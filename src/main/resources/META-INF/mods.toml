@@ -1,0 +1,20 @@
+modLoader="javafml"
+loaderVersion="[32,)"
+# The license for your mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
+license="All Rights Reserved"
+# A URL to refer people to when problems occur with this mod
+# issueTrackerURL=""
+
+[[mods]]
+    modId="greekfantasy"
+    version="16.0.0"
+    displayName="Greek Fantasy"
+    credits=""
+    authors="skyjay1"
+    description='''Description goes here'''
+[[dependencies.golems]]
+    modId="forge"
+    mandatory=true
+    versionRange="[33,)"
+    ordering="NONE"
+    side="BOTH"
