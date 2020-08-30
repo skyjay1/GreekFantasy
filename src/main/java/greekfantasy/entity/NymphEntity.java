@@ -6,14 +6,14 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class NymphEntity extends CreatureEntity {
-  
-//  protected static final DataParameter<Byte> DATA_TYPE = EntityDataManager.<Byte>createKey(NymphEntity.class, DataSerializers.BYTE);
-//  protected static final String KEY_TYPE = "NymphType";
   
   protected NymphEntity.Variant variant = NymphEntity.Variant.OAK;
   
@@ -22,16 +22,12 @@ public class NymphEntity extends CreatureEntity {
     // set variant
     variant = NymphEntity.Variant.getByName(type.getRegistryName().getPath());
   }
-  
-//  @Override
-//  protected void registerData() {
-//    super.registerData();
-//    this.getDataManager().register(DATA_TYPE, (byte) 0);
-//  }
-  
+
   @Override
   protected void registerGoals() {
     super.registerGoals();
+    this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -40,34 +36,6 @@ public class NymphEntity extends CreatureEntity {
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
  }
-  
-//  @Override
-//  public void notifyDataManagerChange(DataParameter<?> key) {
-//    super.notifyDataManagerChange(key);
-//    // attempt to sync texture from client -> server -> other clients
-//    if (DATA_TYPE.equals(key)) {
-//      this.setNymphType(Variant.getById(this.getDataManager().get(DATA_TYPE)));
-//    }
-//  }
-  
-//  @Override
-//  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-//    this.setNymphType(NymphEntity.Variant.BIRCH);
-//    return spawnDataIn;
-// }
-//
-//  @Override
-//  public void writeAdditional(final CompoundNBT nbt) {
-//    super.writeAdditional(nbt);
-//    nbt.putByte(KEY_TYPE, (byte) this.getNymphType().getId());
-//  }
-//
-//  @Override
-//  public void readAdditional(final CompoundNBT nbt) {
-//    super.readAdditional(nbt);
-//    this.setNymphType(Variant.getById(nbt.getByte(KEY_TYPE)));
-//  }
-//  
   
   public NymphEntity.Variant getVariant() {
     return variant;

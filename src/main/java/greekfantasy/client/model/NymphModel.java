@@ -19,44 +19,36 @@ public class NymphModel<T extends NymphEntity> extends BipedModel<T> {
     textureHeight = 64;
 
     this.bipedHead = new ModelRenderer(this);
-    this.bipedHead.setRotationPoint(0.0F, 0.0F, 1.5F);
+    this.bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F); // 0, 0, 1.5F
     // head
     this.bipedHead.setTextureOffset(0, 0).addBox(-3.0F, -7.0F, -3.0F, 6.0F, 7.0F, 6.0F, modelSize);
     // hair
     this.bipedHead.setTextureOffset(24, 7).addBox(-3.0F, 0.0F, 3.0F, 6.0F, 6.0F, 0.0F, modelSize);
-
-    // re-instantiate to prevent it from rendering its own boxes
-    this.bipedHeadwear = new ModelRenderer(this);
+    // default headwear (remove)
+    this.bipedHeadwear.showModel = false;
     
     this.bipedBody = new ModelRenderer(this);
     this.bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-    this.bipedBody.setTextureOffset(0, 13).addBox(-3.0F, 0.0F, -0.5F, 6.0F, 12.0F, 4.0F, modelSize);
-    // -4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F
-    
-    //this.bipedBody = new ModelRenderer(this);
-    //this.bipedBody.setRotationPoint(0.0F, 24.0F, 0.0F);
-    //this.bipedBody.setTextureOffset(0, 13).addBox(-3.0F, -24.0F, -0.5F, 6.0F, 12.0F, 4.0F, 0.0F, false);
+    this.bipedBody.setTextureOffset(0, 13).addBox(-3.0F, 0.0F, -2.0F, 6.0F, 12.0F, 4.0F, modelSize);    
 
     chest = new ModelRenderer(this);
     chest.setRotationPoint(0.0F, 0.0F, 0.0F);
-    chest.setTextureOffset(3, 17).addBox(-3.0F, 1.0F, -1.5F, 6.0F, 4.0F, 1.0F, modelSize);
+    chest.setTextureOffset(3, 17).addBox(-3.0F, 1.0F, -3.0F, 6.0F, 4.0F, 1.0F, modelSize);
     this.bipedBody.addChild(chest);
 
     this.bipedLeftArm = new ModelRenderer(this);
     this.bipedLeftArm.setRotationPoint(1.0F, 2.0F, 1.5F);
     this.bipedLeftArm.setTextureOffset(20, 13).addBox(-2.0F, -2.0F, -1.5F, 2.0F, 12.0F, 3.0F, modelSize);
-//    this.bipedLeftArm.setRotationPoint(3.0F, 2.0F, 1.5F);
-//    this.bipedLeftArm.setTextureOffset(20, 13).addBox(0.0F, -2.0F, -1.5F, 2.0F, 12.0F, 3.0F, modelSize);
+    this.bipedLeftArm.mirror = true;
 
     this.bipedRightArm = new ModelRenderer(this);
-    this.bipedRightArm.setRotationPoint(-1.0F, 2.0F, 1.5F);
-    this.bipedRightArm.setTextureOffset(30, 13).addBox(-1.0F, -2.0F, -1.5F, 2.0F, 12.0F, 3.0F, modelSize);
-//    this.bipedRightArm.setRotationPoint(-3.0F, 2.0F, 1.5F);
-//    this.bipedRightArm.setTextureOffset(30, 13).addBox(-2.0F, -2.0F, -1.5F, 2.0F, 12.0F, 3.0F, modelSize);
+    this.bipedRightArm.setRotationPoint(0.0F, 2.0F, 1.5F);
+    this.bipedRightArm.setTextureOffset(30, 13).addBox(0.0F, -2.0F, -1.5F, 2.0F, 12.0F, 3.0F, modelSize);
 
     this.bipedLeftLeg = new ModelRenderer(this);
     this.bipedLeftLeg.setRotationPoint(1.5F, 12.0F, 1.5F);
     this.bipedLeftLeg.setTextureOffset(0, 49).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 12.0F, 3.0F, modelSize);
+    this.bipedLeftLeg.mirror = true;
 
     this.bipedRightLeg = new ModelRenderer(this);
     this.bipedRightLeg.setRotationPoint(-1.5F, 12.0F, 1.5F);
@@ -99,13 +91,4 @@ public class NymphModel<T extends NymphEntity> extends BipedModel<T> {
     }
 
   }
-
-//  public void translateHand(HandSide sideIn, MatrixStack matrixStackIn) {
-//    float f = sideIn == HandSide.RIGHT ? 1.0F : -1.0F;
-//    ModelRenderer modelrenderer = this.getArmForSide(sideIn);
-//    modelrenderer.rotationPointX += f;
-//    modelrenderer.translateRotate(matrixStackIn);
-//    modelrenderer.rotationPointX -= f;
-//  }
-
 }
