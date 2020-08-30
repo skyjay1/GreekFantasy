@@ -2,6 +2,7 @@ package greekfantasy.proxy;
 
 import java.util.Map.Entry;
 
+import greekfantasy.client.render.CentaurRenderer;
 import greekfantasy.client.render.NymphRenderer;
 import greekfantasy.client.render.SatyrRenderer;
 import greekfantasy.entity.NymphEntity;
@@ -19,6 +20,7 @@ public class ClientProxy extends Proxy {
       RenderingRegistry.registerEntityRenderingHandler(t.getValue(), NYMPH_RENDERER);
     }
     RenderingRegistry.registerEntityRenderingHandler(SATYR_ENTITY, SatyrRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(CENTAUR_ENTITY, CentaurRenderer::new);
   }
   
 }

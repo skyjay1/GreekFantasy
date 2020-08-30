@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.CentaurEntity;
 import greekfantasy.entity.NymphEntity;
 import greekfantasy.entity.SatyrEntity;
 import net.minecraft.block.Block;
@@ -17,6 +18,7 @@ public class Proxy {
   
   public static final Map<NymphEntity.Variant, EntityType<? extends NymphEntity>> nymphEntityMap = new HashMap<>();
   public static EntityType<? extends SatyrEntity> SATYR_ENTITY;
+  public static EntityType<? extends CentaurEntity> CENTAUR_ENTITY;
   
   public void registerEntityRenders() { }
 
@@ -27,6 +29,7 @@ public class Proxy {
       nymphEntityMap.put(t, entityType);
     }
     SATYR_ENTITY = registerSatyr(event);
+    CENTAUR_ENTITY = registerCentaur(event);
   }
 
  
@@ -53,6 +56,15 @@ public class Proxy {
     entityType.setRegistryName(GreekFantasy.MODID, "satyr");
     event.getRegistry().register(entityType);
     GlobalEntityTypeAttributes.put(entityType, SatyrEntity.getAttributes().create());
+    return entityType;
+  }
+  
+  private EntityType<? extends CentaurEntity> registerCentaur(final RegistryEvent.Register<EntityType<?>> event) {
+    EntityType<? extends CentaurEntity> entityType = EntityType.Builder.create(CentaurEntity::new, EntityClassification.MISC)
+        .size(1.39F, 2.49F).build("centaur");
+    entityType.setRegistryName(GreekFantasy.MODID, "centaur");
+    event.getRegistry().register(entityType);
+    GlobalEntityTypeAttributes.put(entityType, CentaurEntity.getAttributes().create());
     return entityType;
   }
 }
