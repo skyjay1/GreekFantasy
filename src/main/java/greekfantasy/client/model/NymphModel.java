@@ -1,5 +1,7 @@
 package greekfantasy.client.model;
 
+import com.google.common.collect.ImmutableList;
+
 import greekfantasy.entity.NymphEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelHelper;
@@ -24,18 +26,23 @@ public class NymphModel<T extends NymphEntity> extends BipedModel<T> {
     this.bipedHead.setTextureOffset(0, 0).addBox(-3.0F, -7.0F, -3.0F, 6.0F, 7.0F, 6.0F, modelSize);
     // hair
     this.bipedHead.setTextureOffset(24, 7).addBox(-3.0F, 0.0F, 3.0F, 6.0F, 6.0F, 0.0F, modelSize);
-    // default headwear (remove)
+    
+    // disable headwear model
     this.bipedHeadwear.showModel = false;
     
     this.bipedBody = new ModelRenderer(this);
     this.bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
     this.bipedBody.setTextureOffset(0, 13).addBox(-3.0F, 0.0F, -2.0F, 6.0F, 12.0F, 4.0F, modelSize);    
 
-    chest = new ModelRenderer(this);
-    chest.setRotationPoint(0.0F, -20.0F, 2.0F);
-    chest.rotateAngleX = -0.1745F;
-    chest.setTextureOffset(3, 17).addBox(-2.99F, 22.0F, 0.0F, 6.0F, 4.0F, 1.0F, 0.0F, false);
-    this.bipedBody.addChild(chest);
+//    chest = new ModelRenderer(this);
+//    chest.setRotationPoint(0.0F, -20.0F, 2.0F);
+//    chest.rotateAngleX = -0.1745F;
+//    chest.setTextureOffset(3, 17).addBox(-2.99F, 22.0F, 0.0F, 6.0F, 4.0F, 1.0F, 0.0F, false);
+//    
+    this.chest = new ModelRenderer(this);
+    this.chest.setRotationPoint(0.0F, 1.0F, -2.0F);
+    this.chest.rotateAngleX = -0.2182F;
+    this.chest.setTextureOffset(3, 17).addBox(-3.01F, 0.0F, 0.0F, 6.0F, 4.0F, 1.0F, modelSize);
 
     this.bipedLeftArm = new ModelRenderer(this);
     this.bipedLeftArm.setRotationPoint(1.0F, 2.0F, 1.5F);
@@ -55,6 +62,9 @@ public class NymphModel<T extends NymphEntity> extends BipedModel<T> {
     this.bipedRightLeg.setRotationPoint(-1.5F, 12.0F, 1.5F);
     this.bipedRightLeg.setTextureOffset(12, 49).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 12.0F, 3.0F, modelSize);
   }
+  
+  @Override
+  protected Iterable<ModelRenderer> getBodyParts() { return ImmutableList.of(this.bipedBody, this.chest, this.bipedLeftArm, this.bipedRightArm, this.bipedLeftLeg, this.bipedRightLeg); }
 
   @Override
   public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
