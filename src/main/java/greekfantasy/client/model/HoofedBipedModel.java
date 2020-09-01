@@ -122,12 +122,10 @@ public class HoofedBipedModel<T extends LivingEntity> extends BipedModel<T> {
     final float ticks = entityIn.ticksExisted + partialTick;
     final IHoofedEntity hoofedEntity = entityIn instanceof IHoofedEntity ? (IHoofedEntity) entityIn : null;
     // stomping
-    if(hoofedEntity != null /* TODO && hoofedEntity.isStomping() */) {
+    if(hoofedEntity != null && hoofedEntity.isStomping()) {
       final float stompSpeed = hoofedEntity.getStompingSpeed();
       limbSwingSin = MathHelper.cos(ticks * stompSpeed + (float)Math.PI);
       limbSwingCos = MathHelper.cos(ticks * stompSpeed) * 0.75F;
-      this.bipedRightLeg.rotateAngleX = limbSwingCos * 0.9F;
-      this.bipedLeftLeg.rotateAngleX = limbSwingSin * 0.9F;
       this.rightLegUpper.rotateAngleX = -0.2618F + limbSwingSin * 0.42F;
       this.leftLegUpper.rotateAngleX = -0.2618F + limbSwingCos * 0.42F;
     } else {
