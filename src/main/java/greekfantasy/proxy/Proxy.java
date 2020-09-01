@@ -10,7 +10,10 @@ import greekfantasy.entity.GorgonEntity;
 import greekfantasy.entity.MinotaurEntity;
 import greekfantasy.entity.NymphEntity;
 import greekfantasy.entity.SatyrEntity;
+import greekfantasy.entity.ShadeEntity;
 import greekfantasy.entity.SirenEntity;
+import greekfantasy.item.Items;
+import greekfantasy.item.PanfluteItem;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -19,6 +22,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 
 public class Proxy {
@@ -29,6 +35,14 @@ public class Proxy {
   public static EntityType<? extends MinotaurEntity> MINOTAUR_ENTITY;
   public static EntityType<? extends SirenEntity> SIREN_ENTITY;
   public static EntityType<? extends GorgonEntity> GORGON_ENTITY;
+  public static EntityType<? extends ShadeEntity> SHADE_ENTITY;
+  
+  public static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
+    @Override
+    public ItemStack createIcon() {
+      return new ItemStack(Items.PANFLUTE);
+    }
+  };
   
   public void registerEntityRenders() { }
 
@@ -41,11 +55,15 @@ public class Proxy {
     MINOTAUR_ENTITY = registerEntityType(event, MinotaurEntity::new, MinotaurEntity::getAttributes, "minotaur", 0.7F, 1.8F);
     SIREN_ENTITY = registerEntityType(event, SirenEntity::new, SirenEntity::getAttributes, "siren", 0.6F, 1.9F);
     GORGON_ENTITY = registerEntityType(event, GorgonEntity::new, GorgonEntity::getAttributes, "gorgon", 0.9F, 1.9F);
+    SHADE_ENTITY = registerEntityType(event, ShadeEntity::new, ShadeEntity::getAttributes, "shade", 0.7F, 1.8F);
   }
 
  
   public void registerItems(final RegistryEvent.Register<Item> event) {
-    
+    event.getRegistry().registerAll(
+        new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxDamage(100))
+          .setRegistryName(new ResourceLocation(GreekFantasy.MODID, "panflute"))
+    );
   }
 
   public void registerBlocks(final RegistryEvent.Register<Block> event) {
@@ -62,5 +80,7 @@ public class Proxy {
     return entityType;
     
   }
+  
+  
   
 }

@@ -1,5 +1,6 @@
 package greekfantasy.client.model;
 
+import greekfantasy.entity.IHoofedEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.LivingEntity;
@@ -116,23 +117,42 @@ public class HoofedBipedModel<T extends LivingEntity> extends BipedModel<T> {
   @Override
   public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
     super.setLivingAnimations(entityIn, limbSwing, limbSwingAmount, partialTick);
-    final float limbSwingSin = MathHelper.sin(limbSwing) * limbSwingAmount;
-    final float limbSwingCos = MathHelper.cos(limbSwing) * limbSwingAmount;
+    float limbSwingSin;
+    float limbSwingCos;
+    final float ticks = entityIn.ticksExisted + partialTick;
+    final IHoofedEntity hoofedEntity = entityIn instanceof IHoofedEntity ? (IHoofedEntity) entityIn : null;
+    // stomping
+    if(hoofedEntity != null /* TODO && hoofedEntity.isStomping() */) {
+      final float stompSpeed = hoofedEntity.getStompingSpeed();
+      limbSwingSin = MathHelper.cos(ticks * stompSpeed + (float)Math.PI);
+      limbSwingCos = MathHelper.cos(ticks * stompSpeed) * 0.75F;
+      this.bipedRightLeg.rotateAngleX = limbSwingCos * 0.9F;
+      this.bipedLeftLeg.rotateAngleX = limbSwingSin * 0.9F;
+      this.rightLegUpper.rotateAngleX = -0.2618F + limbSwingSin * 0.42F;
+      this.leftLegUpper.rotateAngleX = -0.2618F + limbSwingCos * 0.42F;
+    } else {
+      limbSwingSin = MathHelper.cos(limbSwing + (float)Math.PI) * limbSwingAmount;
+      limbSwingCos = MathHelper.cos(limbSwing) * limbSwingAmount;
+    }
+    
     // legs
-    float rightLegSwing = 0.58F * limbSwingSin;
-    float leftLegSwing = 0.58F * limbSwingCos;
+    float rightLegSwing = 0.38F * limbSwingSin;
+    float leftLegSwing = 0.38F * limbSwingCos;
     rightLegLower.rotateAngleX = 0.7854F + rightLegSwing;
     rightHoof.rotateAngleX = -0.5236F - rightLegSwing;
     leftLegLower.rotateAngleX = 0.7854F + leftLegSwing;
     leftHoof.rotateAngleX = -0.5236F - leftLegSwing;
+    
     // tail
     if(tail.showModel) {
-      float idleSwing = 0.1F * MathHelper.cos((entityIn.ticksExisted + partialTick) * 0.08F);
+      float idleSwing = 0.1F * MathHelper.cos(ticks * 0.08F);
       float tailSwing = 0.42F * limbSwingCos;
       tail.rotateAngleX = 0.6854F + tailSwing;
       tail2.rotateAngleX = 0.3491F + tailSwing * 0.6F;
       tail.rotateAngleZ = idleSwing;
       tail2.rotateAngleZ = idleSwing * 0.85F;
     }
+    
+    
   }
 }

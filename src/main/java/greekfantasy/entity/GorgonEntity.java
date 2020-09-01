@@ -8,6 +8,8 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.world.World;
 
 public class GorgonEntity extends CreatureEntity {
+  
+  // TODO paralyzes upon eye contact (slowness?)
 
   public GorgonEntity(final EntityType<? extends GorgonEntity> type, final World worldIn) {
     super(type, worldIn);

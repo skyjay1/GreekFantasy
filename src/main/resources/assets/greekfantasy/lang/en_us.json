@@ -8,5 +8,10 @@
   "entity.greekfantasy.ocean_nymph": "Ocean Nymph",
   "entity.greekfantasy.river_nymph": "River Nymph",
   "entity.greekfantasy.satyr": "Satyr",
-  "entity.greekfantasy.centaur": "Centaur"
+  "entity.greekfantasy.centaur": "Centaur",
+  "entity.greekfantasy.minotaur": "Minotaur",
+  "entity.greekfantasy.siren": "Siren",
+  "entity.greekfantasy.gorgon": "Gorgon",
+  "entity.greekfantasy.shade": "Shade",
+  "item.greekfantasy.panflute": "Panflute"
 }

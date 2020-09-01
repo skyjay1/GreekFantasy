@@ -8,6 +8,8 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.world.World;
 
 public class SirenEntity extends CreatureEntity {
+  
+  // hostile version should "pull" or "attract" players irresistibly (kinda) while singing
 
   public SirenEntity(final EntityType<? extends SirenEntity> type, final World worldIn) {
     super(type, worldIn);

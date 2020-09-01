@@ -35,9 +35,7 @@ public class CentaurModel<T extends CentaurEntity> extends BipedModel<T> {
     this.bipedBody.setRotationPoint(0.0F, 0.0F, -2.5F);
     this.bipedBody.addBox(-4.0F, -9.0F, -10.0F, 8.0F, 12.0F, 4.0F, modelSize);
 
-    this.bipedHead = new ModelRenderer(this, 0, 0);
-    this.bipedHead.setRotationPoint(0.0F, -9.0F, -10.5F);
-    this.bipedHead.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize);
+    this.bipedHead = makeHeadModel(modelSize);
     
     this.bipedHeadwear = new ModelRenderer(this, 32, 0);
     this.bipedHeadwear.setRotationPoint(0.0F, -9.0F, -10.5F);
@@ -106,11 +104,18 @@ public class CentaurModel<T extends CentaurEntity> extends BipedModel<T> {
     arrow2.setTextureOffset(28, 0).addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 0.0F, modelSize);
     arrows.addChild(arrow2);
   }
+  
+  protected ModelRenderer makeHeadModel(final float modelSize) {
+    final ModelRenderer head = new ModelRenderer(this, 0, 0);
+    head.setRotationPoint(0.0F, -9.0F, -10.5F);
+    head.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize);
+    return head;
+  }
 
   @Override
   protected Iterable<ModelRenderer> getBodyParts() { return ImmutableList.of(this.bipedBody, this.bipedLeftArm, this.bipedRightArm, this.bipedHeadwear); }
   
-  
+  @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float p_225597_4_, float rotationYaw, float rotationPitch) {
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, p_225597_4_, rotationYaw, rotationPitch);
     this.horseBody.rotationPointY = 11.0F;

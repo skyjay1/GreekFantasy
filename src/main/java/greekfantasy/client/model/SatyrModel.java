@@ -1,6 +1,7 @@
 package greekfantasy.client.model;
 
 import greekfantasy.entity.SatyrEntity;
+import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
 public class SatyrModel<T extends SatyrEntity> extends HoofedBipedModel<T> {
@@ -33,30 +34,30 @@ public class SatyrModel<T extends SatyrEntity> extends HoofedBipedModel<T> {
     this.bipedHead.addChild(leftEar);
 
     // horns
-    this.bipedHead.addChild(makeHornModel(modelSize, true));
-    this.bipedHead.addChild(makeHornModel(modelSize, false));
+    this.bipedHead.addChild(makeGoatHorns(this, modelSize, true));
+    this.bipedHead.addChild(makeGoatHorns(this, modelSize, false));
   }
   
-  private ModelRenderer makeHornModel(final float modelSize, final boolean isLeft) {
+  public static ModelRenderer makeGoatHorns(final EntityModel<?> model, final float modelSize, final boolean isLeft) {
     final int textureX = isLeft ? 54 : 47;
     final float horn1X = isLeft ? 4.0F : -5.0F;
     final float horn2X = isLeft ? 8.25F : -1.25F;
     final float horn3X = isLeft ? 8.5F : -1.5F;
     
-    final ModelRenderer horn3 = new ModelRenderer(this);
+    final ModelRenderer horn3 = new ModelRenderer(model);
     horn3.setRotationPoint(0.0F, -3.0F, 0.0F);
     horn3.rotateAngleX = -0.7854F;
     horn3.setTextureOffset(textureX, 59).addBox(horn3X, -3.0F, 0.0F, 1.0F, 3.0F, 2.0F, modelSize);
     horn3.mirror = isLeft;
     
-    final ModelRenderer horn2 = new ModelRenderer(this);
+    final ModelRenderer horn2 = new ModelRenderer(model);
     horn2.setRotationPoint(-4.0F, -4.0F, -1.0F);
     horn2.rotateAngleX = -0.7854F;
     horn2.setTextureOffset(textureX, 54).addBox(horn2X, -3.0F, 0.0F, 1.0F, 3.0F, 2.0F, modelSize);
     horn2.addChild(horn3);
     horn2.mirror = isLeft;
     
-    final ModelRenderer horn1 = new ModelRenderer(this);
+    final ModelRenderer horn1 = new ModelRenderer(model);
     horn1.setRotationPoint(0.0F, -6.0F, -1.0F);
     horn1.rotateAngleX = 0.8727F;
     horn1.setTextureOffset(textureX, 48).addBox(horn1X, -4.0F, -1.0F, 1.0F, 4.0F, 2.0F, modelSize);

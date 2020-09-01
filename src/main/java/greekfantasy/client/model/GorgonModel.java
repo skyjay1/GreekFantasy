@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.entity.GorgonEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
@@ -20,7 +18,12 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
   private final ModelRenderer lowerTail2;
   private final ModelRenderer lowerTail3;
   
-  private final List<ModelRenderer> snakeHair = new ArrayList<>();
+  private final float snakeHair1Y = 1.7F;
+  private final float snakeHair2Y = 1.03F;
+  private final float snakeHair3Y = 0.62F;
+  private final List<ModelRenderer> snakeHair1 = new ArrayList<>();
+  private final List<ModelRenderer> snakeHair2 = new ArrayList<>();
+  private final List<ModelRenderer> snakeHair3 = new ArrayList<>();
 
   public GorgonModel(final float modelSize) {
     super(modelSize);
@@ -93,14 +96,17 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
     // snakeHair1.setRotationPoint(-0.5F, -8.0F, 1.0F);
     // bipedHead.addChild(snakeHair1);
     // setRotationAngle(snakeHair1, 0.5236F, 0.2618F, -0.3491F);
-    for(double a = 0.0D, r = 3.75D, s = Math.PI / 8.0D; a < Math.PI * 2; a += s) {
-      final float ptX = (float) (Math.cos(a) * r);
-      final float ptZ = (float) (Math.sin(a) * r);
-      final float angY = (float) (a - (s * 2) * (snakeHair.size() + 1));
-      final ModelRenderer snake = makeSnake(modelSize, ptX, -8.0F, ptZ, 0, angY, 0);
-      snakeHair.add(snake);
-      bipedHead.addChild(snake);
-    }
+//    for(double a = 0.0D, r = 3.85D, s = Math.PI / 6.0D; a < Math.PI * 2; a += s) {
+//      final float ptX = (float) (Math.cos(a) * r);
+//      final float ptZ = (float) (Math.sin(a) * r);
+//      final float angY = (float) (a - (s * 2) * (snakeHair.size() + 1));
+//      final ModelRenderer snake = makeSnake(modelSize, ptX, -8.0F, ptZ, 0, angY, 0);
+//      snakeHair.add(snake);
+//      bipedHead.addChild(snake);
+//    }
+    makeSnakes(snakeHair1, 3.8F, (float) Math.PI / 6.0F, modelSize);
+    makeSnakes(snakeHair2, 2.25F, (float) Math.PI / 4.0F, modelSize);
+    makeSnakes(snakeHair3, 1.25F, (float) Math.PI / 3.0F, modelSize);
   }
   
   @Override
@@ -113,8 +119,14 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
     float ticks = entity.ticksExisted + partialTick;
 
     // animate snake hair
-    for(int i = 0, l = snakeHair.size(); i < l && snakeHair.get(i).showModel; i++) {
-      snakeHair.get(i).rotateAngleX = 0.62F + (float) Math.cos((ticks + i * 4) * 0.15) * 0.08F;
+    for(int i = 0, l = snakeHair1.size(); i < l && snakeHair1.get(i).showModel; i++) {
+      snakeHair1.get(i).rotateAngleX = snakeHair1Y + (float) Math.cos((ticks + i * 4) * 0.15) * 0.08F;
+    }
+    for(int i = 0, l = snakeHair2.size(); i < l && snakeHair2.get(i).showModel; i++) {
+      snakeHair2.get(i).rotateAngleX = snakeHair2Y + (float) Math.cos((ticks + i * 4) * 0.15) * 0.08F;
+    }
+    for(int i = 0, l = snakeHair3.size(); i < l && snakeHair3.get(i).showModel; i++) {
+      snakeHair3.get(i).rotateAngleX = snakeHair3Y + (float) Math.cos((ticks + i * 4) * 0.15) * 0.08F;
     }
     // animate snake body
     final float limbSwingCos = (float) Math.cos(limbSwing);
@@ -132,8 +144,25 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
   }
   
   public void setSnakeHairVisibility(final boolean visible) {
-    for(final ModelRenderer r : this.snakeHair) {
+    for(final ModelRenderer r : this.snakeHair1) {
       r.showModel = visible;
+    }
+    for(final ModelRenderer r : this.snakeHair2) {
+      r.showModel = visible;
+    }
+    for(final ModelRenderer r : this.snakeHair3) {
+      r.showModel = visible;
+    }
+  }
+  
+  private void makeSnakes(final List<ModelRenderer> list, final float radius, final float deltaAngle, final float modelSize) {
+    for(double angle = 0.0D; angle < Math.PI * 2; angle += deltaAngle) {
+      final float ptX = (float) (Math.cos(angle) * radius);
+      final float ptZ = (float) (Math.sin(angle) * radius);
+      final float angY = (float) (angle - (deltaAngle * 2) * (list.size() + 1));
+      final ModelRenderer snake = makeSnake(modelSize, ptX, -8.0F, ptZ, 0, angY, 0);
+      list.add(snake);
+      bipedHead.addChild(snake);
     }
   }
   

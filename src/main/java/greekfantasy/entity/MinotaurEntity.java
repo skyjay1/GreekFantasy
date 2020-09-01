@@ -7,7 +7,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.world.World;
 
-public class MinotaurEntity extends CreatureEntity {
+public class MinotaurEntity extends CreatureEntity implements IHoofedEntity {
 
   public MinotaurEntity(final EntityType<? extends MinotaurEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -24,5 +24,15 @@ public class MinotaurEntity extends CreatureEntity {
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
  }
+
+  @Override
+  public boolean isStomping() {
+    return false;
+  }
+
+  @Override
+  public float getStompingSpeed() {
+    return 0.64F;
+  }
   
 }

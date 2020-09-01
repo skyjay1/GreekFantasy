@@ -7,6 +7,7 @@ import greekfantasy.client.render.GorgonRenderer;
 import greekfantasy.client.render.MinotaurRenderer;
 import greekfantasy.client.render.NymphRenderer;
 import greekfantasy.client.render.SatyrRenderer;
+import greekfantasy.client.render.ShadeRenderer;
 import greekfantasy.client.render.SirenRenderer;
 import greekfantasy.entity.NymphEntity;
 import greekfantasy.entity.NymphEntity.Variant;
@@ -27,6 +28,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(MINOTAUR_ENTITY, MinotaurRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(SIREN_ENTITY, SirenRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GORGON_ENTITY, GorgonRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(SHADE_ENTITY, ShadeRenderer::new);
   }
   
 }
