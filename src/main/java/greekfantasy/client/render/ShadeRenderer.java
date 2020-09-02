@@ -12,7 +12,7 @@ public class ShadeRenderer<T extends ShadeEntity> extends BipedRenderer<T, Shade
   private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/shade.png");
 
   public ShadeRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new ShadeModel<T>(0.0F), 0.5F);
+    super(renderManagerIn, new ShadeModel<T>(0.0F), 0.0F);
   }
 
   @Override

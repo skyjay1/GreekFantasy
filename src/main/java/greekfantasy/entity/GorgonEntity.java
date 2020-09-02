@@ -2,17 +2,20 @@ package greekfantasy.entity;
 
 import java.util.EnumSet;
 
-import net.minecraft.entity.CreatureEntity;
+import greekfantasy.GreekFantasy;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.monster.EndermanEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
@@ -20,7 +23,7 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
-public class GorgonEntity extends CreatureEntity {
+public class GorgonEntity extends MonsterEntity {
   
   // TODO paralyzes upon eye contact (slowness?)
 
@@ -32,8 +35,12 @@ public class GorgonEntity extends CreatureEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 10.0F));
-    this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(3, new StareAttackGoal(this));
+    this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
+    this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 10.0F));
+    this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
+    this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -55,6 +62,7 @@ public class GorgonEntity extends CreatureEntity {
   
   public boolean useStareAttack(final LivingEntity target) {
     // TODO balance?
+    GreekFantasy.LOGGER.info("Gorgon stare attack - activate!");
     target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 60, 9, false, false));
     target.removeActivePotionEffect(Effects.SPEED);
     // spawn particles
@@ -79,7 +87,7 @@ public class GorgonEntity extends CreatureEntity {
     private int cooldown;
     
     public StareAttackGoal(final GorgonEntity entityIn) {
-       this.setMutexFlags(EnumSet.of(Goal.Flag.JUMP, Goal.Flag.MOVE));
+       this.setMutexFlags(EnumSet.of(Goal.Flag.LOOK));
        this.entity = entityIn;
     }
 

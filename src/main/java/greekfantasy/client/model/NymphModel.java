@@ -34,11 +34,6 @@ public class NymphModel<T extends NymphEntity> extends BipedModel<T> {
     this.bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
     this.bipedBody.setTextureOffset(0, 13).addBox(-3.0F, 0.0F, -2.0F, 6.0F, 12.0F, 4.0F, modelSize);    
 
-//    chest = new ModelRenderer(this);
-//    chest.setRotationPoint(0.0F, -20.0F, 2.0F);
-//    chest.rotateAngleX = -0.1745F;
-//    chest.setTextureOffset(3, 17).addBox(-2.99F, 22.0F, 0.0F, 6.0F, 4.0F, 1.0F, 0.0F, false);
-//    
     this.chest = new ModelRenderer(this);
     this.chest.setRotationPoint(0.0F, 1.0F, -2.0F);
     this.chest.rotateAngleX = -0.2182F;

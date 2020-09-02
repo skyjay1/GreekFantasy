@@ -1,26 +1,43 @@
 package greekfantasy.entity;
 
+import javax.annotation.Nullable;
+
 import greekfantasy.GreekFantasy;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 
 public class NymphEntity extends CreatureEntity {
   
-  protected NymphEntity.Variant variant = NymphEntity.Variant.OAK;
-  
+  private static final DataParameter<Byte> DATA_VARIANT = EntityDataManager.createKey(NymphEntity.class, DataSerializers.BYTE);
+  private static final String KEY_VARIANT = "Variant";
+    
   public NymphEntity(final EntityType<? extends NymphEntity> type, final World worldIn) {
     super(type, worldIn);
-    // set variant
-    variant = NymphEntity.Variant.getByName(type.getRegistryName().getPath());
+  }
+  
+  public static AttributeModifierMap.MutableAttribute getAttributes() {
+    return MobEntity.func_233666_p_()
+        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
   }
 
   @Override
@@ -29,16 +46,39 @@ public class NymphEntity extends CreatureEntity {
     this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
   }
+
+  @Override
+  protected void registerData() {
+    super.registerData();
+    this.getDataManager().register(DATA_VARIANT, Byte.valueOf((byte) 0));
+  }
+
+  @Override
+  public void writeAdditional(CompoundNBT compound) {
+    super.writeAdditional(compound);
+    compound.putByte(KEY_VARIANT, this.getDataManager().get(DATA_VARIANT).byteValue());
+  }
+
+  @Override
+  public void readAdditional(CompoundNBT compound) {
+    super.readAdditional(compound);
+    this.setVariant(NymphEntity.Variant.getById(compound.getByte(KEY_VARIANT)));
+  }
   
-  public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
- }
+  @Nullable
+  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+      @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+    final NymphEntity.Variant variant = Util.getRandomObject(NymphEntity.Variant.values(), this.rand);
+    this.setVariant(variant);
+    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+  }
+
+  public void setVariant(final NymphEntity.Variant variant) {
+    this.getDataManager().set(DATA_VARIANT, variant.getId());
+  }
   
   public NymphEntity.Variant getVariant() {
-    return variant;
+    return NymphEntity.Variant.getById(this.getDataManager().get(DATA_VARIANT).byteValue());
   }
   
   public static enum Variant implements IStringSerializable {

@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,11 +27,6 @@ public class ShadeEntity extends CreatureEntity {
   
   public static final DataParameter<Integer> DATA_XP = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.VARINT);
   public static final String KEY_XP = "StoredXP";
-  
-  // created when player dies
-  // when killed, drops amount of XP that player had at time of death
-  // attacks by draining XP or, if XP=0, drains health
-  // when killed, drops stored XP
 
   public ShadeEntity(final EntityType<? extends ShadeEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -48,6 +44,7 @@ public class ShadeEntity extends CreatureEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
+    this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, true));
     this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 12.0F));
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -99,7 +96,7 @@ public class ShadeEntity extends CreatureEntity {
           this.setStoredXP(this.getStoredXP() + xpSteal);
         } else {
           // brief wither effect
-          player.addPotionEffect(new EffectInstance(Effects.WITHER, 40));
+          player.addPotionEffect(new EffectInstance(Effects.WITHER, 60));
         }
       }
       return true;
