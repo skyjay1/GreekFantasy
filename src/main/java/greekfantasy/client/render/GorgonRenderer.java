@@ -13,6 +13,7 @@ public class GorgonRenderer<T extends GorgonEntity> extends BipedRenderer<T, Gor
 
   public GorgonRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new GorgonModel<T>(0.0F), 0.5F);
+    this.addLayer(new GorgonHairLayer<>(this));
   }
 
   @Override

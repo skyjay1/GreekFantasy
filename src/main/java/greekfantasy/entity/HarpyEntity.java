@@ -20,6 +20,8 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
+  
+  public float flyingTime;
 
   public HarpyEntity(final EntityType<? extends HarpyEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -38,8 +40,8 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
   @Override
   protected void registerGoals() {
     super.registerGoals();
-    this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
+    //this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    //this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
   }
   
 //  @Override
@@ -65,6 +67,11 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
     Vector3d m = getMotion();
     if (!this.onGround && m.y < 0.0D) {
       setMotion(m.mul(1.0D, 0.6D, 1.0D));
+    }
+    if(this.isFlying()) {
+      flyingTime = Math.min(1.0F, flyingTime + 0.1F);
+    } else {
+      flyingTime = Math.max(0.0F, flyingTime - 0.1F);
     }
   }
 

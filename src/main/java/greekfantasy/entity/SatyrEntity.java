@@ -54,7 +54,8 @@ public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
   }
   
-  public void setDancing(final boolean dancing) {
+  @Override
+  public void setStomping(final boolean dancing) {
     this.getDataManager().set(DATA_DANCING, Boolean.valueOf(dancing));
   }
 
@@ -114,7 +115,7 @@ public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
     
     @Override
     public void startExecuting() {
-      this.entity.setDancing(true);
+      this.entity.setStomping(true);
       dancingTime = 1;
     }
     
@@ -130,7 +131,7 @@ public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
         this.entity.getNavigator().tryMoveToXYZ(x, y, z, disSq > 4.0D ? 0.8D : this.dancingSpeed);
       } else {
         // stop dancing
-        this.entity.setDancing(false);;
+        this.entity.setStomping(false);;
         this.dancingTime = 0;
       }
     }
@@ -144,7 +145,7 @@ public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
     @Override
     public void resetTask() {
       this.dancingTime = 0;
-      this.entity.setDancing(false);
+      this.entity.setStomping(false);
     }
     
     private Vector3d findCampfire() {

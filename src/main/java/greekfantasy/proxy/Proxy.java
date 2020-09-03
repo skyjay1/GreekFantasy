@@ -1,7 +1,5 @@
 package greekfantasy.proxy;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import greekfantasy.GreekFantasy;
@@ -31,7 +29,6 @@ import net.minecraftforge.event.RegistryEvent;
 
 public class Proxy {
   
-  //public static final Map<NymphEntity.Variant, EntityType<? extends NymphEntity>> nymphEntityMap = new HashMap<>();
   public static EntityType<? extends NymphEntity> NYMPH_ENTITY;
   public static EntityType<? extends SatyrEntity> SATYR_ENTITY;
   public static EntityType<? extends CentaurEntity> CENTAUR_ENTITY;
@@ -52,9 +49,6 @@ public class Proxy {
   public void registerEntityRenders() { }
 
   public void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
-//    for(final NymphEntity.Variant t : NymphEntity.Variant.values()) {
-//      nymphEntityMap.put(t, registerEntityType(event, NymphEntity::new, NymphEntity::getAttributes, t.getString(), 0.48F, 1.8F));
-//    }
     NYMPH_ENTITY = registerEntityType(event, NymphEntity::new, NymphEntity::getAttributes, "nymph", 0.48F, 1.8F);
     SATYR_ENTITY = registerEntityType(event, SatyrEntity::new, SatyrEntity::getAttributes, "satyr", 0.7F, 1.8F);
     CENTAUR_ENTITY = registerEntityType(event, CentaurEntity::new, CentaurEntity::getAttributes, "centaur", 1.39F, 2.49F);
