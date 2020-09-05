@@ -1,17 +1,12 @@
 {
-  "entity.greekfantasy.acacia_nymph": "Acacia Wood Nymph",
-  "entity.greekfantasy.birch_nymph": "Birch Wood Nymph",
-  "entity.greekfantasy.dark_oak_nymph": "Dark Oak Wood Nymph",
-  "entity.greekfantasy.jungle_nymph": "Jungle Wood Nymph",
-  "entity.greekfantasy.oak_nymph": "Oak Wood Nymph",
-  "entity.greekfantasy.spruce_nymph": "Spruce Wood Nymph",
-  "entity.greekfantasy.ocean_nymph": "Ocean Nymph",
-  "entity.greekfantasy.river_nymph": "River Nymph",
+  "entity.greekfantasy.nymph": "Nymph",
   "entity.greekfantasy.satyr": "Satyr",
   "entity.greekfantasy.centaur": "Centaur",
   "entity.greekfantasy.minotaur": "Minotaur",
   "entity.greekfantasy.siren": "Siren",
   "entity.greekfantasy.gorgon": "Gorgon",
   "entity.greekfantasy.shade": "Shade",
+  "entity.greekfantasy.empusa": "Empusa",
+  "entity.greekfantasy.harpy": "Harpy",
   "item.greekfantasy.panflute": "Panflute"
 }

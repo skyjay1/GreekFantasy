@@ -9,7 +9,10 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.passive.horse.CoatColors;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -21,15 +24,21 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CentaurEntity extends CreatureEntity {
   
-  private static final DataParameter<Boolean> DATA_REARING = EntityDataManager.createKey(CentaurEntity.class, DataSerializers.BOOLEAN);
   private static final DataParameter<Boolean> DATA_QUIVER = EntityDataManager.createKey(CentaurEntity.class, DataSerializers.BOOLEAN);
   private static final DataParameter<Byte> DATA_COLOR = EntityDataManager.createKey(CentaurEntity.class, DataSerializers.BYTE);
   
   private static final String TAG_QUIVER = "HasQuiver";
   private static final String TAG_COLOR = "Color";
+  
+  private static final byte REARING_START = 6;
+  private static final byte REARING_END = 7;
+  
+  private boolean isRearing;
   
   public int tailCounter;
   private float rearingAmount;
@@ -48,12 +57,13 @@ public class CentaurEntity extends CreatureEntity {
   @Override
   protected void registerGoals() {
     super.registerGoals();
+    this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
   }
 
   @Override
   protected void registerData() {
     super.registerData();
-    this.getDataManager().register(DATA_REARING, Boolean.valueOf(false));
     this.getDataManager().register(DATA_QUIVER, Boolean.valueOf(false));
     this.getDataManager().register(DATA_COLOR, Byte.valueOf((byte) 0));
   }
@@ -159,6 +169,21 @@ public class CentaurEntity extends CreatureEntity {
      return 400;
   }
   
+  @OnlyIn(Dist.CLIENT)
+  public void handleStatusUpdate(byte id) {
+    switch(id) {
+    case REARING_START:
+      this.isRearing = true;
+      break;
+    case REARING_END:
+      this.isRearing = false;
+      break;
+    default:
+      super.handleStatusUpdate(id);
+      break;
+    }
+  }
+  
   public void setCoatColor(final CoatColors color) {
     this.getDataManager().set(DATA_COLOR, (byte) color.getId());
   }
@@ -183,11 +208,12 @@ public class CentaurEntity extends CreatureEntity {
   }
   
   public void setRearing(final boolean rearing) {
-    this.getDataManager().set(DATA_REARING, rearing);
+    this.isRearing = rearing;
+    this.world.setEntityState(this, rearing ? REARING_START : REARING_END);
   }
 
   public boolean isRearing() {
-    return this.getDataManager().get(DATA_REARING).booleanValue();
+    return this.isRearing;
   }
 
   private void moveTail() {
@@ -195,6 +221,10 @@ public class CentaurEntity extends CreatureEntity {
   }
 
   public float getRearingAmount(float f) {
-    return MathHelper.lerp(f, this.prevRearingAmount, this.rearingAmount);
+    return f == 1.0F ? this.rearingAmount : MathHelper.lerp(f, this.prevRearingAmount, this.rearingAmount);
+  }
+  
+  public boolean hasBullHead() {
+    return false;
   }
 }

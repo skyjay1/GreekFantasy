@@ -20,6 +20,7 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
   private final ModelRenderer lowerTail2;
   private final ModelRenderer lowerTail3;
   
+  private final ModelRenderer snakeHair;
   private final List<ModelRenderer> snakeHair1 = new ArrayList<>();
   private final List<ModelRenderer> snakeHair2 = new ArrayList<>();
   private final List<ModelRenderer> snakeHair3 = new ArrayList<>();
@@ -46,13 +47,13 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
 
     upperTail = new ModelRenderer(this);
     upperTail.setRotationPoint(0.0F, 12.0F, 0.0F);
-    setRotationAngle(upperTail, -0.5236F, 0.0F, 0.0F);
+    upperTail.rotateAngleX = -0.5236F;
     upperTail.setTextureOffset(0, 32).addBox(-3.999F, 0.0F, -4.0F, 8.0F, 10.0F, 4.0F, modelSize);
 
     midTail = new ModelRenderer(this);
     midTail.setRotationPoint(0.0F, 10.0F, -4.0F);
     upperTail.addChild(midTail);
-    setRotationAngle(midTail, 1.0472F, 0.0F, 0.0F);
+    midTail.rotateAngleX = 1.0472F;
     midTail.setTextureOffset(0, 46).addBox(-4.001F, 0.0F, 0.0F, 8.0F, 6.0F, 4.0F, modelSize);
 
     lowerTail = new ModelRenderer(this);
@@ -63,19 +64,16 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
     lowerTail1 = new ModelRenderer(this);
     lowerTail1.setRotationPoint(0.0F, 2.0F, 0.0F);
     lowerTail.addChild(lowerTail1);
-    setRotationAngle(lowerTail1, 0.0F, 0.0F, -0.2618F);
     lowerTail1.setTextureOffset(25, 32).addBox(-3.0F, -1.0F, 0.0F, 6.0F, 8.0F, 4.0F, modelSize);
 
     lowerTail2 = new ModelRenderer(this);
     lowerTail2.setRotationPoint(0.0F, 6.0F, 0.0F);
     lowerTail1.addChild(lowerTail2);
-    setRotationAngle(lowerTail2, 0.0F, 0.0F, 0.5236F);
     lowerTail2.setTextureOffset(46, 32).addBox(-2.0F, -1.0F, 0.0F, 4.0F, 8.0F, 3.0F, modelSize);
 
     lowerTail3 = new ModelRenderer(this);
     lowerTail3.setRotationPoint(0.0F, 7.0F, 0.0F);
     lowerTail2.addChild(lowerTail3);
-    setRotationAngle(lowerTail3, 0.0F, 0.0F, -0.5236F);
     lowerTail3.setTextureOffset(46, 43).addBox(-1.0F, -1.0F, 0.0F, 2.0F, 6.0F, 2.0F, modelSize);
 
     this.bipedLeftArm = new ModelRenderer(this, 32, 48);
@@ -90,6 +88,9 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
     // disable biped legs
     bipedLeftLeg.showModel = false;
     bipedRightLeg.showModel = false;
+    
+    this.snakeHair = new ModelRenderer(this);
+    this.snakeHair.setRotationPoint(0.0F, 0.0F, 0.0F);
   
     makeSnakes(snakeHair1, 3.8F, (float) Math.PI / 6.0F, modelSize);
     makeSnakes(snakeHair2, 2.25F, (float) Math.PI / 4.0F, modelSize);
@@ -99,12 +100,16 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
   @Override
   protected Iterable<ModelRenderer> getBodyParts() { return ImmutableList.of(this.bipedBody, this.bipedLeftArm, this.bipedRightArm, this.chest, this.upperTail, this.bipedHeadwear); }
 
+  @Override
+  public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    bipedLeftArm.rotationPointZ = -2.0F;
+    bipedRightArm.rotationPointZ = -2.0F;
+  }
   
   @Override
   public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
     super.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTick);
-    bipedLeftArm.rotationPointZ = -2.0F;
-    bipedRightArm.rotationPointZ = -2.0F;
     // animate snake body
     final float limbSwingCos = (float) Math.cos(limbSwing);
     upperTail.rotateAngleY = limbSwingCos * 0.1F;
@@ -114,40 +119,24 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
     
   }
   
-  public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
-    modelRenderer.rotateAngleX = x;
-    modelRenderer.rotateAngleY = y;
-    modelRenderer.rotateAngleZ = z;
-  }
-  
-
   public void renderSnakeHair(T entity, MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, 
       int packedOverlayIn, float limbSwing, float limbSwingAmount) {
     float ticks = entity.ticksExisted;
     // living animations for each list
     animateSnakes(snakeHair1, ticks, 1.7F);
     animateSnakes(snakeHair2, ticks, 1.03F);
-    animateSnakes(snakeHair3, ticks, 0.62F);
+    animateSnakes(snakeHair3, ticks, 0.82F);
     // render each list
-    renderSnakes(snakeHair1, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
-    renderSnakes(snakeHair2, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
-    renderSnakes(snakeHair3, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
+    this.snakeHair.copyModelAngles(this.bipedHead);
+    this.snakeHair.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
   }
   
-  private void animateSnakes(final List<ModelRenderer> list, final float ticks, final float baseY) {
+  private void animateSnakes(final List<ModelRenderer> list, final float ticks, final float baseAngleX) {
     int i = 0;
     for(final ModelRenderer m : list) {
       // update rotation angles
-      m.copyModelAngles(this.bipedHead);
-      m.rotateAngleX = baseY + (float) Math.cos((ticks + i * 3) * 0.15) * 0.08F;
+      m.rotateAngleX = baseAngleX + (float) Math.cos((ticks + i * 3) * 0.15) * 0.08F;
       i++;
-    }
-  }
-  
-  private void renderSnakes(final List<ModelRenderer> list, final MatrixStack matrixStackIn, 
-      IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn) {
-    for(final ModelRenderer m : list) {
-      m.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
     }
   }
   
@@ -156,8 +145,9 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
       final float ptX = (float) (Math.cos(angle) * radius);
       final float ptZ = (float) (Math.sin(angle) * radius);
       final float angY = (float) (angle - (deltaAngle * 2 * count));
-      final ModelRenderer snake = makeSnake(modelSize, ptX, -10.0F, ptZ, 0, angY, 0);
+      final ModelRenderer snake = makeSnake(modelSize, ptX, -8.5F, ptZ, 0, angY, 0);
       list.add(snake);
+      this.snakeHair.addChild(snake);
       count++;
     }
   }
@@ -166,19 +156,21 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
       final float angleX, final float angleY, final float angleZ) {
     final ModelRenderer snakeHair1 = new ModelRenderer(this);
     snakeHair1.setRotationPoint(rotX, rotY, rotZ);
-    setRotationAngle(snakeHair1, angleX, angleY, angleZ);
+    snakeHair1.rotateAngleX = angleX;
+    snakeHair1.rotateAngleY = angleY;
+    snakeHair1.rotateAngleZ = angleZ;
     snakeHair1.setTextureOffset(46, 52).addBox(-0.5F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, modelSize);
 
     final ModelRenderer snakeHair2 = new ModelRenderer(this);
     snakeHair2.setRotationPoint(0.0F, -3.0F, 0.0F);
     snakeHair1.addChild(snakeHair2);
-    setRotationAngle(snakeHair2, 0.5236F, 0.0F, 0.0F);
+    snakeHair2.rotateAngleX = 0.5236F;
     snakeHair2.setTextureOffset(46, 56).addBox(-0.5F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, modelSize);
 
     final ModelRenderer snakeHair3 = new ModelRenderer(this);
     snakeHair3.setRotationPoint(0.0F, -3.0F, -0.5F);
     snakeHair2.addChild(snakeHair3);
-    setRotationAngle(snakeHair3, 0.5236F, 0.0F, 0.0F);
+    snakeHair3.rotateAngleX = 0.5236F;
     snakeHair3.setTextureOffset(46, 60).addBox(-1.0F, -1.5F, -1.0F, 2.0F, 2.0F, 2.0F, modelSize);
     
     return snakeHair1;

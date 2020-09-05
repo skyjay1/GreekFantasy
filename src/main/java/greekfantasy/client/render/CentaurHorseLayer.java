@@ -1,7 +1,6 @@
 package greekfantasy.client.render;
 
 import java.util.EnumMap;
-import java.util.Map;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;

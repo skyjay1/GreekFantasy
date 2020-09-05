@@ -13,6 +13,7 @@ public class EmpusaRenderer<T extends EmpusaEntity> extends BipedRenderer<T, Emp
 
   public EmpusaRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new EmpusaModel<T>(0.0F), 0.5F);
+    this.addLayer(new EmpusaHairLayer<>(this));
   }
 
   @Override

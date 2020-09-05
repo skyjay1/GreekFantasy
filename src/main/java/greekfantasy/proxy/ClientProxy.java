@@ -18,6 +18,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(NYMPH_ENTITY, NymphRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(SATYR_ENTITY, SatyrRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(CENTAUR_ENTITY, CentaurRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(CYPRIAN_CENTAUR_ENTITY, CentaurRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(MINOTAUR_ENTITY, MinotaurRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(SIREN_ENTITY, SirenRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GORGON_ENTITY, GorgonRenderer::new);

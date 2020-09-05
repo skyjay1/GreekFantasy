@@ -16,17 +16,23 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
   
-  private static final DataParameter<Boolean> DATA_STOMPING = EntityDataManager.createKey(MinotaurEntity.class, DataSerializers.BOOLEAN);
-  private static final DataParameter<Boolean> DATA_STUNNED = EntityDataManager.createKey(MinotaurEntity.class, DataSerializers.BOOLEAN);
+  private static final byte STOMPING_START = 4;
+  private static final byte STOMPING_END = 5;
+  private static final byte STUNNED_START = 6;
+  private static final byte STUNNED_END = 7;
+  
+  private boolean isStomping;
+  private boolean isStunned;
   
   public MinotaurEntity(final EntityType<? extends MinotaurEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -52,14 +58,7 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
   }
-  
-  @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(DATA_STOMPING, Boolean.valueOf(false));
-    this.getDataManager().register(DATA_STUNNED, Boolean.valueOf(false));
-  }
-  
+ 
   @Override
   public void livingTick() {
     super.livingTick();
@@ -67,9 +66,9 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
     // spawn particles
     if (world.isRemote() && this.isStunned()) {
       final double motion = 0.09D;
-      final double radius = 0.6D;
+      final double radius = 0.7D;
       for (int i = 0; i < 2; i++) {
-        world.addParticle(ParticleTypes.ENCHANTED_HIT, 
+        world.addParticle(ParticleTypes.INSTANT_EFFECT, 
             this.getPosX() + (world.rand.nextDouble() - 0.5D) * radius, 
             this.getPosYEye() + (world.rand.nextDouble() - 0.5D) * radius * 0.75D, 
             this.getPosZ() + (world.rand.nextDouble() - 0.5D) * radius,
@@ -80,14 +79,37 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
     }
   }
   
+  @OnlyIn(Dist.CLIENT)
+  public void handleStatusUpdate(byte id) {
+    switch(id) {
+    case STOMPING_START:
+      this.isStomping = true;
+      break;
+    case STOMPING_END:
+      this.isStomping = false;
+      break;
+    case STUNNED_START:
+      this.isStunned = true;
+      this.isStomping = false;
+      break;
+    case STUNNED_END:
+      this.isStunned = false;
+      break;
+    default:
+      super.handleStatusUpdate(id);
+      break;
+    }
+  }
+  
   @Override
   public void setStomping(final boolean stomping) {
-    this.getDataManager().set(DATA_STOMPING, Boolean.valueOf(stomping));
+    this.isStomping = stomping;
+    this.world.setEntityState(this, stomping ? STOMPING_START : STOMPING_END);    
   }
 
   @Override
   public boolean isStomping() {
-    return this.getDataManager().get(DATA_STOMPING);
+    return this.isStomping;
   }
 
   @Override
@@ -96,11 +118,12 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
   }
   
   public void setStunned(final boolean stunned) {
-    this.getDataManager().set(DATA_STUNNED, Boolean.valueOf(stunned));
+    this.isStunned = stunned;
+    this.world.setEntityState(this, stunned ? STUNNED_START : STUNNED_END);    
   }
 
   public boolean isStunned() {
-    return this.getDataManager().get(DATA_STUNNED);
+    return this.isStunned;
   }
   
   static class StunnedGoal extends Goal {
@@ -146,6 +169,8 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
     
     private final MinotaurEntity entity;
     private final double speed;
+    private final int MAX_COOLDOWN = 500;
+    private final int MAX_STOMPING = 40;
     private int stompingTimer;
     private int cooldown;
     private Vector3d targetPos;
@@ -159,18 +184,26 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
 
     @Override
     public boolean shouldExecute() {
+      // only execute if cooldown reaches zero and:
+      // valid attack target
+      // move helper is not updating
+      // passes random check
+      // attack target is within direct sight
+      // attack target is more than 3 blocks away
       if(this.cooldown > 0) {
         cooldown--;
-      } else if (this.entity.getAttackTarget() != null && !this.entity.getMoveHelper().isUpdating() && entity.getRNG().nextInt(7) == 0) {
-        // if the target is more than 3 blocks away
-        return (this.entity.getDistanceSq(this.entity.getAttackTarget()) > 9.0D);
+      } else if (this.entity.getAttackTarget() != null && !this.entity.getMoveHelper().isUpdating() 
+          && entity.getRNG().nextInt(7) == 0 && hasDirectPath(this.entity.getAttackTarget())
+          && entity.getDistanceSq(this.entity.getAttackTarget()) > 9.0D) {
+        return true;
       }
       return false;
     }
     
     @Override
     public boolean shouldContinueExecuting() { 
-      return (this.entity.isStomping() && this.entity.getAttackTarget() != null && this.entity.getAttackTarget().isAlive()); 
+      return (this.entity.isStomping() && this.entity.getAttackTarget() != null 
+              && this.entity.getAttackTarget().isAlive()) && hasDirectPath(this.entity.getAttackTarget()); 
     }
     
     @Override
@@ -185,13 +218,13 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
       final boolean hitTarget = this.entity.getDistanceSq(target) < 1.1D;
       final boolean hasTarget = targetPos != null;
       final boolean finished = hitTarget || (hasTarget && this.entity.getDistanceSq(targetPos) < 0.9D);
-      final boolean isStomping = stompingTimer > 0 && stompingTimer++ < 50;
+      final boolean isStomping = stompingTimer > 0 && stompingTimer++ < MAX_STOMPING;
       if(finished) {
         // reset values
         this.entity.setStomping(false);
         this.stompingTimer = 0;
         this.targetPos = null;
-        this.cooldown = 200;
+        this.cooldown = MAX_COOLDOWN;
         // if charge attack hit the player
         if(hitTarget) {
           this.entity.attackEntityAsMob(target);
@@ -219,6 +252,12 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
       this.stompingTimer = 0;
       this.cooldown = 0;
       this.targetPos = null;
+    }
+    
+    private boolean hasDirectPath(final LivingEntity target) {
+      Vector3d vector3d = new Vector3d(this.entity.getPosX(), this.entity.getPosY() + 0.1D, this.entity.getPosZ());
+      Vector3d vector3d1 = new Vector3d(target.getPosX(), target.getPosY() + 0.1D, target.getPosZ());
+      return this.entity.world.rayTraceBlocks(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this.entity)).getType() == RayTraceResult.Type.MISS;
     }
   }
   
