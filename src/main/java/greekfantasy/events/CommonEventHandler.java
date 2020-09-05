@@ -1,6 +1,5 @@
 package greekfantasy.events;
 
-import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.proxy.Proxy;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,10 +23,10 @@ public class CommonEventHandler {
         // remove XP from player
         player.addExperienceLevel(-player.experienceLevel);
         // give XP to shade and spawn into world
-        GreekFantasy.LOGGER.info("Spawning Shade at " + player.getPositionVec() + " for player " + player.getDisplayName());
         final ShadeEntity shade = Proxy.SHADE_ENTITY.create(player.getEntityWorld());
         shade.setLocationAndAngles(player.getPosX(), player.getPosY(), player.getPosZ(), player.rotationYaw, player.rotationPitch);
         shade.setStoredXP(xp);
+        shade.setOwnerUniqueId(player.getUniqueID());
         player.getEntityWorld().addEntity(shade);
       }
     }

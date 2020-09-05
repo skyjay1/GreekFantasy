@@ -1,10 +1,18 @@
 package greekfantasy.entity;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
@@ -13,6 +21,7 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -21,12 +30,19 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 
 public class ShadeEntity extends CreatureEntity {
   
   public static final DataParameter<Integer> DATA_XP = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.VARINT);
+  private static final DataParameter<Optional<UUID>> OWNER_UNIQUE_ID = EntityDataManager.createKey(AbstractHorseEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+
   public static final String KEY_XP = "StoredXP";
+  public static final String KEY_OWNER = "Owner";
 
   public ShadeEntity(final EntityType<? extends ShadeEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -55,6 +71,7 @@ public class ShadeEntity extends CreatureEntity {
   protected void registerData() {
     super.registerData();
     this.getDataManager().register(DATA_XP, Integer.valueOf(0));
+    this.getDataManager().register(OWNER_UNIQUE_ID, Optional.empty());
   }
   
   @Override
@@ -75,13 +92,6 @@ public class ShadeEntity extends CreatureEntity {
       }
     }
   }
-
-//  @Override
-//  public void tick() {
-//    this.noClip = true;
-//    super.tick();
-//    this.noClip = false;
-//  }
 
   @Override
   public boolean attackEntityAsMob(final Entity entity) {
@@ -105,6 +115,12 @@ public class ShadeEntity extends CreatureEntity {
   }
   
   @Override
+  public boolean isInvulnerableTo(final DamageSource source) {
+    return super.isInvulnerableTo(source) 
+        || (source.getImmediateSource() instanceof PlayerEntity && this.isInvulnerableToPlayer((PlayerEntity)source.getImmediateSource()));
+  }
+  
+  @Override
   public boolean canAttack(final EntityType<?> typeIn) {
     return typeIn == EntityType.PLAYER;
   }
@@ -118,6 +134,15 @@ public class ShadeEntity extends CreatureEntity {
   public boolean canDespawn(final double disToPlayer) {
     return false;
   }
+
+  @Override
+  public boolean onLivingFall(float distance, float damageMultiplier) {
+    return false;
+  }
+
+  @Override
+  protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
+  }
   
   @Override
   public float getBrightness() {
@@ -128,18 +153,32 @@ public class ShadeEntity extends CreatureEntity {
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
     compound.putInt(KEY_XP, this.getStoredXP());
+    if (this.getOwnerUniqueId() != null) {
+      compound.putUniqueId(KEY_OWNER, this.getOwnerUniqueId());
+   }
   }
 
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
     this.setStoredXP(compound.getInt(KEY_XP));
+    if (compound.hasUniqueId(KEY_OWNER)) {
+       this.setOwnerUniqueId(compound.getUniqueId(KEY_OWNER));
+    }
   }
 
   @Override
   protected int getExperiencePoints(final PlayerEntity attackingPlayer) {
     return getStoredXP();
   }
+  
+  @Override
+  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+    if(this.getStoredXP() == 0) {
+      this.setStoredXP(5 + this.rand.nextInt(10));
+    }
+    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+ }
 
   public int getStoredXP() {
     return this.getDataManager().get(DATA_XP).intValue();
@@ -147,6 +186,20 @@ public class ShadeEntity extends CreatureEntity {
 
   public void setStoredXP(int xp) {
     this.getDataManager().set(DATA_XP, xp);
+  }
+  
+  @Nullable
+  public UUID getOwnerUniqueId() {
+     return this.dataManager.get(OWNER_UNIQUE_ID).orElse((UUID)null);
+  }
+
+  public void setOwnerUniqueId(@Nullable UUID uniqueId) {
+     this.dataManager.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId));
+  }
+  
+  public boolean isInvulnerableToPlayer(final PlayerEntity player) {
+    final UUID uuid = getOwnerUniqueId();
+    return uuid != null && !uuid.equals(player.getUniqueID());
   }
   
 }

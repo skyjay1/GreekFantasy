@@ -3,6 +3,7 @@ package greekfantasy.client.model;
 import com.google.common.collect.ImmutableList;
 
 import greekfantasy.entity.EmpusaEntity;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
@@ -18,22 +19,8 @@ public class EmpusaModel<T extends EmpusaEntity> extends BipedModel<T> {
   private final ModelRenderer rightWing2;
 
   public EmpusaModel(float modelSize) {
-    super(modelSize);
-    this.textureWidth = 64;
-    this.textureHeight = 64;
-    
-    this.bipedHead = new ModelRenderer(this);
-    this.bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize);
-    this.bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-    
-    this.bipedHeadwear = new ModelRenderer(this, 32, 0);
-    this.bipedHeadwear.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize + 0.5F);
-    this.bipedHeadwear.setRotationPoint(0.0F, 0.0F, 0.0F);
-    
-    this.bipedBody = new ModelRenderer(this, 16, 16);
-    this.bipedBody.addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSize);
-    this.bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-    
+    super(modelSize, 0.0F, 64, 64);
+
     // arms
     
     this.bipedLeftArm = new ModelRenderer(this, 32, 48);
@@ -47,9 +34,9 @@ public class EmpusaModel<T extends EmpusaEntity> extends BipedModel<T> {
     
     // legs
 
-    this.bipedLeftLeg = new ModelRenderer(this);
+    this.bipedLeftLeg = new ModelRenderer(this, 16, 48);
     this.bipedLeftLeg.setRotationPoint(1.9F, 12.0F, 0.0F);
-    this.bipedLeftLeg.setTextureOffset(16, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSize);
+    this.bipedLeftLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSize);
     this.bipedLeftLeg.mirror = true;
     
     this.bipedRightLeg = new ModelRenderer(this);

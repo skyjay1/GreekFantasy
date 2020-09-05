@@ -221,7 +221,7 @@ public class CentaurEntity extends CreatureEntity {
   }
 
   public float getRearingAmount(float f) {
-    return f == 1.0F ? this.rearingAmount : MathHelper.lerp(f, this.prevRearingAmount, this.rearingAmount);
+    return this.rearingAmount;
   }
   
   public boolean hasBullHead() {

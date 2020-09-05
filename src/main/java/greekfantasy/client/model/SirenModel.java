@@ -16,21 +16,7 @@ public class SirenModel<T extends SirenEntity> extends BipedModel<T> {
   private final ModelRenderer lowerTail2;
 
   public SirenModel(final float modelSize) {
-    super(modelSize);
-    textureWidth = 64;
-    textureHeight = 64;
-
-    bipedHead = new ModelRenderer(this);
-    bipedHead.setRotationPoint(0.0F, -2.0F, 0.0F);
-    bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize);
-    
-    bipedHeadwear = new ModelRenderer(this, 32, 0);
-    bipedHeadwear.setRotationPoint(0.0F, -2.0F, 0.0F);
-    bipedHeadwear.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize + 0.5F);
-
-    bipedBody = new ModelRenderer(this);
-    bipedBody.setRotationPoint(0.0F, 24.0F, 0.0F);
-    bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSize);
+    super(modelSize, 0.0F, 64, 64);
 
     chest = new ModelRenderer(this);
     chest.setRotationPoint(0.0F, 1.0F, -2.0F);

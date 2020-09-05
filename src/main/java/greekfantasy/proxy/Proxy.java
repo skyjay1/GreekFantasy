@@ -3,7 +3,9 @@ package greekfantasy.proxy;
 import java.util.function.Supplier;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.AraEntity;
 import greekfantasy.entity.CentaurEntity;
+import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.CyprianCentaurEntity;
 import greekfantasy.entity.EmpusaEntity;
 import greekfantasy.entity.GorgonEntity;
@@ -40,6 +42,8 @@ public class Proxy {
   public static EntityType<? extends ShadeEntity> SHADE_ENTITY;
   public static EntityType<? extends HarpyEntity> HARPY_ENTITY;
   public static EntityType<? extends EmpusaEntity> EMPUSA_ENTITY;
+  public static EntityType<? extends AraEntity> ARA_ENTITY;
+  public static EntityType<? extends CerastesEntity> CERASTES_ENTITY;
   
   public static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
     @Override
@@ -61,6 +65,8 @@ public class Proxy {
     SHADE_ENTITY = registerEntityType(event, ShadeEntity::new, ShadeEntity::getAttributes, "shade", 0.7F, 1.8F, true);
     HARPY_ENTITY = registerEntityType(event, HarpyEntity::new, HarpyEntity::getAttributes, "harpy", 0.7F, 1.8F, false);
     EMPUSA_ENTITY = registerEntityType(event, EmpusaEntity::new, EmpusaEntity::getAttributes, "empusa", 0.7F, 1.8F, true);
+    ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, "ara", 0.7F, 1.8F, true);
+    CERASTES_ENTITY = registerEntityType(event, CerastesEntity::new, CerastesEntity::getAttributes, "cerastes", 0.98F, 0.94F, false);
   }
 
  

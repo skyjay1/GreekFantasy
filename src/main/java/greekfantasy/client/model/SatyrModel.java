@@ -11,8 +11,6 @@ public class SatyrModel<T extends SatyrEntity> extends HoofedBipedModel<T> {
 
   public SatyrModel(float modelSize) {
     super(modelSize, true, true);
-    textureWidth = 64;
-    textureHeight = 64;
     
     // nose
     this.bipedHead.setTextureOffset(24, 0).addBox(-1.0F, -3.0F, -5.0F, 2.0F, 1.0F, 1.0F, 0.0F, false);

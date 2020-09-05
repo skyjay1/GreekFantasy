@@ -12,7 +12,7 @@ public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T>
     textureHeight = 64;
         
     // nose
-    this.bipedHead.setTextureOffset(24, 0).addBox(-3.0F, -3.0F, -5.0F, 6.0F, 3.0F, 1.0F, 0.0F, false);
+    this.bipedHead.setTextureOffset(24, 0).addBox(-3.0F, -3.0F, -5.0F, 6.0F, 3.0F, 1.0F, modelSize);
 
     // horns
     this.bipedHead.addChild(makeBullHorns(this, modelSize, true));
@@ -20,7 +20,7 @@ public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T>
   }
   
   public static ModelRenderer makeBullHorns(EntityModel<?> model, final float modelSize, final boolean isLeft) {
-    final int textureX = isLeft ? 54 : 47;
+    final int textureX = isLeft ? 58 : 51;
     final float horn1X = isLeft ? 3.0F : -3.0F;
     final float horn1Z = isLeft ? 0.0F : -2.0F;
     //final float horn2X = isLeft ? -7.0F : -1.0F;
@@ -30,13 +30,13 @@ public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T>
     final ModelRenderer horn3 = new ModelRenderer(model);
     horn3.setRotationPoint(0.0F, -3.0F, 0.0F);
     horn3.rotateAngleX = -0.5236F;
-    horn3.setTextureOffset(textureX, 59).addBox(-0.5F, -3.0F, 0.0F, 1.0F, 3.0F, 2.0F, 0.0F, false);
+    horn3.setTextureOffset(textureX, 59).addBox(-0.5F, -3.0F, 0.0F, 1.0F, 3.0F, 2.0F, modelSize);
     horn3.mirror = isLeft;
     
     final ModelRenderer horn2 = new ModelRenderer(model);
     horn2.setRotationPoint(-1.0F, -4.0F, -2.0F);
     horn2.rotateAngleX = -0.5236F;
-    horn2.setTextureOffset(textureX, 54).addBox(-0.51F, -3.0F, 0.0F, 1.0F, 3.0F, 2.0F, 0.0F, false);
+    horn2.setTextureOffset(textureX, 54).addBox(-0.51F, -3.0F, 0.0F, 1.0F, 3.0F, 2.0F, modelSize);
     horn2.addChild(horn3);
     horn2.mirror = isLeft;
     
@@ -44,7 +44,7 @@ public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T>
     horn1.setRotationPoint(horn1X, -7.0F, horn1Z);
     horn1.rotateAngleX = 1.3963F;
     horn1.rotateAngleY = 1.0472F * angleY;
-    horn1.setTextureOffset(textureX, 48).addBox(-1.5F, -4.0F, -2.0F, 1.0F, 4.0F, 2.0F, 0.0F, false);
+    horn1.setTextureOffset(textureX, 48).addBox(-1.5F, -4.0F, -2.0F, 1.0F, 4.0F, 2.0F, modelSize);
     horn1.addChild(horn2);
     horn1.mirror = isLeft;
 

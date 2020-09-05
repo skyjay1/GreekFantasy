@@ -6,7 +6,6 @@ import greekfantasy.entity.HarpyEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
 
 public class HarpyModel<T extends HarpyEntity> extends BipedModel<T> {
   
@@ -20,22 +19,9 @@ public class HarpyModel<T extends HarpyEntity> extends BipedModel<T> {
   private final ModelRenderer rightWing3;
 
   public HarpyModel(final float modelSize) {
-    super(modelSize);
-    textureWidth = 64;
-    textureHeight = 64;
-
-    bipedHead = new ModelRenderer(this);
-    bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-    bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize);
+    super(modelSize, 0.0F, 64, 64);
+ 
     bipedHead.setTextureOffset(24, 0).addBox(-4.0F, 0.0F, 4.0F, 8.0F, 5.0F, 0.0F, modelSize);
-    
-    bipedHeadwear = new ModelRenderer(this, 32, 0);
-    bipedHeadwear.setRotationPoint(0.0F, 0.0F, 0.0F);
-    bipedHeadwear.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize + 0.5F);
-
-    bipedBody = new ModelRenderer(this);
-    bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-    bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSize);
 
     chest = new ModelRenderer(this);
     chest.setRotationPoint(0.0F, 1.0F, -2.0F);
@@ -45,19 +31,19 @@ public class HarpyModel<T extends HarpyEntity> extends BipedModel<T> {
     tail = new ModelRenderer(this);
     tail.setRotationPoint(0.0F, 12.0F, 2.0F);
     tail.rotateAngleX = 0.3491F;
-    tail.setTextureOffset(48, 57).addBox(-4.0F, 0.0F, 0.0F, 8.0F, 7.0F, 0.0F, 0.0F, false);
+    tail.setTextureOffset(48, 57).addBox(-4.0F, 0.0F, 0.0F, 8.0F, 7.0F, 0.0F, modelSize);
     
     this.bipedLeftLeg = new ModelRenderer(this);
     this.bipedLeftLeg.setRotationPoint(2.0F, 12.0F, 0.0F);
-    this.bipedLeftLeg.setTextureOffset(0, 33).addBox(-1.0F, 0.0F, -2.0F, 3.0F, 11.0F, 3.0F, 0.0F, false);
+    this.bipedLeftLeg.setTextureOffset(0, 33).addBox(-1.0F, 0.0F, -2.0F, 3.0F, 11.0F, 3.0F, modelSize);
     this.bipedLeftLeg.mirror = true;
 
     this.bipedRightLeg = new ModelRenderer(this);
     this.bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
-    this.bipedRightLeg.setTextureOffset(0, 17).addBox(-2.0F, 0.0F, -2.0F, 3.0F, 11.0F, 3.0F, 0.0F, false);
+    this.bipedRightLeg.setTextureOffset(0, 17).addBox(-2.0F, 0.0F, -2.0F, 3.0F, 11.0F, 3.0F, modelSize);
     
-    this.bipedLeftLeg.addChild(makeFoot(true));
-    this.bipedRightLeg.addChild(makeFoot(false));
+    this.bipedLeftLeg.addChild(makeFoot(modelSize, true));
+    this.bipedRightLeg.addChild(makeFoot(modelSize, false));
    
     leftWing1 = new ModelRenderer(this);
     leftWing1.setRotationPoint(4.0F, 1.0F, 0.0F);
@@ -78,17 +64,17 @@ public class HarpyModel<T extends HarpyEntity> extends BipedModel<T> {
 
     rightWing1 = new ModelRenderer(this);
     rightWing1.setRotationPoint(-4.0F, 1.0F, 0.0F);
-    rightWing1.setTextureOffset(0, 48).addBox(-6.0F, 0.0F, 0.0F, 6.0F, 10.0F, 1.0F, 0.0F, false);
+    rightWing1.setTextureOffset(0, 48).addBox(-6.0F, 0.0F, 0.0F, 6.0F, 10.0F, 1.0F, modelSize);
 
     rightWing2 = new ModelRenderer(this);
     rightWing2.setRotationPoint(-6.0F, 0.0F, 1.0F);
     rightWing1.addChild(rightWing2);
-    rightWing2.setTextureOffset(15, 48).addBox(-8.0F, 0.0F, -1.05F, 8.0F, 14.0F, 1.0F, 0.0F, false);
+    rightWing2.setTextureOffset(15, 48).addBox(-8.0F, 0.0F, -1.05F, 8.0F, 14.0F, 1.0F, modelSize);
 
     rightWing3 = new ModelRenderer(this);
     rightWing3.setRotationPoint(-8.0F, 0.0F, 0.0F);
     rightWing2.addChild(rightWing3);
-    rightWing3.setTextureOffset(34, 48).addBox(-6.0F, 0.0F, -1.1F, 6.0F, 10.0F, 1.0F, 0.0F, false);
+    rightWing3.setTextureOffset(34, 48).addBox(-6.0F, 0.0F, -1.1F, 6.0F, 10.0F, 1.0F, modelSize);
     
     // hide biped arms
     this.bipedRightArm.showModel = false;
@@ -96,7 +82,7 @@ public class HarpyModel<T extends HarpyEntity> extends BipedModel<T> {
   }
   
   @Override
-  protected Iterable<ModelRenderer> getBodyParts() { return ImmutableList.of(this.bipedBody, this.chest, this.bipedRightLeg, this.bipedLeftLeg, this.rightWing1, this.leftWing1, this.bipedHeadwear); }
+  protected Iterable<ModelRenderer> getBodyParts() { return ImmutableList.of(this.bipedBody, this.chest, this.tail, this.bipedRightLeg, this.bipedLeftLeg, this.rightWing1, this.leftWing1, this.bipedHeadwear); }
 
   @Override
   public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
@@ -126,7 +112,7 @@ public class HarpyModel<T extends HarpyEntity> extends BipedModel<T> {
     this.rightWing3.rotateAngleY = -0.1745F * flyingTimeLeft + ((sinTicks - downSwing) * wingAngle) * flyingTime;
   }
   
-  private ModelRenderer makeFoot(final boolean isLeft) {
+  private ModelRenderer makeFoot(final float modelSize, final boolean isLeft) {
     final float offsetX = isLeft ? 1.0F : 0.0F;
     final float rotationToe = 0.3491F;
     
@@ -137,21 +123,21 @@ public class HarpyModel<T extends HarpyEntity> extends BipedModel<T> {
     frontToe1.setRotationPoint(offsetX - 1.0F, 10.0F, -2.0F);
     frontToe1.rotateAngleX = rotationToe;
     frontToe1.rotateAngleY = rotationToe;
-    frontToe1.setTextureOffset(13, 38).addBox(-1.0F, 0.0F, -4.0F, 1.0F, 1.0F, 4.0F, 0.0F, false);
+    frontToe1.setTextureOffset(13, 38).addBox(-1.0F, 0.0F, -4.0F, 1.0F, 1.0F, 4.0F, modelSize);
     foot.addChild(frontToe1);
 
     final ModelRenderer frontToe2 = new ModelRenderer(this);
     frontToe2.setRotationPoint(offsetX, 10.0F, -2.0F);
     frontToe2.rotateAngleX = rotationToe;
     frontToe2.rotateAngleY = -rotationToe;
-    frontToe2.setTextureOffset(13, 38).addBox(0.0F, 0.0F, -4.0F, 1.0F, 1.0F, 4.0F, 0.0F, false);
+    frontToe2.setTextureOffset(13, 38).addBox(0.0F, 0.0F, -4.0F, 1.0F, 1.0F, 4.0F, modelSize);
     foot.addChild(frontToe2);
 
     final ModelRenderer backToe = new ModelRenderer(this);
     backToe.setRotationPoint(offsetX, 10.0F, 1.0F);
     foot.addChild(backToe);
     backToe.rotateAngleX = -0.5236F;
-    backToe.setTextureOffset(13, 33).addBox(-1.0F, 0.0F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, false);
+    backToe.setTextureOffset(13, 33).addBox(-1.0F, 0.0F, 0.0F, 1.0F, 1.0F, 3.0F, modelSize);
     
     return foot;
   }

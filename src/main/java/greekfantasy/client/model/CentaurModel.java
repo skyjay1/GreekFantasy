@@ -126,28 +126,7 @@ public class CentaurModel<T extends CentaurEntity> extends BipedModel<T> {
     this.bipedHeadwear.setRotationPoint(bipedHead.rotationPointX, bipedHead.rotationPointY, bipedHead.rotationPointZ);
     this.bipedLeftArm.setRotationPoint(4.0F, -15.0F * rearingTime - 8.0F * rearingTimeLeft, -3.0F * rearingTime - 10.5F * rearingTimeLeft);
     this.bipedRightArm.setRotationPoint(-4.0F, bipedLeftArm.rotationPointY, bipedLeftArm.rotationPointZ);
-    this.quiver.setRotationPoint(0.0F, -11.0F * rearingTime - 4.0F * rearingTimeLeft, -13.0F * rearingTime - 20.5F * rearingTimeLeft);
-    
-    
-//    if(entity.isRearing()) {
-//      // TODO find a way to lerp this, maybe in #setLivingAnimations
-//      this.bipedBody.setRotationPoint(0.0F, -7.0F, 5.0F);
-//      this.bipedRightArm.setRotationPoint(-4.0F, -15.0F, -3.0F);
-//      this.bipedLeftArm.setRotationPoint(4.0F, -15.0F, -3.0F);
-//      this.bipedHead.setRotationPoint(0.0F, -16.0F, -3.0F);
-//      this.bipedHeadwear.setRotationPoint(0.0F, -16.0F, -3.0F);
-//      this.quiver.setRotationPoint(0.0F, -11.0F, -13.0F);
-//    } else {
-//      this.bipedBody.setRotationPoint(0.0F, 0.0F, -2.5F);
-//      this.bipedRightArm.setRotationPoint(-4.0F, -8.0F, -10.5F);
-//      this.bipedLeftArm.setRotationPoint(4.0F, -8.0F, -10.5F);
-//      this.bipedHead.setRotationPoint(0.0F, -9.0F, -10.5F);
-//      this.bipedHeadwear.setRotationPoint(0.0F, -9.0F, -10.5F);
-//      this.quiver.setRotationPoint(0.0F, -4.0F, -6.5F);
-//    }
-    
-    //this.leftFrontLeg.rotationPointY = 2.0F * rearingTime + 14.0F * rearingTimeLeft; restingY = 6.0F
-    //this.leftFrontLeg.rotationPointZ = -6.0F * rearingTime - 10.0F * rearingTimeLeft; restingY = -12.0F
+    this.quiver.setRotationPoint(0.0F, -11.0F * rearingTime - 4.0F * rearingTimeLeft, 1.5F * rearingTime - 6.5F * rearingTimeLeft);
   }
   
   @Override

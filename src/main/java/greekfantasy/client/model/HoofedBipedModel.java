@@ -20,27 +20,10 @@ public class HoofedBipedModel<T extends LivingEntity> extends BipedModel<T> {
   protected final ModelRenderer rightHoof;
 
   public HoofedBipedModel(final float modelSize, final boolean hasTail, final boolean showHeadwear) {
-    super(modelSize);
-    textureWidth = 64;
-    textureHeight = 64;
-    
-    // head, body
-    
-    this.bipedHead = new ModelRenderer(this);
-    this.bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize);
-    this.bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-    
-    this.bipedHeadwear = new ModelRenderer(this, 32, 0);
+    super(modelSize, 0.0F, 64, 64);
+
     this.bipedHeadwear.showModel = showHeadwear;
-    if(showHeadwear) {
-      this.bipedHeadwear.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize + 0.5F);
-      this.bipedHeadwear.setRotationPoint(0.0F, 0.0F, 0.0F);
-    }
-    
-    this.bipedBody = new ModelRenderer(this, 16, 16);
-    this.bipedBody.addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSize);
-    this.bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-    
+
     // arms
     
     this.bipedLeftArm = new ModelRenderer(this, 32, 48);
@@ -104,12 +87,12 @@ public class HoofedBipedModel<T extends LivingEntity> extends BipedModel<T> {
     tail2.showModel = hasTail;
     if(hasTail) { 
       tail.setRotationPoint(0.0F, 11.0F, 2.0F);
-      tail.addBox(-0.5F, 0.0F, -1.0F, 1.0F, 5.0F, 1.0F, 0.0F, false);
+      tail.addBox(-0.5F, 0.0F, -1.0F, 1.0F, 5.0F, 1.0F, modelSize);
       this.bipedBody.addChild(tail);
   
       tail2.setRotationPoint(0.0F, 5.0F, -1.0F);
-      tail2.setTextureOffset(4, 51).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 5.0F, 1.0F, 0.0F, false);
-      tail2.setTextureOffset(0, 58).addBox(-1.0F, 2.5F, -0.5F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+      tail2.setTextureOffset(4, 51).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 5.0F, 1.0F, modelSize);
+      tail2.setTextureOffset(0, 58).addBox(-1.0F, 2.5F, -0.5F, 2.0F, 4.0F, 2.0F, modelSize);
       tail.addChild(tail2);
     }
   }

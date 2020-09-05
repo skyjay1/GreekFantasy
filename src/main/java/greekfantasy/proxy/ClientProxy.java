@@ -1,14 +1,6 @@
 package greekfantasy.proxy;
 
-import greekfantasy.client.render.CentaurRenderer;
-import greekfantasy.client.render.EmpusaRenderer;
-import greekfantasy.client.render.GorgonRenderer;
-import greekfantasy.client.render.HarpyRenderer;
-import greekfantasy.client.render.MinotaurRenderer;
-import greekfantasy.client.render.NymphRenderer;
-import greekfantasy.client.render.SatyrRenderer;
-import greekfantasy.client.render.ShadeRenderer;
-import greekfantasy.client.render.SirenRenderer;
+import greekfantasy.client.render.*;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy extends Proxy {
@@ -25,6 +17,8 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(SHADE_ENTITY, ShadeRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(HARPY_ENTITY, HarpyRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(EMPUSA_ENTITY, EmpusaRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(ARA_ENTITY, AraRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(CERASTES_ENTITY, CerastesRenderer::new);
   }
   
 }
