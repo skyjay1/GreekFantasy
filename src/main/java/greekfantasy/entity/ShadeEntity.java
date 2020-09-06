@@ -51,7 +51,7 @@ public class ShadeEntity extends CreatureEntity {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 12.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.16D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.9D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.1D);
   }
   

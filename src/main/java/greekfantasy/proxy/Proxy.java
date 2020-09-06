@@ -82,6 +82,16 @@ public class Proxy {
     event.getRegistry().registerAll(
         new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxDamage(100))
           .setRegistryName(GreekFantasy.MODID, "panflute"),
+        new ClubItem(ItemTier.DIAMOND, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "diamond_club"),
+        new ClubItem(ItemTier.GOLD, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "gold_club"),
+        new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "iron_club"),
+        new ClubItem(ItemTier.NETHERITE, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "netherite_club"),
+        new ClubItem(ItemTier.STONE, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "stone_club"),
         new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "wooden_club")
     );

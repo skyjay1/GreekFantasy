@@ -1,6 +1,6 @@
 {
   "parent": "greekfantasy:item/club",
   "textures": {
-    "2": "minecraft:block/oak_log"
+    "2": "minecraft:block/gold_block"
   }
 }
