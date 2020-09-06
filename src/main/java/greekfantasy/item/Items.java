@@ -9,4 +9,7 @@ public class Items {
   
   @ObjectHolder("panflute")
   public static final Item PANFLUTE = null;
+  
+  @ObjectHolder("wooden_club")
+  public static final Item WOODEN_CLUB = null;
 }

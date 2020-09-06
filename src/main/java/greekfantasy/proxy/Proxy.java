@@ -6,6 +6,7 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.entity.AraEntity;
 import greekfantasy.entity.CentaurEntity;
 import greekfantasy.entity.CerastesEntity;
+import greekfantasy.entity.CyclopesEntity;
 import greekfantasy.entity.CyprianCentaurEntity;
 import greekfantasy.entity.EmpusaEntity;
 import greekfantasy.entity.GiganteEntity;
@@ -16,6 +17,7 @@ import greekfantasy.entity.NymphEntity;
 import greekfantasy.entity.SatyrEntity;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.entity.SirenEntity;
+import greekfantasy.item.ClubItem;
 import greekfantasy.item.Items;
 import greekfantasy.item.PanfluteItem;
 import net.minecraft.block.Block;
@@ -28,24 +30,26 @@ import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTier;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 
 public class Proxy {
   
-  public static EntityType<? extends NymphEntity> NYMPH_ENTITY;
-  public static EntityType<? extends SatyrEntity> SATYR_ENTITY;
-  public static EntityType<? extends CentaurEntity> CENTAUR_ENTITY;
-  public static EntityType<? extends CyprianCentaurEntity> CYPRIAN_CENTAUR_ENTITY;
-  public static EntityType<? extends MinotaurEntity> MINOTAUR_ENTITY;
-  public static EntityType<? extends SirenEntity> SIREN_ENTITY;
-  public static EntityType<? extends GorgonEntity> GORGON_ENTITY;
-  public static EntityType<? extends ShadeEntity> SHADE_ENTITY;
-  public static EntityType<? extends HarpyEntity> HARPY_ENTITY;
-  public static EntityType<? extends EmpusaEntity> EMPUSA_ENTITY;
-  public static EntityType<? extends AraEntity> ARA_ENTITY;
-  public static EntityType<? extends CerastesEntity> CERASTES_ENTITY;
-  public static EntityType<? extends GiganteEntity> GIGANTE_ENTITY;
+  public static EntityType<NymphEntity> NYMPH_ENTITY;
+  public static EntityType<SatyrEntity> SATYR_ENTITY;
+  public static EntityType<CentaurEntity> CENTAUR_ENTITY;
+  public static EntityType<CyprianCentaurEntity> CYPRIAN_CENTAUR_ENTITY;
+  public static EntityType<MinotaurEntity> MINOTAUR_ENTITY;
+  public static EntityType<SirenEntity> SIREN_ENTITY;
+  public static EntityType<GorgonEntity> GORGON_ENTITY;
+  public static EntityType<ShadeEntity> SHADE_ENTITY;
+  public static EntityType<HarpyEntity> HARPY_ENTITY;
+  public static EntityType<EmpusaEntity> EMPUSA_ENTITY;
+  public static EntityType<AraEntity> ARA_ENTITY;
+  public static EntityType<CerastesEntity> CERASTES_ENTITY;
+  public static EntityType<GiganteEntity> GIGANTE_ENTITY;
+  public static EntityType<CyclopesEntity> CYCLOPES_ENTITY;
   
   public static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
     @Override
@@ -70,13 +74,16 @@ public class Proxy {
     ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, "ara", 0.7F, 1.8F, true);
     CERASTES_ENTITY = registerEntityType(event, CerastesEntity::new, CerastesEntity::getAttributes, "cerastes", 0.98F, 0.94F, false);
     GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, "gigante", 1.19F, 2.79F, false);
+    CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, "cyclopes", 1.19F, 2.79F, false);
   }
 
  
   public void registerItems(final RegistryEvent.Register<Item> event) {
     event.getRegistry().registerAll(
         new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxDamage(100))
-          .setRegistryName(new ResourceLocation(GreekFantasy.MODID, "panflute"))
+          .setRegistryName(GreekFantasy.MODID, "panflute"),
+        new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "wooden_club")
     );
   }
 
