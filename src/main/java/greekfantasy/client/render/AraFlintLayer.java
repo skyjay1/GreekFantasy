@@ -7,11 +7,13 @@ import greekfantasy.entity.AraEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
-import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class AraFlintLayer<T extends AraEntity> extends LayerRenderer<T, AraModel<T>> {
   
@@ -24,22 +26,22 @@ public class AraFlintLayer<T extends AraEntity> extends LayerRenderer<T, AraMode
       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
     if (!entity.isInvisible()) {
       // prepare to render flint inside body opening
+      final float scale = 0.25F;
+      final float tx = (4.0F / 16.0F) * scale;
+      final float ty = (12.0F / 16.0F) * scale;
+      final float tz = (-2.0F / 16.0F) * scale;
+      final float spin = 180.0F + (180.0F) * MathHelper.cos((entity.ticksExisted + entity.getEntityId() * 3) * 0.08F);
       matrixStackIn.push();
-      
+      // transforms
       this.getEntityModel().getBodyModel().translateRotate(matrixStackIn);
-      matrixStackIn.translate(0.0D, 20.0D, 0.0D);
-      
+      matrixStackIn.translate(tx, ty, tz);
+      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
+      matrixStackIn.scale(scale, -scale, -scale);
+      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(spin));
+      // render the item stack
       ItemStack stack = new ItemStack(Items.FLINT);
-      Minecraft.getInstance().getItemRenderer().renderItem(entity, stack, ItemCameraTransforms.TransformType.HEAD, false, 
-          matrixStackIn, bufferIn, entity.world, packedLightIn, LivingRenderer.getPackedOverlay(entity, 0.0F));
-//    final float scale = 0.5F;
-//      this.getEntityModel().getHeadModel().translateRotate(matrixStackIn);
-//      matrixStackIn.translate(0.5D * scale, -0.5, -0.5D * scale);
-//      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
-//      matrixStackIn.scale(scale, -scale, -scale);
-//      // render fire here
-//      Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(Blocks.FIRE.getDefaultState(), 
-//          matrixStackIn, bufferIn, 15728640, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+      Minecraft.getInstance().getItemRenderer().renderItem(stack, ItemCameraTransforms.TransformType.FIXED, 
+          packedLightIn, OverlayTexture.NO_OVERLAY, matrixStackIn, bufferIn);
       // finish rendering
       matrixStackIn.pop();
     }

@@ -5,6 +5,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 
 public class AraEntity extends CreatureEntity {
@@ -32,6 +35,8 @@ public class AraEntity extends CreatureEntity {
   @Override
   protected void registerGoals() {
     super.registerGoals();
+    this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    //this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
   }
 
 }

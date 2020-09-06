@@ -5,7 +5,6 @@ import java.util.EnumMap;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.model.CentaurModel;
 import greekfantasy.entity.CentaurEntity;
-import greekfantasy.entity.CyprianCentaurEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.entity.passive.horse.CoatColors;
@@ -37,7 +36,11 @@ public class CentaurRenderer<T extends CentaurEntity> extends MobRenderer<T,Cent
   }
   
   public CentaurRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new CentaurModel<T>(0.0F), 0.5F);
+    this(renderManagerIn, new CentaurModel<T>(0.0F));
+  }
+  
+  public CentaurRenderer(final EntityRendererManager renderManagerIn, final CentaurModel<T> model) {
+    super(renderManagerIn, model, 0.5F);
     this.addLayer(new CentaurHorseLayer<T>(this));
     this.addLayer(new CentaurQuiverLayer<T>(this));
   }

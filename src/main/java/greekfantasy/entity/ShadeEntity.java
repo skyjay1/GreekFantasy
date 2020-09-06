@@ -21,7 +21,6 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -39,7 +38,7 @@ import net.minecraft.world.World;
 public class ShadeEntity extends CreatureEntity {
   
   public static final DataParameter<Integer> DATA_XP = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.VARINT);
-  private static final DataParameter<Optional<UUID>> OWNER_UNIQUE_ID = EntityDataManager.createKey(AbstractHorseEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+  private static final DataParameter<Optional<UUID>> OWNER_UNIQUE_ID = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 
   public static final String KEY_XP = "StoredXP";
   public static final String KEY_OWNER = "Owner";

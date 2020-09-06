@@ -6,6 +6,7 @@ import greekfantasy.entity.CerastesEntity;
 import net.minecraft.client.renderer.entity.model.AgeableModel;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
 
 public class CerastesModel<T extends CerastesEntity> extends AgeableModel<T> {
 
@@ -27,7 +28,7 @@ public class CerastesModel<T extends CerastesEntity> extends AgeableModel<T> {
     textureHeight = 32;
 
     head = new ModelRenderer(this);
-    head.setRotationPoint(0.0F, 10.0F, -6.0F); // z = -4.0F
+    head.setRotationPoint(0.0F, 10.0F, -6.0F);
     head.setTextureOffset(0, 0).addBox(-3.0F, -4.0F, -6.0F, 6.0F, 6.0F, 6.0F, modelSize);
     head.setTextureOffset(25, 0).addBox(-2.0F, -1.0F, -10.0F, 4.0F, 2.0F, 4.0F, modelSize);
     head.setTextureOffset(43, 5).addBox(-1.5F, 0.75F, -9.5F, 3.0F, 1.0F, 0.0F, modelSize);
@@ -49,11 +50,11 @@ public class CerastesModel<T extends CerastesEntity> extends AgeableModel<T> {
     head.addChild(makePapillae(this, modelSize, false));
 
     body1 = new ModelRenderer(this);
-    body1.setRotationPoint(0.0F, 8.0F, -6.0F); // z = -4.0F
-    body1.setTextureOffset(0, 13).addBox(-2.0F, 0.0F, 0.0F, 4.0F, 4.0F, 6.0F, modelSize);
+    body1.setRotationPoint(0.0F, 8.0F, -6.5F);
+    body1.setTextureOffset(0, 13).addBox(-2.0F, 0.0F, 0.0F, 4.0F, 4.0F, 6.0F, 0.0F, false);
 
     body2 = new ModelRenderer(this);
-    body2.setRotationPoint(0.0F, 0.0F, 5.5F);
+    body2.setRotationPoint(0.0F, 0.0F, 6.0F);
     body1.addChild(body2);
     body2.setTextureOffset(0, 13).addBox(-2.01F, 0.01F, 0.0F, 4.0F, 4.0F, 6.0F, 0.0F, false);
 
@@ -75,21 +76,26 @@ public class CerastesModel<T extends CerastesEntity> extends AgeableModel<T> {
     body6 = new ModelRenderer(this);
     body6.setRotationPoint(0.0F, 0.0F, 5.5F);
     body5.addChild(body6);
-    body6.setTextureOffset(21, 14).addBox(-1.5F, -3.0F, 0.0F, 3.0F, 3.0F, 6.0F, modelSize);
+    body6.setTextureOffset(21, 14).addBox(-1.5F, -3.0F, 0.0F, 3.0F, 3.0F, 6.0F, 0.0F, false);
 
     body7 = new ModelRenderer(this);
     body7.setRotationPoint(0.0F, 0.0F, 5.5F);
     body6.addChild(body7);
-    body7.setTextureOffset(22, 14).addBox(-1.0F, -2.0F, 0.0F, 2.0F, 2.0F, 6.0F, modelSize);
+    body7.setTextureOffset(22, 14).addBox(-1.0F, -2.0F, 0.0F, 2.0F, 2.0F, 6.0F, 0.0F, false);
   }
   
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
-    // TODO
     final float standingTime = entity.getStandingTime(partialTick);
-    // head
-    head.rotationPointY = 24.0F - 11.0F * standingTime;
-    body1.rotationPointY = 24.0F -8.0F * standingTime;
+    final float hidingTime = entity.getHidingTime(partialTick);
+    // rotation points
+    head.rotationPointY = 21.5F - 10.25F * standingTime + 6.5F * hidingTime;
+    head.rotationPointZ = -6.0F + 6.0F * hidingTime;
+    body1.rotationPointY = head.rotationPointY - 2.0F;
+    body1.rotationPointZ = head.rotationPointZ - 0.5F;
+    // head rotation
+    head.rotateAngleY = rotationYaw * 0.017453292F;
+    head.rotateAngleX = rotationPitch * 0.017453292F;
     // tongue
     tongue.rotationPointZ = -4.0F * (1.0F - 2.0F * Math.abs(entity.getTongueTime() - 0.5F));
   }
@@ -101,20 +107,22 @@ public class CerastesModel<T extends CerastesEntity> extends AgeableModel<T> {
     // animate snake body
     final float standingTime = entity.getStandingTime(partialTick);
     final float standingTimeLeft = (1.0F - standingTime);
-    final float limbSwingCos = (float) Math.cos(limbSwing);
+    final float hidingTime = entity.getHidingTime(partialTick);
+    final float limbSwingCos = entity.isHiding() ? 1.0F : MathHelper.cos(limbSwing);
+    final float idleSwingCos = MathHelper.cos((entity.ticksExisted + partialTick) * 0.22F);
     // standing
-    this.body1.rotateAngleX = -0.7854F * standingTime;
+    this.body1.rotateAngleX = -0.7854F * standingTime - 1.4707F * hidingTime;
     this.body2.rotateAngleX = -0.5236F * standingTime;
     this.body3.rotateAngleX = 0.3491F * standingTime;
     this.body4.rotateAngleX = 0.9599F * standingTime;
-    this.mouth.rotateAngleX = 0.5236F * standingTime;
+    this.mouth.rotateAngleX = (0.5236F + 0.06F * idleSwingCos) * standingTime;
     // slithering
     body1.rotateAngleY = limbSwingCos * -0.4F * standingTimeLeft;
     body2.rotateAngleY = limbSwingCos * 0.4F * standingTimeLeft;
     body3.rotateAngleY = limbSwingCos * -0.75F * standingTimeLeft;
     body4.rotateAngleY = limbSwingCos * 0.75F * standingTimeLeft;
     body5.rotateAngleY = limbSwingCos * -0.65F;
-    body6.rotateAngleY = limbSwingCos * 0.45F;
+    body6.rotateAngleY = limbSwingCos * 0.65F;
     body7.rotateAngleY = limbSwingCos * -0.25F;
   }
 
@@ -128,13 +136,6 @@ public class CerastesModel<T extends CerastesEntity> extends AgeableModel<T> {
     return ImmutableList.of(head);
   }
   
-  public static ModelRenderer makeBodyPart(final EntityModel<?> model, final float modelSize, final boolean offsetY) {
-    final ModelRenderer body3 = new ModelRenderer(model);
-    body3.setRotationPoint(0.0F, 0.0F, 6.0F);
-    body3.setTextureOffset(0, 13).addBox(-2.0F, offsetY ? 0.0F : -4.0F, 0.0F, 4.0F, 4.0F, 6.0F, modelSize);    
-    return body3;
-  }
-
   public static ModelRenderer makeRamHorn(final EntityModel<?> model, final float modelSize, 
       final float rotX, final float rotY, final float rotZ, final boolean isLeft) {
     final float angleY = isLeft ? 0.1745F : -0.1745F;

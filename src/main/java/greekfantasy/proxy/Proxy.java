@@ -8,6 +8,7 @@ import greekfantasy.entity.CentaurEntity;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.CyprianCentaurEntity;
 import greekfantasy.entity.EmpusaEntity;
+import greekfantasy.entity.GiganteEntity;
 import greekfantasy.entity.GorgonEntity;
 import greekfantasy.entity.HarpyEntity;
 import greekfantasy.entity.MinotaurEntity;
@@ -44,6 +45,7 @@ public class Proxy {
   public static EntityType<? extends EmpusaEntity> EMPUSA_ENTITY;
   public static EntityType<? extends AraEntity> ARA_ENTITY;
   public static EntityType<? extends CerastesEntity> CERASTES_ENTITY;
+  public static EntityType<? extends GiganteEntity> GIGANTE_ENTITY;
   
   public static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
     @Override
@@ -67,6 +69,7 @@ public class Proxy {
     EMPUSA_ENTITY = registerEntityType(event, EmpusaEntity::new, EmpusaEntity::getAttributes, "empusa", 0.7F, 1.8F, true);
     ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, "ara", 0.7F, 1.8F, true);
     CERASTES_ENTITY = registerEntityType(event, CerastesEntity::new, CerastesEntity::getAttributes, "cerastes", 0.98F, 0.94F, false);
+    GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, "gigante", 1.19F, 2.79F, false);
   }
 
  
@@ -92,9 +95,6 @@ public class Proxy {
     event.getRegistry().register(entityType);
     GlobalEntityTypeAttributes.put(entityType, mapSupplier.get().create());
     return entityType;
-    
   }
-  
-  
   
 }

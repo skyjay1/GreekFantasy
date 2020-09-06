@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
 public class AraModel<T extends AraEntity> extends BipedModel<T> {
-
+  
   public AraModel(float modelSize) {
     super(modelSize, 0.0F, 64, 64);
     
@@ -13,13 +13,14 @@ public class AraModel<T extends AraEntity> extends BipedModel<T> {
     
     // arms
     
-    bipedLeftArm = new ModelRenderer(this);
-    bipedLeftArm.setRotationPoint(4.0F, 2.0F, 2.0F);
-    bipedLeftArm.setTextureOffset(40, 16).addBox(0.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSize);
-
-    bipedRightArm = new ModelRenderer(this);
-    bipedRightArm.setRotationPoint(-4.0F, 2.0F, 2.0F);
-    bipedRightArm.setTextureOffset(32, 48).addBox(-3.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSize);
+    this.bipedLeftArm = new ModelRenderer(this, 32, 48);
+    this.bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSize);
+    this.bipedLeftArm.setRotationPoint(5.0F, 2.5F, 0.0F);
+    this.bipedLeftArm.mirror = true;
+    
+    this.bipedRightArm = new ModelRenderer(this, 40, 16);
+    this.bipedRightArm.addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSize);
+    this.bipedRightArm.setRotationPoint(-5.0F, 2.5F, 0.0F);
 
     // legs
     

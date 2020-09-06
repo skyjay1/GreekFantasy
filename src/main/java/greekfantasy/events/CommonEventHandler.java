@@ -1,10 +1,15 @@
 package greekfantasy.events;
 
+import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.proxy.Proxy;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -12,6 +17,10 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class CommonEventHandler {
   
+  /**
+   * Used to spawn a shade with the player's XP when they die.
+   * @param event the death event
+   **/
   @SubscribeEvent(priority = EventPriority.HIGHEST)
   public static void onPlayerDeath(final LivingDeathEvent event) {
     if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getEntityLiving() instanceof PlayerEntity) {
@@ -28,6 +37,20 @@ public class CommonEventHandler {
         shade.setStoredXP(xp);
         shade.setOwnerUniqueId(player.getUniqueID());
         player.getEntityWorld().addEntity(shade);
+      }
+    }
+  }
+  
+  /**
+   * Used to add AI to Minecraft entities when they are spawned.
+   * @param event the spawn event
+   **/
+  @SubscribeEvent
+  public static void onLivingSpawn(final LivingSpawnEvent event) {
+    if(event.getEntityLiving().getType() == EntityType.RABBIT) {
+      final RabbitEntity rabbit = (RabbitEntity) event.getEntityLiving();
+      if(rabbit.getRabbitType() != 99) {
+        rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, 4.0F, 2.2D, 2.2D));
       }
     }
   }
