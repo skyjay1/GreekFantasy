@@ -60,8 +60,8 @@ public class GoToBlockGoal extends Goal {
 
     BlockPos pos1 = this.creature.getPosition().down();
 
-    for (int i = 0; i < 10; i++) {
-      BlockPos pos2 = pos1.add(rand.nextInt(searchRadius * 2) - searchRadius, 2 - rand.nextInt(8),
+    for (int i = 0; i < 20; i++) {
+      BlockPos pos2 = pos1.add(rand.nextInt(searchRadius * 2) - searchRadius, rand.nextInt(searchRadius) - searchRadius / 2,
           rand.nextInt(searchRadius * 2) - searchRadius);
 
       if (!this.creature.getEntityWorld().getBlockState(pos2.up(1)).isSolid()

@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
@@ -17,6 +18,8 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
@@ -34,6 +37,8 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
   private boolean isStomping;
   private boolean isStunned;
   
+  private final AttributeModifier knockbackModifier = new AttributeModifier("Charge attack bonus", 1.75F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+  
   public MinotaurEntity(final EntityType<? extends MinotaurEntity> type, final World worldIn) {
     super(type, worldIn);
   }
@@ -42,7 +47,8 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.27D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
+        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.25D);
  }
   
   @Override
@@ -124,6 +130,15 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
 
   public boolean isStunned() {
     return this.isStunned;
+  }
+  
+  public void applyChargeAttack(final LivingEntity target) {
+    // temporarily increase knockback attack
+    this.getAttribute(Attributes.ATTACK_KNOCKBACK).applyNonPersistentModifier(this.knockbackModifier);
+    this.attackEntityAsMob(target);
+    this.getAttribute(Attributes.ATTACK_KNOCKBACK).removeModifier(this.knockbackModifier);
+    // apply potion effects (if we make a "Stunned" effect later, use that instead)
+    target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 2 * 20, 1, false, false, true, new EffectInstance(Effects.NAUSEA, 2 * 20, 0)));
   }
   
   static class StunnedGoal extends Goal {
@@ -227,7 +242,7 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
         this.cooldown = MAX_COOLDOWN;
         // if charge attack hit the player
         if(hitTarget) {
-          this.entity.attackEntityAsMob(target);
+          this.entity.applyChargeAttack(target);
         } else {
           this.entity.setStunned(true);
         }
@@ -259,8 +274,5 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
       Vector3d vector3d1 = new Vector3d(target.getPosX(), target.getPosY() + 0.1D, target.getPosZ());
       return this.entity.world.rayTraceBlocks(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this.entity)).getType() == RayTraceResult.Type.MISS;
     }
-  }
-  
-  
-  
+  }  
 }

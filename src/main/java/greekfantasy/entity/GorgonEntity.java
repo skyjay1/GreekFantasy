@@ -22,13 +22,24 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class GorgonEntity extends MonsterEntity {
   
   // TODO paralyzes upon eye contact (slowness?)
+  
+  private static final byte STARE_ATTACK = 9;
 
   public GorgonEntity(final EntityType<? extends GorgonEntity> type, final World worldIn) {
     super(type, worldIn);
+  }
+  
+  public static AttributeModifierMap.MutableAttribute getAttributes() {
+    return MobEntity.func_233666_p_()
+        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
   }
   
   @Override
@@ -43,11 +54,32 @@ public class GorgonEntity extends MonsterEntity {
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
   }
   
-  public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
+  @OnlyIn(Dist.CLIENT)
+  public void handleStatusUpdate(byte id) {
+    switch(id) {
+    case STARE_ATTACK:
+      stareAttackParticles();
+      break;
+    default:
+      super.handleStatusUpdate(id);
+      break;
+    }
+  }
+  
+  public void stareAttackParticles() {
+    if (world.isRemote()) {
+      final double motion = 0.08D;
+      final double radius = 1.2D;
+      for (int i = 0; i < 5; i++) {
+        world.addParticle(ParticleTypes.END_ROD, 
+            this.getPosX() + (world.rand.nextDouble() - 0.5D) * radius, 
+            this.getPosYEye() + (world.rand.nextDouble() - 0.5D) * radius * 0.75D, 
+            this.getPosZ() + (world.rand.nextDouble() - 0.5D) * radius,
+            (world.rand.nextDouble() - 0.5D) * motion, 
+            (world.rand.nextDouble() - 0.5D) * motion * 0.5D,
+            (world.rand.nextDouble() - 0.5D) * motion);
+      }
+    }
   }
   
   public boolean isPlayerStaring(final PlayerEntity player) {
@@ -65,25 +97,15 @@ public class GorgonEntity extends MonsterEntity {
     GreekFantasy.LOGGER.info("Gorgon stare attack - activate!");
     target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 60, 9, false, false));
     target.removeActivePotionEffect(Effects.SPEED);
-    // spawn particles
-    if (world.isRemote()) {
-      final double motion = 0.01D;
-      final double radius = 0.8D;
-      for (int i = 0; i < 10; i++) {
-        world.addParticle(ParticleTypes.END_ROD, 
-            this.getPosX() + (world.rand.nextDouble() - 0.5D) * radius, 
-            this.getPosYEye() + (world.rand.nextDouble() - 0.5D) * radius, 
-            this.getPosZ() + (world.rand.nextDouble() - 0.5D) * radius,
-            (world.rand.nextDouble() - 0.5D) * motion, 
-            (world.rand.nextDouble() - 0.5D) * motion,
-            (world.rand.nextDouble() - 0.5D) * motion);
-      }
+    if(this.isServerWorld()) {
+      this.world.setEntityState(this, STARE_ATTACK);
     }
     return false;
   }
   
   class StareAttackGoal extends Goal {
     private final GorgonEntity entity;
+    private final int MAX_COOLDOWN = 200;
     private int cooldown;
     
     public StareAttackGoal(final GorgonEntity entityIn) {
@@ -106,9 +128,9 @@ public class GorgonEntity extends MonsterEntity {
     public void startExecuting() {
       final LivingEntity target = this.entity.getAttackTarget();
       this.entity.getNavigator().clearPath();
-      this.entity.getLookController().setLookPosition(target.getPosX(), target.getPosYEye(), target.getPosZ());
+      this.entity.getLookController().setLookPositionWithEntity(target, 100.0F, 100.0F);
       this.entity.useStareAttack(target);
-      this.cooldown = 100;
+      this.cooldown = MAX_COOLDOWN;
     }
     
     @Override

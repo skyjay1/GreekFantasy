@@ -21,6 +21,8 @@ import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
@@ -159,9 +161,25 @@ public class CerastesEntity extends CreatureEntity {
     return super.canAttack(typeIn);
  }
 
+ @Override
+ public boolean attackEntityAsMob(final Entity entity) {
+   if (super.attackEntityAsMob(entity)) {
+     if(entity instanceof LivingEntity) {
+       ((LivingEntity)entity).addPotionEffect(new EffectInstance(Effects.POISON, 7 * 20, 0));
+     }
+     return true;
+   }
+   return false;
+ }
+
   @Override
   public EntitySize getSize(Pose poseIn) {
     return this.isHiding() ? hiddenSize : super.getSize(poseIn);
+  }
+  
+  @Override
+  protected float getStandingEyeHeight(Pose pose, EntitySize size) { 
+    return this.isHiding() ? hiddenSize.height * 0.85F : super.getStandingEyeHeight(pose, size); 
   }
   
   public void setStanding(final boolean standing) {
@@ -211,7 +229,7 @@ public class CerastesEntity extends CreatureEntity {
     @Override
     public boolean shouldExecute() {
       return !this.cerastes.isHiding() && this.cerastes.getAttackTarget() == null 
-          && this.cerastes.getRNG().nextInt(100) == 0 && super.shouldExecute();
+          && this.cerastes.getRNG().nextInt(60) == 1 && super.shouldExecute();
     }
   }
   

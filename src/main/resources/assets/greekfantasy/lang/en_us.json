@@ -14,5 +14,10 @@
   "entity.greekfantasy.shade": "Shade",
   "entity.greekfantasy.siren": "Siren",
   "item.greekfantasy.panflute": "Panflute",
+  "item.greekfantasy.diamond_club": "Diamond Club",
+  "item.greekfantasy.gold_club": "Gold Club",
+  "item.greekfantasy.iron_club": "Iron Club",
+  "item.greekfantasy.netherite_club": "Netherite Club",
+  "item.greekfantasy.stone_club": "Stone Club",
   "item.greekfantasy.wooden_club": "Wooden Club"
 }

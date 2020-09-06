@@ -50,7 +50,7 @@ public class CommonEventHandler {
     if(event.getEntityLiving().getType() == EntityType.RABBIT) {
       final RabbitEntity rabbit = (RabbitEntity) event.getEntityLiving();
       if(rabbit.getRabbitType() != 99) {
-        rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, 4.0F, 2.2D, 2.2D));
+        rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, 10.0F, 2.2D, 2.2D));
       }
     }
   }

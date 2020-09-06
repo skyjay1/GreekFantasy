@@ -11,6 +11,6 @@ public class ClubItem extends ToolItem {
   // TODO make club deal immense knockback attack
  
   public ClubItem(final IItemTier tier, final Item.Properties properties) {
-    super(tier.getAttackDamage() + 4.0F, -3.5F, tier, Sets.newHashSet(), properties);
+    super(tier.getAttackDamage() + 6.0F, -3.5F, tier, Sets.newHashSet(), properties);
   }
 }

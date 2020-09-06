@@ -32,6 +32,13 @@ public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
     super(type, worldIn);
   }
   
+  public static AttributeModifierMap.MutableAttribute getAttributes() {
+    return MobEntity.func_233666_p_()
+        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
+  }
+  
   @Override
   public void registerData() {
     super.registerData();
@@ -47,13 +54,6 @@ public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
   }
 
-  public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
-  }
-  
   @Override
   public void setStomping(final boolean dancing) {
     this.getDataManager().set(DATA_DANCING, Boolean.valueOf(dancing));

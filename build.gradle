@@ -87,7 +87,7 @@ processResources {
 
     from(sourceSets.main.resources.srcDirs) {
         include "META-INF/mods.toml"
-        expand "golems_version": project.version
+        expand "mod_version": project.version
         expand "forge_version": project.forge_version
     }
 
