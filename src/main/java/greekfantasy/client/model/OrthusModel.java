@@ -25,6 +25,7 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
 
 
   public OrthusModel(final float modelSize) {
+    super();
     textureWidth = 64;
     textureHeight = 32;
     
@@ -33,7 +34,7 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
     
     this.headChild1 = new ModelRenderer(this, 0, 0);
     this.headChild1.setRotationPoint(0.0F, 0.0F, 0.0F); // added
-    this.headChild1.rotateAngleY = 0.48F; // added
+    this.headChild1.rotateAngleY = -0.48F; // added
     this.headChild1.addBox(-2.0F, -3.0F, -2.0F, 6.0F, 6.0F, 4.0F, 0.0F);
     this.headChild1.setTextureOffset(16, 14).addBox(-2.0F, -5.0F, 0.0F, 2.0F, 2.0F, 1.0F, 0.0F);
     this.headChild1.setTextureOffset(16, 14).addBox(2.0F, -5.0F, 0.0F, 2.0F, 2.0F, 1.0F, 0.0F);
@@ -42,7 +43,7 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
     
     this.headChild2 = new ModelRenderer(this, 0, 0);
     this.headChild2.setRotationPoint(0.0F, 0.0F, 0.0F); // added
-    this.headChild2.rotateAngleY = -0.48F; // added
+    this.headChild2.rotateAngleY = 0.48F; // added
     this.headChild2.addBox(-2.0F, -3.0F, -2.0F, 6.0F, 6.0F, 4.0F, 0.0F);
     this.headChild2.setTextureOffset(16, 14).addBox(-2.0F, -5.0F, 0.0F, 2.0F, 2.0F, 1.0F, 0.0F);
     this.headChild2.setTextureOffset(16, 14).addBox(2.0F, -5.0F, 0.0F, 2.0F, 2.0F, 1.0F, 0.0F);
@@ -117,10 +118,10 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
 //      this.legFrontLeft.setRotationPoint(0.51F, 17.0F, -4.0F);
 //    } else {
 //      this.body.setRotationPoint(0.0F, 14.0F, 2.0F);
-      this.body.rotateAngleX = 1.5707964F;
+//      this.body.rotateAngleX = 1.5707964F;
       
 //      this.mane.setRotationPoint(-1.0F, 14.0F, -3.0F);
-      this.mane.rotateAngleX = this.body.rotateAngleX;
+//      this.mane.rotateAngleX = this.body.rotateAngleX;
       
 //      this.tail.setRotationPoint(-1.0F, 12.0F, 8.0F);
       
