@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import greekfantasy.GreekFantasy;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.CreatureEntity;
@@ -50,8 +51,8 @@ public class ShadeEntity extends CreatureEntity {
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 12.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.16D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.9D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.19D)
+        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.86D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.1D);
   }
   
@@ -98,7 +99,7 @@ public class ShadeEntity extends CreatureEntity {
       // remove XP or give wither effect
       if(entity instanceof PlayerEntity) {
         final PlayerEntity player = (PlayerEntity)entity;
-        if(player.experienceTotal > 0) {
+        if(GreekFantasy.CONFIG.SHADE_ATTACK.get() && player.experienceTotal > 0) {
           // steal XP from player
           final int xpSteal = Math.min(player.experienceTotal, 10);
           player.giveExperiencePoints(-xpSteal);

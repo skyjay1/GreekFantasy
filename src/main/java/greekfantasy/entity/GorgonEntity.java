@@ -46,19 +46,21 @@ public class GorgonEntity extends MonsterEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(3, new StareAttackGoal(this));
     this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 10.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    if(GreekFantasy.CONFIG.GORGON_ATTACK.get()) {
+      this.goalSelector.addGoal(3, new StareAttackGoal(this));
+    }
   }
   
   @OnlyIn(Dist.CLIENT)
   public void handleStatusUpdate(byte id) {
     switch(id) {
     case STARE_ATTACK:
-      stareAttackParticles();
+      spawnStareParticles();
       break;
     default:
       super.handleStatusUpdate(id);
@@ -66,7 +68,7 @@ public class GorgonEntity extends MonsterEntity {
     }
   }
   
-  public void stareAttackParticles() {
+  public void spawnStareParticles() {
     if (world.isRemote()) {
       final double motion = 0.08D;
       final double radius = 1.2D;
