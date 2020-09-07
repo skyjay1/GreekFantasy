@@ -1,0 +1,8 @@
+{
+  "parent": "greekfantasy:block/quad_upper",
+  "textures": {
+	  "side": "greekfantasy:block/nest_side",
+	  "bottom": "greekfantasy:block/nest_top",
+      "top": "greekfantasy:block/nest_top"
+  }
+}

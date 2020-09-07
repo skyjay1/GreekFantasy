@@ -5,10 +5,13 @@ import net.minecraft.item.Item;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(GreekFantasy.MODID)
-public class Items {
+public class GFItems {
   
   @ObjectHolder("panflute")
   public static final Item PANFLUTE = null;
+  
+  @ObjectHolder("nest")
+  public static final Item NEST_ITEM = null;
   
   @ObjectHolder("diamond_club")
   public static final Item DIAMOND_CLUB = null;

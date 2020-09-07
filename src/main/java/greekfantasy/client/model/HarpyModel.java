@@ -85,6 +85,19 @@ public class HarpyModel<T extends HarpyEntity> extends BipedModel<T> {
   protected Iterable<ModelRenderer> getBodyParts() { return ImmutableList.of(this.bipedBody, this.chest, this.tail, this.bipedRightLeg, this.bipedLeftLeg, this.rightWing1, this.leftWing1, this.bipedHeadwear); }
 
   @Override
+  public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+
+    final float flyingTime = entity.flyingTime;
+    final float flyingTimeLeft = 1.0F - flyingTime;
+    // animate legs (only while flying)
+    this.bipedLeftLeg.rotateAngleX *= (flyingTimeLeft * 0.6F);
+    this.bipedLeftLeg.rotateAngleX += (-0.35F * flyingTime);  
+    this.bipedRightLeg.rotateAngleX *= (flyingTimeLeft * 0.6F);
+    this.bipedRightLeg.rotateAngleX += (-0.35F * flyingTime); 
+  }
+  
+  @Override
   public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
     super.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTick);
     float ticks = entity.getEntityId() * 2 + entity.ticksExisted + partialTick;
@@ -97,6 +110,7 @@ public class HarpyModel<T extends HarpyEntity> extends BipedModel<T> {
     final float sinTicks = flyingTime > 0.0F ? MathHelper.cos(ticks * wingSpeed + (float) Math.PI) : 0.0F;
     final float idleSwing = 0.035F * MathHelper.cos(ticks * 0.08F);
  
+    // animate wings (combines flying and landing animations)
     this.leftWing1.rotateAngleX = 1.0472F - 0.7854F * flyingTime;
     this.leftWing1.rotateAngleY = 0.0F + ((cosTicks + downSwing) * wingAngle * 0.75F) * flyingTime;
     this.leftWing1.rotateAngleZ = 0.9908F - 0.8908F * flyingTime + idleSwing;

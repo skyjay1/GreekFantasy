@@ -20,6 +20,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
@@ -37,8 +38,9 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
   private boolean isStomping;
   private boolean isStunned;
   
-  private final AttributeModifier knockbackModifier = new AttributeModifier("Charge attack bonus", 1.75F, AttributeModifier.Operation.MULTIPLY_TOTAL);
-  
+  private final AttributeModifier knockbackModifier = new AttributeModifier("Charge knockback bonus", 2.25F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+  private final AttributeModifier attackModifier = new AttributeModifier("Charge attack bonus", 1.75F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+
   public MinotaurEntity(final EntityType<? extends MinotaurEntity> type, final World worldIn) {
     super(type, worldIn);
   }
@@ -69,6 +71,10 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
   public void livingTick() {
     super.livingTick();
     
+    if(this.isServerWorld() && this.isStomping() && this.getAttackTarget() == null) {
+      this.setStomping(false);
+    }
+    
     // spawn particles
     if (world.isRemote() && this.isStunned()) {
       final double motion = 0.09D;
@@ -83,6 +89,15 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
             (world.rand.nextDouble() - 0.5D) * motion);
       }
     }
+  }
+  
+  @Override
+  public boolean attackEntityFrom(final DamageSource source, final float amount) {
+    if(this.isServerWorld()) {
+      this.setStomping(false);
+      this.setStunned(false);
+    }
+    return super.attackEntityFrom(source, amount);
   }
   
   @OnlyIn(Dist.CLIENT)
@@ -134,11 +149,14 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
   
   public void applyChargeAttack(final LivingEntity target) {
     // temporarily increase knockback attack
+    this.getAttribute(Attributes.ATTACK_DAMAGE).applyNonPersistentModifier(attackModifier);
     this.getAttribute(Attributes.ATTACK_KNOCKBACK).applyNonPersistentModifier(this.knockbackModifier);
     this.attackEntityAsMob(target);
+    this.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(attackModifier);
     this.getAttribute(Attributes.ATTACK_KNOCKBACK).removeModifier(this.knockbackModifier);
     // apply potion effects (if we make a "Stunned" effect later, use that instead)
-    target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 2 * 20, 1, false, false, true, new EffectInstance(Effects.NAUSEA, 2 * 20, 0)));
+    target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 2 * 20, 1, false, false, true));
+    target.addPotionEffect(new EffectInstance(Effects.NAUSEA, 3 * 20, 0, false, false, true));
   }
   
   static class StunnedGoal extends Goal {

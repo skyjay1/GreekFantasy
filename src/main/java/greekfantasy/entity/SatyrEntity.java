@@ -21,13 +21,18 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
   
-  // uses pipe to summon wild creatures
+  private static final byte STOMPING_START = 4;
+  private static final byte STOMPING_END = 5;
   
-  private static final DataParameter<Boolean> DATA_DANCING = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BOOLEAN);
-
+  private boolean isStomping;
+  
+  // TODO uses pipe to summon wild creatures
+  
   public SatyrEntity(final EntityType<? extends SatyrEntity> type, final World worldIn) {
     super(type, worldIn);
   }
@@ -42,7 +47,6 @@ public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
   @Override
   public void registerData() {
     super.registerData();
-    this.getDataManager().register(DATA_DANCING, Boolean.valueOf(false));
   }
   
   @Override
@@ -53,15 +57,34 @@ public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
     this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
   }
+  
+
+  @OnlyIn(Dist.CLIENT)
+  public void handleStatusUpdate(byte id) {
+    switch(id) {
+    case STOMPING_START:
+      this.isStomping = true;
+      break;
+    case STOMPING_END:
+      this.isStomping = false;
+      break;
+    default:
+      super.handleStatusUpdate(id);
+      break;
+    }
+  }
 
   @Override
   public void setStomping(final boolean dancing) {
-    this.getDataManager().set(DATA_DANCING, Boolean.valueOf(dancing));
+    this.isStomping = dancing;
+    if(this.isServerWorld()) {
+      this.world.setEntityState(this, dancing ? STOMPING_START : STOMPING_END);
+    }
   }
 
   @Override
   public boolean isStomping() {
-    return this.getDataManager().get(DATA_DANCING).booleanValue();
+    return isStomping;
   }
 
   @Override
@@ -98,7 +121,7 @@ public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
 
     @Override
     public boolean shouldExecute() {
-      if(this.entity.getRNG().nextInt(10) > 0) {
+      if(this.entity.getRNG().nextInt(100) > 0) {
         return false;
       }
       // try to find a nearby campfire
@@ -109,7 +132,6 @@ public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
       targetX = target.x;
       targetY = target.y;
       targetZ = target.z;
-      GreekFantasy.LOGGER.info("Starting dancing goal! at " + target);
       return true;
     }
     
@@ -149,7 +171,6 @@ public class SatyrEntity extends CreatureEntity implements IHoofedEntity {
     }
     
     private Vector3d findCampfire() {
-      GreekFantasy.LOGGER.info("Checking for nearby campfire...");
       final Random rand = this.entity.getRNG();
       final BlockPos entityPos = this.entity.getPosition();
       BlockPos toCheck = entityPos;

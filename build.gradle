@@ -69,6 +69,10 @@ repositories {
         name 'tehnut'
         url 'https://maven.tehnut.info'
     }
+	maven { // MAPPINGS
+		name 'gigaherz'
+        url 'https://www.dogforce-games.com/maven/'
+    }
 }
 
 dependencies {

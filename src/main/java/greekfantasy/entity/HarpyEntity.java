@@ -38,7 +38,8 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
+        .createMutableAttribute(Attributes.FLYING_SPEED, 0.9D);
   }
   
   @Override
@@ -71,11 +72,13 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
   @Override
   public void livingTick() {
     super.livingTick();
-    
+    // update falling speed
     Vector3d m = getMotion();
-    if (!this.onGround && m.y < 0.0D) {
-      setMotion(m.mul(1.0D, 0.6D, 1.0D));
+    if (this.isServerWorld() && !this.onGround && m.y < 0.0D) {
+      final double multY = this.getAttackTarget() != null ? 0.9D : 0.6D;
+      setMotion(m.mul(1.0D, multY, 1.0D));
     }
+    // update flying counter
     if(this.isFlying()) {
       flyingTime = Math.min(1.0F, flyingTime + 0.1F);
     } else {

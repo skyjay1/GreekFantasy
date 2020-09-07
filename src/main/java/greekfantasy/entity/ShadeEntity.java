@@ -131,7 +131,7 @@ public class ShadeEntity extends CreatureEntity {
   
   @Override
   public boolean canDespawn(final double disToPlayer) {
-    return false;
+    return this.getStoredXP() > 20;
   }
 
   @Override

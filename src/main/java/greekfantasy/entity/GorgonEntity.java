@@ -140,7 +140,7 @@ public class GorgonEntity extends MonsterEntity {
     
     @Override
     public void resetTask() {
-      this.cooldown = 0;
+      this.cooldown = MAX_COOLDOWN;
     }
   }
   
