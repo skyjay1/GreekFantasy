@@ -10,6 +10,8 @@ import greekfantasy.proxy.ServerProxy;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -36,15 +38,17 @@ public class GreekFantasy {
   public static final Logger LOGGER = LogManager.getFormatterLogger(GreekFantasy.MODID);
 
   public GreekFantasy() {
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+    //FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     GreekFantasy.LOGGER.info("registerConfig");
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, CONFIG_SPEC);
-    GFConfig.loadConfig(CONFIG_SPEC, FMLPaths.CONFIGDIR.get().resolve(MODID + ".toml"));
+    GFConfig.loadConfig(CONFIG_SPEC, FMLPaths.CONFIGDIR.get().resolve(MODID + "-server.toml"));
 
   }
 
-  private void setup(final FMLCommonSetupEvent event) {
-
+  @SubscribeEvent
+  public static void setup(final FMLCommonSetupEvent event) {
+    //GreekFantasy.PROXY.setupFeatures();
+    //GreekFantasy.PROXY.setupStructures();
   }
   
   @SubscribeEvent
@@ -64,5 +68,17 @@ public class GreekFantasy {
   public static void registerBlocks(final RegistryEvent.Register<Block> event) {
     GreekFantasy.LOGGER.info("registerBlocks");
     GreekFantasy.PROXY.registerBlocks(event);
+  }
+  
+  @SubscribeEvent
+  public static void registerStructures(final RegistryEvent.Register<Structure<?>> event) {
+    GreekFantasy.LOGGER.info("registerStructures");
+    GreekFantasy.PROXY.registerStructures(event);
+  }
+  
+  @SubscribeEvent
+  public static void registerFeatures(final RegistryEvent.Register<Feature<?>> event) {
+    GreekFantasy.LOGGER.info("registerFeatures");
+    GreekFantasy.PROXY.registerFeatures(event);
   }
 }

@@ -3,9 +3,30 @@ package greekfantasy.proxy;
 import java.util.function.Supplier;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.block.*;
-import greekfantasy.entity.*;
-import greekfantasy.item.*;
+import greekfantasy.block.GFBlocks;
+import greekfantasy.block.NestBlock;
+import greekfantasy.entity.AraEntity;
+import greekfantasy.entity.CentaurEntity;
+import greekfantasy.entity.CerastesEntity;
+import greekfantasy.entity.CyclopesEntity;
+import greekfantasy.entity.CyprianCentaurEntity;
+import greekfantasy.entity.EmpusaEntity;
+import greekfantasy.entity.GiganteEntity;
+import greekfantasy.entity.GorgonEntity;
+import greekfantasy.entity.HarpyEntity;
+import greekfantasy.entity.MinotaurEntity;
+import greekfantasy.entity.NymphEntity;
+import greekfantasy.entity.OrthusEntity;
+import greekfantasy.entity.SatyrEntity;
+import greekfantasy.entity.ShadeEntity;
+import greekfantasy.entity.SirenEntity;
+import greekfantasy.entity.UnicornEntity;
+import greekfantasy.item.ClubItem;
+import greekfantasy.item.GFItems;
+import greekfantasy.item.PanfluteItem;
+import greekfantasy.structure.GFStructures;
+import greekfantasy.structure.HarpyNestStructure;
+import greekfantasy.structure.feature.HarpyNestFeature;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -18,10 +39,22 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.placement.ChanceConfig;
+import net.minecraft.world.gen.placement.ConfiguredPlacement;
+import net.minecraft.world.gen.placement.IPlacementConfig;
+import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.RegistryEvent.Register;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class Proxy {
-  
   
   public static EntityType<AraEntity> ARA_ENTITY;
   public static EntityType<CentaurEntity> CENTAUR_ENTITY;
@@ -95,6 +128,39 @@ public class Proxy {
         new NestBlock().setRegistryName(GreekFantasy.MODID, "nest")
     );
   }
+  
+  public void registerStructures(final RegistryEvent.Register<Structure<?>> event) {
+//    event.getRegistry().register(new HarpyNestStructure(NoFeatureConfig.field_236558_a_)
+//        .setRegistryName(GreekFantasy.MODID, HarpyNestStructure.NAME));
+  }
+  
+  public void registerFeatures(final RegistryEvent.Register<Feature<?>> event) {
+    event.getRegistry().register(new HarpyNestFeature(NoFeatureConfig.field_236558_a_)
+        .setRegistryName(GreekFantasy.MODID, HarpyNestStructure.NAME));
+  }
+  
+  
+  public void setupFeatures() {
+    for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
+      if (biome.getCategory() != Biome.Category.NETHER && biome.getCategory() != Biome.Category.THEEND) {
+        biome.func_242440_e().func_242498_c().get(GenerationStage.Decoration.SURFACE_STRUCTURES.ordinal())
+          .add(() -> new ConfiguredFeature<>(GFStructures.HARPY_NEST_FEATURE, IFeatureConfig.NO_FEATURE_CONFIG)
+              .withPlacement(new ConfiguredPlacement<>(Placement.field_242898_b, new ChanceConfig(4))));
+        
+      }
+    }
+  }
+    
+  public void setupStructures() {
+//    for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
+//      if (biome.getCategory() != Biome.Category.NETHER && biome.getCategory() != Biome.Category.THEEND) {
+//        biome.func_242440_e()..addStructure(GFFeatures.HARPY_NEST, IFeatureConfig.NO_FEATURE_CONFIG);
+//        biome.addFeature(GenerationStage.Decoration.SURFACE_STRUCTURES, 
+//            Biome.createDecoratedFeature(GFFeatures.HARPY_NEST,
+//            IFeatureConfig.NO_FEATURE_CONFIG, Placement.NOPE, IPlacementConfig.NO_PLACEMENT_CONFIG));
+//      }
+//    }
+  }
 
   private <T extends LivingEntity> EntityType<T> registerEntityType(final RegistryEvent.Register<EntityType<?>> event, 
       final IFactory<T> factoryIn, final Supplier<AttributeModifierMap.MutableAttribute> mapSupplier, final String name, 
@@ -108,5 +174,4 @@ public class Proxy {
     GlobalEntityTypeAttributes.put(entityType, mapSupplier.get().create());
     return entityType;
   }
-  
 }

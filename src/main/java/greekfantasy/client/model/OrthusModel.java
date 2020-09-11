@@ -11,8 +11,8 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
   
 
   private final ModelRenderer head;
-  private final ModelRenderer headChild1;
-  private final ModelRenderer headChild2;
+  private final ModelRenderer leftHead;
+  private final ModelRenderer rightHead;
 
   private final ModelRenderer body;
   private final ModelRenderer mane;
@@ -28,23 +28,23 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
     this.head = new ModelRenderer(this, 0, 0);
     this.head.setRotationPoint(-1.0F, 13.5F, -7.0F);
     
-    headChild1 = new ModelRenderer(this);
-    headChild1.setRotationPoint(2.0F, 0.0F, 0.0F);
-    headChild1.setTextureOffset(0, 0).addBox(-4.0F, -3.0F, -4.0F, 6.0F, 6.0F, 4.0F, modelSize);
-    headChild1.setTextureOffset(16, 14).addBox(-4.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
-    headChild1.setTextureOffset(16, 14).addBox(0.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
-    headChild1.setTextureOffset(0, 10).addBox(-2.5F, -0.01F, -7.0F, 3.0F, 3.0F, 4.0F, modelSize);
-    //headChild1.rotateAngleY = -0.48F;
-    this.head.addChild(this.headChild1);
+    leftHead = new ModelRenderer(this);
+    leftHead.setRotationPoint(1.0F, 0.0F, 1.0F);
+    leftHead.setTextureOffset(0, 0).addBox(-4.0F, -3.0F, -4.0F, 6.0F, 6.0F, 4.0F, modelSize);
+    leftHead.setTextureOffset(16, 14).addBox(-4.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
+    leftHead.setTextureOffset(16, 14).addBox(0.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
+    leftHead.setTextureOffset(0, 10).addBox(-2.5F, -0.01F, -7.0F, 3.0F, 3.0F, 4.0F, modelSize);
+    leftHead.rotateAngleY = -0.48F;
+    this.head.addChild(this.leftHead);
     
-    headChild2 = new ModelRenderer(this);
-    headChild2.setRotationPoint(-2.0F, 0.0F, 0.0F);
-    headChild2.setTextureOffset(0, 0).addBox(-4.0F, -3.0F, -4.0F, 6.0F, 6.0F, 4.0F, modelSize);
-    headChild2.setTextureOffset(16, 14).addBox(-4.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
-    headChild2.setTextureOffset(16, 14).addBox(0.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
-    headChild2.setTextureOffset(0, 10).addBox(-2.5F, -0.012F, -7.0F, 3.0F, 3.0F, 4.0F, modelSize);
-    headChild2.rotateAngleY = 0.48F;
-    this.head.addChild(this.headChild2);
+    rightHead = new ModelRenderer(this);
+    rightHead.setRotationPoint(-1.0F, 0.0F, 1.0F);
+    rightHead.setTextureOffset(0, 0).addBox(-4.0F, -3.0F, -4.0F, 6.0F, 6.0F, 4.0F, modelSize);
+    rightHead.setTextureOffset(16, 14).addBox(-4.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
+    rightHead.setTextureOffset(16, 14).addBox(0.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
+    rightHead.setTextureOffset(0, 10).addBox(-2.5F, -0.012F, -7.0F, 3.0F, 3.0F, 4.0F, modelSize);
+    rightHead.rotateAngleY = 0.48F;
+    this.head.addChild(this.rightHead);
     
     this.body = new ModelRenderer(this, 18, 14);
     this.body.addBox(-3.0F, -2.0F, -3.0F, 6.0F, 9.0F, 6.0F, modelSize);
