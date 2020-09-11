@@ -19,6 +19,13 @@ public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T>
     this.bipedHead.addChild(makeBullHorns(this, modelSize, false));
   }
   
+  @Override
+  public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
+    super.setRotationAngles(entity, limbSwing, limbSwingAmount, partialTick, rotationYaw, rotationPitch);
+    this.bipedBody.rotateAngleY = entity.isStomping() ? 0.2F : 0.0F;
+
+  }
+  
   public static ModelRenderer makeBullHorns(EntityModel<?> model, final float modelSize, final boolean isLeft) {
     final int textureX = isLeft ? 58 : 51;
     final float horn1X = isLeft ? 3.0F : -3.0F;

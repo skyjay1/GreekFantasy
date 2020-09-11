@@ -26,8 +26,8 @@ public class OrthusRenderer<T extends OrthusEntity> extends MobRenderer<T, Orthu
   @Override
   public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
       final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
-    final float scale = 1.5F;
-    final double translateY = 0.4D;
+    final float scale = 1.2F;
+    final double translateY = 0.0D;
     matrixStackIn.push();
     matrixStackIn.translate(0.0D, translateY, 0.0D);
     matrixStackIn.scale(scale, scale, scale);

@@ -133,7 +133,5 @@ public class HoofedBipedModel<T extends LivingEntity> extends BipedModel<T> {
       tail.rotateAngleZ = idleSwing;
       tail2.rotateAngleZ = idleSwing * 0.85F;
     }
-    
-    
   }
 }

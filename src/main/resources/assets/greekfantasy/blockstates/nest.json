@@ -7,39 +7,51 @@
     },
     {
       "when": {
-        "north": "false"
+      	"OR": [
+      	  {"north": "true"},
+      	  {"east": "true"}
+      	]
       },
       "apply": {
-        "model": "greekfantasy:block/nest_quad",
+        "model": "greekfantasy:block/nest_octal",
         "uvlock": true
       }
     },
     {
       "when": {
-        "east": "false"
+      	"OR": [
+      	  {"south": "true"},
+      	  {"east": "true"}
+      	]
       },
       "apply": {
-        "model": "greekfantasy:block/nest_quad",
+        "model": "greekfantasy:block/nest_octal",
         "y": 90,
         "uvlock": true
       }
     },
     {
       "when": {
-        "south": "false"
+      	"OR": [
+      	  {"south": "true"},
+      	  {"west": "true"}
+      	]
       },
       "apply": {
-        "model": "greekfantasy:block/nest_quad",
+        "model": "greekfantasy:block/nest_octal",
         "y": 180,
         "uvlock": true
       }
     },
     {
       "when": {
-        "west": "false"
+      	"OR": [
+      	  {"north": "true"},
+      	  {"west": "true"}
+      	]
       },
       "apply": {
-        "model": "greekfantasy:block/nest_quad",
+        "model": "greekfantasy:block/nest_octal",
         "y": 270,
         "uvlock": true
       }

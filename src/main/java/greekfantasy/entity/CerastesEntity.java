@@ -142,14 +142,17 @@ public class CerastesEntity extends CreatureEntity {
 
   @Override
   protected void collideWithEntity(final Entity entityIn) {
-    if (entityIn instanceof LivingEntity && this.canAttack(entityIn.getType()) && this.getRNG().nextInt(20) == 0) {
-      this.setAttackTarget((LivingEntity) entityIn);
+    if (entityIn instanceof LivingEntity) {
+      // un-hide and stand up
+      if(this.isServerWorld()) {
+        this.setHiding(false);
+        this.setStanding(true);
+      }
+      // sometimes set as attack target
+      if(this.getAttackTarget() == null && this.canAttack(entityIn.getType()) && this.getRNG().nextBoolean()) {
+        this.setAttackTarget((LivingEntity) entityIn);
+      }
     }
-    if(this.isServerWorld()) {
-      this.setHiding(false);
-      this.setStanding(true);
-    }
-
     super.collideWithEntity(entityIn);
   }
   
