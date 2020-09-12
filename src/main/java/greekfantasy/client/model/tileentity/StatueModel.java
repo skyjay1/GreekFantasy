@@ -1,5 +1,6 @@
 package greekfantasy.client.model.tileentity;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map.Entry;
 
@@ -24,10 +25,12 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   protected ModelRenderer bipedBodyChest;
   protected ModelRenderer bipedRightArm;
   protected ModelRenderer bipedLeftArm;
+  protected ModelRenderer bipedRightArmSlim;
+  protected ModelRenderer bipedLeftArmSlim;
   protected ModelRenderer bipedRightLeg;
   protected ModelRenderer bipedLeftLeg;
   
-  private static final EnumMap<ModelPart, ModelRenderer> ROTATION_MAP = new EnumMap<>(ModelPart.class);
+  private static final EnumMap<ModelPart, Collection<ModelRenderer>> ROTATION_MAP = new EnumMap<>(ModelPart.class);
   
   public StatueModel() {
     this(0.0F, 0.0F);
@@ -37,23 +40,34 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     super(RenderType::getEntityCutoutNoCull);
     this.textureWidth = 64;
     this.textureHeight = 64;
+    // head
     this.bipedHead = new ModelRenderer(this, 0, 0);
     this.bipedHead.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSizeIn);
     this.bipedHead.setRotationPoint(0.0F, 0.0F + yOffsetIn, 0.0F);
+    // body
     this.bipedBody = new ModelRenderer(this, 16, 16);
     this.bipedBody.addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedBody.setRotationPoint(0.0F, 0.0F + yOffsetIn, 0.0F);
     this.bipedBodyChest = new ModelRenderer(this);
     this.bipedBodyChest.setRotationPoint(0.0F, 1.0F, -2.0F);
-    this.bipedBodyChest.rotateAngleX = -0.2182F;
     this.bipedBodyChest.setTextureOffset(19, 20).addBox(-4.01F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, modelSizeIn);
+    // full-size arms
+    this.bipedLeftArm = new ModelRenderer(this, 40, 16);
+    this.bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
+    this.bipedLeftArm.setRotationPoint(5.0F, 2.0F + yOffsetIn, 0.0F);
+    this.bipedLeftArm.mirror = true;
     this.bipedRightArm = new ModelRenderer(this, 40, 16);
     this.bipedRightArm.addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedRightArm.setRotationPoint(-5.0F, 2.0F + yOffsetIn, 0.0F);
-    this.bipedLeftArm = new ModelRenderer(this, 40, 16);
-    this.bipedLeftArm.mirror = true;
-    this.bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
-    this.bipedLeftArm.setRotationPoint(5.0F, 2.0F + yOffsetIn, 0.0F);
+    // slim arms
+    this.bipedLeftArmSlim = new ModelRenderer(this, 32, 48);
+    this.bipedLeftArmSlim.addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSizeIn);
+    this.bipedLeftArmSlim.setRotationPoint(5.0F, 2.5F, 0.0F);
+    this.bipedLeftArmSlim.mirror = true;
+    this.bipedRightArmSlim = new ModelRenderer(this, 40, 16);
+    this.bipedRightArmSlim.addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSizeIn);
+    this.bipedRightArmSlim.setRotationPoint(-5.0F, 2.5F, 0.0F);
+    // legs
     this.bipedRightLeg = new ModelRenderer(this, 0, 16);
     this.bipedRightLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedRightLeg.setRotationPoint(-1.9F, 12.0F + yOffsetIn, 0.0F);
@@ -62,34 +76,40 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     this.bipedLeftLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedLeftLeg.setRotationPoint(1.9F, 12.0F + yOffsetIn, 0.0F);
     
-    ROTATION_MAP.put(ModelPart.HEAD, this.bipedHead);
-    ROTATION_MAP.put(ModelPart.BODY, this.bipedBody);
-    ROTATION_MAP.put(ModelPart.LEFT_ARM, this.bipedLeftArm);
-    ROTATION_MAP.put(ModelPart.RIGHT_ARM, this.bipedRightArm);
-    ROTATION_MAP.put(ModelPart.LEFT_LEG, this.bipedLeftLeg);
-    ROTATION_MAP.put(ModelPart.RIGHT_LEG, this.bipedRightLeg);
+    ROTATION_MAP.put(ModelPart.HEAD, ImmutableList.of(this.bipedHead));
+    ROTATION_MAP.put(ModelPart.BODY, ImmutableList.of(this.bipedBody, this.bipedBodyChest));
+    ROTATION_MAP.put(ModelPart.LEFT_ARM, ImmutableList.of(this.bipedLeftArm, this.bipedLeftArmSlim));
+    ROTATION_MAP.put(ModelPart.RIGHT_ARM, ImmutableList.of(this.bipedRightArm, this.bipedRightArmSlim));
+    ROTATION_MAP.put(ModelPart.LEFT_LEG, ImmutableList.of(this.bipedLeftLeg));
+    ROTATION_MAP.put(ModelPart.RIGHT_LEG, ImmutableList.of(this.bipedRightLeg));
   }
   
   protected Iterable<ModelRenderer> getUpperParts() { 
-    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedBodyChest, this.bipedLeftArm, this.bipedRightArm); 
+    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedBodyChest); 
   }
   
   protected Iterable<ModelRenderer> getLowerParts() { 
     return ImmutableList.of(this.bipedLeftLeg, this.bipedRightLeg); 
   }
-
-  public void setRotationAngles(T entity, float partialTicks) {
-    for(final Entry<ModelPart, ModelRenderer> e : ROTATION_MAP.entrySet()) {
-      final Vector3f rotations = entity.getRotations(e.getKey());
-      final ModelRenderer model = e.getValue();
-      model.rotateAngleX = rotations.getX();
-      model.rotateAngleY = rotations.getY();
-      model.rotateAngleZ = rotations.getZ();
-    }
+  
+  protected Iterable<ModelRenderer> getSlimArms() { 
+    return ImmutableList.of(this.bipedLeftArmSlim, this.bipedRightArmSlim); 
   }
   
-  public void setChestVisibility(final boolean isChestVisible) {
-    this.bipedBodyChest.showModel = isChestVisible;
+  protected Iterable<ModelRenderer> getArms() { 
+    return ImmutableList.of(this.bipedLeftArm, this.bipedRightArm); 
+  }
+
+  public void setRotationAngles(T entity, float partialTicks) {
+    for(final Entry<ModelPart, Collection<ModelRenderer>> e : ROTATION_MAP.entrySet()) {
+      final Vector3f rotations = entity.getRotations(e.getKey());
+      e.getValue().forEach(m -> {
+          m.rotateAngleX = rotations.getX();
+          m.rotateAngleY = rotations.getY();
+          m.rotateAngleZ = rotations.getZ();
+      });
+    }
+    this.bipedBodyChest.rotateAngleX = -0.2182F;
   }
 
   @Override
@@ -99,9 +119,21 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   }
   
   public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
-      float green, float blue, float alpha, final boolean isUpper) {
-    final Iterable<ModelRenderer> parts = isUpper ? this.getUpperParts() : this.getLowerParts();
+      float green, float blue, float alpha, final boolean isUpper, final boolean isFemaleModel) {
+    // update which parts can be shown for male/female
+    this.bipedBodyChest.showModel = isFemaleModel;
+    // determine which parts this block will be rendering
+    final Iterable<ModelRenderer> parts;
+    final Iterable<ModelRenderer> arms;
+    if(isUpper) {
+      parts = getUpperParts();
+      arms = (isFemaleModel ? getSlimArms() : getArms());
+    } else {
+      parts = getLowerParts();
+      arms = ImmutableList.of();
+    }
     parts.forEach(m -> m.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha));
+    arms.forEach(m -> m.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha));
   }
 
   @Override

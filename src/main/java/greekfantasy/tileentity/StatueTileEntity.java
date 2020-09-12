@@ -2,6 +2,8 @@ package greekfantasy.tileentity;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.block.StatueBlock;
+import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.util.ModelPart;
 import greekfantasy.util.StatuePose;
 import greekfantasy.util.StatuePoses;
@@ -11,6 +13,7 @@ import net.minecraft.inventory.IClearable;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -28,13 +31,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class StatueTileEntity extends TileEntity implements IClearable {
 
-  private static final String KEY_POSE = "StatuePose";
+  private static final String KEY_POSE = "Pose";
   private static final String KEY_UPPER = "Upper";
+  private static final String KEY_FEMALE = "Female";
 
   private final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
 
   private StatuePose statuePose = StatuePoses.NONE;
   private boolean upper = false;
+  private boolean statueFemale;
 
   public StatueTileEntity() {
     super(GFRegistry.STATUE_TE);
@@ -103,9 +108,11 @@ public class StatueTileEntity extends TileEntity implements IClearable {
   }
   
   // NBT AND SAVING STUFF //
-  
+
   @Override
-  public CompoundNBT getUpdateTag() { return buildUpdateTag(super.getUpdateTag()); }
+  public CompoundNBT getUpdateTag() {
+    return buildUpdateTag(super.getUpdateTag());
+  }
 
   @Override
   public void handleUpdateTag(final BlockState state, final CompoundNBT tag) {
@@ -114,10 +121,14 @@ public class StatueTileEntity extends TileEntity implements IClearable {
   }
 
   @Override
-  public SUpdateTileEntityPacket getUpdatePacket() { return new SUpdateTileEntityPacket(getPos(), -1, buildUpdateTag(new CompoundNBT())); }
+  public SUpdateTileEntityPacket getUpdatePacket() {
+    return new SUpdateTileEntityPacket(getPos(), -1, buildUpdateTag(new CompoundNBT()));
+  }
 
   @Override
-  public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket pkt) { readUpdateTag(pkt.getNbtCompound()); }
+  public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket pkt) {
+    readUpdateTag(pkt.getNbtCompound());
+  }
 
   @Override
   public void read(BlockState state, CompoundNBT nbt) {
@@ -127,28 +138,44 @@ public class StatueTileEntity extends TileEntity implements IClearable {
 
   @Override
   public CompoundNBT write(CompoundNBT compound) {
-    final CompoundNBT tag = buildUpdateTag(super.write(compound));
-    return tag;
+    return buildUpdateTag(super.write(compound));
   }
-  
-  public CompoundNBT buildUpdateTag(final CompoundNBT tag) {
-    tag.putBoolean(KEY_UPPER, this.upper);
-    tag.put(KEY_POSE, this.statuePose.write(new CompoundNBT()));
-    ItemStackHelper.saveAllItems(tag, this.inventory, true);
-    return tag;
+
+  public CompoundNBT buildUpdateTag(final CompoundNBT nbt) {
+    nbt.putBoolean(KEY_UPPER, this.upper);
+    nbt.putBoolean(KEY_FEMALE, statueFemale);
+    nbt.put(KEY_POSE, this.statuePose.write(new CompoundNBT()));
+    ItemStackHelper.saveAllItems(nbt, this.inventory, true);
+    return nbt;
   }
-  
+
   public void readUpdateTag(final CompoundNBT nbt) {
     this.upper = nbt.getBoolean(KEY_UPPER);
+    this.statueFemale = nbt.getBoolean(KEY_FEMALE);
     this.statuePose = new StatuePose(nbt.getCompound(KEY_POSE));
     this.inventory.clear();
     ItemStackHelper.loadAllItems(nbt, this.inventory);
   }
-  
+
   // OTHER //
-  
+
   @OnlyIn(Dist.CLIENT)
   public double getMaxRenderDistanceSquared() {
-     return 256.0D;
+    return 256.0D;
+  }
+
+  public StatueMaterial getStatueMaterial() {
+    if(this.getBlockState().getBlock() instanceof StatueBlock) {
+      return ((StatueBlock)this.getBlockState().getBlock()).getStatueMaterial();
+    }
+    return StatueMaterial.LIMESTONE;
+  }
+
+  public boolean isStatueFemale() {
+    return statueFemale;
+  }
+
+  public void setStatueFemale(boolean statueFemale) {
+    this.statueFemale = statueFemale;
   }
 }

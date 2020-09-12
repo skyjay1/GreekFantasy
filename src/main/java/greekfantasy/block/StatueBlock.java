@@ -12,11 +12,8 @@ import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -37,28 +34,27 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
-public class StatueBlock extends HorizontalBlock {
+public class StatueBlock extends HorizontalBlock {  
   
   public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
-  public static final EnumProperty<StatueMaterial> MATERIAL = EnumProperty.create("material", StatueMaterial.class);
-  public static final BooleanProperty FEMALE = BooleanProperty.create("female");
   
   protected static final VoxelShape AABB_SLAB_BOTTOM = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
-  protected static final VoxelShape AABB_STATUE = Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 16.0D, 12.0D);
-  protected static final VoxelShape AABB_STATUE_TOP = Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 24.0D, 12.0D);
+  protected static final VoxelShape AABB_STATUE = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+  protected static final VoxelShape AABB_STATUE_TOP = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 24.0D, 14.0D);
+  
+  private final StatueMaterial statueMaterial;
     
-  public StatueBlock(final StatueMaterial material, final boolean female) {
+  public StatueBlock(final StatueMaterial material) {
     super(Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).notSolid());
     this.setDefaultState(this.getStateContainer().getBaseState()
         .with(HORIZONTAL_FACING, Direction.NORTH)
-        .with(HALF, DoubleBlockHalf.LOWER)
-        .with(MATERIAL, material)
-        .with(FEMALE, Boolean.valueOf(female)));
+        .with(HALF, DoubleBlockHalf.LOWER));
+    this.statueMaterial = material;
   }
   
   @Override
   protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-    builder.add(HORIZONTAL_FACING).add(HALF).add(MATERIAL).add(FEMALE);
+    builder.add(HORIZONTAL_FACING).add(HALF);
   }
 
   @Override
@@ -137,7 +133,12 @@ public class StatueBlock extends HorizontalBlock {
   public TileEntity createTileEntity(final BlockState state, final IBlockReader world) {
     final StatueTileEntity te = GFRegistry.STATUE_TE.create();
     te.setUpper(state.get(HALF) == DoubleBlockHalf.UPPER);
+    te.setStatueFemale(this.RANDOM.nextBoolean());
     return te;
+  }
+  
+  public StatueMaterial getStatueMaterial() {
+    return this.statueMaterial;
   }
   
   public static enum StatueMaterial implements IStringSerializable {
@@ -145,15 +146,17 @@ public class StatueBlock extends HorizontalBlock {
     MARBLE("marble");
     
     private final String name;
-    private final ResourceLocation texture;
+    private final ResourceLocation textureMale;
+    private final ResourceLocation textureFemale;
     
     private StatueMaterial(final String nameIn) {
       this.name = nameIn;
-      this.texture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + nameIn + ".png");
+      this.textureMale = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + nameIn + ".png");
+      this.textureFemale = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + nameIn + "_slim.png");
     }
     
-    public ResourceLocation getTexture() {
-      return texture;
+    public ResourceLocation getTexture(final boolean isFemaleModel) {
+      return isFemaleModel ? textureFemale : textureMale;
     }
     
     public byte getId() {

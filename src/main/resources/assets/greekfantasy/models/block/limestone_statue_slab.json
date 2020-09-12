@@ -1,9 +1,9 @@
 {
   "parent": "minecraft:block/slab",
   "textures": {
-	  "side": "minecraft:block/diorite",
-	  "bottom": "minecraft:block/diorite",
-      "top": "minecraft:block/diorite",
-      "particle": "minecraft:block/diorite"
+	  "side": "greekfantasy:block/polished_limestone",
+	  "bottom": "greekfantasy:block/polished_limestone",
+      "top": "greekfantasy:block/polished_limestone",
+      "particle": "greekfantasy:block/polished_limestone"
     }
 }

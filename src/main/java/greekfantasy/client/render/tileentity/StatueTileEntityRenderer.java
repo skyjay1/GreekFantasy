@@ -3,7 +3,6 @@ package greekfantasy.client.render.tileentity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import greekfantasy.GreekFantasy;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.client.model.tileentity.StatueModel;
 import greekfantasy.tileentity.StatueTileEntity;
@@ -43,10 +42,10 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
       }
     }
     // determine texture, rotations, and style
-    final ResourceLocation texture = te.getBlockState().get(StatueBlock.MATERIAL).getTexture();
-    final boolean showChest = te.getBlockState().get(StatueBlock.FEMALE);
+    final boolean isFemaleModel = te.isStatueFemale();
     final float rotation = te.getBlockState().get(StatueBlock.HORIZONTAL_FACING).getHorizontalAngle();
     final float translateY = upper ? 0.95F : 1.95F;
+    final ResourceLocation texture = te.getStatueMaterial().getTexture(isFemaleModel);
     // actually render the model
     matrixStackIn.push();
     matrixStackIn.translate(0.5D, (double)translateY, 0.5D);
@@ -54,8 +53,7 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     matrixStackIn.rotate(Vector3f.YP.rotationDegrees(rotation));
     IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(texture));
     this.model.setRotationAngles(te, partialTicks);
-    this.model.setChestVisibility(showChest);
-    this.model.render(matrixStackIn, vertexBuilder, 15728640, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F, upper);
+    this.model.render(matrixStackIn, vertexBuilder, 15728640, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F, upper, isFemaleModel);
     renderHeldItems(te, partialTicks, matrixStackIn, bufferIn, 15728640, OverlayTexture.NO_OVERLAY, upper);
     matrixStackIn.pop();
   }

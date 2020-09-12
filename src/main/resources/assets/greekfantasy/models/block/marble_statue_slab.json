@@ -1,9 +1,9 @@
 {
   "parent": "minecraft:block/slab",
   "textures": {
-	  "side": "minecraft:block/andesite",
-	  "bottom": "minecraft:block/andesite",
-      "top": "minecraft:block/andesite",
-      "particle": "minecraft:block/andesite"
+	  "side": "greekfantasy:block/polished_marble",
+	  "bottom": "greekfantasy:block/polished_marble",
+      "top": "greekfantasy:block/polished_marble",
+      "particle": "greekfantasy:block/polished_marble"
     }
 }
