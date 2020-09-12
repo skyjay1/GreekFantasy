@@ -8,7 +8,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.tileentity.StatueTileEntity;
-import greekfantasy.tileentity.StatueTileEntity.ModelPart;
+import greekfantasy.util.ModelPart;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.Model;
@@ -19,14 +19,11 @@ public class StatueModel<T extends StatueTileEntity> extends Model {
   
   public ModelRenderer bipedHead;
   public ModelRenderer bipedBody;
-  /** The Biped's Right Arm */
   public ModelRenderer bipedRightArm;
-  /** The Biped's Left Arm */
   public ModelRenderer bipedLeftArm;
-  /** The Biped's Right Leg */
   public ModelRenderer bipedRightLeg;
-  /** The Biped's Left Leg */
   public ModelRenderer bipedLeftLeg;
+  
   public BipedModel.ArmPose leftArmPose = BipedModel.ArmPose.EMPTY;
   public BipedModel.ArmPose rightArmPose = BipedModel.ArmPose.EMPTY;
   
@@ -69,12 +66,15 @@ public class StatueModel<T extends StatueTileEntity> extends Model {
     ROTATION_MAP.put(ModelPart.RIGHT_LEG, this.bipedRightLeg);
   }
   
-  protected Iterable<ModelRenderer> getParts() { 
-    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedLeftArm, this.bipedRightArm, this.bipedLeftLeg, this.bipedRightLeg); 
+  protected Iterable<ModelRenderer> getUpperParts() { 
+    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedLeftArm, this.bipedRightArm); 
+  }
+  
+  protected Iterable<ModelRenderer> getLowerParts() { 
+    return ImmutableList.of(this.bipedLeftLeg, this.bipedRightLeg); 
   }
   
   public void setRotationAngles(T entity, float partialTicks) {
-    // TODO
     for(final Entry<ModelPart, ModelRenderer> e : ROTATION_MAP.entrySet()) {
       final Vector3f rotations = entity.getRotations(e.getKey());
       final ModelRenderer model = e.getValue();
@@ -87,7 +87,12 @@ public class StatueModel<T extends StatueTileEntity> extends Model {
   @Override
   public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha) {
-    this.getParts().forEach(m -> m.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha));
+    // nothing here
   }
-
+  
+  public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
+      float green, float blue, float alpha, final boolean isUpper) {
+    final Iterable<ModelRenderer> parts = isUpper ? this.getUpperParts() : this.getLowerParts();
+    parts.forEach(m -> m.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha));
+  }
 }
