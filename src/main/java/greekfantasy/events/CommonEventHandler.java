@@ -1,9 +1,9 @@
 package greekfantasy.events;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.ShadeEntity;
-import greekfantasy.proxy.Proxy;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.passive.RabbitEntity;
@@ -13,9 +13,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber
 public class CommonEventHandler {
   
   /**
@@ -23,7 +21,7 @@ public class CommonEventHandler {
    * @param event the death event
    **/
   @SubscribeEvent(priority = EventPriority.HIGHEST)
-  public static void onPlayerDeath(final LivingDeathEvent event) {
+  public void onPlayerDeath(final LivingDeathEvent event) {
     if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && GreekFantasy.CONFIG.SHADE_SPAWN.get() && event.getEntityLiving() instanceof PlayerEntity) {
       final PlayerEntity player = (PlayerEntity) event.getEntityLiving();
       // check pre-conditions
@@ -31,9 +29,9 @@ public class CommonEventHandler {
         // save XP value
         int xp = player.experienceTotal;
         // remove XP from player
-        player.addExperienceLevel(-player.experienceLevel);
+        player.addExperienceLevel(-xp);
         // give XP to shade and spawn into world
-        final ShadeEntity shade = Proxy.SHADE_ENTITY.create(player.getEntityWorld());
+        final ShadeEntity shade = GFRegistry.SHADE_ENTITY.create(player.getEntityWorld());
         shade.setLocationAndAngles(player.getPosX(), player.getPosY(), player.getPosZ(), player.rotationYaw, player.rotationPitch);
         shade.setStoredXP(xp);
         shade.setOwnerUniqueId(player.getUniqueID());
@@ -47,7 +45,7 @@ public class CommonEventHandler {
    * @param event the spawn event
    **/
   @SubscribeEvent
-  public static void onLivingSpawn(final LivingSpawnEvent event) {
+  public void onLivingSpawn(final LivingSpawnEvent event) {
     if(event.getEntityLiving().getType() == EntityType.RABBIT) {
       final RabbitEntity rabbit = (RabbitEntity) event.getEntityLiving();
       if(rabbit.getRabbitType() != 99) {

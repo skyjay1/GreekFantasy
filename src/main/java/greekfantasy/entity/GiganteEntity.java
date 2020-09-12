@@ -2,7 +2,7 @@ package greekfantasy.entity;
 
 import javax.annotation.Nullable;
 
-import greekfantasy.item.GFItems;
+import greekfantasy.GFRegistry;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
@@ -45,7 +45,7 @@ public class GiganteEntity extends CreatureEntity {
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
     if(this.rand.nextBoolean()) {
-      final ItemStack club = new ItemStack(rand.nextBoolean() ? GFItems.STONE_CLUB : GFItems.WOODEN_CLUB);
+      final ItemStack club = new ItemStack(rand.nextBoolean() ? GFRegistry.STONE_CLUB : GFRegistry.WOODEN_CLUB);
       this.setHeldItem(Hand.MAIN_HAND, club);
     }
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);

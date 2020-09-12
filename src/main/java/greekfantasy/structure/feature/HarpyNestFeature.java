@@ -4,9 +4,8 @@ import java.util.Random;
 
 import com.mojang.serialization.Codec;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.block.GFBlocks;
-import greekfantasy.proxy.Proxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -174,13 +173,14 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
         if(forceReplace || isAirOrLeavesAt(world, p)) {
           set(world, p.up(2), Blocks.AIR.getDefaultState());
           set(world, p.up(1), Blocks.AIR.getDefaultState());
-          set(world, p, GFBlocks.NEST.getDefaultState(), 3);
+          set(world, p, GFRegistry.NEST_BLOCK.getDefaultState(), 3);
         }
       }
     }
+    // try to spawn harpy
     if(world instanceof World) {
       GreekFantasy.LOGGER.info("Spawning harpy :) at " + pos.up());
-      world.addEntity(Proxy.HARPY_ENTITY.create((World)world));
+      world.addEntity(GFRegistry.HARPY_ENTITY.create((World)world));
     } else {
       GreekFantasy.LOGGER.info("Cannot spawn harpy :( at " + pos.up());
     }

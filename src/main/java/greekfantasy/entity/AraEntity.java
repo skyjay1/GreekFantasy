@@ -36,7 +36,7 @@ public class AraEntity extends CreatureEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    //this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
   }
 
 }

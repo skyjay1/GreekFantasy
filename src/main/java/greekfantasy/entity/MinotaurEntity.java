@@ -209,7 +209,7 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
     
     private final MinotaurEntity entity;
     private final double speed;
-    private final int MAX_COOLDOWN = 500;
+    private final int MAX_COOLDOWN = 400;
     private final int MAX_STOMPING = 40;
     private int stompingTimer;
     private int cooldown;
@@ -260,17 +260,14 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
       final boolean finished = hitTarget || (hasTarget && this.entity.getDistanceSq(targetPos) < 0.9D);
       final boolean isStomping = stompingTimer > 0 && stompingTimer++ < MAX_STOMPING;
       if(finished) {
-        // reset values
-        this.entity.setStomping(false);
-        this.stompingTimer = 0;
-        this.targetPos = null;
-        this.cooldown = MAX_COOLDOWN;
         // if charge attack hit the player
         if(hitTarget) {
           this.entity.applyChargeAttack(target);
         } else {
           this.entity.setStunned(true);
         }
+        // reset values
+        resetTask();
       } else if(isStomping) {
         // prevent the entity from moving
         this.entity.getNavigator().clearPath();
@@ -290,7 +287,7 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
     public void resetTask() { 
       this.entity.setStomping(false);
       this.stompingTimer = 0;
-      this.cooldown = 0;
+      this.cooldown = MAX_COOLDOWN;
       this.targetPos = null;
     }
     
