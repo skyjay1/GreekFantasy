@@ -27,8 +27,8 @@ public class NestBlock extends Block {
   protected static final VoxelShape AABB_OCTAL_SW = Block.makeCuboidShape(0.0D, 8.0D, 8.0D, 8.0D, 16.0D, 16.0D);
   protected static final VoxelShape AABB_OCTAL_NW = Block.makeCuboidShape(0.0D, 8.0D, 0.0D, 8.0D, 16.0D, 8.0D);
 
-  public NestBlock() {
-    super(Block.Properties.from(Blocks.HAY_BLOCK).notSolid().variableOpacity());
+  public NestBlock(final Block.Properties builder) {
+    super(builder);
     this.setDefaultState(this.getStateContainer().getBaseState()
         .with(NORTH, false).with(EAST, false).with(SOUTH, false).with(WEST, false));
   }

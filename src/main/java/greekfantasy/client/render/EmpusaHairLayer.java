@@ -32,7 +32,7 @@ public class EmpusaHairLayer<T extends EmpusaEntity> extends LayerRenderer<T, Em
       matrixStackIn.scale(scale, -scale, -scale);
       // render fire here
       Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(Blocks.FIRE.getDefaultState(), 
-          matrixStackIn, bufferIn, 15728640, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+          matrixStackIn, bufferIn, 15728880, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
       // finish rendering
       matrixStackIn.pop();
     }

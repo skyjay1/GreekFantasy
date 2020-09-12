@@ -21,7 +21,7 @@ public class CommonEventHandler {
    * @param event the death event
    **/
   @SubscribeEvent(priority = EventPriority.HIGHEST)
-  public void onPlayerDeath(final LivingDeathEvent event) {
+  public static void onPlayerDeath(final LivingDeathEvent event) {
     if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && GreekFantasy.CONFIG.SHADE_SPAWN.get() && event.getEntityLiving() instanceof PlayerEntity) {
       final PlayerEntity player = (PlayerEntity) event.getEntityLiving();
       // check pre-conditions
@@ -45,7 +45,7 @@ public class CommonEventHandler {
    * @param event the spawn event
    **/
   @SubscribeEvent
-  public void onLivingSpawn(final LivingSpawnEvent event) {
+  public static void onLivingSpawn(final LivingSpawnEvent event) {
     if(event.getEntityLiving().getType() == EntityType.RABBIT) {
       final RabbitEntity rabbit = (RabbitEntity) event.getEntityLiving();
       if(rabbit.getRabbitType() != 99) {

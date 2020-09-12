@@ -3,6 +3,7 @@ package greekfantasy;
 import java.util.function.Supplier;
 
 import greekfantasy.block.NestBlock;
+import greekfantasy.block.StatueBlock;
 import greekfantasy.entity.AraEntity;
 import greekfantasy.entity.CentaurEntity;
 import greekfantasy.entity.CerastesEntity;
@@ -23,7 +24,11 @@ import greekfantasy.item.ClubItem;
 import greekfantasy.item.PanfluteItem;
 import greekfantasy.structure.HarpyNestStructure;
 import greekfantasy.structure.feature.HarpyNestFeature;
+import greekfantasy.tileentity.StatueTileEntity;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EntityType.IFactory;
@@ -35,12 +40,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -79,6 +86,12 @@ public final class GFRegistry {
 
   @ObjectHolder("nest")
   public static final Block NEST_BLOCK = null;
+  
+  @ObjectHolder("statue")
+  public static final Block STATUE_BLOCK = null;
+  
+  @ObjectHolder("statue_te")
+  public static final TileEntityType<StatueTileEntity> STATUE_TE = null;
 
   public static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
     @Override
@@ -108,7 +121,15 @@ public final class GFRegistry {
     SHADE_ENTITY = registerEntityType(event, ShadeEntity::new, ShadeEntity::getAttributes, "shade", 0.7F, 1.8F, true);
     SIREN_ENTITY = registerEntityType(event, SirenEntity::new, SirenEntity::getAttributes, "siren", 0.6F, 1.9F, false);
     UNICORN_ENTITY = registerEntityType(event, UnicornEntity::new, UnicornEntity::getAttributes, "unicorn", 1.39F, 1.98F, false);
-    GreekFantasy.PROXY.registerEntityRenders();
+  }
+  
+  @SubscribeEvent
+  public static void registerTileEntities(final RegistryEvent.Register<TileEntityType<?>> event) {
+    GreekFantasy.LOGGER.info("registerTileEntities");
+    event.getRegistry().register(
+        TileEntityType.Builder.create(StatueTileEntity::new, STATUE_BLOCK).build(null)
+          .setRegistryName(GreekFantasy.MODID, "statue_te")
+    );
   }
 
   @SubscribeEvent
@@ -116,24 +137,38 @@ public final class GFRegistry {
     GreekFantasy.LOGGER.info("registerItems");
     // items
     event.getRegistry().registerAll(
-        new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxDamage(100)).setRegistryName(GreekFantasy.MODID, "panflute"),
-        new ClubItem(ItemTier.DIAMOND, new Item.Properties().group(GREEK_GROUP)).setRegistryName(GreekFantasy.MODID,
-            "diamond_club"),
-        new ClubItem(ItemTier.GOLD, new Item.Properties().group(GREEK_GROUP)).setRegistryName(GreekFantasy.MODID, "gold_club"),
-        new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP)).setRegistryName(GreekFantasy.MODID, "iron_club"),
-        new ClubItem(ItemTier.NETHERITE, new Item.Properties().group(GREEK_GROUP)).setRegistryName(GreekFantasy.MODID,
-            "netherite_club"),
-        new ClubItem(ItemTier.STONE, new Item.Properties().group(GREEK_GROUP)).setRegistryName(GreekFantasy.MODID, "stone_club"),
-        new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP)).setRegistryName(GreekFantasy.MODID, "wooden_club"));
+        new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxDamage(100))
+          .setRegistryName(GreekFantasy.MODID, "panflute"),
+        new ClubItem(ItemTier.DIAMOND, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "diamond_club"),
+        new ClubItem(ItemTier.GOLD, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "gold_club"),
+        new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "iron_club"),
+        new ClubItem(ItemTier.NETHERITE, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "netherite_club"),
+        new ClubItem(ItemTier.STONE, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "stone_club"),
+        new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "wooden_club")
+    );
     // block items
-    event.getRegistry().registerAll(new BlockItem(NEST_BLOCK, new Item.Properties().group(GREEK_GROUP))
-        .setRegistryName(GreekFantasy.MODID, "nest"));
+    event.getRegistry().registerAll(
+        new BlockItem(NEST_BLOCK, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "nest"),
+        new BlockItem(STATUE_BLOCK, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "statue")
+    );
   }
 
   @SubscribeEvent
   public static void registerBlocks(final RegistryEvent.Register<Block> event) {
     GreekFantasy.LOGGER.info("registerBlocks");
-    event.getRegistry().registerAll(new NestBlock().setRegistryName(GreekFantasy.MODID, "nest"));
+    event.getRegistry().registerAll(
+        new NestBlock(Block.Properties.from(Blocks.HAY_BLOCK).notSolid().variableOpacity())
+          .setRegistryName(GreekFantasy.MODID, "nest"),
+        new StatueBlock(Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY))
+          .setRegistryName(GreekFantasy.MODID, "statue"));
   }
 
   @SubscribeEvent
@@ -146,12 +181,19 @@ public final class GFRegistry {
   public static void registerFeatures(final RegistryEvent.Register<Feature<?>> event) {
     GreekFantasy.LOGGER.info("registerFeatures");
     event.getRegistry().register(
-        new HarpyNestFeature(NoFeatureConfig.field_236558_a_).setRegistryName(GreekFantasy.MODID, HarpyNestStructure.NAME));
+        new HarpyNestFeature(NoFeatureConfig.field_236558_a_)
+          .setRegistryName(GreekFantasy.MODID, HarpyNestStructure.NAME));
   }
 
   // OTHER SETUP METHODS //
+  
+  @SubscribeEvent
+  public void setup(final FMLCommonSetupEvent event) {
+    setupFeatures();
+    setupStructures();
+  }
 
-  public static void setupFeatures() {
+  private static void setupFeatures() {
     for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
       if (biome.getCategory() != Biome.Category.NETHER && biome.getCategory() != Biome.Category.THEEND) {
 //        biome.func_242440_e()
@@ -163,7 +205,7 @@ public final class GFRegistry {
     }
   }
 
-  public static void setupStructures() {
+  private static void setupStructures() {
 //  for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
 //    if (biome.getCategory() != Biome.Category.NETHER && biome.getCategory() != Biome.Category.THEEND) {
 //      biome.func_242440_e()..addStructure(GFFeatures.HARPY_NEST, IFeatureConfig.NO_FEATURE_CONFIG);
