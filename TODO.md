@@ -53,6 +53,7 @@ __Key:__
 [~] Harpy Nest - need drops
 [ ] Limestone (raw, smooth, bricks, pillar)
 [ ] Marble (raw, smooth, bricks, pillar)
+[X] Statues
 
 ## Items
 

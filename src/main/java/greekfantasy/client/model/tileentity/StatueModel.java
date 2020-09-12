@@ -10,22 +10,22 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.ModelPart;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.entity.model.IHasArm;
+import net.minecraft.client.renderer.entity.model.IHasHead;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.math.vector.Vector3f;
 
-public class StatueModel<T extends StatueTileEntity> extends Model {
+public class StatueModel<T extends StatueTileEntity> extends Model implements IHasArm, IHasHead {
   
-  public ModelRenderer bipedHead;
-  public ModelRenderer bipedBody;
-  public ModelRenderer bipedRightArm;
-  public ModelRenderer bipedLeftArm;
-  public ModelRenderer bipedRightLeg;
-  public ModelRenderer bipedLeftLeg;
-  
-  public BipedModel.ArmPose leftArmPose = BipedModel.ArmPose.EMPTY;
-  public BipedModel.ArmPose rightArmPose = BipedModel.ArmPose.EMPTY;
+  protected ModelRenderer bipedHead;
+  protected ModelRenderer bipedBody;
+  protected ModelRenderer bipedBodyChest;
+  protected ModelRenderer bipedRightArm;
+  protected ModelRenderer bipedLeftArm;
+  protected ModelRenderer bipedRightLeg;
+  protected ModelRenderer bipedLeftLeg;
   
   private static final EnumMap<ModelPart, ModelRenderer> ROTATION_MAP = new EnumMap<>(ModelPart.class);
   
@@ -43,6 +43,10 @@ public class StatueModel<T extends StatueTileEntity> extends Model {
     this.bipedBody = new ModelRenderer(this, 16, 16);
     this.bipedBody.addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedBody.setRotationPoint(0.0F, 0.0F + yOffsetIn, 0.0F);
+    this.bipedBodyChest = new ModelRenderer(this);
+    this.bipedBodyChest.setRotationPoint(0.0F, 1.0F, -2.0F);
+    this.bipedBodyChest.rotateAngleX = -0.2182F;
+    this.bipedBodyChest.setTextureOffset(19, 20).addBox(-4.01F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, modelSizeIn);
     this.bipedRightArm = new ModelRenderer(this, 40, 16);
     this.bipedRightArm.addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedRightArm.setRotationPoint(-5.0F, 2.0F + yOffsetIn, 0.0F);
@@ -67,13 +71,13 @@ public class StatueModel<T extends StatueTileEntity> extends Model {
   }
   
   protected Iterable<ModelRenderer> getUpperParts() { 
-    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedLeftArm, this.bipedRightArm); 
+    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedBodyChest, this.bipedLeftArm, this.bipedRightArm); 
   }
   
   protected Iterable<ModelRenderer> getLowerParts() { 
     return ImmutableList.of(this.bipedLeftLeg, this.bipedRightLeg); 
   }
-  
+
   public void setRotationAngles(T entity, float partialTicks) {
     for(final Entry<ModelPart, ModelRenderer> e : ROTATION_MAP.entrySet()) {
       final Vector3f rotations = entity.getRotations(e.getKey());
@@ -82,6 +86,10 @@ public class StatueModel<T extends StatueTileEntity> extends Model {
       model.rotateAngleY = rotations.getY();
       model.rotateAngleZ = rotations.getZ();
     }
+  }
+  
+  public void setChestVisibility(final boolean isChestVisible) {
+    this.bipedBodyChest.showModel = isChestVisible;
   }
 
   @Override
@@ -95,4 +103,18 @@ public class StatueModel<T extends StatueTileEntity> extends Model {
     final Iterable<ModelRenderer> parts = isUpper ? this.getUpperParts() : this.getLowerParts();
     parts.forEach(m -> m.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha));
   }
+
+  @Override
+  public ModelRenderer getModelHead() {
+    return this.bipedHead;
+  }
+
+  @Override
+  public void translateHand(HandSide sideIn, MatrixStack matrixStackIn) {
+    this.getArmForSide(sideIn).translateRotate(matrixStackIn);
+  }
+  
+  protected ModelRenderer getArmForSide(HandSide side) {
+    return side == HandSide.LEFT ? this.bipedLeftArm : this.bipedRightArm;
+ }
 }

@@ -1,15 +1,22 @@
 package greekfantasy.block;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
 import greekfantasy.tileentity.StatueTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -18,8 +25,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -27,17 +40,25 @@ import net.minecraft.world.World;
 public class StatueBlock extends HorizontalBlock {
   
   public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
+  public static final EnumProperty<StatueMaterial> MATERIAL = EnumProperty.create("material", StatueMaterial.class);
+  public static final BooleanProperty FEMALE = BooleanProperty.create("female");
   
-  public StatueBlock(final Block.Properties builder) {
-    super(builder);
+  protected static final VoxelShape AABB_SLAB_BOTTOM = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
+  protected static final VoxelShape AABB_STATUE = Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 16.0D, 12.0D);
+  protected static final VoxelShape AABB_STATUE_TOP = Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 24.0D, 12.0D);
+    
+  public StatueBlock(final StatueMaterial material, final boolean female) {
+    super(Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).notSolid());
     this.setDefaultState(this.getStateContainer().getBaseState()
         .with(HORIZONTAL_FACING, Direction.NORTH)
-        .with(HALF, DoubleBlockHalf.LOWER));
+        .with(HALF, DoubleBlockHalf.LOWER)
+        .with(MATERIAL, material)
+        .with(FEMALE, Boolean.valueOf(female)));
   }
   
   @Override
   protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-    builder.add(HORIZONTAL_FACING).add(HALF);
+    builder.add(HORIZONTAL_FACING).add(HALF).add(MATERIAL).add(FEMALE);
   }
 
   @Override
@@ -63,6 +84,21 @@ public class StatueBlock extends HorizontalBlock {
 
     super.onBlockHarvested(worldIn, pos, state, player);
   }
+  
+  @Override
+  public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+    if (!state.isIn(newState.getBlock())) {
+      final DoubleBlockHalf half = state.get(HALF);
+      final boolean isUpper = half == DoubleBlockHalf.UPPER;
+      BlockPos blockpos = isUpper ? pos.down() : pos.up();
+       TileEntity tileentity = worldIn.getTileEntity(blockpos);
+       if (tileentity instanceof StatueTileEntity) {
+          InventoryHelper.dropItems(worldIn, blockpos, ((StatueTileEntity)tileentity).getInventory());
+       }
+
+       super.onReplaced(state, worldIn, pos, newState, isMoving);
+    }
+ }
 
   @Override
   public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
@@ -81,6 +117,18 @@ public class StatueBlock extends HorizontalBlock {
   }
   
   @Override
+  public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {
+    VoxelShape shape = VoxelShapes.empty();
+    if(state.get(HALF) == DoubleBlockHalf.UPPER) {
+      shape = AABB_STATUE_TOP;
+    } else {
+      shape = VoxelShapes.combine(AABB_SLAB_BOTTOM, AABB_STATUE, IBooleanFunction.OR).simplify();
+    }
+    
+    return shape;
+  }
+  
+  @Override
   public boolean hasTileEntity(final BlockState state) {
     return true;
   }
@@ -92,4 +140,33 @@ public class StatueBlock extends HorizontalBlock {
     return te;
   }
   
+  public static enum StatueMaterial implements IStringSerializable {
+    LIMESTONE("limestone"),
+    MARBLE("marble");
+    
+    private final String name;
+    private final ResourceLocation texture;
+    
+    private StatueMaterial(final String nameIn) {
+      this.name = nameIn;
+      this.texture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + nameIn + ".png");
+    }
+    
+    public ResourceLocation getTexture() {
+      return texture;
+    }
+    
+    public byte getId() {
+      return (byte) this.ordinal();
+    }
+    
+    public static StatueMaterial getById(final byte id) {
+      return values()[id];
+    }
+
+    @Override
+    public String getString() {
+      return name;
+    }
+  }
 }

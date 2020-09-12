@@ -24,5 +24,8 @@
   "item.greekfantasy.stone_club": "Stone Club",
   "item.greekfantasy.wooden_club": "Wooden Club",
   "block.greekfantasy.nest": "Harpy Nest",
-  "block.greekfantasy.statue": "Statue"
+  "block.greekfantasy.limestone_statue_male": "Limestone Statue (Male)",
+  "block.greekfantasy.limestone_statue_female": "Limestone Statue (Female)",
+  "block.greekfantasy.marble_statue_male": "Marble Statue (Male)",
+  "block.greekfantasy.marble_statue_female": "Marble Statue (Female)"
 }

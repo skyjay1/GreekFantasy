@@ -30,18 +30,18 @@ public class StatuePoses {
       .set(ModelPart.RIGHT_LEG, 0, 0, 2);
   
   public static final StatuePose STANDING_RAISED = new StatuePose("standing_raised")
-      .set(ModelPart.HEAD, 15, 0, 0)
+      .set(ModelPart.HEAD, -15, 0, 0)
       .set(ModelPart.RIGHT_ARM, 0, 0, 130F)
       .set(ModelPart.LEFT_ARM, 0, 0, -130F)
-      .set(ModelPart.LEFT_LEG, 0, 0, -1)
-      .set(ModelPart.RIGHT_LEG, 0, 0, 1);
+      .set(ModelPart.LEFT_LEG, 0, 0, -2)
+      .set(ModelPart.RIGHT_LEG, 0, 0, 2);
   
   public static final StatuePose WEEPING = new StatuePose("weeping")
-      .set(ModelPart.HEAD, -12, 0, 0)
-      .set(ModelPart.RIGHT_ARM, 125F, 0, 45F)
-      .set(ModelPart.LEFT_ARM, 125F, 0, -45F)
-      .set(ModelPart.LEFT_LEG, 0, 0, -1)
-      .set(ModelPart.RIGHT_LEG, 0, 0, 1);
+      .set(ModelPart.HEAD, 12, 0, 0)
+      .set(ModelPart.RIGHT_ARM, -125F, 0, 45F)
+      .set(ModelPart.LEFT_ARM, -125F, 0, -45F)
+      .set(ModelPart.LEFT_LEG, 0, 0, -2)
+      .set(ModelPart.RIGHT_LEG, 0, 0, 2);
   
   public static final StatuePose[] ALL_POSES = new StatuePose[] {
       NONE, STANDING_HOLDING, WALKING_HOLDING, STANDING_HOLDING_DRAMATIC, STANDING_RAISED, WEEPING

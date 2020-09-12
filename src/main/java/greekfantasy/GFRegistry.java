@@ -87,8 +87,17 @@ public final class GFRegistry {
   @ObjectHolder("nest")
   public static final Block NEST_BLOCK = null;
   
-  @ObjectHolder("statue")
-  public static final Block STATUE_BLOCK = null;
+  @ObjectHolder("limestone_statue_female")
+  public static final Block LIMESTONE_STATUE_FEMALE = null;
+  
+  @ObjectHolder("limestone_statue_male")
+  public static final Block LIMESTONE_STATUE_MALE = null;
+  
+  @ObjectHolder("marble_statue_female")
+  public static final Block MARBLE_STATUE_FEMALE = null;
+  
+  @ObjectHolder("marble_statue_male")
+  public static final Block MARBLE_STATUE_MALE = null;
   
   @ObjectHolder("statue_te")
   public static final TileEntityType<StatueTileEntity> STATUE_TE = null;
@@ -127,8 +136,8 @@ public final class GFRegistry {
   public static void registerTileEntities(final RegistryEvent.Register<TileEntityType<?>> event) {
     GreekFantasy.LOGGER.info("registerTileEntities");
     event.getRegistry().register(
-        TileEntityType.Builder.create(StatueTileEntity::new, STATUE_BLOCK).build(null)
-          .setRegistryName(GreekFantasy.MODID, "statue_te")
+        TileEntityType.Builder.create(StatueTileEntity::new, LIMESTONE_STATUE_MALE, LIMESTONE_STATUE_FEMALE, MARBLE_STATUE_MALE, MARBLE_STATUE_FEMALE)
+        .build(null).setRegistryName(GreekFantasy.MODID, "statue_te")
     );
   }
 
@@ -156,8 +165,14 @@ public final class GFRegistry {
     event.getRegistry().registerAll(
         new BlockItem(NEST_BLOCK, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "nest"),
-        new BlockItem(STATUE_BLOCK, new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "statue")
+        new BlockItem(LIMESTONE_STATUE_FEMALE, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "limestone_statue_female"),
+        new BlockItem(LIMESTONE_STATUE_MALE, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "limestone_statue_male"),
+        new BlockItem(MARBLE_STATUE_FEMALE, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "marble_statue_female"),
+        new BlockItem(MARBLE_STATUE_MALE, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "marble_statue_male")
     );
   }
 
@@ -167,8 +182,15 @@ public final class GFRegistry {
     event.getRegistry().registerAll(
         new NestBlock(Block.Properties.from(Blocks.HAY_BLOCK).notSolid().variableOpacity())
           .setRegistryName(GreekFantasy.MODID, "nest"),
-        new StatueBlock(Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY))
-          .setRegistryName(GreekFantasy.MODID, "statue"));
+        new StatueBlock(StatueBlock.StatueMaterial.LIMESTONE, true)
+          .setRegistryName(GreekFantasy.MODID, "limestone_statue_female"),
+        new StatueBlock(StatueBlock.StatueMaterial.LIMESTONE, false)
+          .setRegistryName(GreekFantasy.MODID, "limestone_statue_male"),
+        new StatueBlock(StatueBlock.StatueMaterial.MARBLE, true)
+          .setRegistryName(GreekFantasy.MODID, "marble_statue_female"),
+        new StatueBlock(StatueBlock.StatueMaterial.MARBLE, false)
+          .setRegistryName(GreekFantasy.MODID, "marble_statue_male")
+    );
   }
 
   @SubscribeEvent

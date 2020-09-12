@@ -1,0 +1,13 @@
+{
+  "multipart": [
+    {
+      "when": {
+      	  "half": "lower"
+      },
+      "apply": {
+        "model": "greekfantasy:block/limestone_statue_slab",
+        "uvlock": true
+      }
+    }
+  ]
+}
