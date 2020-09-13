@@ -1,0 +1,8 @@
+{
+  "parent": "block/inner_stairs",
+  "textures": {
+    "bottom": "greekfantasy:block/polished_limestone",
+    "top": "greekfantasy:block/polished_limestone",
+    "side": "greekfantasy:block/polished_limestone"
+  }
+}

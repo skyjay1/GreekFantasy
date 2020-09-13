@@ -2,6 +2,7 @@ package greekfantasy;
 
 import java.util.function.Supplier;
 
+import greekfantasy.block.ConnectedPillarBlock;
 import greekfantasy.block.NestBlock;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.entity.AraEntity;
@@ -27,6 +28,7 @@ import greekfantasy.structure.feature.HarpyNestFeature;
 import greekfantasy.tileentity.StatueTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.StairsBlock;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EntityType.IFactory;
@@ -81,25 +83,29 @@ public final class GFRegistry {
 
   @ObjectHolder("wooden_club")
   public static final Item WOODEN_CLUB = null;
-
+  
   @ObjectHolder("nest")
   public static final Block NEST_BLOCK = null;
-  
   @ObjectHolder("limestone")
   public static final Block LIMESTONE = null;
-  
+  @ObjectHolder("limestone_stairs")
+  public static final Block LIMESTONE_STAIRS = null;
   @ObjectHolder("polished_limestone")
   public static final Block POLISHED_LIMESTONE = null;
-  
+  @ObjectHolder("polished_limestone_stairs")
+  public static final Block POLISHED_LIMESTONE_STAIRS = null;
   @ObjectHolder("marble")
   public static final Block MARBLE = null;
-  
+  @ObjectHolder("marble_stairs")
+  public static final Block MARBLE_STAIRS = null;
   @ObjectHolder("polished_marble")
-  public static final Block POLISHED_MARBLE = null;
-  
+  public static final Block POLISHED_MARBLE = null; 
+  @ObjectHolder("polished_marble_stairs")
+  public static final Block POLISHED_MARBLE_STAIRS = null;
+  @ObjectHolder("marble_pillar")
+  public static final Block MARBLE_PILLAR = null;
   @ObjectHolder("limestone_statue")
   public static final Block LIMESTONE_STATUE = null;
-  
   @ObjectHolder("marble_statue")
   public static final Block MARBLE_STATUE = null;
   
@@ -167,24 +173,35 @@ public final class GFRegistry {
     );
     // block items
     registerItemBlock(event, NEST_BLOCK, "nest");
+    
     registerItemBlock(event, MARBLE, "marble");
+    registerItemBlock(event, MARBLE_STAIRS, "marble_stairs");
     registerItemBlock(event, POLISHED_MARBLE, "polished_marble");
+    registerItemBlock(event, POLISHED_MARBLE_STAIRS, "polished_marble_stairs");
+    registerItemBlock(event, MARBLE_PILLAR, "marble_pillar");
+
     registerItemBlock(event, LIMESTONE, "limestone");
+    registerItemBlock(event, LIMESTONE_STAIRS, "limestone_stairs");
     registerItemBlock(event, POLISHED_LIMESTONE, "polished_limestone");
+    registerItemBlock(event, POLISHED_LIMESTONE_STAIRS, "polished_limestone_stairs");
+    
     registerItemBlock(event, LIMESTONE_STATUE, "limestone_statue");
     registerItemBlock(event, MARBLE_STATUE, "marble_statue");
+    
   }
 
   @SubscribeEvent
   public static void registerBlocks(final RegistryEvent.Register<Block> event) {
     GreekFantasy.LOGGER.info("registerBlocks");
     
-    registerBlockAndPolished(event, Block.Properties.from(Blocks.STONE), "limestone");
-    registerBlockAndPolished(event, Block.Properties.from(Blocks.STONE), "marble");
+    registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.STONE), "limestone");
+    registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.STONE), "marble");
 
     event.getRegistry().registerAll(
         new NestBlock(Block.Properties.from(Blocks.HAY_BLOCK).notSolid().variableOpacity())
           .setRegistryName(GreekFantasy.MODID, "nest"),
+        new ConnectedPillarBlock(Block.Properties.from(Blocks.STONE).notSolid())
+          .setRegistryName(GreekFantasy.MODID, "marble_pillar"),
         new StatueBlock(StatueBlock.StatueMaterial.LIMESTONE)
           .setRegistryName(GreekFantasy.MODID, "limestone_statue"),
         new StatueBlock(StatueBlock.StatueMaterial.MARBLE)
@@ -252,9 +269,13 @@ public final class GFRegistry {
     return entityType;
   }
   
-  private static void registerBlockAndPolished(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {
-    event.getRegistry().register(new Block(properties).setRegistryName(GreekFantasy.MODID, registryName));
-    event.getRegistry().register(new Block(properties).setRegistryName(GreekFantasy.MODID, "polished_" + registryName));
+  private static void registerBlockPolishedAndStairs(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {
+    final Block raw = new Block(properties).setRegistryName(GreekFantasy.MODID, registryName);
+    final Block polished = new Block(properties).setRegistryName(GreekFantasy.MODID, "polished_" + registryName);
+    event.getRegistry().register(raw);
+    event.getRegistry().register(polished);
+    event.getRegistry().register(new StairsBlock(() -> raw.getDefaultState(), properties).setRegistryName(GreekFantasy.MODID, registryName + "_stairs"));
+    event.getRegistry().register(new StairsBlock(() -> polished.getDefaultState(), properties).setRegistryName(GreekFantasy.MODID, "polished_" + registryName + "_stairs"));
   }
   
   private static void registerItemBlock(final RegistryEvent.Register<Item> event, final Block block, final String registryName) {

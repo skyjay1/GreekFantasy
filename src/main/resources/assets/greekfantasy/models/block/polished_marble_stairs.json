@@ -1,0 +1,8 @@
+{
+  "parent": "block/stairs",
+  "textures": {
+    "bottom": "greekfantasy:block/polished_marble",
+    "top": "greekfantasy:block/polished_marble",
+    "side": "greekfantasy:block/polished_marble"
+  }
+}

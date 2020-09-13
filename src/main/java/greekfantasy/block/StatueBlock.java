@@ -75,6 +75,10 @@ public class StatueBlock extends HorizontalBlock {
     BlockState blockstate = worldIn.getBlockState(blockpos);
     if (blockstate.getBlock() == state.getBlock() && blockstate.get(HALF) != half) {
       worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+      TileEntity tileentity = worldIn.getTileEntity(blockpos);
+      if (!worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
+        InventoryHelper.dropItems(worldIn, blockpos, ((StatueTileEntity) tileentity).getInventory());
+      }
       worldIn.playEvent(player, 2001, blockpos, Block.getStateId(blockstate));
     }
 
@@ -87,12 +91,12 @@ public class StatueBlock extends HorizontalBlock {
       final DoubleBlockHalf half = state.get(HALF);
       final boolean isUpper = half == DoubleBlockHalf.UPPER;
       BlockPos blockpos = isUpper ? pos.down() : pos.up();
-       TileEntity tileentity = worldIn.getTileEntity(blockpos);
-       if (tileentity instanceof StatueTileEntity) {
-          InventoryHelper.dropItems(worldIn, blockpos, ((StatueTileEntity)tileentity).getInventory());
-       }
+      TileEntity tileentity = worldIn.getTileEntity(blockpos);
+      if (!worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
+        InventoryHelper.dropItems(worldIn, blockpos, ((StatueTileEntity) tileentity).getInventory());
+      }
 
-       super.onReplaced(state, worldIn, pos, newState, isMoving);
+      super.onReplaced(state, worldIn, pos, newState, isMoving);
     }
  }
 

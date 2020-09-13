@@ -1,0 +1,25 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "greekfantasy:block/marble_pillar"
+      }
+    },
+    {
+      "when": {
+      	 "connection": "lower"
+      },
+      "apply": {
+        "model": "greekfantasy:block/marble_pillar_slab"
+      }
+    },
+    {
+      "when": {
+      	 "connection": "upper"
+      },
+      "apply": {
+        "model": "greekfantasy:block/marble_pillar_slab_top"
+      }
+    }
+  ]
+}

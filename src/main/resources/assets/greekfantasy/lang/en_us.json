@@ -25,5 +25,14 @@
   "item.greekfantasy.wooden_club": "Wooden Club",
   "block.greekfantasy.nest": "Harpy Nest",
   "block.greekfantasy.limestone_statue": "Limestone Statue",
-  "block.greekfantasy.marble_statue": "Marble Statue"
+  "block.greekfantasy.marble_statue": "Marble Statue",
+  "block.greekfantasy.limestone": "Limestone",
+  "block.greekfantasy.limestone_stairs": "Limestone Stairs",
+  "block.greekfantasy.polished_limestone": "Polished Limestone",
+  "block.greekfantasy.polished_limestone_stairs": "Polished Limestone Stairs",
+  "block.greekfantasy.marble": "Marble",
+  "block.greekfantasy.marble_stairs": "Marble Stairs",
+  "block.greekfantasy.polished_marble": "Polished Marble",
+  "block.greekfantasy.polished_marble_stairs": "Polished Marble Stairs",
+  "block.greekfantasy.marble_pillar": "Marble Pillar"
 }

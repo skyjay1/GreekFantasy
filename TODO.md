@@ -51,8 +51,8 @@ __Key:__
 ## Blocks
 
 [~] Harpy Nest - need drops
-[ ] Limestone (raw, smooth, bricks, pillar)
-[ ] Marble (raw, smooth, bricks, pillar)
+[~] Limestone (raw, smooth, bricks, pillar)
+[~] Marble (raw, smooth, bricks, pillar)
 [X] Statues
 
 ## Items
@@ -60,3 +60,7 @@ __Key:__
 [~] Clubs (all materials)
 [ ] Golden bridle (for Unicorn)
 [ ] Winged sandals
+
+## Other
+
+[ ] Statue GUI
