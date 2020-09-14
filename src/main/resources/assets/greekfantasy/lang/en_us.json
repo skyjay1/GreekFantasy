@@ -34,5 +34,12 @@
   "block.greekfantasy.marble_stairs": "Marble Stairs",
   "block.greekfantasy.polished_marble": "Polished Marble",
   "block.greekfantasy.polished_marble_stairs": "Polished Marble Stairs",
-  "block.greekfantasy.marble_pillar": "Marble Pillar"
+  "block.greekfantasy.marble_pillar": "Marble Pillar",
+  "gui.statue.rotation": "%1$s Angle: %2$s",
+  "gui.statue.head": "Head",
+  "gui.statue.body": "Body",
+  "gui.statue.left_arm": "Left Arm",
+  "gui.statue.right_arm": "Right Arm",
+  "gui.statue.left_leg": "Left Leg",
+  "gui.statue.right_leg": "Right Leg"
 }

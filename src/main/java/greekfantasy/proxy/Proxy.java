@@ -9,6 +9,8 @@ public class Proxy {
   
   public void registerTileEntityRenders() { }
   
+  public void registerContainerRenders() { }
+  
   public void registerEventHandlers() { 
     MinecraftForge.EVENT_BUS.register(CommonEventHandler.class);
   }

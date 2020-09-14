@@ -1,8 +1,12 @@
 package greekfantasy.block;
 
+import java.util.function.Supplier;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.gui.StatueContainer;
 import greekfantasy.tileentity.StatueTileEntity;
+import greekfantasy.util.StatuePose;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -11,9 +15,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -23,6 +31,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -30,9 +39,13 @@ import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class StatueBlock extends HorizontalBlock {  
   
@@ -106,14 +119,27 @@ public class StatueBlock extends HorizontalBlock {
   }
 
   @Override
-  public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos, 
-      final PlayerEntity player, final Hand handIn, final BlockRayTraceResult hit) {
+  public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
+      final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
     final BlockPos tePos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos;
-    final TileEntity te = worldIn.getTileEntity(tePos);
-    if(te instanceof StatueTileEntity) {
-      return ((StatueTileEntity)te).onBlockActivated(state, worldIn, tePos, player, handIn, hit);
+    final TileEntity tileentity = worldIn.getTileEntity(tePos);
+    if (playerIn instanceof ServerPlayerEntity && tileentity instanceof StatueTileEntity) {
+      final StatueTileEntity statuetileentity = (StatueTileEntity)tileentity;
+      // write the pose tag to nbt to send to the gui
+      final StatuePose currentPose = statuetileentity.getStatuePose();
+      NetworkHooks.openGui((ServerPlayerEntity)playerIn, 
+        new SimpleNamedContainerProvider((id, inventory, player) -> {
+          // create and return a container
+          return new StatueContainer(id, inventory, statuetileentity, currentPose, tePos);
+        }, StringTextComponent.EMPTY), 
+        buf -> {
+          buf.writeBlockPos(tePos);
+          buf.writeCompoundTag(currentPose.serializeNBT());
+        });
+      return ActionResultType.CONSUME;
+    } else {
+      return ActionResultType.SUCCESS;
     }
-    return ActionResultType.PASS;
   }
   
   @Override

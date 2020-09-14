@@ -10,6 +10,7 @@ import greekfantasy.util.StatuePoses;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IClearable;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
@@ -29,7 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class StatueTileEntity extends TileEntity implements IClearable {
+public class StatueTileEntity extends TileEntity implements IClearable, IInventory {
 
   private static final String KEY_POSE = "Pose";
   private static final String KEY_UPPER = "Upper";
@@ -57,13 +58,23 @@ public class StatueTileEntity extends TileEntity implements IClearable {
 //      setItem(new ItemStack(Items.STONE_SWORD), HandSide.RIGHT);
 //      setItem(new ItemStack(Items.ACACIA_LOG), HandSide.LEFT);
       // TESTING: poses
-      final int poseNum = worldIn.rand.nextInt(StatuePoses.ALL_POSES.length);
-      this.statuePose = StatuePoses.ALL_POSES[poseNum];
-      GreekFantasy.LOGGER.info("setting statuePose: " + statuePose.getString());
+//      final int poseNum = worldIn.rand.nextInt(StatuePoses.ALL_POSES.length);
+//      this.statuePose = StatuePoses.ALL_POSES[poseNum];
+      // TODO open gui
       this.markDirty();
       worldIn.notifyBlockUpdate(pos, state, state, 2);
     }
     return ActionResultType.SUCCESS;
+  }
+  
+  public StatuePose getStatuePose() {
+    return this.statuePose;
+  }
+  
+  public void setStatuePose(final StatuePose poseIn) {
+    this.statuePose = poseIn;
+    this.markDirty();
+    this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
   }
 
   public Vector3f getRotations(final ModelPart part) {
@@ -144,7 +155,7 @@ public class StatueTileEntity extends TileEntity implements IClearable {
   public CompoundNBT buildUpdateTag(final CompoundNBT nbt) {
     nbt.putBoolean(KEY_UPPER, this.upper);
     nbt.putBoolean(KEY_FEMALE, statueFemale);
-    nbt.put(KEY_POSE, this.statuePose.write(new CompoundNBT()));
+    nbt.put(KEY_POSE, this.statuePose.serializeNBT(new CompoundNBT()));
     ItemStackHelper.saveAllItems(nbt, this.inventory, true);
     return nbt;
   }
@@ -157,6 +168,58 @@ public class StatueTileEntity extends TileEntity implements IClearable {
     ItemStackHelper.loadAllItems(nbt, this.inventory);
   }
 
+  // INVENTORY //
+
+  @Override
+  public int getSizeInventory() {
+    return this.inventory.size();
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return this.inventory.isEmpty();
+  }
+
+  /**
+   * Returns the stack in the given slot.
+   */
+  public ItemStack getStackInSlot(int index) {
+    return index >= 0 && index < this.inventory.size() ? this.inventory.get(index) : ItemStack.EMPTY;
+  }
+
+  /**
+   * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
+   */
+  public ItemStack decrStackSize(int index, int count) {
+    return ItemStackHelper.getAndSplit(this.inventory, index, count);
+  }
+
+  /**
+   * Removes a stack from the given slot and returns it.
+   */
+  public ItemStack removeStackFromSlot(int index) {
+    return ItemStackHelper.getAndRemove(this.inventory, index);
+  }
+
+  /**
+   * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
+   */
+  public void setInventorySlotContents(int index, ItemStack stack) {
+    if (index >= 0 && index < this.inventory.size()) {
+      this.inventory.set(index, stack);
+    }
+  }
+
+  @Override
+  public boolean isUsableByPlayer(PlayerEntity player) {
+    if (this.world.getTileEntity(this.pos) != this) {
+      return false;
+    } else {
+      return !(player.getDistanceSq((double) this.pos.getX() + 0.5D, (double) this.pos.getY() + 0.5D,
+          (double) this.pos.getZ() + 0.5D) > 64.0D);
+    }
+  }
+
   // OTHER //
 
   @OnlyIn(Dist.CLIENT)
@@ -165,8 +228,8 @@ public class StatueTileEntity extends TileEntity implements IClearable {
   }
 
   public StatueMaterial getStatueMaterial() {
-    if(this.getBlockState().getBlock() instanceof StatueBlock) {
-      return ((StatueBlock)this.getBlockState().getBlock()).getStatueMaterial();
+    if (this.getBlockState().getBlock() instanceof StatueBlock) {
+      return ((StatueBlock) this.getBlockState().getBlock()).getStatueMaterial();
     }
     return StatueMaterial.LIMESTONE;
   }

@@ -10,6 +10,6 @@ public class ClientEventHandler {
   public static void setupClient(final FMLClientSetupEvent event) {
     GreekFantasy.PROXY.registerEntityRenders();
     GreekFantasy.PROXY.registerTileEntityRenders();
+    GreekFantasy.PROXY.registerContainerRenders();
   }
-  
 }

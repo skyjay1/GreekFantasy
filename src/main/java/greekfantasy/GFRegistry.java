@@ -21,11 +21,14 @@ import greekfantasy.entity.SatyrEntity;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.entity.SirenEntity;
 import greekfantasy.entity.UnicornEntity;
+import greekfantasy.gui.StatueContainer;
 import greekfantasy.item.ClubItem;
 import greekfantasy.item.PanfluteItem;
 import greekfantasy.structure.HarpyNestStructure;
 import greekfantasy.structure.feature.HarpyNestFeature;
 import greekfantasy.tileentity.StatueTileEntity;
+import greekfantasy.util.StatuePose;
+import greekfantasy.util.StatuePoses;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.StairsBlock;
@@ -35,16 +38,22 @@ import net.minecraft.entity.EntityType.IFactory;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.IWorldPosCallable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -112,6 +121,9 @@ public final class GFRegistry {
   @ObjectHolder("statue_te")
   public static final TileEntityType<StatueTileEntity> STATUE_TE = null;
 
+  @ObjectHolder("statue_container")
+  public static final ContainerType<StatueContainer> STATUE_CONTAINER = null;
+
   public static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
     @Override
     public ItemStack createIcon() {
@@ -149,6 +161,18 @@ public final class GFRegistry {
         TileEntityType.Builder.create(StatueTileEntity::new, LIMESTONE_STATUE, MARBLE_STATUE)
         .build(null).setRegistryName(GreekFantasy.MODID, "statue_te")
     );
+  }
+  
+  @SubscribeEvent
+  public static void registerContainers(final RegistryEvent.Register<ContainerType<?>> event) {
+    GreekFantasy.LOGGER.info("registerContainers");
+    ContainerType<StatueContainer> containerType = IForgeContainerType.create((windowId, inv, data) -> {
+      final BlockPos blockpos = data.readBlockPos();
+      final CompoundNBT poseTag = data.readCompoundTag();
+      final StatuePose pose = new StatuePose(poseTag);
+      return new StatueContainer(windowId, inv, new Inventory(2), pose, blockpos);
+    });
+    event.getRegistry().register(containerType.setRegistryName(GreekFantasy.MODID, "statue_container"));
   }
 
   @SubscribeEvent
@@ -195,7 +219,7 @@ public final class GFRegistry {
     GreekFantasy.LOGGER.info("registerBlocks");
     
     registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.STONE), "limestone");
-    registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.STONE), "marble");
+    registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.DIORITE), "marble");
 
     event.getRegistry().registerAll(
         new NestBlock(Block.Properties.from(Blocks.HAY_BLOCK).notSolid().variableOpacity())

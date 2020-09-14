@@ -2,6 +2,7 @@ package greekfantasy.proxy;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.gui.StatueScreen;
 import greekfantasy.client.render.AraRenderer;
 import greekfantasy.client.render.CentaurRenderer;
 import greekfantasy.client.render.CerastesRenderer;
@@ -20,7 +21,11 @@ import greekfantasy.client.render.SirenRenderer;
 import greekfantasy.client.render.UnicornRenderer;
 import greekfantasy.client.render.tileentity.StatueTileEntityRenderer;
 import greekfantasy.events.ClientEventHandler;
+import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -58,6 +63,12 @@ public class ClientProxy extends Proxy {
   public void registerTileEntityRenders() {
     GreekFantasy.LOGGER.info("registerTileEntityRenders");
     ClientRegistry.bindTileEntityRenderer(GFRegistry.STATUE_TE, StatueTileEntityRenderer::new);
+  }
+  
+  @Override
+  public void registerContainerRenders() {
+    GreekFantasy.LOGGER.info("registerContainerRenders");
+    ScreenManager.registerFactory(GFRegistry.STATUE_CONTAINER, StatueScreen::new);
   }
   
 }

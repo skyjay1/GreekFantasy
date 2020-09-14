@@ -63,4 +63,5 @@ __Key:__
 
 ## Other
 
-[ ] Statue GUI
+[X] Statue GUI
+[ ] Statue Packets
