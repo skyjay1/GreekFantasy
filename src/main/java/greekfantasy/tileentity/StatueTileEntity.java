@@ -1,5 +1,9 @@
 package greekfantasy.tileentity;
 
+import javax.annotation.Nullable;
+
+import com.mojang.authlib.GameProfile;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.block.StatueBlock;
@@ -14,21 +18,16 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.SkullTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -41,11 +40,12 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
 
   private final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
 
-  private ResourceLocation overlayTexture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/steve.png");
   private StatuePose statuePose = StatuePoses.NONE;
   private boolean upper = false;
   private boolean statueFemale = false;
-  private String playerName = "";
+  private String textureName = "";
+  @Nullable
+  private GameProfile playerProfile = null;
 
   public StatueTileEntity() {
     super(GFRegistry.STATUE_TE);
@@ -55,73 +55,86 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     this.upper = isUpper;
     this.markDirty();
   }
+  
+  public boolean isUpper() { return this.upper; }
 
-//  public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
-//      final PlayerEntity player, final Hand handIn, final BlockRayTraceResult hit) {
-//    if (!worldIn.isRemote()) {
-//      // TESTING: items
-////      setItem(new ItemStack(Items.STONE_SWORD), HandSide.RIGHT);
-////      setItem(new ItemStack(Items.ACACIA_LOG), HandSide.LEFT);
-//      // TESTING: poses
-////      final int poseNum = worldIn.rand.nextInt(StatuePoses.ALL_POSES.length);
-////      this.statuePose = StatuePoses.ALL_POSES[poseNum];
-//      // TODO open gui
-//      this.markDirty();
-//      worldIn.notifyBlockUpdate(pos, state, state, 2);
-//    }
-//    return ActionResultType.SUCCESS;
-//  }
+  public StatuePose getStatuePose() { return this.statuePose; }
   
-  public StatuePose getStatuePose() {
-    return this.statuePose;
-  }
+  public void setStatuePose(final StatuePose poseIn) { setStatuePose(poseIn, false); }
   
-  public void setStatuePose(final StatuePose poseIn) {
+  public void setStatuePose(final StatuePose poseIn, final boolean refresh) {
     this.statuePose = poseIn;
     this.markDirty();
-    this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+    if(refresh) {
+      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+    }
   }
 
   public Vector3f getRotations(final ModelPart part) {
     return statuePose.getAngles(part);
   }
   
+  public StatueMaterial getStatueMaterial() {
+    if (this.getBlockState().getBlock() instanceof StatueBlock) {
+      return ((StatueBlock) this.getBlockState().getBlock()).getStatueMaterial();
+    }
+    return StatueMaterial.LIMESTONE;
+  }
+
+  public boolean isStatueFemale() { return statueFemale; }
+  
+  public void setStatueFemale(boolean statueFemaleIn) { setStatueFemale(statueFemaleIn, false); }
+
+  public void setStatueFemale(boolean statueFemaleIn, final boolean refresh) {
+    if(statueFemaleIn == this.statueFemale) {
+      return;
+    }
+    this.statueFemale = statueFemaleIn;
+    this.markDirty();
+    if(refresh) {
+      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+    }
+  }
+  
+  public String getTextureName() { return textureName; }
+
+  public void setTextureName(final String nameIn) { setTextureName(nameIn, false); }
+  
+  public void setTextureName(final String nameIn, final boolean refresh) {
+    if(nameIn.equals(this.textureName)) {
+      return;
+    }
+    this.textureName = nameIn;
+    final CompoundNBT profileNBT = new CompoundNBT();
+    profileNBT.putString("Name", nameIn);
+    setPlayerProfile(NBTUtil.readGameProfile(profileNBT));
+//    GreekFantasy.LOGGER.info("setting texture name: " + nameIn);
+//    if(this.playerProfile != null) {
+//      GreekFantasy.LOGGER.info("Good news! profile is not null.");
+//      GreekFantasy.LOGGER.info("UUID = " + PlayerEntity.getUUID(playerProfile).toString());
+//    }
+    this.markDirty();
+    if(refresh) {
+      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+    }
+  }
+  
+  @Nullable
+  public GameProfile getPlayerProfile() { return this.playerProfile; }
+  
+  private void setPlayerProfile(@Nullable GameProfile profile) {
+    this.playerProfile = profile;
+    this.updatePlayerProfile();
+  }
+
+  private void updatePlayerProfile() {
+    this.playerProfile = SkullTileEntity.updateGameProfile(this.playerProfile);
+    this.markDirty();
+  }
+  
   // INVENTORY //
   
-  public void setItem(final ItemStack stack, final HandSide hand) {
-    int i = hand.ordinal();
-    this.inventory.set(i, stack.split(1));
-    this.inventoryChanged();
-  }
   
-  public ItemStack getItem(final HandSide hand) {
-    return this.inventory.get(hand.ordinal());
-  }
-  
-  public NonNullList<ItemStack> getInventory() {
-     return this.inventory;
-  }
-
-  private void inventoryChanged() {
-    this.markDirty();
-    this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 3);
-  }
-
-  public void dropAllItems() {
-    if (this.world != null) {
-      if (!this.world.isRemote) {
-        InventoryHelper.dropItems(this.world, this.getPos(), this.getInventory());
-      }
-
-      this.inventoryChanged();
-    }
-
-  }
-  
-  @Override
-  public void clear() {
-    this.inventory.clear();
-  }
   
   // NBT AND SAVING STUFF //
 
@@ -161,21 +174,56 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     nbt.putBoolean(KEY_UPPER, this.upper);
     nbt.putBoolean(KEY_FEMALE, statueFemale);
     nbt.put(KEY_POSE, this.statuePose.serializeNBT(new CompoundNBT()));
-    nbt.put(KEY_NAME, StringNBT.valueOf(playerName));
+    nbt.put(KEY_NAME, StringNBT.valueOf(textureName));
     ItemStackHelper.saveAllItems(nbt, this.inventory, true);
     return nbt;
   }
 
   public void readUpdateTag(final CompoundNBT nbt) {
-    this.upper = nbt.getBoolean(KEY_UPPER);
-    this.statueFemale = nbt.getBoolean(KEY_FEMALE);
-    this.statuePose = new StatuePose(nbt.getCompound(KEY_POSE));
-    this.playerName = nbt.getString(KEY_NAME);
+    this.setUpper(nbt.getBoolean(KEY_UPPER));
+    this.setStatueFemale(nbt.getBoolean(KEY_FEMALE));
+    this.setStatuePose(new StatuePose(nbt.getCompound(KEY_POSE)));
+    this.setTextureName(nbt.getString(KEY_NAME));
     this.inventory.clear();
     ItemStackHelper.loadAllItems(nbt, this.inventory);
   }
 
   // INVENTORY //
+  
+  public void setItem(final ItemStack stack, final HandSide hand) {
+    int i = hand.ordinal();
+    this.inventory.set(i, stack.split(1));
+    this.inventoryChanged();
+  }
+  
+  public ItemStack getItem(final HandSide hand) {
+    return this.inventory.get(hand.ordinal());
+  }
+  
+  public NonNullList<ItemStack> getInventory() {
+     return this.inventory;
+  }
+
+  private void inventoryChanged() {
+    this.markDirty();
+    this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 3);
+  }
+
+  public void dropAllItems() {
+    if (this.world != null) {
+      if (!this.world.isRemote) {
+        InventoryHelper.dropItems(this.world, this.getPos(), this.getInventory());
+      }
+
+      this.inventoryChanged();
+    }
+
+  }
+  
+  @Override
+  public void clear() {
+    this.inventory.clear();
+  }
 
   @Override
   public int getSizeInventory() {
@@ -232,57 +280,5 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   @OnlyIn(Dist.CLIENT)
   public double getMaxRenderDistanceSquared() {
     return 256.0D;
-  }
-
-  public StatueMaterial getStatueMaterial() {
-    if (this.getBlockState().getBlock() instanceof StatueBlock) {
-      return ((StatueBlock) this.getBlockState().getBlock()).getStatueMaterial();
-    }
-    return StatueMaterial.LIMESTONE;
-  }
-
-  public boolean isStatueFemale() {
-    return statueFemale;
-  }
-  
-  public void setStatueFemale(boolean statueFemale) {
-    setStatueFemale(statueFemale, false);
-  }
-
-  public void setStatueFemale(boolean statueFemale, final boolean refresh) {
-    this.statueFemale = statueFemale;
-    this.markDirty();
-    if(refresh) {
-      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
-    }
-  }
-  
-  public ResourceLocation getStoneTexture() {
-    return this.getStatueMaterial().getTexture(false);
-  }
-  
-  public ResourceLocation getOverlayTexture() {
-    return overlayTexture;
-  }
-  
-  public void setTextureName(final String nameIn) {
-    setTextureName(nameIn, false);
-  }
-  
-  public void setTextureName(final String nameIn, final boolean refresh) {
-    this.playerName = nameIn;
-    this.setTexture(nameIn);
-    this.markDirty();
-    if(refresh) {
-      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
-    }
-  }
-  
-  public String getPlayerName() {
-    return playerName;
-  }
-  
-  private void setTexture(final String name) {
-    // TODO
   }
 }

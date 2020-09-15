@@ -64,4 +64,4 @@ __Key:__
 ## Other
 
 [X] Statue GUI
-[ ] Statue skins "I think blending the player skin with multiply mode above the stone texture will work"
+[ ] Statue skins

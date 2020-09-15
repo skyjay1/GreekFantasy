@@ -1,6 +1,10 @@
 package greekfantasy.block;
 
-import java.util.function.Supplier;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.mojang.authlib.GameProfile;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
@@ -17,11 +21,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -31,7 +36,6 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -43,9 +47,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 public class StatueBlock extends HorizontalBlock {  
   
@@ -122,24 +124,31 @@ public class StatueBlock extends HorizontalBlock {
   public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
     final BlockPos tePos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos;
-    final TileEntity tileentity = worldIn.getTileEntity(tePos);
-    if (playerIn instanceof ServerPlayerEntity && tileentity instanceof StatueTileEntity) {
-      final StatueTileEntity statuetileentity = (StatueTileEntity)tileentity;
-      // write the pose tag to nbt to send to the gui
-      final StatuePose currentPose = statuetileentity.getStatuePose();
-      final boolean isFemale = statuetileentity.isStatueFemale();
-      final String name = statuetileentity.getPlayerName();
+    final TileEntity te = worldIn.getTileEntity(tePos);
+    if (playerIn instanceof ServerPlayerEntity && te instanceof StatueTileEntity) {
+      final StatueTileEntity teStatue = (StatueTileEntity)te;
+      // handle item interaction
+      final ItemStack stack = playerIn.getHeldItem(handIn);
+      if(!stack.isEmpty() && stack.getItem() == Items.NAME_TAG && stack.hasDisplayName()) {        
+        teStatue.setTextureName(stack.getDisplayName().getUnformattedComponentText(), true);
+        stack.shrink(1);
+        return ActionResultType.SUCCESS;
+      }
+      // get info to send to the GUI constructor and byte buffer
+      final StatuePose currentPose = teStatue.getStatuePose();
+      final boolean isFemale = teStatue.isStatueFemale();
+      final String name = teStatue.getTextureName();
+      // open the container GUI
       NetworkHooks.openGui((ServerPlayerEntity)playerIn, 
-        new SimpleNamedContainerProvider((id, inventory, player) -> {
-          // create and return a container
-          return new StatueContainer(id, inventory, statuetileentity, currentPose, isFemale, name, tePos);
-        }, StringTextComponent.EMPTY), 
-        buf -> {
-          buf.writeBoolean(isFemale);
-          buf.writeBlockPos(tePos);
-          buf.writeCompoundTag(currentPose.serializeNBT());
-          buf.writeString(name);
-        });
+        new SimpleNamedContainerProvider((id, inventory, player) -> new StatueContainer(id, inventory, teStatue, currentPose, isFemale, name, tePos), 
+            StringTextComponent.EMPTY), 
+            buf -> {
+              buf.writeBoolean(isFemale);
+              buf.writeBlockPos(tePos);
+              buf.writeCompoundTag(currentPose.serializeNBT());
+              buf.writeString(name);
+            }
+        );
       return ActionResultType.CONSUME;
     } else {
       return ActionResultType.SUCCESS;
@@ -179,18 +188,16 @@ public class StatueBlock extends HorizontalBlock {
     LIMESTONE("limestone"),
     MARBLE("marble");
     
+    private final ResourceLocation stoneTexture;
     private final String name;
-    private final ResourceLocation textureMale;
-    private final ResourceLocation textureFemale;
     
     private StatueMaterial(final String nameIn) {
       this.name = nameIn;
-      this.textureMale = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + nameIn + ".png");
-      this.textureFemale = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + nameIn + "_slim.png");
+      this.stoneTexture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + nameIn + ".png");
     }
     
-    public ResourceLocation getTexture(final boolean isFemaleModel) {
-      return isFemaleModel ? textureFemale : textureMale;
+    public ResourceLocation getStoneTexture() {
+      return this.stoneTexture;
     }
     
     public byte getId() {

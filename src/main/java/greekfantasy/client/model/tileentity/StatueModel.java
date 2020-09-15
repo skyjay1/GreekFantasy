@@ -55,7 +55,7 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     this.bipedLeftArm = new ModelRenderer(this, 40, 16);
     this.bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedLeftArm.setRotationPoint(5.0F, 2.0F + yOffsetIn, 0.0F);
-    this.bipedLeftArm.mirror = true;
+    //this.bipedLeftArm.mirror = true;
     this.bipedRightArm = new ModelRenderer(this, 40, 16);
     this.bipedRightArm.addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedRightArm.setRotationPoint(-5.0F, 2.0F + yOffsetIn, 0.0F);
@@ -63,7 +63,7 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     this.bipedLeftArmSlim = new ModelRenderer(this, 32, 48);
     this.bipedLeftArmSlim.addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedLeftArmSlim.setRotationPoint(5.0F, 2.5F, 0.0F);
-    this.bipedLeftArmSlim.mirror = true;
+    //this.bipedLeftArmSlim.mirror = true;
     this.bipedRightArmSlim = new ModelRenderer(this, 40, 16);
     this.bipedRightArmSlim.addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedRightArmSlim.setRotationPoint(-5.0F, 2.5F, 0.0F);
@@ -72,7 +72,7 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     this.bipedRightLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedRightLeg.setRotationPoint(-1.9F, 12.0F + yOffsetIn, 0.0F);
     this.bipedLeftLeg = new ModelRenderer(this, 0, 16);
-    this.bipedLeftLeg.mirror = true;
+    //this.bipedLeftLeg.mirror = true;
     this.bipedLeftLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedLeftLeg.setRotationPoint(1.9F, 12.0F + yOffsetIn, 0.0F);
     
@@ -100,16 +100,35 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     return ImmutableList.of(this.bipedLeftArm, this.bipedRightArm); 
   }
 
-  public void setRotationAngles(T entity, float partialTicks) {
+  public void setRotationAngles(final T entity, final float partialTicks) {
     for(final Entry<ModelPart, Collection<ModelRenderer>> e : ROTATION_MAP.entrySet()) {
       final Vector3f rotations = entity.getRotations(e.getKey());
       e.getValue().forEach(m -> {
-          m.rotateAngleX = rotations.getX();
-          m.rotateAngleY = rotations.getY();
-          m.rotateAngleZ = rotations.getZ();
+        m.rotateAngleX = rotations.getX();
+        m.rotateAngleY = rotations.getY();
+        m.rotateAngleZ = rotations.getZ();
       });
     }
+    // reset body rotations
+    this.bipedBody.rotateAngleX = 0.0F;
+    this.bipedBody.rotateAngleY = 0.0F;
+    this.bipedBody.rotateAngleZ = 0.0F;
     this.bipedBodyChest.rotateAngleX = -0.2182F;
+    this.bipedBodyChest.rotateAngleY = 0.0F;
+    this.bipedBodyChest.rotateAngleZ = 0.0F;
+  }
+
+  public void rotateAroundBody(final Vector3f bodyRotations, final MatrixStack matrixStackIn, final float partialTicks) {
+    // rotate entire model around body rotations
+    if (bodyRotations.getZ() != 0.0F) {
+      matrixStackIn.rotate(Vector3f.ZP.rotation(bodyRotations.getZ()));
+    }
+    if (bodyRotations.getY() != 0.0F) {
+      matrixStackIn.rotate(Vector3f.YP.rotation(bodyRotations.getY()));
+    }
+    if (bodyRotations.getX() != 0.0F) {
+      matrixStackIn.rotate(Vector3f.XP.rotation(bodyRotations.getX()));
+    }
   }
 
   @Override

@@ -1,13 +1,19 @@
 package greekfantasy.client.render.tileentity;
 
+import java.util.Map;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
+import greekfantasy.GreekFantasy;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.client.model.tileentity.StatueModel;
 import greekfantasy.tileentity.StatueTileEntity;
+import greekfantasy.util.ModelPart;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -16,13 +22,15 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 
 public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntity> {
+  
+  private static final ResourceLocation STEVE_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/steve.png");
+  private static final ResourceLocation ALEX_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/alex.png");
     
   protected StatueModel<StatueTileEntity> model;
   
@@ -35,7 +43,7 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
   public void render(StatueTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn,
       int packedLightIn, int packedOverlayIn) {
     // get the right TileEntity (always use the lower one)
-    final boolean upper = tileEntityIn.getBlockState().get(StatueBlock.HALF) == DoubleBlockHalf.UPPER;
+    final boolean upper = tileEntityIn.isUpper();
     StatueTileEntity te = tileEntityIn;
     if(upper) {
       final TileEntity temp = tileEntityIn.getWorld().getTileEntity(tileEntityIn.getPos().down());
@@ -47,8 +55,8 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     final boolean isFemaleModel = te.isStatueFemale();
     final float rotation = te.getBlockState().get(StatueBlock.HORIZONTAL_FACING).getHorizontalAngle();
     final float translateY = upper ? 0.95F : 1.95F;
-    final ResourceLocation textureStone = te.getStoneTexture();
-    final ResourceLocation textureOverlay = te.getOverlayTexture();
+    final ResourceLocation textureStone = getStoneTexture(te);
+    final ResourceLocation textureOverlay = getOverlayTexture(te);
     matrixStackIn.push();
     // prepare to render model
     matrixStackIn.translate(0.5D, (double)translateY, 0.5D);
@@ -56,8 +64,9 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     matrixStackIn.rotate(Vector3f.YP.rotationDegrees(rotation));
     IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureStone));
     this.model.setRotationAngles(te, partialTicks);
+    this.model.rotateAroundBody(te.getRotations(ModelPart.BODY), matrixStackIn, partialTicks); 
     // render stone texture
-    this.model.render(matrixStackIn, vertexBuilder, 15728640, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F, upper, isFemaleModel);
+    this.model.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F, upper, isFemaleModel);
     // prepare to render player texture
     vertexBuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(textureOverlay));
     RenderSystem.enableBlend();
@@ -66,16 +75,32 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     //RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.DST_COLOR);
     RenderSystem.alphaFunc(516, 0.0F);
     // render player texture
-    this.model.render(matrixStackIn, vertexBuilder, 15728640, OverlayTexture.NO_OVERLAY, 0.9F, 0.9F, 0.9F, 0.4F, upper, isFemaleModel);
+    this.model.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 0.8F, 0.8F, 0.8F, 0.6F, upper, isFemaleModel);
     // reset RenderSystem values
     RenderSystem.defaultBlendFunc();
     RenderSystem.defaultAlphaFunc();
     RenderSystem.disableBlend();
     
     // render held items
-    renderHeldItems(te, partialTicks, matrixStackIn, bufferIn, 15728640, OverlayTexture.NO_OVERLAY, upper);
-    
+    renderHeldItems(te, partialTicks, matrixStackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, upper);
     matrixStackIn.pop();
+  }
+  
+  private ResourceLocation getStoneTexture(final StatueTileEntity statue) {
+    return statue.getStatueMaterial().getStoneTexture();
+  }
+  
+  private ResourceLocation getOverlayTexture(final StatueTileEntity statue) {
+    final GameProfile gameProfile = statue.getPlayerProfile();
+    final boolean isFemale = statue.isStatueFemale();
+    if(gameProfile != null) {
+      Minecraft minecraft = Minecraft.getInstance();
+      Map<Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(gameProfile);
+      if(map.containsKey(Type.SKIN)) {
+        return minecraft.getSkinManager().loadSkin(map.get(Type.SKIN), Type.SKIN);
+      }
+    }
+    return isFemale ? ALEX_TEXTURE : STEVE_TEXTURE;
   }
   
   private void renderHeldItems(StatueTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn,

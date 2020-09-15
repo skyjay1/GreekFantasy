@@ -1,11 +1,14 @@
 package greekfantasy.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.block.StatueBlock;
 import greekfantasy.client.network.CUpdateStatuePosePacket;
 import greekfantasy.gui.StatueContainer;
+import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.ModelPart;
 import greekfantasy.util.StatuePose;
 import greekfantasy.util.StatuePoses;
@@ -13,11 +16,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.AbstractSlider;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.state.properties.DoubleBlockHalf;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -28,7 +37,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
   private static final ResourceLocation SCREEN_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/gui/statue.png");
 
   private static final int SCREEN_WIDTH = 224;
-  private static final int SCREEN_HEIGHT = 208;
+  private static final int SCREEN_HEIGHT = 202;
   
   private static final int PREVIEW_WIDTH = 52;
   private static final int PREVIEW_HEIGHT = 88;
@@ -36,21 +45,16 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
   private static final int PREVIEW_Y = 8;
   
   private static final int PARTS_X = 147;
-  private static final int PARTS_Y = 23;
+  private static final int PARTS_Y = 7;
   
   private static final int GENDER_X = 26;
   private static final int GENDER_Y = 90;
   
   private static final int RESET_X = 123;
-  private static final int RESET_Y = 103;
-  
-  private static final int TEXT_X = 84;
-  private static final int TEXT_Y = 7;
-  private static final int TEXT_WIDTH = 116;
-  private static final int TEXT_HEIGHT = 12;
+  private static final int RESET_Y = 87;
   
   private static final int SLIDER_X = 69;
-  private static final int SLIDER_Y = 30;
+  private static final int SLIDER_Y = 14;
   private static final int SLIDER_HEIGHT = 20;
   private static final int SLIDER_SPACING = 4;
 
@@ -76,7 +80,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     this.currentPose = screenContainer.getStatuePose();
     this.blockPos = screenContainer.getBlockPos();
     this.isStatueFemale = screenContainer.isStatueFemale();
-    this.textureName = screenContainer.getTextureName();
+    this.textureName = screenContainer.getProfile();
     // send a request for updated pose information
     // GreekFantasy.CHANNEL.sendToServer(new CRequestStatuePoseUpdatePacket(screenContainer.getBlockPos()));
   }
@@ -98,13 +102,13 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     }
     // add reset button
     final ITextComponent titleReset = new TranslationTextComponent("controls.reset");
-    this.addButton(new StatueScreen.IconButton(this, this.guiLeft + RESET_X, this.guiTop + RESET_Y, 0, 240, titleReset, button -> {
+    this.addButton(new StatueScreen.IconButton(this, this.guiLeft + RESET_X, this.guiTop + RESET_Y, 0, 234, titleReset, button -> {
       StatueScreen.this.currentPose.set(StatueScreen.this.selectedPart, 0, 0, 0);
       StatueScreen.this.updateSliders();
     }));
     // add gender button
     final ITextComponent titleGender = new TranslationTextComponent("gui.statue.gender");
-    this.addButton(new StatueScreen.IconButton(this, this.guiLeft + GENDER_X, this.guiTop + GENDER_Y, 16, 240, titleGender, button -> StatueScreen.this.isStatueFemale = !StatueScreen.this.isStatueFemale) {
+    this.addButton(new StatueScreen.IconButton(this, this.guiLeft + GENDER_X, this.guiTop + GENDER_Y, 16, 234, titleGender, button -> StatueScreen.this.isStatueFemale = !StatueScreen.this.isStatueFemale) {
       @Override
       public int getIconX() { return super.getIconX() + (StatueScreen.this.isStatueFemale ? 0 : this.width); }
     });
@@ -141,7 +145,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     this.minecraft.getTextureManager().bindTexture(SCREEN_TEXTURE);
     this.blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     // draw tile entity preview
-    drawTileEntityOnScreen(matrixStack, this.guiLeft + PREVIEW_X, this.guiTop + PREVIEW_Y, 1, x, y, partialTicks);
+    drawTileEntityOnScreen(matrixStack, this.guiLeft + PREVIEW_X, this.guiTop + PREVIEW_Y, x, y, partialTicks);
   }
   
   @Override
@@ -168,9 +172,58 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     this.updateSliders();
   }
   
-  public static void drawTileEntityOnScreen(final MatrixStack matrixStackIn, final int posX, final int posY, final int scale, 
+  public void drawTileEntityOnScreen(final MatrixStack matrixStackIn, final int posX, final int posY, 
       final float mouseX, final float mouseY, final float partialTicks) {
-    // TODO
+    float margin = 12;
+    float scale = PREVIEW_WIDTH - margin * 2;
+    float rotX = (float)Math.atan((double)((mouseX - this.guiLeft) / 40.0F));
+    float rotY = (float)Math.atan((double)((mouseY - this.guiTop - PREVIEW_HEIGHT / 2) / 40.0F));
+    final TileEntity teMain = minecraft.world.getTileEntity(this.blockPos);
+    final boolean isUpper = teMain.getBlockState().get(StatueBlock.HALF) == DoubleBlockHalf.UPPER;
+    final float rotation = -teMain.getBlockState().get(StatueBlock.HORIZONTAL_FACING).getHorizontalAngle();
+    final TileEntity teOther = minecraft.world.getTileEntity(isUpper ? this.blockPos.down() : this.blockPos.up());
+    // preview client-side tile entity information
+    if(teMain instanceof StatueTileEntity && teOther instanceof StatueTileEntity) {
+      final StatueTileEntity statueMain = (StatueTileEntity)teMain;
+      final StatueTileEntity statueOther = (StatueTileEntity)teOther;
+      statueMain.setStatuePose(this.currentPose);
+      statueMain.setStatueFemale(this.isStatueFemale);
+      statueMain.setTextureName(this.textureName);
+      statueOther.setStatuePose(this.currentPose);
+      statueOther.setStatueFemale(this.isStatueFemale);
+      statueOther.setTextureName(this.textureName);
+   
+      // Render the Block with given scale
+      RenderSystem.pushMatrix();
+      RenderSystem.enableRescaleNormal();
+      RenderSystem.enableAlphaTest();
+      RenderSystem.defaultAlphaFunc();
+      RenderSystem.enableBlend();
+      RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+      RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+      RenderSystem.translatef(posX + margin, posY + margin, 100.0F + 10.0F);
+      RenderSystem.translatef(0.0F, PREVIEW_HEIGHT - margin * 2, 0.0F); // RenderSystem.translatef(8.0F, 8.0F, 0.0F);
+      RenderSystem.scalef(1.0F, -1.0F, 1.0F);
+      RenderSystem.scalef(scale, scale, scale); // RenderSystem.scalef(16.0F, 16.0F, 16.0F);
+
+      RenderSystem.rotatef(rotX * 15.0F, 0.0F, 1.0F, 0.0F);
+      RenderSystem.rotatef((rotY * 15.0F) + rotation, 1.0F, 0.0F, 0.0F);
+      
+      RenderHelper.setupGuiFlatDiffuseLighting();
+  
+      IRenderTypeBuffer.Impl bufferType = minecraft.getRenderTypeBuffers().getBufferSource();
+      TileEntityRendererDispatcher.instance.getRenderer(statueMain).render(statueMain, partialTicks, matrixStackIn, bufferType, 15728880, OverlayTexture.NO_OVERLAY);
+      bufferType.finish();
+
+      RenderSystem.translatef(0.0F, 1.0F, 0.0F);
+      TileEntityRendererDispatcher.instance.getRenderer(statueOther).render(statueOther, partialTicks, matrixStackIn, bufferType, 15728880, OverlayTexture.NO_OVERLAY);
+      bufferType.finish();
+      RenderSystem.enableDepthTest();
+      RenderHelper.setupGui3DDiffuseLighting();
+      RenderSystem.disableAlphaTest();
+      RenderSystem.disableRescaleNormal();
+      RenderSystem.popMatrix();
+    }
   }
  
   protected class PartButton extends Button {
