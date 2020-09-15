@@ -16,6 +16,7 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
@@ -23,6 +24,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.vector.Vector3f;
@@ -35,12 +37,15 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   private static final String KEY_POSE = "Pose";
   private static final String KEY_UPPER = "Upper";
   private static final String KEY_FEMALE = "Female";
+  private static final String KEY_NAME = "Name";
 
   private final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
 
+  private ResourceLocation overlayTexture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/steve.png");
   private StatuePose statuePose = StatuePoses.NONE;
   private boolean upper = false;
-  private boolean statueFemale;
+  private boolean statueFemale = false;
+  private String playerName = "";
 
   public StatueTileEntity() {
     super(GFRegistry.STATUE_TE);
@@ -51,21 +56,21 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     this.markDirty();
   }
 
-  public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
-      final PlayerEntity player, final Hand handIn, final BlockRayTraceResult hit) {
-    if (!worldIn.isRemote()) {
-      // TESTING: items
-//      setItem(new ItemStack(Items.STONE_SWORD), HandSide.RIGHT);
-//      setItem(new ItemStack(Items.ACACIA_LOG), HandSide.LEFT);
-      // TESTING: poses
-//      final int poseNum = worldIn.rand.nextInt(StatuePoses.ALL_POSES.length);
-//      this.statuePose = StatuePoses.ALL_POSES[poseNum];
-      // TODO open gui
-      this.markDirty();
-      worldIn.notifyBlockUpdate(pos, state, state, 2);
-    }
-    return ActionResultType.SUCCESS;
-  }
+//  public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
+//      final PlayerEntity player, final Hand handIn, final BlockRayTraceResult hit) {
+//    if (!worldIn.isRemote()) {
+//      // TESTING: items
+////      setItem(new ItemStack(Items.STONE_SWORD), HandSide.RIGHT);
+////      setItem(new ItemStack(Items.ACACIA_LOG), HandSide.LEFT);
+//      // TESTING: poses
+////      final int poseNum = worldIn.rand.nextInt(StatuePoses.ALL_POSES.length);
+////      this.statuePose = StatuePoses.ALL_POSES[poseNum];
+//      // TODO open gui
+//      this.markDirty();
+//      worldIn.notifyBlockUpdate(pos, state, state, 2);
+//    }
+//    return ActionResultType.SUCCESS;
+//  }
   
   public StatuePose getStatuePose() {
     return this.statuePose;
@@ -156,6 +161,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     nbt.putBoolean(KEY_UPPER, this.upper);
     nbt.putBoolean(KEY_FEMALE, statueFemale);
     nbt.put(KEY_POSE, this.statuePose.serializeNBT(new CompoundNBT()));
+    nbt.put(KEY_NAME, StringNBT.valueOf(playerName));
     ItemStackHelper.saveAllItems(nbt, this.inventory, true);
     return nbt;
   }
@@ -164,6 +170,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     this.upper = nbt.getBoolean(KEY_UPPER);
     this.statueFemale = nbt.getBoolean(KEY_FEMALE);
     this.statuePose = new StatuePose(nbt.getCompound(KEY_POSE));
+    this.playerName = nbt.getString(KEY_NAME);
     this.inventory.clear();
     ItemStackHelper.loadAllItems(nbt, this.inventory);
   }
@@ -237,8 +244,45 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   public boolean isStatueFemale() {
     return statueFemale;
   }
-
+  
   public void setStatueFemale(boolean statueFemale) {
+    setStatueFemale(statueFemale, false);
+  }
+
+  public void setStatueFemale(boolean statueFemale, final boolean refresh) {
     this.statueFemale = statueFemale;
+    this.markDirty();
+    if(refresh) {
+      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+    }
+  }
+  
+  public ResourceLocation getStoneTexture() {
+    return this.getStatueMaterial().getTexture(false);
+  }
+  
+  public ResourceLocation getOverlayTexture() {
+    return overlayTexture;
+  }
+  
+  public void setTextureName(final String nameIn) {
+    setTextureName(nameIn, false);
+  }
+  
+  public void setTextureName(final String nameIn, final boolean refresh) {
+    this.playerName = nameIn;
+    this.setTexture(nameIn);
+    this.markDirty();
+    if(refresh) {
+      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+    }
+  }
+  
+  public String getPlayerName() {
+    return playerName;
+  }
+  
+  private void setTexture(final String name) {
+    // TODO
   }
 }

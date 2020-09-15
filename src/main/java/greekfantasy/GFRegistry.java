@@ -167,10 +167,12 @@ public final class GFRegistry {
   public static void registerContainers(final RegistryEvent.Register<ContainerType<?>> event) {
     GreekFantasy.LOGGER.info("registerContainers");
     ContainerType<StatueContainer> containerType = IForgeContainerType.create((windowId, inv, data) -> {
+      final boolean isFemale = data.readBoolean();
       final BlockPos blockpos = data.readBlockPos();
       final CompoundNBT poseTag = data.readCompoundTag();
+      final String name = data.readString();
       final StatuePose pose = new StatuePose(poseTag);
-      return new StatueContainer(windowId, inv, new Inventory(2), pose, blockpos);
+      return new StatueContainer(windowId, inv, new Inventory(2), pose, isFemale, name, blockpos);
     });
     event.getRegistry().register(containerType.setRegistryName(GreekFantasy.MODID, "statue_container"));
   }

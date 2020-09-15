@@ -127,14 +127,18 @@ public class StatueBlock extends HorizontalBlock {
       final StatueTileEntity statuetileentity = (StatueTileEntity)tileentity;
       // write the pose tag to nbt to send to the gui
       final StatuePose currentPose = statuetileentity.getStatuePose();
+      final boolean isFemale = statuetileentity.isStatueFemale();
+      final String name = statuetileentity.getPlayerName();
       NetworkHooks.openGui((ServerPlayerEntity)playerIn, 
         new SimpleNamedContainerProvider((id, inventory, player) -> {
           // create and return a container
-          return new StatueContainer(id, inventory, statuetileentity, currentPose, tePos);
+          return new StatueContainer(id, inventory, statuetileentity, currentPose, isFemale, name, tePos);
         }, StringTextComponent.EMPTY), 
         buf -> {
+          buf.writeBoolean(isFemale);
           buf.writeBlockPos(tePos);
           buf.writeCompoundTag(currentPose.serializeNBT());
+          buf.writeString(name);
         });
       return ActionResultType.CONSUME;
     } else {

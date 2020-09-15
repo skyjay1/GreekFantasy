@@ -14,27 +14,31 @@ import net.minecraft.util.math.BlockPos;
 
 public class StatueContainer extends Container {
   
-  private static final int PLAYER_INV_X = 23;
-  private static final int PLAYER_INV_Y = 117;
+  public static final int PLAYER_INV_X = 31;
+  public static final int PLAYER_INV_Y = 125;
   
   private final Slot leftSlot;
   private final Slot rightSlot;
   
   private BlockPos blockPos;
   private StatuePose statuePose;
+  private boolean isFemale;
+  private String textureName;
 
   public StatueContainer(int id, final PlayerInventory inventory) {
-    this(id, inventory, new Inventory(2), StatuePoses.NONE, BlockPos.ZERO);
+    this(id, inventory, new Inventory(2), StatuePoses.NONE, false, "", BlockPos.ZERO);
   }
   
   public StatueContainer(final int id, final PlayerInventory inventory, final IInventory iinventory, 
-      final StatuePose statuePoseIn, final BlockPos blockPosIn) {
+      final StatuePose statuePoseIn, final boolean isFemaleIn, final String textureNameIn, final BlockPos blockPosIn) {
     super(GFRegistry.STATUE_CONTAINER, id);
     this.statuePose = statuePoseIn;
     this.blockPos = blockPosIn;
+    this.isFemale = isFemaleIn;
+    this.textureName = textureNameIn;
     // add container inventory
-    rightSlot = this.addSlot(new Slot(iinventory, 0, 7, 89));
-    leftSlot = this.addSlot(new Slot(iinventory, 1, 43, 89));
+    leftSlot = this.addSlot(new Slot(iinventory, 0, 8, 90));
+    rightSlot = this.addSlot(new Slot(iinventory, 1, 44, 90));
     // add player inventory
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 9; ++j) {
@@ -58,5 +62,13 @@ public class StatueContainer extends Container {
   
   public StatuePose getStatuePose() {
     return this.statuePose;
+  }
+  
+  public boolean isStatueFemale() {
+    return this.isFemale;
+  }
+  
+  public String getTextureName() {
+    return this.textureName;
   }
 }

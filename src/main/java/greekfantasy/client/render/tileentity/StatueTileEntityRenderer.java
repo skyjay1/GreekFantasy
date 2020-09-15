@@ -1,6 +1,8 @@
 package greekfantasy.client.render.tileentity;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.block.StatueBlock;
@@ -45,16 +47,34 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     final boolean isFemaleModel = te.isStatueFemale();
     final float rotation = te.getBlockState().get(StatueBlock.HORIZONTAL_FACING).getHorizontalAngle();
     final float translateY = upper ? 0.95F : 1.95F;
-    final ResourceLocation texture = te.getStatueMaterial().getTexture(isFemaleModel);
-    // actually render the model
+    final ResourceLocation textureStone = te.getStoneTexture();
+    final ResourceLocation textureOverlay = te.getOverlayTexture();
     matrixStackIn.push();
+    // prepare to render model
     matrixStackIn.translate(0.5D, (double)translateY, 0.5D);
     matrixStackIn.rotate(Vector3f.XP.rotationDegrees(180.0F));
     matrixStackIn.rotate(Vector3f.YP.rotationDegrees(rotation));
-    IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(texture));
+    IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureStone));
     this.model.setRotationAngles(te, partialTicks);
+    // render stone texture
     this.model.render(matrixStackIn, vertexBuilder, 15728640, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F, upper, isFemaleModel);
+    // prepare to render player texture
+    vertexBuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(textureOverlay));
+    RenderSystem.enableBlend();
+    RenderSystem.blendEquation(32774);
+    RenderSystem.blendFunc(770, 1);
+    //RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.DST_COLOR);
+    RenderSystem.alphaFunc(516, 0.0F);
+    // render player texture
+    this.model.render(matrixStackIn, vertexBuilder, 15728640, OverlayTexture.NO_OVERLAY, 0.9F, 0.9F, 0.9F, 0.4F, upper, isFemaleModel);
+    // reset RenderSystem values
+    RenderSystem.defaultBlendFunc();
+    RenderSystem.defaultAlphaFunc();
+    RenderSystem.disableBlend();
+    
+    // render held items
     renderHeldItems(te, partialTicks, matrixStackIn, bufferIn, 15728640, OverlayTexture.NO_OVERLAY, upper);
+    
     matrixStackIn.pop();
   }
   
