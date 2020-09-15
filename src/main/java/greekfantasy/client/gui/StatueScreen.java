@@ -1,5 +1,7 @@
 package greekfantasy.client.gui;
 
+import java.util.Random;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -26,7 +28,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -40,7 +41,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
   private static final int SCREEN_HEIGHT = 202;
   
   private static final int PREVIEW_WIDTH = 52;
-  private static final int PREVIEW_HEIGHT = 88;
+  private static final int PREVIEW_HEIGHT = 86;
   private static final int PREVIEW_X = 8;
   private static final int PREVIEW_Y = 8;
   
@@ -49,6 +50,9 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
   
   private static final int GENDER_X = 26;
   private static final int GENDER_Y = 90;
+  
+  private static final int PRESET_X = 69;
+  private static final int PRESET_Y = 87;
   
   private static final int RESET_X = 123;
   private static final int RESET_Y = 87;
@@ -63,10 +67,10 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
   
   protected BlockPos blockPos = BlockPos.ZERO;
   protected StatuePose currentPose = StatuePoses.NONE;
-  protected ModelPart selectedPart = ModelPart.HEAD;
+  protected ModelPart selectedPart = ModelPart.BODY;
   protected boolean isStatueFemale = false;
-  protected String textureName;
-  
+  protected String textureName = "";
+    
   protected AngleSlider sliderAngleX;
   protected AngleSlider sliderAngleY;
   protected AngleSlider sliderAngleZ;
@@ -76,13 +80,11 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     this.xSize = SCREEN_WIDTH;
     this.ySize = SCREEN_HEIGHT;
     this.playerInventoryTitleX = this.guiLeft + StatueContainer.PLAYER_INV_X;
-    this.playerInventoryTitleY = this.guiTop + StatueContainer.PLAYER_INV_Y - 9;
+    this.playerInventoryTitleY = this.guiTop + StatueContainer.PLAYER_INV_Y - 10;
     this.currentPose = screenContainer.getStatuePose();
     this.blockPos = screenContainer.getBlockPos();
     this.isStatueFemale = screenContainer.isStatueFemale();
     this.textureName = screenContainer.getProfile();
-    // send a request for updated pose information
-    // GreekFantasy.CHANNEL.sendToServer(new CRequestStatuePoseUpdatePacket(screenContainer.getBlockPos()));
   }
   
   @Override
@@ -112,6 +114,12 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
       @Override
       public int getIconX() { return super.getIconX() + (StatueScreen.this.isStatueFemale ? 0 : this.width); }
     });
+    // add preset button
+    final ITextComponent titlePreset = new TranslationTextComponent("gui.statue.preset");
+    this.addButton(new StatueScreen.IconButton(this, this.guiLeft + PRESET_X, this.guiTop + PRESET_Y, 48, 234, titlePreset, button -> {
+      StatueScreen.this.currentPose = StatuePoses.getRandomPose(StatueScreen.this.minecraft.world.rand);
+      StatueScreen.this.updateSliders();
+    }));
     // add sliders
     this.sliderAngleX = (new StatueScreen.AngleSlider(this.guiLeft + SLIDER_X, this.guiTop + SLIDER_Y, "X") {
       @Override
@@ -180,18 +188,13 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     float rotY = (float)Math.atan((double)((mouseY - this.guiTop - PREVIEW_HEIGHT / 2) / 40.0F));
     final TileEntity teMain = minecraft.world.getTileEntity(this.blockPos);
     final boolean isUpper = teMain.getBlockState().get(StatueBlock.HALF) == DoubleBlockHalf.UPPER;
-    final float rotation = -teMain.getBlockState().get(StatueBlock.HORIZONTAL_FACING).getHorizontalAngle();
     final TileEntity teOther = minecraft.world.getTileEntity(isUpper ? this.blockPos.down() : this.blockPos.up());
     // preview client-side tile entity information
     if(teMain instanceof StatueTileEntity && teOther instanceof StatueTileEntity) {
       final StatueTileEntity statueMain = (StatueTileEntity)teMain;
       final StatueTileEntity statueOther = (StatueTileEntity)teOther;
-      statueMain.setStatuePose(this.currentPose);
-      statueMain.setStatueFemale(this.isStatueFemale);
-      statueMain.setTextureName(this.textureName);
-      statueOther.setStatuePose(this.currentPose);
-      statueOther.setStatueFemale(this.isStatueFemale);
-      statueOther.setTextureName(this.textureName);
+      updateStatueTileEntity(statueMain);
+      updateStatueTileEntity(statueOther);
    
       // Render the Block with given scale
       RenderSystem.pushMatrix();
@@ -202,12 +205,13 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
       RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
       RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
       RenderSystem.translatef(posX + margin, posY + margin, 100.0F + 10.0F);
-      RenderSystem.translatef(0.0F, PREVIEW_HEIGHT - margin * 2, 0.0F); // RenderSystem.translatef(8.0F, 8.0F, 0.0F);
+      RenderSystem.translatef(0.0F, PREVIEW_HEIGHT - margin, 0.0F);
       RenderSystem.scalef(1.0F, -1.0F, 1.0F);
-      RenderSystem.scalef(scale, scale, scale); // RenderSystem.scalef(16.0F, 16.0F, 16.0F);
-
+      RenderSystem.scalef(scale, scale, scale);
+      //RenderSystem.rotatef(-this.currentPose.getAngles(ModelPart.BODY).getY(), 0.0F, 1.0F, 0.0F);
       RenderSystem.rotatef(rotX * 15.0F, 0.0F, 1.0F, 0.0F);
-      RenderSystem.rotatef((rotY * 15.0F) + rotation, 1.0F, 0.0F, 0.0F);
+      RenderSystem.rotatef(rotY * 15.0F, 1.0F, 0.0F, 0.0F);
+      
       
       RenderHelper.setupGuiFlatDiffuseLighting();
   
@@ -224,6 +228,19 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
       RenderSystem.disableRescaleNormal();
       RenderSystem.popMatrix();
     }
+  }
+  
+  /**
+   * Updates the client-side model for rendering in the GUI only.
+   * Does not send anything to the server.
+   * @param te the StatueTileEntity to update
+   **/
+  private void updateStatueTileEntity(final StatueTileEntity te) {
+    te.setStatuePose(this.currentPose);
+    te.setStatueFemale(this.isStatueFemale);
+    te.setTextureName(this.textureName);
+//    te.setItem(this.getContainer().getItemLeft(), HandSide.LEFT);
+//    te.setItem(this.getContainer().getItemRight(), HandSide.RIGHT);
   }
  
   protected class PartButton extends Button {
@@ -304,16 +321,21 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
 
     // called when the value is changed and is different from its previous value
     protected void func_230972_a_() {
-      setAngleValue(Math.toRadians((this.sliderValue - 0.5D) * 180.0D));
+      setAngleValue(Math.toRadians((this.sliderValue - 0.5D) * getAngleBounds()));
     }
 
     protected double getValueRadians() {
-      return Math.toRadians((this.sliderValue - 0.5D) * 180.0D);
+      return Math.toRadians((this.sliderValue - 0.5D) * getAngleBounds());
     }
     
     public void updateSlider() {
-      this.sliderValue = MathHelper.clamp((getAngleValue() / 180.0D) + 0.5D, 0.0D, 1.0D);
+      this.sliderValue = MathHelper.clamp((getAngleValue() / getAngleBounds()) + 0.5D, 0.0D, 1.0D);
       this.func_230979_b_();
+    }
+    
+    /** @return the range of angles that the slider outputs, in degrees **/
+    protected double getAngleBounds() {
+      return 360.0D;
     }
 
     /** @return the angle to display to the user, in degrees **/

@@ -64,4 +64,4 @@ __Key:__
 ## Other
 
 [X] Statue GUI
-[ ] Statue skins
+[X] Statue skins

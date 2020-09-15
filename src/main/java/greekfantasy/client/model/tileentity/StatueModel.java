@@ -46,10 +46,11 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     this.bipedHead.setRotationPoint(0.0F, 0.0F + yOffsetIn, 0.0F);
     // body
     this.bipedBody = new ModelRenderer(this, 16, 16);
-    this.bipedBody.addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSizeIn);
+    this.bipedBody.addBox(-4.01F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedBody.setRotationPoint(0.0F, 0.0F + yOffsetIn, 0.0F);
     this.bipedBodyChest = new ModelRenderer(this);
     this.bipedBodyChest.setRotationPoint(0.0F, 1.0F, -2.0F);
+    this.bipedBodyChest.rotateAngleX = -0.2182F;
     this.bipedBodyChest.setTextureOffset(19, 20).addBox(-4.01F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, modelSizeIn);
     // full-size arms
     this.bipedLeftArm = new ModelRenderer(this, 40, 16);

@@ -9,6 +9,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
 
@@ -70,5 +71,13 @@ public class StatueContainer extends Container {
   
   public String getProfile() {
     return this.profile;
+  }
+  
+  public ItemStack getItemLeft() {
+    return this.leftSlot != null ? this.leftSlot.getStack() : ItemStack.EMPTY;
+  }
+  
+  public ItemStack getItemRight() {
+    return this.rightSlot != null ? this.rightSlot.getStack() : ItemStack.EMPTY;
   }
 }

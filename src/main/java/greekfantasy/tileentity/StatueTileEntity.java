@@ -211,10 +211,9 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
 
   public void dropAllItems() {
     if (this.world != null) {
-      if (!this.world.isRemote) {
+      if (!this.world.isRemote()) {
         InventoryHelper.dropItems(this.world, this.getPos(), this.getInventory());
       }
-
       this.inventoryChanged();
     }
 
@@ -223,6 +222,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   @Override
   public void clear() {
     this.inventory.clear();
+    this.inventoryChanged();
   }
 
   @Override
@@ -246,6 +246,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
    * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
    */
   public ItemStack decrStackSize(int index, int count) {
+    this.inventoryChanged();
     return ItemStackHelper.getAndSplit(this.inventory, index, count);
   }
 
@@ -253,6 +254,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
    * Removes a stack from the given slot and returns it.
    */
   public ItemStack removeStackFromSlot(int index) {
+    this.inventoryChanged();
     return ItemStackHelper.getAndRemove(this.inventory, index);
   }
 
@@ -262,6 +264,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   public void setInventorySlotContents(int index, ItemStack stack) {
     if (index >= 0 && index < this.inventory.size()) {
       this.inventory.set(index, stack);
+      this.inventoryChanged();
     }
   }
 
