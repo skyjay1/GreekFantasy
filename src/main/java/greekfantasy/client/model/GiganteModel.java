@@ -1,5 +1,8 @@
 package greekfantasy.client.model;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import greekfantasy.entity.GiganteEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
@@ -50,5 +53,15 @@ public class GiganteModel<T extends GiganteEntity> extends BipedModel<T> {
     bipedLeftLeg.setRotationPoint(3.0F, 8.0F, 3.0F);
     bipedRightLeg.setRotationPoint(-3.0F, 8.0F, 3.0F);
   }
+
+  @Override
+  public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
+      float green, float blue, float alpha) {
+    matrixStackIn.push();
+    matrixStackIn.translate(0, 0, -0.25D);
+    super.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+    matrixStackIn.pop();
+  }
+  
   
 }

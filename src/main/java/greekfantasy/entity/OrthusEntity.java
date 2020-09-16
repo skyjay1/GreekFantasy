@@ -9,7 +9,10 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
+import net.minecraft.entity.ai.goal.LeapAtTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,19 +39,19 @@ public class OrthusEntity extends MonsterEntity {
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.29D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
   }
   
   @Override
   protected void registerGoals() {
     super.registerGoals();
-    //this.goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
-    //this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+    this.goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
+    this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
-    //this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    //this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     if(GreekFantasy.CONFIG.ORTHUS_ATTACK.get()) {
       // TODO make goal
       this.goalSelector.addGoal(2, new FireAttackGoal(this));
@@ -131,8 +134,8 @@ public class OrthusEntity extends MonsterEntity {
   
   static class FireAttackGoal extends Goal {
     private final OrthusEntity entity;
-    private final int MAX_FIRE_TIME = 80;
-    private final int MAX_COOLDOWN = 100;
+    private final int MAX_FIRE_TIME = 90;
+    private final int MAX_COOLDOWN = 160;
     private int fireBreathingTime;
     private int cooldown;
     
@@ -176,10 +179,8 @@ public class OrthusEntity extends MonsterEntity {
         this.entity.getLookController().setLookPositionWithEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
         // set fire to target
         if(fireBreathingTime > 10 && this.entity.getAttackTarget().hurtTime == 0) {
-          
+          // TODO get all entities within range and direction of fire to ignite
           this.entity.getAttackTarget().setFire(5);
-          //this.entity.attackEntityAsMob(this.entity.getAttackTarget());
-          
         }
       } else {
         resetTask();

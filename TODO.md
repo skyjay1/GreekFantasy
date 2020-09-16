@@ -35,7 +35,7 @@ __Key:__
 [ ] [ ] [ ] Various demons (Lamia)
 [ ] [ ] [ ] Hippocampus?
 [ ] [ ] [ ] Phoenix?
-[ ] [ ] [ ] Boss: Cerberus
+[X] [ ] [ ] Boss: Cerberus
 
 ## Features / Structures
 [~] Harpy Nests

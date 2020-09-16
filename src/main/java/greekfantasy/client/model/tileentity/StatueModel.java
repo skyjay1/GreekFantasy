@@ -53,10 +53,10 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     this.bipedBodyChest.rotateAngleX = -0.2182F;
     this.bipedBodyChest.setTextureOffset(19, 20).addBox(-4.01F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, modelSizeIn);
     // full-size arms
-    this.bipedLeftArm = new ModelRenderer(this, 40, 16);
+    this.bipedLeftArm = new ModelRenderer(this, 32, 48);
     this.bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedLeftArm.setRotationPoint(5.0F, 2.0F + yOffsetIn, 0.0F);
-    //this.bipedLeftArm.mirror = true;
+    this.bipedLeftArm.mirror = true;
     this.bipedRightArm = new ModelRenderer(this, 40, 16);
     this.bipedRightArm.addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedRightArm.setRotationPoint(-5.0F, 2.0F + yOffsetIn, 0.0F);
@@ -64,16 +64,16 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     this.bipedLeftArmSlim = new ModelRenderer(this, 32, 48);
     this.bipedLeftArmSlim.addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedLeftArmSlim.setRotationPoint(5.0F, 2.5F, 0.0F);
-    //this.bipedLeftArmSlim.mirror = true;
+    this.bipedLeftArmSlim.mirror = true;
     this.bipedRightArmSlim = new ModelRenderer(this, 40, 16);
     this.bipedRightArmSlim.addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedRightArmSlim.setRotationPoint(-5.0F, 2.5F, 0.0F);
     // legs
-    this.bipedRightLeg = new ModelRenderer(this, 0, 16);
+    this.bipedRightLeg = new ModelRenderer(this, 16, 48);
     this.bipedRightLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedRightLeg.setRotationPoint(-1.9F, 12.0F + yOffsetIn, 0.0F);
     this.bipedLeftLeg = new ModelRenderer(this, 0, 16);
-    //this.bipedLeftLeg.mirror = true;
+    this.bipedLeftLeg.mirror = true;
     this.bipedLeftLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedLeftLeg.setRotationPoint(1.9F, 12.0F + yOffsetIn, 0.0F);
     

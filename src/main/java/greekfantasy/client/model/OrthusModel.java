@@ -9,7 +9,6 @@ import net.minecraft.util.math.MathHelper;
 
 public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
   
-
   private final ModelRenderer head;
   private final ModelRenderer leftHead;
   private final ModelRenderer rightHead;
@@ -29,7 +28,7 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
     this.head.setRotationPoint(-1.0F, 13.5F, -7.0F);
     
     leftHead = new ModelRenderer(this);
-    leftHead.setRotationPoint(1.0F, 0.0F, 1.0F);
+    leftHead.setRotationPoint(4.0F, 0.0F, 2.0F);
     leftHead.setTextureOffset(0, 0).addBox(-4.0F, -3.0F, -4.0F, 6.0F, 6.0F, 4.0F, modelSize);
     leftHead.setTextureOffset(16, 14).addBox(-4.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
     leftHead.setTextureOffset(16, 14).addBox(0.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
@@ -38,7 +37,7 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
     this.head.addChild(this.leftHead);
     
     rightHead = new ModelRenderer(this);
-    rightHead.setRotationPoint(-1.0F, 0.0F, 1.0F);
+    rightHead.setRotationPoint(-1.0F, 0.0F, 2.0F);
     rightHead.setTextureOffset(0, 0).addBox(-4.0F, -3.0F, -4.0F, 6.0F, 6.0F, 4.0F, modelSize);
     rightHead.setTextureOffset(16, 14).addBox(-4.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
     rightHead.setTextureOffset(16, 14).addBox(0.0F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
@@ -91,7 +90,7 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
 //    if (p_212843_1_.func_233678_J__()) {
 //      this.tail.rotateAngleY = 0.0F;
 //    } else {
-      this.tail.rotateAngleY = 0.2F + MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+      this.tail.rotateAngleY = -0.8F + MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
 //    } 
     
 //    if (p_212843_1_.func_233684_eK_()) {

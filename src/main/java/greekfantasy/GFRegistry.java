@@ -8,6 +8,7 @@ import greekfantasy.block.StatueBlock;
 import greekfantasy.entity.AraEntity;
 import greekfantasy.entity.CentaurEntity;
 import greekfantasy.entity.CerastesEntity;
+import greekfantasy.entity.CerberusEntity;
 import greekfantasy.entity.CyclopesEntity;
 import greekfantasy.entity.CyprianCentaurEntity;
 import greekfantasy.entity.EmpusaEntity;
@@ -68,6 +69,7 @@ public final class GFRegistry {
   public static EntityType<AraEntity> ARA_ENTITY;
   public static EntityType<CentaurEntity> CENTAUR_ENTITY;
   public static EntityType<CerastesEntity> CERASTES_ENTITY;
+  public static EntityType<CerberusEntity> CERBERUS_ENTITY;
   public static EntityType<CyclopesEntity> CYCLOPES_ENTITY;
   public static EntityType<CyprianCentaurEntity> CYPRIAN_CENTAUR_ENTITY;
   public static EntityType<EmpusaEntity> EMPUSA_ENTITY;
@@ -140,6 +142,7 @@ public final class GFRegistry {
     CENTAUR_ENTITY = registerEntityType(event, CentaurEntity::new, CentaurEntity::getAttributes, "centaur", 1.39F, 2.49F, false);
     CYPRIAN_CENTAUR_ENTITY = registerEntityType(event, CyprianCentaurEntity::new, CyprianCentaurEntity::getAttributes, "cyprian", 1.39F, 2.49F, false);
     CERASTES_ENTITY = registerEntityType(event, CerastesEntity::new, CerastesEntity::getAttributes, "cerastes", 0.98F, 0.94F, false);
+    CERBERUS_ENTITY = registerEntityType(event, CerberusEntity::new, CerberusEntity::getAttributes, "cerberus", 1.98F, 1.9F, false);
     CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, "cyclopes", 1.19F, 2.79F, false);
     EMPUSA_ENTITY = registerEntityType(event, EmpusaEntity::new, EmpusaEntity::getAttributes, "empusa", 0.7F, 1.8F, true);
     GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, "gigante", 1.19F, 2.79F, false);
