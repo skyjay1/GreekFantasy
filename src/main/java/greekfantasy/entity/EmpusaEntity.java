@@ -3,7 +3,6 @@ package greekfantasy.entity;
 import java.util.EnumSet;
 
 import greekfantasy.GreekFantasy;
-import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -15,6 +14,7 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class EmpusaEntity extends CreatureEntity {
+public class EmpusaEntity extends MonsterEntity {
   
   private static final byte DRAINING_START = 4;
   private static final byte DRAINING_END = 5;
@@ -60,6 +60,10 @@ public class EmpusaEntity extends CreatureEntity {
   @Override
   public void livingTick() {
     super.livingTick();
+    // hurt in daytime
+    if(this.isServerWorld() && this.world.isDaytime() && this.hurtTime == 0) {
+      this.attackEntityFrom(DamageSource.STARVE, 1.0F);
+    }
     
     // spawn particles
     if (world.isRemote() && this.isDraining()) {

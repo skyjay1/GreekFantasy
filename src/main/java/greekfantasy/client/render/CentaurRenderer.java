@@ -5,12 +5,13 @@ import java.util.EnumMap;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.model.CentaurModel;
 import greekfantasy.entity.CentaurEntity;
+import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.entity.passive.horse.CoatColors;
 import net.minecraft.util.ResourceLocation;
 
-public class CentaurRenderer<T extends CentaurEntity> extends MobRenderer<T,CentaurModel<T>> {
+public class CentaurRenderer<T extends CentaurEntity> extends BipedRenderer<T,CentaurModel<T>> {
   
   public static final EnumMap<CoatColors, ResourceLocation> CENTAUR_TEXTURE_MAP = new EnumMap<>(CoatColors.class);
   public static final EnumMap<CoatColors, ResourceLocation> CYPRIAN_TEXTURE_MAP = new EnumMap<>(CoatColors.class);
@@ -43,6 +44,7 @@ public class CentaurRenderer<T extends CentaurEntity> extends MobRenderer<T,Cent
     super(renderManagerIn, model, 0.5F);
     this.addLayer(new CentaurHorseLayer<T>(this));
     this.addLayer(new CentaurQuiverLayer<T>(this));
+    //this.addLayer(new HeldItemLayer<>(this));
   }
 
   @Override

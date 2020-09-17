@@ -2,7 +2,7 @@ package greekfantasy.client.model;
 
 import com.google.common.collect.ImmutableList;
 
-import greekfantasy.entity.NymphEntity;
+import greekfantasy.entity.DryadEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelHelper;
 import net.minecraft.client.renderer.model.ModelRenderer;
@@ -11,7 +11,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
 
-public class NymphModel<T extends NymphEntity> extends BipedModel<T> {
+public class NymphModel<T extends DryadEntity> extends BipedModel<T> {
 
   private final ModelRenderer chest;
 

@@ -223,7 +223,7 @@ public class CentaurEntity extends CreatureEntity {
   public float getRearingAmount(float f) {
     return this.rearingAmount;
   }
-  
+
   public boolean hasBullHead() {
     return false;
   }

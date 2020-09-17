@@ -1,5 +1,7 @@
 package greekfantasy.entity;
 
+import java.util.Random;
+
 import javax.annotation.Nullable;
 
 import greekfantasy.GreekFantasy;
@@ -19,17 +21,21 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biome.Category;
 
-public class NymphEntity extends CreatureEntity {
+public class NaiadEntity extends CreatureEntity {
   
-  private static final DataParameter<Byte> DATA_VARIANT = EntityDataManager.createKey(NymphEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Byte> DATA_VARIANT = EntityDataManager.createKey(NaiadEntity.class, DataSerializers.BYTE);
   private static final String KEY_VARIANT = "Variant";
     
-  public NymphEntity(final EntityType<? extends NymphEntity> type, final World worldIn) {
+  public NaiadEntity(final EntityType<? extends NaiadEntity> type, final World worldIn) {
     super(type, worldIn);
   }
   
@@ -38,6 +44,16 @@ public class NymphEntity extends CreatureEntity {
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
+  }
+
+  //copied from DolphinEntity
+  public static boolean canNaiadSpawnOn(EntityType<NaiadEntity> entity, IWorld world, SpawnReason reason, BlockPos pos,
+      Random rand) {
+    if (pos.getY() <= 45 || pos.getY() >= world.getSeaLevel()) {
+      return false;
+    }
+    final Biome biome = world.getBiome(pos);
+    return biome.getCategory() == Biome.Category.OCEAN || biome.getCategory() == Biome.Category.RIVER;
   }
 
   @Override
@@ -62,32 +78,26 @@ public class NymphEntity extends CreatureEntity {
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
-    this.setVariant(NymphEntity.Variant.getById(compound.getByte(KEY_VARIANT)));
+    this.setVariant(NaiadEntity.Variant.getById(compound.getByte(KEY_VARIANT)));
   }
   
-  @Nullable
+  @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    final NymphEntity.Variant variant = Util.getRandomObject(NymphEntity.Variant.values(), this.rand);
-    this.setVariant(variant);
+    final Biome.Category biome = worldIn.getBiome(this.getPosition()).getCategory();
+    this.setVariant(biome == Category.OCEAN ? NaiadEntity.Variant.OCEAN : NaiadEntity.Variant.RIVER);
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
 
-  public void setVariant(final NymphEntity.Variant variant) {
+  public void setVariant(final NaiadEntity.Variant variant) {
     this.getDataManager().set(DATA_VARIANT, variant.getId());
   }
   
-  public NymphEntity.Variant getVariant() {
-    return NymphEntity.Variant.getById(this.getDataManager().get(DATA_VARIANT).byteValue());
+  public NaiadEntity.Variant getVariant() {
+    return NaiadEntity.Variant.getById(this.getDataManager().get(DATA_VARIANT).byteValue());
   }
   
   public static enum Variant implements IStringSerializable {
-    ACACIA("acacia"),
-    BIRCH("birch"),
-    DARK_OAK("dark_oak"),
-    JUNGLE("jungle"),
-    OAK("oak"),
-    SPRUCE("spruce"),
     OCEAN("ocean"),
     RIVER("river");
     
@@ -95,12 +105,12 @@ public class NymphEntity extends CreatureEntity {
     private final ResourceLocation texture;
     
     private Variant(final String nameIn) {
-      name = nameIn + "_nymph";
-      texture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/nymph/" + name + ".png");
+      name = nameIn;
+      texture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/naiad/" + name + ".png");
     }
     
     public static Variant getById(final byte i) {
-      return values()[i];
+      return values()[MathHelper.clamp(i, 0, values().length)];
     }
     
     public static Variant getByName(final String n) {
@@ -113,13 +123,9 @@ public class NymphEntity extends CreatureEntity {
         }
       }
       // defaults to OAK
-      return OAK;
+      return RIVER;
     }
-    
-    public boolean isWaterVariant() {
-      return this == OCEAN || this == RIVER;
-    }
-    
+
     public ResourceLocation getTexture() {
       return texture;
     }

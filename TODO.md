@@ -54,14 +54,23 @@ __Key:__
 [~] Limestone (raw, smooth, bricks, pillar)
 [~] Marble (raw, smooth, bricks, pillar)
 [X] Statues
+[ ] Vase / Urn
+[ ] Grapes / grapevines
 
 ## Items
 
-[~] Clubs (all materials)
+[~] Panflute
+[~] Clubs (wood, stone/flint, iron)
+[ ] Javelins (wood, stone/flint, iron)
+[ ] Pandora's Box (item)
 [ ] Golden bridle (for Unicorn)
 [ ] Winged sandals
+[ ] Horn (from Minotaur / Cyprians)
 
 ## Other
 
 [X] Statue GUI
 [X] Statue skins
+[ ] "Stunned" effect (prevent movement or item use)
+[ ] "Petrified" effect
+[ ] Achievement for being petrified: "At first, I was afraid, I was petrified"

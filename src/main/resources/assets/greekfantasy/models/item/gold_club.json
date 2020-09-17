@@ -1,6 +1,0 @@
-{
-  "parent": "greekfantasy:item/club",
-  "textures": {
-    "2": "minecraft:block/gold_block"
-  }
-}

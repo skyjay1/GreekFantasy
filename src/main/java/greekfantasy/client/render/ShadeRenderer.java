@@ -1,11 +1,14 @@
 package greekfantasy.client.render;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.model.ShadeModel;
 import greekfantasy.entity.ShadeEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
@@ -33,5 +36,12 @@ public class ShadeRenderer<T extends ShadeEntity> extends BipedRenderer<T, Shade
     matrixStackIn.translate(0.0D, translateY, 0.0D);
     super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
     matrixStackIn.pop();
+  }
+  
+  @Override
+  @Nullable
+  protected RenderType func_230496_a_(final T entity, boolean isVisible, boolean isVisibleToPlayer, boolean isGlowing) {
+    ResourceLocation tex = this.getEntityTexture(entity);
+    return entity.isGlowing() ? RenderType.getOutline(tex) : RenderType.getEntityTranslucent(tex);
   }
 }

@@ -275,7 +275,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
         final ITextComponent title, final IPressable pressedAction) {
       super(x, y, BTN_HEIGHT, BTN_HEIGHT, StringTextComponent.EMPTY, pressedAction, (button, matrix, mouseX, mouseY) -> {
         if(button.active) {
-          screenIn.renderTooltip(matrix, screenIn.minecraft.fontRenderer.func_238425_b_(title, Math.max(screenIn.width / 2 - 43, 170)), mouseX, mouseY);
+          screenIn.renderTooltip(matrix, screenIn.minecraft.fontRenderer.trimStringToWidth(title, Math.max(screenIn.width / 2 - 43, 170)), mouseX, mouseY);
         }
       });
       this.textureX = tX;

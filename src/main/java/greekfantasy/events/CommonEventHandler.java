@@ -11,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -52,5 +53,11 @@ public class CommonEventHandler {
         rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, 10.0F, 2.2D, 2.2D));
       }
     }
+  }
+  
+  @SubscribeEvent
+  public static void onBiomeLoad(final BiomeLoadingEvent event) {
+    GFRegistry.addBiomeFeatures(event);
+    GFRegistry.addBiomeSpawns(event);
   }
 }

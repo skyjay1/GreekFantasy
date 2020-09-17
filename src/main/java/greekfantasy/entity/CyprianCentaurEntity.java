@@ -38,5 +38,4 @@ public class CyprianCentaurEntity extends CentaurEntity {
   public boolean hasBullHead() {
     return true;
   }
-  
 }

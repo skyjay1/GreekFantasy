@@ -31,6 +31,7 @@ public class EmpusaHairLayer<T extends EmpusaEntity> extends LayerRenderer<T, Em
       matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
       matrixStackIn.scale(scale, -scale, -scale);
       // render fire here
+      // note: packed light flag 15728640 uses world light, 15728880 uses constant/full light
       Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(Blocks.FIRE.getDefaultState(), 
           matrixStackIn, bufferIn, 15728880, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
       // finish rendering
