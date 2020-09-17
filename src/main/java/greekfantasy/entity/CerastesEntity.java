@@ -1,9 +1,11 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
+import java.util.Random;
 
 import greekfantasy.entity.ai.GoToBlockGoal;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
@@ -11,6 +13,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.Pose;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
@@ -26,7 +29,9 @@ import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -59,6 +64,12 @@ public class CerastesEntity extends CreatureEntity {
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.31D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 5.0D);
+  }
+  
+  public static boolean canCerastesSpawnOn(final EntityType<? extends MobEntity> entity, final IWorld world, final SpawnReason reason, 
+      final BlockPos pos, final Random rand) {
+    final BlockPos blockpos = pos.down();
+    return reason == SpawnReason.SPAWNER || world.getBlockState(blockpos.down()).isIn(Blocks.SAND);
   }
   
   @Override

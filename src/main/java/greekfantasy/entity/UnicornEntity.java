@@ -4,16 +4,19 @@ import net.minecraft.block.SoundType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
 public class UnicornEntity extends AbstractHorseEntity {
-
+  
   public UnicornEntity(EntityType<? extends UnicornEntity> type, World worldIn) {
     super(type, worldIn);
   }
@@ -27,6 +30,10 @@ public class UnicornEntity extends AbstractHorseEntity {
   @Override
   public void registerGoals() {
     super.registerGoals();
+    this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, PlayerEntity.class, 16.0F, 1.6D, 1.4D, (entity) -> {
+      return !entity.isDiscrete() && EntityPredicates.CAN_AI_TARGET.test(entity) && 
+          (this.getOwnerUniqueId() == null || !entity.getUniqueID().equals(this.getOwnerUniqueId()));
+   }));
   }
   
   // CALLED FROM ON INITIAL SPAWN

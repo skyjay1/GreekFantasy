@@ -10,7 +10,7 @@ import greekfantasy.entity.CentaurEntity;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.CerberusEntity;
 import greekfantasy.entity.CyclopesEntity;
-import greekfantasy.entity.CyprianCentaurEntity;
+import greekfantasy.entity.CyprianEntity;
 import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.EmpusaEntity;
 import greekfantasy.entity.GiganteEntity;
@@ -82,7 +82,7 @@ public final class GFRegistry {
   public static EntityType<CerastesEntity> CERASTES_ENTITY;
   public static EntityType<CerberusEntity> CERBERUS_ENTITY;
   public static EntityType<CyclopesEntity> CYCLOPES_ENTITY;
-  public static EntityType<CyprianCentaurEntity> CYPRIAN_CENTAUR_ENTITY;
+  public static EntityType<CyprianEntity> CYPRIAN_ENTITY;
   public static EntityType<DryadEntity> DRYAD_ENTITY;
   public static EntityType<EmpusaEntity> EMPUSA_ENTITY;
   public static EntityType<GiganteEntity> GIGANTE_ENTITY;
@@ -149,23 +149,23 @@ public final class GFRegistry {
   public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
     GreekFantasy.LOGGER.info("registerEntities");
     ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, MonsterEntity::canMonsterSpawnInLight, "ara", 0.7F, 1.8F, EntityClassification.MONSTER, true);
-    CENTAUR_ENTITY = registerEntityType(event, CentaurEntity::new, CentaurEntity::getAttributes, MobEntity::canSpawnOn, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, false);
-    CYPRIAN_CENTAUR_ENTITY = registerEntityType(event, CyprianCentaurEntity::new, CyprianCentaurEntity::getAttributes, MobEntity::canSpawnOn, "cyprian", 1.39F, 2.49F, EntityClassification.MONSTER, false);
-    CERASTES_ENTITY = registerEntityType(event, CerastesEntity::new, CerastesEntity::getAttributes, MobEntity::canSpawnOn, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, false);
-    CERBERUS_ENTITY = registerEntityType(event, CerberusEntity::new, CerberusEntity::getAttributes, MobEntity::canSpawnOn, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, false);
-    CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, MobEntity::canSpawnOn, "cyclopes", 1.19F, 2.79F, EntityClassification.MONSTER, false);
-    DRYAD_ENTITY = registerEntityType(event, DryadEntity::new, DryadEntity::getAttributes, MobEntity::canSpawnOn, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, false);
-    EMPUSA_ENTITY = registerEntityType(event, EmpusaEntity::new, EmpusaEntity::getAttributes, MonsterEntity::canMonsterSpawnInLight, "empusa", 0.7F, 1.8F, EntityClassification.MONSTER, true);
-    GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, MobEntity::canSpawnOn, "gigante", 1.19F, 2.79F, EntityClassification.CREATURE, false);
-    GORGON_ENTITY = registerEntityType(event, GorgonEntity::new, GorgonEntity::getAttributes, MonsterEntity::canMonsterSpawn, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, false);
-    HARPY_ENTITY = registerEntityType(event, HarpyEntity::new, HarpyEntity::getAttributes, MobEntity::canSpawnOn, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, false);
-    MINOTAUR_ENTITY = registerEntityType(event, MinotaurEntity::new, MinotaurEntity::getAttributes, MonsterEntity::canMonsterSpawnInLight, "minotaur", 0.7F, 1.8F, EntityClassification.MONSTER, false);
+    CENTAUR_ENTITY = registerEntityType(event, CentaurEntity::new, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, false);
+    CYPRIAN_ENTITY = registerEntityType(event, CyprianEntity::new, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn, "cyprian", 1.39F, 2.49F, EntityClassification.MONSTER, false);
+    CERASTES_ENTITY = registerEntityType(event, CerastesEntity::new, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, false);
+    CERBERUS_ENTITY = registerEntityType(event, CerberusEntity::new, CerberusEntity::getAttributes, CerberusEntity::canSpawnOn, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, false);
+    CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn, "cyclopes", 1.19F, 2.79F, EntityClassification.MONSTER, false);
+    DRYAD_ENTITY = registerEntityType(event, DryadEntity::new, DryadEntity::getAttributes, DryadEntity::canSpawnOn, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, false);
+    EMPUSA_ENTITY = registerEntityType(event, EmpusaEntity::new, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight, "empusa", 0.7F, 1.8F, EntityClassification.MONSTER, true);
+    GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn, "gigante", 1.19F, 2.79F, EntityClassification.CREATURE, false);
+    GORGON_ENTITY = registerEntityType(event, GorgonEntity::new, GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, false);
+    HARPY_ENTITY = registerEntityType(event, HarpyEntity::new, HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, false);
+    MINOTAUR_ENTITY = registerEntityType(event, MinotaurEntity::new, MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight, "minotaur", 0.7F, 1.8F, EntityClassification.MONSTER, false);
     NAIAD_ENTITY = registerEntityType(event, NaiadEntity::new, NaiadEntity::getAttributes, NaiadEntity::canNaiadSpawnOn, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, false);
-    ORTHUS_ENTITY = registerEntityType(event, OrthusEntity::new, OrthusEntity::getAttributes, MobEntity::canSpawnOn, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, true);
-    SATYR_ENTITY = registerEntityType(event, SatyrEntity::new, SatyrEntity::getAttributes, MobEntity::canSpawnOn, "satyr", 0.7F, 1.8F, EntityClassification.CREATURE, false);
-    SHADE_ENTITY = registerEntityType(event, ShadeEntity::new, ShadeEntity::getAttributes, MonsterEntity::canMonsterSpawnInLight, "shade", 0.7F, 1.8F, EntityClassification.MONSTER, true);
+    ORTHUS_ENTITY = registerEntityType(event, OrthusEntity::new, OrthusEntity::getAttributes, OrthusEntity::canSpawnOn, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, true);
+    SATYR_ENTITY = registerEntityType(event, SatyrEntity::new, SatyrEntity::getAttributes, SatyrEntity::canSpawnOn, "satyr", 0.7F, 1.8F, EntityClassification.CREATURE, false);
+    SHADE_ENTITY = registerEntityType(event, ShadeEntity::new, ShadeEntity::getAttributes, ShadeEntity::canMonsterSpawnInLight, "shade", 0.7F, 1.8F, EntityClassification.MONSTER, true);
     SIREN_ENTITY = registerEntityType(event, SirenEntity::new, SirenEntity::getAttributes, SirenEntity::canSirenSpawnOn, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, false);
-    UNICORN_ENTITY = registerEntityType(event, UnicornEntity::new, UnicornEntity::getAttributes, MobEntity::canSpawnOn, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, false);
+    UNICORN_ENTITY = registerEntityType(event, UnicornEntity::new, UnicornEntity::getAttributes, UnicornEntity::canSpawnOn, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, false);
   }
   
   @SubscribeEvent
@@ -260,56 +260,58 @@ public final class GFRegistry {
   // OTHER SETUP METHODS //
 
   public static void addBiomeFeatures(final BiomeLoadingEvent event) {
-    GreekFantasy.LOGGER.info("registerBiomeFeatures");
     if(event.getCategory() != Biome.Category.NETHER && event.getCategory() != Biome.Category.THEEND) {
-      event.getGeneration().withFeature(GenerationStage.Decoration.SURFACE_STRUCTURES, 
-          new ConfiguredFeature<>(GFStructures.HARPY_NEST_FEATURE, IFeatureConfig.NO_FEATURE_CONFIG)
-          .withPlacement(new ConfiguredPlacement<>(Placement.field_242898_b, new ChanceConfig(4))));
+//      event.getGeneration().withFeature(GenerationStage.Decoration.SURFACE_STRUCTURES, 
+//          new ConfiguredFeature<>(GFStructures.HARPY_NEST_FEATURE, IFeatureConfig.NO_FEATURE_CONFIG)
+//          .withPlacement(new ConfiguredPlacement<>(Placement.field_242898_b, new ChanceConfig(4))));
     }
   }
   
   public static void addBiomeSpawns(final BiomeLoadingEvent event) {
-    GreekFantasy.LOGGER.info("registerBiomeSpawns");
     final String name = event.getName().getPath();
-    if(event.getCategory() == Biome.Category.NETHER) {
+    final boolean isForest = name.contains("forest") || name.contains("taiga") || name.contains("jungle") || name.contains("savanna") || name.contains("wooded");
+    final Biome.Category category = event.getCategory();
+    if(category == Biome.Category.NETHER) {
       // register nether spawns
       registerSpawns(event.getSpawns(), CERBERUS_ENTITY, 1, 1, 1);
       registerSpawns(event.getSpawns(), ORTHUS_ENTITY, 1, 1, 4);
-    } else if(event.getCategory() != Biome.Category.THEEND) {
+    } else if(category != Biome.Category.THEEND) {
       // register overworld spawns
-      // TODO conditions
       registerSpawns(event.getSpawns(), ARA_ENTITY, 10, 2, 5);
-      registerSpawns(event.getSpawns(), CENTAUR_ENTITY, 10, 2, 4);
-      // desert spawns
-      if(event.getCategory() == Biome.Category.DESERT) {
-        registerSpawns(event.getSpawns(), CERASTES_ENTITY, 12, 1, 1);
-      }
-      registerSpawns(event.getSpawns(), CYCLOPES_ENTITY, 10, 1, 3);
-      registerSpawns(event.getSpawns(), CYPRIAN_CENTAUR_ENTITY, 10, 2, 3);
-      // forest spawns
-      if(name.contains("forest") || name.contains("taiga") || name.contains("jungle") || name.contains("savanna") || name.contains("wooded")) {
-        registerSpawns(event.getSpawns(), DRYAD_ENTITY, 18, 1, 2);
-        registerSpawns(event.getSpawns(), SATYR_ENTITY, 14, 2, 5);
-      }
       registerSpawns(event.getSpawns(), EMPUSA_ENTITY, 50, 1, 3);
-      if(event.getCategory() == Biome.Category.EXTREME_HILLS) {
-        registerSpawns(event.getSpawns(), GIGANTE_ENTITY, 10, 1, 4);
-      }
       registerSpawns(event.getSpawns(), GORGON_ENTITY, 10, 3, 3);
       registerSpawns(event.getSpawns(), HARPY_ENTITY, 10, 1, 3);
       registerSpawns(event.getSpawns(), MINOTAUR_ENTITY, 30, 2, 5);
-      
       registerSpawns(event.getSpawns(), SHADE_ENTITY, 5, 1, 1);
-      // ocean spawns
-      if(event.getCategory() == Biome.Category.OCEAN) {
-        registerSpawns(event.getSpawns(), SIREN_ENTITY, 10, 2, 5);
+      // desert spawns
+      if(category == Biome.Category.DESERT) {
+        registerSpawns(event.getSpawns(), CERASTES_ENTITY, 12, 1, 1);
       }
-      if(event.getCategory() == Biome.Category.OCEAN || event.getCategory() == Biome.Category.RIVER) {
-        registerSpawns(event.getSpawns(), NAIAD_ENTITY, 8, 2, 5);
+      // mountains spawns
+      if(category == Biome.Category.EXTREME_HILLS) {
+        registerSpawns(event.getSpawns(), CYCLOPES_ENTITY, 10, 1, 3);
+        registerSpawns(event.getSpawns(), GIGANTE_ENTITY, 10, 1, 4);
       }
       // plains spawns
-      if(event.getCategory() == Biome.Category.PLAINS) {
+      if(category == Biome.Category.PLAINS) {
         registerSpawns(event.getSpawns(), UNICORN_ENTITY, 8, 2, 5);
+      }
+      // plains + taiga spawns
+      if(category == Biome.Category.PLAINS || name.contains("taiga")) {
+        registerSpawns(event.getSpawns(), CENTAUR_ENTITY, 10, 2, 4);
+        registerSpawns(event.getSpawns(), CYPRIAN_ENTITY, 10, 2, 3);
+      }
+      // forest spawns
+      if(isForest) {
+        registerSpawns(event.getSpawns(), DRYAD_ENTITY, 18, 1, 2);
+        registerSpawns(event.getSpawns(), SATYR_ENTITY, 14, 2, 5);
+      }
+      // water spawns
+      if(category == Biome.Category.OCEAN) {
+        registerSpawns(event.getSpawns(), SIREN_ENTITY, 10, 2, 5);
+      }
+      if(category == Biome.Category.OCEAN || category == Biome.Category.RIVER) {
+        registerSpawns(event.getSpawns(), NAIAD_ENTITY, 8, 2, 5);
       }
     }
   }

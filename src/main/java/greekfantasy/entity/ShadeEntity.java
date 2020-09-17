@@ -143,11 +143,6 @@ public class ShadeEntity extends MonsterEntity {
   @Override
   protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
   }
-  
-  @Override
-  public float getBrightness() {
-    return 1.0F;
-  }
 
   @Override
   public void writeAdditional(CompoundNBT compound) {

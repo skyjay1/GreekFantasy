@@ -1,5 +1,7 @@
 package greekfantasy.entity;
 
+import java.util.Optional;
+
 import javax.annotation.Nullable;
 
 import greekfantasy.GreekFantasy;
@@ -18,8 +20,8 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
@@ -67,10 +69,10 @@ public class DryadEntity extends CreatureEntity {
     this.setVariant(DryadEntity.Variant.getById(compound.getByte(KEY_VARIANT)));
   }
   
-  @Nullable
+  @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    final DryadEntity.Variant variant = DryadEntity.Variant.getForBiome(worldIn.getBiome(this.getPosition()));
+    final DryadEntity.Variant variant = DryadEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
     this.setVariant(variant);
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
@@ -99,8 +101,8 @@ public class DryadEntity extends CreatureEntity {
       texture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/dryad/" + name + ".png");
     }
     
-    public static Variant getForBiome(final Biome biome) {
-      final String biomeName = biome.getRegistryName().getPath();
+    public static Variant getForBiome(final Optional<RegistryKey<Biome>> biome) {
+      final String biomeName = biome.isPresent() ? biome.get().getRegistryName().getPath() : "";
       if(biomeName.contains("birch")) {
         return BIRCH;
       }

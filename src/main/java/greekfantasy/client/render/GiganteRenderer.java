@@ -1,8 +1,11 @@
 package greekfantasy.client.render;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.model.GiganteModel;
 import greekfantasy.entity.GiganteEntity;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
@@ -18,5 +21,15 @@ public class GiganteRenderer<T extends GiganteEntity> extends BipedRenderer<T, G
   @Override
   public ResourceLocation getEntityTexture(final T entity) {
     return TEXTURE;
+  }
+  
+  @Override
+  public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
+      final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
+    final float scale = 1.1F;
+    matrixStackIn.push();
+    matrixStackIn.scale(scale, scale, scale);
+    super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
+    matrixStackIn.pop();
   }
 }

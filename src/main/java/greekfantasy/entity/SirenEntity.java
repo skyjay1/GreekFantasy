@@ -40,8 +40,8 @@ public class SirenEntity extends WaterMobEntity {
   }
 
   // copied from DolphinEntity
-  public static boolean canSirenSpawnOn(EntityType<SirenEntity> entity, IWorld world, SpawnReason reason, BlockPos pos,
-      Random rand) {
+  public static boolean canSirenSpawnOn(final EntityType<? extends WaterMobEntity> entity, final IWorld world, final SpawnReason reason, 
+      final BlockPos pos, final Random rand) {
     if (pos.getY() <= 45 || pos.getY() >= world.getSeaLevel()) {
       return false;
     }

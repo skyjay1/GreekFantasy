@@ -1,11 +1,12 @@
 package greekfantasy.entity;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 import javax.annotation.Nullable;
 
 import greekfantasy.GreekFantasy;
-import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.MobEntity;
@@ -14,12 +15,14 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -28,9 +31,9 @@ import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.Category;
+import net.minecraft.world.biome.Biomes;
 
-public class NaiadEntity extends CreatureEntity {
+public class NaiadEntity extends WaterMobEntity {
   
   private static final DataParameter<Byte> DATA_VARIANT = EntityDataManager.createKey(NaiadEntity.class, DataSerializers.BYTE);
   private static final String KEY_VARIANT = "Variant";
@@ -47,13 +50,9 @@ public class NaiadEntity extends CreatureEntity {
   }
 
   //copied from DolphinEntity
-  public static boolean canNaiadSpawnOn(EntityType<NaiadEntity> entity, IWorld world, SpawnReason reason, BlockPos pos,
+  public static boolean canNaiadSpawnOn(EntityType<? extends WaterMobEntity> entity, IWorld world, SpawnReason reason, BlockPos pos,
       Random rand) {
-    if (pos.getY() <= 45 || pos.getY() >= world.getSeaLevel()) {
-      return false;
-    }
-    final Biome biome = world.getBiome(pos);
-    return biome.getCategory() == Biome.Category.OCEAN || biome.getCategory() == Biome.Category.RIVER;
+    return SirenEntity.canSirenSpawnOn(entity, world, reason, pos, rand);
   }
 
   @Override
@@ -84,8 +83,8 @@ public class NaiadEntity extends CreatureEntity {
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    final Biome.Category biome = worldIn.getBiome(this.getPosition()).getCategory();
-    this.setVariant(biome == Category.OCEAN ? NaiadEntity.Variant.OCEAN : NaiadEntity.Variant.RIVER);
+    final NaiadEntity.Variant variant = NaiadEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
+    this.setVariant(variant);
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
 
@@ -124,6 +123,10 @@ public class NaiadEntity extends CreatureEntity {
       }
       // defaults to OAK
       return RIVER;
+    }
+    
+    public static Variant getForBiome(final Optional<RegistryKey<Biome>> biome) {
+      return biome.isPresent() && Objects.equals(biome, Optional.of(Biomes.RIVER)) ? RIVER : OCEAN;
     }
 
     public ResourceLocation getTexture() {

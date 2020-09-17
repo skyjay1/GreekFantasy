@@ -61,7 +61,7 @@ public class EmpusaEntity extends MonsterEntity {
   public void livingTick() {
     super.livingTick();
     // hurt in daytime
-    if(this.isServerWorld() && this.world.isDaytime() && this.hurtTime == 0) {
+    if(this.isServerWorld() && this.world.isDaytime() && this.hurtTime == 0 && rand.nextInt(10) == 0) {
       this.attackEntityFrom(DamageSource.STARVE, 1.0F);
     }
     

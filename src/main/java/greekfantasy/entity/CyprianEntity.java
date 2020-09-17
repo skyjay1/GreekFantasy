@@ -12,9 +12,9 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 
-public class CyprianCentaurEntity extends CentaurEntity {
+public class CyprianEntity extends CentaurEntity {
 
-  public CyprianCentaurEntity(final EntityType<? extends CyprianCentaurEntity> type, final World worldIn) {
+  public CyprianEntity(final EntityType<? extends CyprianEntity> type, final World worldIn) {
     super(type, worldIn);
   }
 

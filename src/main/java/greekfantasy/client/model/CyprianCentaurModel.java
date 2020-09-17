@@ -1,8 +1,8 @@
 package greekfantasy.client.model;
 
-import greekfantasy.entity.CyprianCentaurEntity;
+import greekfantasy.entity.CyprianEntity;
 
-public class CyprianCentaurModel<T extends CyprianCentaurEntity> extends CentaurModel<T> {
+public class CyprianCentaurModel<T extends CyprianEntity> extends CentaurModel<T> {
 
   public CyprianCentaurModel(float modelSize) {
     super(modelSize);

@@ -26,7 +26,7 @@ public class CerberusRenderer<T extends CerberusEntity> extends MobRenderer<T, C
   @Override
   public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
       final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
-    final float scale = 1.9F; // TODO increase
+    final float scale = 1.9F;
     matrixStackIn.push();
     matrixStackIn.scale(scale, scale, scale);
     super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);

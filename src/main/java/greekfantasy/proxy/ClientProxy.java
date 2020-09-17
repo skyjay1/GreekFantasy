@@ -14,7 +14,8 @@ import greekfantasy.client.render.GiganteRenderer;
 import greekfantasy.client.render.GorgonRenderer;
 import greekfantasy.client.render.HarpyRenderer;
 import greekfantasy.client.render.MinotaurRenderer;
-import greekfantasy.client.render.NymphRenderer;
+import greekfantasy.client.render.NaiadRenderer;
+import greekfantasy.client.render.DryadRenderer;
 import greekfantasy.client.render.OrthusRenderer;
 import greekfantasy.client.render.SatyrRenderer;
 import greekfantasy.client.render.ShadeRenderer;
@@ -33,7 +34,7 @@ public class ClientProxy extends Proxy {
   public void registerEventHandlers() { 
     super.registerEventHandlers();
     FMLJavaModLoadingContext.get().getModEventBus().register(ClientEventHandler.class);
-    MinecraftForge.EVENT_BUS.register(ClientEventHandler.class);
+    //MinecraftForge.EVENT_BUS.register(ClientEventHandler.class);
   }
     
   @Override
@@ -41,16 +42,17 @@ public class ClientProxy extends Proxy {
     GreekFantasy.LOGGER.info("registerEntityRenders");
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ARA_ENTITY, AraRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CENTAUR_ENTITY, CentaurRenderer::new);
-    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYPRIAN_CENTAUR_ENTITY, CyprianCentaurRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYPRIAN_ENTITY, CyprianCentaurRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CERASTES_ENTITY, CerastesRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CERBERUS_ENTITY, CerberusRenderer::new);
-    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYCLOPES_ENTITY, CyclopesRenderer::new);    
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYCLOPES_ENTITY, CyclopesRenderer::new);  
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DRYAD_ENTITY, DryadRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.EMPUSA_ENTITY, EmpusaRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GIGANTE_ENTITY, GiganteRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GORGON_ENTITY, GorgonRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.HARPY_ENTITY, HarpyRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.MINOTAUR_ENTITY, MinotaurRenderer::new);
-    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DRYAD_ENTITY, NymphRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.NAIAD_ENTITY, NaiadRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ORTHUS_ENTITY, OrthusRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SATYR_ENTITY, SatyrRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SHADE_ENTITY, ShadeRenderer::new);  

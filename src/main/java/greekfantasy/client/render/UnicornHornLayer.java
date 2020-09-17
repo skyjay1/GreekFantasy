@@ -25,19 +25,13 @@ public class UnicornHornLayer<T extends UnicornEntity> extends LayerRenderer<T, 
   @Override
   public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entity,
       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-    if (!entity.isInvisible()) {
+    if (!entity.isInvisible() && !entity.isChild()) {
       // get packed light and a vertex builder bound to the correct texture
       int packedOverlay = LivingRenderer.getPackedOverlay(entity, 0.0F);
       IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(TEXTURE));
             
-      // render snake hair
+      // render horn
       matrixStackIn.push();
-      float yaw = MathHelper.lerp(partialTicks, entity.prevRotationYaw, entity.rotationYaw) - MathHelper.lerp(partialTicks, entity.prevRenderYawOffset, entity.renderYawOffset);
-      float pitch = MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch);
-//      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(yaw));
-//      matrixStackIn.rotate(Vector3f.XP.rotationDegrees(pitch));
-//      matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-pitch));
-//      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-yaw));
       this.getEntityModel().renderHorn(entity, matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, limbSwing, limbSwingAmount);
       matrixStackIn.pop();
     }
