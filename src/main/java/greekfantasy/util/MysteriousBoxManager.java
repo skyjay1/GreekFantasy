@@ -22,13 +22,24 @@ public class MysteriousBoxManager {
   private static List<ResourceLocation> functions = new ArrayList<>();
   
   private static void loadFunctions(final FunctionManager manager) {
-    functions.add(new ResourceLocation(GreekFantasy.MODID, "mysterious_box/summon_shade"));
+    manager.reloader.func_240931_a_().keySet().forEach(rl -> {
+      if(rl.getNamespace().equals(GreekFantasy.MODID) && rl.getPath().contains("mysterious_box")) {
+        functions.add(rl);
+      }
+    });
   }
   
   private static Optional<FunctionObject> getRandomFunction(final FunctionManager manager, final Random rand) {
+    // load functions the first time this is called
     if(functions.isEmpty()) {
       loadFunctions(manager);
+      // if it's still empty, something went wrong
+      if(functions.isEmpty()) {
+        GreekFantasy.LOGGER.error("Tried to load functions for mysterious_box but none were found! What went wrong?");
+        return Optional.empty();
+      }
     }
+    // choose a random function to execute
     final int index = rand.nextInt(functions.size());
     final ResourceLocation rl = functions.get(index);
     return manager.get(rl);

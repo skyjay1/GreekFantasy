@@ -58,6 +58,7 @@ __Key:__
 [~] Marble (raw, smooth, bricks, pillar)
 [X] Statues
 [X] Vase
+[X] Mysterious box
 [ ] Urn
 [ ] Grapes / grapevines
 
@@ -66,7 +67,6 @@ __Key:__
 [~] Panflute
 [~] Clubs (wood, stone/flint, iron)
 [ ] Javelins (wood, stone/flint, iron)
-[ ] Pandora's Box? (item)
 [ ] Golden bridle (for Unicorn)
 [ ] Winged sandals
 [ ] Horn (from Minotaur / Cyprians)
@@ -77,4 +77,6 @@ __Key:__
 [X] Statue skins
 [X] "Stunned" effect (prevent movement or item use)
 [~] "Petrified" effect
-[ ] Achievement for being petrified: "At first, I was afraid, I was petrified"
+[X] Achievement for being petrified: "At first, I was afraid, I was petrified"
+[X] Achievement for encountering Cerastes
+[ ] Lots of mysterious box functions!
