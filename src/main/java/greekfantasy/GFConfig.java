@@ -1,4 +1,4 @@
-package greekfantasy.config;
+package greekfantasy;
 
 import java.nio.file.Path;
 
@@ -39,6 +39,7 @@ public class GFConfig {
 //  public final ForgeConfigSpec.IntValue SIREN_SPAWN_RATE;
 //  public final ForgeConfigSpec.IntValue UNICORN_SPAWN_RATE;
   public final ForgeConfigSpec.BooleanValue SHADE_SPAWN;
+  public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
   
   public GFConfig(final ForgeConfigSpec.Builder builder) {
     // mob attacks
@@ -64,6 +65,8 @@ public class GFConfig {
     builder.push("mob_spawns");
     SHADE_SPAWN = builder.comment("Whether a shade can spawn when players die")
         .define("shade_spawn", true);
+    SHADE_PLAYER_ONLY = builder.comment("Whether shades that spawn when a player dies can only be killed by that player")
+        .define("shade_player_only", true);
 //    SHADE_SPAWN_RATE = builder.comment("Natural spawn rate of shades")
 //        .defineInRange("shade_spawn_rate", 20, 0, 50);
     builder.pop();

@@ -11,6 +11,7 @@ import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -46,6 +47,7 @@ public class ShadeEntity extends MonsterEntity {
 
   public ShadeEntity(final EntityType<? extends ShadeEntity> type, final World worldIn) {
     super(type, worldIn);
+    this.stepHeight = 1.0F;
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -116,33 +118,30 @@ public class ShadeEntity extends MonsterEntity {
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
-    return super.isInvulnerableTo(source) 
-        || (source.getImmediateSource() instanceof PlayerEntity && this.isInvulnerableToPlayer((PlayerEntity)source.getImmediateSource()));
+    if(super.isInvulnerableTo(source)) {
+      return true;
+    }
+    return source.getTrueSource() instanceof PlayerEntity && isInvulnerableToPlayer((PlayerEntity)source.getTrueSource());
   }
   
   @Override
-  public boolean canAttack(final EntityType<?> typeIn) {
-    return typeIn == EntityType.PLAYER;
-  }
-
+  public boolean canAttack(final EntityType<?> typeIn) { return typeIn == EntityType.PLAYER; }
   @Override
-  public CreatureAttribute getCreatureAttribute() {
-    return CreatureAttribute.UNDEAD;
-  }
+  public boolean canBePushed() { return false; }
+  @Override
+  public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.UNDEAD; }
+  @Override
+  public boolean canDespawn(final double disToPlayer) { return this.getStoredXP() > 20; }
+  @Override
+  public boolean onLivingFall(float distance, float damageMultiplier) { return false; }
+  @Override
+  protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) { }
   
-  @Override
-  public boolean canDespawn(final double disToPlayer) {
-    return this.getStoredXP() > 20;
-  }
-
-  @Override
-  public boolean onLivingFall(float distance, float damageMultiplier) {
-    return false;
-  }
-
-  @Override
-  protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
-  }
+  @Nullable
+  public UUID getOwnerUniqueId() { return this.dataManager.get(OWNER_UNIQUE_ID).orElse((UUID)null); }
+  public void setOwnerUniqueId(@Nullable UUID uniqueId) { this.dataManager.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId)); }
+  public int getStoredXP() { return this.getDataManager().get(DATA_XP).intValue(); }
+  public void setStoredXP(int xp) { this.getDataManager().set(DATA_XP, xp); }  
 
   @Override
   public void writeAdditional(CompoundNBT compound) {
@@ -173,28 +172,14 @@ public class ShadeEntity extends MonsterEntity {
       this.setStoredXP(5 + this.rand.nextInt(10));
     }
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
- }
-
-  public int getStoredXP() {
-    return this.getDataManager().get(DATA_XP).intValue();
-  }
-
-  public void setStoredXP(int xp) {
-    this.getDataManager().set(DATA_XP, xp);
-  }
-  
-  @Nullable
-  public UUID getOwnerUniqueId() {
-     return this.dataManager.get(OWNER_UNIQUE_ID).orElse((UUID)null);
-  }
-
-  public void setOwnerUniqueId(@Nullable UUID uniqueId) {
-     this.dataManager.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId));
   }
   
   public boolean isInvulnerableToPlayer(final PlayerEntity player) {
-    final UUID uuid = getOwnerUniqueId();
-    return uuid != null && !uuid.equals(player.getUniqueID());
+    if(GreekFantasy.CONFIG.SHADE_PLAYER_ONLY.get() && !player.isCreative()) {
+      // check uuid to see if it matches
+      final UUID uuidPlayer = PlayerEntity.getOfflineUUID(player.getDisplayName().getUnformattedComponentText());
+      return this.getOwnerUniqueId() != null && !uuidPlayer.equals(this.getOwnerUniqueId());
+    }
+    return false;
   }
-  
 }

@@ -39,7 +39,7 @@ public class CommonForgeEventHandler {
         final ShadeEntity shade = GFRegistry.SHADE_ENTITY.create(player.getEntityWorld());
         shade.setLocationAndAngles(player.getPosX(), player.getPosY(), player.getPosZ(), player.rotationYaw, player.rotationPitch);
         shade.setStoredXP(xp);
-        shade.setOwnerUniqueId(player.getUniqueID());
+        shade.setOwnerUniqueId(PlayerEntity.getOfflineUUID(player.getDisplayName().getUnformattedComponentText()));
         player.getEntityWorld().addEntity(shade);
       }
     }

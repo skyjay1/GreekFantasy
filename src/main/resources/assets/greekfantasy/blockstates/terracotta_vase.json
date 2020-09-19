@@ -1,7 +1,19 @@
 {
   "variants": {
-	"": {
-	  "model": "greekfantasy:block/terracotta_vase"
-	}
+    "facing=east": {
+      "model": "greekfantasy:block/terracotta_vase",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "greekfantasy:block/terracotta_vase"
+    },
+    "facing=south": {
+      "model": "greekfantasy:block/terracotta_vase",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "greekfantasy:block/terracotta_vase",
+      "y": 270
+    }
   }
 }

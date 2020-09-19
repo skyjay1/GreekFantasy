@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import greekfantasy.client.network.CUpdateStatuePosePacket;
-import greekfantasy.config.GFConfig;
 import greekfantasy.proxy.ClientProxy;
 import greekfantasy.proxy.Proxy;
 import greekfantasy.proxy.ServerProxy;
@@ -48,7 +47,7 @@ public class GreekFantasy {
     // register config
     GreekFantasy.LOGGER.info("registerConfig");
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, CONFIG_SPEC);
-    GFConfig.loadConfig(CONFIG_SPEC, FMLPaths.CONFIGDIR.get().resolve(MODID + "-server.toml"));
+    //GFConfig.loadConfig(CONFIG_SPEC, FMLPaths.CONFIGDIR.get().resolve(MODID + "-server.toml"));
     // register side-specific or common event handlers
     PROXY.registerEventHandlers();
     // register messages
@@ -58,7 +57,6 @@ public class GreekFantasy {
   }
 
   public static void setup(final FMLCommonSetupEvent event) {
-//  setupFeatures();
-//  setupStructures();
+    
   }
 }

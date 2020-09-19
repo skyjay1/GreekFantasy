@@ -16,7 +16,7 @@ __Key:__
 [X] [X] [ ] Minotaur
 [X] [X] [ ] Gorgon (Medusa)
 [X] [~] [ ] Harpy
-[X] [X] [ ] Empusa
+[X] [X] [X] Empusa
 [X] [X] [X] Shade
 [~] [ ] [ ] Siren (hostile)
 [X] [X] [ ] Cerastes (ram-horned serpent)
@@ -30,7 +30,9 @@ __Key:__
 [ ] [ ] [ ] Makhai (6 arms)
 [ ] [ ] [ ] Eurynomos (blue skin; vulture head?)
 [ ] [ ] [ ] Ourea (mountain spirit, male)
-[ ] [ ] [ ] Phobos (panic) (lion head) ?
+[ ] [ ] [ ] Achos (pain)
+[ ] [ ] [ ] Deimos (panic)
+[ ] [ ] [ ] Elpis (hope) - after killing achos/deimos
 [ ] [ ] [ ] Yale (Latin "Centicore")
 [ ] [ ] [ ] Colchis Bull (giant bronze bull)
 [ ] [ ] [ ] Various demons (Lamia)
@@ -64,7 +66,7 @@ __Key:__
 [~] Panflute
 [~] Clubs (wood, stone/flint, iron)
 [ ] Javelins (wood, stone/flint, iron)
-[ ] Pandora's Box (item)
+[ ] Pandora's Box? (item)
 [ ] Golden bridle (for Unicorn)
 [ ] Winged sandals
 [ ] Horn (from Minotaur / Cyprians)
@@ -73,6 +75,6 @@ __Key:__
 
 [X] Statue GUI
 [X] Statue skins
-[ ] "Stunned" effect (prevent movement or item use)
-[ ] "Petrified" effect
+[X] "Stunned" effect (prevent movement or item use)
+[~] "Petrified" effect
 [ ] Achievement for being petrified: "At first, I was afraid, I was petrified"

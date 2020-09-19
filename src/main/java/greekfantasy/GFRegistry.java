@@ -3,6 +3,7 @@ package greekfantasy;
 import java.util.function.Supplier;
 
 import greekfantasy.block.ConnectedPillarBlock;
+import greekfantasy.block.MysteriousBoxBlock;
 import greekfantasy.block.NestBlock;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.block.VaseBlock;
@@ -33,9 +34,13 @@ import greekfantasy.structure.feature.HarpyNestFeature;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.tileentity.VaseTileEntity;
 import greekfantasy.util.StatuePose;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.StairsBlock;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType;
@@ -130,6 +135,8 @@ public final class GFRegistry {
   public static final Block MARBLE_STATUE = null;
   @ObjectHolder("terracotta_vase")
   public static final Block TERRACOTTA_VASE = null;
+  @ObjectHolder("mysterious_box")
+  public static final Block MYSTERIOUS_BOX = null;
   
   @ObjectHolder("statue_te")
   public static final TileEntityType<StatueTileEntity> STATUE_TE = null;
@@ -159,22 +166,22 @@ public final class GFRegistry {
   @SubscribeEvent
   public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
     GreekFantasy.LOGGER.info("registerEntities");
-    ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, MonsterEntity::canMonsterSpawnInLight, "ara", 0.7F, 1.8F, EntityClassification.MONSTER, true);
+    ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, MonsterEntity::canMonsterSpawnInLight, "ara", 0.67F, 1.8F, EntityClassification.MONSTER, true);
     CENTAUR_ENTITY = registerEntityType(event, CentaurEntity::new, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, false);
     CYPRIAN_ENTITY = registerEntityType(event, CyprianEntity::new, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, false);
     CERASTES_ENTITY = registerEntityType(event, CerastesEntity::new, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, false);
     CERBERUS_ENTITY = registerEntityType(event, CerberusEntity::new, CerberusEntity::getAttributes, CerberusEntity::canSpawnOn, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, false);
-    CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn, "cyclopes", 1.19F, 2.79F, EntityClassification.MONSTER, false);
+    CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn, "cyclopes", 0.99F, 2.79F, EntityClassification.MONSTER, false);
     DRYAD_ENTITY = registerEntityType(event, DryadEntity::new, DryadEntity::getAttributes, DryadEntity::canSpawnOn, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, false);
-    EMPUSA_ENTITY = registerEntityType(event, EmpusaEntity::new, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight, "empusa", 0.7F, 1.8F, EntityClassification.MONSTER, true);
-    GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn, "gigante", 1.19F, 2.79F, EntityClassification.CREATURE, false);
+    EMPUSA_ENTITY = registerEntityType(event, EmpusaEntity::new, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, true);
+    GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn, "gigante", 0.99F, 2.79F, EntityClassification.CREATURE, false);
     GORGON_ENTITY = registerEntityType(event, GorgonEntity::new, GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, false);
     HARPY_ENTITY = registerEntityType(event, HarpyEntity::new, HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, false);
     MINOTAUR_ENTITY = registerEntityType(event, MinotaurEntity::new, MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight, "minotaur", 0.7F, 1.8F, EntityClassification.MONSTER, false);
     NAIAD_ENTITY = registerEntityType(event, NaiadEntity::new, NaiadEntity::getAttributes, NaiadEntity::canNaiadSpawnOn, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, false);
     ORTHUS_ENTITY = registerEntityType(event, OrthusEntity::new, OrthusEntity::getAttributes, OrthusEntity::canSpawnOn, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, true);
-    SATYR_ENTITY = registerEntityType(event, SatyrEntity::new, SatyrEntity::getAttributes, SatyrEntity::canSpawnOn, "satyr", 0.7F, 1.8F, EntityClassification.CREATURE, false);
-    SHADE_ENTITY = registerEntityType(event, ShadeEntity::new, ShadeEntity::getAttributes, ShadeEntity::canMonsterSpawnInLight, "shade", 0.7F, 1.8F, EntityClassification.MONSTER, true);
+    SATYR_ENTITY = registerEntityType(event, SatyrEntity::new, SatyrEntity::getAttributes, SatyrEntity::canSpawnOn, "satyr", 0.67F, 1.8F, EntityClassification.CREATURE, false);
+    SHADE_ENTITY = registerEntityType(event, ShadeEntity::new, ShadeEntity::getAttributes, ShadeEntity::canMonsterSpawnInLight, "shade", 0.67F, 1.8F, EntityClassification.MONSTER, true);
     SIREN_ENTITY = registerEntityType(event, SirenEntity::new, SirenEntity::getAttributes, SirenEntity::canSirenSpawnOn, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, false);
     UNICORN_ENTITY = registerEntityType(event, UnicornEntity::new, UnicornEntity::getAttributes, UnicornEntity::canSpawnOn, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, false);
   }
@@ -214,16 +221,18 @@ public final class GFRegistry {
     registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.DIORITE), "marble");
 
     event.getRegistry().registerAll(
-        new NestBlock(Block.Properties.from(Blocks.HAY_BLOCK).notSolid().variableOpacity())
+        new NestBlock(AbstractBlock.Properties.create(Material.ORGANIC, MaterialColor.BROWN).hardnessAndResistance(0.5F).sound(SoundType.PLANT).notSolid())
           .setRegistryName(GreekFantasy.MODID, "nest"),
-        new ConnectedPillarBlock(Block.Properties.from(Blocks.STONE).notSolid())
+        new ConnectedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F).notSolid())
           .setRegistryName(GreekFantasy.MODID, "marble_pillar"),
         new StatueBlock(StatueBlock.StatueMaterial.LIMESTONE)
           .setRegistryName(GreekFantasy.MODID, "limestone_statue"),
         new StatueBlock(StatueBlock.StatueMaterial.MARBLE)
           .setRegistryName(GreekFantasy.MODID, "marble_statue"),
-        new VaseBlock(Block.Properties.from(Blocks.TERRACOTTA).notSolid())
-          .setRegistryName(GreekFantasy.MODID, "terracotta_vase")
+        new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
+          .setRegistryName(GreekFantasy.MODID, "terracotta_vase"),
+        new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
+          .setRegistryName(GreekFantasy.MODID, "mysterious_box")
     );
   }
 
@@ -259,6 +268,7 @@ public final class GFRegistry {
     registerItemBlock(event, MARBLE_STATUE, "marble_statue");
     
     registerItemBlock(event, TERRACOTTA_VASE, "terracotta_vase");
+    registerItemBlock(event, MYSTERIOUS_BOX, "mysterious_box");
   }
   
   @SubscribeEvent
