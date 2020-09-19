@@ -9,6 +9,10 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class GFConfig {
   
+  // effect configs
+  public final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
+  public final ForgeConfigSpec.BooleanValue STUN_PREVENTS_USE;
+  
   // special attack configs
   public final ForgeConfigSpec.BooleanValue EMPUSA_ATTACK;
   public final ForgeConfigSpec.BooleanValue GORGON_ATTACK;
@@ -21,6 +25,7 @@ public class GFConfig {
 //  public final ForgeConfigSpec.IntValue ARA_SPAWN_RATE;
 //  public final ForgeConfigSpec.IntValue CENTAUR_SPAWN_RATE;
 //  public final ForgeConfigSpec.IntValue CERASTES_SPAWN_RATE;
+//  public final ForgeConfigSpec.IntValue CERBERUS_SPAWN_RATE;
 //  public final ForgeConfigSpec.IntValue CYCLOPES_SPAWN_RATE;
 //  public final ForgeConfigSpec.IntValue CYPRIAN_SPAWN_RATE;
 //  public final ForgeConfigSpec.IntValue EMPUSA_SPAWN_RATE;
@@ -37,6 +42,12 @@ public class GFConfig {
   
   public GFConfig(final ForgeConfigSpec.Builder builder) {
     // mob attacks
+    builder.push("stun_effect");
+    STUN_PREVENTS_JUMP = builder.comment("When stunned, players are prevented from jumping")
+        .define("stun_prevents_jump", true);
+    STUN_PREVENTS_USE = builder.comment("When stunned, players are prevented from using items")
+        .define("stun_prevents_use", true);
+    builder.pop();
     builder.push("mob_attacks");
     EMPUSA_ATTACK = builder.comment("Whether the Empusa can drain health")
         .define("empusa_attack", true);

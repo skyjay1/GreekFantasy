@@ -25,7 +25,7 @@ public class VaseTileEntityRenderer extends TileEntityRenderer<VaseTileEntity> {
       final float scale = 0.35F;
       matrixStackIn.push();
       // transforms
-      matrixStackIn.translate(0.5D, 0.98D, 0.5D);
+      matrixStackIn.translate(0.5D, 0.96D, 0.5D);
       //matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
       matrixStackIn.scale(scale, scale, scale);
       // render the item stack

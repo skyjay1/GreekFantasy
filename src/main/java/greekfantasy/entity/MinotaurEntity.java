@@ -162,7 +162,7 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
     this.attackEntityAsMob(target);
     this.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(attackModifier);
     this.getAttribute(Attributes.ATTACK_KNOCKBACK).removeModifier(this.knockbackModifier);
-    // apply potion effects (if we make a "Stunned" effect later, use that instead)
+    // apply stunned effect
     target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 5 * 20, 0, false, false, true));
   }
   

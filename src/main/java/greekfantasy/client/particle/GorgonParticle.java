@@ -28,7 +28,7 @@ public class GorgonParticle extends Particle {
     GreekFantasy.LOGGER.info("Spawning gorgon particle...");
     this.particleGravity = 0.0F;
     this.age = 0;
-    this.maxAge = 120;
+    this.maxAge = 90;
   }
 
   @Override
@@ -42,13 +42,13 @@ public class GorgonParticle extends Particle {
     MatrixStack matrixStack = new MatrixStack();
     
     matrixStack.rotate(renderInfo.getRotation());
-    //matrixStack.rotate(Vector3f.YP.rotationDegrees(180.0F));
-    //matrixStack.scale(1.0F, -1.0F, 1.0F);
-    //matrixStack.translate(0.0D, -0.5D, 0.5D);
-    
-    matrixStack.rotate(Vector3f.XP.rotationDegrees(180.0F));
-    matrixStack.rotate(Vector3f.YP.rotationDegrees(180.0F));
-    matrixStack.translate(0.0D, -0.25D, 0.0D);
+    matrixStack.rotate(Vector3f.XP.rotationDegrees(120.0F)); // 150.0F * agePercent - 60.0F
+    matrixStack.scale(-1.0F, -1.0F, 1.0F);
+    matrixStack.translate(0.0D, -0.5D, 1.5D);
+    // TODO not working :(
+    //matrixStack.rotate(Vector3f.XP.rotationDegrees(180.0F));
+    //matrixStack.scale(-1.0F, -1.0F, 1.0F);
+    //matrixStack.translate(0.0D, 0.25D, 0.0D);
     
     IRenderTypeBuffer.Impl bufferImpl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
     IVertexBuilder vertexBuilder = bufferImpl.getBuffer(this.renderType);

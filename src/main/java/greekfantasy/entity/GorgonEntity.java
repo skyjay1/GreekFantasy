@@ -107,7 +107,7 @@ public class GorgonEntity extends MonsterEntity {
   }
   
   public boolean useStareAttack(final LivingEntity target) {
-    target.addPotionEffect(new EffectInstance(GFRegistry.PETRIFIED_EFFECT, PETRIFY_DURATION, 0, false, false));
+    target.addPotionEffect(new EffectInstance(GFRegistry.PETRIFIED_EFFECT, PETRIFY_DURATION, 0, false, false, true));
     if(this.isServerWorld()) {
       this.world.setEntityState(this, STARE_ATTACK);
     }

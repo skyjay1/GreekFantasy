@@ -314,7 +314,7 @@ public final class GFRegistry {
       // register overworld spawns
       registerSpawns(event.getSpawns(), ARA_ENTITY, 20, 2, 5);
       registerSpawns(event.getSpawns(), EMPUSA_ENTITY, 80, 1, 3);
-      registerSpawns(event.getSpawns(), GORGON_ENTITY, 20, 3, 3);
+      registerSpawns(event.getSpawns(), GORGON_ENTITY, 18, 1, 3);
       registerSpawns(event.getSpawns(), HARPY_ENTITY, 15, 1, 3);
       registerSpawns(event.getSpawns(), MINOTAUR_ENTITY, 60, 2, 5);
       registerSpawns(event.getSpawns(), SHADE_ENTITY, 10, 1, 1);

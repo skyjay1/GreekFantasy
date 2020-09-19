@@ -51,7 +51,7 @@ public class ShadeEntity extends MonsterEntity {
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 12.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.19D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.21D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.86D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.1D);
   }
@@ -106,7 +106,7 @@ public class ShadeEntity extends MonsterEntity {
           this.setStoredXP(this.getStoredXP() + xpSteal);
         } else {
           // brief wither effect
-          player.addPotionEffect(new EffectInstance(Effects.WITHER, 60));
+          player.addPotionEffect(new EffectInstance(Effects.WITHER, 80));
         }
       }
       return true;

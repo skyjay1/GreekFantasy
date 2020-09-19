@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "greekfantasy:panflute"
+    },
+    "title": {
+      "translate": "advancements.greekfantasy.root.title"
+    },
+    "description": {
+      "translate": "advancements.greekfantasy.root.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png"
+  },
+  "criteria": {
+    "inv_changed": {
+      "trigger": "minecraft:inventory_changed",
+        "conditions": { }
+	}
+  },
+  "requirements": [
+    [
+      "inv_changed"
+    ]
+  ]
+}

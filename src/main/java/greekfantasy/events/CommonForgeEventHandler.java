@@ -5,14 +5,16 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.ShadeEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -43,20 +45,40 @@ public class CommonForgeEventHandler {
     }
   }
   
+  /**
+   * Used to prevent players from using items while stunned.
+   * @param event a PlayerInteractEvent or any of its children
+   **/
   @SubscribeEvent
-  public static void onItemUse(final LivingEntityUseItemEvent.Start event) {
-    final boolean isStunned = event.getEntityLiving().getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null;
-    final boolean isPetrified = event.getEntityLiving().getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null;
-    if(isStunned || isPetrified) {
+  public static void onPlayerInteract(final PlayerInteractEvent event) {
+    if(GreekFantasy.CONFIG.STUN_PREVENTS_USE.get() && event.getPlayer().isAlive() && isStunned(event.getPlayer())) {
+      // note: PlayerInteractEvent has several children but we receive and cancel all of the ones that can be cancelled
+      if(event.isCancelable()) {
+        event.setCanceled(true);
+      }
+    }
+  }
+  
+  /**
+   * Used to prevent players from using items while stunned.
+   * @param event a PlayerInteractEvent or any of its children
+   **/
+  @SubscribeEvent
+  public static void onPlayerAttack(final AttackEntityEvent event) {
+    if(GreekFantasy.CONFIG.STUN_PREVENTS_USE.get() && event.getPlayer().isAlive() && isStunned(event.getPlayer())) {
       event.setCanceled(true);
     }
   }
   
+  /**
+   * Used to prevent players (or potentially, other living entities)
+   * from jumping while stunned. Accomplishes this by applying a negative velocity
+   * equal to what the positive velocity would have been.
+   * @param event the LivingJumpEvent
+   **/
   @SubscribeEvent
-  public static void onPlayerJump(final LivingJumpEvent event) {
-    final boolean isStunned = event.getEntityLiving().getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null;
-    final boolean isPetrified = event.getEntityLiving().getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null;
-    if(isStunned || isPetrified) {
+  public static void onLivingJump(final LivingJumpEvent event) {
+    if(GreekFantasy.CONFIG.STUN_PREVENTS_JUMP.get() && isStunned(event.getEntityLiving())) {
       event.getEntityLiving().setMotion(event.getEntityLiving().getMotion().add(0.0D, -0.42D, 0.0D));
     }
   }
@@ -83,5 +105,9 @@ public class CommonForgeEventHandler {
   public static void onBiomeLoad(final BiomeLoadingEvent event) {
     GFRegistry.addBiomeFeatures(event);
     GFRegistry.addBiomeSpawns(event);
+  }
+  
+  private static boolean isStunned(final LivingEntity entity) {
+    return (entity.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null || entity.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null);
   }
 }

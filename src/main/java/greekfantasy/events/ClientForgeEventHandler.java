@@ -13,10 +13,14 @@ public class ClientForgeEventHandler {
     final Minecraft mc = Minecraft.getInstance();
     if(mc != null) {
       final PlayerEntity player = mc.player;
-      if(player.isAlive() && player.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null) {
+      if(player.isAlive() && isStunned(player)) {
         event.setFOV(mc.gameSettings.fov);
       }
     }
+  }
+  
+  private static boolean isStunned(final PlayerEntity player) {
+    return (player.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null || player.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null);
   }
   
 }
