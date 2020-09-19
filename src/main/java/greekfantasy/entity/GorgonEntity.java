@@ -1,7 +1,10 @@
 package greekfantasy.entity;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -18,8 +21,8 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -30,6 +33,7 @@ public class GorgonEntity extends MonsterEntity {
   // TODO paralyzes upon eye contact (slowness?)
   
   private static final byte STARE_ATTACK = 9;
+  private final int PETRIFY_DURATION = 20 * 4;
 
   public GorgonEntity(final EntityType<? extends GorgonEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -39,7 +43,8 @@ public class GorgonEntity extends MonsterEntity {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
+        .createMutableAttribute(Attributes.FOLLOW_RANGE, 16.0D);
   }
   
   @Override
@@ -81,6 +86,13 @@ public class GorgonEntity extends MonsterEntity {
             (world.rand.nextDouble() - 0.5D) * motion * 0.5D,
             (world.rand.nextDouble() - 0.5D) * motion);
       }
+      // get list of all nearby players who have been petrified
+      final List<PlayerEntity> list = this.getEntityWorld().getEntitiesWithinAABB(PlayerEntity.class, this.getBoundingBox().grow(16.0D, 16.0D, 16.0D), 
+        e -> e.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null);
+      for(final PlayerEntity p : list) {
+        GreekFantasy.LOGGER.info("spawning gorgon particle for player!");
+        world.addParticle(GFRegistry.GORGON_PARTICLE, true, p.getPosX(), p.getPosY(), p.getPosZ(), 0D, 0D, 0D);
+      }
     }
   }
   
@@ -95,20 +107,18 @@ public class GorgonEntity extends MonsterEntity {
   }
   
   public boolean useStareAttack(final LivingEntity target) {
-    // TODO balance?
-    GreekFantasy.LOGGER.info("Gorgon stare attack - activate!");
-    target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 60, 9, false, false));
-    target.removeActivePotionEffect(Effects.SPEED);
+    target.addPotionEffect(new EffectInstance(GFRegistry.PETRIFIED_EFFECT, PETRIFY_DURATION, 0, false, false));
     if(this.isServerWorld()) {
       this.world.setEntityState(this, STARE_ATTACK);
     }
     return false;
   }
   
-  class StareAttackGoal extends Goal {
+  public static class StareAttackGoal extends Goal {
     private final GorgonEntity entity;
-    private final int MAX_COOLDOWN = 200;
-    private int cooldown;
+    private final int MAX_COOLDOWN = 50;
+    private int cooldown = MAX_COOLDOWN;
+    private List<PlayerEntity> trackedPlayers = new ArrayList<>();
     
     public StareAttackGoal(final GorgonEntity entityIn) {
        this.setMutexFlags(EnumSet.of(Goal.Flag.LOOK));
@@ -119,20 +129,23 @@ public class GorgonEntity extends MonsterEntity {
     public boolean shouldExecute() {
       if(this.cooldown > 0) {
         cooldown--;
-      } else if (this.entity.getAttackTarget() instanceof PlayerEntity) {
-        double d0 = this.entity.getAttackTarget().getDistanceSq(this.entity);
-        return d0 > 256.0D ? false : this.entity.isPlayerStaring((PlayerEntity) this.entity.getAttackTarget());
+      } else {
+        this.trackedPlayers = this.entity.getEntityWorld().getEntitiesWithinAABB(PlayerEntity.class, this.entity.getBoundingBox().grow(16.0D, 16.0D, 16.0D), 
+            e -> this.entity.canAttack(e) && this.entity.isPlayerStaring((PlayerEntity)e));
+        return !this.trackedPlayers.isEmpty();
       }
       return false;
     }
 
     @Override
     public void startExecuting() {
-      final LivingEntity target = this.entity.getAttackTarget();
-      this.entity.getNavigator().clearPath();
-      this.entity.getLookController().setLookPositionWithEntity(target, 100.0F, 100.0F);
-      this.entity.useStareAttack(target);
-      this.cooldown = MAX_COOLDOWN;
+      if(!trackedPlayers.isEmpty() && trackedPlayers.get(0) != null && cooldown <= 0) {
+        this.entity.getNavigator().clearPath();
+        this.entity.getLookController().setLookPositionWithEntity(trackedPlayers.get(0), 100.0F, 100.0F);
+        trackedPlayers.forEach(e -> this.entity.useStareAttack(e));
+        trackedPlayers.clear();
+        this.cooldown = MAX_COOLDOWN;
+      }
     }
     
     @Override

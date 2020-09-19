@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class GorgonRenderer<T extends GorgonEntity> extends BipedRenderer<T, GorgonModel<T>> {
   
-  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/gorgon.png");
+  public static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/gorgon.png");
 
   public GorgonRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new GorgonModel<T>(0.0F), 0.5F);

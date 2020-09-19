@@ -9,20 +9,22 @@ import greekfantasy.client.render.CerastesRenderer;
 import greekfantasy.client.render.CerberusRenderer;
 import greekfantasy.client.render.CyclopesRenderer;
 import greekfantasy.client.render.CyprianCentaurRenderer;
+import greekfantasy.client.render.DryadRenderer;
 import greekfantasy.client.render.EmpusaRenderer;
 import greekfantasy.client.render.GiganteRenderer;
 import greekfantasy.client.render.GorgonRenderer;
 import greekfantasy.client.render.HarpyRenderer;
 import greekfantasy.client.render.MinotaurRenderer;
 import greekfantasy.client.render.NaiadRenderer;
-import greekfantasy.client.render.DryadRenderer;
 import greekfantasy.client.render.OrthusRenderer;
 import greekfantasy.client.render.SatyrRenderer;
 import greekfantasy.client.render.ShadeRenderer;
 import greekfantasy.client.render.SirenRenderer;
 import greekfantasy.client.render.UnicornRenderer;
 import greekfantasy.client.render.tileentity.StatueTileEntityRenderer;
-import greekfantasy.events.ClientEventHandler;
+import greekfantasy.client.render.tileentity.VaseTileEntityRenderer;
+import greekfantasy.events.ClientForgeEventHandler;
+import greekfantasy.events.ClientModEventHandler;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -33,8 +35,8 @@ public class ClientProxy extends Proxy {
   
   public void registerEventHandlers() { 
     super.registerEventHandlers();
-    FMLJavaModLoadingContext.get().getModEventBus().register(ClientEventHandler.class);
-    //MinecraftForge.EVENT_BUS.register(ClientEventHandler.class);
+    FMLJavaModLoadingContext.get().getModEventBus().register(ClientModEventHandler.class);
+    MinecraftForge.EVENT_BUS.register(ClientForgeEventHandler.class);
   }
     
   @Override
@@ -64,6 +66,7 @@ public class ClientProxy extends Proxy {
   public void registerTileEntityRenders() {
     GreekFantasy.LOGGER.info("registerTileEntityRenders");
     ClientRegistry.bindTileEntityRenderer(GFRegistry.STATUE_TE, StatueTileEntityRenderer::new);
+    ClientRegistry.bindTileEntityRenderer(GFRegistry.VASE_TE, VaseTileEntityRenderer::new);
   }
   
   @Override
@@ -71,5 +74,4 @@ public class ClientProxy extends Proxy {
     GreekFantasy.LOGGER.info("registerContainerRenders");
     ScreenManager.registerFactory(GFRegistry.STATUE_CONTAINER, StatueScreen::new);
   }
-  
 }

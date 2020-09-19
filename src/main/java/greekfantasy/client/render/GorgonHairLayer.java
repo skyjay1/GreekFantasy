@@ -21,21 +21,21 @@ public class GorgonHairLayer<T extends GorgonEntity> extends LayerRenderer<T, Go
 
   @Override
   public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entity,
-      float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-    if (!entity.isInvisible() /* TODO define other conditions */) {
+      float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
+    if (!entity.isInvisible()) {
       // get packed light and a vertex builder bound to the correct texture
       int packedOverlay = LivingRenderer.getPackedOverlay(entity, 0.0F);
       IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(this.getEntityTexture(entity)));
             
       // render snake hair
       matrixStackIn.push();
-      float yaw = MathHelper.lerp(partialTicks, entity.prevRotationYaw, entity.rotationYaw) - MathHelper.lerp(partialTicks, entity.prevRenderYawOffset, entity.renderYawOffset);
-      float pitch = MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch);
-      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(yaw));
-      matrixStackIn.rotate(Vector3f.XP.rotationDegrees(pitch));
-      matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-pitch));
-      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-yaw));
-      this.getEntityModel().renderSnakeHair(entity, matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, limbSwing, limbSwingAmount);
+//      float yaw = MathHelper.lerp(partialTick, entity.prevRotationYaw, entity.rotationYaw) - MathHelper.lerp(partialTick, entity.prevRenderYawOffset, entity.renderYawOffset);
+//      float pitch = MathHelper.lerp(partialTick, entity.prevRotationPitch, entity.rotationPitch);
+//      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(yaw));
+//      matrixStackIn.rotate(Vector3f.XP.rotationDegrees(pitch));
+//      matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-pitch));
+//      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-yaw));
+      this.getEntityModel().renderSnakeHair(matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, entity.ticksExisted + partialTick);
       matrixStackIn.pop();
     }
   }

@@ -10,12 +10,14 @@ import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class CommonEventHandler {
+public class CommonForgeEventHandler {
   
   /**
    * Used to spawn a shade with the player's XP when they die.
@@ -41,6 +43,24 @@ public class CommonEventHandler {
     }
   }
   
+  @SubscribeEvent
+  public static void onItemUse(final LivingEntityUseItemEvent.Start event) {
+    final boolean isStunned = event.getEntityLiving().getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null;
+    final boolean isPetrified = event.getEntityLiving().getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null;
+    if(isStunned || isPetrified) {
+      event.setCanceled(true);
+    }
+  }
+  
+  @SubscribeEvent
+  public static void onPlayerJump(final LivingJumpEvent event) {
+    final boolean isStunned = event.getEntityLiving().getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null;
+    final boolean isPetrified = event.getEntityLiving().getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null;
+    if(isStunned || isPetrified) {
+      event.getEntityLiving().setMotion(event.getEntityLiving().getMotion().add(0.0D, -0.42D, 0.0D));
+    }
+  }
+  
   /**
    * Used to add AI to Minecraft entities when they are spawned.
    * @param event the spawn event
@@ -55,6 +75,10 @@ public class CommonEventHandler {
     }
   }
   
+  /**
+   * Used to add features and mob spawns to each biome as it loads
+   * @param event the biome load event
+   **/
   @SubscribeEvent
   public static void onBiomeLoad(final BiomeLoadingEvent event) {
     GFRegistry.addBiomeFeatures(event);

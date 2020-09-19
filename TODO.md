@@ -9,14 +9,15 @@ __Key:__
 __Key:__
 `[Model] [AI] [Spawning]`
 
-[X] [ ] [ ] Nymph (Naiad, Dryad)
+[X] [ ] [ ] Naiad
+[X] [ ] [ ] Dryad
 [X] [~] [ ] Satyr
 [X] [ ] [ ] Centaur
 [X] [X] [ ] Minotaur
 [X] [X] [ ] Gorgon (Medusa)
 [X] [~] [ ] Harpy
 [X] [X] [ ] Empusa
-[X] [X] [~] Shade
+[X] [X] [X] Shade
 [~] [ ] [ ] Siren (hostile)
 [X] [X] [ ] Cerastes (ram-horned serpent)
 [X] [ ] [ ] Ara (Propoetide)
@@ -54,7 +55,8 @@ __Key:__
 [~] Limestone (raw, smooth, bricks, pillar)
 [~] Marble (raw, smooth, bricks, pillar)
 [X] Statues
-[ ] Vase / Urn
+[X] Vase
+[ ] Urn
 [ ] Grapes / grapevines
 
 ## Items

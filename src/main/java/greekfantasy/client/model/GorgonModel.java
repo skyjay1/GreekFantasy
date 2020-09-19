@@ -116,12 +116,10 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
     lowerTail1.rotateAngleZ = limbSwingCos * 0.67F;
     lowerTail2.rotateAngleZ = limbSwingCos * -0.75F;
     lowerTail3.rotateAngleZ = limbSwingCos * 0.4F;
-    
   }
   
-  public void renderSnakeHair(T entity, MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, 
-      int packedOverlayIn, float limbSwing, float limbSwingAmount) {
-    float ticks = entity.ticksExisted;
+  public void renderSnakeHair(final MatrixStack matrixStackIn, final IVertexBuilder bufferIn, final int packedLightIn, 
+      final int packedOverlayIn, final float ticks) {
     // living animations for each list
     animateSnakes(snakeHair1, ticks, 1.7F);
     animateSnakes(snakeHair2, ticks, 1.03F);

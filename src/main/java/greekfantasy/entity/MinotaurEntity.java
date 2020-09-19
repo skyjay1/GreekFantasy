@@ -2,6 +2,7 @@ package greekfantasy.entity;
 
 import java.util.EnumSet;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -162,8 +163,7 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
     this.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(attackModifier);
     this.getAttribute(Attributes.ATTACK_KNOCKBACK).removeModifier(this.knockbackModifier);
     // apply potion effects (if we make a "Stunned" effect later, use that instead)
-    target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 2 * 20, 1, false, false, true));
-    target.addPotionEffect(new EffectInstance(Effects.NAUSEA, 3 * 20, 0, false, false, true));
+    target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 5 * 20, 0, false, false, true));
   }
   
   static class StunnedGoal extends Goal {
@@ -209,10 +209,10 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
     
     private final MinotaurEntity entity;
     private final double speed;
-    private final int MAX_COOLDOWN = 400;
+    private final int MAX_COOLDOWN = 200;
     private final int MAX_STOMPING = 40;
     private int stompingTimer;
-    private int cooldown;
+    private int cooldown = MAX_COOLDOWN;
     private Vector3d targetPos;
     
     protected ChargeAttackGoal(final MinotaurEntity entityIn, final double speedIn) {

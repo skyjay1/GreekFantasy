@@ -5,6 +5,8 @@ import java.util.function.Supplier;
 import greekfantasy.block.ConnectedPillarBlock;
 import greekfantasy.block.NestBlock;
 import greekfantasy.block.StatueBlock;
+import greekfantasy.block.VaseBlock;
+import greekfantasy.effect.StunnedEffect;
 import greekfantasy.entity.AraEntity;
 import greekfantasy.entity.CentaurEntity;
 import greekfantasy.entity.CerastesEntity;
@@ -26,10 +28,10 @@ import greekfantasy.entity.UnicornEntity;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.item.ClubItem;
 import greekfantasy.item.PanfluteItem;
-import greekfantasy.structure.GFStructures;
 import greekfantasy.structure.HarpyNestStructure;
 import greekfantasy.structure.feature.HarpyNestFeature;
 import greekfantasy.tileentity.StatueTileEntity;
+import greekfantasy.tileentity.VaseTileEntity;
 import greekfantasy.util.StatuePose;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -51,20 +53,17 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.BasicParticleType;
+import net.minecraft.particles.ParticleType;
+import net.minecraft.potion.Effect;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.placement.ChanceConfig;
-import net.minecraft.world.gen.placement.ConfiguredPlacement;
-import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.RegistryEvent;
@@ -129,12 +128,24 @@ public final class GFRegistry {
   public static final Block LIMESTONE_STATUE = null;
   @ObjectHolder("marble_statue")
   public static final Block MARBLE_STATUE = null;
+  @ObjectHolder("terracotta_vase")
+  public static final Block TERRACOTTA_VASE = null;
   
   @ObjectHolder("statue_te")
   public static final TileEntityType<StatueTileEntity> STATUE_TE = null;
+  @ObjectHolder("vase_te")
+  public static final TileEntityType<VaseTileEntity> VASE_TE = null;
 
   @ObjectHolder("statue_container")
   public static final ContainerType<StatueContainer> STATUE_CONTAINER = null;
+  
+  @ObjectHolder("stunned")
+  public static final Effect STUNNED_EFFECT = null;
+  @ObjectHolder("petrified")
+  public static final Effect PETRIFIED_EFFECT = null;
+  
+  @ObjectHolder("gorgon_face")
+  public static final BasicParticleType GORGON_PARTICLE = new BasicParticleType(true);
 
   public static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
     @Override
@@ -150,7 +161,7 @@ public final class GFRegistry {
     GreekFantasy.LOGGER.info("registerEntities");
     ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, MonsterEntity::canMonsterSpawnInLight, "ara", 0.7F, 1.8F, EntityClassification.MONSTER, true);
     CENTAUR_ENTITY = registerEntityType(event, CentaurEntity::new, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, false);
-    CYPRIAN_ENTITY = registerEntityType(event, CyprianEntity::new, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn, "cyprian", 1.39F, 2.49F, EntityClassification.MONSTER, false);
+    CYPRIAN_ENTITY = registerEntityType(event, CyprianEntity::new, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, false);
     CERASTES_ENTITY = registerEntityType(event, CerastesEntity::new, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, false);
     CERBERUS_ENTITY = registerEntityType(event, CerberusEntity::new, CerberusEntity::getAttributes, CerberusEntity::canSpawnOn, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, false);
     CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn, "cyclopes", 1.19F, 2.79F, EntityClassification.MONSTER, false);
@@ -175,6 +186,10 @@ public final class GFRegistry {
         TileEntityType.Builder.create(StatueTileEntity::new, LIMESTONE_STATUE, MARBLE_STATUE)
         .build(null).setRegistryName(GreekFantasy.MODID, "statue_te")
     );
+    event.getRegistry().register(
+        TileEntityType.Builder.create(VaseTileEntity::new, TERRACOTTA_VASE)
+        .build(null).setRegistryName(GreekFantasy.MODID, "vase_te")
+    );
   }
   
   @SubscribeEvent
@@ -189,6 +204,27 @@ public final class GFRegistry {
       return new StatueContainer(windowId, inv, new Inventory(2), pose, isFemale, name, blockpos);
     });
     event.getRegistry().register(containerType.setRegistryName(GreekFantasy.MODID, "statue_container"));
+  }
+
+  @SubscribeEvent
+  public static void registerBlocks(final RegistryEvent.Register<Block> event) {
+    GreekFantasy.LOGGER.info("registerBlocks");
+    
+    registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.STONE), "limestone");
+    registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.DIORITE), "marble");
+
+    event.getRegistry().registerAll(
+        new NestBlock(Block.Properties.from(Blocks.HAY_BLOCK).notSolid().variableOpacity())
+          .setRegistryName(GreekFantasy.MODID, "nest"),
+        new ConnectedPillarBlock(Block.Properties.from(Blocks.STONE).notSolid())
+          .setRegistryName(GreekFantasy.MODID, "marble_pillar"),
+        new StatueBlock(StatueBlock.StatueMaterial.LIMESTONE)
+          .setRegistryName(GreekFantasy.MODID, "limestone_statue"),
+        new StatueBlock(StatueBlock.StatueMaterial.MARBLE)
+          .setRegistryName(GreekFantasy.MODID, "marble_statue"),
+        new VaseBlock(Block.Properties.from(Blocks.TERRACOTTA).notSolid())
+          .setRegistryName(GreekFantasy.MODID, "terracotta_vase")
+    );
   }
 
   @SubscribeEvent
@@ -222,25 +258,23 @@ public final class GFRegistry {
     registerItemBlock(event, LIMESTONE_STATUE, "limestone_statue");
     registerItemBlock(event, MARBLE_STATUE, "marble_statue");
     
+    registerItemBlock(event, TERRACOTTA_VASE, "terracotta_vase");
   }
+  
+  @SubscribeEvent
+  public static void registerEffects(final RegistryEvent.Register<Effect> event) {
+    GreekFantasy.LOGGER.info("registerEffects");
+    event.getRegistry().registerAll(
+        new StunnedEffect("eb685e9d-fc50-4b68-94d6-c4d906c27034").setRegistryName(GreekFantasy.MODID, "stunned"),
+        new StunnedEffect("ef99fb38-38d1-4703-9607-fabea29c0e6e").setRegistryName(GreekFantasy.MODID, "petrified")
+    );
+  }
+  
 
   @SubscribeEvent
-  public static void registerBlocks(final RegistryEvent.Register<Block> event) {
-    GreekFantasy.LOGGER.info("registerBlocks");
-    
-    registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.STONE), "limestone");
-    registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.DIORITE), "marble");
-
-    event.getRegistry().registerAll(
-        new NestBlock(Block.Properties.from(Blocks.HAY_BLOCK).notSolid().variableOpacity())
-          .setRegistryName(GreekFantasy.MODID, "nest"),
-        new ConnectedPillarBlock(Block.Properties.from(Blocks.STONE).notSolid())
-          .setRegistryName(GreekFantasy.MODID, "marble_pillar"),
-        new StatueBlock(StatueBlock.StatueMaterial.LIMESTONE)
-          .setRegistryName(GreekFantasy.MODID, "limestone_statue"),
-        new StatueBlock(StatueBlock.StatueMaterial.MARBLE)
-          .setRegistryName(GreekFantasy.MODID, "marble_statue")
-    );
+  public static void registerParticleTypes(final RegistryEvent.Register<ParticleType<?>> event) {
+    GreekFantasy.LOGGER.info("registerParticleTypes");
+    event.getRegistry().register(new BasicParticleType(true).setRegistryName(GreekFantasy.MODID, "gorgon_face"));
   }
 
   @SubscribeEvent
@@ -273,38 +307,39 @@ public final class GFRegistry {
     final Biome.Category category = event.getCategory();
     if(category == Biome.Category.NETHER) {
       // register nether spawns
-      registerSpawns(event.getSpawns(), CERBERUS_ENTITY, 1, 1, 1);
-      registerSpawns(event.getSpawns(), ORTHUS_ENTITY, 1, 1, 4);
+      registerSpawns(event.getSpawns(), CERBERUS_ENTITY, 10, 1, 1);
+      registerSpawns(event.getSpawns(), ORTHUS_ENTITY, 20, 1, 4);
     } else if(category != Biome.Category.THEEND) {
+      // TODO use config for all of these
       // register overworld spawns
-      registerSpawns(event.getSpawns(), ARA_ENTITY, 10, 2, 5);
-      registerSpawns(event.getSpawns(), EMPUSA_ENTITY, 50, 1, 3);
-      registerSpawns(event.getSpawns(), GORGON_ENTITY, 10, 3, 3);
-      registerSpawns(event.getSpawns(), HARPY_ENTITY, 10, 1, 3);
-      registerSpawns(event.getSpawns(), MINOTAUR_ENTITY, 30, 2, 5);
-      registerSpawns(event.getSpawns(), SHADE_ENTITY, 5, 1, 1);
+      registerSpawns(event.getSpawns(), ARA_ENTITY, 20, 2, 5);
+      registerSpawns(event.getSpawns(), EMPUSA_ENTITY, 80, 1, 3);
+      registerSpawns(event.getSpawns(), GORGON_ENTITY, 20, 3, 3);
+      registerSpawns(event.getSpawns(), HARPY_ENTITY, 15, 1, 3);
+      registerSpawns(event.getSpawns(), MINOTAUR_ENTITY, 60, 2, 5);
+      registerSpawns(event.getSpawns(), SHADE_ENTITY, 10, 1, 1);
       // desert spawns
       if(category == Biome.Category.DESERT) {
-        registerSpawns(event.getSpawns(), CERASTES_ENTITY, 12, 1, 1);
+        registerSpawns(event.getSpawns(), CERASTES_ENTITY, 30, 1, 1);
       }
       // mountains spawns
       if(category == Biome.Category.EXTREME_HILLS) {
-        registerSpawns(event.getSpawns(), CYCLOPES_ENTITY, 10, 1, 3);
-        registerSpawns(event.getSpawns(), GIGANTE_ENTITY, 10, 1, 4);
+        registerSpawns(event.getSpawns(), CYCLOPES_ENTITY, 20, 1, 3);
+        registerSpawns(event.getSpawns(), GIGANTE_ENTITY, 20, 1, 4);
       }
       // plains spawns
       if(category == Biome.Category.PLAINS) {
-        registerSpawns(event.getSpawns(), UNICORN_ENTITY, 8, 2, 5);
+        registerSpawns(event.getSpawns(), UNICORN_ENTITY, 11, 2, 5);
       }
       // plains + taiga spawns
       if(category == Biome.Category.PLAINS || name.contains("taiga")) {
-        registerSpawns(event.getSpawns(), CENTAUR_ENTITY, 10, 2, 4);
+        registerSpawns(event.getSpawns(), CENTAUR_ENTITY, 15, 2, 4);
         registerSpawns(event.getSpawns(), CYPRIAN_ENTITY, 10, 2, 3);
       }
       // forest spawns
       if(isForest) {
-        registerSpawns(event.getSpawns(), DRYAD_ENTITY, 18, 1, 2);
-        registerSpawns(event.getSpawns(), SATYR_ENTITY, 14, 2, 5);
+        registerSpawns(event.getSpawns(), DRYAD_ENTITY, 24, 1, 2);
+        registerSpawns(event.getSpawns(), SATYR_ENTITY, 18, 2, 5);
       }
       // water spawns
       if(category == Biome.Category.OCEAN) {

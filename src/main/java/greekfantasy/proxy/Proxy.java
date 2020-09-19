@@ -1,6 +1,6 @@
 package greekfantasy.proxy;
 
-import greekfantasy.events.CommonEventHandler;
+import greekfantasy.events.CommonForgeEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 
 public class Proxy {
@@ -10,8 +10,9 @@ public class Proxy {
   public void registerTileEntityRenders() { }
   
   public void registerContainerRenders() { }
-  
+    
   public void registerEventHandlers() { 
-    MinecraftForge.EVENT_BUS.register(CommonEventHandler.class);
+    MinecraftForge.EVENT_BUS.register(CommonForgeEventHandler.class);
   }
+
 }

@@ -108,11 +108,6 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     final CompoundNBT profileNBT = new CompoundNBT();
     profileNBT.putString("Name", nameIn);
     setPlayerProfile(NBTUtil.readGameProfile(profileNBT));
-//    GreekFantasy.LOGGER.info("setting texture name: " + nameIn);
-//    if(this.playerProfile != null) {
-//      GreekFantasy.LOGGER.info("Good news! profile is not null.");
-//      GreekFantasy.LOGGER.info("UUID = " + PlayerEntity.getUUID(playerProfile).toString());
-//    }
     this.markDirty();
     if(refresh) {
       this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
@@ -131,10 +126,6 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     this.playerProfile = SkullTileEntity.updateGameProfile(this.playerProfile);
     this.markDirty();
   }
-  
-  // INVENTORY //
-  
-  
   
   // NBT AND SAVING STUFF //
 
