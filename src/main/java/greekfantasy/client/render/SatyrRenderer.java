@@ -13,6 +13,7 @@ public class SatyrRenderer<T extends SatyrEntity> extends BipedRenderer<T, Satyr
 
   public SatyrRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new SatyrModel<T>(0.0F), 0.5F);
+    this.addLayer(new SatyrPanfluteLayer<>(this));
   }
 
   @Override

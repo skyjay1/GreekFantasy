@@ -1,10 +1,8 @@
 package greekfantasy.client.model;
 
-import greekfantasy.GFRegistry;
 import greekfantasy.entity.SatyrEntity;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.Hand;
 
 public class SatyrModel<T extends SatyrEntity> extends HoofedBipedModel<T> {
   
@@ -39,16 +37,21 @@ public class SatyrModel<T extends SatyrEntity> extends HoofedBipedModel<T> {
   }
   
   @Override
-  public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-    super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-    if(entity.getHeldItem(Hand.MAIN_HAND).getItem() == GFRegistry.PANFLUTE && entity.getHeldItem(Hand.OFF_HAND).isEmpty()) {
+  public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float netHeadYaw, float headPitch) {
+    super.setRotationAngles(entity, limbSwing, limbSwingAmount, partialTick, netHeadYaw, headPitch);
+    if(entity.isDancing() || entity.summonTime > 0) {
       // set arm rotations when holding panflute
-      this.bipedRightArm.rotateAngleX = -1.31F;
-      this.bipedRightArm.rotateAngleY = -0.68F;
-      this.bipedLeftArm.rotateAngleX = -1.22F;
-      this.bipedLeftArm.rotateAngleY = -0.43F;
-      this.bipedLeftArm.rotateAngleZ = 1.17F;
+      final float armPercent = entity.getArmMovementPercent(partialTick);
+      this.bipedRightArm.rotateAngleX = -1.31F * armPercent;
+      this.bipedRightArm.rotateAngleY = -0.68F * armPercent;
+      this.bipedLeftArm.rotateAngleX = -1.22F * armPercent;
+      this.bipedLeftArm.rotateAngleY = -0.43F * armPercent;
+      this.bipedLeftArm.rotateAngleZ = 1.17F * armPercent;
     }
+  }
+  
+  public ModelRenderer getRightArm() {
+    return this.bipedRightArm;
   }
   
   public static ModelRenderer makeGoatHorns(final EntityModel<?> model, final float modelSize, final boolean isLeft) {

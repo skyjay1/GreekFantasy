@@ -41,7 +41,7 @@ public class PanfluteSong {
    * @return a set of notes to play
    **/
   public List<Integer> getTrebleNotes(final long worldTime) {
-    return getNotes(treble, worldTime);
+    return getNotes(treble, worldTime, getPlaySpeed(), length);
   }
   
   /**
@@ -51,7 +51,7 @@ public class PanfluteSong {
    * @return a set of notes to play
    **/
   public List<Integer> getBassNotes(final long worldTime) {
-    return getNotes(bass, worldTime);
+    return getNotes(bass, worldTime, getPlaySpeed(), length);
   }
   
   /**
@@ -61,20 +61,20 @@ public class PanfluteSong {
    * @param worldTime the world time
    * @return a set of notes to play
    **/
-  public List<Integer> getNotes(final int[] notes, final long worldTime) {
+  public static List<Integer> getNotes(final int[] notes, final long worldTime, final int playSpeed, final int maxLength) {
     final List<Integer> noteSet = new ArrayList<>();
-    final int playSpeed = getPlaySpeed();
     // get the current note
-    final int index1 = Math.abs((int)(worldTime / playSpeed)) % length;
-    final int note1 = index1 >= notes.length ? 0 : MathHelper.clamp(notes[index1], 0, 24);
-    if(note1 > 0) {
-      noteSet.add(Integer.valueOf(note1));
+    final int currentIndex = Math.abs((int)(worldTime / playSpeed)) % maxLength;
+    final int currentNote = currentIndex >= notes.length ? 0 : MathHelper.clamp(notes[currentIndex], 0, 24);
+    if(currentNote > 0) {
+      noteSet.add(Integer.valueOf(currentNote));
       // get a note halfway between last note and current note
-      if(index1 > 0) {
-        final int index2 = index1 - 1;
-        final int note2 = index2 >= notes.length ? 0 : MathHelper.clamp(notes[index2], 0, 24);
-        if(note2 > 0) {
-          noteSet.add(Integer.valueOf((note1 + note2) / 2));
+      if(currentIndex > 0) {
+        final int lastIndex = currentIndex - 1;
+        final int lastNote = lastIndex >= notes.length ? 0 : MathHelper.clamp(notes[lastIndex], 0, 24);
+        final int middleNote = (currentNote + lastNote) / 2;
+        if(middleNote > 0 && middleNote != currentNote) {
+          noteSet.add(Integer.valueOf(middleNote));
         }
       }
     }

@@ -17,16 +17,18 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
@@ -45,7 +47,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class SatyrEntity extends CreatureEntity {
   
   private static final DataParameter<Boolean> DATA_DANCING = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BOOLEAN);
-  private static final ResourceLocation SONG = new ResourceLocation(GreekFantasy.MODID, "sound_of_silence");
+  private static final ResourceLocation DANCING_SONG = new ResourceLocation(GreekFantasy.MODID, "sound_of_silence");
+  private static final ResourceLocation SUMMONING_SONG = new ResourceLocation(GreekFantasy.MODID, "sarias_song");
+
+  protected static final byte SUMMON = 7;
+  protected static final int MAX_SUMMON_TIME = 160;
+  protected static final int MAX_PANFLUTE_TIME = 8;
+  public int holdingPanfluteTime;
+  public int summonTime;
   
   public SatyrEntity(final EntityType<? extends SatyrEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -70,17 +79,48 @@ public class SatyrEntity extends CreatureEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
+    this.goalSelector.addGoal(1, new SummonAnimalsGoal(MAX_SUMMON_TIME, 1000));
     this.goalSelector.addGoal(2, new DancingGoal(0.75D));
     this.goalSelector.addGoal(3, new GoToCampfireGoal(12, 0.9D));
     this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
+    this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
   }
   
   @Override
   public void livingTick() {
-    super.livingTick();
-    if(this.isDancing() && this.getHeldItem(Hand.MAIN_HAND).getItem() == GFRegistry.PANFLUTE) {
-      PanfluteMusicManager.playMusic(this, SONG, this.getEntityWorld().getGameTime(), 0.8F, 0.2F);
+    super.livingTick();  
+    // play music
+    if(summonTime > 0) {
+      PanfluteMusicManager.playMusic(this, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
+    } else if(this.isDancing()) {
+      PanfluteMusicManager.playMusic(this, DANCING_SONG, this.getEntityWorld().getGameTime(), 0.84F, 0.28F);
+    }
+    
+    // dancing timer
+    if(this.isDancing() || this.summonTime > 0) {
+      this.holdingPanfluteTime = Math.min(this.holdingPanfluteTime + 1, MAX_PANFLUTE_TIME);
+    } else {
+      this.holdingPanfluteTime = Math.max(this.holdingPanfluteTime - 1, 0);
+    }
+    
+    // summon timer (concurrent)
+    if(summonTime > 0 && summonTime++ > MAX_SUMMON_TIME) {
+      this.getEntityWorld().playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_WOLF_HOWL, this.getSoundCategory(), 1.1F, 0.9F + this.getRNG().nextFloat() * 0.2F, false);
+      summonTime = 0;
+    }
+    
+  }
+  
+  @OnlyIn(Dist.CLIENT)
+  public void handleStatusUpdate(byte id) {
+    switch(id) {
+    case SUMMON:
+      this.summonTime = 1;
+      break;
+    default:
+      super.handleStatusUpdate(id);
+      break;
     }
   }
   
@@ -100,7 +140,25 @@ public class SatyrEntity extends CreatureEntity {
   public void setDancing(final boolean dancing) {
     this.getDataManager().set(DATA_DANCING, Boolean.valueOf(dancing));
   }
-
+  
+  public void startSummoning() {
+    this.summonTime = 1;
+    if(this.isServerWorld()) {
+      this.getEntityWorld().setEntityState(this, SUMMON);
+    }
+  }
+  
+  /**
+   * Only used client-side. Calculates the portion of dancing
+   * or summoning completed up to 8 ticks so that the model 
+   * animates in that time.
+   * @return the percent
+   **/
+  public float getArmMovementPercent(final float partialTick) {
+    final float time = this.holdingPanfluteTime + (partialTick % 1.0F);
+    return Math.min(1.0F, time / 8.0F);
+  }
+  
   /**
    * @param world the entity's world
    * @param pos the BlockPos to check around
@@ -127,13 +185,70 @@ public class SatyrEntity extends CreatureEntity {
     return true;
   }
 
-  // TODO uses pipe to summon wild creatures
-  static class SummonAnimalsGoal extends Goal {
+  class SummonAnimalsGoal extends Goal {
+    
+    protected final int MAX_DELAY;
+    protected final int MAX_COOLDOWN;
+    
+    protected int delay;
+    protected int cooldown;
+    
+    public SummonAnimalsGoal(final int summonDelayIn, final int summonCooldownIn) {
+      this.setMutexFlags(EnumSet.allOf(Goal.Flag.class));
+      MAX_DELAY = summonDelayIn;
+      MAX_COOLDOWN = summonCooldownIn;
+      cooldown = summonCooldownIn / 3;
+    }
 
     @Override
     public boolean shouldExecute() {
-      // TODO Auto-generated method stub
+      if(cooldown > 0) {
+        cooldown--;
+      } else {
+        return SatyrEntity.this.getAttackTarget() != null && SatyrEntity.this.getRNG().nextInt(40) == 0;
+      }
       return false;
+    }
+    
+    @Override
+    public void startExecuting() {
+      SatyrEntity.this.startSummoning();
+      this.delay = 1;
+    }
+    
+    @Override
+    public boolean shouldContinueExecuting() {
+      return this.delay > 0 && SatyrEntity.this.getAttackTarget() != null && SatyrEntity.this.hurtTime == 0;
+    }
+    
+    @Override
+    public void tick() {
+      super.tick();
+      SatyrEntity.this.getNavigator().clearPath();
+      SatyrEntity.this.getLookController().setLookPositionWithEntity(SatyrEntity.this.getAttackTarget(), 100.0F, 100.0F);
+      if(delay++ > MAX_DELAY) {
+        // summon animals
+        final double x = SatyrEntity.this.getPosX();
+        final double y = SatyrEntity.this.getPosY();
+        final double z = SatyrEntity.this.getPosZ();
+        final float yaw = SatyrEntity.this.rotationYaw;
+        final float pitch = SatyrEntity.this.rotationPitch;
+        for(int i = 0; i < 3; i++) {
+          final WolfEntity wolf = EntityType.WOLF.create(SatyrEntity.this.getEntityWorld());
+          wolf.setLocationAndAngles(x, y, z, yaw, pitch);
+          wolf.setAngerTime(800);
+          wolf.setAngerTarget(SatyrEntity.this.getAttackTarget().getUniqueID());
+          SatyrEntity.this.getEntityWorld().addEntity(wolf);
+        }
+        resetTask();
+      }
+    }
+    
+    @Override
+    public void resetTask() {
+      this.delay = 0;
+      this.cooldown = MAX_COOLDOWN;
+      SatyrEntity.this.summonTime = 0;
     }
     
   }
@@ -188,7 +303,7 @@ public class SatyrEntity extends CreatureEntity {
     public boolean shouldExecute() {
       if(cooldown > 0) {
         cooldown--;
-      } else if(SatyrEntity.this.rand.nextInt(60) == 0) {
+      } else if(!SatyrEntity.this.getNavigator().hasPath() && SatyrEntity.this.getAttackTarget() == null && SatyrEntity.this.rand.nextInt(20) == 0) {
         // find a nearby campfire
         this.campfirePos = findCampfire();
         return this.updateTarget();
@@ -203,16 +318,13 @@ public class SatyrEntity extends CreatureEntity {
         SatyrEntity.this.getNavigator().tryMoveToXYZ(targetPos.get().x, targetPos.get().y, targetPos.get().z, moveSpeed);
         SatyrEntity.this.setDancing(true);
         dancingTime = 1;
-        if(SatyrEntity.this.getHeldItem(Hand.MAIN_HAND).isEmpty()) {
-          SatyrEntity.this.setHeldItem(Hand.MAIN_HAND, new ItemStack(GFRegistry.PANFLUTE));
-        }
       }
     }
     
     @Override
     public boolean shouldContinueExecuting() {
       boolean isCampfireValid = SatyrEntity.this.ticksExisted % 10 > 0 ? true : this.campfirePos.isPresent() && SatyrEntity.this.getEntityWorld().getBlockState(this.campfirePos.get()).isIn(BlockTags.CAMPFIRES);
-      return this.targetPos.isPresent() && isCampfireValid;
+      return SatyrEntity.this.getAttackTarget() == null && this.targetPos.isPresent() && isCampfireValid;
     }
     
     @Override
@@ -240,9 +352,6 @@ public class SatyrEntity extends CreatureEntity {
       this.travelTime = 0;
       this.cooldown = MAX_COOLDOWN;
       SatyrEntity.this.setDancing(false);
-      if(SatyrEntity.this.getHeldItem(Hand.MAIN_HAND).getItem() == GFRegistry.PANFLUTE) {
-        SatyrEntity.this.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
-      }
     }
  
     /**
