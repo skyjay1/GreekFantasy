@@ -30,7 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
+public class MinotaurEntity extends MonsterEntity {
   
   private static final byte STOMPING_START = 4;
   private static final byte STOMPING_END = 5;
@@ -116,18 +116,17 @@ public class MinotaurEntity extends MonsterEntity implements IHoofedEntity {
     }
   }
   
-  @Override
   public void setStomping(final boolean stomping) {
     this.isStomping = stomping;
-    this.world.setEntityState(this, stomping ? STOMPING_START : STOMPING_END);    
+    if(this.isServerWorld()) {
+      this.world.setEntityState(this, stomping ? STOMPING_START : STOMPING_END);
+    }
   }
 
-  @Override
   public boolean isStomping() {
     return this.isStomping;
   }
 
-  @Override
   public float getStompingSpeed() {
     return 0.74F;
   }

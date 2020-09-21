@@ -47,9 +47,10 @@ public class GreekFantasy {
     // register config
     GreekFantasy.LOGGER.info("registerConfig");
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, CONFIG_SPEC);
-    //GFConfig.loadConfig(CONFIG_SPEC, FMLPaths.CONFIGDIR.get().resolve(MODID + "-server.toml"));
     // register side-specific or common event handlers
     PROXY.registerEventHandlers();
+    // register reload listeners (only applies to client-side)
+    PROXY.registerReloadListeners();
     // register messages
     GreekFantasy.LOGGER.info("registerNetwork");
     int messageId = 0;

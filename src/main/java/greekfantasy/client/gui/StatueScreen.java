@@ -205,7 +205,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
       RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
       RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
       RenderSystem.translatef(posX + margin, posY + margin, 100.0F + 10.0F);
-      RenderSystem.translatef(0.0F, PREVIEW_HEIGHT - margin, 0.0F);
+      RenderSystem.translatef(0.0F, PREVIEW_HEIGHT - margin * 2, 0.0F);
       RenderSystem.scalef(1.0F, -1.0F, 1.0F);
       RenderSystem.scalef(scale, scale, scale);
       //RenderSystem.rotatef(-this.currentPose.getAngles(ModelPart.BODY).getY(), 0.0F, 1.0F, 0.0F);

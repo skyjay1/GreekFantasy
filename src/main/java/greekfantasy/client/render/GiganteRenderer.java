@@ -26,7 +26,7 @@ public class GiganteRenderer<T extends GiganteEntity> extends BipedRenderer<T, G
   @Override
   public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
       final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
-    final float scale = 1.1F;
+    final float scale = 2.0F;
     matrixStackIn.push();
     matrixStackIn.scale(scale, scale, scale);
     super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);

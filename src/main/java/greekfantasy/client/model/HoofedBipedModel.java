@@ -1,6 +1,5 @@
 package greekfantasy.client.model;
 
-import greekfantasy.entity.IHoofedEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.LivingEntity;
@@ -100,25 +99,12 @@ public class HoofedBipedModel<T extends LivingEntity> extends BipedModel<T> {
   @Override
   public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
     super.setLivingAnimations(entityIn, limbSwing, limbSwingAmount, partialTick);
-    float limbSwingSin;
-    float limbSwingCos;
     final float ticks = entityIn.ticksExisted + partialTick;
-    final IHoofedEntity hoofedEntity = entityIn instanceof IHoofedEntity ? (IHoofedEntity) entityIn : null;
-    // stomping
-    if(hoofedEntity != null && hoofedEntity.isStomping()) {
-      final float stompSpeed = hoofedEntity.getStompingSpeed();
-      limbSwingSin = MathHelper.cos(ticks * stompSpeed + (float)Math.PI);
-      limbSwingCos = MathHelper.cos(ticks * stompSpeed) * 0.75F;
-      this.rightLegUpper.rotateAngleX = -0.2618F + limbSwingSin * 0.42F;
-      this.leftLegUpper.rotateAngleX = -0.2618F + limbSwingCos * 0.42F;
-    } else {
-      limbSwingSin = MathHelper.cos(limbSwing + (float)Math.PI) * limbSwingAmount;
-      limbSwingCos = MathHelper.cos(limbSwing) * limbSwingAmount;
-    }
-    
-    // legs
+    float limbSwingSin = MathHelper.cos(limbSwing + (float)Math.PI) * limbSwingAmount;
+    float limbSwingCos = MathHelper.cos(limbSwing) * limbSwingAmount;
     float rightLegSwing = 0.38F * limbSwingSin;
     float leftLegSwing = 0.38F * limbSwingCos;
+    // legs
     rightLegLower.rotateAngleX = 0.7854F + rightLegSwing;
     rightHoof.rotateAngleX = -0.5236F - rightLegSwing;
     leftLegLower.rotateAngleX = 0.7854F + leftLegSwing;

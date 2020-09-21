@@ -1,5 +1,7 @@
 package greekfantasy.entity;
 
+import greekfantasy.GFRegistry;
+import greekfantasy.entity.ai.GoToBlockGoal;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
@@ -21,6 +23,7 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
 public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
@@ -49,6 +52,12 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
     this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(7, new GoToBlockGoal(this, 10, 12, 0.9D) {
+      @Override
+      public boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) { return worldIn.getBlockState(pos).isIn(GFRegistry.NEST_BLOCK); }
+      @Override
+      protected Vector3d getVecForBlockPos(final BlockPos pos) { return super.getVecForBlockPos(pos).add(0.0D, 1.0D, 0.0D); }
+    });
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
   }
@@ -72,7 +81,7 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
   @Override
   public void livingTick() {
     super.livingTick();
-    // update falling speed
+    // update falling moveSpeed
     Vector3d m = getMotion();
     if (this.isServerWorld() && !this.onGround && m.y < 0.0D) {
       final double multY = this.getAttackTarget() != null ? 0.9D : 0.6D;

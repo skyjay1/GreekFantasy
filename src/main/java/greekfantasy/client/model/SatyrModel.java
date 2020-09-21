@@ -1,8 +1,10 @@
 package greekfantasy.client.model;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.entity.SatyrEntity;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.Hand;
 
 public class SatyrModel<T extends SatyrEntity> extends HoofedBipedModel<T> {
   
@@ -34,6 +36,19 @@ public class SatyrModel<T extends SatyrEntity> extends HoofedBipedModel<T> {
     // horns
     this.bipedHead.addChild(makeGoatHorns(this, modelSize, true));
     this.bipedHead.addChild(makeGoatHorns(this, modelSize, false));
+  }
+  
+  @Override
+  public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    if(entity.getHeldItem(Hand.MAIN_HAND).getItem() == GFRegistry.PANFLUTE && entity.getHeldItem(Hand.OFF_HAND).isEmpty()) {
+      // set arm rotations when holding panflute
+      this.bipedRightArm.rotateAngleX = -1.31F;
+      this.bipedRightArm.rotateAngleY = -0.68F;
+      this.bipedLeftArm.rotateAngleX = -1.22F;
+      this.bipedLeftArm.rotateAngleY = -0.43F;
+      this.bipedLeftArm.rotateAngleZ = 1.17F;
+    }
   }
   
   public static ModelRenderer makeGoatHorns(final EntityModel<?> model, final float modelSize, final boolean isLeft) {

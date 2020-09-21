@@ -1,6 +1,7 @@
 package greekfantasy.entity.ai;
 
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -8,68 +9,94 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.IWorldReader;
 
-public class GoToBlockGoal extends Goal {
+public abstract class GoToBlockGoal extends Goal {
 
   protected final CreatureEntity creature;
-  protected final int searchRadius;
+  protected final int searchRadiusXZ;
+  protected final int searchRadiusY;
   protected final double speed;
-  protected final Predicate<BlockState> predicate;
   
-  protected double targetX;
-  protected double targetY;
-  protected double targetZ;
+  protected Optional<Vector3d> target = Optional.empty();
+  
+  public GoToBlockGoal(final CreatureEntity entity, final int radius, final double speed) {
+    this(entity, radius, Math.max(1, radius / 2), speed);
+  }
 
-  public GoToBlockGoal(final CreatureEntity entity, final int radius, final double speed, final Predicate<BlockState> blockPred) {
+  public GoToBlockGoal(final CreatureEntity entity, final int radiusXZ, final int radiusY, final double speed) {
     this.creature = entity;
-    this.searchRadius = radius;
+    this.searchRadiusXZ = radiusXZ;
+    this.searchRadiusY = radiusY;
     this.speed = speed;
-    this.predicate = blockPred;
     setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
   }
 
   @Override
   public boolean shouldExecute() {
-    if (this.predicate.test(this.creature.getEntityWorld().getBlockState(this.creature.getPosition().down()))) {
+    // if already near target, do not execute
+    if (isOnBlock() || isNearTarget(1.2D) || this.creature.getNavigator().hasPath()) {
       return false;
     }
 
-    BlockPos target = findNearbyBlock();
-    if (target == null) {
-      return false;
+    final Optional<BlockPos> blockPos = findNearbyBlock();
+    if (blockPos.isPresent()) {
+      this.target = Optional.of(getVecForBlockPos(blockPos.get()));
+      return true;
     }
-
-    this.targetX = target.getX() + 0.5F;
-    this.targetY = target.getY();
-    this.targetZ = target.getZ() + 0.5F;
-    return true;
+   
+    return false;
   }
 
   @Override
   public boolean shouldContinueExecuting() {
-    return !this.creature.getNavigator().noPath();
+    return false;
   }
 
   @Override
   public void startExecuting() {
-    this.creature.getNavigator().tryMoveToXYZ(this.targetX, this.targetY, this.targetZ, this.speed);
+    if(this.target.isPresent()) {
+      this.creature.getNavigator().tryMoveToXYZ(this.target.get().x, this.target.get().y, this.target.get().z, this.speed);
+      this.target = Optional.empty();
+    }
   }
   
-  private BlockPos findNearbyBlock() {
+  /**
+   * Required to use this goal.
+   * @param worldIn the world
+   * @param pos the BlockPos to check
+   * @return whether the entity should move toward the given block
+   **/
+  public abstract boolean shouldMoveTo(final IWorldReader worldIn, final BlockPos pos);
+  
+  protected boolean isOnBlock() {
+    return shouldMoveTo(this.creature.getEntityWorld(), this.creature.getPosition());
+  }
+  
+  protected Vector3d getVecForBlockPos(final BlockPos pos) {
+    return new Vector3d(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
+  }
+  
+  public boolean isNearTarget(final double distance) {
+    return this.target.isPresent() && this.target.get().isWithinDistanceOf(this.creature.getPositionVec(), distance);
+  }
+  
+  private Optional<BlockPos> findNearbyBlock() {
     Random rand = this.creature.getRNG();
 
     BlockPos pos1 = this.creature.getPosition().down();
 
     for (int i = 0; i < 20; i++) {
-      BlockPos pos2 = pos1.add(rand.nextInt(searchRadius * 2) - searchRadius, rand.nextInt(searchRadius) - searchRadius / 2,
-          rand.nextInt(searchRadius * 2) - searchRadius);
+      BlockPos pos2 = pos1.add(rand.nextInt(searchRadiusXZ * 2) - searchRadiusXZ, rand.nextInt(searchRadiusY * 2) - searchRadiusY,
+          rand.nextInt(searchRadiusXZ * 2) - searchRadiusXZ);
 
       if (!this.creature.getEntityWorld().getBlockState(pos2.up(1)).isSolid()
-          && this.predicate.test(this.creature.getEntityWorld().getBlockState(pos2))) {
-        return new BlockPos(pos2.getX(), pos2.getY(), pos2.getZ());
+          && this.shouldMoveTo(this.creature.getEntityWorld(), pos2)) {
+        return Optional.of(new BlockPos(pos2.getX(), pos2.getY(), pos2.getZ()));
       }
     }
-    return null;
+    return Optional.empty();
   }
 
 }

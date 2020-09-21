@@ -104,8 +104,8 @@ public class HarpyModel<T extends HarpyEntity> extends BipedModel<T> {
     final float flyingTime = entity.flyingTime;
     final float flyingTimeLeft = 1.0F - flyingTime;
     final float downSwing = 0.5F;
-    final float wingAngle = 0.4F;
-    final float wingSpeed = 0.6F;
+    final float wingAngle = 0.5F;
+    final float wingSpeed = 0.7F;
     final float cosTicks = flyingTime > 0.0F ? MathHelper.cos(ticks * wingSpeed) : 0.0F;
     final float sinTicks = flyingTime > 0.0F ? MathHelper.cos(ticks * wingSpeed + (float) Math.PI) : 0.0F;
     final float idleSwing = 0.035F * MathHelper.cos(ticks * 0.08F);

@@ -25,7 +25,10 @@ import greekfantasy.client.render.tileentity.StatueTileEntityRenderer;
 import greekfantasy.client.render.tileentity.VaseTileEntityRenderer;
 import greekfantasy.events.ClientForgeEventHandler;
 import greekfantasy.events.ClientModEventHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -33,8 +36,18 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class ClientProxy extends Proxy {
   
+  public void registerReloadListeners() {
+    super.registerReloadListeners();
+    GreekFantasy.LOGGER.info("registerReloadListeners");
+    IResourceManager manager = Minecraft.getInstance().getResourceManager();
+    if (manager instanceof IReloadableResourceManager) {
+      ((IReloadableResourceManager)manager).addReloadListener(PANFLUTE_SONGS);
+    }
+  }
+  
   public void registerEventHandlers() { 
     super.registerEventHandlers();
+    GreekFantasy.LOGGER.info("registerClientEventHandlers");
     FMLJavaModLoadingContext.get().getModEventBus().register(ClientModEventHandler.class);
     MinecraftForge.EVENT_BUS.register(ClientForgeEventHandler.class);
   }

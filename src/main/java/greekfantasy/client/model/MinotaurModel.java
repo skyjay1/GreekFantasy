@@ -3,6 +3,7 @@ package greekfantasy.client.model;
 import greekfantasy.entity.MinotaurEntity;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
 
 public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T> {
 
@@ -22,8 +23,25 @@ public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T>
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, partialTick, rotationYaw, rotationPitch);
-    this.bipedBody.rotateAngleX = entity.isStomping() ? 0.8F : 0.0F;
-
+    if(entity.isStomping()) {
+      final float ticks = entity.ticksExisted + partialTick;
+      final float stompSpeed = entity.getStompingSpeed();
+      final float limbSwingSin = MathHelper.cos(ticks * stompSpeed + (float)Math.PI);
+      final float limbSwingCos = MathHelper.cos(ticks * stompSpeed) * 0.75F;
+      float rightLegSwing = 0.38F * limbSwingSin;
+      float leftLegSwing = 0.38F * limbSwingCos;
+      // legs
+      rightLegUpper.rotateAngleX = -0.2618F + limbSwingSin * 0.42F;
+      leftLegUpper.rotateAngleX = -0.2618F + limbSwingCos * 0.42F;
+      rightLegLower.rotateAngleX = 0.7854F + rightLegSwing;
+      rightHoof.rotateAngleX = -0.5236F - rightLegSwing;
+      leftLegLower.rotateAngleX = 0.7854F + leftLegSwing;
+      leftHoof.rotateAngleX = -0.5236F - leftLegSwing;
+      // body
+      this.bipedBody.rotateAngleX = entity.isStomping() ? 0.4F : 0.0F;
+      // head
+      this.bipedHead.rotateAngleX = 0.29F;
+    }
   }
   
   public static ModelRenderer makeBullHorns(EntityModel<?> model, final float modelSize, final boolean isLeft) {

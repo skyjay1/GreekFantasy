@@ -6,6 +6,7 @@ import java.util.Random;
 import greekfantasy.entity.ai.GoToBlockGoal;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SweetBerryBushBlock;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
@@ -21,7 +22,9 @@ import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
@@ -30,8 +33,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -76,9 +79,9 @@ public class CerastesEntity extends CreatureEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(1, new HideGoal(this));
-    this.goalSelector.addGoal(2, new GoToSandGoal(this, 10, 0.8D));
+    this.goalSelector.addGoal(2, new MoveToSandGoal(10, 0.8F));
     this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
-    //this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 4.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -231,19 +234,21 @@ public class CerastesEntity extends CreatureEntity {
     return hidingTime;
   }
   
-  static class GoToSandGoal extends GoToBlockGoal {
+  class MoveToSandGoal extends GoToBlockGoal {
     
-    final CerastesEntity cerastes;
-
-    public GoToSandGoal(final CerastesEntity entity, final int radius, final double speed) {
-      super(entity, radius, speed, b -> BlockTags.SAND.contains(b.getBlock()));
-      this.cerastes = entity;
+    public MoveToSandGoal(final int radiusIn, final double speedIn) {
+      super(CerastesEntity.this, radiusIn, speedIn);
     }
     
     @Override
     public boolean shouldExecute() {
-      return !this.cerastes.isHiding() && this.cerastes.getAttackTarget() == null 
-          && this.cerastes.getRNG().nextInt(60) == 1 && super.shouldExecute();
+      return !CerastesEntity.this.isHiding() && CerastesEntity.this.getAttackTarget() == null
+          && CerastesEntity.this.getRNG().nextInt(60) == 1 && super.shouldExecute();
+    }
+
+    @Override
+    public boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
+      return worldIn.getBlockState(pos).isIn(BlockTags.SAND);
     }
   }
   
