@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GoToBlockGoal;
 import greekfantasy.util.PanfluteMusicManager;
@@ -23,8 +22,6 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -32,7 +29,6 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -46,15 +42,27 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class SatyrEntity extends CreatureEntity {
   
-  private static final DataParameter<Boolean> DATA_DANCING = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BOOLEAN);
+  private static final DataParameter<Byte> DATA_STATE = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Boolean> DATA_SHAMAN = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BOOLEAN);
+  private static final String KEY_STATE = "SatyrState";
+  private static final String KEY_SHAMAN = "Shaman";
+  private static final String KEY_SUMMON = "SummonTime";
+  
   private static final ResourceLocation DANCING_SONG = new ResourceLocation(GreekFantasy.MODID, "sound_of_silence");
   private static final ResourceLocation SUMMONING_SONG = new ResourceLocation(GreekFantasy.MODID, "sarias_song");
 
-  protected static final byte SUMMON = 7;
+  protected static final byte NONE = 9;
+  protected static final byte DANCING = 10;
+  protected static final byte SUMMONING = 11;
+  protected static final byte PLAY_SUMMON_SOUND = 12;
+  
   protected static final int MAX_SUMMON_TIME = 160;
   protected static final int MAX_PANFLUTE_TIME = 8;
   public int holdingPanfluteTime;
   public int summonTime;
+  public boolean hasShamanTexture;
+    
+  private final Goal summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 650);
   
   public SatyrEntity(final EntityType<? extends SatyrEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -72,14 +80,14 @@ public class SatyrEntity extends CreatureEntity {
   @Override
   public void registerData() {
     super.registerData();
-    this.getDataManager().register(DATA_DANCING, Boolean.valueOf(false));
+    this.getDataManager().register(DATA_STATE, Byte.valueOf(NONE));
+    this.getDataManager().register(DATA_SHAMAN, Boolean.valueOf(false));
   }
   
   @Override
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(1, new SummonAnimalsGoal(MAX_SUMMON_TIME, 1000));
     this.goalSelector.addGoal(2, new DancingGoal(0.75D));
     this.goalSelector.addGoal(3, new GoToCampfireGoal(12, 0.9D));
     this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
@@ -91,63 +99,116 @@ public class SatyrEntity extends CreatureEntity {
   public void livingTick() {
     super.livingTick();  
     // play music
-    if(summonTime > 0) {
+    if(this.isSummoning()) {
       PanfluteMusicManager.playMusic(this, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
     } else if(this.isDancing()) {
       PanfluteMusicManager.playMusic(this, DANCING_SONG, this.getEntityWorld().getGameTime(), 0.84F, 0.28F);
     }
     
     // dancing timer
-    if(this.isDancing() || this.summonTime > 0) {
+    if(this.isDancing() || this.isSummoning()) {
       this.holdingPanfluteTime = Math.min(this.holdingPanfluteTime + 1, MAX_PANFLUTE_TIME);
     } else {
       this.holdingPanfluteTime = Math.max(this.holdingPanfluteTime - 1, 0);
     }
     
-    // summon timer (concurrent)
+    // summon timer
     if(summonTime > 0 && summonTime++ > MAX_SUMMON_TIME) {
-      this.getEntityWorld().playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_WOLF_HOWL, this.getSoundCategory(), 1.1F, 0.9F + this.getRNG().nextFloat() * 0.2F, false);
       summonTime = 0;
     }
     
   }
-  
-  @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
-    switch(id) {
-    case SUMMON:
-      this.summonTime = 1;
-      break;
-    default:
-      super.handleStatusUpdate(id);
-      break;
-    }
-  }
-  
+ 
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    final ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     // it makes our lives easier if main hand is always right (model changes when holding pipe, etc)
     this.setLeftHanded(false);
-    return data;
+    // set shaman (one per group)
+    if(worldIn.getRandom().nextInt(100) < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get()) {
+      this.setShaman(true);
+      // DEBUG
+      GreekFantasy.LOGGER.info("Shaman spawned!");
+    }
+    return spawnDataIn;
   }
   
-  public boolean isDancing() {
-    return this.getDataManager().get(DATA_DANCING).booleanValue();
-  }
-  
-  public void setDancing(final boolean dancing) {
-    this.getDataManager().set(DATA_DANCING, Boolean.valueOf(dancing));
-  }
-  
-  public void startSummoning() {
-    this.summonTime = 1;
-    if(this.isServerWorld()) {
-      this.getEntityWorld().setEntityState(this, SUMMON);
+  @Override
+  public void notifyDataManagerChange(final DataParameter<?> key) {
+    super.notifyDataManagerChange(key);
+    if(key == DATA_SHAMAN) {
+      // change AI task for shaman / non-shaman
+      if(this.isServerWorld()) {
+        if(this.isShaman()) {
+          this.goalSelector.addGoal(1, summonAnimalsGoal);
+        } else {
+          this.goalSelector.removeGoal(summonAnimalsGoal);
+        }
+      }
+      // server AND client should do this
+      this.hasShamanTexture = this.isShaman();
+      
+    } else if(key == DATA_STATE) {
+      // update summon time
+      if(this.isSummoning()) {
+        this.summonTime = 1;
+      } else {
+        this.summonTime = 0;
+      }
     }
   }
   
+  @OnlyIn(Dist.CLIENT)
+  public void handleStatusUpdate(byte id) {
+    if(id == PLAY_SUMMON_SOUND) {
+      this.getEntityWorld().playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_WOLF_HOWL, this.getSoundCategory(), 1.1F, 0.9F + this.getRNG().nextFloat() * 0.2F, false);
+      this.summonTime = 0;
+    } else {
+      super.handleStatusUpdate(id);
+    }
+  }
+
+  @Override
+  public void writeAdditional(CompoundNBT compound) {
+    super.writeAdditional(compound);
+    compound.putByte(KEY_STATE, this.getDataManager().get(DATA_STATE).byteValue());
+    compound.putBoolean(KEY_SHAMAN, this.isShaman());
+  }
+
+  @Override
+  public void readAdditional(CompoundNBT compound) {
+    super.readAdditional(compound);
+    final byte state = Byte.valueOf(compound.getByte(KEY_STATE));
+    if(state == SUMMONING) {
+      this.setSummoning(true);
+    } else if(state == DANCING) {
+      this.setDancing(true);
+    }
+    this.setShaman(compound.getBoolean(KEY_SHAMAN));
+  }
+  
+  // Dancing, summoning, and shaman getters/setters
+  
+  public boolean isDancing() { return this.getDataManager().get(DATA_STATE).byteValue() == DANCING; }
+  
+  public void setDancing(final boolean dancing) { this.getDataManager().set(DATA_STATE, Byte.valueOf(dancing ? DANCING : NONE)); }
+  
+  public boolean isSummoning() { return this.getDataManager().get(DATA_STATE).byteValue() == SUMMONING; }
+  
+  public void setSummoning(final boolean summoning) { this.getDataManager().set(DATA_STATE, Byte.valueOf(summoning ? SUMMONING : NONE)); }
+  
+  public boolean isShaman() { return this.getDataManager().get(DATA_SHAMAN); }
+  
+  public void setShaman(final boolean shaman) { 
+    this.hasShamanTexture = shaman;
+    this.getDataManager().set(DATA_SHAMAN, Boolean.valueOf(shaman)); 
+  }
+  
+  public boolean hasShamanTexture() {
+    return this.hasShamanTexture;
+  }
+    
   /**
    * Only used client-side. Calculates the portion of dancing
    * or summoning completed up to 8 ticks so that the model 
@@ -197,28 +258,30 @@ public class SatyrEntity extends CreatureEntity {
       this.setMutexFlags(EnumSet.allOf(Goal.Flag.class));
       MAX_DELAY = summonDelayIn;
       MAX_COOLDOWN = summonCooldownIn;
-      cooldown = summonCooldownIn / 3;
+      cooldown = summonCooldownIn / 4;
     }
 
     @Override
     public boolean shouldExecute() {
-      if(cooldown > 0) {
+      if(SatyrEntity.this.isSummoning()) {
+        return true;
+      } else if(cooldown > 0) {
         cooldown--;
       } else {
-        return SatyrEntity.this.getAttackTarget() != null && SatyrEntity.this.getRNG().nextInt(40) == 0;
+        return SatyrEntity.this.isShaman() && SatyrEntity.this.getAttackTarget() != null && SatyrEntity.this.getRNG().nextInt(40) == 0;
       }
       return false;
     }
     
     @Override
     public void startExecuting() {
-      SatyrEntity.this.startSummoning();
+      SatyrEntity.this.setSummoning(true);
       this.delay = 1;
     }
     
     @Override
     public boolean shouldContinueExecuting() {
-      return this.delay > 0 && SatyrEntity.this.getAttackTarget() != null && SatyrEntity.this.hurtTime == 0;
+      return this.delay > 0 && SatyrEntity.this.getAttackTarget() != null;
     }
     
     @Override
@@ -240,7 +303,14 @@ public class SatyrEntity extends CreatureEntity {
           wolf.setAngerTarget(SatyrEntity.this.getAttackTarget().getUniqueID());
           SatyrEntity.this.getEntityWorld().addEntity(wolf);
         }
+        SatyrEntity.this.getEntityWorld().setEntityState(SatyrEntity.this, PLAY_SUMMON_SOUND);
         resetTask();
+      }
+      // soft reset when entity is hurt
+      if(SatyrEntity.this.hurtTime != 0) {
+        this.delay = 0;
+        this.cooldown = 30;
+        SatyrEntity.this.setSummoning(false);
       }
     }
     
@@ -248,7 +318,7 @@ public class SatyrEntity extends CreatureEntity {
     public void resetTask() {
       this.delay = 0;
       this.cooldown = MAX_COOLDOWN;
-      SatyrEntity.this.summonTime = 0;
+      SatyrEntity.this.setSummoning(false);
     }
     
   }
@@ -263,7 +333,8 @@ public class SatyrEntity extends CreatureEntity {
     
     @Override
     public boolean shouldExecute() {
-      return SatyrEntity.this.getAttackTarget() == null && SatyrEntity.this.getRNG().nextInt(60) == 0 && super.shouldExecute();
+      return SatyrEntity.this.getAttackTarget() == null && !SatyrEntity.this.isSummoning() 
+          && SatyrEntity.this.getRNG().nextInt(60) == 0 && super.shouldExecute();
     }
 
     @Override
@@ -303,7 +374,8 @@ public class SatyrEntity extends CreatureEntity {
     public boolean shouldExecute() {
       if(cooldown > 0) {
         cooldown--;
-      } else if(!SatyrEntity.this.getNavigator().hasPath() && SatyrEntity.this.getAttackTarget() == null && SatyrEntity.this.rand.nextInt(20) == 0) {
+      } else if(!SatyrEntity.this.getNavigator().hasPath() && SatyrEntity.this.getAttackTarget() == null 
+          && !SatyrEntity.this.isSummoning() && SatyrEntity.this.rand.nextInt(20) == 0) {
         // find a nearby campfire
         this.campfirePos = findCampfire();
         return this.updateTarget();

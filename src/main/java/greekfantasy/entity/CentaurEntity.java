@@ -108,21 +108,23 @@ public class CentaurEntity extends CreatureEntity {
       this.setRearing(false);
     }
   }
-  
+
+  @Override
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
     compound.putByte(TAG_COLOR, (byte) this.getCoatColor().getId());
     compound.putBoolean(TAG_QUIVER, this.hasQuiver());
- }
+  }
 
- /**
-  * (abstract) Protected helper method to read subclass entity data from NBT.
-  */
- public void readAdditional(CompoundNBT compound) {
+  /**
+   * (abstract) Protected helper method to read subclass entity data from NBT.
+   */
+  @Override
+  public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
     this.setCoatColor(CoatColors.func_234254_a_(compound.getByte(TAG_COLOR)));
     this.setQuiver(compound.getBoolean(TAG_QUIVER));
- }
+  }
 
   @Nullable
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,

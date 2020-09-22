@@ -372,8 +372,7 @@ public final class GFRegistry {
     EntityType<T> entityType = entityTypeBuilder.build(name);
     entityType.setRegistryName(GreekFantasy.MODID, name);
     event.getRegistry().register(entityType);
-    GlobalEntityTypeAttributes.put(entityType, mapSupplier.get().create());
-    
+    GlobalEntityTypeAttributes.put(entityType, mapSupplier.get().create());    
     EntitySpawnPlacementRegistry.register(entityType, classification == EntityClassification.WATER_CREATURE ? PlacementType.IN_WATER : PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, placementPredicate);
     return entityType;
   }

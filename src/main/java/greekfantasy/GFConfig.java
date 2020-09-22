@@ -39,6 +39,9 @@ public class GFConfig {
 //  public final ForgeConfigSpec.IntValue SIREN_SPAWN_RATE;
 //  public final ForgeConfigSpec.IntValue UNICORN_SPAWN_RATE;
   public final ForgeConfigSpec.BooleanValue SHADE_SPAWN;
+  public final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
+  // other special entity abilities
+  public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
   public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
   
   public GFConfig(final ForgeConfigSpec.Builder builder) {
@@ -61,12 +64,18 @@ public class GFConfig {
     SHADE_ATTACK = builder.comment("Whether the Shade can steal player XP")
         .define("shade_attack", true);
     builder.pop();
+    // mob abilities
+    GIGANTE_RESISTANCE = builder.comment("Whether the Gigante has damage resistance")
+        .define("gigante_resistance", true);
+    SHADE_PLAYER_ONLY = builder.comment("Whether shades that spawn when a player dies can only be killed by that player")
+        .define("shade_player_only", true);
     // mob spawns
     builder.push("mob_spawns");
     SHADE_SPAWN = builder.comment("Whether a shade can spawn when players die")
         .define("shade_spawn", true);
-    SHADE_PLAYER_ONLY = builder.comment("Whether shades that spawn when a player dies can only be killed by that player")
-        .define("shade_player_only", true);
+    SATYR_SHAMAN_CHANCE = builder.comment("Percent chance that a satyr will be a shaman")
+        .defineInRange("satyr_shaman_chance", 20, 0, 100);
+    
 //    SHADE_SPAWN_RATE = builder.comment("Natural spawn rate of shades")
 //        .defineInRange("shade_spawn_rate", 20, 0, 50);
     builder.pop();

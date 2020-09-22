@@ -5,6 +5,8 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
+import greekfantasy.item.ClubItem;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
@@ -17,6 +19,7 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
@@ -34,10 +37,11 @@ public class GiganteEntity extends CreatureEntity {
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 56.0D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.32D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D)
+        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 1.5D);
   }
   
   public static boolean canGiganteSpawnOn(final EntityType<? extends MobEntity> entity, final IWorld world, final SpawnReason reason, 
@@ -48,9 +52,21 @@ public class GiganteEntity extends CreatureEntity {
   @Override
   protected void registerGoals() {
     super.registerGoals();
-    this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 10.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
   }
+  
+  @Override
+  protected void damageEntity(final DamageSource source, final float amountIn) {
+    float amount = amountIn;
+    if (GreekFantasy.CONFIG.GIGANTE_RESISTANCE.get()) {
+      amount *= 0.6F;
+    }
+    super.damageEntity(source, amount);
+  }
+  
+  @Override
+  public boolean canBePushed() { return false; }
   
   @Nullable
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,

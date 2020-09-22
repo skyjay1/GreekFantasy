@@ -59,6 +59,8 @@ public class PanfluteSong {
    * Currently supports up to 2 notes
    * @param notes the note array to reference
    * @param worldTime the world time
+   * @param playSpeed the number of notes to play per second
+   * @param maxLength the maximum number of notes from the array to use
    * @return a set of notes to play
    **/
   public static List<Integer> getNotes(final int[] notes, final long worldTime, final int playSpeed, final int maxLength) {
@@ -68,15 +70,6 @@ public class PanfluteSong {
     final int currentNote = currentIndex >= notes.length ? 0 : MathHelper.clamp(notes[currentIndex], 0, 24);
     if(currentNote > 0) {
       noteSet.add(Integer.valueOf(currentNote));
-      // get a note halfway between last note and current note
-      if(currentIndex > 0) {
-        final int lastIndex = currentIndex - 1;
-        final int lastNote = lastIndex >= notes.length ? 0 : MathHelper.clamp(notes[lastIndex], 0, 24);
-        final int middleNote = (currentNote + lastNote) / 2;
-        if(middleNote > 0 && middleNote != currentNote) {
-          noteSet.add(Integer.valueOf(middleNote));
-        }
-      }
     }
     return noteSet;
   }

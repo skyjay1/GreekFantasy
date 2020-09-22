@@ -6,8 +6,9 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import greekfantasy.entity.GiganteEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.entity.CreatureEntity;
 
-public class GiganteModel<T extends GiganteEntity> extends BipedModel<T> {
+public class GiganteModel<T extends CreatureEntity> extends BipedModel<T> {
 
   public GiganteModel(float modelSize) {
     super(modelSize, 0.0F, 128, 64);
