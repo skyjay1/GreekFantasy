@@ -11,6 +11,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 
 public class CentaurQuiverLayer<T extends CentaurEntity> extends LayerRenderer<T, CentaurModel<T>> {
@@ -24,7 +27,8 @@ public class CentaurQuiverLayer<T extends CentaurEntity> extends LayerRenderer<T
   @Override
   public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entity,
       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-    if (!entity.isInvisible() && entity.hasQuiver()) {
+    final ItemStack bow = entity.getHeldItem(ProjectileHelper.getHandWith(entity, Items.BOW));
+    if (!entity.isInvisible() && bow.getItem() == Items.BOW) {
       // get packed light and a vertex builder bound to the correct texture
       int packedOverlay = LivingRenderer.getPackedOverlay(entity, 0.0F);
       IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(TEXTURE));

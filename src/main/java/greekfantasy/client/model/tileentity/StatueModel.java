@@ -46,7 +46,7 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     this.bipedHead.setRotationPoint(0.0F, 0.0F + yOffsetIn, 0.0F);
     // body
     this.bipedBody = new ModelRenderer(this, 16, 16);
-    this.bipedBody.addBox(-4.01F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSizeIn);
+    this.bipedBody.addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedBody.setRotationPoint(0.0F, 0.0F + yOffsetIn, 0.0F);
     this.bipedBodyChest = new ModelRenderer(this);
     this.bipedBodyChest.setRotationPoint(0.0F, 1.0F, -2.0F);
@@ -71,11 +71,11 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     // legs
     this.bipedRightLeg = new ModelRenderer(this, 16, 48);
     this.bipedRightLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
-    this.bipedRightLeg.setRotationPoint(-1.9F, 12.0F + yOffsetIn, 0.0F);
+    this.bipedRightLeg.setRotationPoint(-2.0F, 12.0F + yOffsetIn, 0.0F);
     this.bipedLeftLeg = new ModelRenderer(this, 0, 16);
     this.bipedLeftLeg.mirror = true;
     this.bipedLeftLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
-    this.bipedLeftLeg.setRotationPoint(1.9F, 12.0F + yOffsetIn, 0.0F);
+    this.bipedLeftLeg.setRotationPoint(2.0F, 12.0F + yOffsetIn, 0.0F);
     
     ROTATION_MAP.put(ModelPart.HEAD, ImmutableList.of(this.bipedHead));
     ROTATION_MAP.put(ModelPart.BODY, ImmutableList.of(this.bipedBody, this.bipedBodyChest));

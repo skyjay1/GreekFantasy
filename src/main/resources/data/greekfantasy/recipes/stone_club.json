@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I",
+    "X",
+    "#"
+  ],
+  "key": {
+    "I": {
+      "tag": "minecraft:stone_tool_materials"
+    },
+    "#": {
+      "tag": "minecraft:planks"
+    },
+    "X": {
+      "tag": "minecraft:logs"
+    }
+  },
+  "result": {
+    "item": "greekfantasy:iron_club"
+  }
+}

@@ -28,8 +28,8 @@ public class CerberusEntity extends CreatureEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    //this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 8.0F));
+    this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
   }
 
 }

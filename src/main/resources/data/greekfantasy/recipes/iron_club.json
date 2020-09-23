@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I",
+    "X",
+    "#"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "#": {
+      "tag": "minecraft:planks"
+    },
+    "X": {
+      "tag": "minecraft:logs"
+    }
+  },
+  "result": {
+    "item": "greekfantasy:iron_club"
+  }
+}

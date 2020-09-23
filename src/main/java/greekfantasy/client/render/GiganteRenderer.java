@@ -13,7 +13,8 @@ import net.minecraft.util.ResourceLocation;
 public class GiganteRenderer<T extends GiganteEntity> extends BipedRenderer<T, GiganteModel<T>> {
   
   private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/gigante.png");
-
+  private static final float SCALE = 1.9F;
+  
   public GiganteRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new GiganteModel<T>(0.0F), 0.0F);
   }
@@ -26,9 +27,8 @@ public class GiganteRenderer<T extends GiganteEntity> extends BipedRenderer<T, G
   @Override
   public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
       final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
-    final float scale = 2.0F;
     matrixStackIn.push();
-    matrixStackIn.scale(scale, scale, scale);
+    matrixStackIn.scale(SCALE, SCALE, SCALE);
     super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
     matrixStackIn.pop();
   }

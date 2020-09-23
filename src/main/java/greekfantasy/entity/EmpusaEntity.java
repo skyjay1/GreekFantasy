@@ -4,16 +4,17 @@ import java.util.EnumSet;
 
 import greekfantasy.GreekFantasy;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
@@ -47,9 +48,9 @@ public class EmpusaEntity extends MonsterEntity {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
     this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
-    //this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    //this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     if(GreekFantasy.CONFIG.EMPUSA_ATTACK.get()) {

@@ -3,6 +3,7 @@ package greekfantasy.entity;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -11,6 +12,7 @@ import greekfantasy.entity.ai.GoToBlockGoal;
 import greekfantasy.util.PanfluteMusicManager;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.IAngerable;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -22,6 +24,8 @@ import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,18 +37,21 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
+import net.minecraft.util.RangedInteger;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.TickRangeConverter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class SatyrEntity extends CreatureEntity {
+public class SatyrEntity extends CreatureEntity implements IAngerable {
   
   private static final DataParameter<Byte> DATA_STATE = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BYTE);
   private static final DataParameter<Boolean> DATA_SHAMAN = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BOOLEAN);
@@ -63,6 +70,10 @@ public class SatyrEntity extends CreatureEntity {
   public int holdingPanfluteTime;
   public int summonTime;
   public boolean hasShamanTexture;
+  
+  private static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(20, 39);
+  private int angerTime;
+  private UUID angerTarget;
     
   private final Goal meleeAttackGoal = new MeleeAttackGoal(this, 1.0D, false);
   private final Goal summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 650);
@@ -96,6 +107,8 @@ public class SatyrEntity extends CreatureEntity {
     this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
+    this.targetSelector.addGoal(3, new ResetAngerGoal<>(this, true));
   }
   
   @Override
@@ -119,9 +132,12 @@ public class SatyrEntity extends CreatureEntity {
     if(summonTime > 0 && summonTime++ > MAX_SUMMON_TIME) {
       summonTime = 0;
     }
-    
+
+    // anger timer
+    if (!this.world.isRemote()) {
+      this.func_241359_a_((ServerWorld) this.world, true);
+    }
   }
-  
   
   @Override
   public boolean attackEntityFrom(final DamageSource source, final float amount) {
@@ -189,13 +205,30 @@ public class SatyrEntity extends CreatureEntity {
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
     compound.putBoolean(KEY_SHAMAN, this.isShaman());
+    this.writeAngerNBT(compound);
   }
 
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
     this.setShaman(compound.getBoolean(KEY_SHAMAN));
+    this.readAngerNBT((ServerWorld)this.world, compound);
   }
+  
+  //IAngerable methods
+  
+  @Override
+  public void func_230258_H__() { this.setAngerTime(ANGER_RANGE.getRandomWithinRange(this.rand)); }
+  @Override
+  public void setAngerTime(int time) { this.angerTime = time; }
+  @Override
+  public int getAngerTime() { return this.angerTime; }
+  @Override
+  public void setAngerTarget(@Nullable UUID target) { this.angerTarget = target; }
+  @Override
+  public UUID getAngerTarget() { return this.angerTarget; }
+ 
+  // End IAngerable methods
   
   // Dancing, summoning, and shaman getters/setters
   

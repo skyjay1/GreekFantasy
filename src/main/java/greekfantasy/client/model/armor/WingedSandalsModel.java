@@ -20,8 +20,6 @@ public class WingedSandalsModel  extends BipedModel<LivingEntity> {
     leftWing2 = makeWing(this, modelSize, false);
     this.bipedLeftLeg.addChild(leftWing1);
     this.bipedLeftLeg.addChild(leftWing2);
-    //setRotationAngle(leftWing1, 0.0F, -0.7854F, 0.0F);
-    //setRotationAngle(leftWing2, 0.0F, 0.7854F, 0.0F);
 
     rightWing1 = makeWing(this, modelSize, true);
     rightWing2 = makeWing(this, modelSize, false);
@@ -40,7 +38,7 @@ public class WingedSandalsModel  extends BipedModel<LivingEntity> {
   public void setRotationAngles(LivingEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     // animate wings
-    final float wingSpeed = entity.isOnGround() ? 0.24F : 0.76F;
+    final float wingSpeed = entity.isOnGround() ? 0.64F : 1.14F;
     final float wingSpan = 0.7854F;
     final float wingAngle = wingSpan + MathHelper.cos((ageInTicks + entity.getEntityId()) * wingSpeed) * wingSpan * 0.5F;
     this.leftWing1.rotateAngleY = this.rightWing1.rotateAngleY = -wingAngle;

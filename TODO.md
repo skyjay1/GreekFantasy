@@ -9,7 +9,7 @@ __Key:__
 __Key:__
 `[Model] [AI] [Spawning]`
 
-_ _ _ Naiad
+X _ _ Naiad
 X _ _ Dryad
 X X _ Satyr
 X _ _ Centaur
