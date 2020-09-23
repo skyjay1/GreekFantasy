@@ -27,7 +27,7 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent(priority = EventPriority.HIGHEST)
   public static void onPlayerDeath(final LivingDeathEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && GreekFantasy.CONFIG.SHADE_SPAWN.get() && event.getEntityLiving() instanceof PlayerEntity) {
+    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && GreekFantasy.CONFIG.SHADE_SPAWN_ON_DEATH.get() && event.getEntityLiving() instanceof PlayerEntity) {
       final PlayerEntity player = (PlayerEntity) event.getEntityLiving();
       // check pre-conditions
       if(!player.getEntityWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY) && !player.isSpectator() && player.experienceLevel > 3) {
@@ -51,7 +51,7 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent
   public static void onPlayerInteract(final PlayerInteractEvent event) {
-    if(GreekFantasy.CONFIG.STUN_PREVENTS_USE.get() && event.getPlayer().isAlive() && isStunned(event.getPlayer())) {
+    if(GreekFantasy.CONFIG.doesStunPreventUse() && event.getPlayer().isAlive() && isStunned(event.getPlayer())) {
       // note: PlayerInteractEvent has several children but we receive and cancel all of the ones that can be cancelled
       if(event.isCancelable()) {
         event.setCanceled(true);
@@ -65,7 +65,7 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent
   public static void onPlayerAttack(final AttackEntityEvent event) {
-    if(GreekFantasy.CONFIG.STUN_PREVENTS_USE.get() && event.getPlayer().isAlive() && isStunned(event.getPlayer())) {
+    if(GreekFantasy.CONFIG.doesStunPreventUse() && event.getPlayer().isAlive() && isStunned(event.getPlayer())) {
       event.setCanceled(true);
     }
   }
@@ -78,7 +78,7 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent
   public static void onLivingJump(final LivingJumpEvent event) {
-    if(GreekFantasy.CONFIG.STUN_PREVENTS_JUMP.get() && isStunned(event.getEntityLiving())) {
+    if(GreekFantasy.CONFIG.doesStunPreventJump() && isStunned(event.getEntityLiving())) {
       event.getEntityLiving().setMotion(event.getEntityLiving().getMotion().add(0.0D, -0.42D, 0.0D));
     }
   }

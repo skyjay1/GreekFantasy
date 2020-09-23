@@ -97,10 +97,6 @@ public class EmpusaEntity extends MonsterEntity {
     return this.isDraining;
   }
   
-  public void healthDrainAttack(final LivingEntity target) {
-    target.attackEntityFrom(DamageSource.causeIndirectMagicDamage(this, this), 1.0F);
-  }
-  
   public void particleRay() {
     Vector3d pos = this.getEyePosition(1.0F).add(0, -this.getHeight() * 0.25D, 0);
     Vector3d lookVec = this.getLookVec();
@@ -168,7 +164,7 @@ public class EmpusaEntity extends MonsterEntity {
           final DamageSource src = DamageSource.causeIndirectMagicDamage(this.entity, this.entity);
           float amount = (float) this.entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
           if(this.entity.getAttackTarget().attackEntityFrom(src, amount)) {
-            this.entity.heal(amount * 0.75F);
+            this.entity.heal(amount * 1.5F);
           }
         }
       } else {

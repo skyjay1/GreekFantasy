@@ -68,7 +68,7 @@ _ Grapes / grapevines
 ~ Clubs (wood, stone/flint, iron)
 _ Javelins (wood, stone/flint, iron)
 _ Golden bridle (for Unicorn)
-_ Winged sandals
+X Winged sandals
 _ Horn (from Minotaur / Cyprians)
 
 ## Other
@@ -77,6 +77,7 @@ X Statue GUI
 X Statue skins
 X "Stunned" effect (prevent movement or item use)
 ~ "Petrified" effect
+X "Overstep" effect
 X Achievement for being petrified: "At first, I was afraid, I was petrified"
 X Achievement for encountering Cerastes
 ~ Panflute songs

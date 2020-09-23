@@ -3,9 +3,7 @@ package greekfantasy.entity.ai;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Random;
-import java.util.function.Predicate;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.BlockPos;

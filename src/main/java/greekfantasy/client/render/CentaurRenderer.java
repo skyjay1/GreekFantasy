@@ -7,7 +7,6 @@ import greekfantasy.client.model.CentaurModel;
 import greekfantasy.entity.CentaurEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.entity.passive.horse.CoatColors;
 import net.minecraft.util.ResourceLocation;
 

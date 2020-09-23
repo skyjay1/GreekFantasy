@@ -7,6 +7,7 @@ import greekfantasy.block.MysteriousBoxBlock;
 import greekfantasy.block.NestBlock;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.block.VaseBlock;
+import greekfantasy.effect.OverstepEffect;
 import greekfantasy.effect.StunnedEffect;
 import greekfantasy.entity.AraEntity;
 import greekfantasy.entity.CentaurEntity;
@@ -29,6 +30,7 @@ import greekfantasy.entity.UnicornEntity;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.item.ClubItem;
 import greekfantasy.item.PanfluteItem;
+import greekfantasy.item.WingedSandalsItem;
 import greekfantasy.structure.HarpyNestStructure;
 import greekfantasy.structure.feature.HarpyNestFeature;
 import greekfantasy.tileentity.StatueTileEntity;
@@ -108,6 +110,8 @@ public final class GFRegistry {
   public static final Item STONE_CLUB = null;
   @ObjectHolder("wooden_club")
   public static final Item WOODEN_CLUB = null;
+  @ObjectHolder("winged_sandals")
+  public static final Item WINGED_SANDALS = null;
   
   @ObjectHolder("nest")
   public static final Block NEST_BLOCK = null;
@@ -150,6 +154,8 @@ public final class GFRegistry {
   public static final Effect STUNNED_EFFECT = null;
   @ObjectHolder("petrified")
   public static final Effect PETRIFIED_EFFECT = null;
+  @ObjectHolder("overstep")
+  public static final Effect OVERSTEP_EFFECT = null;
   
   @ObjectHolder("gorgon_face")
   public static final BasicParticleType GORGON_PARTICLE = new BasicParticleType(true);
@@ -248,7 +254,9 @@ public final class GFRegistry {
         new ClubItem(ItemTier.STONE, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "stone_club"),
         new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "wooden_club")
+          .setRegistryName(GreekFantasy.MODID, "wooden_club"),
+        new WingedSandalsItem(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "winged_sandals")
     );
     // block items
     registerItemBlock(event, NEST_BLOCK, "nest");
@@ -276,7 +284,8 @@ public final class GFRegistry {
     GreekFantasy.LOGGER.info("registerEffects");
     event.getRegistry().registerAll(
         new StunnedEffect("eb685e9d-fc50-4b68-94d6-c4d906c27034").setRegistryName(GreekFantasy.MODID, "stunned"),
-        new StunnedEffect("ef99fb38-38d1-4703-9607-fabea29c0e6e").setRegistryName(GreekFantasy.MODID, "petrified")
+        new StunnedEffect("ef99fb38-38d1-4703-9607-fabea29c0e6e").setRegistryName(GreekFantasy.MODID, "petrified"),
+        new OverstepEffect().setRegistryName(GreekFantasy.MODID, "overstep")
     );
   }
   
@@ -317,46 +326,46 @@ public final class GFRegistry {
     final Biome.Category category = event.getCategory();
     if(category == Biome.Category.NETHER) {
       // register nether spawns
-      registerSpawns(event.getSpawns(), CERBERUS_ENTITY, 10, 1, 1);
-      registerSpawns(event.getSpawns(), ORTHUS_ENTITY, 20, 1, 4);
+      registerSpawns(event.getSpawns(), CERBERUS_ENTITY, GreekFantasy.CONFIG.CERBERUS_SPAWN_WEIGHT.get(), 1, 1);
+      registerSpawns(event.getSpawns(), ORTHUS_ENTITY, GreekFantasy.CONFIG.ORTHUS_SPAWN_WEIGHT.get(), 1, 4);
     } else if(category != Biome.Category.THEEND) {
       // TODO use config for all of these
       // register overworld spawns
-      registerSpawns(event.getSpawns(), ARA_ENTITY, 20, 2, 5);
-      registerSpawns(event.getSpawns(), EMPUSA_ENTITY, 80, 1, 3);
-      registerSpawns(event.getSpawns(), GORGON_ENTITY, 18, 1, 3);
-      registerSpawns(event.getSpawns(), HARPY_ENTITY, 15, 1, 3);
-      registerSpawns(event.getSpawns(), MINOTAUR_ENTITY, 60, 2, 5);
-      registerSpawns(event.getSpawns(), SHADE_ENTITY, 10, 1, 1);
+      registerSpawns(event.getSpawns(), ARA_ENTITY, GreekFantasy.CONFIG.ARA_SPAWN_WEIGHT.get(), 2, 5);
+      registerSpawns(event.getSpawns(), EMPUSA_ENTITY, GreekFantasy.CONFIG.EMPUSA_SPAWN_WEIGHT.get(), 1, 3);
+      registerSpawns(event.getSpawns(), GORGON_ENTITY, GreekFantasy.CONFIG.GORGON_SPAWN_WEIGHT.get(), 1, 3);
+      registerSpawns(event.getSpawns(), HARPY_ENTITY, GreekFantasy.CONFIG.HARPY_SPAWN_WEIGHT.get(), 1, 3);
+      registerSpawns(event.getSpawns(), MINOTAUR_ENTITY, GreekFantasy.CONFIG.MINOTAUR_SPAWN_WEIGHT.get(), 2, 5);
+      registerSpawns(event.getSpawns(), SHADE_ENTITY, GreekFantasy.CONFIG.SHADE_SPAWN_WEIGHT.get(), 1, 1);
       // desert spawns
       if(category == Biome.Category.DESERT) {
-        registerSpawns(event.getSpawns(), CERASTES_ENTITY, 30, 1, 1);
+        registerSpawns(event.getSpawns(), CERASTES_ENTITY, GreekFantasy.CONFIG.CERASTES_SPAWN_WEIGHT.get(), 1, 1);
       }
       // mountains spawns
       if(category == Biome.Category.EXTREME_HILLS) {
-        registerSpawns(event.getSpawns(), CYCLOPES_ENTITY, 20, 1, 3);
-        registerSpawns(event.getSpawns(), GIGANTE_ENTITY, 20, 1, 4);
+        registerSpawns(event.getSpawns(), CYCLOPES_ENTITY, GreekFantasy.CONFIG.CYCLOPES_SPAWN_WEIGHT.get(), 1, 3);
+        registerSpawns(event.getSpawns(), GIGANTE_ENTITY, GreekFantasy.CONFIG.GIGANTE_SPAWN_WEIGHT.get(), 1, 4);
       }
       // plains spawns
       if(category == Biome.Category.PLAINS) {
-        registerSpawns(event.getSpawns(), UNICORN_ENTITY, 11, 2, 5);
+        registerSpawns(event.getSpawns(), UNICORN_ENTITY, GreekFantasy.CONFIG.UNICORN_SPAWN_WEIGHT.get(), 2, 5);
       }
       // plains + taiga spawns
       if(category == Biome.Category.PLAINS || name.contains("taiga")) {
-        registerSpawns(event.getSpawns(), CENTAUR_ENTITY, 15, 2, 4);
-        registerSpawns(event.getSpawns(), CYPRIAN_ENTITY, 10, 2, 3);
+        registerSpawns(event.getSpawns(), CENTAUR_ENTITY, GreekFantasy.CONFIG.CENTAUR_SPAWN_WEIGHT.get(), 2, 4);
+        registerSpawns(event.getSpawns(), CYPRIAN_ENTITY, GreekFantasy.CONFIG.CYPRIAN_SPAWN_WEIGHT.get(), 2, 3);
       }
       // forest spawns
       if(isForest) {
-        registerSpawns(event.getSpawns(), DRYAD_ENTITY, 24, 1, 2);
-        registerSpawns(event.getSpawns(), SATYR_ENTITY, 18, 2, 5);
+        registerSpawns(event.getSpawns(), DRYAD_ENTITY, GreekFantasy.CONFIG.DRYAD_SPAWN_WEIGHT.get(), 1, 2);
+        registerSpawns(event.getSpawns(), SATYR_ENTITY, GreekFantasy.CONFIG.SATYR_SPAWN_WEIGHT.get(), 2, 5);
       }
       // water spawns
       if(category == Biome.Category.OCEAN) {
-        registerSpawns(event.getSpawns(), SIREN_ENTITY, 10, 2, 5);
+        registerSpawns(event.getSpawns(), SIREN_ENTITY, GreekFantasy.CONFIG.SIREN_SPAWN_WEIGHT.get(), 2, 5);
       }
       if(category == Biome.Category.OCEAN || category == Biome.Category.RIVER) {
-        registerSpawns(event.getSpawns(), NAIAD_ENTITY, 8, 2, 5);
+        registerSpawns(event.getSpawns(), NAIAD_ENTITY, GreekFantasy.CONFIG.NAIAD_SPAWN_WEIGHT.get(), 2, 5);
       }
     }
   }

@@ -1,17 +1,19 @@
 package greekfantasy;
 
-import java.nio.file.Path;
-
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
-
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class GFConfig {
   
+  // items
+  public final ForgeConfigSpec.DoubleValue SANDALS_SPEED_BONUS;
+  
   // effect configs
-  public final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
-  public final ForgeConfigSpec.BooleanValue STUN_PREVENTS_USE;
+  private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
+  private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_USE;
+  private final ForgeConfigSpec.BooleanValue OVERSTEP_ENABLED;
+  private boolean stunPreventsJump;
+  private boolean stunPreventsUse;
+  private boolean overstepEnabled;
   
   // special attack configs
   public final ForgeConfigSpec.BooleanValue EMPUSA_ATTACK;
@@ -21,36 +23,45 @@ public class GFConfig {
   public final ForgeConfigSpec.BooleanValue SHADE_ATTACK;
   
   // spawn rate configs
-  // TODO
-//  public final ForgeConfigSpec.IntValue ARA_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue CENTAUR_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue CERASTES_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue CERBERUS_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue CYCLOPES_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue CYPRIAN_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue EMPUSA_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue GIGANTE_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue GORGON_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue HARPY_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue MINOTAUR_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue NYMPH_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue SATYR_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue SHADE_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue SIREN_SPAWN_RATE;
-//  public final ForgeConfigSpec.IntValue UNICORN_SPAWN_RATE;
-  public final ForgeConfigSpec.BooleanValue SHADE_SPAWN;
+  public final ForgeConfigSpec.IntValue ARA_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue CENTAUR_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue CERASTES_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue CERBERUS_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue CYCLOPES_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue CYPRIAN_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue DRYAD_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue EMPUSA_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue GIGANTE_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue GORGON_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue HARPY_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue MINOTAUR_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue NAIAD_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue ORTHUS_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue SATYR_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue SHADE_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue SIREN_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue UNICORN_SPAWN_WEIGHT;
+  // special spawn configs
+  public final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
   public final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
   // other special entity abilities
   public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
   public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
   
   public GFConfig(final ForgeConfigSpec.Builder builder) {
+    // items
+    builder.push("items");
+    SANDALS_SPEED_BONUS = builder.comment("Winged Sandals speed bonus (1.0 = +100%)").worldRestart()
+        .defineInRange("sandals_speed_bonus", 1.0D, 0.0D, 2.0D);
+    builder.pop();
     // mob attacks
     builder.push("stun_effect");
     STUN_PREVENTS_JUMP = builder.comment("When stunned, players are prevented from jumping")
         .define("stun_prevents_jump", true);
     STUN_PREVENTS_USE = builder.comment("When stunned, players are prevented from using items")
         .define("stun_prevents_use", true);
+    OVERSTEP_ENABLED = builder.comment("Whether 'overstep' effect can modify player step height")
+        .define("enable_overstep", true);
     builder.pop();
     builder.push("mob_attacks");
     EMPUSA_ATTACK = builder.comment("Whether the Empusa can drain health")
@@ -70,26 +81,48 @@ public class GFConfig {
     SHADE_PLAYER_ONLY = builder.comment("Whether shades that spawn when a player dies can only be killed by that player")
         .define("shade_player_only", true);
     // mob spawns
-    builder.push("mob_spawns");
-    SHADE_SPAWN = builder.comment("Whether a shade can spawn when players die")
-        .define("shade_spawn", true);
+    builder.push("mob_spawn_weights");
+    ARA_SPAWN_WEIGHT = builder.worldRestart().defineInRange("ara_spawn_weight", 20, 0, 100);
+    CERBERUS_SPAWN_WEIGHT = builder.worldRestart().defineInRange("cerberus_spawn_weight", 10, 0, 100);
+    CENTAUR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("centaur_spawn_weight", 15, 0, 100);
+    CERASTES_SPAWN_WEIGHT = builder.worldRestart().defineInRange("cerastes_spawn_weight", 30, 0, 100);
+    CYCLOPES_SPAWN_WEIGHT = builder.worldRestart().defineInRange("cyclopes_spawn_weight", 20, 0, 100);
+    CYPRIAN_SPAWN_WEIGHT = builder.worldRestart().defineInRange("cyprian_spawn_weight", 10, 0, 100);
+    DRYAD_SPAWN_WEIGHT = builder.worldRestart().defineInRange("dryad_spawn_weight", 24, 0, 100);
+    EMPUSA_SPAWN_WEIGHT = builder.worldRestart().defineInRange("empusa_spawn_weight", 80, 0, 100);
+    GIGANTE_SPAWN_WEIGHT = builder.worldRestart().defineInRange("gigante_spawn_weight", 20, 0, 100);
+    GORGON_SPAWN_WEIGHT = builder.worldRestart().defineInRange("gorgon_spawn_weight", 16, 0, 100);
+    HARPY_SPAWN_WEIGHT = builder.worldRestart().defineInRange("harpy_spawn_weight", 10, 0, 100);
+    MINOTAUR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("minotaur_spawn_weight", 60, 0, 100);
+    NAIAD_SPAWN_WEIGHT = builder.worldRestart().defineInRange("naiad_spawn_weight", 10, 0, 100);
+    ORTHUS_SPAWN_WEIGHT = builder.worldRestart().defineInRange("orthus_spawn_weight", 20, 0, 100);
+    SATYR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("satyr_spawn_weight", 18, 0, 100);
+    SHADE_SPAWN_WEIGHT = builder.worldRestart().defineInRange("shade_spawn_weight", 10, 0, 100);
+    SIREN_SPAWN_WEIGHT = builder.worldRestart().defineInRange("siren_spawn_weight", 10, 0, 100);
+    UNICORN_SPAWN_WEIGHT = builder.worldRestart().defineInRange("unicorn_spawn_weight", 11, 0, 100);
+    builder.pop();
+    builder.push("mob_spawn_specials"); 
+    SHADE_SPAWN_ON_DEATH = builder.comment("Whether a shade can spawn when players die")
+        .define("shade_spawn_on_death", true);
     SATYR_SHAMAN_CHANCE = builder.comment("Percent chance that a satyr will be a shaman")
         .defineInRange("satyr_shaman_chance", 20, 0, 100);
-    
-//    SHADE_SPAWN_RATE = builder.comment("Natural spawn rate of shades")
-//        .defineInRange("shade_spawn_rate", 20, 0, 50);
     builder.pop();
   }
   
   /**
-   * Loads a config file to initialize values early
-   * @param spec the spec
-   * @param path the exact path to the config
-   */
-  public static void loadConfig(final ForgeConfigSpec spec, final Path path) {
-    final CommentedFileConfig configData = CommentedFileConfig.builder(path).sync().autosave()
-        .writingMode(WritingMode.REPLACE).build();
-    configData.load();
-    spec.setConfig(configData);
+   * Finalizes some values that might otherwise be called
+   * every tick and cause potential lag. Not all config
+   * values are baked, since many of them are only called
+   * once-per-load or once-per-entity
+   **/
+  public void bake() {
+    stunPreventsJump = STUN_PREVENTS_JUMP.get();
+    stunPreventsUse = STUN_PREVENTS_USE.get();
+    overstepEnabled = OVERSTEP_ENABLED.get();
   }
+  
+  public boolean doesStunPreventJump() { return stunPreventsJump; }
+  public boolean doesStunPreventUse() { return stunPreventsUse; }
+  public boolean isOverstepEnabled() { return overstepEnabled; }
+  
 }

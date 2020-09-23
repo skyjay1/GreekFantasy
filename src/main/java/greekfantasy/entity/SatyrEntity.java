@@ -1,6 +1,7 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Nullable;
@@ -11,6 +12,7 @@ import greekfantasy.util.PanfluteMusicManager;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -19,6 +21,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,6 +31,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
@@ -44,9 +48,7 @@ public class SatyrEntity extends CreatureEntity {
   
   private static final DataParameter<Byte> DATA_STATE = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BYTE);
   private static final DataParameter<Boolean> DATA_SHAMAN = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BOOLEAN);
-  private static final String KEY_STATE = "SatyrState";
   private static final String KEY_SHAMAN = "Shaman";
-  private static final String KEY_SUMMON = "SummonTime";
   
   private static final ResourceLocation DANCING_SONG = new ResourceLocation(GreekFantasy.MODID, "sound_of_silence");
   private static final ResourceLocation SUMMONING_SONG = new ResourceLocation(GreekFantasy.MODID, "sarias_song");
@@ -62,6 +64,7 @@ public class SatyrEntity extends CreatureEntity {
   public int summonTime;
   public boolean hasShamanTexture;
     
+  private final Goal meleeAttackGoal = new MeleeAttackGoal(this, 1.0D, false);
   private final Goal summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 650);
   
   public SatyrEntity(final EntityType<? extends SatyrEntity> type, final World worldIn) {
@@ -118,18 +121,30 @@ public class SatyrEntity extends CreatureEntity {
     }
     
   }
+  
+  
+  @Override
+  public boolean attackEntityFrom(final DamageSource source, final float amount) {
+    final boolean attackEntityFrom = super.attackEntityFrom(source, amount);
+    if(attackEntityFrom && source.getImmediateSource() instanceof LivingEntity) {
+      // alert all nearby satyr shamans
+      final LivingEntity target = (LivingEntity)source.getImmediateSource();
+      final List<SatyrEntity> shamans = this.getEntityWorld().getEntitiesWithinAABB(SatyrEntity.class, this.getBoundingBox().grow(10.0D), e -> e.isShaman());
+      for(final SatyrEntity shaman : shamans) {
+        shaman.setAttackTarget(target);
+      }
+    }
+    
+    return attackEntityFrom;
+  }
  
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
     spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-    // it makes our lives easier if main hand is always right (model changes when holding pipe, etc)
-    this.setLeftHanded(false);
-    // set shaman (one per group)
+    // random chance to be a satyr shaman
     if(worldIn.getRandom().nextInt(100) < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get()) {
       this.setShaman(true);
-      // DEBUG
-      GreekFantasy.LOGGER.info("Shaman spawned!");
     }
     return spawnDataIn;
   }
@@ -142,13 +157,14 @@ public class SatyrEntity extends CreatureEntity {
       if(this.isServerWorld()) {
         if(this.isShaman()) {
           this.goalSelector.addGoal(1, summonAnimalsGoal);
+          this.goalSelector.removeGoal(meleeAttackGoal);
         } else {
+          this.goalSelector.addGoal(1, meleeAttackGoal);
           this.goalSelector.removeGoal(summonAnimalsGoal);
         }
       }
-      // server AND client should do this
+      // update client-side field
       this.hasShamanTexture = this.isShaman();
-      
     } else if(key == DATA_STATE) {
       // update summon time
       if(this.isSummoning()) {
@@ -172,19 +188,12 @@ public class SatyrEntity extends CreatureEntity {
   @Override
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
-    compound.putByte(KEY_STATE, this.getDataManager().get(DATA_STATE).byteValue());
     compound.putBoolean(KEY_SHAMAN, this.isShaman());
   }
 
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
-    final byte state = Byte.valueOf(compound.getByte(KEY_STATE));
-    if(state == SUMMONING) {
-      this.setSummoning(true);
-    } else if(state == DANCING) {
-      this.setDancing(true);
-    }
     this.setShaman(compound.getBoolean(KEY_SHAMAN));
   }
   
@@ -215,8 +224,8 @@ public class SatyrEntity extends CreatureEntity {
    * animates in that time.
    * @return the percent
    **/
-  public float getArmMovementPercent(final float partialTick) {
-    final float time = this.holdingPanfluteTime + (partialTick % 1.0F);
+  public float getArmMovementPercent(final float ageInTicks) {
+    final float time = this.holdingPanfluteTime + (ageInTicks - (float)Math.floor(ageInTicks));
     return Math.min(1.0F, time / 8.0F);
   }
   
@@ -237,6 +246,7 @@ public class SatyrEntity extends CreatureEntity {
           // check for impassable blocks
           final BlockPos p = pos.add(x, 0, z);
           if(!world.getBlockState(p.down()).isSolidSide(world, p.down(), Direction.UP) || 
+              world.getBlockState(p).isSolid() ||
               world.getBlockState(p).getMaterial().blocksMovement()) {
             return false;
           }
@@ -268,7 +278,7 @@ public class SatyrEntity extends CreatureEntity {
       } else if(cooldown > 0) {
         cooldown--;
       } else {
-        return SatyrEntity.this.isShaman() && SatyrEntity.this.getAttackTarget() != null && SatyrEntity.this.getRNG().nextInt(40) == 0;
+        return SatyrEntity.this.isShaman() && SatyrEntity.this.getAttackTarget() != null && SatyrEntity.this.getRNG().nextInt(20) == 0;
       }
       return false;
     }
@@ -395,7 +405,7 @@ public class SatyrEntity extends CreatureEntity {
     
     @Override
     public boolean shouldContinueExecuting() {
-      boolean isCampfireValid = SatyrEntity.this.ticksExisted % 10 > 0 ? true : this.campfirePos.isPresent() && SatyrEntity.this.getEntityWorld().getBlockState(this.campfirePos.get()).isIn(BlockTags.CAMPFIRES);
+      boolean isCampfireValid = SatyrEntity.this.ticksExisted % 15 > 0 ? true : this.campfirePos.isPresent() && SatyrEntity.isValidCampfire(SatyrEntity.this.getEntityWorld(), this.campfirePos.get());
       return SatyrEntity.this.getAttackTarget() == null && this.targetPos.isPresent() && isCampfireValid;
     }
     

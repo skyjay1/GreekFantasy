@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 
 public class UnicornHornLayer<T extends UnicornEntity> extends LayerRenderer<T, UnicornModel<T>> {
   

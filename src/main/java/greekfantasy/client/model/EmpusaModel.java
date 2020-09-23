@@ -3,7 +3,6 @@ package greekfantasy.client.model;
 import com.google.common.collect.ImmutableList;
 
 import greekfantasy.entity.EmpusaEntity;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;

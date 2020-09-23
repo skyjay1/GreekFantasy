@@ -21,7 +21,6 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
@@ -29,9 +28,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class GorgonEntity extends MonsterEntity {
-  
-  // TODO paralyzes upon eye contact (slowness?)
-  
+    
   private static final byte STARE_ATTACK = 9;
   private final int PETRIFY_DURATION = 20 * 4;
 

@@ -11,16 +11,12 @@ import greekfantasy.proxy.Proxy;
 import greekfantasy.proxy.ServerProxy;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -44,6 +40,8 @@ public class GreekFantasy {
   public GreekFantasy() {
     FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.class);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::setup);
+    FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::loadConfig);
+    FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::reloadConfig);
     // register config
     GreekFantasy.LOGGER.info("registerConfig");
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, CONFIG_SPEC);
@@ -59,5 +57,13 @@ public class GreekFantasy {
 
   public static void setup(final FMLCommonSetupEvent event) {
     
+  }
+  
+  public static void loadConfig(final ModConfig.Loading event) {
+    CONFIG.bake();
+  }
+  
+  public static void reloadConfig(final ModConfig.Reloading event) {
+    CONFIG.bake();
   }
 }
