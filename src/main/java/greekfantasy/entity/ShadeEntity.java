@@ -133,6 +133,8 @@ public class ShadeEntity extends MonsterEntity {
   @Override
   public boolean canDespawn(final double disToPlayer) { return this.getStoredXP() > 20; }
   @Override
+  protected boolean isDespawnPeaceful() { return true; }
+  @Override
   public boolean onLivingFall(float distance, float damageMultiplier) { return false; }
   @Override
   protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) { }

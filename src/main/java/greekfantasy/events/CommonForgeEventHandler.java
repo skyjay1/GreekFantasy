@@ -1,14 +1,19 @@
 package greekfantasy.events;
 
+import java.util.List;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.CerastesEntity;
+import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.ShadeEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
@@ -16,6 +21,7 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -80,6 +86,28 @@ public class CommonForgeEventHandler {
   public static void onLivingJump(final LivingJumpEvent event) {
     if(GreekFantasy.CONFIG.doesStunPreventJump() && isStunned(event.getEntityLiving())) {
       event.getEntityLiving().setMotion(event.getEntityLiving().getMotion().add(0.0D, -0.42D, 0.0D));
+    }
+  }
+  
+  /**
+   * Used to anger nearby dryads when the player breaks a log block that may be a tree
+   * @param event the block break event
+   **/
+  @SubscribeEvent
+  public static void onBreakLog(final BlockEvent.BreakEvent event) {
+    if(GreekFantasy.CONFIG.isDryadAngryOnHarvest() && event.getPlayer() != null && !event.getPlayer().isCreative() && event.getState().isIn(BlockTags.LOGS)) {
+      // make a list of nearby dryads
+      final AxisAlignedBB aabb = new AxisAlignedBB(event.getPos()).grow(9.0D);
+      final List<DryadEntity> dryads = event.getWorld().getEntitiesWithinAABB(DryadEntity.class, aabb);
+      for(final DryadEntity dryad : dryads) {
+        // check if this is a tree according to the given dryad
+        if(DryadEntity.isTreeAt(event.getWorld(), event.getPos().down(1), dryad.getVariant().getBlocks())
+            || DryadEntity.isTreeAt(event.getWorld(), event.getPos().down(2), dryad.getVariant().getBlocks())) {
+          // anger the dryad
+          dryad.setAttackTarget(event.getPlayer());
+          dryad.setHiding(false);
+        }
+      }
     }
   }
   

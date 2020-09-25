@@ -62,7 +62,7 @@ public class EmpusaEntity extends MonsterEntity {
   public void livingTick() {
     super.livingTick();
     // hurt in daytime
-    if(this.isServerWorld() && this.world.isDaytime() && this.hurtTime == 0 && rand.nextInt(10) == 0) {
+    if(this.isServerWorld() && this.world.isDaytime() && this.hurtTime == 0 && rand.nextInt(20) == 0) {
       this.attackEntityFrom(DamageSource.STARVE, 1.0F);
     }
     
@@ -91,7 +91,9 @@ public class EmpusaEntity extends MonsterEntity {
   
   public void setDraining(final boolean draining) {
     this.isDraining = draining;
-    this.world.setEntityState(this, draining ? DRAINING_START : DRAINING_END);
+    if(this.isServerWorld()) {
+      this.world.setEntityState(this, draining ? DRAINING_START : DRAINING_END);
+    }
   }
 
   public boolean isDraining() {
@@ -126,6 +128,7 @@ public class EmpusaEntity extends MonsterEntity {
     protected DrainAttackGoal(final EmpusaEntity entityIn) {
       this.setMutexFlags(EnumSet.allOf(Goal.Flag.class));
       this.entity = entityIn;
+      this.cooldown = MAX_COOLDOWN / 2;
     }
 
     @Override
@@ -158,10 +161,9 @@ public class EmpusaEntity extends MonsterEntity {
         drainingTime++;
         // stop the entity from moving, and adjust look vecs
         this.entity.getNavigator().clearPath();
-        this.entity.faceEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
         this.entity.getLookController().setLookPositionWithEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
         // drain health from target
-        if(drainingTime > (MAX_DRAIN_TIME / 2) && this.entity.getAttackTarget().hurtTime == 0) {
+        if(drainingTime > (MAX_DRAIN_TIME / 3) && this.entity.getAttackTarget().hurtTime == 0) {
           final DamageSource src = DamageSource.causeIndirectMagicDamage(this.entity, this.entity);
           float amount = (float) this.entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
           if(this.entity.getAttackTarget().attackEntityFrom(src, amount)) {

@@ -39,7 +39,7 @@ public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T>
       leftHoof.rotateAngleX = -0.5236F - leftLegSwing;
       // body
       // TODO fix this
-      this.bipedBody.rotateAngleX = entity.isStomping() ? 0.4F : 0.0F;
+      this.bipedBody.rotateAngleX = entity.isStomping() ? 0.12F : 0.0F;
       // head
       this.bipedHead.rotateAngleX = 0.42F;
     }

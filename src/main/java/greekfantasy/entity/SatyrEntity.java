@@ -57,7 +57,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   private static final DataParameter<Boolean> DATA_SHAMAN = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BOOLEAN);
   private static final String KEY_SHAMAN = "Shaman";
   
-  private static final ResourceLocation DANCING_SONG = new ResourceLocation(GreekFantasy.MODID, "sound_of_silence");
+  private static final ResourceLocation DANCING_SONG = new ResourceLocation(GreekFantasy.MODID, "greensleeves");
   private static final ResourceLocation SUMMONING_SONG = new ResourceLocation(GreekFantasy.MODID, "sarias_song");
 
   protected static final byte NONE = 9;
@@ -76,7 +76,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   private UUID angerTarget;
     
   private final Goal meleeAttackGoal = new MeleeAttackGoal(this, 1.0D, false);
-  private final Goal summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 650);
+  private final Goal summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 300);
   
   public SatyrEntity(final EntityType<? extends SatyrEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -145,10 +145,14 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     if(attackEntityFrom && source.getImmediateSource() instanceof LivingEntity) {
       // alert all nearby satyr shamans
       final LivingEntity target = (LivingEntity)source.getImmediateSource();
-      final List<SatyrEntity> shamans = this.getEntityWorld().getEntitiesWithinAABB(SatyrEntity.class, this.getBoundingBox().grow(10.0D), e -> e.isShaman());
-      for(final SatyrEntity shaman : shamans) {
-        shaman.setAttackTarget(target);
-      }
+  	  final List<SatyrEntity> shamans = this.getEntityWorld().getEntitiesWithinAABB(SatyrEntity.class, this.getBoundingBox().grow(10.0D), e -> e.isShaman());
+  	  for(final SatyrEntity shaman : shamans) {
+  	    if(shaman.getAttackTarget() == null) { // if IAngerable#canTargetEntity
+  	      // DEBUG
+  	  	  shaman.setAngerTarget(target.getUniqueID());
+  	  	  shaman.setAngerTime(ANGER_RANGE.getRandomWithinRange(this.rand));
+  	    }
+  	  }   
     }
     
     return attackEntityFrom;
@@ -161,6 +165,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     // random chance to be a satyr shaman
     if(worldIn.getRandom().nextInt(100) < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get()) {
       this.setShaman(true);
+      updateCombatAI();
     }
     return spawnDataIn;
   }
@@ -170,15 +175,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     super.notifyDataManagerChange(key);
     if(key == DATA_SHAMAN) {
       // change AI task for shaman / non-shaman
-      if(this.isServerWorld()) {
-        if(this.isShaman()) {
-          this.goalSelector.addGoal(1, summonAnimalsGoal);
-          this.goalSelector.removeGoal(meleeAttackGoal);
-        } else {
-          this.goalSelector.addGoal(1, meleeAttackGoal);
-          this.goalSelector.removeGoal(summonAnimalsGoal);
-        }
-      }
+      updateCombatAI();
       // update client-side field
       this.hasShamanTexture = this.isShaman();
     } else if(key == DATA_STATE) {
@@ -213,6 +210,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     super.readAdditional(compound);
     this.setShaman(compound.getBoolean(KEY_SHAMAN));
     this.readAngerNBT((ServerWorld)this.world, compound);
+    this.updateCombatAI();
   }
   
   //IAngerable methods
@@ -245,6 +243,18 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   public void setShaman(final boolean shaman) { 
     this.hasShamanTexture = shaman;
     this.getDataManager().set(DATA_SHAMAN, Boolean.valueOf(shaman)); 
+  }
+  
+  protected void updateCombatAI() {
+    if(this.isServerWorld()) {
+      if(this.isShaman()) {
+        this.goalSelector.addGoal(1, summonAnimalsGoal);
+        this.goalSelector.removeGoal(meleeAttackGoal);
+      } else {
+        this.goalSelector.addGoal(1, meleeAttackGoal);
+        this.goalSelector.removeGoal(summonAnimalsGoal);
+      }
+    }
   }
   
   public boolean hasShamanTexture() {
@@ -291,15 +301,15 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
 
   class SummonAnimalsGoal extends Goal {
     
-    protected final int MAX_DELAY;
+    protected final int MAX_PROGRESS;
     protected final int MAX_COOLDOWN;
     
-    protected int delay;
+    protected int progress;
     protected int cooldown;
     
-    public SummonAnimalsGoal(final int summonDelayIn, final int summonCooldownIn) {
+    public SummonAnimalsGoal(final int summonProgressIn, final int summonCooldownIn) {
       this.setMutexFlags(EnumSet.allOf(Goal.Flag.class));
-      MAX_DELAY = summonDelayIn;
+      MAX_PROGRESS = summonProgressIn;
       MAX_COOLDOWN = summonCooldownIn;
       cooldown = summonCooldownIn / 4;
     }
@@ -311,7 +321,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       } else if(cooldown > 0) {
         cooldown--;
       } else {
-        return SatyrEntity.this.isShaman() && SatyrEntity.this.getAttackTarget() != null && SatyrEntity.this.getRNG().nextInt(20) == 0;
+        return SatyrEntity.this.isShaman() && SatyrEntity.this.getAttackTarget() != null;
       }
       return false;
     }
@@ -319,12 +329,12 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     @Override
     public void startExecuting() {
       SatyrEntity.this.setSummoning(true);
-      this.delay = 1;
+      this.progress = 1;
     }
     
     @Override
     public boolean shouldContinueExecuting() {
-      return this.delay > 0 && SatyrEntity.this.getAttackTarget() != null;
+      return this.progress > 0 && SatyrEntity.this.getAttackTarget() != null;
     }
     
     @Override
@@ -332,7 +342,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       super.tick();
       SatyrEntity.this.getNavigator().clearPath();
       SatyrEntity.this.getLookController().setLookPositionWithEntity(SatyrEntity.this.getAttackTarget(), 100.0F, 100.0F);
-      if(delay++ > MAX_DELAY) {
+      if(progress++ > MAX_PROGRESS) {
         // summon animals
         final double x = SatyrEntity.this.getPosX();
         final double y = SatyrEntity.this.getPosY();
@@ -351,7 +361,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       }
       // soft reset when entity is hurt
       if(SatyrEntity.this.hurtTime != 0) {
-        this.delay = 0;
+        this.progress = 0;
         this.cooldown = 30;
         SatyrEntity.this.setSummoning(false);
       }
@@ -359,7 +369,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     
     @Override
     public void resetTask() {
-      this.delay = 0;
+      this.progress = 0;
       this.cooldown = MAX_COOLDOWN;
       SatyrEntity.this.setSummoning(false);
     }
@@ -382,9 +392,9 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
 
     @Override
     public boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
+      final boolean isPassable = !worldIn.getBlockState(pos.up(1)).getMaterial().blocksMovement() && !worldIn.getBlockState(pos).getMaterial().blocksMovement();
       for(final Direction d : HORIZONTALS) {
-        if(!worldIn.getBlockState(pos).getMaterial().blocksMovement() 
-            && !worldIn.getBlockState(pos.offset(d.getOpposite())).getMaterial().blocksMovement() 
+        if(isPassable && !worldIn.getBlockState(pos.offset(d.getOpposite())).getMaterial().blocksMovement() 
             && worldIn.getBlockState(pos.offset(d)).isIn(BlockTags.CAMPFIRES)) {
           return true;
         }

@@ -82,15 +82,13 @@ public abstract class GoToBlockGoal extends Goal {
   
   private Optional<BlockPos> findNearbyBlock() {
     Random rand = this.creature.getRNG();
-
     BlockPos pos1 = this.creature.getPosition().down();
-
+    // choose 20 random positions to check
     for (int i = 0; i < 20; i++) {
       BlockPos pos2 = pos1.add(rand.nextInt(searchRadiusXZ * 2) - searchRadiusXZ, rand.nextInt(searchRadiusY * 2) - searchRadiusY,
           rand.nextInt(searchRadiusXZ * 2) - searchRadiusXZ);
-
-      if (!this.creature.getEntityWorld().getBlockState(pos2.up(1)).isSolid()
-          && this.shouldMoveTo(this.creature.getEntityWorld(), pos2)) {
+      // check the block to see if creature should move here
+      if (this.shouldMoveTo(this.creature.getEntityWorld(), pos2)) {
         return Optional.of(new BlockPos(pos2.getX(), pos2.getY(), pos2.getZ()));
       }
     }

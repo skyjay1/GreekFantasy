@@ -28,6 +28,11 @@ public class CyprianEntity extends CentaurEntity {
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
   }
   
+  @Override
+  protected boolean isDespawnPeaceful() {
+    return true;
+  }
+  
   public boolean hasBullHead() {
     return true;
   }

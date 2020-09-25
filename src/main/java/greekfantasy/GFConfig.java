@@ -47,6 +47,8 @@ public class GFConfig {
   // other special entity abilities
   public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
   public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
+  private final ForgeConfigSpec.BooleanValue DRYAD_ANGRY_ON_HARVEST;
+  private boolean dryadAngryOnHarvest;
   
   public GFConfig(final ForgeConfigSpec.Builder builder) {
     // items
@@ -106,12 +108,14 @@ public class GFConfig {
         .define("shade_spawn_on_death", true);
     SATYR_SHAMAN_CHANCE = builder.comment("Percent chance that a satyr will be a shaman")
         .defineInRange("satyr_shaman_chance", 20, 0, 100);
+    DRYAD_ANGRY_ON_HARVEST = builder.comment("Whether harvesting log blocks angers nearby dryads")
+        .define("dryad_angry_on_harvest", true);
     builder.pop();
   }
   
   /**
    * Finalizes some values that might otherwise be called
-   * every tick and cause potential lag. Not all config
+   * fairly often and cause potential lag. Not all config
    * values are baked, since many of them are only called
    * once-per-load or once-per-entity
    **/
@@ -119,10 +123,11 @@ public class GFConfig {
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
+    dryadAngryOnHarvest = DRYAD_ANGRY_ON_HARVEST.get();
   }
   
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
   public boolean isOverstepEnabled() { return overstepEnabled; }
-  
+  public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }
 }

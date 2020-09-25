@@ -127,7 +127,7 @@ public class MinotaurEntity extends MonsterEntity {
   }
 
   public float getStompingSpeed() {
-    return 0.64F;
+    return 0.58F;
   }
   
   public void setStunned(final boolean stunned) {

@@ -10,20 +10,20 @@ __Key:__
 `[Model] [AI] [Spawning]`
 
 X _ _ Naiad
-X _ _ Dryad
+X X _ Dryad
 X X _ Satyr
-X _ _ Centaur
+X ~ _ Centaur
 X X _ Minotaur
-X X _ Gorgon (Medusa)
-X ~ _ Harpy
+X X X Gorgon (Medusa)
+X X _ Harpy
 X X X Empusa
 X X X Shade
 ~ _ _ Siren (hostile)
-X X _ Cerastes (ram-horned serpent)
+X X X Cerastes (ram-horned serpent)
 X _ _ Ara (Propoetide)
-X _ _ Cyclopes
-~ _ _ Giant
-X _ _ Cyprian Centaurs (bull-horns, hostile)
+X X _ Cyclopes
+X _ _ Giant
+X ~ X Cyprian Centaurs (bull-horns, hostile)
 X _ _ Unicorn
 X ~ _ Orthus (2-headed dog)
 _ _ _ Telchine
@@ -65,7 +65,7 @@ _ Grapes / grapevines
 ## Items
 
 ~ Panflute
-~ Clubs (wood, stone/flint, iron)
+X Clubs (wood, stone/flint, iron)
 _ Javelins (wood, stone/flint, iron)
 _ Golden bridle (for Unicorn)
 X Winged sandals

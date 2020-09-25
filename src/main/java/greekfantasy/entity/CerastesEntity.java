@@ -30,6 +30,7 @@ import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -167,36 +168,41 @@ public class CerastesEntity extends CreatureEntity {
     }
     super.collideWithEntity(entityIn);
   }
-  
+
   @Override
   public boolean canAttack(EntityType<?> typeIn) {
     if (typeIn == this.getType() || typeIn == EntityType.CREEPER) {
-       return false;
+      return false;
     }
     return super.canAttack(typeIn);
- }
+  }
 
- @Override
- public boolean attackEntityAsMob(final Entity entity) {
-   if (super.attackEntityAsMob(entity)) {
-     if(entity instanceof LivingEntity) {
-       ((LivingEntity)entity).addPotionEffect(new EffectInstance(Effects.POISON, 7 * 20, 0));
-     }
-     return true;
-   }
-   return false;
- }
+  @Override
+  public boolean attackEntityAsMob(final Entity entity) {
+    if (super.attackEntityAsMob(entity)) {
+      if (entity instanceof LivingEntity) {
+        ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.POISON, 7 * 20, 0));
+      }
+      return true;
+    }
+    return false;
+  }
+  
+  @Override
+  protected boolean isDespawnPeaceful() {
+    return true;
+  }
 
   @Override
   public EntitySize getSize(Pose poseIn) {
     return this.isHiding() ? hiddenSize : super.getSize(poseIn);
   }
-  
+
   @Override
-  protected float getStandingEyeHeight(Pose pose, EntitySize size) { 
-    return this.isHiding() ? hiddenSize.height * 0.85F : super.getStandingEyeHeight(pose, size); 
+  protected float getStandingEyeHeight(Pose pose, EntitySize size) {
+    return this.isHiding() ? hiddenSize.height * 0.85F : super.getStandingEyeHeight(pose, size);
   }
-  
+
   public void setStanding(final boolean standing) {
     this.isStanding = standing;
     if(standing) this.isHiding = false;
@@ -246,7 +252,7 @@ public class CerastesEntity extends CreatureEntity {
 
     @Override
     public boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
-      return worldIn.getBlockState(pos).isIn(BlockTags.SAND);
+      return !worldIn.getBlockState(pos.up(1)).getMaterial().blocksMovement() && worldIn.getBlockState(pos).isIn(BlockTags.SAND);
     }
   }
   

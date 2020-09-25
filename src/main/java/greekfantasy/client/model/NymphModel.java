@@ -13,88 +13,53 @@ import net.minecraft.util.math.MathHelper;
 
 public class NymphModel<T extends MobEntity> extends BipedModel<T> {
 
-  private final ModelRenderer chest;
+  private final ModelRenderer bipedChest;
 
-  public NymphModel(float modelSize) {
+  public NymphModel(final float modelSize) {
     super(modelSize);
-    textureWidth = 64;
-    textureHeight = 64;
 
-    this.bipedHead = new ModelRenderer(this);
-    this.bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F); // 0, 0, 1.5F
-    // head
-    this.bipedHead.setTextureOffset(0, 0).addBox(-3.0F, -7.0F, -3.0F, 6.0F, 7.0F, 6.0F, modelSize);
-    // hair
-    this.bipedHead.setTextureOffset(24, 7).addBox(-3.0F, 0.0F, 3.0F, 6.0F, 6.0F, 0.0F, modelSize);
-    
-    // disable headwear model
-    this.bipedHeadwear.showModel = false;
-    
-    this.bipedBody = new ModelRenderer(this);
-    this.bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-    this.bipedBody.setTextureOffset(0, 13).addBox(-3.0F, 0.0F, -2.0F, 6.0F, 12.0F, 4.0F, modelSize);    
+    bipedHead = new ModelRenderer(this);
+    bipedHead.setRotationPoint(0.0F, 0.0F, 1.5F);
+    bipedHead.setTextureOffset(0, 0).addBox(-3.5F, -7.0F, -3.5F, 7.0F, 7.0F, 7.0F, modelSize);
+    bipedHead.setTextureOffset(21, 0).addBox(-3.5F, 0.0F, 2.5F, 7.0F, 6.0F, 1.0F, modelSize);
 
-    this.chest = new ModelRenderer(this);
-    this.chest.setRotationPoint(0.0F, 1.0F, -2.0F);
-    this.chest.rotateAngleX = -0.2182F;
-    this.chest.setTextureOffset(3, 17).addBox(-3.01F, 0.0F, 0.0F, 6.0F, 4.0F, 1.0F, modelSize);
+    bipedBody = new ModelRenderer(this, 0, 16);
+    bipedBody.addBox(-3.0F, 0.0F, 0.0F, 6.0F, 12.0F, 3.0F, modelSize);
 
-    this.bipedLeftArm = new ModelRenderer(this);
-    this.bipedLeftArm.setRotationPoint(1.0F, 2.0F, 1.5F);
-    this.bipedLeftArm.setTextureOffset(20, 13).addBox(-2.0F, -2.0F, -1.5F, 2.0F, 12.0F, 3.0F, modelSize);
-    this.bipedLeftArm.mirror = true;
+    bipedChest = new ModelRenderer(this, 30, 7);
+    bipedChest.setRotationPoint(0.0F, 1.0F, 1.0F);
+    bipedChest.rotateAngleX = -0.1745F;
+    bipedChest.addBox(-2.99F, 0.0F, -1.0F, 6.0F, 4.0F, 1.0F, modelSize);
 
-    this.bipedRightArm = new ModelRenderer(this);
-    this.bipedRightArm.setRotationPoint(0.0F, 2.0F, 1.5F);
-    this.bipedRightArm.setTextureOffset(30, 13).addBox(0.0F, -2.0F, -1.5F, 2.0F, 12.0F, 3.0F, modelSize);
+    bipedLeftArm = new ModelRenderer(this, 19, 16);
+    bipedLeftArm.setRotationPoint(3.0F, 2.0F, 1.5F);
+    bipedLeftArm.addBox(0.0F, -2.0F, -1.5F, 2.0F, 12.0F, 3.0F, modelSize);
 
-    this.bipedLeftLeg = new ModelRenderer(this);
-    this.bipedLeftLeg.setRotationPoint(1.5F, 12.0F, 1.5F);
-    this.bipedLeftLeg.setTextureOffset(0, 49).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 12.0F, 3.0F, modelSize);
-    this.bipedLeftLeg.mirror = true;
+    bipedRightArm = new ModelRenderer(this, 29, 16);
+    bipedRightArm.setRotationPoint(-3.0F, 2.0F, 1.5F);
+    bipedRightArm.addBox(-2.0F, -2.0F, -1.5F, 2.0F, 12.0F, 3.0F, modelSize);
 
-    this.bipedRightLeg = new ModelRenderer(this);
-    this.bipedRightLeg.setRotationPoint(-1.5F, 12.0F, 1.5F);
-    this.bipedRightLeg.setTextureOffset(12, 49).addBox(-1.5F, 0.0F, -1.5F, 3.0F, 12.0F, 3.0F, modelSize);
+    bipedLeftLeg = new ModelRenderer(this, 40, 16);
+    bipedLeftLeg.setRotationPoint(1.5F, 12.0F, 1.5F);
+    bipedLeftLeg.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 12.0F, 3.0F, modelSize);
+
+    bipedRightLeg = new ModelRenderer(this, 52, 16);
+    bipedRightLeg.setRotationPoint(-1.5F, 12.0F, 1.5F);
+    bipedRightLeg.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 12.0F, 3.0F, modelSize);
   }
   
   @Override
-  protected Iterable<ModelRenderer> getBodyParts() { return ImmutableList.of(this.bipedBody, this.chest, this.bipedLeftArm, this.bipedRightArm, this.bipedLeftLeg, this.bipedRightLeg); }
-
-  @Override
-  public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-    this.rightArmPose = BipedModel.ArmPose.EMPTY;
-    this.leftArmPose = BipedModel.ArmPose.EMPTY;
-    ItemStack itemstack = entityIn.getHeldItem(Hand.MAIN_HAND);
-    if (itemstack.getItem() instanceof net.minecraft.item.BowItem && entityIn.isAggressive()) {
-      if (entityIn.getPrimaryHand() == HandSide.RIGHT) {
-        this.rightArmPose = BipedModel.ArmPose.BOW_AND_ARROW;
-      } else {
-        this.leftArmPose = BipedModel.ArmPose.BOW_AND_ARROW;
-      }
-    }
-
-    super.setLivingAnimations(entityIn, limbSwing, limbSwingAmount, partialTick);
-  }
+  protected Iterable<ModelRenderer> getBodyParts() { return ImmutableList.of(this.bipedBody, this.bipedChest, this.bipedLeftArm, this.bipedRightArm, this.bipedLeftLeg, this.bipedRightLeg); }
 
   @Override
   public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
       float headPitch) {
-    super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-    ItemStack itemstack = entityIn.getHeldItemMainhand();
-    if (entityIn.isAggressive() && (itemstack.isEmpty() || !(itemstack.getItem() instanceof net.minecraft.item.BowItem))) {
-      float f = MathHelper.sin(this.swingProgress * (float) Math.PI);
-      float f1 = MathHelper.sin((1.0F - (1.0F - this.swingProgress) * (1.0F - this.swingProgress)) * (float) Math.PI);
-      this.bipedRightArm.rotateAngleZ = 0.0F;
-      this.bipedLeftArm.rotateAngleZ = 0.0F;
-      this.bipedRightArm.rotateAngleY = -(0.1F - f * 0.6F);
-      this.bipedLeftArm.rotateAngleY = 0.1F - f * 0.6F;
-      this.bipedRightArm.rotateAngleX = (-(float) Math.PI / 2F);
-      this.bipedLeftArm.rotateAngleX = (-(float) Math.PI / 2F);
-      this.bipedRightArm.rotateAngleX -= f * 1.2F - f1 * 0.4F;
-      this.bipedLeftArm.rotateAngleX -= f * 1.2F - f1 * 0.4F;
-      ModelHelper.func_239101_a_(this.bipedRightArm, this.bipedLeftArm, ageInTicks);
-    }
-
+    super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);    
+    // correct rotation points
+    bipedHead.setRotationPoint(0.0F, 0.0F, 1.5F);
+    bipedLeftArm.setRotationPoint(3.0F, 2.0F, 1.5F);
+    bipedRightArm.setRotationPoint(-3.0F, 2.0F, 1.5F);
+    bipedLeftLeg.setRotationPoint(1.5F, 12.0F, 1.5F);
+    bipedRightLeg.setRotationPoint(-1.5F, 12.0F, 1.5F);
   }
 }
