@@ -27,7 +27,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
 public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
-  
+    
   public float flyingTime;
 
   public HarpyEntity(final EntityType<? extends HarpyEntity> type, final World worldIn) {
@@ -112,5 +112,5 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
 
   public boolean isFlying() {
     return !this.onGround || this.getMotion().lengthSquared() > 0.06D;
-  }  
+  }
 }

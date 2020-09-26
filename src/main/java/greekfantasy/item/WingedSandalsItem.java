@@ -10,6 +10,7 @@ import com.google.common.collect.Multimap;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -18,11 +19,13 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.IArmorMaterial;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
@@ -48,7 +51,24 @@ public class WingedSandalsItem extends ArmorItem {
     builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(SPEED_MODIFIER, "Armor speed modifier", speedBonus, AttributeModifier.Operation.MULTIPLY_TOTAL));
     this.attributeModifiers = builder.build();
   }
-  
+
+  @Override
+  public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+    // add the item to the group with enchantment already applied
+    if (this.isInGroup(group)) {
+      final ItemStack stack = new ItemStack(this);
+      if(GreekFantasy.CONFIG.isOverstepEnabled()) {
+        stack.addEnchantment(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
+      }
+      items.add(stack);
+    }
+  }
+
+  @Override
+  public boolean hasEffect(ItemStack stack) {
+    return GreekFantasy.CONFIG.isOverstepEnabled() ? stack.getEnchantmentTagList().size() > 1 : super.hasEffect(stack);
+  }
+
   /**
    * Called each tick as long the item is on a player inventory. Uses by maps to check if is on a player hand and
    * update it's contents.
@@ -59,9 +79,6 @@ public class WingedSandalsItem extends ArmorItem {
     if(itemSlot == EquipmentSlotType.FEET.getIndex() && entityIn instanceof LivingEntity) {
       final LivingEntity entity = (LivingEntity)entityIn;
       entity.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 20, 4, false, false, false));
-      if(GreekFantasy.CONFIG.isOverstepEnabled()) {
-        entity.addPotionEffect(new EffectInstance(GFRegistry.OVERSTEP_EFFECT, 20, 0, false, false, false));
-      }
       entity.fallDistance = 0;
     }
   }

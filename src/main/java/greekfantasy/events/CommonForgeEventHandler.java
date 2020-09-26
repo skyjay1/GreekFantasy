@@ -3,6 +3,7 @@ package greekfantasy.events;
 import java.util.List;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GFWorldGen;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.DryadEntity;
@@ -46,7 +47,7 @@ public class CommonForgeEventHandler {
         shade.setLocationAndAngles(player.getPosX(), player.getPosY(), player.getPosZ(), player.rotationYaw, player.rotationPitch);
         shade.setStoredXP(xp);
         shade.setOwnerUniqueId(PlayerEntity.getOfflineUUID(player.getDisplayName().getUnformattedComponentText()));
-        shade.setNoDespawn();
+        shade.enablePersistence();
         player.getEntityWorld().addEntity(shade);
       }
     }
@@ -132,8 +133,8 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent
   public static void onBiomeLoad(final BiomeLoadingEvent event) {
-    GFRegistry.addBiomeFeatures(event);
-    GFRegistry.addBiomeSpawns(event);
+    GFWorldGen.addBiomeFeatures(event);
+    GFWorldGen.addBiomeSpawns(event);
   }
   
   private static boolean isStunned(final LivingEntity entity) {

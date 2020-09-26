@@ -4,72 +4,95 @@ List of features that could be added to the mod at some point.
 __Key:__
 `X Complete` `~ In Progress` `_ Incomplete`
 
-## Entities
+## Entity basics
 
 __Key:__
-`[Model] [AI] [Spawning]`
+`[In-game] [Loot table]`
 
-X _ _ Naiad
-X X _ Dryad
-X X _ Satyr
-X ~ _ Centaur
-X X _ Minotaur
-X X X Gorgon (Medusa)
-X X _ Harpy
-X X X Empusa
-X X X Shade
-~ _ _ Siren (hostile)
-X X X Cerastes (ram-horned serpent)
-X _ _ Ara (Propoetide)
-X X _ Cyclopes
-X _ _ Giant
-X ~ X Cyprian Centaurs (bull-horns, hostile)
-X _ _ Unicorn
-X ~ _ Orthus (2-headed dog)
-_ _ _ Telchine
-_ _ _ Makhai (6 arms)
-_ _ _ Eurynomos (blue skin; vulture head?)
-_ _ _ Ourea (mountain spirit, male)
-_ _ _ Achos (pain)
-_ _ _ Deimos (panic)
-_ _ _ Elpis (hope) - after killing achos/deimos
-_ _ _ Yale (Latin "Centicore")
-_ _ _ Colchis Bull (giant bronze bull)
-_ _ _ Various demons (Lamia)
-_ _ _ Hippocampus?
-_ _ _ Phoenix?
-X _ _ Boss: Cerberus
+X _ Naiad
+X _ Dryad
+X _ Satyr
+X _ Centaur
+X _ Minotaur
+X _ Gorgon (Medusa)
+X _ Harpy
+X _ Empusa
+X _ Shade
+~ _ Siren (hostile)
+X _ Cerastes (ram-horned serpent)
+X _ Ara (Propoetide)
+X _ Cyclopes
+X _ Gigante
+X _ Cyprian Centaurs (bull-horns, hostile)
+X _ Unicorn
+~ _ Orthus (2-headed dog) (TODO fix model)
+_ _ Eurynomos (blue skin; vulture head?)
+_ _ Elpis (hope)
+_ _ Hippocampus
+X _ Boss: Cerberus
+_ _ Boss: Geryon (3-headed Gigante)
 
-## Features / Structures
+
+## Entity AI
+
+X Dryads hide in trees
+X Dryads are angry when player chops wood
+_ Dryads plant trees?
+_ Dryads trade with player?
+X Satyrs dance around campfires
+X Satyrs summon wolves
+_ Satyrs trade with player (obtain panflute)
+~ Centaurs / Cyprians shoot arrows (TODO: animation not working)
+~ Minotaur charges at player (TODO: extend charge beyond player position)
+X Minotaur is stunned when charge attack misses
+X Gorgon petrifies player
+X Harpy looks for nests
+X Empusa drains health
+X Shade drains XP
+X Orthus breathes fire
+_ Siren AI
+_ Ara AI
+_ Cyclopes AI
+_ Gigante AI
+X Cerastes hides in sand
+_ Unicorn can be tamed / ridden
+
+## Structures
 ~ Harpy Nests
-_ Nymph Trees
 _ Satyr Camps
 _ Centaur Camps
 _ Ara Camps
 _ Cyclopes Cave+Pastures
 _ Ruined Temple
-_ Marble veins
-_ Limestone veins
+X Marble veins
+X Limestone veins
 
 ## Blocks
 
-~ Harpy Nest - need drops
-~ Limestone (raw, smooth, bricks, pillar)
-~ Marble (raw, smooth, bricks, pillar)
+~ Harpy Nest - need drops/use
+~ Limestone (raw, smooth, slab)
+~ Marble (raw, smooth, slab, pillar)
 X Statues
 X Vase
-X Mysterious box
 _ Urn
-_ Grapes / grapevines
+X Mysterious box
+_ Grapes / grapevines?
 
 ## Items
 
 ~ Panflute
-X Clubs (wood, stone/flint, iron)
+~ Clubs (wood, stone/flint, iron) (TODO: 16x16 icons)
 _ Javelins (wood, stone/flint, iron)
 _ Golden bridle (for Unicorn)
 X Winged sandals
-_ Horn (from Minotaur / Cyprians)
+_ Horn (from Minotaur / Cyprians) (needs use)
+
+## Achievements
+
+X Become petrified
+X Encounter Cerastes
+_ Anger Dryads by chopping logs
+_ Equip Winged Sandals (Much Fast, So Speed!)
 
 ## Other
 
@@ -77,8 +100,26 @@ X Statue GUI
 X Statue skins
 X "Stunned" effect (prevent movement or item use)
 ~ "Petrified" effect
-X "Overstep" effect
-X Achievement for being petrified: "At first, I was afraid, I was petrified"
-X Achievement for encountering Cerastes
+X "Overstep" enchantment
 ~ Panflute songs
+_ Panflute song selection GUI
 ~ Lots of mysterious box functions!
+_ Some way to obtain Winged Sandals
+_ Some way to obtain Mysterious Box
+
+## Misc Ideas and Inspirations
+
+_Can I do something with these?_
+
+- Midas touch
+- Tantalus
+- Demeter (goddess of growth/fertility/crops)
+- Hydra
+- Telchine
+- Makhai (6 arms)
+- Yale (Latin "Centicore")
+- Colchis Bull (giant bronze bull)
+- Lamia (demon)
+- Daemon (spirit of specific trait, emotion, object, etc)
+- Phoenix
+- Pegasus (and bull-like twin, Chrysaor)

@@ -38,7 +38,9 @@ public class GreekFantasy {
   public static final Logger LOGGER = LogManager.getFormatterLogger(GreekFantasy.MODID);
 
   public GreekFantasy() {
+    // register mod event listeners
     FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.class);
+    FMLJavaModLoadingContext.get().getModEventBus().register(GFWorldGen.class);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::setup);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::loadConfig);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::reloadConfig);

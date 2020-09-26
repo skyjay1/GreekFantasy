@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.HarpyEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -34,8 +35,9 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
 
   @Override
   public boolean func_241855_a(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
-      final BlockPos blockPos, final NoFeatureConfig config) {
+      final BlockPos blockPosIn, final NoFeatureConfig config) {
     // position for generation
+    final BlockPos blockPos = blockPosIn.add( 4 + rand.nextInt(8), 0, 4 + rand.nextInt(8));
     final int y = reader.getHeight(Heightmap.Type.WORLD_SURFACE, blockPos).getY();
     BlockPos pos = new BlockPos(blockPos.getX(), y, blockPos.getZ());
     
@@ -60,10 +62,10 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
     return false;
   }
   
-  public boolean buildVariant0(final IWorldGenerationReader world, final ChunkGenerator chunkGenerator, final Random rand, 
+  public boolean buildVariant0(final ISeedReader world, final ChunkGenerator chunkGenerator, final Random rand, 
       final BlockState log, final BlockState leaf, final BlockPos pos) {
     // random height
-    int rh = rand.nextInt(3);
+    int rh = rand.nextInt(3) - 1;
     // build tree
     for(int i = 0; i < 14 + rh; i++) {
       set(world, pos.up(i), log);
@@ -75,6 +77,7 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
     generateLeavesAround(world, rand, pos.up(3 + rh), leaf, 2);
     generateLeavesAround(world, rand, pos.up(4 + rh), leaf, 2);
     generateLeavesAround(world, rand, pos.up(5 + rh), leaf, 1);
+    generateLeavesAround(world, rand, pos.add(0, 5 + rh, 2), leaf, 1);
     generateLeavesAround(world, rand, pos.up(6 + rh), leaf, 1);
     // upper canopy
     generateLeavesAround(world, rand, pos.up(9 + rh), leaf, 1);
@@ -82,46 +85,51 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
     generateLeavesAround(world, rand, pos.up(11 + rh), leaf, 2);
     generateLeavesAround(world, rand, pos.up(12 + rh), leaf, 2);
     generateLeavesAround(world, rand, pos.up(13 + rh), leaf, 1);
-    set(world, pos.up(14 + rh), log);
+    set(world, pos.up(14 + rh), leaf);
     // nest
-    generateNestAround(world, pos.add(0, 6 + rh, 2), true);
+    final BlockPos nestPos = pos.add(0, 6 + rh, 2);
+    generateNestAround(world, nestPos, true);
+    addHarpy(world, nestPos.up());
+    if(rand.nextBoolean()) {
+      addHarpy(world, nestPos.up());
+    }
     
     return true;
   }
   
   // HELPER METHODS //
   
-  public static void set(IWorldWriter writer, BlockPos pos, BlockState state) {
+  protected static void set(IWorldWriter writer, BlockPos pos, BlockState state) {
     set(writer, pos, state, 2);
   }
   
-  public static void set(IWorldWriter writer, BlockPos pos, BlockState state, int flag) {
+  protected static void set(IWorldWriter writer, BlockPos pos, BlockState state, int flag) {
     writer.setBlockState(pos, state, flag);
   }
 
-  public static boolean isAirOrLeavesAt(IWorldGenerationReader reader, BlockPos pos) {
+  protected static boolean isAirOrLeavesAt(IWorldGenerationReader reader, BlockPos pos) {
     return reader.hasBlockState(pos, state -> (state.isAir() || state.isIn(BlockTags.LEAVES)));
   }
 
-  public static boolean isDirtOrGrassAt(IWorldGenerationReader reader, BlockPos pos) {
+  protected static boolean isDirtOrGrassAt(IWorldGenerationReader reader, BlockPos pos) {
     return reader.hasBlockState(pos, state -> {
       Block block = state.getBlock();
       return (isDirt(block) || block == Blocks.GRASS_BLOCK);
     });
   }
 
-  public static boolean isPlantAt(IWorldGenerationReader reader, BlockPos pos) {
+  protected static boolean isPlantAt(IWorldGenerationReader reader, BlockPos pos) {
     return reader.hasBlockState(pos, state -> {
       Material m = state.getMaterial();
       return (m == Material.TALL_PLANTS || m == Material.PLANTS);
     });
   }
 
-  public static boolean isReplaceableAt(IWorldGenerationReader reader, BlockPos pos) {
+  protected static boolean isReplaceableAt(IWorldGenerationReader reader, BlockPos pos) {
     return (isAirOrLeavesAt(reader, pos) || isPlantAt(reader, pos));
   }
 
-  public static BlockState getLogState(final Biome biome) {
+  protected static BlockState getLogState(final Biome biome) {
     Block log = Blocks.OAK_LOG;
     Biome.Category category = biome.getCategory();
 //    if (category == Biome.Category.FOREST) {
@@ -132,10 +140,10 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
     } else if (category == Biome.Category.TAIGA || category == Biome.Category.ICY) {
         log = Blocks.SPRUCE_LOG;
     }
-    return log.getDefaultState().with(RotatedPillarBlock.AXIS, Direction.Axis.X);
+    return log.getDefaultState().with(RotatedPillarBlock.AXIS, Direction.Axis.Y);
   }
   
-  public static BlockState getLeavesState(final BlockState log) {
+  protected static BlockState getLeavesState(final BlockState log) {
     if(log.isIn(BlockTags.ACACIA_LOGS)) {
       return Blocks.ACACIA_LEAVES.getDefaultState();
     } else if(log.isIn(BlockTags.DARK_OAK_LOGS)) {
@@ -151,22 +159,18 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
     }
   }
   
-  public static void generateLeavesAround(IWorldGenerationReader world, Random rand, BlockPos pos, BlockState leaf, int radius) {
+  protected static void generateLeavesAround(IWorldGenerationReader world, Random rand, BlockPos pos, BlockState leaf, int radius) {
     for(int x = -radius; x <= radius; x++) {
       for(int z = -radius; z <= radius; z++) {
-        boolean valid = !(Math.abs(x) == radius && Math.abs(z) == radius);
-        if(valid && (Math.abs(x) == (radius - 1) || Math.abs(z) == (radius - 1))) {
-          valid = rand.nextBoolean();
-        }
         final BlockPos p = pos.add(x, 0, z);
-        if(valid && isAirOrLeavesAt(world, p)) {
+        if(shouldGenerateLeaf(x, z, radius, rand) && isAirOrLeavesAt(world, p)) {
           set(world, p, leaf);
         }
       }
     }
   }
 
-  public static void generateNestAround(IWorldGenerationReader world, BlockPos pos, boolean forceReplace) {
+  protected static void generateNestAround(IWorldGenerationReader world, BlockPos pos, boolean forceReplace) {
     for(int x = -1; x <= 1; x++) {
       for(int z = -1; z <= 1; z++) {
         final BlockPos p = pos.add(x, 0, z);
@@ -177,13 +181,24 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
         }
       }
     }
-    // try to spawn harpy
-    if(world instanceof World) {
-      GreekFantasy.LOGGER.info("Spawning harpy :) at " + pos.up());
-      world.addEntity(GFRegistry.HARPY_ENTITY.create((World)world));
-    } else {
-      GreekFantasy.LOGGER.info("Cannot spawn harpy :( at " + pos.up());
+  }
+  
+  protected static void addHarpy(final ISeedReader world, final BlockPos pos) {
+    // spawn a harpy
+    final HarpyEntity entity = GFRegistry.HARPY_ENTITY.create(world.getWorld());
+    entity.setLocationAndAngles(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, 0, 0);
+    entity.enablePersistence();
+    world.addEntity(entity);
+  }
+  
+  protected static boolean shouldGenerateLeaf(final int x, final int z, final int radius, final Random rand) {
+    boolean nonStrict = radius > 1;
+    boolean valid = !(Math.abs(x) == radius && Math.abs(z) == radius);
+    boolean isNonStrictCorner = nonStrict && (Math.abs(x) == (radius - 1) && Math.abs(z) == radius) || (Math.abs(x) == radius && Math.abs(z) == (radius - 1));
+    if(valid && isNonStrictCorner) {
+      valid = rand.nextBoolean();
     }
+    return valid;
   }
 
 }

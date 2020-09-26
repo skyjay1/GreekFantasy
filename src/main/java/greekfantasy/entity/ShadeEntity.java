@@ -46,8 +46,6 @@ public class ShadeEntity extends MonsterEntity {
   protected static final String KEY_OWNER = "Owner";
   protected static final String KEY_DESPAWN = "NoDespawn";
   
-  private boolean noDespawn;
-
   public ShadeEntity(final EntityType<? extends ShadeEntity> type, final World worldIn) {
     super(type, worldIn);
     this.stepHeight = 1.0F;
@@ -134,8 +132,6 @@ public class ShadeEntity extends MonsterEntity {
   @Override
   public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.UNDEAD; }
   @Override
-  public boolean canDespawn(final double disToPlayer) { return noDespawn; }
-  @Override
   protected boolean isDespawnPeaceful() { return true; }
   @Override
   public boolean onLivingFall(float distance, float damageMultiplier) { return false; }
@@ -147,13 +143,11 @@ public class ShadeEntity extends MonsterEntity {
   public void setOwnerUniqueId(@Nullable UUID uniqueId) { this.dataManager.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId)); }
   public int getStoredXP() { return this.getDataManager().get(DATA_XP).intValue(); }
   public void setStoredXP(int xp) { this.getDataManager().set(DATA_XP, xp); }
-  public void setNoDespawn() { noDespawn = true; }
 
   @Override
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
     compound.putInt(KEY_XP, this.getStoredXP());
-    compound.putBoolean(KEY_DESPAWN, noDespawn);
     if (this.getOwnerUniqueId() != null) {
       compound.putUniqueId(KEY_OWNER, this.getOwnerUniqueId());
     }
@@ -163,7 +157,6 @@ public class ShadeEntity extends MonsterEntity {
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
     this.setStoredXP(compound.getInt(KEY_XP));
-    this.noDespawn = compound.getBoolean(KEY_DESPAWN);
     if (compound.hasUniqueId(KEY_OWNER)) {
        this.setOwnerUniqueId(compound.getUniqueId(KEY_OWNER));
     }

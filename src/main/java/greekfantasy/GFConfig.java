@@ -4,7 +4,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class GFConfig {
   
-  // items
+  // item configs
   public final ForgeConfigSpec.DoubleValue SANDALS_SPEED_BONUS;
   
   // effect configs
@@ -44,14 +44,17 @@ public class GFConfig {
   // special spawn configs
   public final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
   public final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
+  
   // other special entity abilities
   public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
   public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
-  
   private final ForgeConfigSpec.BooleanValue DRYAD_ANGRY_ON_HARVEST;
   private final ForgeConfigSpec.IntValue DRYAD_ANGRY_RANGE;
   private boolean dryadAngryOnHarvest;
   private int dryadAngryRange;
+  
+  // feature configs
+  public final ForgeConfigSpec.IntValue HARPY_NEST_SPREAD;
   
   public GFConfig(final ForgeConfigSpec.Builder builder) {
     // items
@@ -97,7 +100,7 @@ public class GFConfig {
     EMPUSA_SPAWN_WEIGHT = builder.worldRestart().defineInRange("empusa_spawn_weight", 80, 0, 100);
     GIGANTE_SPAWN_WEIGHT = builder.worldRestart().defineInRange("gigante_spawn_weight", 20, 0, 100);
     GORGON_SPAWN_WEIGHT = builder.worldRestart().defineInRange("gorgon_spawn_weight", 16, 0, 100);
-    HARPY_SPAWN_WEIGHT = builder.worldRestart().defineInRange("harpy_spawn_weight", 10, 0, 100);
+    HARPY_SPAWN_WEIGHT = builder.worldRestart().defineInRange("harpy_spawn_weight", 8, 0, 100);
     MINOTAUR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("minotaur_spawn_weight", 60, 0, 100);
     NAIAD_SPAWN_WEIGHT = builder.worldRestart().defineInRange("naiad_spawn_weight", 10, 0, 100);
     ORTHUS_SPAWN_WEIGHT = builder.worldRestart().defineInRange("orthus_spawn_weight", 20, 0, 100);
@@ -115,6 +118,9 @@ public class GFConfig {
         .define("dryad_angry_on_harvest", true);
     DRYAD_ANGRY_RANGE = builder.comment("The distance at which dryads become angry when players harvest logs")
         .defineInRange("dryad_angry_range", 4, 0, 32);
+    builder.pop();
+    builder.push("features");
+    HARPY_NEST_SPREAD = builder.defineInRange("harpy_nest_spread", 400, 1, 5000);
     builder.pop();
   }
   

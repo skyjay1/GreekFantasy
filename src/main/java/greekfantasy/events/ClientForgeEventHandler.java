@@ -4,7 +4,9 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -59,7 +61,7 @@ public class ClientForgeEventHandler {
   /** @return whether the player should have the client-side overstep step-height logic applied **/
   private static boolean hasOverstep(final PlayerEntity player) {
     // return player.getItemStackFromSlot(EquipmentSlotType.FEET).getItem() == GFRegistry.WINGED_SANDALS;
-    return player.getActivePotionEffect(GFRegistry.OVERSTEP_EFFECT) != null;
+    return EnchantmentHelper.getEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
   }
   
   /** @return whether the player should have the client-side stun/petrify FOV logic applied **/

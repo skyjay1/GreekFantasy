@@ -269,7 +269,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
    **/
   public float getArmMovementPercent(final float ageInTicks) {
     final float time = this.holdingPanfluteTime + (ageInTicks - (float)Math.floor(ageInTicks));
-    return Math.min(1.0F, time / 8.0F);
+    return Math.min(1.0F, (float)time / (float)MAX_PANFLUTE_TIME);
   }
   
   /**

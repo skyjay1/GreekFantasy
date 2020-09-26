@@ -2,7 +2,7 @@
   "type": "crafting_shapeless",
   "ingredients": [
 	{
-	  "item": "greekfantasy:wooden_club"
+	  "item": "greekfantasy:stone_club"
 	},
 	{
 	  "item": "minecraft:iron_block"
