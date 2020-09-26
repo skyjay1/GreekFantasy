@@ -1,8 +1,11 @@
 package greekfantasy.entity;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import greekfantasy.GreekFantasy;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -178,9 +181,10 @@ public class OrthusEntity extends MonsterEntity {
         this.entity.faceEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
         this.entity.getLookController().setLookPositionWithEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
         // set fire to target
-        if(fireBreathingTime > 10 && this.entity.getAttackTarget().hurtTime == 0) {
+        if(fireBreathingTime > 10 && fireBreathingTime % 10 == 0) {
           // TODO get all entities within range and direction of fire to ignite
-          this.entity.getAttackTarget().setFire(5);
+          final Vector3d entityPos = new Vector3d(entity.getPosX(), entity.getPosYEye(), entity.getPosZ());
+          igniteInRange(entityPos, entity.getAttackTarget().getPositionVec(), 0.65D, 5);
         }
       } else {
         resetTask();
@@ -192,6 +196,27 @@ public class OrthusEntity extends MonsterEntity {
       this.entity.setFireBreathing(false);
       this.fireBreathingTime = 0;
       this.cooldown = MAX_COOLDOWN;
+    }
+    
+    /**
+     * Ignites all entities along a raytrace given the start and end positions
+     * @param startPos the starting position
+     * @param endPos the ending position
+     * @param radius the radius around each point in the ray to check for entities
+     * @param fireTime the amount of time to set fire to the entity
+     **/
+    private void igniteInRange(final Vector3d startPos, final Vector3d endPos, final double radius, final int fireTime) {    
+      Vector3d vecDifference = endPos.subtract(startPos);
+      // step along the vector created by adding the start position and the difference vector
+      for(double i = 0.1, l = vecDifference.length(), stepSize = radius * 0.75D; i < l; i += stepSize) {
+        Vector3d scaled = startPos.add(vecDifference.scale(i));
+        // make a box at this position along the vector
+        final AxisAlignedBB aabb = new AxisAlignedBB(scaled.x - radius, scaled.y - radius, scaled.z - radius, scaled.x + radius, scaled.y + radius, scaled.z + radius);
+        for(final Entity e : this.entity.getEntityWorld().getEntitiesWithinAABBExcludingEntity(this.entity, aabb)) {
+          // set fire to any entities inside the box
+          e.setFire(fireTime + this.entity.getRNG().nextInt(5) - 2);
+        }
+      }
     }
   }
 

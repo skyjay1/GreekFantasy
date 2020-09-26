@@ -66,7 +66,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   protected static final byte PLAY_SUMMON_SOUND = 12;
   
   protected static final int MAX_SUMMON_TIME = 160;
-  protected static final int MAX_PANFLUTE_TIME = 8;
+  protected static final int MAX_PANFLUTE_TIME = 7;
   public int holdingPanfluteTime;
   public int summonTime;
   public boolean hasShamanTexture;
@@ -76,7 +76,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   private UUID angerTarget;
     
   private final Goal meleeAttackGoal = new MeleeAttackGoal(this, 1.0D, false);
-  private final Goal summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 300);
+  private final Goal summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 200);
   
   public SatyrEntity(final EntityType<? extends SatyrEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -165,8 +165,8 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     // random chance to be a satyr shaman
     if(worldIn.getRandom().nextInt(100) < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get()) {
       this.setShaman(true);
-      updateCombatAI();
     }
+    updateCombatAI();
     return spawnDataIn;
   }
   
@@ -311,7 +311,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       this.setMutexFlags(EnumSet.allOf(Goal.Flag.class));
       MAX_PROGRESS = summonProgressIn;
       MAX_COOLDOWN = summonCooldownIn;
-      cooldown = summonCooldownIn / 4;
+      cooldown = 60;
     }
 
     @Override

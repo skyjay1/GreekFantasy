@@ -46,6 +46,7 @@ public class CommonForgeEventHandler {
         shade.setLocationAndAngles(player.getPosX(), player.getPosY(), player.getPosZ(), player.rotationYaw, player.rotationPitch);
         shade.setStoredXP(xp);
         shade.setOwnerUniqueId(PlayerEntity.getOfflineUUID(player.getDisplayName().getUnformattedComponentText()));
+        shade.setNoDespawn();
         player.getEntityWorld().addEntity(shade);
       }
     }
@@ -97,7 +98,7 @@ public class CommonForgeEventHandler {
   public static void onBreakLog(final BlockEvent.BreakEvent event) {
     if(GreekFantasy.CONFIG.isDryadAngryOnHarvest() && event.getPlayer() != null && !event.getPlayer().isCreative() && event.getState().isIn(BlockTags.LOGS)) {
       // make a list of nearby dryads
-      final AxisAlignedBB aabb = new AxisAlignedBB(event.getPos()).grow(9.0D);
+      final AxisAlignedBB aabb = new AxisAlignedBB(event.getPos()).grow(GreekFantasy.CONFIG.getDryadAngryRange());
       final List<DryadEntity> dryads = event.getWorld().getEntitiesWithinAABB(DryadEntity.class, aabb);
       for(final DryadEntity dryad : dryads) {
         // check if this is a tree according to the given dryad

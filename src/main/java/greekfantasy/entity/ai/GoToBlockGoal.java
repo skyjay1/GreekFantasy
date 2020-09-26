@@ -80,7 +80,7 @@ public abstract class GoToBlockGoal extends Goal {
     return this.target.isPresent() && this.target.get().isWithinDistanceOf(this.creature.getPositionVec(), distance);
   }
   
-  private Optional<BlockPos> findNearbyBlock() {
+  protected Optional<BlockPos> findNearbyBlock() {
     Random rand = this.creature.getRNG();
     BlockPos pos1 = this.creature.getPosition().down();
     // choose 20 random positions to check

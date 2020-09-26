@@ -24,7 +24,7 @@ public class SatyrPanfluteLayer<T extends SatyrEntity> extends LayerRenderer<T, 
   @Override
   public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entity,
       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-    if (!entity.isInvisible() && (entity.isDancing() || entity.summonTime > 0)) {
+    if (!entity.isInvisible() && entity.holdingPanfluteTime > 0) {
       matrixStackIn.push();
       // transforms
       this.getEntityModel().translateHand(HandSide.RIGHT, matrixStackIn);

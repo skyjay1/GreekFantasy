@@ -39,11 +39,14 @@ import net.minecraft.world.World;
 
 public class ShadeEntity extends MonsterEntity {
   
-  public static final DataParameter<Integer> DATA_XP = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.VARINT);
-  private static final DataParameter<Optional<UUID>> OWNER_UNIQUE_ID = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
-
-  public static final String KEY_XP = "StoredXP";
-  public static final String KEY_OWNER = "Owner";
+  protected static final DataParameter<Integer> DATA_XP = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.VARINT);
+  protected static final DataParameter<Optional<UUID>> OWNER_UNIQUE_ID = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+  
+  protected static final String KEY_XP = "StoredXP";
+  protected static final String KEY_OWNER = "Owner";
+  protected static final String KEY_DESPAWN = "NoDespawn";
+  
+  private boolean noDespawn;
 
   public ShadeEntity(final EntityType<? extends ShadeEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -131,7 +134,7 @@ public class ShadeEntity extends MonsterEntity {
   @Override
   public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.UNDEAD; }
   @Override
-  public boolean canDespawn(final double disToPlayer) { return this.getStoredXP() > 20; }
+  public boolean canDespawn(final double disToPlayer) { return noDespawn; }
   @Override
   protected boolean isDespawnPeaceful() { return true; }
   @Override
@@ -143,21 +146,24 @@ public class ShadeEntity extends MonsterEntity {
   public UUID getOwnerUniqueId() { return this.dataManager.get(OWNER_UNIQUE_ID).orElse((UUID)null); }
   public void setOwnerUniqueId(@Nullable UUID uniqueId) { this.dataManager.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId)); }
   public int getStoredXP() { return this.getDataManager().get(DATA_XP).intValue(); }
-  public void setStoredXP(int xp) { this.getDataManager().set(DATA_XP, xp); }  
+  public void setStoredXP(int xp) { this.getDataManager().set(DATA_XP, xp); }
+  public void setNoDespawn() { noDespawn = true; }
 
   @Override
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
     compound.putInt(KEY_XP, this.getStoredXP());
+    compound.putBoolean(KEY_DESPAWN, noDespawn);
     if (this.getOwnerUniqueId() != null) {
       compound.putUniqueId(KEY_OWNER, this.getOwnerUniqueId());
-   }
+    }
   }
 
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
     this.setStoredXP(compound.getInt(KEY_XP));
+    this.noDespawn = compound.getBoolean(KEY_DESPAWN);
     if (compound.hasUniqueId(KEY_OWNER)) {
        this.setOwnerUniqueId(compound.getUniqueId(KEY_OWNER));
     }

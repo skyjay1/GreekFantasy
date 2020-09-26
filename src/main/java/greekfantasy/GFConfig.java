@@ -47,8 +47,11 @@ public class GFConfig {
   // other special entity abilities
   public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
   public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
+  
   private final ForgeConfigSpec.BooleanValue DRYAD_ANGRY_ON_HARVEST;
+  private final ForgeConfigSpec.IntValue DRYAD_ANGRY_RANGE;
   private boolean dryadAngryOnHarvest;
+  private int dryadAngryRange;
   
   public GFConfig(final ForgeConfigSpec.Builder builder) {
     // items
@@ -110,6 +113,8 @@ public class GFConfig {
         .defineInRange("satyr_shaman_chance", 20, 0, 100);
     DRYAD_ANGRY_ON_HARVEST = builder.comment("Whether harvesting log blocks angers nearby dryads")
         .define("dryad_angry_on_harvest", true);
+    DRYAD_ANGRY_RANGE = builder.comment("The distance at which dryads become angry when players harvest logs")
+        .defineInRange("dryad_angry_range", 4, 0, 32);
     builder.pop();
   }
   
@@ -124,10 +129,12 @@ public class GFConfig {
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
     dryadAngryOnHarvest = DRYAD_ANGRY_ON_HARVEST.get();
+    dryadAngryRange = DRYAD_ANGRY_RANGE.get();
   }
   
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
   public boolean isOverstepEnabled() { return overstepEnabled; }
   public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }
+  public int getDryadAngryRange() { return dryadAngryRange; }
 }

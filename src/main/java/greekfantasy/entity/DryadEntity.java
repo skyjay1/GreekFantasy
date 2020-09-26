@@ -2,7 +2,6 @@ package greekfantasy.entity;
 
 import java.util.EnumSet;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -59,6 +58,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   private static final DataParameter<Byte> DATA_VARIANT = EntityDataManager.createKey(DryadEntity.class, DataSerializers.BYTE);
   private static final String KEY_VARIANT = "Variant";
   private static final String KEY_TREE_POS = "Tree";
+  private static final String KEY_HIDING = "HidingTime";
+  private static final String KEY_IMMUNE = "HidingImmuneTime";
   
   private Optional<BlockPos> treePos = Optional.empty();
   
@@ -115,8 +116,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       // update tree pos
       setTreePos(Optional.empty());
       setHiding(false);
-    }
-    
+    }    
     // hiding immune timer
     if(!isHiding() && hidingImmuneTime > 0) {
       hidingImmuneTime--;
@@ -138,14 +138,14 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   public void tick() {
     // determine how close the entity is to the tree
-    final Vector3d treeVec = treePos.isPresent() ? new Vector3d(treePos.get().getX() + 0.5D, treePos.get().getY() + 1.0D, treePos.get().getZ() + 0.5D) : Vector3d.ZERO;
-    final boolean isHidingInTree = isHiding() && treePos.isPresent() && this.getPositionVec().isWithinDistanceOf(treeVec, 2.0D);
+    final boolean isHidingInTree = isHiding() && this.isWithinDistanceOfTree(2.05D);
     // set clip and gravity values
     if(isHidingInTree) {
       this.noClip = true;
       this.setMotion(this.getMotion().mul(1.0D, 0.0D, 1.0D));
       // snap to the tree's position if close enough
-      this.setPosition(treeVec.getX(), treeVec.getY(), treeVec.getZ());
+      final Optional<Vector3d> treeVec = getTreeVec();
+      this.setPosition(treeVec.get().getX(), treeVec.get().getY(), treeVec.get().getZ());
     }
     // super method
     super.tick();   
@@ -173,6 +173,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       compound.putInt(KEY_TREE_POS + ".y", treePos.get().getY());
       compound.putInt(KEY_TREE_POS + ".z", treePos.get().getZ());
     }
+    compound.putInt(KEY_HIDING, hidingTime);
+    compound.putInt(KEY_IMMUNE, hidingImmuneTime);
   }
 
   @Override
@@ -186,6 +188,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       final int z = compound.getInt(KEY_TREE_POS + ".z");
       this.setTreePos(Optional.of(new BlockPos(x, y, z)));
     }
+    this.hidingTime = compound.getInt(KEY_HIDING);
+    this.hidingImmuneTime = compound.getInt(KEY_IMMUNE);
   }
   
   @Override
@@ -218,6 +222,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   public void setVariant(final DryadEntity.Variant variant) { this.getDataManager().set(DATA_VARIANT, variant.getId()); }
   public DryadEntity.Variant getVariant() { return DryadEntity.Variant.getById(this.getDataManager().get(DATA_VARIANT).byteValue()); }
   public Optional<BlockPos> getTreePos() { return treePos; }
+  public Optional<Vector3d> getTreeVec() { return treePos.isPresent() ? Optional.of(new Vector3d(treePos.get().getX() + 0.5D, treePos.get().getY() + 1.0D, treePos.get().getZ() + 0.5D)) : Optional.empty(); }
   public void setTreePos(final Optional<BlockPos> pos) { treePos = pos; }
   public boolean isHiding() { return hidingTime > 0; }
   public void setHiding(final boolean hiding) { hidingTime = hiding ? 1 : 0; }
@@ -231,6 +236,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
    * @return if this block pos is supporting a likely tree
    **/
   public static boolean isTreeAt(final IWorldReader worldIn, final BlockPos pos, final ITag<Block> logs) {
+    // a "tree" is considered two log blocks on top of a dirt block (or other plant-sustaining block)
     return worldIn.getBlockState(pos).canSustainPlant(worldIn, pos, Direction.UP, (IPlantable)Blocks.OAK_SAPLING)
         && worldIn.getBlockState(pos.up(1)).isIn(logs) && worldIn.getBlockState(pos.up(2)).isIn(logs);
   }
@@ -253,6 +259,18 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     return false;
   }
   
+  /**
+   * @param dis the maximum distance to the tree
+   * @return whether the entity is near its tree
+   **/
+  public boolean isWithinDistanceOfTree(final double dis) {
+    final Optional<Vector3d> treeVec = getTreeVec();
+    if(!treeVec.isPresent()) {
+      return false;
+    }
+    return treeVec.get().isWithinDistanceOf(this.getPositionVec(), dis);
+  }
+  
   class HideGoal extends Goal {
     
     private int maxHidingTime;
@@ -264,10 +282,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
 
     @Override
     public boolean shouldExecute() {
-      if(DryadEntity.this.treePos.isPresent()) {
-        final Vector3d treeVec = new Vector3d(treePos.get().getX() + 0.5D, treePos.get().getY() + 1.0D, treePos.get().getZ() + 0.5D);
-        return DryadEntity.this.getAttackTarget() == null && treeVec.isWithinDistanceOf(DryadEntity.this.getPositionVec(), 1.5D)
-            && isTreeAt(DryadEntity.this.getEntityWorld(), DryadEntity.this.treePos.get(), DryadEntity.this.getVariant().getBlocks());
+      if(DryadEntity.this.treePos.isPresent() && DryadEntity.this.isWithinDistanceOfTree(1.5D) && DryadEntity.this.getAttackTarget() == null) {
+        return isTreeAt(DryadEntity.this.getEntityWorld(), DryadEntity.this.treePos.get(), DryadEntity.this.getVariant().getBlocks());
       }
       return false;      
     }
@@ -310,10 +326,16 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     
     @Override
     public boolean shouldExecute() {
-      final boolean hasTreePos = DryadEntity.this.treePos.isPresent() 
-          && DryadEntity.isTreeAt(DryadEntity.this.getEntityWorld(), DryadEntity.this.treePos.get(), DryadEntity.this.getVariant().getBlocks());
-      return !hasTreePos && DryadEntity.this.getAttackTarget() == null
+      return !DryadEntity.this.isHiding() && DryadEntity.this.getAttackTarget() == null
           && DryadEntity.this.getRNG().nextInt(20) == 1 && super.shouldExecute();
+    }
+    
+    @Override
+    protected Optional<BlockPos> findNearbyBlock() {
+      if(DryadEntity.this.treePos.isPresent() && shouldMoveTo(DryadEntity.this.world, DryadEntity.this.treePos.get())) {
+        return DryadEntity.this.treePos;
+      }
+      return super.findNearbyBlock();
     }
 
     @Override
