@@ -41,6 +41,7 @@ _ Dryads plant trees?
 _ Dryads trade with player?
 X Satyrs dance around campfires
 X Satyrs summon wolves
+_ Satyrs light unlit campfires
 _ Satyrs trade with player (obtain panflute)
 ~ Centaurs / Cyprians shoot arrows (TODO: animation not working)
 ~ Minotaur charges at player (TODO: extend charge beyond player position)
@@ -58,7 +59,7 @@ X Cerastes hides in sand
 _ Unicorn can be tamed / ridden
 
 ## Structures
-~ Harpy Nests
+X Harpy Nests
 _ Satyr Camps
 _ Centaur Camps
 _ Ara Camps
@@ -71,7 +72,11 @@ X Limestone veins
 
 ~ Harpy Nest - need drops/use
 ~ Limestone (raw, smooth, slab)
-~ Marble (raw, smooth, slab, pillar)
+~ Marble (raw, smooth, slab)
+X Capped marble pillar
+_ Un-capped marble pillar
+_ Capped limestone pillar
+_ Un-capped limestone pillar
 X Statues
 X Vase
 _ Urn
@@ -86,6 +91,7 @@ _ Javelins (wood, stone/flint, iron)
 _ Golden bridle (for Unicorn)
 X Winged sandals
 _ Horn (from Minotaur / Cyprians) (needs use)
+_ Ambrosia (like ench. golden apple)
 
 ## Achievements
 

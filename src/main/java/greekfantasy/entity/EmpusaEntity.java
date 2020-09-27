@@ -162,7 +162,7 @@ public class EmpusaEntity extends MonsterEntity {
         // stop the entity from moving, and adjust look vecs
         this.entity.getNavigator().clearPath();
         this.entity.getLookController().setLookPositionWithEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
-        // drain health from target
+        // drain health from targetPos
         if(drainingTime > (MAX_DRAIN_TIME / 3) && this.entity.getAttackTarget().hurtTime == 0) {
           final DamageSource src = DamageSource.causeIndirectMagicDamage(this.entity, this.entity);
           float amount = (float) this.entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue();

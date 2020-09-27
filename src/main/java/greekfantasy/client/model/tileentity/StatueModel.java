@@ -73,7 +73,7 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     this.bipedRightLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedRightLeg.setRotationPoint(-2.0F, 12.0F + yOffsetIn, 0.0F);
     this.bipedLeftLeg = new ModelRenderer(this, 0, 16);
-    this.bipedLeftLeg.mirror = true;
+    //this.bipedLeftLeg.mirror = true;
     this.bipedLeftLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedLeftLeg.setRotationPoint(2.0F, 12.0F + yOffsetIn, 0.0F);
     

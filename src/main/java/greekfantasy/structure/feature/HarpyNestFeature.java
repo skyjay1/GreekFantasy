@@ -1,5 +1,7 @@
 package greekfantasy.structure.feature;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 import com.mojang.serialization.Codec;
@@ -14,11 +16,13 @@ import net.minecraft.block.RotatedPillarBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorldWriter;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.IWorldGenerationReader;
@@ -46,53 +50,114 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
       return false;
     }
     
-    final BlockState log = getLogState(reader.getBiome(pos));
-    final BlockState leaf = getLeavesState(log);
+    final Optional<RegistryKey<Biome>> biome = reader.func_242406_i(pos);
+    final boolean isDesert = Objects.equals(biome, Optional.of(Biomes.DESERT)) || Objects.equals(biome, Optional.of(Biomes.DESERT_HILLS));
+    final BlockState log = getLogState(biome);
+    final BlockState leaf = isDesert ? Blocks.AIR.getDefaultState() : getLeavesState(log);
     
-    int variant = 0;//rand.nextInt(2);
+    final int variant = rand.nextInt(2);
+    final Rotation rotation = Rotation.randomRotation(rand);
     GreekFantasy.LOGGER.info("Building harpy nest (variant " + variant + ") at " + pos);
     switch(variant) {
-    case 0: return buildVariant0(reader, chunkGenerator, rand, log, leaf, pos);
     default:
-      break;
+    case 0: return buildVariant0(reader, chunkGenerator, rand, log, leaf, pos, rotation);
+    case 1: return buildVariant1(reader, chunkGenerator, rand, log, leaf, pos, rotation);
     }
-    
-    
-    
-    return false;
   }
   
   public boolean buildVariant0(final ISeedReader world, final ChunkGenerator chunkGenerator, final Random rand, 
-      final BlockState log, final BlockState leaf, final BlockPos pos) {
+      final BlockState log, final BlockState leaf, final BlockPos pos, final Rotation rot) {
     // random height
     int rh = rand.nextInt(3) - 1;
     // build tree
     for(int i = 0; i < 14 + rh; i++) {
       set(world, pos.up(i), log);
     }
-    set(world, pos.add(0, 4 + rh, 1), log);
-    set(world, pos.add(0, 5 + rh, 2), log);
+    set(world, rot(pos.up(4 + rh), 0, 1, rot), log);
+    set(world, rot(pos.up(5 + rh), 0, 2, rot), log);
     // add leaves
-    // lower canopy
-    generateLeavesAround(world, rand, pos.up(3 + rh), leaf, 2);
-    generateLeavesAround(world, rand, pos.up(4 + rh), leaf, 2);
-    generateLeavesAround(world, rand, pos.up(5 + rh), leaf, 1);
-    generateLeavesAround(world, rand, pos.add(0, 5 + rh, 2), leaf, 1);
-    generateLeavesAround(world, rand, pos.up(6 + rh), leaf, 1);
-    // upper canopy
-    generateLeavesAround(world, rand, pos.up(9 + rh), leaf, 1);
-    generateLeavesAround(world, rand, pos.up(10 + rh), leaf, 2);
-    generateLeavesAround(world, rand, pos.up(11 + rh), leaf, 2);
-    generateLeavesAround(world, rand, pos.up(12 + rh), leaf, 2);
-    generateLeavesAround(world, rand, pos.up(13 + rh), leaf, 1);
-    set(world, pos.up(14 + rh), leaf);
-    // nest
-    final BlockPos nestPos = pos.add(0, 6 + rh, 2);
-    generateNestAround(world, nestPos, true);
-    addHarpy(world, nestPos.up());
-    if(rand.nextBoolean()) {
-      addHarpy(world, nestPos.up());
+    if(leaf.getBlock() != Blocks.AIR) {
+      // lower canopy
+      generateLeavesAround(world, rand, pos.up(3 + rh), leaf, 2);
+      generateLeavesAround(world, rand, pos.up(4 + rh), leaf, 2);
+      generateLeavesAround(world, rand, pos.up(5 + rh), leaf, 1);
+      generateLeavesAround(world, rand, rot(pos.up(5 + rh), 0, 1, rot), leaf, 1);
+      generateLeavesAround(world, rand, rot(pos.up(5 + rh), 0, 2, rot), leaf, 1);
+      generateLeavesAround(world, rand, pos.up(6 + rh), leaf, 1);
+      // upper canopy
+      generateLeavesAround(world, rand, pos.up(9 + rh), leaf, 1);
+      generateLeavesAround(world, rand, pos.up(10 + rh), leaf, 2);
+      generateLeavesAround(world, rand, pos.up(11 + rh), leaf, 2);
+      generateLeavesAround(world, rand, pos.up(12 + rh), leaf, 2);
+      generateLeavesAround(world, rand, pos.up(13 + rh), leaf, 1);
+      set(world, pos.up(14 + rh), leaf);
     }
+    // nest
+    final BlockPos nestPos = pos.add(new BlockPos(0, 6 + rh, 2).rotate(rot));
+    generateNestAround(world, nestPos, true);
+    addHarpy(world, rand, nestPos.up());
+    if(rand.nextBoolean()) {
+      addHarpy(world, rand, nestPos.up());
+    }
+    
+    return true;
+  }
+  
+  public boolean buildVariant1(final ISeedReader world, final ChunkGenerator chunkGenerator, final Random rand, 
+      final BlockState log, final BlockState leaf, final BlockPos pos, final Rotation rot) {
+    // random height
+    int rh = rand.nextInt(3) - 1;
+    // build tree
+    for(int i = 0; i < 6 + rh; i++) {
+      set(world, pos.up(i), log);
+    }
+    // -z branch
+    set(world, rot(pos.up(4 + rh), 0, -1, rot), log);
+    set(world, rot(pos.up(5 + rh), 0, -2, rot), log);
+    // +z branch
+    set(world, rot(pos.up(4 + rh), 0, 1, rot), log);
+    set(world, rot(pos.up(5 + rh), 0, 2, rot), log);
+    // -x branch
+    set(world, rot(pos.up(4 + rh), -1, 0, rot), log);
+    set(world, rot(pos.up(5 + rh), -2, 0, rot), log);
+    set(world, rot(pos.up(5 + rh), -2, -1, rot), log);
+    set(world, rot(pos.up(6 + rh), -3, 0, rot), log);
+    // +x branch
+    set(world, rot(pos.up(5 + rh), 1, 0, rot), log);
+    set(world, rot(pos.up(5 + rh), 2, 0, rot), log);
+    // add leaves
+    if(leaf.getBlock() != Blocks.AIR) {
+      generateLeavesAround(world, rand, pos.up(3 + rh), leaf, 1);
+      generateLeavesAround(world, rand, pos.up(4 + rh), leaf, 2);
+      generateLeavesAround(world, rand, pos.up(5 + rh), leaf, 3);
+      // -x side
+      generateLeavesAround(world, rand, rot(pos.up(5 + rh), -2, 0, rot), leaf, 1);
+      generateLeavesAround(world, rand, rot(pos.up(6 + rh), -3, 0, rot), leaf, 1);
+      generateLeavesAround(world, rand, rot(pos.up(6 + rh), -2, 1, rot), leaf, 1);
+      generateLeavesAround(world, rand, rot(pos.up(7 + rh), -2, 1, rot), leaf, 1);
+      generateLeavesAround(world, rand, rot(pos.up(7 + rh), -2, 0, rot), leaf, 1);
+      generateLeavesAround(world, rand, rot(pos.up(6 + rh), -2, -1, rot), leaf, 1);
+      // +x side
+      generateLeavesAround(world, rand, rot(pos.up(5 + rh), 2, 0, rot), leaf, 1);
+      generateLeavesAround(world, rand, rot(pos.up(6 + rh), 2, 0, rot), leaf, 1);
+      // -z side
+      generateLeavesAround(world, rand, rot(pos.up(6 + rh), 0, -2, rot), leaf, 1);
+      generateLeavesAround(world, rand, rot(pos.up(7 + rh), 0, -2, rot), leaf, 1);
+      // +z side
+      generateLeavesAround(world, rand, rot(pos.up(6 + rh), 0, 2, rot), leaf, 1);
+      generateLeavesAround(world, rand, rot(pos.up(7 + rh), 0, 2, rot), leaf, 1);
+    }
+    // nest
+    final BlockPos nestPos = pos.up(6 + rh);
+    generateNestAround(world, nestPos, true);
+    addHarpy(world, rand, nestPos.up());
+    if(rand.nextBoolean()) {
+      addHarpy(world, rand, nestPos.up());
+    }
+    // a few more leaves (imperfect nest)
+    set(world, rot(nestPos, -1, 1, rot), leaf, 3);
+    set(world, rot(nestPos.up(1), -1, 1, rot), leaf);
+    set(world, rot(nestPos.up(2), -1, 1, rot), leaf);
     
     return true;
   }
@@ -105,6 +170,10 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
   
   protected static void set(IWorldWriter writer, BlockPos pos, BlockState state, int flag) {
     writer.setBlockState(pos, state, flag);
+  }
+  
+  protected static BlockPos rot(final BlockPos origin, final int x, final int z, final Rotation rot) {
+    return origin.add(new BlockPos(x, 0, z).rotate(rot));
   }
 
   protected static boolean isAirOrLeavesAt(IWorldGenerationReader reader, BlockPos pos) {
@@ -129,16 +198,19 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
     return (isAirOrLeavesAt(reader, pos) || isPlantAt(reader, pos));
   }
 
-  protected static BlockState getLogState(final Biome biome) {
-    Block log = Blocks.OAK_LOG;
-    Biome.Category category = biome.getCategory();
-//    if (category == Biome.Category.FOREST) {
-//        log = Blocks.BIRCH_LOG;
-//    } else 
-    if (category == Biome.Category.SAVANNA || category == Biome.Category.DESERT) {
-        log = Blocks.ACACIA_LOG;
-    } else if (category == Biome.Category.TAIGA || category == Biome.Category.ICY) {
-        log = Blocks.SPRUCE_LOG;
+  protected static BlockState getLogState(final Optional<RegistryKey<Biome>> biome) {
+    Block log = Blocks.OAK_LOG;    
+    final String biomeName = biome.isPresent() ? biome.get().getRegistryName().getPath() : "";
+    if(biomeName.contains("birch")) {
+      log = Blocks.BIRCH_LOG;
+    } else if(biomeName.contains("dark_forest")) {
+      log = Blocks.DARK_OAK_LOG;
+    } else if(biomeName.contains("taiga")) {
+      log = Blocks.SPRUCE_LOG;
+    } else if(biomeName.contains("jungle")) {
+      log = Blocks.JUNGLE_LOG;
+    } else if(biomeName.contains("savanna")) {
+      log = Blocks.ACACIA_LOG;
     }
     return log.getDefaultState().with(RotatedPillarBlock.AXIS, Direction.Axis.Y);
   }
@@ -183,20 +255,25 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
     }
   }
   
-  protected static void addHarpy(final ISeedReader world, final BlockPos pos) {
+  protected static void addHarpy(final ISeedReader world, final Random rand, final BlockPos pos) {
     // spawn a harpy
     final HarpyEntity entity = GFRegistry.HARPY_ENTITY.create(world.getWorld());
-    entity.setLocationAndAngles(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, 0, 0);
+    entity.setLocationAndAngles(pos.getX() + rand.nextDouble(), pos.getY() + 0.5D, pos.getZ() + rand.nextDouble(), 0, 0);
     entity.enablePersistence();
     world.addEntity(entity);
   }
   
   protected static boolean shouldGenerateLeaf(final int x, final int z, final int radius, final Random rand) {
-    boolean nonStrict = radius > 1;
     boolean valid = !(Math.abs(x) == radius && Math.abs(z) == radius);
-    boolean isNonStrictCorner = nonStrict && (Math.abs(x) == (radius - 1) && Math.abs(z) == radius) || (Math.abs(x) == radius && Math.abs(z) == (radius - 1));
+    boolean isNonStrictCorner = radius > 1 && (Math.abs(x) == (radius - 1) && Math.abs(z) == radius) || (Math.abs(x) == radius && Math.abs(z) == (radius - 1));
+    boolean isNonStrictCorner2 = radius > 2 && (Math.abs(x) == (radius - 2) && Math.abs(z) == (radius - 1)) || (Math.abs(x) == (radius - 1) && Math.abs(z) == (radius - 2));
+    // cut off almost-corners some of the time
+    if(valid && isNonStrictCorner2) {
+      valid = rand.nextInt(3) == 0;
+    }
+    // cut off corners most of the time
     if(valid && isNonStrictCorner) {
-      valid = rand.nextBoolean();
+      valid = rand.nextInt(4) == 0;
     }
     return valid;
   }

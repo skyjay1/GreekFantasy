@@ -223,11 +223,11 @@ public class MinotaurEntity extends MonsterEntity {
     @Override
     public boolean shouldExecute() {
       // only execute if cooldown reaches zero and:
-      // valid attack target
+      // valid attack targetPos
       // move helper is not updating
       // passes random check
-      // attack target is within direct sight
-      // attack target is more than 3 blocks away
+      // attack targetPos is within direct sight
+      // attack targetPos is more than 3 blocks away
       if(this.cooldown > 0) {
         cooldown--;
       } else if (this.entity.getAttackTarget() != null && !this.entity.getMoveHelper().isUpdating() 
@@ -275,7 +275,7 @@ public class MinotaurEntity extends MonsterEntity {
         this.entity.getLookController().setLookPosition(targetPos.add(0, target.getEyeHeight(), 0));
       } else {
         // launch the charge attack
-        // TODO get a vector from entity to target and extend it
+        // TODO get a vector from entity to targetPos and extend it
         // to allow minotaur to run past the player position
         this.targetPos = target.getPositionVec();
       }

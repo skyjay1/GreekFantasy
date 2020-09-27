@@ -10,6 +10,8 @@ import javax.annotation.Nullable;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GoToBlockGoal;
 import greekfantasy.util.PanfluteMusicManager;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IAngerable;
@@ -25,6 +27,7 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.WolfEntity;
@@ -102,8 +105,14 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(2, new DancingGoal(0.75D));
-    this.goalSelector.addGoal(3, new GoToCampfireGoal(12, 0.9D));
+    this.goalSelector.addGoal(2, new SatyrEntity.DancingGoal(0.75D));
+    this.goalSelector.addGoal(3, new SatyrEntity.GoToCampfireGoal(12, 0.9D));
+    this.goalSelector.addGoal(4, new RandomWalkingGoal(this, 0.8D, 180) {
+      @Override
+      public boolean shouldExecute() { 
+        return !SatyrEntity.this.isDancing() && !SatyrEntity.this.isSummoning() && SatyrEntity.this.getAttackTarget() == null && super.shouldExecute(); 
+      }
+    });
     this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -156,6 +165,15 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
     
     return attackEntityFrom;
+  }
+  
+  @Override
+  public boolean isInvulnerableTo(final DamageSource source) {
+    if(super.isInvulnerableTo(source)) {
+      return true;
+    }
+    // fire resistant, but not fire immune
+    return source == DamageSource.IN_FIRE && this.getRNG().nextInt(4) > 0;
   }
  
   @Override
@@ -381,7 +399,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     final Direction[] HORIZONTALS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
     
     public GoToCampfireGoal(int radius, double speed) {
-      super(SatyrEntity.this, radius, speed);
+      super(SatyrEntity.this, speed, radius);
     }
     
     @Override
@@ -391,7 +409,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
 
     @Override
-    public boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
+    public boolean isTargetBlock(IWorldReader worldIn, BlockPos pos) {
       final boolean isPassable = !worldIn.getBlockState(pos.up(1)).getMaterial().blocksMovement() && !worldIn.getBlockState(pos).getMaterial().blocksMovement();
       for(final Direction d : HORIZONTALS) {
         if(isPassable && !worldIn.getBlockState(pos.offset(d.getOpposite())).getMaterial().blocksMovement() 
@@ -456,7 +474,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     public void tick() {
       super.tick();
       if(this.dancingTime++ < MAX_DANCING_TIME && this.travelTime++ < MAX_TRAVEL_TIME) {         
-        // if we're close to the target, update target and path
+        // if we're close to the targetPos, update targetPos and path
         if(isNearTarget(1.2D)) {
           this.updateTarget();
           SatyrEntity.this.jump();
@@ -497,7 +515,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     /**
      * Checks if a campfire has been found, and if so, updates
      * which block the entity should path toward
-     * @return whether there is now a target to move toward
+     * @return whether there is now a targetPos to move toward
      **/
     private boolean updateTarget() {
       if(this.campfirePos.isPresent()) {
@@ -536,6 +554,35 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
   }
   
+  class LightCampfireGoal extends GoToBlockGoal {
+    
+    private final Direction[] HORIZONTALS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
+
+    public LightCampfireGoal(double speed, int radius) {
+      super(SatyrEntity.this, speed, radius);
+    }
+    
+    @Override
+    public boolean shouldExecute() {
+      return SatyrEntity.this.getRNG().nextInt(200) == 0 && super.shouldExecute();
+    }
+
+    @Override
+    public boolean isTargetBlock(IWorldReader worldIn, BlockPos pos) {
+      for(final Direction d : HORIZONTALS) {
+        final BlockState state = worldIn.getBlockState(pos.offset(d, 1));
+        if(state.isIn(BlockTags.CAMPFIRES) && !state.get(CampfireBlock.LIT).booleanValue()) {
+          return true;
+        }
+      }
+      return false;
+    }
+    
+    // TODO everything else
+    
+    
+   
+  }
  
   
 }

@@ -180,7 +180,7 @@ public class OrthusEntity extends MonsterEntity {
         this.entity.getNavigator().clearPath();
         this.entity.faceEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
         this.entity.getLookController().setLookPositionWithEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
-        // set fire to target
+        // set fire to targetPos
         if(fireBreathingTime > 10 && fireBreathingTime % 10 == 0) {
           // TODO get all entities within range and direction of fire to ignite
           final Vector3d entityPos = new Vector3d(entity.getPosX(), entity.getPosYEye(), entity.getPosZ());

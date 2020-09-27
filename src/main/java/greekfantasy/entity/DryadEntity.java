@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.ai.GoToBlockGoal;
+import greekfantasy.entity.ai.FindBlockGoal;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -27,7 +27,9 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -55,7 +57,7 @@ import net.minecraftforge.common.IPlantable;
 
 public class DryadEntity extends CreatureEntity implements IAngerable {
   
-  private static final DataParameter<Byte> DATA_VARIANT = EntityDataManager.createKey(DryadEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<String> DATA_VARIANT = EntityDataManager.createKey(DryadEntity.class, DataSerializers.STRING);
   private static final String KEY_VARIANT = "Variant";
   private static final String KEY_TREE_POS = "Tree";
   private static final String KEY_HIDING = "HidingTime";
@@ -67,6 +69,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   private int angerTime;
   private UUID angerTarget;
   
+  // whether the entity is pathing to a tree
+  private boolean isGoingToTree;
   // number of ticks the entity has been hiding
   private int hidingTime;
   // number of ticks left that the entity is immune to suffocation
@@ -86,11 +90,14 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   protected void registerGoals() {
     super.registerGoals();
+    this.goalSelector.addGoal(0, new SwimGoal(this));
     this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
-    this.goalSelector.addGoal(2, new HideGoal(600));
-    this.goalSelector.addGoal(3, new GoToTreeGoal(0.9F));
-    this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(1, new DryadEntity.FindTreeGoal(8, 28));
+    this.goalSelector.addGoal(2, new DryadEntity.HideGoal(200));
+    this.goalSelector.addGoal(3, new DryadEntity.GoToTreeGoal(0.9F, 200));
+    this.goalSelector.addGoal(4, new DryadEntity.WalkingGoal(0.9F, 140));
+    this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
     this.targetSelector.addGoal(4, new ResetAngerGoal<>(this, true));
@@ -99,29 +106,33 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   protected void registerData() {
     super.registerData();
-    this.getDataManager().register(DATA_VARIANT, Byte.valueOf((byte) 0));
+    this.getDataManager().register(DATA_VARIANT, DryadEntity.Variant.OAK.getString());
   }
   
   @Override
   public void livingTick() {
     super.livingTick();
-    // if entity has a tree, check if the tree is still there
-    if(treePos.isPresent() && !isTreeAt(getEntityWorld(), treePos.get(), this.getVariant().getBlocks())) {
+    // if entity has a tree position, make sure it still exists
+    if(this.ticksExisted % 18 == 0 && this.treePos.isPresent() && !isTreeAt(getEntityWorld(), DryadEntity.this.treePos.get(), DryadEntity.this.getVariant().getBlocks())) {
       // if entity was hiding, exit the tree
-      if(isHiding()) {
-        exitTree();
+      if(this.isHiding()) {
+        this.exitTree();
         // set immune to suffocation for additional amount of time
-        hidingImmuneTime = 50;
+        this.hidingImmuneTime = 50;
       }
       // update tree pos
-      setTreePos(Optional.empty());
-      setHiding(false);
-    }    
+      // DEBUG
+      GreekFantasy.LOGGER.info("No tree found, removing tree pos at " + treePos.get().toString());
+      this.setTreePos(Optional.empty());
+      this.setHiding(false);
+      this.isGoingToTree = false;
+    }
+    
     // hiding immune timer
     if(!isHiding() && hidingImmuneTime > 0) {
       hidingImmuneTime--;
     }
-    
+   
     // anger timer
     if (!this.world.isRemote()) {
       this.func_241359_a_((ServerWorld) this.world, true);
@@ -166,7 +177,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
-    compound.putByte(KEY_VARIANT, this.getDataManager().get(DATA_VARIANT).byteValue());
+    compound.putString(KEY_VARIANT, this.getDataManager().get(DATA_VARIANT));
     this.writeAngerNBT(compound);
     if(treePos.isPresent()) {
       compound.putInt(KEY_TREE_POS + ".x", treePos.get().getX());
@@ -180,7 +191,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
-    this.setVariant(DryadEntity.Variant.getById(compound.getByte(KEY_VARIANT)));
+    this.setVariant(DryadEntity.Variant.getByName(compound.getString(KEY_VARIANT)));
     this.readAngerNBT((ServerWorld)this.world, compound);
     if(compound.contains(KEY_TREE_POS + ".x")) {
       final int x = compound.getInt(KEY_TREE_POS + ".x");
@@ -218,14 +229,23 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   
   @Override
   public float getBrightness() { return 1.0F; }
+  @Override
+  public boolean canDespawn(double distanceToClosestPlayer) { return !treePos.isPresent() && this.ticksExisted > 2400; }
 
-  public void setVariant(final DryadEntity.Variant variant) { this.getDataManager().set(DATA_VARIANT, variant.getId()); }
-  public DryadEntity.Variant getVariant() { return DryadEntity.Variant.getById(this.getDataManager().get(DATA_VARIANT).byteValue()); }
+
+  public void setVariant(final DryadEntity.Variant variant) { this.getDataManager().set(DATA_VARIANT, variant.getString()); }
+  public boolean isHiding() { return hidingTime > 0; }
+  public void setHiding(final boolean hiding) { hidingTime = hiding ? 1 : 0; }public DryadEntity.Variant getVariant() { return DryadEntity.Variant.getByName(this.getDataManager().get(DATA_VARIANT)); }
   public Optional<BlockPos> getTreePos() { return treePos; }
   public Optional<Vector3d> getTreeVec() { return treePos.isPresent() ? Optional.of(new Vector3d(treePos.get().getX() + 0.5D, treePos.get().getY() + 1.0D, treePos.get().getZ() + 0.5D)) : Optional.empty(); }
-  public void setTreePos(final Optional<BlockPos> pos) { treePos = pos; }
-  public boolean isHiding() { return hidingTime > 0; }
-  public void setHiding(final boolean hiding) { hidingTime = hiding ? 1 : 0; }
+  public void setTreePos(final Optional<BlockPos> pos) {
+    treePos = pos;
+    if(pos.isPresent()) {
+      this.setHomePosAndDistance(pos.get(), (int)(this.getAttribute(Attributes.FOLLOW_RANGE).getBaseValue()));
+    } else {
+      this.setHomePosAndDistance(BlockPos.ZERO, -1);
+    }
+  }
 
   /**
    * Checks if the given position is a dirt or other plant-sustaining
@@ -247,8 +267,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
    **/
   public boolean exitTree() {
     int radius = 2;
-    // choose 20 random positions to check
-    for (int i = 0; i < 20; i++) {
+    // choose several random positions to check
+    for (int i = 0; i < 10; i++) {
       double x = this.getPosX() + rand.nextInt(radius * 2) - radius;
       double y = this.getPosY() + rand.nextInt(radius) - radius / 2;
       double z = this.getPosZ() + rand.nextInt(radius * 2) - radius;
@@ -268,7 +288,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     if(!treeVec.isPresent()) {
       return false;
     }
-    return treeVec.get().isWithinDistanceOf(this.getPositionVec(), dis);
+    return treeVec.get().isWithinDistanceOf(getPositionVec(), dis);
   }
   
   class HideGoal extends Goal {
@@ -291,6 +311,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     @Override
     public void startExecuting() {
       DryadEntity.this.setHiding(true);
+      DryadEntity.this.isGoingToTree = false;
     }
     
     @Override
@@ -308,48 +329,93 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     
     @Override
     public void resetTask() {
-      if(DryadEntity.this.hidingTime > 10) {
+      if(DryadEntity.this.isWithinDistanceOfTree(2.0D)) {
         // get a path to leave the tree
         DryadEntity.this.exitTree();
         // set immune to suffocation for additional amount of time
         DryadEntity.this.hidingImmuneTime = 50;
       }
       DryadEntity.this.setHiding(false);
+      DryadEntity.this.isGoingToTree = false;
     }
   }
   
-  class GoToTreeGoal extends GoToBlockGoal {
+  class FindTreeGoal extends FindBlockGoal {
 
-    public GoToTreeGoal(double speed) {
-      super(DryadEntity.this, 10, speed);
+    public FindTreeGoal(int radius, int cooldown) {
+      super(DryadEntity.this, radius, cooldown);
     }
     
     @Override
     public boolean shouldExecute() {
-      return !DryadEntity.this.isHiding() && DryadEntity.this.getAttackTarget() == null
-          && DryadEntity.this.getRNG().nextInt(20) == 1 && super.shouldExecute();
+      return !DryadEntity.this.getTreePos().isPresent() && super.shouldExecute();
     }
     
     @Override
-    protected Optional<BlockPos> findNearbyBlock() {
-      if(DryadEntity.this.treePos.isPresent() && shouldMoveTo(DryadEntity.this.world, DryadEntity.this.treePos.get())) {
-        return DryadEntity.this.treePos;
-      }
-      return super.findNearbyBlock();
+    public boolean isTargetBlock(IWorldReader worldIn, BlockPos pos) {
+      // valid block if there is a tree here and it has not been occupied by another dryad
+      return isTreeAt(worldIn, pos, DryadEntity.this.getVariant().getBlocks()) 
+          && DryadEntity.this.getEntityWorld().getEntitiesWithinAABBExcludingEntity(DryadEntity.this, new AxisAlignedBB(pos)).isEmpty();
     }
 
     @Override
-    public boolean shouldMoveTo(final IWorldReader worldIn, final BlockPos pos) {
-     if(isTreeAt(worldIn, pos, DryadEntity.this.getVariant().getBlocks())) {
-       // check if this tree is already occupied
-       if(DryadEntity.this.getEntityWorld().getEntitiesWithinAABB(DryadEntity.class, new AxisAlignedBB(pos)).isEmpty()) {
-         DryadEntity.this.setTreePos(Optional.of(pos));
-         return true;
-       }
-     }
-     return false;
+    public void onFoundBlock(final IWorldReader worldIn, final BlockPos target) {
+      DryadEntity.this.setTreePos(Optional.of(target));
+      // DEBUG:
+      GreekFantasy.LOGGER.info("Dryad found tree at " + target.toString());
+    }
+  }
+  
+  class GoToTreeGoal extends Goal {
+    
+    private final double speed;
+    private final int chance;
+    
+    public GoToTreeGoal(final double speedIn, final int chanceIn) {
+      setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+      speed = speedIn;
+      chance = chanceIn;
     }
 
+    @Override
+    public boolean shouldExecute() {
+      return !DryadEntity.this.isHiding() && DryadEntity.this.getTreePos().isPresent() 
+            && DryadEntity.this.getAttackTarget() == null && DryadEntity.this.getRNG().nextInt(chance) == 0;
+    }
+
+    @Override
+    public boolean shouldContinueExecuting() {
+      return DryadEntity.this.isGoingToTree && DryadEntity.this.getTreePos().isPresent() 
+          && !DryadEntity.this.getNavigator().noPath() && DryadEntity.this.getAttackTarget() == null ;
+    }
+
+    @Override
+    public void startExecuting() {
+      DryadEntity.this.isGoingToTree = true;
+      final Optional<Vector3d> vec = DryadEntity.this.getTreeVec();
+      DryadEntity.this.getNavigator().tryMoveToXYZ(vec.get().getX(), vec.get().getY(), vec.get().getZ(), this.speed);
+      // DEBUG:
+      GreekFantasy.LOGGER.info("Dryad trying to go to tree at " + vec.toString());
+    }
+
+    @Override
+    public void resetTask() {
+      DryadEntity.this.getNavigator().clearPath();
+      DryadEntity.this.isGoingToTree = false;
+    }
+  }
+  
+  class WalkingGoal extends RandomWalkingGoal {
+
+    public WalkingGoal(double speed, final int chance) {
+      super(DryadEntity.this, speed, chance);
+    }
+    
+    @Override
+    public boolean shouldExecute() {
+      return !DryadEntity.this.isHiding() && !DryadEntity.this.isGoingToTree && DryadEntity.this.getAttackTarget() == null
+           && super.shouldExecute();
+    }
   }
   
   public static enum Variant implements IStringSerializable {

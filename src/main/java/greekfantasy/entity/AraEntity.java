@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.FollowMobGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.monster.MonsterEntity;
@@ -35,8 +36,17 @@ public class AraEntity extends MonsterEntity {
   @Override
   protected void registerGoals() {
     super.registerGoals();
+    // TODO: add FollowMobGoal to travel in groups
+    // from parrot:
+    // this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0D, 3.0F, 7.0F));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
+    
+  }
+
+  @Override
+  public boolean canDespawn(double distanceToClosestPlayer) {
+    return this.ticksExisted > 2400;
   }
 
 }

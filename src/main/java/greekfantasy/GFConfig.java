@@ -63,7 +63,7 @@ public class GFConfig {
         .defineInRange("sandals_speed_bonus", 1.0D, 0.0D, 2.0D);
     builder.pop();
     // mob attacks
-    builder.push("stun_effect");
+    builder.push("effects");
     STUN_PREVENTS_JUMP = builder.comment("When stunned, players are prevented from jumping")
         .define("stun_prevents_jump", true);
     STUN_PREVENTS_USE = builder.comment("When stunned, players are prevented from using items")
@@ -71,7 +71,8 @@ public class GFConfig {
     OVERSTEP_ENABLED = builder.comment("Whether 'overstep' effect can modify player step height")
         .define("enable_overstep", true);
     builder.pop();
-    builder.push("mob_attacks");
+    // mob abilities
+    builder.push("mob_abilities");
     EMPUSA_ATTACK = builder.comment("Whether the Empusa can drain health")
         .define("empusa_attack", true);
     GORGON_ATTACK = builder.comment("Whether the Gorgon can stun players by staring")
@@ -82,12 +83,15 @@ public class GFConfig {
         .define("orthus_attack", true);
     SHADE_ATTACK = builder.comment("Whether the Shade can steal player XP")
         .define("shade_attack", true);
-    builder.pop();
-    // mob abilities
+    DRYAD_ANGRY_ON_HARVEST = builder.comment("Whether harvesting log blocks angers nearby dryads")
+        .define("dryad_angry_on_harvest", true);
+    DRYAD_ANGRY_RANGE = builder.comment("The distance at which dryads become angry when players harvest logs")
+        .defineInRange("dryad_angry_range", 4, 0, 32);
     GIGANTE_RESISTANCE = builder.comment("Whether the Gigante has damage resistance")
         .define("gigante_resistance", true);
     SHADE_PLAYER_ONLY = builder.comment("Whether shades that spawn when a player dies can only be killed by that player")
         .define("shade_player_only", true);
+    builder.pop();
     // mob spawns
     builder.push("mob_spawn_weights");
     ARA_SPAWN_WEIGHT = builder.worldRestart().defineInRange("ara_spawn_weight", 20, 0, 100);
@@ -104,23 +108,22 @@ public class GFConfig {
     MINOTAUR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("minotaur_spawn_weight", 60, 0, 100);
     NAIAD_SPAWN_WEIGHT = builder.worldRestart().defineInRange("naiad_spawn_weight", 10, 0, 100);
     ORTHUS_SPAWN_WEIGHT = builder.worldRestart().defineInRange("orthus_spawn_weight", 20, 0, 100);
-    SATYR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("satyr_spawn_weight", 18, 0, 100);
+    SATYR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("satyr_spawn_weight", 22, 0, 100);
     SHADE_SPAWN_WEIGHT = builder.worldRestart().defineInRange("shade_spawn_weight", 10, 0, 100);
     SIREN_SPAWN_WEIGHT = builder.worldRestart().defineInRange("siren_spawn_weight", 10, 0, 100);
     UNICORN_SPAWN_WEIGHT = builder.worldRestart().defineInRange("unicorn_spawn_weight", 11, 0, 100);
     builder.pop();
+    // mob spawn specials
     builder.push("mob_spawn_specials"); 
     SHADE_SPAWN_ON_DEATH = builder.comment("Whether a shade can spawn when players die")
         .define("shade_spawn_on_death", true);
     SATYR_SHAMAN_CHANCE = builder.comment("Percent chance that a satyr will be a shaman")
         .defineInRange("satyr_shaman_chance", 20, 0, 100);
-    DRYAD_ANGRY_ON_HARVEST = builder.comment("Whether harvesting log blocks angers nearby dryads")
-        .define("dryad_angry_on_harvest", true);
-    DRYAD_ANGRY_RANGE = builder.comment("The distance at which dryads become angry when players harvest logs")
-        .defineInRange("dryad_angry_range", 4, 0, 32);
     builder.pop();
+    // feature configs
+    builder.comment("structure and feature spread (higher number = less common)");
     builder.push("features");
-    HARPY_NEST_SPREAD = builder.defineInRange("harpy_nest_spread", 400, 1, 5000);
+    HARPY_NEST_SPREAD = builder.worldRestart().defineInRange("harpy_nest_spread", 90, 1, 1000);
     builder.pop();
   }
   

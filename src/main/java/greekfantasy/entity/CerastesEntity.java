@@ -54,6 +54,7 @@ public class CerastesEntity extends CreatureEntity {
   
   private boolean isHiding;
   private boolean isStanding;
+  private boolean isGoingToSand;
   
   public CerastesEntity(final EntityType<? extends CerastesEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -78,9 +79,15 @@ public class CerastesEntity extends CreatureEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(1, new HideGoal(this));
-    this.goalSelector.addGoal(2, new MoveToSandGoal(10, 0.8F));
+    this.goalSelector.addGoal(2, new GoToSandGoal(10, 0.8F));
     this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
-    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D){
+      @Override
+      public boolean shouldExecute() {
+        return !CerastesEntity.this.isHiding() && !CerastesEntity.this.isGoingToSand 
+            && CerastesEntity.this.rand.nextInt(200) == 0 && super.shouldExecute();
+      }
+    });
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 4.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -113,11 +120,16 @@ public class CerastesEntity extends CreatureEntity {
     }
     // standing logic
     if(this.isServerWorld()) {
-      if(this.getAttackTarget() != null) {
+      // stand when attacked, and sometimes randomly
+      if(this.getAttackTarget() != null || this.rand.nextInt(600) == 0) {
         this.setStanding(true);
-      } else if(this.isStanding() && this.rand.nextInt(60) == 0){
+      } else if(this.isStanding() && standingTime > 0.9F && this.rand.nextInt(60) == 0){
         this.setStanding(false);
       }
+    }
+    // isGoingToSand checker
+    if(this.getAttackTarget() != null) {
+      isGoingToSand = false;
     }
   }
   
@@ -161,7 +173,7 @@ public class CerastesEntity extends CreatureEntity {
         this.setHiding(false);
         this.setStanding(true);
       }
-      // sometimes set as attack target
+      // sometimes set as attack targetPos
       if(this.getAttackTarget() == null && this.canAttack(entityIn.getType()) && this.getRNG().nextBoolean()) {
         this.setAttackTarget((LivingEntity) entityIn);
       }
@@ -238,21 +250,26 @@ public class CerastesEntity extends CreatureEntity {
     return hidingTime;
   }
   
-  class MoveToSandGoal extends GoToBlockGoal {
+  class GoToSandGoal extends GoToBlockGoal {
     
-    public MoveToSandGoal(final int radiusIn, final double speedIn) {
-      super(CerastesEntity.this, radiusIn, speedIn);
+    public GoToSandGoal(final int radiusIn, final double speedIn) {
+      super(CerastesEntity.this, speedIn, radiusIn);
     }
     
     @Override
     public boolean shouldExecute() {
-      return !CerastesEntity.this.isHiding() && CerastesEntity.this.getAttackTarget() == null
-          && CerastesEntity.this.getRNG().nextInt(60) == 1 && super.shouldExecute();
+      return !CerastesEntity.this.isHiding() && CerastesEntity.this.getAttackTarget() == null && super.shouldExecute();
     }
 
     @Override
-    public boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
+    public boolean isTargetBlock(IWorldReader worldIn, BlockPos pos) {
       return !worldIn.getBlockState(pos.up(1)).getMaterial().blocksMovement() && worldIn.getBlockState(pos).isIn(BlockTags.SAND);
+    }
+    
+    @Override
+    public void onFoundBlock(final IWorldReader worldIn, final BlockPos pos) {
+      super.onFoundBlock(worldIn, pos);
+      CerastesEntity.this.isGoingToSand = true;
     }
   }
   
@@ -286,6 +303,7 @@ public class CerastesEntity extends CreatureEntity {
     @Override
     public void startExecuting() {
       this.entity.setHiding(true);
+      this.entity.isGoingToSand = false;
       this.cooldown = MAX_COOLDOWN + MAX_HIDE_TIME;
     }
     
