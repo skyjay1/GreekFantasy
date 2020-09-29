@@ -43,6 +43,7 @@ public class GiganteModel<T extends CreatureEntity> extends BipedModel<T> {
     bipedRightLeg.setRotationPoint(-3.0F, 8.0F, 3.0F);
     bipedRightLeg.setTextureOffset(40, 42).addBox(-3.0F, 0.0F, -3.0F, 6.0F, 16.0F, 6.0F, modelSize);
   }
+  
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, partialTick, rotationYaw, rotationPitch);
@@ -63,6 +64,5 @@ public class GiganteModel<T extends CreatureEntity> extends BipedModel<T> {
     super.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     matrixStackIn.pop();
   }
-  
   
 }

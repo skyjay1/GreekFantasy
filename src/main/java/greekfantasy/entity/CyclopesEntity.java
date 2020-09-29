@@ -69,4 +69,9 @@ public class CyclopesEntity extends MonsterEntity {
     }
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
+  
+  @Override
+  protected float getJumpUpwardsMotion() {
+    return 0.52F * this.getJumpFactor();
+  }
 }

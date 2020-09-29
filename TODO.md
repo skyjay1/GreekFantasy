@@ -30,20 +30,21 @@ _ _ _ Eurynomos (blue skin; vulture head?)
 _ _ _ Elpis (hope)
 _ _ _ Hippocampus
 X _ _ Boss: Cerberus
-_ _ _ Boss: Geryon (3-headed Gigante)
+X _ _ Boss: Geryon (3-headed Gigante)
 
 
 ## Entity AI
 
 X Dryads hide in trees
 X Dryads are angry when player chops wood
-X Dryad heals self over time
+X Dryads heal self over time
 _ Dryads plant trees?
 _ Dryads trade with player?
 X Satyrs dance around campfires
 X Satyrs summon wolves
 X Satyrs light unlit campfires
 _ Satyrs trade with player (obtain panflute)
+_ Geryon smash attack (jump+smash? or just swing club?)
 ~ Centaurs / Cyprians shoot arrows (TODO: animation not working)
 ~ Minotaur charges at player (TODO: extend charge beyond player position)
 X Minotaur is stunned when charge attack misses
@@ -71,7 +72,7 @@ X Limestone veins
 ## Blocks
 
 ~ Harpy Nest - need drops/use
-X Limestone (raw, smooth, slab, pillar)
+~ Limestone (raw, smooth, slab, pillar) (TODO: pillar texture)
 X Marble (raw, smooth, slab, pillar)
 X Statues
 X Vase
@@ -81,7 +82,7 @@ _ Grapes / grapevines?
 
 ## Items
 
-~ Panflute
+~ Panflute (TODO: song selection)
 ~ Clubs (wood, stone/flint, iron) (TODO: 16x16 icons)
 _ Javelins (wood, stone/flint, iron)
 _ Golden bridle (for Unicorn)
@@ -107,7 +108,7 @@ X "Stunned" effect (prevent movement or item use)
 ~ "Petrified" effect
 X "Overstep" enchantment
 ~ Panflute songs
-_ Panflute song selection GUI
+_ Panflute song selection GUI?
 ~ Lots of mysterious box functions!
 _ Some way to obtain Winged Sandals
 _ Some way to obtain Mysterious Box

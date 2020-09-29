@@ -11,6 +11,7 @@ import greekfantasy.client.render.CyclopesRenderer;
 import greekfantasy.client.render.CyprianCentaurRenderer;
 import greekfantasy.client.render.DryadRenderer;
 import greekfantasy.client.render.EmpusaRenderer;
+import greekfantasy.client.render.GeryonRenderer;
 import greekfantasy.client.render.GiganteRenderer;
 import greekfantasy.client.render.GorgonRenderer;
 import greekfantasy.client.render.HarpyRenderer;
@@ -63,6 +64,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYCLOPES_ENTITY, CyclopesRenderer::new);  
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DRYAD_ENTITY, DryadRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.EMPUSA_ENTITY, EmpusaRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GERYON_ENTITY, GeryonRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GIGANTE_ENTITY, GiganteRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GORGON_ENTITY, GorgonRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.HARPY_ENTITY, HarpyRenderer::new);

@@ -51,6 +51,7 @@ public class GFConfig {
   
   // other special entity abilities
   public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
+  public final ForgeConfigSpec.BooleanValue GERYON_RESISTANCE;
   public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
   private final ForgeConfigSpec.BooleanValue DRYAD_ANGRY_ON_HARVEST;
   private final ForgeConfigSpec.IntValue DRYAD_ANGRY_RANGE;
@@ -100,6 +101,8 @@ public class GFConfig {
         .defineInRange("dryad_angry_range", 4, 0, 32);
     GIGANTE_RESISTANCE = builder.comment("Whether the Gigante has damage resistance")
         .define("gigante_resistance", true);
+    GERYON_RESISTANCE = builder.comment("Whether the Geryon has damage resistance")
+        .define("geryon_resistance", true);
     SHADE_PLAYER_ONLY = builder.comment("Whether shades that spawn when a player dies can only be killed by that player")
         .define("shade_player_only", true);
     builder.pop();

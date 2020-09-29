@@ -17,6 +17,7 @@ import greekfantasy.entity.CyclopesEntity;
 import greekfantasy.entity.CyprianEntity;
 import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.EmpusaEntity;
+import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.GiganteEntity;
 import greekfantasy.entity.GorgonEntity;
 import greekfantasy.entity.HarpyEntity;
@@ -36,7 +37,6 @@ import greekfantasy.tileentity.VaseTileEntity;
 import greekfantasy.util.StatuePose;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.StairsBlock;
@@ -55,7 +55,6 @@ import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.Food;
 import net.minecraft.item.Foods;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -87,6 +86,7 @@ public final class GFRegistry {
   public static EntityType<CyprianEntity> CYPRIAN_ENTITY;
   public static EntityType<DryadEntity> DRYAD_ENTITY;
   public static EntityType<EmpusaEntity> EMPUSA_ENTITY;
+  public static EntityType<GeryonEntity> GERYON_ENTITY;
   public static EntityType<GiganteEntity> GIGANTE_ENTITY;
   public static EntityType<GorgonEntity> GORGON_ENTITY;
   public static EntityType<HarpyEntity> HARPY_ENTITY;
@@ -102,6 +102,8 @@ public final class GFRegistry {
 
   @ObjectHolder("panflute")
   public static final Item PANFLUTE = null;
+  @ObjectHolder("iron_club")
+  public static final Item IRON_CLUB = null;
   @ObjectHolder("stone_club")
   public static final Item STONE_CLUB = null;
   @ObjectHolder("wooden_club")
@@ -187,6 +189,7 @@ public final class GFRegistry {
     CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, false);
     DRYAD_ENTITY = registerEntityType(event, DryadEntity::new, DryadEntity::getAttributes, DryadEntity::canSpawnOn, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, false);
     EMPUSA_ENTITY = registerEntityType(event, EmpusaEntity::new, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, true);
+    GERYON_ENTITY = registerEntityType(event, GeryonEntity::new, GeryonEntity::getAttributes, GeryonEntity::canGeryonSpawnOn, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, false);
     GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, false);
     GORGON_ENTITY = registerEntityType(event, GorgonEntity::new, GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, false);
     HARPY_ENTITY = registerEntityType(event, HarpyEntity::new, HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, false);
