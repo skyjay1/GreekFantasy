@@ -18,6 +18,7 @@ import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
@@ -27,6 +28,7 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.PanicGoal;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -75,7 +77,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   protected static final byte PLAY_SUMMON_SOUND = 12;
   
   protected static final int MAX_SUMMON_TIME = 160;
-  protected static final int MAX_PANFLUTE_TIME = 7;
+  protected static final int MAX_PANFLUTE_TIME = 10;
   public int holdingPanfluteTime;
   public int summonTime;
   public boolean hasShamanTexture;
@@ -116,16 +118,17 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
     this.goalSelector.addGoal(2, new SatyrEntity.DancingGoal(0.75D, 880));
-    this.goalSelector.addGoal(3, new SatyrEntity.StartDancingGoal(0.9D, 22, 12, 320));
-    this.goalSelector.addGoal(4, new SatyrEntity.LightCampfireGoal(0.9D, 12, 10, 60, 400));
+    this.goalSelector.addGoal(3, new SatyrEntity.PanicGoal(this, 1.1D));
+    this.goalSelector.addGoal(4, new SatyrEntity.StartDancingGoal(0.9D, 22, 12, 420));
+    this.goalSelector.addGoal(4, new SatyrEntity.LightCampfireGoal(0.9D, 12, 10, 60, 500));
     this.goalSelector.addGoal(4, new RandomWalkingGoal(this, 0.8D, 160) {
       @Override
       public boolean shouldExecute() { 
-        return !SatyrEntity.this.isDancing() && !SatyrEntity.this.isSummoning() && SatyrEntity.this.getAttackTarget() == null && super.shouldExecute(); 
+        return SatyrEntity.this.isIdleState() && SatyrEntity.this.getAttackTarget() == null && super.shouldExecute(); 
       }
     });
-    this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
     this.targetSelector.addGoal(3, new ResetAngerGoal<>(this, true));
@@ -189,7 +192,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       return true;
     }
     // fire resistant, but not fire immune
-    return source == DamageSource.IN_FIRE && this.getRNG().nextInt(4) > 0;
+    return source == DamageSource.IN_FIRE && this.getRNG().nextInt(40) > 0;
   }
  
   @Override
@@ -197,10 +200,9 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
     spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     // random chance to be a satyr shaman
-    if(worldIn.getRandom().nextInt(100) < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get()) {
+    if(worldIn.getRandom().nextInt(100) < GreekFantasy.CONFIG.getSatyrShamanChance()) {
       this.setShaman(true);
     }
-    updateCombatAI();
     return spawnDataIn;
   }
   
@@ -244,7 +246,6 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     super.readAdditional(compound);
     this.setShaman(compound.getBoolean(KEY_SHAMAN));
     this.readAngerNBT((ServerWorld)this.world, compound);
-    this.updateCombatAI();
   }
   
   //IAngerable methods
@@ -264,6 +265,10 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   
   // Dancing, summoning, and shaman getters/setters
   
+  public boolean isIdleState() { return this.getDataManager().get(DATA_STATE).byteValue() == NONE; }
+  
+  public void setIdleState() { this.getDataManager().set(DATA_STATE, Byte.valueOf(NONE)); }
+  
   public boolean isDancing() { return this.getDataManager().get(DATA_STATE).byteValue() == DANCING; }
   
   public void setDancing(final boolean dancing) { this.getDataManager().set(DATA_STATE, Byte.valueOf(dancing ? DANCING : NONE)); }
@@ -276,12 +281,15 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   
   public void setShaman(final boolean shaman) { 
     this.hasShamanTexture = shaman;
-    this.getDataManager().set(DATA_SHAMAN, Boolean.valueOf(shaman)); 
+    this.getDataManager().set(DATA_SHAMAN, Boolean.valueOf(shaman));
+    if(this.isServerWorld()) {
+      updateCombatAI();
+    }
   }
   
   protected void updateCombatAI() {
     if(this.isServerWorld()) {
-      if(this.isShaman()) {
+      if(this.isShaman() && GreekFantasy.CONFIG.SATYR_ATTACK.get()) {
         this.goalSelector.addGoal(1, summonAnimalsGoal);
         this.goalSelector.removeGoal(meleeAttackGoal);
       } else {
@@ -430,6 +438,24 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     
   }
   
+  class PanicGoal extends net.minecraft.entity.ai.goal.PanicGoal {
+    public PanicGoal(CreatureEntity entity, double speed) {
+      super(entity, speed);
+    }
+
+    @Override
+    public boolean shouldExecute() {
+      return SatyrEntity.this.getAttackTarget() == null && super.shouldExecute();
+    }
+    
+    @Override
+    public void tick() {
+      SatyrEntity.this.setIdleState();
+      super.tick();
+    }
+
+  }
+  
   class DancingGoal extends Goal {
     
     private final int maxTravelTime = 100;
@@ -488,7 +514,16 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
    
     @Override
     public void resetTask() {
-      SatyrEntity.this.getNavigator().clearPath();
+      // move out of the way
+      if(SatyrEntity.this.campfirePos.isPresent() && campfirePos.get().withinDistance(SatyrEntity.this.getPosition(), 4.0D)) {
+        final Vector3d vec = RandomPositionGenerator.findRandomTargetBlockAwayFrom(SatyrEntity.this, 4, 4, Vector3d.copyCenteredHorizontally(SatyrEntity.this.campfirePos.get()));
+        if(vec != null) {
+          SatyrEntity.this.getNavigator().tryMoveToXYZ(vec.getX(), vec.getY(), vec.getZ(), this.moveSpeed);
+        }
+      } else {
+        SatyrEntity.this.getNavigator().clearPath();
+      }
+      // reset values
       SatyrEntity.this.campfirePos = Optional.empty();
       this.targetPos = Optional.empty();
       this.dancingTime = 0;
@@ -548,8 +583,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     
     @Override
     public boolean shouldExecute() {
-      return SatyrEntity.this.getAttackTarget() == null && !SatyrEntity.this.isSummoning() 
-          && !SatyrEntity.this.isDancing() && super.shouldExecute();
+      return SatyrEntity.this.getAttackTarget() == null && SatyrEntity.this.isIdleState() && super.shouldExecute();
     }
 
     @Override
@@ -619,7 +653,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
 
     @Override
     public boolean shouldExecute() {
-      return !SatyrEntity.this.isDancing() && !SatyrEntity.this.isSummoning() 
+      return SatyrEntity.this.isIdleState()
           && SatyrEntity.this.getAttackTarget() == null 
           && !SatyrEntity.this.getEntityWorld().isRaining()
           && SatyrEntity.this.getEntityWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)

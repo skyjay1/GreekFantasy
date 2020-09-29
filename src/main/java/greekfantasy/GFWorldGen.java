@@ -1,6 +1,9 @@
 package greekfantasy;
 
+import greekfantasy.structure.feature.AraCampFeature;
 import greekfantasy.structure.feature.HarpyNestFeature;
+import greekfantasy.structure.feature.SatyrCampFeature;
+import greekfantasy.structure.feature.SmallShrineFeature;
 import net.minecraft.entity.EntityType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.biome.Biome;
@@ -22,7 +25,13 @@ import net.minecraftforge.registries.ObjectHolder;
 public final class GFWorldGen {
   
   @ObjectHolder(GreekFantasy.MODID + ":harpy_nest")
-  public static final Feature<NoFeatureConfig> HARPY_NEST_FEATURE = null;
+  public static final Feature<NoFeatureConfig> HARPY_NEST = null;
+  @ObjectHolder(GreekFantasy.MODID + ":small_shrine")
+  public static final Feature<NoFeatureConfig> SMALL_SHRINE = null;
+  @ObjectHolder(GreekFantasy.MODID + ":ara_camp")
+  public static final Feature<NoFeatureConfig> ARA_CAMP = null;
+  @ObjectHolder(GreekFantasy.MODID + ":satyr_camp")
+  public static final Feature<NoFeatureConfig> SATYR_CAMP = null;
   
   
   private static final RuleTest ruleTestStone = new TagMatchRuleTest(BlockTags.BASE_STONE_OVERWORLD);
@@ -33,16 +42,25 @@ public final class GFWorldGen {
 
   @SubscribeEvent
   public static void registerStructures(final RegistryEvent.Register<Structure<?>> event) {
-    GreekFantasy.LOGGER.info("registerStructures");
+    GreekFantasy.LOGGER.debug("registerStructures");
     // TODO
   }
 
   @SubscribeEvent
   public static void registerFeatures(final RegistryEvent.Register<Feature<?>> event) {
-    GreekFantasy.LOGGER.info("registerFeatures");
+    GreekFantasy.LOGGER.debug("registerFeatures");
     event.getRegistry().register(
         new HarpyNestFeature(NoFeatureConfig.field_236558_a_)
           .setRegistryName(GreekFantasy.MODID, "harpy_nest"));
+    event.getRegistry().register(
+        new SmallShrineFeature(NoFeatureConfig.field_236558_a_)
+          .setRegistryName(GreekFantasy.MODID, "small_shrine"));
+    event.getRegistry().register(
+        new AraCampFeature(NoFeatureConfig.field_236558_a_)
+          .setRegistryName(GreekFantasy.MODID, "ara_camp"));
+    event.getRegistry().register(
+        new SatyrCampFeature(NoFeatureConfig.field_236558_a_)
+          .setRegistryName(GreekFantasy.MODID, "satyr_camp"));
   }
 
   // OTHER SETUP METHODS //
@@ -68,9 +86,27 @@ public final class GFWorldGen {
       event.getGeneration().withFeature(
           GenerationStage.Decoration.SURFACE_STRUCTURES, 
           // NoFeatureConfig.NO_FEATURE_CONFIG
-          HARPY_NEST_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
+          HARPY_NEST.withConfiguration(NoFeatureConfig.field_236559_b_)
           // These are copied from Features.DESERT_WELL
           .withPlacement(Placements.HEIGHTMAP_PLACEMENT.func_242728_a()).func_242729_a(GreekFantasy.CONFIG.HARPY_NEST_SPREAD.get())
+      );
+      // Small Shrine
+      event.getGeneration().withFeature(
+          GenerationStage.Decoration.SURFACE_STRUCTURES, 
+          SMALL_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_)
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT.func_242728_a()).func_242729_a(GreekFantasy.CONFIG.SMALL_SHRINE_SPREAD.get())
+      );
+      // Ara Camp
+      event.getGeneration().withFeature(
+          GenerationStage.Decoration.SURFACE_STRUCTURES, 
+          ARA_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT.func_242728_a()).func_242729_a(GreekFantasy.CONFIG.ARA_CAMP_SPREAD.get())
+      );
+      // Ara Camp
+      event.getGeneration().withFeature(
+          GenerationStage.Decoration.SURFACE_STRUCTURES, 
+          SATYR_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT.func_242728_a()).func_242729_a(75)
       );
     }
   }

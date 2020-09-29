@@ -20,11 +20,9 @@
     "attacked_by_cerastes": {
       "trigger": "minecraft:entity_hurt_player",
       "damage": {
-	    "type": {
-		  "source_entity": {
-		    "type": "greekfantasy:cerastes"
-		  }
-	    }
+		"source_entity": {
+		  "type": "greekfantasy:cerastes"
+		}
 	  }
     }
   },

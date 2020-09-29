@@ -13,9 +13,9 @@ public class OverstepEnchantment extends Enchantment {
   }
   
   @Override 
-  public int getMinEnchantability(int level) { return 15; }
+  public int getMinEnchantability(int level) { return 10; }
   @Override
-  public int getMaxEnchantability(int level) { return 30; }
+  public int getMaxEnchantability(int level) { return 20; }
   @Override
   public boolean isTreasureEnchantment() { return GreekFantasy.CONFIG.isOverstepEnabled(); }
   @Override

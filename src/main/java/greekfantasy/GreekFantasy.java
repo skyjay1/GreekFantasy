@@ -45,14 +45,14 @@ public class GreekFantasy {
     FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::loadConfig);
     FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::reloadConfig);
     // register config
-    GreekFantasy.LOGGER.info("registerConfig");
+    GreekFantasy.LOGGER.debug("registerConfig");
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, CONFIG_SPEC);
     // register side-specific or common event handlers
     PROXY.registerEventHandlers();
     // register reload listeners (only applies to client-side)
     PROXY.registerReloadListeners();
     // register messages
-    GreekFantasy.LOGGER.info("registerNetwork");
+    GreekFantasy.LOGGER.debug("registerNetwork");
     int messageId = 0;
     CHANNEL.registerMessage(messageId++, CUpdateStatuePosePacket.class, CUpdateStatuePosePacket::toBytes, CUpdateStatuePosePacket::fromBytes, CUpdateStatuePosePacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
   }

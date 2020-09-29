@@ -87,7 +87,7 @@ public class GorgonEntity extends MonsterEntity {
       final List<PlayerEntity> list = this.getEntityWorld().getEntitiesWithinAABB(PlayerEntity.class, this.getBoundingBox().grow(16.0D, 16.0D, 16.0D), 
         e -> e.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null);
       for(final PlayerEntity p : list) {
-        GreekFantasy.LOGGER.info("spawning gorgon particle for player!");
+        GreekFantasy.LOGGER.debug("spawning gorgon particle for player!");
         world.addParticle(GFRegistry.GORGON_PARTICLE, true, p.getPosX(), p.getPosY(), p.getPosZ(), 0D, 0D, 0D);
       }
     }

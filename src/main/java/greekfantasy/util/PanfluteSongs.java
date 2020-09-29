@@ -28,7 +28,7 @@ public class PanfluteSongs extends JsonReloadListener {
     if(SONGS.containsKey(id)) {
       return Optional.of(SONGS.get(id));
     }
-    GreekFantasy.LOGGER.info("Could not find song for " + id);
+    GreekFantasy.LOGGER.debug("Could not find song for " + id);
     return Optional.empty();
   }
   
@@ -41,6 +41,6 @@ public class PanfluteSongs extends JsonReloadListener {
     jsons.forEach((key, input) -> SONGS.put(key, parse(input)));
     final StringBuilder builder = new StringBuilder("Parsing PanfluteSongs map. Entries: {\n");
     SONGS.keySet().forEach(id -> builder.append(id.toString()).append("\n"));
-    GreekFantasy.LOGGER.info(builder.append("}").toString());
+    GreekFantasy.LOGGER.debug(builder.append("}").toString());
   }
 }

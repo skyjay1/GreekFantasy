@@ -55,10 +55,13 @@ import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Food;
+import net.minecraft.item.Foods;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
+import net.minecraft.item.Rarity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleType;
@@ -105,6 +108,8 @@ public final class GFRegistry {
   public static final Item WOODEN_CLUB = null;
   @ObjectHolder("winged_sandals")
   public static final Item WINGED_SANDALS = null;
+  @ObjectHolder("ambrosia")
+  public static final Item AMBROSIA = null;
   
   @ObjectHolder("nest")
   public static final Block NEST_BLOCK = null;
@@ -166,16 +171,14 @@ public final class GFRegistry {
 
   public static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
     @Override
-    public ItemStack createIcon() {
-      return new ItemStack(PANFLUTE);
-    }
+    public ItemStack createIcon() { return new ItemStack(PANFLUTE); }
   };
 
   // REGISTRY METHODS //
 
   @SubscribeEvent
   public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
-    GreekFantasy.LOGGER.info("registerEntities");
+    GreekFantasy.LOGGER.debug("registerEntities");
     ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, MonsterEntity::canMonsterSpawnInLight, "ara", 0.67F, 1.8F, EntityClassification.MONSTER, true);
     CENTAUR_ENTITY = registerEntityType(event, CentaurEntity::new, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, false);
     CYPRIAN_ENTITY = registerEntityType(event, CyprianEntity::new, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, false);
@@ -198,7 +201,7 @@ public final class GFRegistry {
   
   @SubscribeEvent
   public static void registerTileEntities(final RegistryEvent.Register<TileEntityType<?>> event) {
-    GreekFantasy.LOGGER.info("registerTileEntities");
+    GreekFantasy.LOGGER.debug("registerTileEntities");
     event.getRegistry().register(
         TileEntityType.Builder.create(StatueTileEntity::new, LIMESTONE_STATUE, MARBLE_STATUE)
         .build(null).setRegistryName(GreekFantasy.MODID, "statue_te")
@@ -211,7 +214,7 @@ public final class GFRegistry {
   
   @SubscribeEvent
   public static void registerContainers(final RegistryEvent.Register<ContainerType<?>> event) {
-    GreekFantasy.LOGGER.info("registerContainers");
+    GreekFantasy.LOGGER.debug("registerContainers");
     ContainerType<StatueContainer> containerType = IForgeContainerType.create((windowId, inv, data) -> {
       final boolean isFemale = data.readBoolean();
       final BlockPos blockpos = data.readBlockPos();
@@ -225,7 +228,7 @@ public final class GFRegistry {
 
   @SubscribeEvent
   public static void registerBlocks(final RegistryEvent.Register<Block> event) {
-    GreekFantasy.LOGGER.info("registerBlocks");
+    GreekFantasy.LOGGER.debug("registerBlocks");
     
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "marble");
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
@@ -250,7 +253,8 @@ public final class GFRegistry {
 
   @SubscribeEvent
   public static void registerItems(final RegistryEvent.Register<Item> event) {
-    GreekFantasy.LOGGER.info("registerItems");
+    GreekFantasy.LOGGER.debug("registerItems");
+    final boolean nerfAmbrosia = GreekFantasy.CONFIG.NERF_AMBROSIA.get();
     // items
     event.getRegistry().registerAll(
         new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxDamage(100))
@@ -262,7 +266,10 @@ public final class GFRegistry {
         new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "wooden_club"),
         new WingedSandalsItem(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "winged_sandals")
+          .setRegistryName(GreekFantasy.MODID, "winged_sandals"),
+        new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
+          .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC))
+          .setRegistryName(GreekFantasy.MODID, "ambrosia")
     );
     // block items
     registerItemBlock(event, NEST_BLOCK, "nest");
@@ -292,22 +299,22 @@ public final class GFRegistry {
   
   @SubscribeEvent
   public static void registerEffects(final RegistryEvent.Register<Effect> event) {
-    GreekFantasy.LOGGER.info("registerEffects");
+    GreekFantasy.LOGGER.debug("registerEffects");
     event.getRegistry().registerAll(
-        new StunnedEffect("eb685e9d-fc50-4b68-94d6-c4d906c27034").setRegistryName(GreekFantasy.MODID, "stunned"),
-        new StunnedEffect("ef99fb38-38d1-4703-9607-fabea29c0e6e").setRegistryName(GreekFantasy.MODID, "petrified")
+        new StunnedEffect().setRegistryName(GreekFantasy.MODID, "stunned"),
+        new StunnedEffect().setRegistryName(GreekFantasy.MODID, "petrified")
     );
   }
   
   @SubscribeEvent
   public static void registerEnchantments(final RegistryEvent.Register<Enchantment> event) {
-    event.getRegistry().register(new OverstepEnchantment(Enchantment.Rarity.RARE)
+    event.getRegistry().register(new OverstepEnchantment(Enchantment.Rarity.UNCOMMON)
         .setRegistryName(GreekFantasy.MODID, "overstep"));
   }
 
   @SubscribeEvent
   public static void registerParticleTypes(final RegistryEvent.Register<ParticleType<?>> event) {
-    GreekFantasy.LOGGER.info("registerParticleTypes");
+    GreekFantasy.LOGGER.debug("registerParticleTypes");
     event.getRegistry().register(new BasicParticleType(true).setRegistryName(GreekFantasy.MODID, "gorgon_face"));
   }
 

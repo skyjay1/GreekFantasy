@@ -25,7 +25,7 @@ public class GorgonParticle extends Particle {
   
   public GorgonParticle(ClientWorld worldIn, double posX, double posY, double posZ, double motX, double motY, double motZ) {
     super(worldIn, posX, posY, posZ, motX, motY, motZ);
-    GreekFantasy.LOGGER.info("Spawning gorgon particle...");
+    GreekFantasy.LOGGER.debug("Spawning gorgon particle...");
     this.particleGravity = 0.0F;
     this.age = 0;
     this.maxAge = 90;

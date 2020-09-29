@@ -36,8 +36,8 @@ public class EffectGoal<T extends LivingEntity> extends Goal {
   
   @Override
   public void startExecuting() {
-    final int len = minLength != maxLength ? minLength + entity.getRNG().nextInt(maxLength) : minLength;
-    final int amp = minAmplifier != maxAmplifier ? minAmplifier + entity.getRNG().nextInt(maxAmplifier) : minAmplifier;
+    final int len = minLength != maxLength ? minLength + entity.getRNG().nextInt(maxLength - minLength + 1) : minLength;
+    final int amp = minAmplifier != maxAmplifier ? minAmplifier + entity.getRNG().nextInt(maxAmplifier - minAmplifier + 1) : minAmplifier;
     entity.addPotionEffect(new EffectInstance(effect.get(), len, amp));
   }
   

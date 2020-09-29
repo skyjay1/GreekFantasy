@@ -38,7 +38,7 @@ public class ClientProxy extends Proxy {
   
   public void registerReloadListeners() {
     super.registerReloadListeners();
-    GreekFantasy.LOGGER.info("registerReloadListeners");
+    GreekFantasy.LOGGER.debug("registerReloadListeners");
     IResourceManager manager = Minecraft.getInstance().getResourceManager();
     if (manager instanceof IReloadableResourceManager) {
       ((IReloadableResourceManager)manager).addReloadListener(PANFLUTE_SONGS);
@@ -47,14 +47,14 @@ public class ClientProxy extends Proxy {
   
   public void registerEventHandlers() { 
     super.registerEventHandlers();
-    GreekFantasy.LOGGER.info("registerClientEventHandlers");
+    GreekFantasy.LOGGER.debug("registerClientEventHandlers");
     FMLJavaModLoadingContext.get().getModEventBus().register(ClientModEventHandler.class);
     MinecraftForge.EVENT_BUS.register(ClientForgeEventHandler.class);
   }
     
   @Override
   public void registerEntityRenders() {
-    GreekFantasy.LOGGER.info("registerEntityRenders");
+    GreekFantasy.LOGGER.debug("registerEntityRenders");
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ARA_ENTITY, AraRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CENTAUR_ENTITY, CentaurRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYPRIAN_ENTITY, CyprianCentaurRenderer::new);
@@ -77,14 +77,14 @@ public class ClientProxy extends Proxy {
   
   @Override
   public void registerTileEntityRenders() {
-    GreekFantasy.LOGGER.info("registerTileEntityRenders");
+    GreekFantasy.LOGGER.debug("registerTileEntityRenders");
     ClientRegistry.bindTileEntityRenderer(GFRegistry.STATUE_TE, StatueTileEntityRenderer::new);
     ClientRegistry.bindTileEntityRenderer(GFRegistry.VASE_TE, VaseTileEntityRenderer::new);
   }
   
   @Override
   public void registerContainerRenders() {
-    GreekFantasy.LOGGER.info("registerContainerRenders");
+    GreekFantasy.LOGGER.debug("registerContainerRenders");
     ScreenManager.registerFactory(GFRegistry.STATUE_CONTAINER, StatueScreen::new);
   }
 }

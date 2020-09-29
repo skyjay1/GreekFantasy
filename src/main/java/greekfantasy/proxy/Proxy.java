@@ -18,7 +18,7 @@ public class Proxy {
   public void registerContainerRenders() { }
     
   public void registerEventHandlers() {
-    GreekFantasy.LOGGER.info("registerEventHandlers");
+    GreekFantasy.LOGGER.debug("registerEventHandlers");
     MinecraftForge.EVENT_BUS.register(CommonForgeEventHandler.class);
   }
 

@@ -41,7 +41,7 @@ public class VaseBlock extends HorizontalBlock {
   public BlockState getStateForPlacement(BlockItemUseContext context) {
     return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing());
   }
-  
+
   @Override
   public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {

@@ -6,6 +6,7 @@ public class GFConfig {
   
   // item configs
   public final ForgeConfigSpec.DoubleValue SANDALS_SPEED_BONUS;
+  public final ForgeConfigSpec.BooleanValue NERF_AMBROSIA;
   
   // effect configs
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
@@ -21,6 +22,7 @@ public class GFConfig {
   public final ForgeConfigSpec.BooleanValue MINOTAUR_ATTACK;
   public final ForgeConfigSpec.BooleanValue ORTHUS_ATTACK;
   public final ForgeConfigSpec.BooleanValue SHADE_ATTACK;
+  public final ForgeConfigSpec.BooleanValue SATYR_ATTACK;
   
   // spawn rate configs
   public final ForgeConfigSpec.IntValue ARA_SPAWN_WEIGHT;
@@ -42,8 +44,10 @@ public class GFConfig {
   public final ForgeConfigSpec.IntValue SIREN_SPAWN_WEIGHT;
   public final ForgeConfigSpec.IntValue UNICORN_SPAWN_WEIGHT;
   // special spawn configs
-  public final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
-  public final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
+  private final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
+  private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
+  private boolean shadeSpawnOnDeath;
+  private int satyrShamanChance;
   
   // other special entity abilities
   public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
@@ -55,12 +59,17 @@ public class GFConfig {
   
   // feature configs
   public final ForgeConfigSpec.IntValue HARPY_NEST_SPREAD;
+  public final ForgeConfigSpec.IntValue SMALL_SHRINE_SPREAD;
+  public final ForgeConfigSpec.IntValue ARA_CAMP_SPREAD;
+  public final ForgeConfigSpec.IntValue SATYR_CAMP_SPREAD;
   
   public GFConfig(final ForgeConfigSpec.Builder builder) {
     // items
     builder.push("items");
     SANDALS_SPEED_BONUS = builder.comment("Winged Sandals speed bonus (1.0 = +100%)").worldRestart()
         .defineInRange("sandals_speed_bonus", 1.0D, 0.0D, 2.0D);
+    NERF_AMBROSIA = builder.comment("When true, ambrosia gives effects of Golden Apple instead of Enchanted Golden Apple")
+        .define("nerf_ambrosia", false);
     builder.pop();
     // mob attacks
     builder.push("effects");
@@ -81,6 +90,8 @@ public class GFConfig {
         .define("minotaur_attack", true);
     ORTHUS_ATTACK = builder.comment("Whether the Orthus can breath fire")
         .define("orthus_attack", true);
+    SATYR_ATTACK = builder.comment("Whether the Satyr can summon wolves")
+        .define("satyr_attack", true);
     SHADE_ATTACK = builder.comment("Whether the Shade can steal player XP")
         .define("shade_attack", true);
     DRYAD_ANGRY_ON_HARVEST = builder.comment("Whether harvesting log blocks angers nearby dryads")
@@ -124,6 +135,9 @@ public class GFConfig {
     builder.comment("structure and feature spread (higher number = less common)");
     builder.push("features");
     HARPY_NEST_SPREAD = builder.worldRestart().defineInRange("harpy_nest_spread", 90, 1, 1000);
+    SMALL_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_shrine_spread", 110, 1, 1000);
+    ARA_CAMP_SPREAD = builder.worldRestart().defineInRange("ara_camp_spread", 180, 1, 1000);
+    SATYR_CAMP_SPREAD = builder.worldRestart().defineInRange("satyr_camp_spread", 130, 1, 1000);
     builder.pop();
   }
   
@@ -137,6 +151,8 @@ public class GFConfig {
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
+    shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
+    satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
     dryadAngryOnHarvest = DRYAD_ANGRY_ON_HARVEST.get();
     dryadAngryRange = DRYAD_ANGRY_RANGE.get();
   }
@@ -144,6 +160,8 @@ public class GFConfig {
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
   public boolean isOverstepEnabled() { return overstepEnabled; }
+  public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
+  public int getSatyrShamanChance() { return satyrShamanChance; }
   public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }
   public int getDryadAngryRange() { return dryadAngryRange; }
 }

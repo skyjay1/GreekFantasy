@@ -162,8 +162,6 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
   public void setNestPos(final Optional<BlockPos> pos) {
     this.getDataManager().set(DATA_NEST, pos);
     if(pos.isPresent()) {
-      // DEBUG:
-      GreekFantasy.LOGGER.info("Harpy: setting home position at " + pos.get().toString());
       this.setHomePosAndDistance(pos.get(), (int)(this.getAttribute(Attributes.FOLLOW_RANGE).getBaseValue() * 1.75D));
     } else {
       this.setHomePosAndDistance(BlockPos.ZERO, -1);

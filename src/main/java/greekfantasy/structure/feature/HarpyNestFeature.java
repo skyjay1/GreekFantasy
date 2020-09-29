@@ -7,7 +7,6 @@ import java.util.Random;
 import com.mojang.serialization.Codec;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.GreekFantasy;
 import greekfantasy.entity.HarpyEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -57,7 +56,6 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
     
     final int variant = rand.nextInt(2);
     final Rotation rotation = Rotation.randomRotation(rand);
-    GreekFantasy.LOGGER.info("Building harpy nest (variant " + variant + ") at " + pos);
     switch(variant) {
     default:
     case 0: return buildVariant0(reader, chunkGenerator, rand, log, leaf, pos, rotation);

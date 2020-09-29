@@ -57,13 +57,14 @@ _ Unicorn can be tamed / ridden
 
 ## Structures
 X Harpy Nests
-_ Satyr Camps
+X Satyr Camps
 _ Centaur Camps
-_ Ara Camps
+X Ara Camps
 _ Cyclopes Cave+Pastures
 _ Ruined Temple
-_ Small Marble Shrine
-_ Small Limestone Shrine
+X Small Marble Shrine
+X Small Limestone Shrine
+_ Small Nether Shrine
 X Marble veins
 X Limestone veins
 
@@ -92,7 +93,10 @@ _ Ambrosia (like ench. golden apple) (use horn as cornucopia?)
 
 X Become petrified
 X Encounter Cerastes
+X Kill Shade
 _ Anger Dryads by chopping logs
+_ Ride a Unicorn
+_ Open a Mysterious Box
 _ Equip Winged Sandals (Much Fast, So Speed!)
 
 ## Other

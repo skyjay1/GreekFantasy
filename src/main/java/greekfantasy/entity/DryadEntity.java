@@ -94,8 +94,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     this.goalSelector.addGoal(1, new DryadEntity.FindTreeGoal(8, 28));
     this.goalSelector.addGoal(2, new DryadEntity.HideGoal(640));
     this.goalSelector.addGoal(3, new DryadEntity.GoToTreeGoal(0.9F, 320));
-    this.goalSelector.addGoal(4, new EffectGoal<>(this, () -> Effects.REGENERATION, 20, 60, 0, 0, 
-        EffectGoal.randomPredicate(200).and(e -> ((DryadEntity)e).isHiding())));
+    this.goalSelector.addGoal(4, new EffectGoal<>(this, () -> Effects.REGENERATION, 60, 120, 0, 1, 
+        EffectGoal.randomPredicate(400).and(e -> ((DryadEntity)e).isHiding())));
     this.goalSelector.addGoal(4, new DryadEntity.WalkingGoal(0.8F, 140));
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
@@ -319,8 +319,6 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       super.tick();
       DryadEntity.this.getNavigator().clearPath();
       if(DryadEntity.this.hidingTime++ > maxHidingTime && DryadEntity.this.getRNG().nextInt(100) == 0) {
-        // DEBUG
-        GreekFantasy.LOGGER.info("Times up! Dryad leaving tree");
         resetTask();
       }
     }
@@ -384,8 +382,6 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       DryadEntity.this.isGoingToTree = true;
       final Optional<Vector3d> vec = DryadEntity.this.getTreeVec();
       DryadEntity.this.getNavigator().tryMoveToXYZ(vec.get().getX(), vec.get().getY(), vec.get().getZ(), this.speed);
-      // DEBUG:
-      GreekFantasy.LOGGER.info("Dryad trying to go to tree at " + vec.get().toString());
     }
 
     @Override

@@ -19,7 +19,7 @@ public class ClientModEventHandler {
   
   @SubscribeEvent
   public static void registerParticleRenders(final ParticleFactoryRegisterEvent event) {
-    GreekFantasy.LOGGER.info("registerParticleRenders");
+    GreekFantasy.LOGGER.debug("registerParticleRenders");
     final Minecraft mc = Minecraft.getInstance();
     mc.particles.registerFactory(GFRegistry.GORGON_PARTICLE, new GorgonParticle.Factory());
   }

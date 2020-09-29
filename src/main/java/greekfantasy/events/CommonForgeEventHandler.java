@@ -34,7 +34,7 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent(priority = EventPriority.HIGHEST)
   public static void onPlayerDeath(final LivingDeathEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && GreekFantasy.CONFIG.SHADE_SPAWN_ON_DEATH.get() && event.getEntityLiving() instanceof PlayerEntity) {
+    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && GreekFantasy.CONFIG.doesShadeSpawnOnDeath() && event.getEntityLiving() instanceof PlayerEntity) {
       final PlayerEntity player = (PlayerEntity) event.getEntityLiving();
       // check pre-conditions
       if(!player.getEntityWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY) && !player.isSpectator() && player.experienceLevel > 3) {
