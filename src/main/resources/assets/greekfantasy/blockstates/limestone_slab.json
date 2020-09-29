@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "greekfantasy:block/limestone_slab"
+    },
+    "type=double": {
+      "model": "greekfantasy:block/limestone"
+    },
+    "type=top": {
+      "model": "greekfantasy:block/limestone_slab_top"
+    }
+  }
+}

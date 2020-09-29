@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+	  "side": "greekfantasy:block/limestone",
+	  "bottom": "greekfantasy:block/limestone",
+      "top": "greekfantasy:block/limestone",
+      "particle": "greekfantasy:block/limestone"
+    }
+}

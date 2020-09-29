@@ -2,6 +2,7 @@
   "parent": "greekfantasy:block/pillar",
   "textures": {
 	  "side": "greekfantasy:block/marble_pillar",
-      "top": "greekfantasy:block/polished_marble"
+      "top": "greekfantasy:block/polished_marble",
+      "bottom": "greekfantasy:block/polished_marble"
     }
 }

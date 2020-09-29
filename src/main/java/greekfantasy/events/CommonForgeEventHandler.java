@@ -107,7 +107,7 @@ public class CommonForgeEventHandler {
             || DryadEntity.isTreeAt(event.getWorld(), event.getPos().down(2), dryad.getVariant().getBlocks())) {
           // anger the dryad
           dryad.setAttackTarget(event.getPlayer());
-          dryad.setHiding(false);
+          dryad.tryExitTree();
         }
       }
     }

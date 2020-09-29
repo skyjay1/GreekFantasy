@@ -7,41 +7,42 @@ __Key:__
 ## Entity basics
 
 __Key:__
-`[In-game] [Loot table]`
+`[Model] [AI] [Loot table]`
 
-X _ Naiad
-X _ Dryad
-X _ Satyr
-X _ Centaur
-X _ Minotaur
-X _ Gorgon (Medusa)
-X _ Harpy
-X _ Empusa
-X _ Shade
-~ _ Siren (hostile)
-X _ Cerastes (ram-horned serpent)
-X _ Ara (Propoetide)
-X _ Cyclopes
-X _ Gigante
-X _ Cyprian Centaurs (bull-horns, hostile)
-X _ Unicorn
-~ _ Orthus (2-headed dog) (TODO fix model)
-_ _ Eurynomos (blue skin; vulture head?)
-_ _ Elpis (hope)
-_ _ Hippocampus
-X _ Boss: Cerberus
-_ _ Boss: Geryon (3-headed Gigante)
+X _ _ Naiad
+X ~ _ Dryad
+X ~ _ Satyr
+X ~ _ Centaur
+X X _ Minotaur
+X X _ Gorgon (Medusa)
+X X _ Harpy
+X X _ Empusa
+X X _ Shade
+~ _ _ Siren (hostile)
+X X _ Cerastes (ram-horned serpent)
+X ~ _ Ara (Propoetide)
+X _ _ Cyclopes
+X _ _ Gigante
+X ~ _ Cyprian Centaurs (bull-horns, hostile)
+X ~ _ Unicorn
+~ X _ Orthus (2-headed dog) (TODO fix model)
+_ _ _ Eurynomos (blue skin; vulture head?)
+_ _ _ Elpis (hope)
+_ _ _ Hippocampus
+X _ _ Boss: Cerberus
+_ _ _ Boss: Geryon (3-headed Gigante)
 
 
 ## Entity AI
 
 X Dryads hide in trees
 X Dryads are angry when player chops wood
+X Dryad heals self over time
 _ Dryads plant trees?
 _ Dryads trade with player?
 X Satyrs dance around campfires
 X Satyrs summon wolves
-_ Satyrs light unlit campfires
+X Satyrs light unlit campfires
 _ Satyrs trade with player (obtain panflute)
 ~ Centaurs / Cyprians shoot arrows (TODO: animation not working)
 ~ Minotaur charges at player (TODO: extend charge beyond player position)
@@ -51,10 +52,6 @@ X Harpy looks for nests
 X Empusa drains health
 X Shade drains XP
 X Orthus breathes fire
-_ Siren AI
-_ Ara AI
-_ Cyclopes AI
-_ Gigante AI
 X Cerastes hides in sand
 _ Unicorn can be tamed / ridden
 
@@ -65,18 +62,16 @@ _ Centaur Camps
 _ Ara Camps
 _ Cyclopes Cave+Pastures
 _ Ruined Temple
+_ Small Marble Shrine
+_ Small Limestone Shrine
 X Marble veins
 X Limestone veins
 
 ## Blocks
 
 ~ Harpy Nest - need drops/use
-~ Limestone (raw, smooth, slab)
-~ Marble (raw, smooth, slab)
-X Capped marble pillar
-_ Un-capped marble pillar
-_ Capped limestone pillar
-_ Un-capped limestone pillar
+X Limestone (raw, smooth, slab, pillar)
+X Marble (raw, smooth, slab, pillar)
 X Statues
 X Vase
 _ Urn
@@ -91,7 +86,7 @@ _ Javelins (wood, stone/flint, iron)
 _ Golden bridle (for Unicorn)
 X Winged sandals
 _ Horn (from Minotaur / Cyprians) (needs use)
-_ Ambrosia (like ench. golden apple)
+_ Ambrosia (like ench. golden apple) (use horn as cornucopia?)
 
 ## Achievements
 
@@ -121,7 +116,8 @@ _Can I do something with these?_
 - Tantalus
 - Demeter (goddess of growth/fertility/crops)
 - Hydra
-- Telchine
+- Charybdis (monster in whirlpool)
+- Telchine (seal hands)
 - Makhai (6 arms)
 - Yale (Latin "Centicore")
 - Colchis Bull (giant bronze bull)

@@ -85,7 +85,7 @@ public class CerastesEntity extends CreatureEntity {
       @Override
       public boolean shouldExecute() {
         return !CerastesEntity.this.isHiding() && !CerastesEntity.this.isGoingToSand 
-            && CerastesEntity.this.rand.nextInt(200) == 0 && super.shouldExecute();
+            && CerastesEntity.this.rand.nextInt(600) == 0 && super.shouldExecute();
       }
     });
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 4.0F));

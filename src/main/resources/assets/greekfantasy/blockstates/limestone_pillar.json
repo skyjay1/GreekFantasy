@@ -1,0 +1,54 @@
+{
+  "variants": {
+    "cap=east,hidden=false": {
+      "model": "greekfantasy:block/capped_limestone_pillar",
+      "y": 90,
+      "x": 90
+    },
+    "cap=north,hidden=false": {
+      "model": "greekfantasy:block/capped_limestone_pillar",
+      "x": 90
+    },
+    "cap=south,hidden=false": {
+      "model": "greekfantasy:block/capped_limestone_pillar",
+      "x": 270
+    },
+    "cap=west,hidden=false": {
+      "model": "greekfantasy:block/capped_limestone_pillar",
+      "y": 90,
+      "x": 270
+    },
+    "cap=up,hidden=false": {
+      "model": "greekfantasy:block/capped_limestone_pillar"
+    },
+    "cap=down,hidden=false": {
+      "model": "greekfantasy:block/capped_limestone_pillar",
+      "x": 180
+    },
+    "cap=east,hidden=true": {
+      "model": "greekfantasy:block/limestone_pillar",
+      "y": 90,
+      "x": 90
+    },
+    "cap=north,hidden=true": {
+      "model": "greekfantasy:block/limestone_pillar",
+      "x": 90
+    },
+    "cap=south,hidden=true": {
+      "model": "greekfantasy:block/limestone_pillar",
+      "x": 270
+    },
+    "cap=west,hidden=true": {
+      "model": "greekfantasy:block/limestone_pillar",
+      "y": 90,
+      "x": 270
+    },
+    "cap=up,hidden=true": {
+      "model": "greekfantasy:block/limestone_pillar"
+    },
+    "cap=down,hidden=true": {
+      "model": "greekfantasy:block/limestone_pillar",
+      "x": 180
+    }
+  }
+}

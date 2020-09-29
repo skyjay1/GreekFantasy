@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+	  "side": "greekfantasy:block/marble",
+	  "bottom": "greekfantasy:block/marble",
+      "top": "greekfantasy:block/marble"
+    }
+}

@@ -8,7 +8,6 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.ai.GoToBlockGoal;
 import greekfantasy.util.PanfluteMusicManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CampfireBlock;
@@ -26,6 +25,7 @@ import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
@@ -40,6 +40,7 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.RangedInteger;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
@@ -47,6 +48,7 @@ import net.minecraft.util.TickRangeConverter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -60,12 +62,16 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   private static final DataParameter<Boolean> DATA_SHAMAN = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BOOLEAN);
   private static final String KEY_SHAMAN = "Shaman";
   
+  private static final Direction[] HORIZONTALS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
+
   private static final ResourceLocation DANCING_SONG = new ResourceLocation(GreekFantasy.MODID, "greensleeves");
   private static final ResourceLocation SUMMONING_SONG = new ResourceLocation(GreekFantasy.MODID, "sarias_song");
 
-  protected static final byte NONE = 9;
-  protected static final byte DANCING = 10;
-  protected static final byte SUMMONING = 11;
+  // NONE, DANCING, and SUMMONING are values for DATA_STATE
+  protected static final byte NONE = 0;
+  protected static final byte DANCING = 1;
+  protected static final byte SUMMONING = 2;
+  // sent from server to client to trigger sound
   protected static final byte PLAY_SUMMON_SOUND = 12;
   
   protected static final int MAX_SUMMON_TIME = 160;
@@ -77,14 +83,18 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   private static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(20, 39);
   private int angerTime;
   private UUID angerTarget;
+  
+  private Optional<BlockPos> campfirePos = Optional.empty();
     
-  private final Goal meleeAttackGoal = new MeleeAttackGoal(this, 1.0D, false);
-  private final Goal summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 200);
+  private final Goal meleeAttackGoal;
+  private final Goal summonAnimalsGoal;
   
   public SatyrEntity(final EntityType<? extends SatyrEntity> type, final World worldIn) {
     super(type, worldIn);
     this.setPathPriority(PathNodeType.DANGER_FIRE, -1.0F);
     this.setPathPriority(PathNodeType.DAMAGE_FIRE, -1.0F);
+    meleeAttackGoal = new MeleeAttackGoal(this, 1.0D, false);
+    summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 200);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -105,9 +115,10 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(2, new SatyrEntity.DancingGoal(0.75D));
-    this.goalSelector.addGoal(3, new SatyrEntity.GoToCampfireGoal(12, 0.9D));
-    this.goalSelector.addGoal(4, new RandomWalkingGoal(this, 0.8D, 180) {
+    this.goalSelector.addGoal(2, new SatyrEntity.DancingGoal(0.75D, 880));
+    this.goalSelector.addGoal(3, new SatyrEntity.StartDancingGoal(0.9D, 22, 12, 320));
+    this.goalSelector.addGoal(4, new SatyrEntity.LightCampfireGoal(0.9D, 12, 10, 60, 400));
+    this.goalSelector.addGoal(4, new RandomWalkingGoal(this, 0.8D, 160) {
       @Override
       public boolean shouldExecute() { 
         return !SatyrEntity.this.isDancing() && !SatyrEntity.this.isSummoning() && SatyrEntity.this.getAttackTarget() == null && super.shouldExecute(); 
@@ -124,14 +135,20 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   public void livingTick() {
     super.livingTick();  
     // play music
-    if(this.isSummoning()) {
+    if(isSummoning()) {
       PanfluteMusicManager.playMusic(this, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
-    } else if(this.isDancing()) {
-      PanfluteMusicManager.playMusic(this, DANCING_SONG, this.getEntityWorld().getGameTime(), 0.84F, 0.28F);
+    } else if(isDancing()) {
+      PanfluteMusicManager.playMusic(this, DANCING_SONG, world.getGameTime(), 0.84F, 0.28F);
+    }
+    
+    // campfire checker
+    if(this.ticksExisted % 60 == 1 && campfirePos.isPresent() && !isValidCampfire(world, campfirePos.get())) {
+      campfirePos = Optional.empty();
+      setDancing(false);
     }
     
     // dancing timer
-    if(this.isDancing() || this.isSummoning()) {
+    if(isDancing() || isSummoning()) {
       this.holdingPanfluteTime = Math.min(this.holdingPanfluteTime + 1, MAX_PANFLUTE_TIME);
     } else {
       this.holdingPanfluteTime = Math.max(this.holdingPanfluteTime - 1, 0);
@@ -157,7 +174,6 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   	  final List<SatyrEntity> shamans = this.getEntityWorld().getEntitiesWithinAABB(SatyrEntity.class, this.getBoundingBox().grow(10.0D), e -> e.isShaman());
   	  for(final SatyrEntity shaman : shamans) {
   	    if(shaman.getAttackTarget() == null) { // if IAngerable#canTargetEntity
-  	      // DEBUG
   	  	  shaman.setAngerTarget(target.getUniqueID());
   	  	  shaman.setAngerTime(ANGER_RANGE.getRandomWithinRange(this.rand));
   	    }
@@ -286,7 +302,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
    * @return the percent
    **/
   public float getArmMovementPercent(final float ageInTicks) {
-    final float time = this.holdingPanfluteTime + (ageInTicks - (float)Math.floor(ageInTicks));
+    final float time = this.holdingPanfluteTime;
     return Math.min(1.0F, (float)time / (float)MAX_PANFLUTE_TIME);
   }
   
@@ -297,7 +313,8 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
    **/
   protected static boolean isValidCampfire(final IWorldReader world, final BlockPos pos) {
     // check if the block is actually a campfire
-    if(!world.getBlockState(pos).isIn(BlockTags.CAMPFIRES)) {
+    final BlockState campfire = world.getBlockState(pos);
+    if(!campfire.isIn(BlockTags.CAMPFIRES) || !campfire.get(CampfireBlock.LIT)) {
       return false;
     }
     // check surrounding area (only flat or passable terrain is allowed)
@@ -306,7 +323,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
         if(!(x == 0 && z == 0)) {
           // check for impassable blocks
           final BlockPos p = pos.add(x, 0, z);
-          if(!world.getBlockState(p.down()).isSolidSide(world, p.down(), Direction.UP) || 
+          if(!world.getBlockState(p.down()).getMaterial().isSolid() || 
               world.getBlockState(p).isSolid() ||
               world.getBlockState(p).getMaterial().blocksMovement()) {
             return false;
@@ -316,30 +333,49 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
     return true;
   }
+  
+  /**
+   * @param world the world
+   * @param pos the center pos
+   * @param lit whether to check for a lit or unlit campfire
+   * @return an Optional containing the campfire pos if found, otherwise empty
+   **/
+  protected static Optional<BlockPos> getCampfireNear(final IWorldReader world, final BlockPos pos, final boolean lit) {
+    // check surrounding area (including diagonals)
+    for (int x = -2; x <= 2; x++) {
+      for (int z = -2; z <= 2; z++) {
+        // check for impassable blocks
+        final BlockPos p = pos.add(x, 0, z);
+        final BlockState state = world.getBlockState(p);
+        if (state.isIn(BlockTags.CAMPFIRES) && (state.get(CampfireBlock.LIT) == lit)) {
+          return Optional.of(p);
+        }
+      }
+    }
+    return Optional.empty();
+  }
 
   class SummonAnimalsGoal extends Goal {
     
-    protected final int MAX_PROGRESS;
-    protected final int MAX_COOLDOWN;
+    protected final int maxProgress;
+    protected final int maxCooldown;
     
     protected int progress;
     protected int cooldown;
     
     public SummonAnimalsGoal(final int summonProgressIn, final int summonCooldownIn) {
       this.setMutexFlags(EnumSet.allOf(Goal.Flag.class));
-      MAX_PROGRESS = summonProgressIn;
-      MAX_COOLDOWN = summonCooldownIn;
+      maxProgress = summonProgressIn;
+      maxCooldown = summonCooldownIn;
       cooldown = 60;
     }
 
     @Override
     public boolean shouldExecute() {
-      if(SatyrEntity.this.isSummoning()) {
-        return true;
-      } else if(cooldown > 0) {
+      if(cooldown > 0) {
         cooldown--;
       } else {
-        return SatyrEntity.this.isShaman() && SatyrEntity.this.getAttackTarget() != null;
+        return SatyrEntity.this.getAttackTarget() != null;
       }
       return false;
     }
@@ -360,7 +396,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       super.tick();
       SatyrEntity.this.getNavigator().clearPath();
       SatyrEntity.this.getLookController().setLookPositionWithEntity(SatyrEntity.this.getAttackTarget(), 100.0F, 100.0F);
-      if(progress++ > MAX_PROGRESS) {
+      if(progress++ > maxProgress) {
         // summon animals
         final double x = SatyrEntity.this.getPosX();
         final double y = SatyrEntity.this.getPosY();
@@ -388,70 +424,32 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     @Override
     public void resetTask() {
       this.progress = 0;
-      this.cooldown = MAX_COOLDOWN;
+      this.cooldown = maxCooldown;
       SatyrEntity.this.setSummoning(false);
     }
     
   }
   
-  class GoToCampfireGoal extends GoToBlockGoal {
-
-    final Direction[] HORIZONTALS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
-    
-    public GoToCampfireGoal(int radius, double speed) {
-      super(SatyrEntity.this, speed, radius);
-    }
-    
-    @Override
-    public boolean shouldExecute() {
-      return SatyrEntity.this.getAttackTarget() == null && !SatyrEntity.this.isSummoning() 
-          && SatyrEntity.this.getRNG().nextInt(60) == 0 && super.shouldExecute();
-    }
-
-    @Override
-    public boolean isTargetBlock(IWorldReader worldIn, BlockPos pos) {
-      final boolean isPassable = !worldIn.getBlockState(pos.up(1)).getMaterial().blocksMovement() && !worldIn.getBlockState(pos).getMaterial().blocksMovement();
-      for(final Direction d : HORIZONTALS) {
-        if(isPassable && !worldIn.getBlockState(pos.offset(d.getOpposite())).getMaterial().blocksMovement() 
-            && worldIn.getBlockState(pos.offset(d)).isIn(BlockTags.CAMPFIRES)) {
-          return true;
-        }
-      }
-      return false;
-    }
-  }
-  
   class DancingGoal extends Goal {
     
-    private final Direction[] HORIZONTALS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
-    private final int MAX_TRAVEL_TIME = 120;
-    private final int MAX_COOLDOWN = 100;
-    private final int MAX_DANCING_TIME = 1200;
+    private final int maxTravelTime = 100;
+    private final int maxDancingTime;
     
-    private Optional<BlockPos> campfirePos = Optional.empty();
     private Optional<Vector3d> targetPos = Optional.empty();
     
     protected final double moveSpeed;
-    private int cooldown = MAX_COOLDOWN / 2;
     private int dancingTime = 0;
     private int travelTime = 0;
     
-    public DancingGoal(final double speedIn) {
+    public DancingGoal(final double speedIn, final int dancingTimeIn) {
       this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.JUMP));
       this.moveSpeed = speedIn;
+      this.maxDancingTime = dancingTimeIn;
    }
     
     @Override
     public boolean shouldExecute() {
-      if(cooldown > 0) {
-        cooldown--;
-      } else if(!SatyrEntity.this.getNavigator().hasPath() && SatyrEntity.this.getAttackTarget() == null 
-          && !SatyrEntity.this.isSummoning() && SatyrEntity.this.rand.nextInt(20) == 0) {
-        // find a nearby campfire
-        this.campfirePos = findCampfire();
-        return this.updateTarget();
-      }
-      return false;
+      return SatyrEntity.this.isDancing() && this.updateTarget();
     }
     
     @Override
@@ -459,21 +457,23 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       super.startExecuting();
       if(targetPos.isPresent()) {
         SatyrEntity.this.getNavigator().tryMoveToXYZ(targetPos.get().x, targetPos.get().y, targetPos.get().z, moveSpeed);
-        SatyrEntity.this.setDancing(true);
         dancingTime = 1;
       }
     }
     
     @Override
     public boolean shouldContinueExecuting() {
-      boolean isCampfireValid = SatyrEntity.this.ticksExisted % 15 > 0 ? true : this.campfirePos.isPresent() && SatyrEntity.isValidCampfire(SatyrEntity.this.getEntityWorld(), this.campfirePos.get());
-      return SatyrEntity.this.getAttackTarget() == null && this.targetPos.isPresent() && isCampfireValid;
+      boolean isCampfireValid = true;
+      if(SatyrEntity.this.ticksExisted % 15 == 1) {
+        isCampfireValid = SatyrEntity.this.campfirePos.isPresent() && SatyrEntity.isValidCampfire(SatyrEntity.this.getEntityWorld(), SatyrEntity.this.campfirePos.get());
+      }
+      return SatyrEntity.this.getAttackTarget() == null && SatyrEntity.this.hurtTime == 0 && this.targetPos.isPresent() && isCampfireValid;
     }
     
     @Override
     public void tick() {
       super.tick();
-      if(this.dancingTime++ < MAX_DANCING_TIME && this.travelTime++ < MAX_TRAVEL_TIME) {         
+      if(this.dancingTime++ < maxDancingTime && this.travelTime++ < maxTravelTime) {         
         // if we're close to the targetPos, update targetPos and path
         if(isNearTarget(1.2D)) {
           this.updateTarget();
@@ -488,37 +488,21 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
    
     @Override
     public void resetTask() {
-      super.resetTask();
-      this.campfirePos = Optional.empty();
+      SatyrEntity.this.getNavigator().clearPath();
+      SatyrEntity.this.campfirePos = Optional.empty();
       this.targetPos = Optional.empty();
       this.dancingTime = 0;
       this.travelTime = 0;
-      this.cooldown = MAX_COOLDOWN;
       SatyrEntity.this.setDancing(false);
     }
  
-    /**
-     * Checks each direction to determine if a campfire is there
-     * @return an Optional containing the BlockPos if found, otherwise empty
-     **/
-    private Optional<BlockPos> findCampfire() {
-      // check adjacent blocks for campfire
-      for(final Direction d : HORIZONTALS) {
-        final BlockPos pos = SatyrEntity.this.getPosition().offset(d, 2);
-        if(SatyrEntity.isValidCampfire(SatyrEntity.this.getEntityWorld(), pos)) {
-          return Optional.of(pos);
-        }
-      }
-      return Optional.empty();
-    }
-    
     /**
      * Checks if a campfire has been found, and if so, updates
      * which block the entity should path toward
      * @return whether there is now a targetPos to move toward
      **/
     private boolean updateTarget() {
-      if(this.campfirePos.isPresent()) {
+      if(SatyrEntity.this.campfirePos.isPresent()) {
         final Direction nextDir = getClosestDirection().rotateY();
         final BlockPos target = campfirePos.get().offset(nextDir);
         this.targetPos = Optional.of(new Vector3d(target.getX() + 0.5D, target.getY(), target.getZ() + 0.5D));
@@ -535,7 +519,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       Direction dClosest = Direction.NORTH;
       final Vector3d curPos = SatyrEntity.this.getPositionVec();
       double dMin = 100.0D;
-      if(this.campfirePos.isPresent()) {
+      if(SatyrEntity.this.campfirePos.isPresent()) {
         for(final Direction dir : HORIZONTALS) {
           final BlockPos dPos = campfirePos.get().offset(dir);
           final Vector3d dVec = new Vector3d(dPos.getX() + 0.5D, dPos.getY(), dPos.getZ() + 0.5D);
@@ -554,35 +538,132 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
   }
   
-  class LightCampfireGoal extends GoToBlockGoal {
+  class StartDancingGoal extends MoveToBlockGoal {
+    protected final int chance;
     
-    private final Direction[] HORIZONTALS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
-
-    public LightCampfireGoal(double speed, int radius) {
-      super(SatyrEntity.this, speed, radius);
+    public StartDancingGoal(final double speed, final int searchLength, final int radius, final int chanceIn) {
+      super(SatyrEntity.this, speed, searchLength, radius);
+      chance = chanceIn;
     }
     
     @Override
     public boolean shouldExecute() {
-      return SatyrEntity.this.getRNG().nextInt(200) == 0 && super.shouldExecute();
+      return SatyrEntity.this.getAttackTarget() == null && !SatyrEntity.this.isSummoning() 
+          && !SatyrEntity.this.isDancing() && super.shouldExecute();
     }
 
     @Override
-    public boolean isTargetBlock(IWorldReader worldIn, BlockPos pos) {
-      for(final Direction d : HORIZONTALS) {
-        final BlockState state = worldIn.getBlockState(pos.offset(d, 1));
-        if(state.isIn(BlockTags.CAMPFIRES) && !state.get(CampfireBlock.LIT).booleanValue()) {
+    protected boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
+      // checks if the given block is within 1 block of a campfire
+      for(final Direction d : SatyrEntity.HORIZONTALS) {
+        if(SatyrEntity.isValidCampfire(worldIn, pos.offset(d, 1))) {
+          return true;
+        }
+      }
+      return false; 
+    }
+    
+    @Override
+    public double getTargetDistanceSq() {
+      return 2.0D;
+    }
+    
+    @Override
+    public void tick() {
+      if (this.getIsAboveDestination()) {
+        // check surrounding blocks to find a campfire
+        final Optional<BlockPos> campfire = SatyrEntity.getCampfireNear(SatyrEntity.this.world, SatyrEntity.this.getPosition(), true);
+        if (campfire.isPresent() && SatyrEntity.isValidCampfire(SatyrEntity.this.world, campfire.get())) {
+          SatyrEntity.this.campfirePos = campfire;
+          SatyrEntity.this.setDancing(true);
+        } else {
+          resetTask();
+        }
+      }
+      super.tick();
+    }
+   
+    @Override
+    protected int getRunDelay(CreatureEntity entity) { return 200 + entity.getRNG().nextInt(chance); }
+  }
+  
+  class LightCampfireGoal extends MoveToBlockGoal {
+    protected final int maxLightCampfireTime;
+    protected final int chance;
+
+    protected int lightCampfireTimer;
+    
+
+    public LightCampfireGoal(double speed, int searchLength, int radius, int maxLightTime, int chanceIn) {
+      super(SatyrEntity.this, speed, searchLength, radius);
+      maxLightCampfireTime = maxLightTime;
+      chance = chanceIn;
+    }
+
+    @Override
+    protected boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
+      // checks if the given block is within 2 blocks of an unlit campfire
+      for(final Direction d : SatyrEntity.HORIZONTALS) {
+        final BlockState blockstate = worldIn.getBlockState(pos.offset(d, 1));
+        if(blockstate.isIn(BlockTags.CAMPFIRES) && !blockstate.get(CampfireBlock.LIT)) {
           return true;
         }
       }
       return false;
     }
     
-    // TODO everything else
+    @Override
+    public double getTargetDistanceSq() {
+      return 2.0D;
+    }
+
+    @Override
+    public boolean shouldExecute() {
+      return !SatyrEntity.this.isDancing() && !SatyrEntity.this.isSummoning() 
+          && SatyrEntity.this.getAttackTarget() == null 
+          && !SatyrEntity.this.getEntityWorld().isRaining()
+          && SatyrEntity.this.getEntityWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)
+          && super.shouldExecute();
+    }
+
+    @Override
+    public void startExecuting() {
+      this.lightCampfireTimer = 0;
+      super.startExecuting();
+    }
+
+    @Override
+    public void tick() {
+      final Optional<BlockPos> campfire = SatyrEntity.getCampfireNear(SatyrEntity.this.world, SatyrEntity.this.getPosition(), false);
+      if (this.getIsAboveDestination() && campfire.isPresent()) {
+        if (this.lightCampfireTimer >= maxLightCampfireTime) {
+          // find and light campfire
+          this.lightCampfire(campfire.get());
+        } else {
+          ++this.lightCampfireTimer;
+          SatyrEntity.this.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 1.0F, 1.0F);
+          SatyrEntity.this.swingArm(Hand.MAIN_HAND);
+          SatyrEntity.this.getLookController().setLookPosition(Vector3d.copyCenteredHorizontally(campfire.get()));
+        }
+      }
+      super.tick();
+    }
     
-    
-   
+    @Override
+    protected int getRunDelay(CreatureEntity entity) { return 200 + entity.getRNG().nextInt(chance); }
+
+    protected boolean lightCampfire(final BlockPos pos) {
+      if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(SatyrEntity.this.world, SatyrEntity.this)) {
+        final BlockState state = SatyrEntity.this.world.getBlockState(pos);
+        if (state.isIn(BlockTags.CAMPFIRES)) {
+          SatyrEntity.this.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 1.0F, 1.0F);
+          SatyrEntity.this.world.setBlockState(pos, state.with(CampfireBlock.LIT, Boolean.valueOf(true)), 2);
+          SatyrEntity.this.swingArm(Hand.MAIN_HAND);
+          return true;
+        }
+      }
+      return false;
+    }
   }
- 
   
 }

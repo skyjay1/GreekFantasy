@@ -1,0 +1,9 @@
+{
+  "parent": "greekfantasy:block/capped_pillar",
+  "textures": {
+	  "pillar": "greekfantasy:block/limestone_pillar",
+	  "side": "greekfantasy:block/polished_limestone",
+	  "bottom": "greekfantasy:block/polished_limestone",
+      "top": "greekfantasy:block/polished_limestone"
+    }
+}

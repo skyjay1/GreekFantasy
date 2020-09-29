@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "greekfantasy:block/polished_marble_slab"
+    },
+    "type=double": {
+      "model": "greekfantasy:block/polished_marble"
+    },
+    "type=top": {
+      "model": "greekfantasy:block/polished_marble_slab_top"
+    }
+  }
+}

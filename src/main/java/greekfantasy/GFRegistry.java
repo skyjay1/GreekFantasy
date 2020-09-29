@@ -2,7 +2,7 @@ package greekfantasy;
 
 import java.util.function.Supplier;
 
-import greekfantasy.block.ConnectedPillarBlock;
+import greekfantasy.block.CappedPillarBlock;
 import greekfantasy.block.MysteriousBoxBlock;
 import greekfantasy.block.NestBlock;
 import greekfantasy.block.StatueBlock;
@@ -37,6 +37,7 @@ import greekfantasy.util.StatuePose;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SlabBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.block.material.Material;
@@ -109,18 +110,28 @@ public final class GFRegistry {
   public static final Block NEST_BLOCK = null;
   @ObjectHolder("limestone")
   public static final Block LIMESTONE = null;
+  @ObjectHolder("limestone_slab")
+  public static final Block LIMESTONE_SLAB = null;
   @ObjectHolder("limestone_stairs")
   public static final Block LIMESTONE_STAIRS = null;
   @ObjectHolder("polished_limestone")
   public static final Block POLISHED_LIMESTONE = null;
+  @ObjectHolder("polished_limestone_slab")
+  public static final Block POLISHED_LIMESTONE_SLAB = null;
   @ObjectHolder("polished_limestone_stairs")
   public static final Block POLISHED_LIMESTONE_STAIRS = null;
+  @ObjectHolder("limestone_pillar")
+  public static final Block LIMESTONE_PILLAR = null;
   @ObjectHolder("marble")
   public static final Block MARBLE = null;
+  @ObjectHolder("marble_slab")
+  public static final Block MARBLE_SLAB = null;
   @ObjectHolder("marble_stairs")
   public static final Block MARBLE_STAIRS = null;
   @ObjectHolder("polished_marble")
   public static final Block POLISHED_MARBLE = null; 
+  @ObjectHolder("polished_marble_slab")
+  public static final Block POLISHED_MARBLE_SLAB = null; 
   @ObjectHolder("polished_marble_stairs")
   public static final Block POLISHED_MARBLE_STAIRS = null;
   @ObjectHolder("marble_pillar")
@@ -216,18 +227,20 @@ public final class GFRegistry {
   public static void registerBlocks(final RegistryEvent.Register<Block> event) {
     GreekFantasy.LOGGER.info("registerBlocks");
     
-    registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.STONE), "limestone");
-    registerBlockPolishedAndStairs(event, Block.Properties.from(Blocks.DIORITE), "marble");
+    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "marble");
+    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
 
     event.getRegistry().registerAll(
         new NestBlock(AbstractBlock.Properties.create(Material.ORGANIC, MaterialColor.BROWN).hardnessAndResistance(0.5F).sound(SoundType.PLANT).notSolid())
           .setRegistryName(GreekFantasy.MODID, "nest"),
-        new ConnectedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F).notSolid())
+        new CappedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F).notSolid())
           .setRegistryName(GreekFantasy.MODID, "marble_pillar"),
-        new StatueBlock(StatueBlock.StatueMaterial.LIMESTONE)
-          .setRegistryName(GreekFantasy.MODID, "limestone_statue"),
+        new CappedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F).notSolid())
+          .setRegistryName(GreekFantasy.MODID, "limestone_pillar"),
         new StatueBlock(StatueBlock.StatueMaterial.MARBLE)
           .setRegistryName(GreekFantasy.MODID, "marble_statue"),
+        new StatueBlock(StatueBlock.StatueMaterial.LIMESTONE)
+          .setRegistryName(GreekFantasy.MODID, "limestone_statue"),
         new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
           .setRegistryName(GreekFantasy.MODID, "terracotta_vase"),
         new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
@@ -255,15 +268,20 @@ public final class GFRegistry {
     registerItemBlock(event, NEST_BLOCK, "nest");
     
     registerItemBlock(event, MARBLE, "marble");
+    registerItemBlock(event, MARBLE_SLAB, "marble_slab");
     registerItemBlock(event, MARBLE_STAIRS, "marble_stairs");
     registerItemBlock(event, POLISHED_MARBLE, "polished_marble");
+    registerItemBlock(event, POLISHED_MARBLE_SLAB, "polished_marble_slab");
     registerItemBlock(event, POLISHED_MARBLE_STAIRS, "polished_marble_stairs");
     registerItemBlock(event, MARBLE_PILLAR, "marble_pillar");
 
     registerItemBlock(event, LIMESTONE, "limestone");
+    registerItemBlock(event, LIMESTONE_SLAB, "limestone_slab");
     registerItemBlock(event, LIMESTONE_STAIRS, "limestone_stairs");
     registerItemBlock(event, POLISHED_LIMESTONE, "polished_limestone");
+    registerItemBlock(event, POLISHED_LIMESTONE_SLAB, "polished_limestone_slab");
     registerItemBlock(event, POLISHED_LIMESTONE_STAIRS, "polished_limestone_stairs");
+    registerItemBlock(event, LIMESTONE_PILLAR, "limestone_pillar");
     
     registerItemBlock(event, LIMESTONE_STATUE, "limestone_statue");
     registerItemBlock(event, MARBLE_STATUE, "marble_statue");
@@ -309,12 +327,16 @@ public final class GFRegistry {
     return entityType;
   }
 
-  private static void registerBlockPolishedAndStairs(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {
+  private static void registerBlockPolishedSlabAndStairs(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {
     final Block raw = new Block(properties).setRegistryName(GreekFantasy.MODID, registryName);
     final Block polished = new Block(properties).setRegistryName(GreekFantasy.MODID, "polished_" + registryName);
+    // raw, slab, and stairs
     event.getRegistry().register(raw);
-    event.getRegistry().register(polished);
+    event.getRegistry().register(new SlabBlock(properties).setRegistryName(GreekFantasy.MODID, registryName + "_slab"));
     event.getRegistry().register(new StairsBlock(() -> raw.getDefaultState(), properties).setRegistryName(GreekFantasy.MODID, registryName + "_stairs"));
+    // polished, slab, and stairs
+    event.getRegistry().register(polished);
+    event.getRegistry().register(new SlabBlock(properties).setRegistryName(GreekFantasy.MODID, "polished_" + registryName + "_slab"));
     event.getRegistry().register(new StairsBlock(() -> polished.getDefaultState(), properties).setRegistryName(GreekFantasy.MODID, "polished_" + registryName + "_stairs"));
   }
   

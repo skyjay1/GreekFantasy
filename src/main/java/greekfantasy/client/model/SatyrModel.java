@@ -39,7 +39,7 @@ public class SatyrModel<T extends SatyrEntity> extends HoofedBipedModel<T> {
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-    if(entity.isDancing() || entity.summonTime > 0) {
+    if(entity.holdingPanfluteTime > 0) {
       // set arm rotations when holding panflute
       final float armPercent = entity.getArmMovementPercent(ageInTicks);
       this.bipedRightArm.rotateAngleX = -1.31F * armPercent;

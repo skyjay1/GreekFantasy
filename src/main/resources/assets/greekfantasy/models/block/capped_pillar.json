@@ -1,0 +1,31 @@
+{
+	"parent": "minecraft:block/block",
+    "textures": {
+        "particle": "#pillar"
+    },
+	"elements": [
+		{
+			"from": [3, 0, 3],
+			"to": [13, 16, 13],
+			"color": 1,
+			"faces": {
+				"north": {"uv": [0, 0, 10, 16], "texture": "#pillar"},
+				"east": {"uv": [0, 0, 10, 16], "texture": "#pillar"},
+				"south": {"uv": [0, 0, 10, 16], "texture": "#pillar"},
+				"west": {"uv": [0, 0, 10, 16], "texture": "#pillar"},
+				"down": {"uv": [3, 3, 13, 13], "texture": "#bottom", "cullface": "down"}
+			}
+		},
+		{   "from": [ 0, 8, 0 ],
+            "to": [ 16, 16, 16 ],
+            "faces": {
+                "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#bottom" },
+                "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#top" },
+                "north": { "uv": [ 0, 0, 16,  8 ], "texture": "#side", "cullface": "north" },
+                "south": { "uv": [ 0, 0, 16,  8 ], "texture": "#side", "cullface": "south" },
+                "west":  { "uv": [ 0, 0, 16,  8 ], "texture": "#side", "cullface": "west" },
+                "east":  { "uv": [ 0, 0, 16,  8 ], "texture": "#side", "cullface": "east" }
+            }
+        }
+	]
+}
