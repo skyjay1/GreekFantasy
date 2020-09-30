@@ -10,6 +10,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.block.StatueBlock;
 import greekfantasy.client.model.tileentity.StatueModel;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.ModelPart;
@@ -51,6 +52,7 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
       }
     }
     // determine texture, rotations, and style
+    final float rotation = te.getBlockState().get(StatueBlock.HORIZONTAL_FACING).getHorizontalAngle();
     final boolean isFemaleModel = te.isStatueFemale();
     final float translateY = upper ? 0.95F : 1.95F;
     final ResourceLocation textureStone = getStoneTexture(te);
@@ -59,6 +61,7 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     // prepare to render model
     matrixStackIn.translate(0.5D, (double)translateY, 0.5D);
     matrixStackIn.rotate(Vector3f.XP.rotationDegrees(180.0F));
+    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(rotation));
     IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureStone));
     this.model.setRotationAngles(te, partialTicks);
     this.model.rotateAroundBody(te.getRotations(ModelPart.BODY), matrixStackIn, partialTicks); 

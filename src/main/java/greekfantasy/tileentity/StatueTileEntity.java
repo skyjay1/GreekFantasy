@@ -166,7 +166,9 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     nbt.putBoolean(KEY_FEMALE, statueFemale);
     nbt.put(KEY_POSE, this.statuePose.serializeNBT(new CompoundNBT()));
     nbt.put(KEY_NAME, StringNBT.valueOf(textureName));
-    ItemStackHelper.saveAllItems(nbt, this.inventory, true);
+    if(GreekFantasy.CONFIG.STATUES_HOLD_ITEMS.get()) {
+      ItemStackHelper.saveAllItems(nbt, this.inventory, true);
+    }
     return nbt;
   }
 
@@ -176,7 +178,9 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     this.setStatuePose(new StatuePose(nbt.getCompound(KEY_POSE)));
     this.setTextureName(nbt.getString(KEY_NAME));
     this.inventory.clear();
-    ItemStackHelper.loadAllItems(nbt, this.inventory);
+    if(GreekFantasy.CONFIG.STATUES_HOLD_ITEMS.get()) {
+      ItemStackHelper.loadAllItems(nbt, this.inventory);
+    }
   }
 
   // INVENTORY //

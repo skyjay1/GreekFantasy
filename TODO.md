@@ -83,12 +83,13 @@ _ Grapes / grapevines?
 ## Items
 
 ~ Panflute (TODO: song selection)
-~ Clubs (wood, stone/flint, iron) (TODO: 16x16 icons)
+X Clubs (wood, stone/flint, iron) (TODO: 16x16 icons)
 _ Javelins (wood, stone/flint, iron)
-_ Golden bridle (for Unicorn)
+X Golden bridle (for Unicorn)
 X Winged sandals
-_ Horn (from Minotaur / Cyprians) (needs use)
-_ Ambrosia (like ench. golden apple) (use horn as cornucopia?)
+X Bull Horn (from Minotaur / Cyprians) (needs use)
+X Unicorn Horn (while holding, cures certain potion effects?)
+X Ambrosia (like ench. golden apple) (use horn as cornucopia?)
 
 ## Achievements
 
@@ -97,8 +98,10 @@ X Encounter Cerastes
 X Kill Shade
 _ Anger Dryads by chopping logs
 _ Ride a Unicorn
+_ Use a unicorn horn
 _ Open a Mysterious Box
 _ Equip Winged Sandals (Much Fast, So Speed!)
+_ Kill a Geryon
 
 ## Other
 

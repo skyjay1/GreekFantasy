@@ -1,9 +1,27 @@
 {
   "variants": {
-	"half=lower": {
+	"facing=north,half=lower": {
 	  "model": "greekfantasy:block/polished_marble_slab"
 	},
-	"half=upper": {
+	"facing=east,half=lower": {
+	  "model": "greekfantasy:block/polished_marble_slab"
+	},
+	"facing=south,half=lower": {
+	  "model": "greekfantasy:block/polished_marble_slab"
+	},
+	"facing=west,half=lower": {
+	  "model": "greekfantasy:block/polished_marble_slab"
+	},
+	"facing=north,half=upper": {
+	  "model": "greekfantasy:block/marble_statue_upper"
+	},
+	"facing=east,half=upper": {
+	  "model": "greekfantasy:block/marble_statue_upper"
+	},
+	"facing=south,half=upper": {
+	  "model": "greekfantasy:block/marble_statue_upper"
+	},
+	"facing=west,half=upper": {
 	  "model": "greekfantasy:block/marble_statue_upper"
 	}
   }

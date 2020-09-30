@@ -1,7 +1,5 @@
 package greekfantasy.client.gui;
 
-import java.util.Random;
-
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -25,6 +23,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -66,6 +65,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
   private static final int BTN_HEIGHT = 16;
   
   protected BlockPos blockPos = BlockPos.ZERO;
+  protected Direction blockRotation = Direction.NORTH;
   protected StatuePose currentPose = StatuePoses.NONE;
   protected ModelPart selectedPart = ModelPart.BODY;
   protected boolean isStatueFemale = false;
@@ -83,6 +83,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     this.playerInventoryTitleY = this.guiTop + StatueContainer.PLAYER_INV_Y - 10;
     this.currentPose = screenContainer.getStatuePose();
     this.blockPos = screenContainer.getBlockPos();
+    this.blockRotation = screenContainer.getBlockRotation();
     this.isStatueFemale = screenContainer.isStatueFemale();
     this.textureName = screenContainer.getProfile();
   }
@@ -205,13 +206,12 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
       RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
       RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
       RenderSystem.translatef(posX + margin, posY + margin, 100.0F + 10.0F);
-      RenderSystem.translatef(0.0F, PREVIEW_HEIGHT - margin * 2, 0.0F);
+      RenderSystem.translatef(0.0F, PREVIEW_HEIGHT - margin * 1.75F, 0.0F);
+      //RenderSystem.rotatef(this.blockRotation.getOpposite().getHorizontalAngle(), 0.0F, -1.0F, 0.0F);
       RenderSystem.scalef(1.0F, -1.0F, 1.0F);
       RenderSystem.scalef(scale, scale, scale);
-      //RenderSystem.rotatef(-this.currentPose.getAngles(ModelPart.BODY).getY(), 0.0F, 1.0F, 0.0F);
       RenderSystem.rotatef(rotX * 15.0F, 0.0F, 1.0F, 0.0F);
       RenderSystem.rotatef(rotY * 15.0F, 1.0F, 0.0F, 0.0F);
-      
       
       RenderHelper.setupGuiFlatDiffuseLighting();
   
@@ -239,8 +239,6 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     te.setStatuePose(this.currentPose);
     te.setStatueFemale(this.isStatueFemale);
     te.setTextureName(this.textureName);
-//    te.setItem(this.getContainer().getItemLeft(), HandSide.LEFT);
-//    te.setItem(this.getContainer().getItemRight(), HandSide.RIGHT);
   }
  
   protected class PartButton extends Button {

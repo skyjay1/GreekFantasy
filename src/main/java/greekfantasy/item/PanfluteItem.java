@@ -29,7 +29,7 @@ public class PanfluteItem extends Item {
   
   @Override
   public UseAction getUseAction(final ItemStack stack) {
-    return UseAction.BOW;
+    return UseAction.CROSSBOW;
   }
 
   @Override

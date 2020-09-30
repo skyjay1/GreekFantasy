@@ -29,8 +29,6 @@ public class SatyrCampFeature extends Feature<NoFeatureConfig> {
   private static final ResourceLocation STRUCTURE_CAMPFIRE = new ResourceLocation(GreekFantasy.MODID, "satyr_camp/satyr_campfire");
   private static final ResourceLocation STRUCTURE_TENT_CHEST = new ResourceLocation(GreekFantasy.MODID, "satyr_camp/satyr_tent_with_chest");
   private static final ResourceLocation STRUCTURE_TENT_NOCHEST = new ResourceLocation(GreekFantasy.MODID, "satyr_camp/satyr_tent");
-
-  private int tentsGenerated;
   
   public SatyrCampFeature(final Codec<NoFeatureConfig> codec) {
     super(codec);
@@ -46,11 +44,12 @@ public class SatyrCampFeature extends Feature<NoFeatureConfig> {
     final Template templateFire = manager.getTemplateDefaulted(STRUCTURE_CAMPFIRE);
     final Template templateChest = manager.getTemplateDefaulted(STRUCTURE_TENT_CHEST);
     final Template templateNoChest = manager.getTemplateDefaulted(STRUCTURE_TENT_NOCHEST);
-    tentsGenerated = 0;
   
     // position for generation
     final BlockPos tent1Offset = new BlockPos(8 + rand.nextInt(4), 0, rand.nextInt(4) - 2);
-    final BlockPos tent2Offset = new BlockPos(2 + rand.nextInt(4), 0, 8 + rand.nextInt(3));
+    final BlockPos tent2Offset = new BlockPos(2 + rand.nextInt(4), 0, 7 + rand.nextInt(3));
+    final BlockPos tent3Offset = new BlockPos(2 + rand.nextInt(4), 0, 7 + rand.nextInt(3));
+    final BlockPos tent4Offset = new BlockPos(2 + rand.nextInt(4), 0, 7 + rand.nextInt(3));
     
     // placement settings
     Rotation rotation = Rotation.randomRotation(rand);
@@ -61,42 +60,42 @@ public class SatyrCampFeature extends Feature<NoFeatureConfig> {
     
     // generate the campfire
     BlockPos campfirePos = getHeightPos(reader, blockPosIn.add(4 + rand.nextInt(8), 0, 4 + rand.nextInt(8)));
-    generateTemplate(reader, templateFire, placement, campfirePos, rand, false);
-    
-    // generate the first tent
-    BlockPos tentPos = getHeightPos(reader, campfirePos.add(tent1Offset.rotate(rotation)));
-    //rotation = rotation.add(Rotation.CLOCKWISE_90);
-    if(generateTemplate(reader, templateChest, placement, tentPos, rand, true)) {
-      tentsGenerated++;
-    }
-    
-    // generate the second tent
-    tentPos = getHeightPos(reader, campfirePos.add(tent2Offset.rotate(rotation)));
-    rotation = rotation.add(Rotation.CLOCKWISE_90);
-    if(generateTemplate(reader, templateNoChest, placement.setRotation(rotation), tentPos, rand, true)) {
-      tentsGenerated++;
-    }
-    
-    // generate the third tent
-    tentPos = getHeightPos(reader, campfirePos.add(tent2Offset.rotate(rotation)));
-    rotation = rotation.add(Rotation.CLOCKWISE_90);
-    if(generateTemplate(reader, templateChest, placement.setRotation(rotation), tentPos, rand, true)) {
-      tentsGenerated++;
-    }
-    
-    // generate the fourth tent
-    tentPos = getHeightPos(reader, campfirePos.add(tent2Offset.rotate(rotation)));
-    rotation = rotation.add(Rotation.CLOCKWISE_90);
-    if(generateTemplate(reader, templateNoChest, placement.setRotation(rotation), tentPos, rand, true)) {
-      tentsGenerated++;
+    if(generateTemplate(reader, templateFire, placement, campfirePos, rand, false, 0)) {
+      // generate the first tent
+      int tentsGenerated = 0;
+      BlockPos tentPos = getHeightPos(reader, campfirePos.add(tent1Offset.rotate(rotation)));
+      //rotation = rotation.add(Rotation.CLOCKWISE_90);
+      if(generateTemplate(reader, templateChest, placement, tentPos, rand, true, tentsGenerated)) {
+        tentsGenerated++;
+      }
+      
+      // generate the second tent
+      tentPos = getHeightPos(reader, campfirePos.add(tent2Offset.rotate(rotation)));
+      rotation = rotation.add(Rotation.CLOCKWISE_90);
+      if(generateTemplate(reader, templateNoChest, placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
+        tentsGenerated++;
+      }
+      
+      // generate the third tent
+      tentPos = getHeightPos(reader, campfirePos.add(tent3Offset.rotate(rotation)));
+      rotation = rotation.add(Rotation.CLOCKWISE_90);
+      if(generateTemplate(reader, templateChest, placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
+        tentsGenerated++;
+      }
+      
+      // generate the fourth tent
+      tentPos = getHeightPos(reader, campfirePos.add(tent4Offset.rotate(rotation)));
+      rotation = rotation.add(Rotation.CLOCKWISE_90);
+      if(generateTemplate(reader, templateNoChest, placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
+        tentsGenerated++;
+      } 
     }
     
     return true;
   }
  
-  
   protected boolean generateTemplate(final ISeedReader reader, final Template template, final PlacementSettings placement,
-      final BlockPos pos, final Random rand, final boolean satyrs) {
+      final BlockPos pos, final Random rand, final boolean satyrs, final int tentsGenerated) {
     if(tentsGenerated > 2 || pos.getY() < 3 || !reader.getBlockState(pos).isSolid() || reader.getBlockState(pos.up(3)).isSolid()) {
       return false;
     }

@@ -10,7 +10,6 @@ import com.google.common.collect.Multimap;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;

@@ -106,7 +106,7 @@ public final class GFWorldGen {
       event.getGeneration().withFeature(
           GenerationStage.Decoration.SURFACE_STRUCTURES, 
           SATYR_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT.func_242728_a()).func_242729_a(75)
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT.func_242728_a()).func_242729_a(GreekFantasy.CONFIG.SATYR_CAMP_SPREAD.get())
       );
     }
   }

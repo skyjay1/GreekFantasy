@@ -44,7 +44,7 @@ public class GeryonEntity extends MonsterEntity {
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 56.0D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 120.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.30D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)

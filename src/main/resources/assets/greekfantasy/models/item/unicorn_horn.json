@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "greekfantasy:item/wooden_club"
+    "layer0": "greekfantasy:item/unicorn_horn"
   }
 }

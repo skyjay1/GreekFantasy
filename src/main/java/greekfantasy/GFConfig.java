@@ -7,7 +7,8 @@ public class GFConfig {
   // item configs
   public final ForgeConfigSpec.DoubleValue SANDALS_SPEED_BONUS;
   public final ForgeConfigSpec.BooleanValue NERF_AMBROSIA;
-  
+  public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
+
   // effect configs
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_USE;
@@ -64,6 +65,9 @@ public class GFConfig {
   public final ForgeConfigSpec.IntValue ARA_CAMP_SPREAD;
   public final ForgeConfigSpec.IntValue SATYR_CAMP_SPREAD;
   
+  // other
+  public final ForgeConfigSpec.BooleanValue STATUES_HOLD_ITEMS;
+  
   public GFConfig(final ForgeConfigSpec.Builder builder) {
     // items
     builder.push("items");
@@ -71,6 +75,8 @@ public class GFConfig {
         .defineInRange("sandals_speed_bonus", 1.0D, 0.0D, 2.0D);
     NERF_AMBROSIA = builder.comment("When true, ambrosia gives effects of Golden Apple instead of Enchanted Golden Apple")
         .define("nerf_ambrosia", false);
+    UNICORN_HORN_CURES_EFFECTS = builder.comment("Whether holding the unicorn horn can cure potion effects")
+        .define("unicorn_horn_cures_effects", true);
     builder.pop();
     // mob attacks
     builder.push("effects");
@@ -138,9 +144,14 @@ public class GFConfig {
     builder.comment("structure and feature spread (higher number = less common)");
     builder.push("features");
     HARPY_NEST_SPREAD = builder.worldRestart().defineInRange("harpy_nest_spread", 90, 1, 1000);
-    SMALL_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_shrine_spread", 110, 1, 1000);
+    SMALL_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_shrine_spread", 150, 1, 1000);
     ARA_CAMP_SPREAD = builder.worldRestart().defineInRange("ara_camp_spread", 180, 1, 1000);
-    SATYR_CAMP_SPREAD = builder.worldRestart().defineInRange("satyr_camp_spread", 130, 1, 1000);
+    SATYR_CAMP_SPREAD = builder.worldRestart().defineInRange("satyr_camp_spread", 210, 1, 1000);
+    builder.pop();
+    // other
+    builder.push("other");
+    STATUES_HOLD_ITEMS = builder.comment("Whether statues can hold items")
+        .define("statues_hold_items", true);
     builder.pop();
   }
   

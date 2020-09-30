@@ -1,6 +1,7 @@
 package greekfantasy.gui;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
 import greekfantasy.util.StatuePose;
 import greekfantasy.util.StatuePoses;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,6 +11,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
 
@@ -18,28 +20,33 @@ public class StatueContainer extends Container {
   public static final int PLAYER_INV_X = 32;
   public static final int PLAYER_INV_Y = 120;
   
-  private final Slot leftSlot;
-  private final Slot rightSlot;
+  private Slot leftSlot;
+  private Slot rightSlot;
   
   private BlockPos blockPos;
+  private Direction facing;
   private StatuePose statuePose;
   private boolean isFemale;
   private String profile;
 
   public StatueContainer(int id, final PlayerInventory inventory) {
-    this(id, inventory, new Inventory(2), StatuePoses.NONE, false, "", BlockPos.ZERO);
+    this(id, inventory, new Inventory(2), StatuePoses.NONE, false, "", BlockPos.ZERO, Direction.NORTH);
   }
   
   public StatueContainer(final int id, final PlayerInventory inventory, final IInventory iinventory, 
-      final StatuePose statuePoseIn, final boolean isFemaleIn, final String profileIn, final BlockPos blockPosIn) {
+      final StatuePose statuePoseIn, final boolean isFemaleIn, final String profileIn, 
+      final BlockPos blockPosIn, final Direction facingIn) {
     super(GFRegistry.STATUE_CONTAINER, id);
     this.statuePose = statuePoseIn;
     this.blockPos = blockPosIn;
+    this.facing = facingIn;
     this.isFemale = isFemaleIn;
     this.profile = profileIn;
     // add container inventory
-    leftSlot = this.addSlot(new Slot(iinventory, 0, 8, 90));
-    rightSlot = this.addSlot(new Slot(iinventory, 1, 44, 90));
+    if(GreekFantasy.CONFIG.STATUES_HOLD_ITEMS.get()) {
+      leftSlot = this.addSlot(new Slot(iinventory, 0, 8, 90));
+      rightSlot = this.addSlot(new Slot(iinventory, 1, 44, 90));
+    }
     // add player inventory
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 9; ++j) {
@@ -59,6 +66,10 @@ public class StatueContainer extends Container {
 
   public BlockPos getBlockPos() {
     return this.blockPos;
+  }
+  
+  public Direction getBlockRotation() {
+    return this.facing;
   }
   
   public StatuePose getStatuePose() {

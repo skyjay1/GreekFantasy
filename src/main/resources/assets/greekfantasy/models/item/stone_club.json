@@ -1,6 +1,6 @@
 {
-  "parent": "greekfantasy:item/club",
+  "parent": "minecraft:item/generated",
   "textures": {
-    "2": "minecraft:block/stone"
+    "layer0": "greekfantasy:item/stone_club"
   }
 }

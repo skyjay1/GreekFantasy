@@ -1,8 +1,6 @@
 package greekfantasy.entity;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 
 import greekfantasy.GreekFantasy;
 import net.minecraft.entity.Entity;

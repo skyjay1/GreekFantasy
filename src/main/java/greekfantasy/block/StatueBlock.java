@@ -4,11 +4,11 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.tileentity.StatueTileEntity;
-import greekfantasy.util.ModelPart;
 import greekfantasy.util.StatuePose;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -17,6 +17,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.state.EnumProperty;
@@ -25,6 +26,7 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
@@ -40,7 +42,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class StatueBlock extends Block {  
+public class StatueBlock extends HorizontalBlock {  
   
   public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
   
@@ -53,27 +55,25 @@ public class StatueBlock extends Block {
   public StatueBlock(final StatueMaterial material) {
     super(Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(1.5F, 6.0F).sound(SoundType.STONE).notSolid());
     this.setDefaultState(this.getStateContainer().getBaseState()
-        .with(HALF, DoubleBlockHalf.LOWER));
+        .with(HALF, DoubleBlockHalf.LOWER).with(HORIZONTAL_FACING, Direction.NORTH));
     this.statueMaterial = material;
   }
   
   @Override
   protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-    builder.add(HALF);
+    builder.add(HALF, HORIZONTAL_FACING);
+  }
+  
+  @Override
+  public BlockState getStateForPlacement(BlockItemUseContext context) {
+    return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
   }
 
   @Override
   public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
     // place upper block
-    worldIn.setBlockState(pos.up(), state.with(HALF, DoubleBlockHalf.UPPER), 3);
-    // update body rotations to face player by default
-    final float rotation = placer.getHorizontalFacing().getOpposite().getHorizontalAngle();
-    final TileEntity te = worldIn.getTileEntity(pos);
-    if(te instanceof StatueTileEntity) {
-      ((StatueTileEntity)te).getStatuePose().set(ModelPart.BODY, 0, rotation, 0);
-      te.markDirty();
-      worldIn.notifyBlockUpdate(pos, state, state, 2);
-    }
+    final Direction facing = state.get(HORIZONTAL_FACING);
+    worldIn.setBlockState(pos.up(), state.with(HALF, DoubleBlockHalf.UPPER).with(HORIZONTAL_FACING, facing), 3);
   }
   
   @Override
@@ -135,15 +135,18 @@ public class StatueBlock extends Block {
       final StatuePose currentPose = teStatue.getStatuePose();
       final boolean isFemale = teStatue.isStatueFemale();
       final String name = teStatue.getTextureName();
+      final Direction facing = state.get(HORIZONTAL_FACING);
       // open the container GUI
       NetworkHooks.openGui((ServerPlayerEntity)playerIn, 
-        new SimpleNamedContainerProvider((id, inventory, player) -> new StatueContainer(id, inventory, teStatue, currentPose, isFemale, name, tePos), 
+        new SimpleNamedContainerProvider((id, inventory, player) -> 
+            new StatueContainer(id, inventory, teStatue, currentPose, isFemale, name, tePos, facing), 
             StringTextComponent.EMPTY), 
             buf -> {
               buf.writeBoolean(isFemale);
               buf.writeBlockPos(tePos);
               buf.writeCompoundTag(currentPose.serializeNBT());
               buf.writeString(name);
+              buf.writeByte(facing.getHorizontalIndex());
             }
         );
       return ActionResultType.CONSUME;

@@ -31,6 +31,7 @@ import greekfantasy.entity.UnicornEntity;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.item.ClubItem;
 import greekfantasy.item.PanfluteItem;
+import greekfantasy.item.UnicornHornItem;
 import greekfantasy.item.WingedSandalsItem;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.tileentity.VaseTileEntity;
@@ -66,6 +67,7 @@ import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Effect;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.common.extensions.IForgeContainerType;
@@ -112,6 +114,12 @@ public final class GFRegistry {
   public static final Item WINGED_SANDALS = null;
   @ObjectHolder("ambrosia")
   public static final Item AMBROSIA = null;
+  @ObjectHolder("unicorn_horn")
+  public static final Item UNICORN_HORN = null;
+  @ObjectHolder("bull_horn")
+  public static final Item BULL_HORN = null;
+  @ObjectHolder("golden_bridle")
+  public static final Item GOLDEN_BRIDLE = null;
   
   @ObjectHolder("nest")
   public static final Block NEST_BLOCK = null;
@@ -224,7 +232,8 @@ public final class GFRegistry {
       final CompoundNBT poseTag = data.readCompoundTag();
       final String name = data.readString();
       final StatuePose pose = new StatuePose(poseTag);
-      return new StatueContainer(windowId, inv, new Inventory(2), pose, isFemale, name, blockpos);
+      final Direction facing = Direction.byHorizontalIndex(data.readByte());
+      return new StatueContainer(windowId, inv, new Inventory(2), pose, isFemale, name, blockpos, facing);
     });
     event.getRegistry().register(containerType.setRegistryName(GreekFantasy.MODID, "statue_container"));
   }
@@ -272,7 +281,13 @@ public final class GFRegistry {
           .setRegistryName(GreekFantasy.MODID, "winged_sandals"),
         new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
           .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC))
-          .setRegistryName(GreekFantasy.MODID, "ambrosia")
+          .setRegistryName(GreekFantasy.MODID, "ambrosia"),
+        new UnicornHornItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
+          .setRegistryName(GreekFantasy.MODID, "unicorn_horn"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "bull_horn"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "golden_bridle")
     );
     // block items
     registerItemBlock(event, NEST_BLOCK, "nest");
