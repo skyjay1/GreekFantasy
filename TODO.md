@@ -24,10 +24,10 @@ X ~ _ Ara (Propoetide)
 X _ _ Cyclopes
 X _ _ Gigante
 X ~ _ Cyprian Centaurs (bull-horns, hostile)
-X ~ _ Unicorn
+X X _ Unicorn
 ~ X _ Orthus (2-headed dog) (TODO fix model)
 _ _ _ Eurynomos (blue skin; vulture head?)
-_ _ _ Elpis (hope)
+X ~ _ Elpis (hope)
 _ _ _ Hippocampus
 X _ _ Boss: Cerberus
 X _ _ Boss: Geryon (3-headed Gigante)
@@ -54,7 +54,8 @@ X Empusa drains health
 X Shade drains XP
 X Orthus breathes fire
 X Cerastes hides in sand
-_ Unicorn can be tamed / ridden
+X Unicorn can be tamed / ridden
+_ Elpis grants something to player
 
 ## Structures
 X Harpy Nests

@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "greekfantasy:item/club",
   "textures": {
-    "layer0": "greekfantasy:item/wooden_club"
+    "2": "minecraft:block/oak_log"
   }
 }

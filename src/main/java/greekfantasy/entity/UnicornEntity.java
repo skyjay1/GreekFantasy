@@ -9,11 +9,10 @@ import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.HorseArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.potion.EffectType;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
@@ -32,16 +31,14 @@ public class UnicornEntity extends AbstractHorseEntity {
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return AbstractHorseEntity.func_234237_fg_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 64.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D);
+    return AbstractHorseEntity.func_234237_fg_();
   }
   
   @Override
   public void registerGoals() {
     super.registerGoals();
-    this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, PlayerEntity.class, 16.0F, 1.2D, 1.0D, (entity) -> {
-      return !entity.isDiscrete() && EntityPredicates.CAN_AI_TARGET.test(entity) && 
+    this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, PlayerEntity.class, 16.0F, 1.1D, 0.95D, (entity) -> {
+      return !entity.isDiscrete() && EntityPredicates.CAN_AI_TARGET.test(entity) && !this.isBeingRidden() &&
           (!this.isTame() || this.getOwnerUniqueId() == null || !entity.getUniqueID().equals(this.getOwnerUniqueId()));
    }));
   }
@@ -49,6 +46,24 @@ public class UnicornEntity extends AbstractHorseEntity {
   // CALLED FROM ON INITIAL SPAWN
   @Override
   protected void func_230273_eI_() {
+    this.getAttribute(Attributes.MAX_HEALTH).setBaseValue((double)this.getModifiedMaxHealth());
+    this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.getModifiedMovementSpeed());
+    this.getAttribute(Attributes.HORSE_JUMP_STRENGTH).setBaseValue(this.getModifiedJumpStrength());
+  }
+  
+  @Override
+  protected float getModifiedMaxHealth() {
+    return super.getModifiedMaxHealth() + 28.0F;
+  }
+
+  @Override
+  protected double getModifiedJumpStrength() {
+    return super.getModifiedJumpStrength() + 0.22F;
+  }
+
+  @Override
+  protected double getModifiedMovementSpeed() {
+    return super.getModifiedMovementSpeed() + 0.16F;
   }
   
   @Override
@@ -58,7 +73,7 @@ public class UnicornEntity extends AbstractHorseEntity {
 
   @Override
   public boolean isPotionApplicable(EffectInstance potioneffectIn) {
-    if (potioneffectIn.getPotion() == Effects.POISON) {
+    if (potioneffectIn.getPotion().getEffectType() == EffectType.HARMFUL) {
       PotionEvent.PotionApplicableEvent event = new PotionEvent.PotionApplicableEvent(this, potioneffectIn);
       MinecraftForge.EVENT_BUS.post(event);
       return event.getResult() == Event.Result.ALLOW;
@@ -118,6 +133,11 @@ public class UnicornEntity extends AbstractHorseEntity {
       if (this.isBeingRidden()) {
         return super.func_230254_b_(player, hand);
       }
+      
+      if((itemstack.isEmpty() && this.isTame()) || itemstack.getItem() == GFRegistry.GOLDEN_BRIDLE) {
+        this.mountTo(player);
+        return ActionResultType.func_233537_a_(this.world.isRemote());
+      }
     }
 
     if (!itemstack.isEmpty()) {
@@ -142,18 +162,23 @@ public class UnicornEntity extends AbstractHorseEntity {
       }
     }
 
-    if (this.isChild()) {
+//    if (this.isChild()) {
       return super.func_230254_b_(player, hand);
-    } else if(this.isTame() || itemstack.getItem() == GFRegistry.GOLDEN_BRIDLE) {
-      this.mountTo(player);
-    }
-    return ActionResultType.func_233537_a_(this.world.isRemote());
+//    } else {
+//      this.mountTo(player);
+//      return ActionResultType.func_233537_a_(this.world.isRemote());
+//    }
   }
 
 //  @Override
 //  public boolean isArmor(ItemStack stack) {
 //    return stack.getItem() instanceof HorseArmorItem;
 //  }
+  
+  @Override
+  public int getMaxTemper() {
+    return 200;
+  }
 
   @Override
   public boolean canMateWith(final AnimalEntity otherAnimal) {

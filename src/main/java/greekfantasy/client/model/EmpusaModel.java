@@ -1,6 +1,7 @@
 package greekfantasy.client.model;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 import greekfantasy.entity.EmpusaEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
@@ -90,8 +91,8 @@ public class EmpusaModel<T extends EmpusaEntity> extends BipedModel<T> {
   }
   
   @Override
-  protected Iterable<ModelRenderer> getBodyParts() { return ImmutableList.of(this.bipedBody, this.bipedLeftArm, this.bipedRightArm, this.chest, this.leftWingArm, this.rightWingArm, this.bipedLeftLeg, this.bipedRightLeg, this.bipedHeadwear); }
-  
+  protected Iterable<ModelRenderer> getBodyParts() { return Iterables.concat(super.getBodyParts(), ImmutableList.of(this.chest, this.leftWingArm, this.rightWingArm)); }
+    
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, partialTick, rotationYaw, rotationPitch);

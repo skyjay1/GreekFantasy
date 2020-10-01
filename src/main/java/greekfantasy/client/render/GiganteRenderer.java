@@ -5,7 +5,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.model.GiganteModel;
 import greekfantasy.entity.GiganteEntity;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
@@ -25,11 +24,7 @@ public class GiganteRenderer<T extends GiganteEntity> extends BipedRenderer<T, G
   }
   
   @Override
-  public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
-      final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
-    matrixStackIn.push();
-    matrixStackIn.scale(SCALE, SCALE, SCALE);
-    super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
-    matrixStackIn.pop();
+  protected void preRenderCallback(final T entity, MatrixStack matrix, float ageInTicks) {
+    matrix.scale(SCALE, SCALE, SCALE);
   }
 }

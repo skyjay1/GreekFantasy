@@ -71,7 +71,8 @@ public final class GFWorldGen {
       event.getGeneration().withFeature(
         GenerationStage.Decoration.UNDERGROUND_DECORATION,
         Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.MARBLE.getDefaultState(), 33))
-          // I have no idea what these functions are, I copied them from world.gen.feature.Features
+          // unmapped methods copied from world.gen.feature.Features
+		  // 33 = vein size, 80 = maxY, func_242728_a = spreadHorizontally, func_242731_b = repeat, 
           .func_242733_d(80).func_242728_a().func_242731_b(10)
       );
       // Limestone

@@ -1,11 +1,17 @@
 package greekfantasy.client.model;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import greekfantasy.entity.MinotaurEntity;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T> {
+  
+  private boolean stomping;
 
   public MinotaurModel(float modelSize) {
     super(modelSize, true, false);
@@ -37,14 +43,26 @@ public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T>
       rightHoof.rotateAngleX = -0.5236F - rightLegSwing;
       leftLegLower.rotateAngleX = 0.7854F + leftLegSwing;
       leftHoof.rotateAngleX = -0.5236F - leftLegSwing;
-      // body
-      // TODO fix this
-      this.bipedBody.rotateAngleX = entity.isStomping() ? 0.12F : 0.0F;
       // head
-      this.bipedHead.rotateAngleX = 0.42F;
+      this.bipedHead.rotateAngleX = 0.558F;
     }
   }
   
+  @Override
+  public void render(final MatrixStack matrixStackIn, final IVertexBuilder vertexBuilder, final int packedLightIn, final int packedOverlayIn, 
+      final float redIn, final float greenIn, final float blueIn, final float alphaIn) {
+    matrixStackIn.push();
+    if(stomping) {
+      matrixStackIn.rotate(Vector3f.XP.rotationDegrees(9.0F));
+    }
+    super.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, redIn, greenIn, blueIn, alphaIn);
+    matrixStackIn.pop();
+  }
+  
+  public boolean isStomping() { return stomping; }
+  public void setStomping(final boolean isStomping) { stomping = isStomping; }
+  public void resetStomping() { stomping = false; }
+
   public static ModelRenderer makeBullHorns(EntityModel<?> model, final float modelSize, final boolean isLeft) {
     final int textureX = isLeft ? 58 : 51;
     final float horn1X = isLeft ? 3.0F : -3.0F;

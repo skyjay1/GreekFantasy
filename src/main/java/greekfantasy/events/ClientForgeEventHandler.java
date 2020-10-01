@@ -8,6 +8,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -15,6 +16,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 
 public class ClientForgeEventHandler {
+  
+  @SubscribeEvent
+  public static void registerModels(final ModelRegistryEvent event) {
+    
+  }
     
   /**
    * This method handles when the player is wearing the winged sandals item.
@@ -39,7 +45,6 @@ public class ClientForgeEventHandler {
         player.autoJumpEnabled = mc.gameSettings.autoJump;
       }
     }
-    
   }
   
   /**

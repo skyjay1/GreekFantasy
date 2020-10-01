@@ -11,6 +11,7 @@ import greekfantasy.entity.HarpyEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.RotatedPillarBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.tags.BlockTags;
@@ -52,7 +53,7 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
     final Optional<RegistryKey<Biome>> biome = reader.func_242406_i(pos);
     final boolean isDesert = Objects.equals(biome, Optional.of(Biomes.DESERT)) || Objects.equals(biome, Optional.of(Biomes.DESERT_HILLS));
     final BlockState log = getLogState(biome);
-    final BlockState leaf = isDesert ? Blocks.AIR.getDefaultState() : getLeavesState(log);
+    final BlockState leaf = isDesert ? Blocks.AIR.getDefaultState() : getLeavesState(log).with(LeavesBlock.DISTANCE, Integer.valueOf(3));
     
     final int variant = rand.nextInt(2);
     final Rotation rotation = Rotation.randomRotation(rand);

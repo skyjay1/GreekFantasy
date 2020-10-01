@@ -58,6 +58,7 @@ public class GiganteModel<T extends CreatureEntity> extends BipedModel<T> {
   @Override
   public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha) {
+    // this corrects a model offset mistake :/
     matrixStackIn.push();
     matrixStackIn.translate(0, 0, -0.25D);
     super.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);

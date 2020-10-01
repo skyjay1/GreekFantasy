@@ -47,8 +47,10 @@ public class GFConfig {
   // special spawn configs
   private final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
   private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
+  private final ForgeConfigSpec.IntValue ELPIS_SPAWN_CHANCE;
   private boolean shadeSpawnOnDeath;
   private int satyrShamanChance;
+  private int elpisSpawnChance;
   
   // other special entity abilities
   public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
@@ -139,6 +141,8 @@ public class GFConfig {
         .define("shade_spawn_on_death", true);
     SATYR_SHAMAN_CHANCE = builder.comment("Percent chance that a satyr will be a shaman")
         .defineInRange("satyr_shaman_chance", 20, 0, 100);
+    ELPIS_SPAWN_CHANCE = builder.comment("Percent chance that opening a mysterious box spawns an Elpis")
+        .defineInRange("elpis_spawn_chance", 50, 0, 100);
     builder.pop();
     // feature configs
     builder.comment("structure and feature spread (higher number = less common)");
@@ -167,6 +171,7 @@ public class GFConfig {
     overstepEnabled = OVERSTEP_ENABLED.get();
     shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
+    elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
     dryadAngryOnHarvest = DRYAD_ANGRY_ON_HARVEST.get();
     dryadAngryRange = DRYAD_ANGRY_RANGE.get();
   }
@@ -176,6 +181,7 @@ public class GFConfig {
   public boolean isOverstepEnabled() { return overstepEnabled; }
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
   public int getSatyrShamanChance() { return satyrShamanChance; }
+  public int getElpisSpawnChance() { return elpisSpawnChance; }
   public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }
   public int getDryadAngryRange() { return dryadAngryRange; }
 }

@@ -4,7 +4,6 @@ import java.util.EnumSet;
 import java.util.Optional;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.FindBlockGoal;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;

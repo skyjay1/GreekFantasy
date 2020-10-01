@@ -119,7 +119,6 @@ public class WingedSandalsItem extends ArmorItem {
    * @return A ModelBiped to render instead of the default
    */
   @OnlyIn(Dist.CLIENT)
-  @Nullable
   public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default) {
     if(MODEL == null) {
       MODEL = new greekfantasy.client.model.armor.WingedSandalsModel(1.0F);

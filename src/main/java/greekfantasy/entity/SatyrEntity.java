@@ -372,7 +372,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     protected int cooldown;
     
     public SummonAnimalsGoal(final int summonProgressIn, final int summonCooldownIn) {
-      this.setMutexFlags(EnumSet.allOf(Goal.Flag.class));
+      this.setMutexFlags(EnumSet.noneOf(Goal.Flag.class));
       maxProgress = summonProgressIn;
       maxCooldown = summonCooldownIn;
       cooldown = 60;

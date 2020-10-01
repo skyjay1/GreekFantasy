@@ -25,11 +25,16 @@ public class GeryonRenderer<T extends GeryonEntity> extends BipedRenderer<T, Ger
   }
   
   @Override
-  public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
-      final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
-    matrixStackIn.push();
-    matrixStackIn.scale(SCALE, SCALE, SCALE);
-    super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
-    matrixStackIn.pop();
+  protected void preRenderCallback(final T entity, MatrixStack matrix, float f) {
+    matrix.scale(SCALE, SCALE, SCALE);
   }
+  
+//  @Override
+//  public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
+//      final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
+//    matrixStackIn.push();
+//    matrixStackIn.scale(SCALE, SCALE, SCALE);
+//    super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
+//    matrixStackIn.pop();
+//  }
 }

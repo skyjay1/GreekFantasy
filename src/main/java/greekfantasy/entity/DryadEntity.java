@@ -197,6 +197,10 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
+  @Override
+  public ResourceLocation getLootTable() {
+    return this.getVariant().getLootTable();
+  }  
   
   //IAngerable methods
   
@@ -338,14 +342,14 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     
     @Override
     public boolean shouldExecute() {
-      return !DryadEntity.this.getTreePos().isPresent() && super.shouldExecute();
+      return (!DryadEntity.this.getTreePos().isPresent() || DryadEntity.this.getRNG().nextInt(500) == 0) && super.shouldExecute();
     }
     
     @Override
     public boolean isTargetBlock(IWorldReader worldIn, BlockPos pos) {
       // valid block if there is a tree here and it has not been occupied by another dryad
       return isTreeAt(worldIn, pos, DryadEntity.this.getVariant().getBlocks()) 
-          && DryadEntity.this.getEntityWorld().getEntitiesWithinAABBExcludingEntity(DryadEntity.this, new AxisAlignedBB(pos.up())).isEmpty();
+          && DryadEntity.this.getEntityWorld().getEntitiesWithinAABB(DryadEntity.class, new AxisAlignedBB(pos.up()).grow(0.5D)).isEmpty();
     }
 
     @Override
@@ -417,6 +421,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     private final Supplier<Block> sapling;
     private final ResourceLocation tag;
     private final ResourceLocation texture;
+    private final ResourceLocation lootTable;
     
     private Variant(final int idIn, final String nameIn, final Supplier<Block> saplingIn) {
       id = idIn;
@@ -424,6 +429,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       sapling = saplingIn;
       tag = new ResourceLocation("minecraft", name + "_logs");
       texture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/dryad/" + name + ".png");
+      lootTable = new ResourceLocation(GreekFantasy.MODID, "entities/dryad/" + name);
     }
     
     public static Variant getForBiome(final Optional<RegistryKey<Biome>> biome) {
@@ -478,6 +484,10 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     
     public BlockState getSapling() {
       return sapling.get().getDefaultState();
+    }
+    
+    public ResourceLocation getLootTable() {
+      return lootTable;
     }
   
     public byte getId() {

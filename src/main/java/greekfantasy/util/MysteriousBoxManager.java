@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ElpisEntity;
 import net.minecraft.advancements.FunctionManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.CommandSource;
@@ -54,9 +56,21 @@ public class MysteriousBoxManager {
       if(function.isPresent()) {
         final CommandSource commandSource = manager.getCommandSource().withEntity(playerIn).withPos(vec).withPermissionLevel(4).withFeedbackDisabled();
         manager.execute(function.get(), commandSource);
+        // percent chance to spawn Elpis as well
+        if(worldIn.getRandom().nextInt(100) < GreekFantasy.CONFIG.getElpisSpawnChance()) {
+          addElpis(worldIn, pos);
+        }
         return true;
       }
     }
     return false;
+  }
+  
+  public static void addElpis(final World worldIn, final BlockPos pos) {
+    final ElpisEntity entity = GFRegistry.ELPIS_ENTITY.create(worldIn);
+    entity.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.85D, pos.getZ() + 0.5D, 0, 0);
+    entity.setHomePosAndDistance(pos.up(), ElpisEntity.wanderDistance);
+    entity.enablePersistence();
+    worldIn.addEntity(entity);
   }
 }

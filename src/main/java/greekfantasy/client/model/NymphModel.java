@@ -1,6 +1,9 @@
 package greekfantasy.client.model;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
@@ -17,6 +20,9 @@ public class NymphModel<T extends MobEntity> extends BipedModel<T> {
     bipedHead.setRotationPoint(0.0F, 0.0F, 1.5F);
     bipedHead.setTextureOffset(0, 0).addBox(-3.5F, -7.0F, -3.5F, 7.0F, 7.0F, 7.0F, modelSize);
     bipedHead.setTextureOffset(21, 0).addBox(-3.5F, 0.0F, 2.5F, 7.0F, 6.0F, 1.0F, modelSize);
+    
+    // hide headwear
+    bipedHeadwear.showModel = false;
 
     bipedBody = new ModelRenderer(this, 0, 16);
     bipedBody.addBox(-3.0F, 0.0F, 0.0F, 6.0F, 12.0F, 3.0F, modelSize);
@@ -44,8 +50,8 @@ public class NymphModel<T extends MobEntity> extends BipedModel<T> {
   }
   
   @Override
-  protected Iterable<ModelRenderer> getBodyParts() { return ImmutableList.of(this.bipedBody, this.bipedChest, this.bipedLeftArm, this.bipedRightArm, this.bipedLeftLeg, this.bipedRightLeg); }
-
+  protected Iterable<ModelRenderer> getBodyParts() { return Iterables.concat(super.getBodyParts(), ImmutableList.of(this.bipedChest)); }
+  
   @Override
   public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
       float headPitch) {
@@ -56,5 +62,15 @@ public class NymphModel<T extends MobEntity> extends BipedModel<T> {
     bipedRightArm.setRotationPoint(-3.0F, 2.0F, 1.5F);
     bipedLeftLeg.setRotationPoint(1.5F, 12.0F, 1.5F);
     bipedRightLeg.setRotationPoint(-1.5F, 12.0F, 1.5F);
+  }
+  
+  @Override
+  public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
+      float green, float blue, float alpha) {
+    // this corrects a model offset mistake :/
+    matrixStackIn.push();
+    matrixStackIn.translate(0, 0, -0.125D);
+    super.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+    matrixStackIn.pop();
   }
 }
