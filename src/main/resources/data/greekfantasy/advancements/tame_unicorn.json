@@ -1,0 +1,33 @@
+{
+  "parent": "greekfantasy:root",
+  "display": {
+    "icon": {
+      "item": "greekfantasy:golden_bridle"
+    },
+    "title": {
+      "translate": "advancements.greekfantasy.tame_unicorn.title"
+    },
+    "description": {
+      "translate": "advancements.greekfantasy.tame_unicorn.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "tamed_unicorn": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+		"entity": {
+	      "type": "greekfantasy:unicorn"
+		}
+	  }
+    }
+  },
+  "requirements": [
+    [
+      "tamed_unicorn"
+    ]
+  ]
+}

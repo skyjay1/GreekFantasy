@@ -10,27 +10,27 @@ __Key:__
 `[Model] [AI] [Loot table]`
 
 X _ _ Naiad
-X ~ _ Dryad
+X ~ X Dryad
 X ~ _ Satyr
 X ~ _ Centaur
 X X _ Minotaur
 X X _ Gorgon (Medusa)
 X X _ Harpy
 X X _ Empusa
-X X _ Shade
+X X X Shade
 ~ _ _ Siren (hostile)
-X X _ Cerastes (ram-horned serpent)
-X ~ _ Ara (Propoetide)
+X X X Cerastes (ram-horned serpent)
+X ~ X Ara (Propoetide)
 X _ _ Cyclopes
 X _ _ Gigante
 X ~ _ Cyprian Centaurs (bull-horns, hostile)
-X X _ Unicorn
+X X X Unicorn
 ~ X _ Orthus (2-headed dog) (TODO fix model)
 _ _ _ Eurynomos (blue skin; vulture head?)
 X ~ _ Elpis (hope)
 _ _ _ Hippocampus
 X _ _ Boss: Cerberus
-X _ _ Boss: Geryon (3-headed Gigante)
+X ~ _ Boss: Geryon (3-headed Gigante)
 
 
 ## Entity AI
@@ -44,7 +44,8 @@ X Satyrs dance around campfires
 X Satyrs summon wolves
 X Satyrs light unlit campfires
 _ Satyrs trade with player (obtain panflute)
-_ Geryon smash attack (jump+smash? or just swing club?)
+X Geryon smash attack
+_ Another Geryon attack
 ~ Centaurs / Cyprians shoot arrows (TODO: animation not working)
 ~ Minotaur charges at player (TODO: extend charge beyond player position)
 X Minotaur is stunned when charge attack misses
@@ -98,11 +99,12 @@ X Become petrified
 X Encounter Cerastes
 X Kill Shade
 _ Anger Dryads by chopping logs
-_ Ride a Unicorn
+X Tame a Unicorn
 _ Use a unicorn horn
 _ Open a Mysterious Box
-_ Equip Winged Sandals (Much Fast, So Speed!)
-_ Kill a Geryon
+_ Obtain Ambrosia
+X Obtain Winged Sandals (Much Fast, So Speed!)
+X Kill a Geryon
 
 ## Other
 

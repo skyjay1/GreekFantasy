@@ -117,7 +117,7 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   @Override
   public boolean attackEntityAsMob(final Entity entityIn) {
     if (super.attackEntityAsMob(entityIn)) {
-      entityIn.setMotion(entityIn.getMotion().add(0.0D, (double)0.55F, 0.0D));
+      entityIn.setMotion(entityIn.getMotion().add(0.0D, (double)0.25F, 0.0D));
       return true;
     }
     return false;

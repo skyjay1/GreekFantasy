@@ -1,6 +1,15 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "greekfantasy:item/unicorn_horn"
+  "parent":"forge:item/default",
+  "loader":"forge:separate-perspective",
+  "base": {
+    "parent": "greekfantasy:item/unicorn_horn_held"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "minecraft:item/generated",
+	  "textures": {
+		"layer0": "greekfantasy:item/unicorn_horn"
+	  }
+    }
   }
 }

@@ -1,6 +1,18 @@
 {
-  "parent": "greekfantasy:item/club",
-  "textures": {
-    "2": "minecraft:block/iron_block"
+  "parent":"forge:item/default",
+  "loader":"forge:separate-perspective",
+  "base": {
+    "parent": "greekfantasy:item/club",
+	"textures": {
+	  "spikes": "minecraft:block/iron_block"
+	}
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "minecraft:item/generated",
+	  "textures": {
+		"layer0": "greekfantasy:item/iron_club"
+	  }
+    }
   }
 }

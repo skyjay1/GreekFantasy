@@ -50,9 +50,9 @@ public class MysteriousBoxBlock extends HorizontalBlock {
   @Override
   public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
-    
-    if(playerIn.isServerWorld()) {
-      if(!state.get(OPEN).booleanValue()) {
+    if(!state.get(OPEN).booleanValue()) {
+      addSmokeParticles(worldIn, pos, worldIn.rand, 32);
+      if(playerIn.isServerWorld()) {
         // open the box
         final boolean open = MysteriousBoxManager.onBoxOpened(worldIn, playerIn, state, pos);
         if(open) {
@@ -80,18 +80,22 @@ public class MysteriousBoxBlock extends HorizontalBlock {
   @OnlyIn(Dist.CLIENT)
   public void animateTick(BlockState stateIn, World world, BlockPos pos, Random rand) {
     if(stateIn.get(OPEN).booleanValue()) {
-      final double x = pos.getX() + 0.5D;
-      final double y = pos.getY() + 0.22D;
-      final double z = pos.getZ() + 0.5D;
-      final double motion = 0.08D;
-      final double radius = 0.25D;
-      for (int i = 0; i < 3; i++) {
-        world.addParticle(ParticleTypes.SMOKE, 
-            x + (world.rand.nextDouble() - 0.5D) * radius, y, z + (world.rand.nextDouble() - 0.5D) * radius,
-            (world.rand.nextDouble() - 0.5D) * motion, 
-            (world.rand.nextDouble() - 0.5D) * motion * 0.5D,
-            (world.rand.nextDouble() - 0.5D) * motion);
-      }
+      addSmokeParticles(world, pos, rand, 3);
+    }
+  }
+  
+  private void addSmokeParticles(final World world, final BlockPos pos, final Random rand, final int count) {
+    final double x = pos.getX() + 0.5D;
+    final double y = pos.getY() + 0.22D;
+    final double z = pos.getZ() + 0.5D;
+    final double motion = 0.08D;
+    final double radius = 0.25D;
+    for (int i = 0; i < count; i++) {
+      world.addParticle(ParticleTypes.SMOKE, 
+          x + (world.rand.nextDouble() - 0.5D) * radius, y, z + (world.rand.nextDouble() - 0.5D) * radius,
+          (world.rand.nextDouble() - 0.5D) * motion, 
+          (world.rand.nextDouble() - 0.5D) * motion * 0.5D,
+          (world.rand.nextDouble() - 0.5D) * motion);
     }
   }
 }

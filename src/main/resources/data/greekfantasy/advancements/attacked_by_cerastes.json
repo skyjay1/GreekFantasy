@@ -6,10 +6,10 @@
       "nbt": "{Damage:0}"
     },
     "title": {
-      "translate": "advancements.greekfantasy.ambushed_from_below.title"
+      "translate": "advancements.greekfantasy.attacked_by_cerastes.title"
     },
     "description": {
-      "translate": "advancements.greekfantasy.ambushed_from_below.description"
+      "translate": "advancements.greekfantasy.attacked_by_cerastes.description"
     },
     "frame": "task",
     "show_toast": true,
@@ -19,11 +19,15 @@
   "criteria": {
     "attacked_by_cerastes": {
       "trigger": "minecraft:entity_hurt_player",
-      "damage": {
-		"source_entity": {
-		  "type": "greekfantasy:cerastes"
-		}
-	  }
+	  "conditions": {
+        "damage": {
+          "type": {
+            "direct_entity": {
+              "type": "greekfantasy:cerastes"
+            }
+          }
+        }
+      }
     }
   },
   "requirements": [

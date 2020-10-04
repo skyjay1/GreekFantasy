@@ -1,6 +1,9 @@
 package greekfantasy;
 
+import java.util.List;
 import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
 
 import greekfantasy.block.CappedPillarBlock;
 import greekfantasy.block.MysteriousBoxBlock;
@@ -25,6 +28,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
@@ -51,7 +55,13 @@ import net.minecraft.potion.Effect;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -273,6 +283,7 @@ public final class GFRegistry {
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "golden_bridle")
     );
+    
     // block items
     registerItemBlock(event, NEST_BLOCK, "nest");
     
@@ -296,7 +307,14 @@ public final class GFRegistry {
     registerItemBlock(event, MARBLE_STATUE, "marble_statue");
     
     registerItemBlock(event, TERRACOTTA_VASE, "terracotta_vase");
-    registerItemBlock(event, MYSTERIOUS_BOX, "mysterious_box");
+    
+    // mysterious box item
+    event.getRegistry().register(new BlockItem(MYSTERIOUS_BOX, new Item.Properties().group(GREEK_GROUP)) {
+      @OnlyIn(Dist.CLIENT)
+      public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        tooltip.add(new TranslationTextComponent("block.greekfantasy.mysterious_box.tooltip").mergeStyle(TextFormatting.ITALIC, TextFormatting.GRAY));
+      }
+    }.setRegistryName(GreekFantasy.MODID, "mysterious_box"));
   }
   
   @SubscribeEvent
