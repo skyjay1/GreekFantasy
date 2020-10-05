@@ -27,6 +27,7 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -39,10 +40,12 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.BossInfo;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -56,6 +59,8 @@ public class GeryonEntity extends MonsterEntity {
   
   private static final int MAX_SMASH_TIME = 45;
   private static final double SMASH_RANGE = 12.0D;
+  
+  private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.BLUE, BossInfo.Overlay.PROGRESS)).setDarkenSky(true);
   
   private int smashTime;
   
@@ -101,6 +106,9 @@ public class GeryonEntity extends MonsterEntity {
   public void livingTick() {
     super.livingTick();
     
+    // boss info
+    this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
+    
     // update smash attack
     if(this.isSmashAttack()) {
       smashTime++;
@@ -143,6 +151,9 @@ public class GeryonEntity extends MonsterEntity {
   
   @Override
   public boolean isNonBoss() { return false; }
+  
+  @Override
+  protected boolean canBeRidden(Entity entityIn) { return false; }
   
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
@@ -237,7 +248,7 @@ public class GeryonEntity extends MonsterEntity {
    **/
   private void useSmashAttack(final Entity entity) {
     final boolean onGround = entity.isOnGround();
-    float knockback = 0.55F;
+    float knockback = 0.25F;
     if(onGround) {
       knockback = 1.65F;
       entity.addVelocity(0.0D, 0.85D, 0.0D);
@@ -251,6 +262,22 @@ public class GeryonEntity extends MonsterEntity {
       }
     }
   }
+  
+  // Boss Logic
+
+  @Override
+  public void addTrackingPlayer(ServerPlayerEntity player) {
+    super.addTrackingPlayer(player);
+    this.bossInfo.addPlayer(player);
+  }
+
+  @Override
+  public void removeTrackingPlayer(ServerPlayerEntity player) {
+    super.removeTrackingPlayer(player);
+    this.bossInfo.removePlayer(player);
+  }
+  
+  // End Boss Logic
   
   class SmashAttackGoal extends Goal {
     

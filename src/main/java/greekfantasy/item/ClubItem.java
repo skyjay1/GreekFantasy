@@ -25,7 +25,7 @@ public class ClubItem extends TieredItem implements IVanishable {
 
   public static final UUID ATTACK_KNOCKBACK_MODIFIER = UUID.fromString("d5df356d-0c5c-4629-bf18-e8dcde25bcb9");
   public static final UUID MOVE_SPEED_MODIFIER = UUID.fromString("aaa7e73d-1121-45e2-8b0e-dd2042f7dddc");
-  public static final double ATTACK_KNOCKBACK_AMOUNT = 1.5D;
+  public static final double ATTACK_KNOCKBACK_AMOUNT = 1.75D;
   protected final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
   public ClubItem(IItemTier tier, Item.Properties properties) {
@@ -37,7 +37,7 @@ public class ClubItem extends TieredItem implements IVanishable {
     builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", attackDamage, AttributeModifier.Operation.ADDITION));
     builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", attackSpeed, AttributeModifier.Operation.ADDITION));
     builder.put(Attributes.ATTACK_KNOCKBACK, new AttributeModifier(ATTACK_KNOCKBACK_MODIFIER, "Weapon modifier", ATTACK_KNOCKBACK_AMOUNT, AttributeModifier.Operation.ADDITION));
-    builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(MOVE_SPEED_MODIFIER, "Weapon modifier", moveSpeed, AttributeModifier.Operation.ADDITION));
+    builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(MOVE_SPEED_MODIFIER, "Weapon modifier", moveSpeed, AttributeModifier.Operation.MULTIPLY_TOTAL));
     this.attributeModifiers = builder.build();
   }
 

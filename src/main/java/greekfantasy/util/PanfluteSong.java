@@ -4,61 +4,74 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class PanfluteSong {
   
+  private String name;
   private String credits;
-  private int time;
+  private int interval;
   private int length;
   private int[] treble;
   private int [] bass;
   
+  /** @return the translation key for the name **/
+  public String getTranslationKey() { return name; }
+  /** @return an translated text component for the name **/
+  public IFormattableTextComponent getName() { 
+    return new TranslationTextComponent(getTranslationKey()); 
+  }
   /** @return the credits for this song **/
-  public String getCredits() { return credits; }
-  /** @return the notes per second **/
-  public int getTime() { return time; }
+  public String getCreditString() { return credits; }
+  /** @return an translated text component for the name **/
+  public IFormattableTextComponent getCredits() { 
+    return new StringTextComponent(getCreditString()).mergeStyle(TextFormatting.DARK_GRAY); 
+  }
+  /** @return the number of ticks between playing notes **/
+  public int getInterval() { return interval; }
   /** @return the number of notes in the song **/
   public int getLength() { return length; }
-  /** @return the value of 20/time **/
-  public int getPlaySpeed() { return 20 / getTime(); }
   /** @return the treble notes **/
   public int[] getTreble() { return treble; }
   /** @return the bass notes **/
   public int[] getBass() { return bass; }
   
   /**
-   * @param worldTime the world time
-   * @return Whether a note should be played at this time
+   * @param worldTime the world interval
+   * @return Whether a note should be played at this interval
    **/
   public boolean shouldPlayNote(final long worldTime) {
-    return (int)(worldTime % getPlaySpeed()) == 0;
+    return (int)(worldTime % getInterval()) == 0;
   }
   
   /**
-   * Determines which treble note(s) should be played at this time.
+   * Determines which treble note(s) should be played at this interval.
    * Currently supports up to 2 notes
-   * @param worldTime the world time
+   * @param worldTime the world interval
    * @return a set of notes to play
    **/
   public List<Integer> getTrebleNotes(final long worldTime) {
-    return getNotes(treble, worldTime, getPlaySpeed(), length);
+    return getNotes(treble, worldTime, getInterval(), length);
   }
   
   /**
-   * Determines which bass note(s) should be played at this time.
+   * Determines which bass note(s) should be played at this interval.
    * Currently supports up to 2 notes
-   * @param worldTime the world time
+   * @param worldTime the world interval
    * @return a set of notes to play
    **/
   public List<Integer> getBassNotes(final long worldTime) {
-    return getNotes(bass, worldTime, getPlaySpeed(), length);
+    return getNotes(bass, worldTime, getInterval(), length);
   }
   
   /**
-   * Determines which note(s) should be played at this time.
+   * Determines which note(s) should be played at this interval.
    * Currently supports up to 2 notes
    * @param notes the note array to reference
-   * @param worldTime the world time
+   * @param worldTime the world interval
    * @param playSpeed the number of notes to play per second
    * @param maxLength the maximum number of notes from the array to use
    * @return a set of notes to play

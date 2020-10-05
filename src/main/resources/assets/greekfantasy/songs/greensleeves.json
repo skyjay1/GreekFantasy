@@ -1,6 +1,7 @@
 {
+  "name": "song.greensleeves.name",
   "credits": "2001 Anne Christopherson",
-  "time": 4,
+  "interval": 5,
   "length": 132,
   "treble": [
   	0,0,0,8, 11,0,0,13, 15,0,17,15, 13,0,0,10, 6,0,8,10, 11,0,0,8, 8,0,7,8,

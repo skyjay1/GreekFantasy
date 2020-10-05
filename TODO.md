@@ -13,7 +13,7 @@ X _ _ Naiad
 X ~ X Dryad
 X ~ _ Satyr
 X ~ _ Centaur
-X X _ Minotaur
+X X X Minotaur
 X X _ Gorgon (Medusa)
 X X _ Harpy
 X X _ Empusa
@@ -23,7 +23,7 @@ X X X Cerastes (ram-horned serpent)
 X ~ X Ara (Propoetide)
 X _ _ Cyclopes
 X _ _ Gigante
-X ~ _ Cyprian Centaurs (bull-horns, hostile)
+X ~ X Cyprian Centaurs (bull-horns, hostile)
 X X X Unicorn
 ~ X _ Orthus (2-headed dog) (TODO fix model)
 _ _ _ Eurynomos (blue skin; vulture head?)
@@ -84,14 +84,15 @@ _ Grapes / grapevines?
 
 ## Items
 
-~ Panflute (TODO: song selection)
+X Panflute
 X Clubs (wood, stone/flint, iron) (TODO: 16x16 icons)
 _ Javelins (wood, stone/flint, iron)
 X Golden bridle (for Unicorn)
 X Winged sandals
 X Bull Horn (from Minotaur / Cyprians) (needs use)
-X Unicorn Horn (while holding, cures certain potion effects?)
-X Ambrosia (like ench. golden apple) (use horn as cornucopia?)
+X Unicorn Horn (while holding, cures certain potion effects)
+X Ambrosia (like ench. golden apple)
+_ Magical feather
 
 ## Achievements
 
@@ -114,7 +115,7 @@ X "Stunned" effect (prevent movement or item use)
 ~ "Petrified" effect
 X "Overstep" enchantment
 ~ Panflute songs
-_ Panflute song selection GUI?
+X Panflute song selection GUI
 ~ Lots of mysterious box functions!
 _ Some way to obtain Winged Sandals
 _ Some way to obtain Mysterious Box

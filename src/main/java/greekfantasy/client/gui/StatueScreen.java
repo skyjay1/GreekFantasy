@@ -272,7 +272,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     public IconButton(final StatueScreen screenIn, final int x, final int y, final int tX, final int tY,
         final ITextComponent title, final IPressable pressedAction) {
       super(x, y, BTN_HEIGHT, BTN_HEIGHT, StringTextComponent.EMPTY, pressedAction, (button, matrix, mouseX, mouseY) -> {
-        if(button.active) {
+        if(button.isHovered()) {
           screenIn.renderTooltip(matrix, screenIn.minecraft.fontRenderer.trimStringToWidth(title, Math.max(screenIn.width / 2 - 43, 170)), mouseX, mouseY);
         }
       });

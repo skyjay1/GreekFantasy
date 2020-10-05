@@ -103,14 +103,16 @@ public final class GFRegistry {
   public static final Item STONE_CLUB = null;
   @ObjectHolder("wooden_club")
   public static final Item WOODEN_CLUB = null;
-  @ObjectHolder("winged_sandals")
-  public static final Item WINGED_SANDALS = null;
-  @ObjectHolder("ambrosia")
-  public static final Item AMBROSIA = null;
-  @ObjectHolder("unicorn_horn")
-  public static final Item UNICORN_HORN = null;
-  @ObjectHolder("bull_horn")
-  public static final Item BULL_HORN = null;
+//  @ObjectHolder("winged_sandals")
+//  public static final Item WINGED_SANDALS = null;
+//  @ObjectHolder("ambrosia")
+//  public static final Item AMBROSIA = null;
+//  @ObjectHolder("unicorn_horn")
+//  public static final Item UNICORN_HORN = null;
+//  @ObjectHolder("horn")
+//  public static final Item HORN = null;
+//  @ObjectHolder("magic_feather")
+//  public static final Item MAGIC_FEATHER = null;
   @ObjectHolder("golden_bridle")
   public static final Item GOLDEN_BRIDLE = null;
   
@@ -279,9 +281,11 @@ public final class GFRegistry {
         new UnicornHornItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
           .setRegistryName(GreekFantasy.MODID, "unicorn_horn"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "bull_horn"),
+          .setRegistryName(GreekFantasy.MODID, "horn"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "golden_bridle")
+          .setRegistryName(GreekFantasy.MODID, "golden_bridle"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "magic_feather")
     );
     
     // block items

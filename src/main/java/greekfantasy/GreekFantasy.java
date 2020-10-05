@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import greekfantasy.client.network.CUpdatePanflutePacket;
 import greekfantasy.client.network.CUpdateStatuePosePacket;
 import greekfantasy.proxy.ClientProxy;
 import greekfantasy.proxy.Proxy;
@@ -55,6 +56,7 @@ public class GreekFantasy {
     GreekFantasy.LOGGER.debug("registerNetwork");
     int messageId = 0;
     CHANNEL.registerMessage(messageId++, CUpdateStatuePosePacket.class, CUpdateStatuePosePacket::toBytes, CUpdateStatuePosePacket::fromBytes, CUpdateStatuePosePacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+    CHANNEL.registerMessage(messageId++, CUpdatePanflutePacket.class, CUpdatePanflutePacket::toBytes, CUpdatePanflutePacket::fromBytes, CUpdatePanflutePacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
   }
 
   public static void setup(final FMLCommonSetupEvent event) {

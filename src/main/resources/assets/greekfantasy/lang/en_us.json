@@ -26,7 +26,7 @@
   "item.greekfantasy.stone_club": "Stone Club",
   "item.greekfantasy.wooden_club": "Wooden Club",
   "item.greekfantasy.winged_sandals": "Winged Sandals",
-  "item.greekfantasy.bull_horn": "Bull Horn",
+  "item.greekfantasy.horn": "Horn",
   "item.greekfantasy.unicorn_horn": "Unicorn Horn",
   "item.greekfantasy.golden_bridle": "Golden Bridle",
   "block.greekfantasy.nest": "Harpy Nest",
@@ -74,5 +74,9 @@
   "gui.statue.left_arm": "Left Arm",
   "gui.statue.right_arm": "Right Arm",
   "gui.statue.left_leg": "Left Leg",
-  "gui.statue.right_leg": "Right Leg"
+  "gui.statue.right_leg": "Right Leg",
+  "gui.panflute.title": "Panflute Songs",
+  "song.greensleeves.name": "Greensleeves",
+  "song.sarias_song.name": "Saria's Song",
+  "song.sound_of_silence.name": "The Sound of Silence"
 }

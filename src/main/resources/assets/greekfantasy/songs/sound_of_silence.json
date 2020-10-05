@@ -1,6 +1,7 @@
 {
+  "name": "song.sound_of_silence.name",
   "credits": "1964 Paul Simon",
-  "time": 4,
+  "interval": 5,
   "length": 132,
   "treble": [
   	0,0,0,0,0,0,0,0, 0,0,8,8,11,11,15,15, 13,0,0,0,0,0,0,0,

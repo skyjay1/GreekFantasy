@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+  	"FQF"
+    "FBF"
+  ],
+  "key": {
+    "F": {
+      "item": "greekfantasy:magic_feather"
+    },
+    "Q": {
+      "item": "minecraft:quartz"
+    },
+    "B": {
+      "item": "minecraft:leather_boots"
+    }
+  },
+  "result": {
+    "item": "greekfantasy:winged_sandals",
+    "count": 1
+  }
+}

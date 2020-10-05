@@ -1,6 +1,7 @@
 {
+  "name": "song.sarias_song.name",
   "credits": "1998 Koji Kondo",
-  "time": 4,
+  "interval": 5,
   "length": 32,
   "treble": [
   	0,0,0,0, 11,15,17,0, 11,15,17,0, 11,15,17,22, 20,0,17,18, 17,13,10,0, 8,10,13,10, 0,0,0,0
