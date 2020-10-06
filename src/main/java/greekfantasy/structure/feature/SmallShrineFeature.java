@@ -28,7 +28,6 @@ public class SmallShrineFeature extends Feature<NoFeatureConfig> {
 
   public SmallShrineFeature(final Codec<NoFeatureConfig> codec) {
     super(codec);
-    // TODO Auto-generated constructor stub
   }
 
   @Override
@@ -49,14 +48,13 @@ public class SmallShrineFeature extends Feature<NoFeatureConfig> {
       return false;
     }
     
-    
     // rotation / mirror
     Mirror mirror = Mirror.NONE;
     Rotation rotation = Rotation.randomRotation(rand);
     
     // placement settings
     ChunkPos chunkPos = new ChunkPos(pos);
-    MutableBoundingBox mbb = new MutableBoundingBox(chunkPos.getXStart(), pos.getY(), chunkPos.getZStart(), chunkPos.getXEnd(), pos.getY() + 16, chunkPos.getZEnd());
+    MutableBoundingBox mbb = new MutableBoundingBox(chunkPos.getXStart(), pos.getY() - 16, chunkPos.getZStart(), chunkPos.getXEnd(), pos.getY() + 16, chunkPos.getZEnd());
     PlacementSettings placement = new PlacementSettings()
         .setRotation(rotation).setMirror(mirror).setRandom(rand).setBoundingBox(mbb)
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);

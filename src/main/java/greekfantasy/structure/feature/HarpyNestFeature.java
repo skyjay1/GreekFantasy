@@ -50,7 +50,7 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
       return false;
     }
     
-    final Optional<RegistryKey<Biome>> biome = reader.func_242406_i(pos);
+    final Optional<RegistryKey<Biome>> biome = reader.getWorld().func_242406_i(pos);
     final boolean isDesert = Objects.equals(biome, Optional.of(Biomes.DESERT)) || Objects.equals(biome, Optional.of(Biomes.DESERT_HILLS));
     final BlockState log = getLogState(biome);
     final BlockState leaf = isDesert ? Blocks.AIR.getDefaultState() : getLeavesState(log).with(LeavesBlock.DISTANCE, Integer.valueOf(3));

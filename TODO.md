@@ -59,6 +59,7 @@ X Unicorn can be tamed / ridden
 _ Elpis grants something to player
 
 ## Structures
+
 X Harpy Nests
 X Satyr Camps
 _ Centaur Camps
@@ -73,26 +74,34 @@ X Limestone veins
 
 ## Blocks
 
-~ Harpy Nest - need drops/use
-~ Limestone (raw, smooth, slab, pillar) (TODO: pillar texture)
-X Marble (raw, smooth, slab, pillar)
-X Statues
-X Vase
-_ Urn
-X Mysterious box
-_ Grapes / grapevines?
+__Key:__
+`[In-game] [Use] [Obtainable]`
+
+X X X Harpy Nest
+X X X Limestone (raw, smooth, slab, pillar)
+X X X Marble (raw, smooth, slab, pillar)
+X X X Statues
+X X X Vase
+_ _ _ Urn
+X X _ Mysterious box
+_ _ _ Grapes / grapevines?
 
 ## Items
 
-X Panflute
-X Clubs (wood, stone/flint, iron) (TODO: 16x16 icons)
-_ Javelins (wood, stone/flint, iron)
-X Golden bridle (for Unicorn)
-X Winged sandals
-X Bull Horn (from Minotaur / Cyprians) (needs use)
-X Unicorn Horn (while holding, cures certain potion effects)
-X Ambrosia (like ench. golden apple)
-_ Magical feather
+__Key:__
+`[In-game] [Use] [Obtainable]`
+
+X X _ Panflute
+X X X Clubs (wood, stone/flint, iron)
+_ _ _ Javelins (wood, stone/flint, iron)
+X X X Golden bridle (for Unicorn)
+X X X Winged sandals
+X X X Bull Horn (from Minotaur / Cyprians)
+X X X Unicorn Horn (while holding, cures certain potion effects)
+X X X Ambrosia (like ench. golden apple)
+X X X Magical feather
+_ _ _ Healing rod (can not be used on self) (healing projectiles)
+_ _ _ Helm of Darkness (grants invisibility w/o particles) (from Cyclopes somehow)
 
 ## Achievements
 
@@ -102,8 +111,8 @@ X Kill Shade
 _ Anger Dryads by chopping logs
 X Tame a Unicorn
 _ Use a unicorn horn
-_ Open a Mysterious Box
-_ Obtain Ambrosia
+X Obtain a Mysterious Box
+X Obtain Ambrosia
 X Obtain Winged Sandals (Much Fast, So Speed!)
 X Kill a Geryon
 
@@ -115,19 +124,26 @@ X "Stunned" effect (prevent movement or item use)
 ~ "Petrified" effect
 X "Overstep" enchantment
 ~ Panflute songs
+ - Loch Lomond, Amazing Grace, LOTR/Hobbit theme, Clementine, Waltzing Matilda, Yellow Rose of Texas, O du lieber Augustin
 X Panflute song selection GUI
 ~ Lots of mysterious box functions!
-_ Some way to obtain Winged Sandals
+X Some way to obtain Winged Sandals
 _ Some way to obtain Mysterious Box
 
 ## Misc Ideas and Inspirations
 
 _Can I do something with these?_
 
+- Belt of Aphrodite (maybe allows disguise as other player?)
+- Dragon's Teeth (used to summon Sparti, skeleton warriors)
+- Palladium (statue that provides safety)
+- River Styx
 - Midas touch
 - Tantalus
 - Demeter (goddess of growth/fertility/crops)
+- Sphinx
 - Hydra
+- Nemean Lion (invulnerable to physical damage)
 - Charybdis (monster in whirlpool)
 - Telchine (seal hands)
 - Makhai (6 arms)

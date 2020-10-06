@@ -1,14 +1,14 @@
 {
-  "parent": "greekfantasy:kill_harpy",
+  "parent": "greekfantasy:root",
   "display": {
     "icon": {
-      "item": "greekfantasy:winged_sandals"
+      "item": "greekfantasy:mysterious_box"
     },
     "title": {
-      "translate": "advancements.greekfantasy.obtain_winged_sandals.title"
+      "translate": "advancements.greekfantasy.obtain_mysterious_box.title"
     },
     "description": {
-      "translate": "advancements.greekfantasy.obtain_winged_sandals.description"
+      "translate": "advancements.greekfantasy.obtain_mysterious_box.description"
     },
     "frame": "task",
     "show_toast": true,
@@ -16,12 +16,12 @@
     "hidden": false
   },
   "criteria": {
-    "sandals": {
+    "box": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "greekfantasy:winged_sandals"
+            "item": "greekfantasy:mysterious_box"
           }
         ]
       }
@@ -29,7 +29,7 @@
   },
   "requirements": [
     [
-      "sandals"
+      "box"
     ]
   ]
 }

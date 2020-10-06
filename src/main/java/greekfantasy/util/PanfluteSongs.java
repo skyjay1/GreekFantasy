@@ -48,7 +48,7 @@ public class PanfluteSongs extends JsonReloadListener {
     if(SONG_LOOKUP.containsKey(song)) {
       return Optional.of(SONG_LOOKUP.get(song));
     }
-    GreekFantasy.LOGGER.debug("Could not find ID for " + song.getTranslationKey() + ", this means it was not registered!");
+    GreekFantasy.LOGGER.debug("Could not find ID for " + song.getNameTranslationKey() + ", this means it was not registered!");
     return Optional.empty();
   }
   

@@ -1,3 +1,9 @@
 {
-	"parent": "greekfantasy:block/mysterious_box"
+	"parent": "greekfantasy:block/mysterious_box",
+	"display": {
+        "fixed": {
+            "rotation": [ 0, 180, 0 ],
+            "scale": [ 1.5, 1.5, 1.5 ]
+        }
+    }
 }

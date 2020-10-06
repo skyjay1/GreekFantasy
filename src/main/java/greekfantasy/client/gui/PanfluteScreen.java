@@ -17,6 +17,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -153,32 +154,43 @@ public class PanfluteScreen extends Screen {
         PanfluteScreen.this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
         this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
         // draw song name string
-        int textX = this.x + 3;
-        int textY = this.y + 4;
-        PanfluteScreen.this.font.func_243248_b(matrixStack, this.song.getName(), textX, textY, 0);
+        drawStringToFit(matrixStack, song.getName(), this.x + 3, this.y + 4, this.width - 6);
         // draw credits string
-        final IFormattableTextComponent text = this.song.getCredits();
-        final int wrap = this.width - 6;
-        float scale = 1.0F;
-        int textHeight =  PanfluteScreen.this.font.getWordWrappedHeight(text.getString(), wrap);
-        if (textHeight > PanfluteScreen.this.font.FONT_HEIGHT) {
-          scale = 0.75F;
-          textHeight = (int) (scale * PanfluteScreen.this.font.getWordWrappedHeight(text.getString(), (int) (wrap / scale)));
-        }
-        textX = this.x + 3;
-        textY = this.y + PanfluteScreen.this.font.FONT_HEIGHT + (int) (4.0F / scale);
-        // re-scale and draw the credits string
-        RenderSystem.pushMatrix();
-        RenderSystem.scalef(scale, scale, scale);
-        PanfluteScreen.this.font.func_243248_b(matrixStack, text, textX / scale, textY / scale, 0);
-        RenderSystem.popMatrix();
+        drawStringToFit(matrixStack, song.getCredits(), this.x + 3, this.y + PanfluteScreen.this.font.FONT_HEIGHT + 6, this.width - 6);
       }
     }
     
+    /**
+     * Scales a text component until it fits the given wrap width, then draws
+     * the text at the given location
+     * @param matrixStack the matrix stack
+     * @param text the text to scale and draw
+     * @param x the text x-position
+     * @param y the text y-position
+     * @param maxWidth the maximum width of the text component
+     **/
+    protected void drawStringToFit(MatrixStack matrixStack, ITextComponent text, int x, int y, int maxWidth) {
+      float scale = 1.0F;
+      while(PanfluteScreen.this.font.getWordWrappedHeight(text.getUnformattedComponentText(), (int) (maxWidth / scale)) > PanfluteScreen.this.font.FONT_HEIGHT && scale > 0.25F) {
+        scale -= 0.1F;
+      }
+      RenderSystem.pushMatrix();
+      RenderSystem.scalef(scale, scale, scale);
+      PanfluteScreen.this.font.func_243248_b(matrixStack, text, x / scale, y / scale, 0);
+      RenderSystem.popMatrix();
+    }
+    
+    /** @return whether this button should render as selected **/
     protected boolean isSelected() {
       return this.isHovered() || (songID.equals(PanfluteScreen.this.selectedSong));
     }
     
+    /**
+     * Determines whether this button should show on the screen, and if so,
+     * what y-position to assign in order to align with the current scroll value.
+     * @param startIndex the start index of the buttons that are currently visible,
+     * based on the scroll value
+     **/
     public void updateLocation(final int startIndex) {
       this.y = PanfluteScreen.this.guiTop + PanfluteScreen.BTN_TOP + PanfluteScreen.BTN_HEIGHT * (index - startIndex);
       if(index < startIndex || index >= (startIndex + PanfluteScreen.BTN_VISIBLE)) {

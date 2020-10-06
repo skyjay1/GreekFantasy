@@ -111,8 +111,8 @@ public final class GFRegistry {
 //  public static final Item UNICORN_HORN = null;
 //  @ObjectHolder("horn")
 //  public static final Item HORN = null;
-//  @ObjectHolder("magic_feather")
-//  public static final Item MAGIC_FEATHER = null;
+  @ObjectHolder("magic_feather")
+  public static final Item MAGIC_FEATHER = null;
   @ObjectHolder("golden_bridle")
   public static final Item GOLDEN_BRIDLE = null;
   

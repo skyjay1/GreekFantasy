@@ -2,7 +2,6 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "name": "main",
       "rolls": 1,
       "entries": [
         {
@@ -10,6 +9,7 @@
           "children": [
             {
               "type": "minecraft:item",
+              "name": "minecraft:stone",
               "conditions": [
                 {
                   "condition": "minecraft:match_tool",
@@ -24,68 +24,59 @@
                     ]
                   }
                 }
-              ],
-              "name": "greekfantasy:nest"
+              ]
             },
-			
-			{
+            {
               "type": "minecraft:alternatives",
-              "conditions": [
-                {
-                  "condition": "minecraft:survives_explosion"
-                }
-              ],
               "children": [
                 {
-				  "type": "minecraft:item",
-				  "conditions": [
-					{
-					  "condition": "minecraft:table_bonus",
-					  "enchantment": "minecraft:fortune",
-					  "chances": [
-						0.025,
-						0.0325,
-						0.043333336,
-						0.1
-					  ]
-					}
-				  ],
-				  "name": "greekfantasy:magic_feather"
-				},
-				{
-				  "type": "minecraft:item",
-				  "functions": [
-					{
-					  "function": "minecraft:set_count",
-					  "count": {
-						"min": 2.0,
-						"max": 6.0,
-						"type": "minecraft:uniform"
-					  }
-					},
-					{
-					  "function": "minecraft:explosion_decay"
-					}
-				  ],
-				  "name": "minecraft:stick"
-				},
-				{
-				  "type": "minecraft:item",
-				  "functions": [
-					{
-					  "function": "minecraft:set_count",
-					  "count": {
-						"min": 1.0,
-						"max": 2.0,
-						"type": "minecraft:uniform"
-					  }
-					},
-					{
-					  "function": "minecraft:explosion_decay"
-					}
-				  ],
-				  "name": "minecraft:feather"
-				}
+                  "type": "minecraft:item",
+                  "name": "greekfantasy:magic_feather",
+                  "conditions": [
+                    {
+                      "condition": "minecraft:table_bonus",
+                      "enchantment": "minecraft:fortune",
+                      "chances": [
+                        0.1,
+                        0.15,
+                        0.2,
+                        0.25
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "minecraft:item",
+                  "name": "minecraft:feather",
+                  "functions": [
+                    {
+                      "function": "minecraft:set_count",
+                      "count": {
+                        "min": 1,
+                        "max": 2
+                      }
+                    }
+                  ],
+                  "conditions": [
+                    {
+                      "condition": "minecraft:random_chance",
+                      "chance": 0.35
+                    }
+                  ]
+                },
+                {
+                  "type": "minecraft:item",
+                  "name": "minecraft:stick",
+                  "functions": [
+                    {
+                      "function": "minecraft:set_count",
+                      "count": {
+                        "min": 2,
+                        "max": 6
+                      }
+                    }
+                  ]
+                }
               ]
             }
           ]

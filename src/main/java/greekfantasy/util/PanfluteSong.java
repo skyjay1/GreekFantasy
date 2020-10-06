@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -19,16 +18,16 @@ public class PanfluteSong {
   private int [] bass;
   
   /** @return the translation key for the name **/
-  public String getTranslationKey() { return name; }
+  public String getNameTranslationKey() { return name; }
+  /** @return the translation key for the name **/
+  public String getCreditsTranslationKey() { return credits; }
   /** @return an translated text component for the name **/
   public IFormattableTextComponent getName() { 
-    return new TranslationTextComponent(getTranslationKey()); 
+    return new TranslationTextComponent(getNameTranslationKey()); 
   }
-  /** @return the credits for this song **/
-  public String getCreditString() { return credits; }
   /** @return an translated text component for the name **/
   public IFormattableTextComponent getCredits() { 
-    return new StringTextComponent(getCreditString()).mergeStyle(TextFormatting.DARK_GRAY); 
+    return new TranslationTextComponent(getCreditsTranslationKey()).mergeStyle(TextFormatting.DARK_GRAY); 
   }
   /** @return the number of ticks between playing notes **/
   public int getInterval() { return interval; }
@@ -49,7 +48,7 @@ public class PanfluteSong {
   
   /**
    * Determines which treble note(s) should be played at this interval.
-   * Currently supports up to 2 notes
+   * Current implementation returns a list containing only one note.
    * @param worldTime the world interval
    * @return a set of notes to play
    **/
@@ -59,7 +58,7 @@ public class PanfluteSong {
   
   /**
    * Determines which bass note(s) should be played at this interval.
-   * Currently supports up to 2 notes
+   * Current implementation returns a list containing only one note.
    * @param worldTime the world interval
    * @return a set of notes to play
    **/
@@ -69,7 +68,7 @@ public class PanfluteSong {
   
   /**
    * Determines which note(s) should be played at this interval.
-   * Currently supports up to 2 notes
+   * Current implementation returns a list containing only one note.
    * @param notes the note array to reference
    * @param worldTime the world interval
    * @param playSpeed the number of notes to play per second

@@ -70,7 +70,6 @@ public class MysteriousBoxManager {
     final ElpisEntity entity = GFRegistry.ELPIS_ENTITY.create(worldIn);
     entity.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.85D, pos.getZ() + 0.5D, 0, 0);
     entity.setHomePosAndDistance(pos.up(), ElpisEntity.wanderDistance);
-    entity.enablePersistence();
     worldIn.addEntity(entity);
   }
 }

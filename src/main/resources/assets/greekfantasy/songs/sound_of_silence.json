@@ -1,6 +1,6 @@
 {
   "name": "song.sound_of_silence.name",
-  "credits": "1964 Paul Simon",
+  "credits": "song.sound_of_silence.credits",
   "interval": 5,
   "length": 132,
   "treble": [
