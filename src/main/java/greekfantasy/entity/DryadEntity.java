@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.EffectGoal;
 import greekfantasy.entity.ai.FindBlockGoal;
@@ -409,25 +410,28 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   }
   
   public static enum Variant implements IStringSerializable {
-    ACACIA(0, "acacia", () -> Blocks.ACACIA_SAPLING),
-    BIRCH(1, "birch", () -> Blocks.BIRCH_SAPLING),
-    DARK_OAK(2, "dark_oak", () -> Blocks.DARK_OAK_SAPLING),
-    JUNGLE(3, "jungle", () -> Blocks.JUNGLE_SAPLING),
-    OAK(4, "oak", () -> Blocks.OAK_SAPLING),
-    SPRUCE(5, "spruce", () -> Blocks.SPRUCE_SAPLING);
+    ACACIA("acacia", () -> Blocks.ACACIA_SAPLING),
+    BIRCH("birch", () -> Blocks.BIRCH_SAPLING),
+    DARK_OAK("dark_oak", () -> Blocks.DARK_OAK_SAPLING),
+    JUNGLE("jungle", () -> Blocks.JUNGLE_SAPLING),
+    OAK("oak", () -> Blocks.OAK_SAPLING),
+    SPRUCE("spruce", () -> Blocks.SPRUCE_SAPLING),
+    OLIVE(GreekFantasy.MODID, "olive", () -> GFRegistry.OLIVE_SAPLING);
     
-    private final int id;
     private final String name;
     private final Supplier<Block> sapling;
     private final ResourceLocation tag;
     private final ResourceLocation texture;
     private final ResourceLocation lootTable;
     
-    private Variant(final int idIn, final String nameIn, final Supplier<Block> saplingIn) {
-      id = idIn;
+    private Variant(final String nameIn, final Supplier<Block> saplingIn) {
+      this("minecraft", nameIn, saplingIn);
+    }
+    
+    private Variant(final String modid, final String nameIn, final Supplier<Block> saplingIn) {
       name = nameIn;
       sapling = saplingIn;
-      tag = new ResourceLocation("minecraft", name + "_logs");
+      tag = new ResourceLocation(modid, name + "_logs");
       texture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/dryad/" + name + ".png");
       lootTable = new ResourceLocation(GreekFantasy.MODID, "entities/dryad/" + name);
     }
@@ -449,14 +453,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       if(biomeName.contains("savanna")) {
         return ACACIA;
       }
-      return OAK;
-    }
-
-    public static Variant getById(final byte i) {
-      for (final Variant v : values()) {
-        if (v.getId() == i) {
-          return v;
-        }
+      if(biomeName.contains("olive")) {
+        return OLIVE;
       }
       return OAK;
     }
@@ -490,10 +488,6 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       return lootTable;
     }
   
-    public byte getId() {
-      return (byte) this.id;
-    }
-
     @Override
     public String getString() {
       return name;

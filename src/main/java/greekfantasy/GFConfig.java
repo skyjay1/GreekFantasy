@@ -8,6 +8,8 @@ public class GFConfig {
   public final ForgeConfigSpec.DoubleValue SANDALS_SPEED_BONUS;
   public final ForgeConfigSpec.BooleanValue NERF_AMBROSIA;
   public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
+  private final ForgeConfigSpec.BooleanValue HELM_HIDES_ARMOR;
+  private boolean helmHidesArmor;
 
   // effect configs
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
@@ -79,6 +81,8 @@ public class GFConfig {
         .define("nerf_ambrosia", false);
     UNICORN_HORN_CURES_EFFECTS = builder.comment("Whether holding the unicorn horn can cure potion effects")
         .define("unicorn_horn_cures_effects", true);
+    HELM_HIDES_ARMOR = builder.comment("Whether the helm of darkness hides armor")
+        .define("helm_hides_armor", true);
     builder.pop();
     // mob attacks
     builder.push("effects");
@@ -142,15 +146,15 @@ public class GFConfig {
     SATYR_SHAMAN_CHANCE = builder.comment("Percent chance that a satyr will be a shaman")
         .defineInRange("satyr_shaman_chance", 20, 0, 100);
     ELPIS_SPAWN_CHANCE = builder.comment("Percent chance that opening a mysterious box spawns an Elpis")
-        .defineInRange("elpis_spawn_chance", 50, 0, 100);
+        .defineInRange("elpis_spawn_chance", 60, 0, 100);
     builder.pop();
     // feature configs
     builder.comment("structure and feature spread (higher number = less common)");
     builder.push("features");
-    HARPY_NEST_SPREAD = builder.worldRestart().defineInRange("harpy_nest_spread", 90, 1, 1000);
-    SMALL_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_shrine_spread", 150, 1, 1000);
-    ARA_CAMP_SPREAD = builder.worldRestart().defineInRange("ara_camp_spread", 180, 1, 1000);
-    SATYR_CAMP_SPREAD = builder.worldRestart().defineInRange("satyr_camp_spread", 210, 1, 1000);
+    HARPY_NEST_SPREAD = builder.worldRestart().defineInRange("harpy_nest_spread", 68, 1, 1000);
+    SMALL_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_shrine_spread", 102, 1, 1000);
+    ARA_CAMP_SPREAD = builder.worldRestart().defineInRange("ara_camp_spread", 161, 1, 1000);
+    SATYR_CAMP_SPREAD = builder.worldRestart().defineInRange("satyr_camp_spread", 205, 1, 1000);
     builder.pop();
     // other
     builder.push("other");
@@ -166,6 +170,7 @@ public class GFConfig {
    * once-per-load or once-per-entity
    **/
   public void bake() {
+    helmHidesArmor = HELM_HIDES_ARMOR.get();
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
@@ -176,6 +181,7 @@ public class GFConfig {
     dryadAngryRange = DRYAD_ANGRY_RANGE.get();
   }
   
+  public boolean doesHelmHideArmor() { return helmHidesArmor; }
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
   public boolean isOverstepEnabled() { return overstepEnabled; }

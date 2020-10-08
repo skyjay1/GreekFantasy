@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import greekfantasy.block.CappedPillarBlock;
 import greekfantasy.block.MysteriousBoxBlock;
 import greekfantasy.block.NestBlock;
+import greekfantasy.block.OliveTree;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.block.VaseBlock;
 import greekfantasy.effect.StunnedEffect;
@@ -15,6 +16,7 @@ import greekfantasy.enchantment.OverstepEnchantment;
 import greekfantasy.entity.*;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.item.ClubItem;
+import greekfantasy.item.HelmOfDarknessItem;
 import greekfantasy.item.PanfluteItem;
 import greekfantasy.item.UnicornHornItem;
 import greekfantasy.item.WingedSandalsItem;
@@ -23,6 +25,10 @@ import greekfantasy.tileentity.VaseTileEntity;
 import greekfantasy.util.StatuePose;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.LeavesBlock;
+import net.minecraft.block.RotatedPillarBlock;
+import net.minecraft.block.SaplingBlock;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.StairsBlock;
@@ -58,6 +64,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
@@ -111,11 +118,28 @@ public final class GFRegistry {
 //  public static final Item UNICORN_HORN = null;
 //  @ObjectHolder("horn")
 //  public static final Item HORN = null;
+  @ObjectHolder("helm_of_darkness")
+  public static final Item HELM_OF_DARKNESS = null;
   @ObjectHolder("magic_feather")
   public static final Item MAGIC_FEATHER = null;
   @ObjectHolder("golden_bridle")
   public static final Item GOLDEN_BRIDLE = null;
   
+
+  @ObjectHolder("olive_log")
+  public static final Block OLIVE_LOG = null;
+  @ObjectHolder("olive_wood")
+  public static final Block OLIVE_WOOD = null;
+  @ObjectHolder("olive_planks")
+  public static final Block OLIVE_PLANKS = null;
+  @ObjectHolder("olive_slab")
+  public static final Block OLIVE_SLAB = null;
+  @ObjectHolder("olive_stairs")
+  public static final Block OLIVE_STAIRS = null;
+  @ObjectHolder("olive_leaves")
+  public static final Block OLIVE_LEAVES = null;
+  @ObjectHolder("olive_sapling")
+  public static final Block OLIVE_SAPLING = null;
   @ObjectHolder("nest")
   public static final Block NEST_BLOCK = null;
   @ObjectHolder("limestone")
@@ -238,15 +262,36 @@ public final class GFRegistry {
   public static void registerBlocks(final RegistryEvent.Register<Block> event) {
     GreekFantasy.LOGGER.debug("registerBlocks");
     
-    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "marble");
-    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
+    final AbstractBlock.Properties woodProperties = AbstractBlock.Properties.create(Material.WOOD, MaterialColor.WOOD).hardnessAndResistance(2.0F, 3.0F).sound(SoundType.WOOD);
+    
+    event.getRegistry().registerAll(
+        rotatedLogBlock(MaterialColor.SAND, MaterialColor.STONE)
+          .setRegistryName(GreekFantasy.MODID, "olive_log"),
+        new RotatedPillarBlock(woodProperties)
+          .setRegistryName(GreekFantasy.MODID, "olive_wood"),
+        new Block(woodProperties)
+          .setRegistryName(GreekFantasy.MODID, "olive_planks"),
+        new SlabBlock(woodProperties)
+          .setRegistryName(GreekFantasy.MODID, "olive_slab"),
+        new StairsBlock(() -> GFRegistry.OLIVE_LOG.getDefaultState(), woodProperties)
+          .setRegistryName(GreekFantasy.MODID, "olive_stairs"),
+        new LeavesBlock(AbstractBlock.Properties.create(Material.LEAVES).hardnessAndResistance(0.2F).tickRandomly().sound(SoundType.PLANT)
+            .notSolid().setAllowsSpawn(GFRegistry::allowsSpawnOnLeaves).setSuffocates((s, r, p) -> false).setBlocksVision((s, r, p) -> false))
+          .setRegistryName(GreekFantasy.MODID, "olive_leaves"),
+        new SaplingBlock(new OliveTree(), AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly()
+            .zeroHardnessAndResistance().notSolid().sound(SoundType.PLANT))
+          .setRegistryName(GreekFantasy.MODID, "olive_sapling")
+    );
 
     event.getRegistry().registerAll(
-        new NestBlock(AbstractBlock.Properties.create(Material.ORGANIC, MaterialColor.BROWN).hardnessAndResistance(0.5F).sound(SoundType.PLANT).notSolid())
+        new NestBlock(AbstractBlock.Properties.create(Material.ORGANIC, MaterialColor.BROWN).hardnessAndResistance(0.5F).sound(SoundType.PLANT)
+            .setNeedsPostProcessing((s, r, p) -> true).notSolid())
           .setRegistryName(GreekFantasy.MODID, "nest"),
-        new CappedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F).notSolid())
+        new CappedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)
+            .setNeedsPostProcessing((s, r, p) -> true).notSolid())
           .setRegistryName(GreekFantasy.MODID, "marble_pillar"),
-        new CappedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F).notSolid())
+        new CappedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)
+            .setNeedsPostProcessing((s, r, p) -> true).notSolid())
           .setRegistryName(GreekFantasy.MODID, "limestone_pillar"),
         new StatueBlock(StatueBlock.StatueMaterial.MARBLE)
           .setRegistryName(GreekFantasy.MODID, "marble_statue"),
@@ -257,6 +302,9 @@ public final class GFRegistry {
         new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
           .setRegistryName(GreekFantasy.MODID, "mysterious_box")
     );
+    
+    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "marble");
+    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
   }
 
   @SubscribeEvent
@@ -275,6 +323,8 @@ public final class GFRegistry {
           .setRegistryName(GreekFantasy.MODID, "wooden_club"),
         new WingedSandalsItem(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "winged_sandals"),
+        new HelmOfDarknessItem(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "helm_of_darkness"),
         new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
           .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC))
           .setRegistryName(GreekFantasy.MODID, "ambrosia"),
@@ -289,6 +339,13 @@ public final class GFRegistry {
     );
     
     // block items
+    registerItemBlock(event, OLIVE_LOG, "olive_log");
+    registerItemBlock(event, OLIVE_WOOD, "olive_wood");
+    registerItemBlock(event, OLIVE_PLANKS, "olive_planks");
+    registerItemBlock(event, OLIVE_SLAB, "olive_slab");
+    registerItemBlock(event, OLIVE_STAIRS, "olive_stairs");
+    registerItemBlock(event, OLIVE_LEAVES, "olive_leaves");
+    registerItemBlock(event, OLIVE_SAPLING, "olive_sapling");
     registerItemBlock(event, NEST_BLOCK, "nest");
     
     registerItemBlock(event, MARBLE, "marble");
@@ -370,8 +427,18 @@ public final class GFRegistry {
     event.getRegistry().register(new SlabBlock(properties).setRegistryName(GreekFantasy.MODID, "polished_" + registryName + "_slab"));
     event.getRegistry().register(new StairsBlock(() -> polished.getDefaultState(), properties).setRegistryName(GreekFantasy.MODID, "polished_" + registryName + "_stairs"));
   }
-  
+    
   private static void registerItemBlock(final RegistryEvent.Register<Item> event, final Block block, final String registryName) {
     event.getRegistry().register(new BlockItem(block, new Item.Properties().group(GREEK_GROUP)).setRegistryName(GreekFantasy.MODID, registryName));
+  }
+  
+  private static RotatedPillarBlock rotatedLogBlock(final MaterialColor topColor, final MaterialColor sideColor) {
+    return new RotatedPillarBlock(AbstractBlock.Properties.create(Material.WOOD, (state) -> {
+       return state.get(RotatedPillarBlock.AXIS) == Direction.Axis.Y ? topColor : sideColor;
+    }).hardnessAndResistance(2.0F).sound(SoundType.WOOD));
+  }
+
+  private static Boolean allowsSpawnOnLeaves(BlockState state, IBlockReader reader, BlockPos pos, EntityType<?> entity) {
+    return entity == EntityType.OCELOT || entity == EntityType.PARROT;
   }
 }

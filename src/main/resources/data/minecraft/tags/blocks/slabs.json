@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "greekfantasy:marble_slab",
+    "greekfantasy:polished_marble_slab",
+    "greekfantasy:limestone_slab",
+    "greekfantasy:polished_limestone_slab"
+  ]
+}

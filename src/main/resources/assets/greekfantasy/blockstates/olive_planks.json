@@ -1,0 +1,14 @@
+{
+  "variants": {
+	"": [
+	  {
+	    "model": "greekfantasy:block/olive_planks",
+	    "weight": 1
+	  },
+	  {
+	    "model": "greekfantasy:block/olive_planks2",
+	    "weight": 3
+	  }
+	]
+  }
+}

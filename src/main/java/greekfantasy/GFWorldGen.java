@@ -2,6 +2,7 @@ package greekfantasy;
 
 import greekfantasy.structure.feature.AraCampFeature;
 import greekfantasy.structure.feature.HarpyNestFeature;
+import greekfantasy.structure.feature.OliveTreeFeature;
 import greekfantasy.structure.feature.SatyrCampFeature;
 import greekfantasy.structure.feature.SmallShrineFeature;
 import net.minecraft.entity.EntityType;
@@ -9,6 +10,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.BaseTreeFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.Features.Placements;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
@@ -32,6 +34,8 @@ public final class GFWorldGen {
   public static final Feature<NoFeatureConfig> ARA_CAMP = null;
   @ObjectHolder(GreekFantasy.MODID + ":satyr_camp")
   public static final Feature<NoFeatureConfig> SATYR_CAMP = null;
+  @ObjectHolder(GreekFantasy.MODID + ":olive_tree")
+  public static final Feature<BaseTreeFeatureConfig> OLIVE_TREE = null;
   
   
   private static final RuleTest ruleTestStone = new TagMatchRuleTest(BlockTags.BASE_STONE_OVERWORLD);
@@ -61,6 +65,9 @@ public final class GFWorldGen {
     event.getRegistry().register(
         new SatyrCampFeature(NoFeatureConfig.field_236558_a_)
           .setRegistryName(GreekFantasy.MODID, "satyr_camp"));
+    event.getRegistry().register(
+        new OliveTreeFeature(BaseTreeFeatureConfig.CODEC)
+          .setRegistryName(GreekFantasy.MODID, "olive_tree"));
   }
 
   // OTHER SETUP METHODS //

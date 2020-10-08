@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "type=bottom": [
+	  {
+	    "model": "greekfantasy:block/olive_slab",
+	    "weight": 1
+	  },
+	  {
+	    "model": "greekfantasy:block/olive_slab2",
+	    "weight": 3
+	  }
+	],
+    "type=double": [
+	  {
+	    "model": "greekfantasy:block/olive_planks",
+	    "weight": 1
+	  },
+	  {
+	    "model": "greekfantasy:block/olive_planks2",
+	    "weight": 3
+	  }
+	],
+    "type=top": [
+	  {
+	    "model": "greekfantasy:block/olive_slab_top",
+	    "weight": 1
+	  },
+	  {
+	    "model": "greekfantasy:block/olive_slab_top2",
+	    "weight": 3
+	  }
+	]
+  }
+}

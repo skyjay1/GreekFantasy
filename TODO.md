@@ -84,6 +84,10 @@ X X X Statues
 X X X Vase
 _ _ _ Urn
 X X _ Mysterious box
+X X _ Olive basics (log, wood, planks, slab, stair)
+_ _ _ Olive blocks: button, fence, boat, door, trapdoor, stripped log, stripped wood, pressure plate, sign
+_ _ _ Olive leaves
+_ _ _ Olive sapling
 _ _ _ Grapes / grapevines?
 
 ## Items
@@ -101,7 +105,8 @@ X X X Unicorn Horn (while holding, cures certain potion effects)
 X X X Ambrosia (like ench. golden apple)
 X X X Magical feather
 _ _ _ Healing rod (can not be used on self) (healing projectiles)
-_ _ _ Helm of Darkness (grants invisibility w/o particles) (from Cyclopes somehow)
+X X _ Helm of Darkness (grants invisibility w/o particles) (from Cyclopes somehow) (TODO: texture)
+_ _ _ Olive sapling
 
 ## Achievements
 
@@ -124,11 +129,13 @@ X "Stunned" effect (prevent movement or item use)
 ~ "Petrified" effect
 X "Overstep" enchantment
 ~ Panflute songs
- - Loch Lomond, Amazing Grace, LOTR/Hobbit theme, Clementine, Waltzing Matilda, Yellow Rose of Texas, O du lieber Augustin
+- Loch Lomond, Amazing Grace, LOTR/Hobbit theme, Clementine, Waltzing Matilda, Yellow Rose of Texas, O du lieber Augustin
 X Panflute song selection GUI
 ~ Lots of mysterious box functions!
 X Some way to obtain Winged Sandals
 _ Some way to obtain Mysterious Box
+_ Block and Item tags (saplings, leaves, wooden_doors, etc.)
+_ Olive forest biome
 
 ## Misc Ideas and Inspirations
 

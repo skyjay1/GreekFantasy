@@ -2,12 +2,19 @@ package greekfantasy.events;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockDisplayReader;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -15,6 +22,31 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 
 public class ClientForgeEventHandler {
+  
+  /**
+   * Used to hide the player and their armor / held items
+   * while using the Helm of Darkness.
+   * @param event the RenderPlayerEvent (Pre)
+   **/
+  @SubscribeEvent(priority = EventPriority.HIGH)
+  public static void renderPlayer(final RenderPlayerEvent.Pre event) {
+    if(GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(event.getPlayer())) {
+      event.setCanceled(true);
+    }
+  }
+  
+  /**
+   * Used to hide the first-person view of held items
+   * while a player is using the Helm of Darkness.
+   * @param event the RenderHandEvent
+   **/
+  @SubscribeEvent(priority = EventPriority.HIGH)
+  public static void renderPlayerHand(final RenderHandEvent event) {
+    final Minecraft mc = Minecraft.getInstance();
+    if(GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(mc.player)) {
+      event.setCanceled(true);
+    }
+  }
     
   /**
    * This method handles when the player is wearing the winged sandals item.
@@ -29,7 +61,7 @@ public class ClientForgeEventHandler {
       final Minecraft mc = Minecraft.getInstance();
       final boolean hasOverstep = hasOverstep(player);
       // apply step height changes      
-      if(hasOverstep && (player.stepHeight < 1.0F || player.isAutoJumpEnabled())) {
+      if(hasOverstep && !player.isSneaking() && (player.stepHeight < 1.0F || player.isAutoJumpEnabled())) {
         player.stepHeight = 1.25F;
         // use Access Transformers to use/modify this field directly
         player.autoJumpEnabled = false;
@@ -55,6 +87,26 @@ public class ClientForgeEventHandler {
         event.setFOV(mc.gameSettings.fov);
       }
     }
+  }
+  
+  /**
+   * Used to register block color handlers.
+   * Currently used to color Olive Leaves.
+   * @param event the ColorHandlerEvent (Block)
+   **/
+  @SubscribeEvent
+  public static void onBlockColors(final ColorHandlerEvent.Block event) {
+    event.getBlockColors().register(new IBlockColor() {
+      @Override
+      public int getColor(BlockState stateIn, IBlockDisplayReader world, BlockPos pos, int color) {
+        return 0x738269;
+      }
+    }, GFRegistry.OLIVE_LEAVES);
+  }
+  
+  /** @return whether the player is wearing the Helm of Darkness **/
+  private static boolean hasHelmOfDarkness(final PlayerEntity player) {
+    return player.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.HELM_OF_DARKNESS;
   }
   
   /** @return whether the player should have the client-side overstep step-height logic applied **/

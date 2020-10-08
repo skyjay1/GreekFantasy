@@ -40,7 +40,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class WingedSandalsItem extends ArmorItem {
   public static final UUID SPEED_MODIFIER = UUID.fromString("58b7ff54-706b-4b0b-80f7-0dce04a673e4");
-  protected static final int MAX_DURABILITY = 195;
   protected static final IArmorMaterial MATERIAL = new WingedSandalsArmorMaterial();
    
   private static final String TEXTURE = GreekFantasy.MODID + ":textures/models/armor/winged_layer_2.png";
@@ -163,7 +162,7 @@ public class WingedSandalsItem extends ArmorItem {
     @Override
     public int getDamageReductionAmount(EquipmentSlotType arg0) { return 2; }
     @Override
-    public int getDurability(EquipmentSlotType arg0) { return WingedSandalsItem.MAX_DURABILITY; }
+    public int getDurability(EquipmentSlotType arg0) { return 195; }
     @Override
     public int getEnchantability() { return 15; }
     @Override

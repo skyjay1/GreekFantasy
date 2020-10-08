@@ -54,7 +54,7 @@ public class SmallShrineFeature extends Feature<NoFeatureConfig> {
     
     // placement settings
     ChunkPos chunkPos = new ChunkPos(pos);
-    MutableBoundingBox mbb = new MutableBoundingBox(chunkPos.getXStart(), pos.getY() - 16, chunkPos.getZStart(), chunkPos.getXEnd(), pos.getY() + 16, chunkPos.getZEnd());
+    MutableBoundingBox mbb = new MutableBoundingBox(chunkPos.getXStart() - 8, pos.getY() - 16, chunkPos.getZStart() - 8, chunkPos.getXEnd() + 8, pos.getY() + 16, chunkPos.getZEnd() + 8);
     PlacementSettings placement = new PlacementSettings()
         .setRotation(rotation).setMirror(mirror).setRandom(rand).setBoundingBox(mbb)
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);

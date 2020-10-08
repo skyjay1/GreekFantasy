@@ -86,7 +86,7 @@ public class AraCampFeature extends Feature<NoFeatureConfig> {
     MutableBoundingBox mbb = new MutableBoundingBox(chunkPos.getXStart() - 8, pos.getY() - 8, chunkPos.getZStart() - 8, chunkPos.getXEnd() + 8, pos.getY() + 16, chunkPos.getZEnd() + 8);
     
     // actually generate the structure
-    template.func_237146_a_(reader, pos, pos, placement.setBoundingBox(mbb), rand, 0);
+    template.func_237146_a_(reader, pos, pos, placement.setBoundingBox(mbb), rand, 2);
     
     // add entities
     addAra(reader, rand, pos.add(new BlockPos(3, 2, 2).rotate(placement.getRotation())), 1 + rand.nextInt(3));
