@@ -44,7 +44,7 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
     final Template template = manager.getTemplateDefaulted(getRandomTree(rand));
     
     // position for tree
-    final BlockPos offset = new BlockPos(-Math.ceil((template.getSize().getX() / 2.0F) + 0.5F), 0, -Math.floor(template.getSize().getZ() / 2.0F));
+    final BlockPos offset = new BlockPos(-3, 0, -3);
     final BlockPos pos = blockPosIn.add(offset.rotate(rotation));
     
     // conditions for generation

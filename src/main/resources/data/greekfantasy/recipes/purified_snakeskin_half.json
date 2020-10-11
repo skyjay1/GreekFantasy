@@ -1,0 +1,14 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+	{ "item": "greekfantasy:snakeskin" },
+    { "item": "greekfantasy:snakeskin" },
+	{ "item": "greekfantasy:snakeskin" },
+    { "item": "greekfantasy:snakeskin" },
+	{ "item": "minecraft:ghast_tear" }
+  ],
+  "result": {
+    "item": "greekfantasy:purified_snakeskin",
+    "count": 1
+  }
+}

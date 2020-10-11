@@ -15,6 +15,7 @@ public class ClientModEventHandler {
     GreekFantasy.PROXY.registerEntityRenders();
     GreekFantasy.PROXY.registerTileEntityRenders();
     GreekFantasy.PROXY.registerContainerRenders();
+    GreekFantasy.PROXY.registerRenderLayers();
   }
   
   @SubscribeEvent

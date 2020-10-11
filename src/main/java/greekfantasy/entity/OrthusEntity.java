@@ -26,7 +26,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class OrthusEntity extends MonsterEntity {
   
-  // TODO add fire breathing attack
   private static final byte FIRE_START = 6;
   private static final byte FIRE_END = 7;
   
@@ -180,7 +179,6 @@ public class OrthusEntity extends MonsterEntity {
         this.entity.getLookController().setLookPositionWithEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
         // set fire to targetPos
         if(fireBreathingTime > 10 && fireBreathingTime % 10 == 0) {
-          // TODO get all entities within range and direction of fire to ignite
           final Vector3d entityPos = new Vector3d(entity.getPosX(), entity.getPosYEye(), entity.getPosZ());
           igniteInRange(entityPos, entity.getAttackTarget().getPositionVec(), 0.65D, 5);
         }

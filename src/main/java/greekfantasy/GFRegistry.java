@@ -17,6 +17,7 @@ import greekfantasy.entity.*;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.item.ClubItem;
 import greekfantasy.item.DragonToothItem;
+import greekfantasy.item.HealingRodItem;
 import greekfantasy.item.HelmOfDarknessItem;
 import greekfantasy.item.PanfluteItem;
 import greekfantasy.item.UnicornHornItem;
@@ -86,6 +87,7 @@ public final class GFRegistry {
   public static EntityType<CerberusEntity> CERBERUS_ENTITY;
   public static EntityType<CyclopesEntity> CYCLOPES_ENTITY;
   public static EntityType<CyprianEntity> CYPRIAN_ENTITY;
+  public static EntityType<DragonToothEntity> DRAGON_TOOTH_ENTITY;
   public static EntityType<DryadEntity> DRYAD_ENTITY;
   public static EntityType<ElpisEntity> ELPIS_ENTITY;
   public static EntityType<EmpusaEntity> EMPUSA_ENTITY;
@@ -93,6 +95,7 @@ public final class GFRegistry {
   public static EntityType<GiganteEntity> GIGANTE_ENTITY;
   public static EntityType<GorgonEntity> GORGON_ENTITY;
   public static EntityType<HarpyEntity> HARPY_ENTITY;
+  public static EntityType<HealingSpellEntity> HEALING_SPELL_ENTITY;
   public static EntityType<MadCowEntity> MAD_COW_ENTITY;
   public static EntityType<MinotaurEntity> MINOTAUR_ENTITY;
   public static EntityType<NaiadEntity> NAIAD_ENTITY;
@@ -115,6 +118,8 @@ public final class GFRegistry {
   public static final Item WOODEN_CLUB = null;
   @ObjectHolder("flint_knife")
   public static final Item FLINT_KNIFE = null;
+  @ObjectHolder("dragon_tooth")
+  public static final Item DRAGON_TOOTH = null;
 //  @ObjectHolder("winged_sandals")
 //  public static final Item WINGED_SANDALS = null;
 //  @ObjectHolder("ambrosia")
@@ -129,6 +134,10 @@ public final class GFRegistry {
   public static final Item MAGIC_FEATHER = null;
   @ObjectHolder("golden_bridle")
   public static final Item GOLDEN_BRIDLE = null;
+  @ObjectHolder("snakeskin")
+  public static final Item SNAKESKIN = null;
+  @ObjectHolder("purified_snakeskin")
+  public static final Item PURIFIED_SNAKESKIN = null;
   
 
   @ObjectHolder("olive_log")
@@ -235,6 +244,15 @@ public final class GFRegistry {
     SIREN_ENTITY = registerEntityType(event, SirenEntity::new, SirenEntity::getAttributes, SirenEntity::canSirenSpawnOn, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, false);
     SPARTI_ENTITY = registerEntityType(event, SpartiEntity::new, SpartiEntity::getAttributes, null, "sparti", 0.6F, 1.98F, EntityClassification.CREATURE, false);
     UNICORN_ENTITY = registerEntityType(event, UnicornEntity::new, UnicornEntity::getAttributes, UnicornEntity::canSpawnOn, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, false);
+    // create and register misc. entity types
+    EntityType<DragonToothEntity> dragonToothEntityType = EntityType.Builder.create(DragonToothEntity::new, EntityClassification.MISC)
+        .size(0.25F, 0.25F).immuneToFire().build("dragon_tooth");
+    event.getRegistry().register(dragonToothEntityType.setRegistryName(GreekFantasy.MODID, "dragon_tooth"));
+    DRAGON_TOOTH_ENTITY = dragonToothEntityType;
+    EntityType<HealingSpellEntity> healingSpellEntityType = EntityType.Builder.create(HealingSpellEntity::new, EntityClassification.MISC)
+        .size(0.25F, 0.25F).immuneToFire().build("healing_spell");
+    event.getRegistry().register(healingSpellEntityType.setRegistryName(GreekFantasy.MODID, "healing_spell"));
+    HEALING_SPELL_ENTITY = healingSpellEntityType;
   }
   
   @SubscribeEvent
@@ -306,7 +324,7 @@ public final class GFRegistry {
     event.getRegistry().registerAll(
         new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxDamage(100))
           .setRegistryName(GreekFantasy.MODID, "panflute"),
-        new SwordItem(ItemTier.WOOD, 3, -1.9F, new Item.Properties().group(GREEK_GROUP))
+        new SwordItem(ItemTier.WOOD, 3, -2.0F, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "flint_knife"),
         new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "iron_club"),
@@ -321,8 +339,10 @@ public final class GFRegistry {
         new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
           .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC))
           .setRegistryName(GreekFantasy.MODID, "ambrosia"),
-        new UnicornHornItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
+        new UnicornHornItem(new Item.Properties().group(GREEK_GROUP).maxDamage(24))
           .setRegistryName(GreekFantasy.MODID, "unicorn_horn"),
+        new HealingRodItem(new Item.Properties().group(GREEK_GROUP).maxDamage(168))
+          .setRegistryName(GreekFantasy.MODID, "healing_rod"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "horn"),
         new Item(new Item.Properties().group(GREEK_GROUP))
@@ -330,7 +350,11 @@ public final class GFRegistry {
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "magic_feather"),
         new DragonToothItem(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "dragon_tooth")
+          .setRegistryName(GreekFantasy.MODID, "dragon_tooth"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "snakeskin"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "purified_snakeskin")
     );
     
     // block items
@@ -400,12 +424,18 @@ public final class GFRegistry {
       final IFactory<T> factoryIn, final Supplier<AttributeModifierMap.MutableAttribute> mapSupplier, 
       @Nullable final EntitySpawnPlacementRegistry.IPlacementPredicate<T> placementPredicate, final String name,
       final float width, final float height, final EntityClassification classification, final boolean fireproof) {
+    // make the entity type
     EntityType.Builder<T> entityTypeBuilder = EntityType.Builder.create(factoryIn, classification).size(width, height);
     if (fireproof) entityTypeBuilder.immuneToFire();
     EntityType<T> entityType = entityTypeBuilder.build(name);
     entityType.setRegistryName(GreekFantasy.MODID, name);
+    // register the entity type
     event.getRegistry().register(entityType);
-    GlobalEntityTypeAttributes.put(entityType, mapSupplier.get().create());
+    // register attributes
+    if(mapSupplier != null) {
+      GlobalEntityTypeAttributes.put(entityType, mapSupplier.get().create());
+    }
+    // register placement (not used unless spawn information is registered with a biome)
     if(placementPredicate != null) {
       EntitySpawnPlacementRegistry.register(entityType, classification == EntityClassification.WATER_CREATURE ? PlacementType.IN_WATER : PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, placementPredicate);
     }
@@ -429,23 +459,24 @@ public final class GFRegistry {
       @Override
       public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
     };
+    final Block planks = new Block(properties) {
+      @Override
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      @Override
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 20; }
+    };
     // register log, planks, and others
     event.getRegistry().registerAll(     
         log.setRegistryName(GreekFantasy.MODID, registryName + "_log"), 
         wood.setRegistryName(GreekFantasy.MODID, registryName + "_wood"),
-        new Block(properties) {
-          @Override
-          public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
-          @Override
-          public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 20; }
-        }.setRegistryName(GreekFantasy.MODID, registryName + "_planks"),
+        planks.setRegistryName(GreekFantasy.MODID, registryName + "_planks"),
         new SlabBlock(properties) {
           @Override
           public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
           @Override
           public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 20; }
         }.setRegistryName(GreekFantasy.MODID, registryName + "_slab"),
-        new StairsBlock(() -> log.getDefaultState(), properties){
+        new StairsBlock(() -> planks.getDefaultState(), properties){
           @Override
           public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
           @Override

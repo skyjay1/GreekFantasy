@@ -47,7 +47,7 @@ X Satyrs summon wolves
 X Satyrs light unlit campfires
 _ Satyrs trade with player (obtain panflute)
 X Geryon smash attack
-_ Another Geryon attack
+X Geryon summons Mad Cows
 ~ Centaurs / Cyprians shoot arrows (TODO: animation not working)
 ~ Minotaur charges at player (TODO: extend charge beyond player position)
 X Minotaur is stunned when charge attack misses
@@ -87,7 +87,7 @@ X X X Statues
 X X X Vase
 _ _ _ Urn
 X X _ Mysterious box
-X X _ Olive basics (log, wood, planks, slab, stair)
+X X X Olive basics (log, wood, planks, slab, stair)
 _ _ _ Olive blocks: button, fence, boat, door, trapdoor, stripped log, stripped wood, pressure plate, sign
 X _ _ Olive leaves
 X X _ Olive sapling
@@ -108,9 +108,10 @@ X X X Unicorn Horn (while holding, cures certain potion effects)
 X X X Ambrosia (like ench. golden apple)
 X X X Magical feather
 ~ X _ Dragon's Teeth (to summon Sparti) (TODO: texture)
-_ _ _ Healing rod (cannot be used on self) (healing projectiles)
+X ~ _ Healing rod (cannot be used on self) (healing projectiles)
 X X _ Helm of Darkness (grants invisibility w/o particles) (from Cyclopes somehow) (TODO: texture)
-X X _ Flint Knife
+X X X Flint Knife
+~ _ _ Snake skin and Purified snake skin (from Gorgons)
 
 ## Achievements
 

@@ -5,13 +5,13 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.entity.ai.FollowGoal;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IAngerable;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.FollowMobGoal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
@@ -47,11 +47,11 @@ public class AraEntity extends CreatureEntity implements IAngerable {
   private int angerTime;
   private UUID angerTarget;
   
-  private Item sword;
+  private Item weapon;
   
   public AraEntity(final EntityType<? extends AraEntity> type, final World worldIn) {
     super(type, worldIn);
-    sword = GFRegistry.FLINT_KNIFE;
+    weapon = GFRegistry.FLINT_KNIFE;
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -66,7 +66,10 @@ public class AraEntity extends CreatureEntity implements IAngerable {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
     this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false));
-    this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0D, 3.0F, 7.0F));
+    this.goalSelector.addGoal(3, new FollowGoal(this, 1.0D, 6.0F, 12.0F) {
+      @Override
+      public boolean shouldExecute() { return entity.getRNG().nextInt(80) == 0 && super.shouldExecute(); }
+    });
     this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
@@ -81,13 +84,13 @@ public class AraEntity extends CreatureEntity implements IAngerable {
     if (!this.world.isRemote()) {
       this.func_241359_a_((ServerWorld) this.world, true);
     }
-    // when aggressive, equip a sword
+    // when aggressive, equip a weapon
     if(this.isAggressive()) {
       if(this.getHeldItem(Hand.MAIN_HAND).isEmpty()) {
-        this.setHeldItem(Hand.MAIN_HAND, new ItemStack(sword));
+        this.setHeldItem(Hand.MAIN_HAND, new ItemStack(weapon));
         this.getEntityWorld().playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ITEM_ARMOR_EQUIP_IRON, SoundCategory.HOSTILE, 1.0F, 1.0F, false);
       }
-    } else if(this.getAttackTarget() == null && this.getHeldItem(Hand.MAIN_HAND).getItem() == sword) {
+    } else if(this.getAttackTarget() == null && this.getHeldItem(Hand.MAIN_HAND).getItem() == weapon) {
       this.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
     }
   }
@@ -124,8 +127,8 @@ public class AraEntity extends CreatureEntity implements IAngerable {
     this.readAngerNBT((ServerWorld)this.world, compound);
   }
   
-  public boolean isHoldingSword() {
-    return this.getHeldItem(Hand.MAIN_HAND).getItem() == sword;
+  public boolean isHoldingWeapon() {
+    return this.getHeldItem(Hand.MAIN_HAND).getItem() == weapon;
   }
 
 }

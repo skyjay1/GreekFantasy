@@ -48,7 +48,7 @@ public class AraModel<T extends AraEntity> extends BipedModel<T> {
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-    if(entity.isHoldingSword()) {
+    if(entity.isHoldingWeapon()) {
       // this is referenced from IllagerModel#setRotationAngles (Vindicator)
       ModelHelper.func_239103_a_(bipedRightArm, bipedLeftArm, entity, this.swingProgress, ageInTicks);
     }
