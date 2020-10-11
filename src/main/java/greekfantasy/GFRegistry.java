@@ -16,6 +16,7 @@ import greekfantasy.enchantment.OverstepEnchantment;
 import greekfantasy.entity.*;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.item.ClubItem;
+import greekfantasy.item.DragonToothItem;
 import greekfantasy.item.HelmOfDarknessItem;
 import greekfantasy.item.PanfluteItem;
 import greekfantasy.item.UnicornHornItem;
@@ -44,7 +45,6 @@ import net.minecraft.entity.EntityType.IFactory;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
-import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
@@ -54,6 +54,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
 import net.minecraft.item.Rarity;
+import net.minecraft.item.SwordItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleType;
@@ -92,12 +93,14 @@ public final class GFRegistry {
   public static EntityType<GiganteEntity> GIGANTE_ENTITY;
   public static EntityType<GorgonEntity> GORGON_ENTITY;
   public static EntityType<HarpyEntity> HARPY_ENTITY;
+  public static EntityType<MadCowEntity> MAD_COW_ENTITY;
   public static EntityType<MinotaurEntity> MINOTAUR_ENTITY;
   public static EntityType<NaiadEntity> NAIAD_ENTITY;
   public static EntityType<OrthusEntity> ORTHUS_ENTITY;
   public static EntityType<SatyrEntity> SATYR_ENTITY;
   public static EntityType<ShadeEntity> SHADE_ENTITY;
   public static EntityType<SirenEntity> SIREN_ENTITY;
+  public static EntityType<SpartiEntity> SPARTI_ENTITY;
   public static EntityType<UnicornEntity> UNICORN_ENTITY;
 
   // OBJECT HOLDERS //
@@ -110,14 +113,16 @@ public final class GFRegistry {
   public static final Item STONE_CLUB = null;
   @ObjectHolder("wooden_club")
   public static final Item WOODEN_CLUB = null;
+  @ObjectHolder("flint_knife")
+  public static final Item FLINT_KNIFE = null;
 //  @ObjectHolder("winged_sandals")
 //  public static final Item WINGED_SANDALS = null;
 //  @ObjectHolder("ambrosia")
 //  public static final Item AMBROSIA = null;
 //  @ObjectHolder("unicorn_horn")
 //  public static final Item UNICORN_HORN = null;
-//  @ObjectHolder("horn")
-//  public static final Item HORN = null;
+  @ObjectHolder("horn")
+  public static final Item HORN = null;
   @ObjectHolder("helm_of_darkness")
   public static final Item HELM_OF_DARKNESS = null;
   @ObjectHolder("magic_feather")
@@ -208,25 +213,27 @@ public final class GFRegistry {
   @SubscribeEvent
   public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
     GreekFantasy.LOGGER.debug("registerEntities");
-    ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, MonsterEntity::canMonsterSpawnInLight, "ara", 0.67F, 1.8F, EntityClassification.MONSTER, true);
+    ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, AraEntity::canSpawnOn, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, false);
     CENTAUR_ENTITY = registerEntityType(event, CentaurEntity::new, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, false);
     CYPRIAN_ENTITY = registerEntityType(event, CyprianEntity::new, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, false);
     CERASTES_ENTITY = registerEntityType(event, CerastesEntity::new, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, false);
     CERBERUS_ENTITY = registerEntityType(event, CerberusEntity::new, CerberusEntity::getAttributes, CerberusEntity::canSpawnOn, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, false);
     CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, false);
     DRYAD_ENTITY = registerEntityType(event, DryadEntity::new, DryadEntity::getAttributes, DryadEntity::canSpawnOn, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, false);
-    ELPIS_ENTITY = registerEntityType(event, ElpisEntity::new, ElpisEntity::getAttributes, ElpisEntity::canSpawnOn, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, false);
+    ELPIS_ENTITY = registerEntityType(event, ElpisEntity::new, ElpisEntity::getAttributes, null, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, false);
     EMPUSA_ENTITY = registerEntityType(event, EmpusaEntity::new, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, true);
     GERYON_ENTITY = registerEntityType(event, GeryonEntity::new, GeryonEntity::getAttributes, GeryonEntity::canGeryonSpawnOn, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, false);
     GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, false);
     GORGON_ENTITY = registerEntityType(event, GorgonEntity::new, GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, false);
     HARPY_ENTITY = registerEntityType(event, HarpyEntity::new, HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, false);
+    MAD_COW_ENTITY = registerEntityType(event, MadCowEntity::new, MadCowEntity::getAttributes, null, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, false);
     MINOTAUR_ENTITY = registerEntityType(event, MinotaurEntity::new, MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight, "minotaur", 0.7F, 1.8F, EntityClassification.MONSTER, false);
     NAIAD_ENTITY = registerEntityType(event, NaiadEntity::new, NaiadEntity::getAttributes, NaiadEntity::canNaiadSpawnOn, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, false);
     ORTHUS_ENTITY = registerEntityType(event, OrthusEntity::new, OrthusEntity::getAttributes, OrthusEntity::canSpawnOn, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, true);
     SATYR_ENTITY = registerEntityType(event, SatyrEntity::new, SatyrEntity::getAttributes, SatyrEntity::canSpawnOn, "satyr", 0.67F, 1.8F, EntityClassification.CREATURE, false);
     SHADE_ENTITY = registerEntityType(event, ShadeEntity::new, ShadeEntity::getAttributes, ShadeEntity::canMonsterSpawnInLight, "shade", 0.67F, 1.8F, EntityClassification.MONSTER, true);
     SIREN_ENTITY = registerEntityType(event, SirenEntity::new, SirenEntity::getAttributes, SirenEntity::canSirenSpawnOn, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, false);
+    SPARTI_ENTITY = registerEntityType(event, SpartiEntity::new, SpartiEntity::getAttributes, null, "sparti", 0.6F, 1.98F, EntityClassification.CREATURE, false);
     UNICORN_ENTITY = registerEntityType(event, UnicornEntity::new, UnicornEntity::getAttributes, UnicornEntity::canSpawnOn, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, false);
   }
   
@@ -261,29 +268,16 @@ public final class GFRegistry {
   @SubscribeEvent
   public static void registerBlocks(final RegistryEvent.Register<Block> event) {
     GreekFantasy.LOGGER.debug("registerBlocks");
+        
+    registerLogLeavesPlanksEtc(event, AbstractBlock.Properties.create(Material.WOOD, MaterialColor.WOOD).hardnessAndResistance(2.0F, 3.0F).sound(SoundType.WOOD), "olive");
     
-    final AbstractBlock.Properties woodProperties = AbstractBlock.Properties.create(Material.WOOD, MaterialColor.WOOD).hardnessAndResistance(2.0F, 3.0F).sound(SoundType.WOOD);
+    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "marble");
+    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
     
     event.getRegistry().registerAll(
-        rotatedLogBlock(MaterialColor.SAND, MaterialColor.STONE)
-          .setRegistryName(GreekFantasy.MODID, "olive_log"),
-        new RotatedPillarBlock(woodProperties)
-          .setRegistryName(GreekFantasy.MODID, "olive_wood"),
-        new Block(woodProperties)
-          .setRegistryName(GreekFantasy.MODID, "olive_planks"),
-        new SlabBlock(woodProperties)
-          .setRegistryName(GreekFantasy.MODID, "olive_slab"),
-        new StairsBlock(() -> GFRegistry.OLIVE_LOG.getDefaultState(), woodProperties)
-          .setRegistryName(GreekFantasy.MODID, "olive_stairs"),
-        new LeavesBlock(AbstractBlock.Properties.create(Material.LEAVES).hardnessAndResistance(0.2F).tickRandomly().sound(SoundType.PLANT)
-            .notSolid().setAllowsSpawn(GFRegistry::allowsSpawnOnLeaves).setSuffocates((s, r, p) -> false).setBlocksVision((s, r, p) -> false))
-          .setRegistryName(GreekFantasy.MODID, "olive_leaves"),
         new SaplingBlock(new OliveTree(), AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly()
             .zeroHardnessAndResistance().notSolid().sound(SoundType.PLANT))
-          .setRegistryName(GreekFantasy.MODID, "olive_sapling")
-    );
-
-    event.getRegistry().registerAll(
+          .setRegistryName(GreekFantasy.MODID, "olive_sapling"),
         new NestBlock(AbstractBlock.Properties.create(Material.ORGANIC, MaterialColor.BROWN).hardnessAndResistance(0.5F).sound(SoundType.PLANT)
             .setNeedsPostProcessing((s, r, p) -> true).notSolid())
           .setRegistryName(GreekFantasy.MODID, "nest"),
@@ -302,9 +296,6 @@ public final class GFRegistry {
         new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
           .setRegistryName(GreekFantasy.MODID, "mysterious_box")
     );
-    
-    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "marble");
-    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
   }
 
   @SubscribeEvent
@@ -315,6 +306,8 @@ public final class GFRegistry {
     event.getRegistry().registerAll(
         new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxDamage(100))
           .setRegistryName(GreekFantasy.MODID, "panflute"),
+        new SwordItem(ItemTier.WOOD, 3, -1.9F, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "flint_knife"),
         new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "iron_club"),
         new ClubItem(ItemTier.STONE, new Item.Properties().group(GREEK_GROUP))
@@ -335,7 +328,9 @@ public final class GFRegistry {
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "golden_bridle"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "magic_feather")
+          .setRegistryName(GreekFantasy.MODID, "magic_feather"),
+        new DragonToothItem(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "dragon_tooth")
     );
     
     // block items
@@ -403,16 +398,67 @@ public final class GFRegistry {
 
   private static <T extends MobEntity> EntityType<T> registerEntityType(final RegistryEvent.Register<EntityType<?>> event,
       final IFactory<T> factoryIn, final Supplier<AttributeModifierMap.MutableAttribute> mapSupplier, 
-      final EntitySpawnPlacementRegistry.IPlacementPredicate<T> placementPredicate, final String name,
+      @Nullable final EntitySpawnPlacementRegistry.IPlacementPredicate<T> placementPredicate, final String name,
       final float width, final float height, final EntityClassification classification, final boolean fireproof) {
     EntityType.Builder<T> entityTypeBuilder = EntityType.Builder.create(factoryIn, classification).size(width, height);
     if (fireproof) entityTypeBuilder.immuneToFire();
     EntityType<T> entityType = entityTypeBuilder.build(name);
     entityType.setRegistryName(GreekFantasy.MODID, name);
     event.getRegistry().register(entityType);
-    GlobalEntityTypeAttributes.put(entityType, mapSupplier.get().create());    
-    EntitySpawnPlacementRegistry.register(entityType, classification == EntityClassification.WATER_CREATURE ? PlacementType.IN_WATER : PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, placementPredicate);
+    GlobalEntityTypeAttributes.put(entityType, mapSupplier.get().create());
+    if(placementPredicate != null) {
+      EntitySpawnPlacementRegistry.register(entityType, classification == EntityClassification.WATER_CREATURE ? PlacementType.IN_WATER : PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, placementPredicate);
+    }
     return entityType;
+  }
+  
+  private static void registerLogLeavesPlanksEtc(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {
+    // log block
+    final Block log = new RotatedPillarBlock(AbstractBlock.Properties.create(Material.WOOD, (state) -> {
+      return state.get(RotatedPillarBlock.AXIS) == Direction.Axis.Y ? MaterialColor.SAND : MaterialColor.WOOD;
+    }).hardnessAndResistance(2.0F).sound(SoundType.WOOD)) {
+      @Override
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      @Override
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+    };
+    // planks block
+    final Block wood = new RotatedPillarBlock(properties){
+      @Override
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      @Override
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+    };
+    // register log, planks, and others
+    event.getRegistry().registerAll(     
+        log.setRegistryName(GreekFantasy.MODID, registryName + "_log"), 
+        wood.setRegistryName(GreekFantasy.MODID, registryName + "_wood"),
+        new Block(properties) {
+          @Override
+          public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+          @Override
+          public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 20; }
+        }.setRegistryName(GreekFantasy.MODID, registryName + "_planks"),
+        new SlabBlock(properties) {
+          @Override
+          public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+          @Override
+          public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 20; }
+        }.setRegistryName(GreekFantasy.MODID, registryName + "_slab"),
+        new StairsBlock(() -> log.getDefaultState(), properties){
+          @Override
+          public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+          @Override
+          public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 20; }
+        }.setRegistryName(GreekFantasy.MODID, registryName + "_stairs"),
+        new LeavesBlock(AbstractBlock.Properties.create(Material.LEAVES).hardnessAndResistance(0.2F).tickRandomly().sound(SoundType.PLANT)
+            .notSolid().setAllowsSpawn(GFRegistry::allowsSpawnOnLeaves).setSuffocates((s, r, p) -> false).setBlocksVision((s, r, p) -> false)) {
+          @Override
+          public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 30; }
+          @Override
+          public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 60; }
+        }.setRegistryName(GreekFantasy.MODID, registryName + "_leaves")
+    );
   }
 
   private static void registerBlockPolishedSlabAndStairs(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {
@@ -431,14 +477,8 @@ public final class GFRegistry {
   private static void registerItemBlock(final RegistryEvent.Register<Item> event, final Block block, final String registryName) {
     event.getRegistry().register(new BlockItem(block, new Item.Properties().group(GREEK_GROUP)).setRegistryName(GreekFantasy.MODID, registryName));
   }
-  
-  private static RotatedPillarBlock rotatedLogBlock(final MaterialColor topColor, final MaterialColor sideColor) {
-    return new RotatedPillarBlock(AbstractBlock.Properties.create(Material.WOOD, (state) -> {
-       return state.get(RotatedPillarBlock.AXIS) == Direction.Axis.Y ? topColor : sideColor;
-    }).hardnessAndResistance(2.0F).sound(SoundType.WOOD));
-  }
 
   private static Boolean allowsSpawnOnLeaves(BlockState state, IBlockReader reader, BlockPos pos, EntityType<?> entity) {
-    return entity == EntityType.OCELOT || entity == EntityType.PARROT;
+    return entity == EntityType.OCELOT || entity == EntityType.PARROT || entity == DRYAD_ENTITY;
   }
 }

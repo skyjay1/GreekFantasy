@@ -28,9 +28,11 @@ X X X Unicorn
 ~ X _ Orthus (2-headed dog) (TODO fix model)
 _ _ _ Eurynomos (blue skin; vulture head?)
 X ~ _ Elpis (hope)
+~ X _ Sparti (TODO: texture)
 _ _ _ Hippocampus
+X X X Mad Cow (summoned by Geryon)
 X _ _ Boss: Cerberus
-X ~ _ Boss: Geryon (3-headed Gigante)
+~ X _ Boss: Geryon (3-headed Gigante) (TODO: texture)
 
 
 ## Entity AI
@@ -57,6 +59,7 @@ X Orthus breathes fire
 X Cerastes hides in sand
 X Unicorn can be tamed / ridden
 _ Elpis grants something to player
+X Sparti follow player who summoned them (owner)
 
 ## Structures
 
@@ -86,8 +89,8 @@ _ _ _ Urn
 X X _ Mysterious box
 X X _ Olive basics (log, wood, planks, slab, stair)
 _ _ _ Olive blocks: button, fence, boat, door, trapdoor, stripped log, stripped wood, pressure plate, sign
-_ _ _ Olive leaves
-_ _ _ Olive sapling
+X _ _ Olive leaves
+X X _ Olive sapling
 _ _ _ Grapes / grapevines?
 
 ## Items
@@ -104,9 +107,10 @@ X X X Bull Horn (from Minotaur / Cyprians)
 X X X Unicorn Horn (while holding, cures certain potion effects)
 X X X Ambrosia (like ench. golden apple)
 X X X Magical feather
-_ _ _ Healing rod (can not be used on self) (healing projectiles)
+~ X _ Dragon's Teeth (to summon Sparti) (TODO: texture)
+_ _ _ Healing rod (cannot be used on self) (healing projectiles)
 X X _ Helm of Darkness (grants invisibility w/o particles) (from Cyclopes somehow) (TODO: texture)
-_ _ _ Olive sapling
+X X _ Flint Knife
 
 ## Achievements
 
@@ -134,7 +138,7 @@ X Panflute song selection GUI
 ~ Lots of mysterious box functions!
 X Some way to obtain Winged Sandals
 _ Some way to obtain Mysterious Box
-_ Block and Item tags (saplings, leaves, wooden_doors, etc.)
+~ Block and Item tags (wooden_doors, etc.)
 _ Olive forest biome
 
 ## Misc Ideas and Inspirations
@@ -142,7 +146,6 @@ _ Olive forest biome
 _Can I do something with these?_
 
 - Belt of Aphrodite (maybe allows disguise as other player?)
-- Dragon's Teeth (used to summon Sparti, skeleton warriors)
 - Palladium (statue that provides safety)
 - River Styx
 - Midas touch

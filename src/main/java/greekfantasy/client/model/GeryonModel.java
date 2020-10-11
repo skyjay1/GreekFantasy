@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import greekfantasy.entity.GeryonEntity;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.HandSide;
 
 public class GeryonModel<T extends GeryonEntity> extends GiganteModel<T> {
   
@@ -33,7 +34,13 @@ public class GeryonModel<T extends GeryonEntity> extends GiganteModel<T> {
     bipedRightHead.setRotationPoint(8.0F, -11F, 3.0F);
     // smash animation
     final float smashTime = entity.getSmashPercent(partialTick);
-    if(smashTime > 0) {
+    final float summonTime = entity.getSummonPercent(partialTick);
+    if(summonTime > 0) {
+      final ModelRenderer arm = this.getArmForSide(entity.getPrimaryHand().opposite());
+      arm.rotateAngleX = -1.5708F * summonTime;
+      arm.rotateAngleY = 0.680678F * summonTime * (entity.getPrimaryHand() == HandSide.RIGHT ? -1 : 1);
+    }
+    else if(smashTime > 0) {
       // when smashTime is >= downTrigger, arms will move downwards
       final float downTrigger = 0.9F;
       final float downMult = 12.5F;

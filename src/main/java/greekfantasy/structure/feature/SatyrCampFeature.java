@@ -12,7 +12,6 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
@@ -96,13 +95,12 @@ public class SatyrCampFeature extends Feature<NoFeatureConfig> {
  
   protected boolean generateTemplate(final ISeedReader reader, final Template template, final PlacementSettings placement,
       final BlockPos pos, final Random rand, final boolean satyrs, final int tentsGenerated) {
-    if(tentsGenerated > 2 || pos.getY() < 3 || !reader.getBlockState(pos).isSolid() || reader.getBlockState(pos.up(3)).isSolid()) {
+    final BlockPos offset = new BlockPos(-template.getSize().getX(), 0, -template.getSize().getZ());
+    if(tentsGenerated > 2 || !canPlaceOnBlock(reader, pos) || !canPlaceOnBlock(reader, pos.add(offset.rotate(placement.getRotation())))) {
       return false;
     }
-    
     // placement settings
-    ChunkPos chunkPos = new ChunkPos(pos);
-    MutableBoundingBox mbb = new MutableBoundingBox(chunkPos.getXStart() - 8, pos.getY() - 8, chunkPos.getZStart() - 8, chunkPos.getXEnd() + 8, pos.getY() + 16, chunkPos.getZEnd() + 8);
+    MutableBoundingBox mbb = new MutableBoundingBox(pos.getX() - 12, pos.getY() - 16, pos.getZ() - 12, pos.getX() + 12, pos.getY() + 16, pos.getZ() + 12);
     
     // actually generate the structure
     template.func_237146_a_(reader, pos, pos, placement.setBoundingBox(mbb), rand, 2);
@@ -132,6 +130,10 @@ public class SatyrCampFeature extends Feature<NoFeatureConfig> {
       }
       world.addEntity(entity);
     }
+  }
+  
+  protected static boolean canPlaceOnBlock(final ISeedReader world, final BlockPos pos) {
+    return pos.getY() > 3 && world.getBlockState(pos).isSolid() && !world.getBlockState(pos.up(3)).isSolid();
   }
 
 }

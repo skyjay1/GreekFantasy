@@ -271,11 +271,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     
     public IconButton(final StatueScreen screenIn, final int x, final int y, final int tX, final int tY,
         final ITextComponent title, final IPressable pressedAction) {
-      super(x, y, BTN_HEIGHT, BTN_HEIGHT, StringTextComponent.EMPTY, pressedAction, (button, matrix, mouseX, mouseY) -> {
-        if(button.isHovered()) {
-          screenIn.renderTooltip(matrix, screenIn.minecraft.fontRenderer.trimStringToWidth(title, Math.max(screenIn.width / 2 - 43, 170)), mouseX, mouseY);
-        }
-      });
+      super(x, y, BTN_HEIGHT, BTN_HEIGHT, StringTextComponent.EMPTY, pressedAction);
       this.textureX = tX;
       this.textureY = tY;
     }
@@ -290,6 +286,9 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
         this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
         // draw button icon
         this.blit(matrixStack, this.x, this.y, getIconX(), getIconY(), this.width, this.height);
+        if(this.isHovered()) {
+          StatueScreen.this.renderTooltip(matrixStack, StatueScreen.this.minecraft.fontRenderer.trimStringToWidth(title, Math.max(StatueScreen.this.width / 2 - 43, 170)), mouseX, mouseY);
+        }
       }
     }
     

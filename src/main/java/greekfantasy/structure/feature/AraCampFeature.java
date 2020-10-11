@@ -77,7 +77,8 @@ public class AraCampFeature extends Feature<NoFeatureConfig> {
   
   protected static boolean generateTent(final ISeedReader reader, final Template template, final PlacementSettings placement,
       final BlockPos pos, final Random rand) {
-    if(pos.getY() < 3 || !reader.getBlockState(pos).isSolid() || reader.getBlockState(pos.up(3)).isSolid()) {
+    final BlockPos offset = new BlockPos(-template.getSize().getX(), 0, -template.getSize().getZ());
+    if(!canPlaceOnBlock(reader, pos) || !canPlaceOnBlock(reader, pos.add(offset.rotate(placement.getRotation())))) {
       return false;
     }
     
@@ -101,6 +102,10 @@ public class AraCampFeature extends Feature<NoFeatureConfig> {
       entity.enablePersistence();
       world.addEntity(entity);
     }
+  }
+  
+  protected static boolean canPlaceOnBlock(final ISeedReader world, final BlockPos pos) {
+    return pos.getY() > 3 && world.getBlockState(pos).isSolid() && !world.getBlockState(pos.up(3)).isSolid();
   }
 
 }

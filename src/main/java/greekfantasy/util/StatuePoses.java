@@ -2,6 +2,9 @@ package greekfantasy.util;
 
 import java.util.Random;
 
+/**
+ * This class holds several StatuePose presets
+ **/
 public class StatuePoses {
   
   private StatuePoses() { }
@@ -43,9 +46,16 @@ public class StatuePoses {
       .set(ModelPart.LEFT_LEG, 4, 0, -2)
       .set(ModelPart.RIGHT_LEG, -4, 0, 2);
   
+  public static final StatuePose DAB = new StatuePose()
+      .set(ModelPart.HEAD, 38, 0, 0)
+      .set(ModelPart.RIGHT_ARM, -108F, 64F, 0)
+      .set(ModelPart.LEFT_ARM, -100F, 45F, 0)
+      .set(ModelPart.LEFT_LEG, 0, 0, -4)
+      .set(ModelPart.RIGHT_LEG, 0, 0, 4);
+  
   // Array to hold all the poses in this class
-  public static final StatuePose[] ALL_POSES = new StatuePose[] {
-      NONE, STANDING_HOLDING, WALKING, STANDING_HOLDING_DRAMATIC, STANDING_RAISED, WEEPING
+  public static final StatuePose[] POSES = new StatuePose[] {
+      STANDING_HOLDING, WALKING, STANDING_HOLDING_DRAMATIC, STANDING_RAISED, WEEPING, DAB
   };
 
   /**
@@ -53,6 +63,6 @@ public class StatuePoses {
    * @return a preset pose that is not 'NONE'
    **/
   public static final StatuePose getRandomPose(final Random rand) {
-    return ALL_POSES[1 + rand.nextInt(ALL_POSES.length - 1)];
+    return POSES[rand.nextInt(POSES.length)];
   }
 }

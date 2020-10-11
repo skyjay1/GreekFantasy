@@ -44,7 +44,8 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
     final Template template = manager.getTemplateDefaulted(getRandomTree(rand));
     
     // position for tree
-    final BlockPos pos = blockPosIn.add(new BlockPos(-(template.getSize().getX() / 2), 0, -(template.getSize().getZ() / 2)).rotate(rotation));
+    final BlockPos offset = new BlockPos(-Math.ceil((template.getSize().getX() / 2.0F) + 0.5F), 0, -Math.floor(template.getSize().getZ() / 2.0F));
+    final BlockPos pos = blockPosIn.add(offset.rotate(rotation));
     
     // conditions for generation
     if (!config.forcePlacement && !reader.getBlockState(pos).canSustainPlant(reader, pos, Direction.UP, (IPlantable)GFRegistry.OLIVE_SAPLING)) {

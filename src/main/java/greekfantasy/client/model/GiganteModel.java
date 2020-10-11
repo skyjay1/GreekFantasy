@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.CreatureEntity;
+import net.minecraft.util.HandSide;
 
 public class GiganteModel<T extends CreatureEntity> extends BipedModel<T> {
 
@@ -65,4 +66,18 @@ public class GiganteModel<T extends CreatureEntity> extends BipedModel<T> {
     matrixStackIn.pop();
   }
   
+  @Override
+  public void translateHand(final HandSide sideIn, final MatrixStack matrixStackIn) {
+    float dX = sideIn == HandSide.RIGHT ? -2F : 2F;
+    float dZ = -3.5F;
+    float dY = 3.0F;
+    ModelRenderer armModel = this.getArmForSide(sideIn);
+    armModel.rotationPointX += dX;
+    armModel.rotationPointY += dY;
+    armModel.rotationPointZ += dZ;
+    armModel.translateRotate(matrixStackIn);
+    armModel.rotationPointX -= dX;
+    armModel.rotationPointY -= dY;
+    armModel.rotationPointZ -= dZ;
+  }
 }

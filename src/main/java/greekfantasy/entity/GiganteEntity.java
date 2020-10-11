@@ -55,7 +55,7 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 100.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.30D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.20D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D)

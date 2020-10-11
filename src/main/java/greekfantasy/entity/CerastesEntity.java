@@ -3,7 +3,6 @@ package greekfantasy.entity;
 import java.util.EnumSet;
 import java.util.Random;
 
-import greekfantasy.entity.ai.GoToBlockGoal;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.CreatureEntity;
@@ -21,6 +20,7 @@ import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.passive.RabbitEntity;
@@ -30,7 +30,6 @@ import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -79,8 +78,8 @@ public class CerastesEntity extends CreatureEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(1, new HideGoal(this));
-    this.goalSelector.addGoal(2, new GoToSandGoal(10, 0.8F));
-    this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
+    this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false));
+    this.goalSelector.addGoal(3, new GoToSandGoal(10, 0.8F));
     this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D){
       @Override
       public boolean shouldExecute() {
@@ -250,7 +249,7 @@ public class CerastesEntity extends CreatureEntity {
     return hidingTime;
   }
   
-  class GoToSandGoal extends GoToBlockGoal {
+  class GoToSandGoal extends MoveToBlockGoal {
     
     public GoToSandGoal(final int radiusIn, final double speedIn) {
       super(CerastesEntity.this, speedIn, radiusIn);
@@ -260,16 +259,22 @@ public class CerastesEntity extends CreatureEntity {
     public boolean shouldExecute() {
       return !CerastesEntity.this.isHiding() && CerastesEntity.this.getAttackTarget() == null && super.shouldExecute();
     }
-
+    
     @Override
-    public boolean isTargetBlock(IWorldReader worldIn, BlockPos pos) {
-      return !worldIn.getBlockState(pos.up(1)).getMaterial().blocksMovement() && worldIn.getBlockState(pos).isIn(BlockTags.SAND);
+    public void tick() {
+      super.tick();
+      if(this.getIsAboveDestination()) {
+        CerastesEntity.this.isGoingToSand = false;
+      }
     }
     
     @Override
-    public void onFoundBlock(final IWorldReader worldIn, final BlockPos pos) {
-      super.onFoundBlock(worldIn, pos);
-      CerastesEntity.this.isGoingToSand = true;
+    protected boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
+      if(!worldIn.getBlockState(pos.up(1)).getMaterial().blocksMovement() && worldIn.getBlockState(pos).isIn(BlockTags.SAND)) {
+        CerastesEntity.this.isGoingToSand = true;
+        return true;
+      }
+      return false;
     }
   }
   
