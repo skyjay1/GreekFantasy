@@ -1,7 +1,6 @@
 package greekfantasy.item;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.GreekFantasy;
 import greekfantasy.entity.HealingSpellEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -24,13 +23,10 @@ public class HealingRodItem extends Item {
     if(stack.getMaxDamage() - stack.getDamage() <= 4) {
       return ActionResult.resultFail(stack);
     }
-    player.getCooldownTracker().setCooldown(this, 90);
+    player.getCooldownTracker().setCooldown(this, 50);
     // spawn a healing spell entity
     if(!world.isRemote()) {
-      // TODO this isn't setting motion properly, if at all. Maybe because it's server-side.
       HealingSpellEntity healingSpell = HealingSpellEntity.create(world, player);
-      // this unmapped method from ProjectileEntity does some math, then calls #shoot
-      healingSpell.func_234612_a_(player, player.rotationPitch, player.rotationYaw, 0.0F, 1.5F, 1.0F);
       world.addEntity(healingSpell);
     }
     

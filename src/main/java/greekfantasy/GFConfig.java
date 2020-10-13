@@ -9,7 +9,9 @@ public class GFConfig {
   public final ForgeConfigSpec.BooleanValue NERF_AMBROSIA;
   public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
   private final ForgeConfigSpec.BooleanValue HELM_HIDES_ARMOR;
+  private final ForgeConfigSpec.BooleanValue DRAGON_TOOTH_SPAWNS_SPARTI;
   private boolean helmHidesArmor;
+  private boolean dragonToothSpawnsSparti;
 
   // effect configs
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
@@ -39,6 +41,7 @@ public class GFConfig {
   public final ForgeConfigSpec.IntValue GIGANTE_SPAWN_WEIGHT;
   public final ForgeConfigSpec.IntValue GORGON_SPAWN_WEIGHT;
   public final ForgeConfigSpec.IntValue HARPY_SPAWN_WEIGHT;
+  public final ForgeConfigSpec.IntValue MAD_COW_SPAWN_WEIGHT;
   public final ForgeConfigSpec.IntValue MINOTAUR_SPAWN_WEIGHT;
   public final ForgeConfigSpec.IntValue NAIAD_SPAWN_WEIGHT;
   public final ForgeConfigSpec.IntValue ORTHUS_SPAWN_WEIGHT;
@@ -50,9 +53,11 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
   private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
   private final ForgeConfigSpec.IntValue ELPIS_SPAWN_CHANCE;
+  public final ForgeConfigSpec.IntValue NUM_SPARTI_SPAWNED;
   private boolean shadeSpawnOnDeath;
   private int satyrShamanChance;
   private int elpisSpawnChance;
+  private int numSpartiSpawned;
   
   // other special entity abilities
   public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
@@ -66,6 +71,7 @@ public class GFConfig {
   // feature configs
   public final ForgeConfigSpec.IntValue HARPY_NEST_SPREAD;
   public final ForgeConfigSpec.IntValue SMALL_SHRINE_SPREAD;
+  public final ForgeConfigSpec.IntValue SMALL_NETHER_SHRINE_SPREAD;
   public final ForgeConfigSpec.IntValue ARA_CAMP_SPREAD;
   public final ForgeConfigSpec.IntValue SATYR_CAMP_SPREAD;
   
@@ -79,10 +85,12 @@ public class GFConfig {
         .defineInRange("sandals_speed_bonus", 1.0D, 0.0D, 2.0D);
     NERF_AMBROSIA = builder.comment("When true, ambrosia gives effects of Golden Apple instead of Enchanted Golden Apple")
         .define("nerf_ambrosia", false);
-    UNICORN_HORN_CURES_EFFECTS = builder.comment("Whether holding the unicorn horn can cure potion effects")
+    UNICORN_HORN_CURES_EFFECTS = builder.comment("Whether using the unicorn horn can cure potion effects")
         .define("unicorn_horn_cures_effects", true);
     HELM_HIDES_ARMOR = builder.comment("Whether the helm of darkness hides armor")
         .define("helm_hides_armor", true);
+    DRAGON_TOOTH_SPAWNS_SPARTI = builder.comment("Whether throwing a dragon tooth can spawn Sparti")
+        .define("dragon_tooth_spawns_sparti", true);
     builder.pop();
     // mob attacks
     builder.push("effects");
@@ -120,7 +128,7 @@ public class GFConfig {
     builder.pop();
     // mob spawns
     builder.push("mob_spawn_weights");
-    ARA_SPAWN_WEIGHT = builder.worldRestart().defineInRange("ara_spawn_weight", 20, 0, 100);
+    ARA_SPAWN_WEIGHT = builder.worldRestart().defineInRange("ara_spawn_weight", 10, 0, 100);
     CERBERUS_SPAWN_WEIGHT = builder.worldRestart().defineInRange("cerberus_spawn_weight", 10, 0, 100);
     CENTAUR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("centaur_spawn_weight", 15, 0, 100);
     CERASTES_SPAWN_WEIGHT = builder.worldRestart().defineInRange("cerastes_spawn_weight", 30, 0, 100);
@@ -131,6 +139,7 @@ public class GFConfig {
     GIGANTE_SPAWN_WEIGHT = builder.worldRestart().defineInRange("gigante_spawn_weight", 20, 0, 100);
     GORGON_SPAWN_WEIGHT = builder.worldRestart().defineInRange("gorgon_spawn_weight", 16, 0, 100);
     HARPY_SPAWN_WEIGHT = builder.worldRestart().defineInRange("harpy_spawn_weight", 8, 0, 100);
+    MAD_COW_SPAWN_WEIGHT = builder.worldRestart().defineInRange("mad_cow_spawn_weight", 2, 0, 100);
     MINOTAUR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("minotaur_spawn_weight", 60, 0, 100);
     NAIAD_SPAWN_WEIGHT = builder.worldRestart().defineInRange("naiad_spawn_weight", 10, 0, 100);
     ORTHUS_SPAWN_WEIGHT = builder.worldRestart().defineInRange("orthus_spawn_weight", 20, 0, 100);
@@ -147,18 +156,21 @@ public class GFConfig {
         .defineInRange("satyr_shaman_chance", 20, 0, 100);
     ELPIS_SPAWN_CHANCE = builder.comment("Percent chance that opening a mysterious box spawns an Elpis")
         .defineInRange("elpis_spawn_chance", 60, 0, 100);
+    NUM_SPARTI_SPAWNED = builder.comment("Number of Sparti spawned by using a dragon tooth")
+        .defineInRange("num_sparti_spawned", 1, 1, 8);
     builder.pop();
     // feature configs
     builder.comment("structure and feature spread (higher number = less common)");
     builder.push("features");
     HARPY_NEST_SPREAD = builder.worldRestart().defineInRange("harpy_nest_spread", 68, 1, 1000);
     SMALL_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_shrine_spread", 102, 1, 1000);
+    SMALL_NETHER_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_nether_shrine_spread", 90, 1, 1000);
     ARA_CAMP_SPREAD = builder.worldRestart().defineInRange("ara_camp_spread", 161, 1, 1000);
     SATYR_CAMP_SPREAD = builder.worldRestart().defineInRange("satyr_camp_spread", 205, 1, 1000);
     builder.pop();
     // other
     builder.push("other");
-    STATUES_HOLD_ITEMS = builder.comment("Whether statues can hold items")
+    STATUES_HOLD_ITEMS = builder.comment("Whether statues can hold items (kinda buggy when disabled)")
         .define("statues_hold_items", true);
     builder.pop();
   }
@@ -171,23 +183,27 @@ public class GFConfig {
    **/
   public void bake() {
     helmHidesArmor = HELM_HIDES_ARMOR.get();
+    dragonToothSpawnsSparti = DRAGON_TOOTH_SPAWNS_SPARTI.get();
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
     shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
     elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
+    numSpartiSpawned = NUM_SPARTI_SPAWNED.get();
     dryadAngryOnHarvest = DRYAD_ANGRY_ON_HARVEST.get();
     dryadAngryRange = DRYAD_ANGRY_RANGE.get();
   }
   
   public boolean doesHelmHideArmor() { return helmHidesArmor; }
+  public boolean doesDragonToothSpawnSparti() { return dragonToothSpawnsSparti; }
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
   public boolean isOverstepEnabled() { return overstepEnabled; }
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
   public int getSatyrShamanChance() { return satyrShamanChance; }
   public int getElpisSpawnChance() { return elpisSpawnChance; }
+  public int getNumSpartiSpawned() { return numSpartiSpawned; }
   public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }
   public int getDryadAngryRange() { return dryadAngryRange; }
 }

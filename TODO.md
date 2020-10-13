@@ -9,7 +9,7 @@ __Key:__
 __Key:__
 `[Model] [AI] [Loot table]`
 
-X _ _ Naiad
+X ~ _ Naiad
 X ~ X Dryad
 X ~ _ Satyr
 X ~ _ Centaur
@@ -28,7 +28,7 @@ X X X Unicorn
 ~ X _ Orthus (2-headed dog) (TODO fix model)
 _ _ _ Eurynomos (blue skin; vulture head?)
 X ~ _ Elpis (hope)
-~ X _ Sparti (TODO: texture)
+X X _ Sparti
 _ _ _ Hippocampus
 X X X Mad Cow (summoned by Geryon)
 X _ _ Boss: Cerberus
@@ -100,18 +100,18 @@ __Key:__
 
 X X _ Panflute
 X X X Clubs (wood, stone/flint, iron)
-_ _ _ Javelins (wood, stone/flint, iron)
+_ _ _ Javelin or Bident (wood, stone/flint, iron)
 X X X Golden bridle (for Unicorn)
 X X X Winged sandals
 X X X Bull Horn (from Minotaur / Cyprians)
 X X X Unicorn Horn (while holding, cures certain potion effects)
 X X X Ambrosia (like ench. golden apple)
-X X X Magical feather
-~ X _ Dragon's Teeth (to summon Sparti) (TODO: texture)
-X ~ _ Healing rod (cannot be used on self) (healing projectiles)
-X X _ Helm of Darkness (grants invisibility w/o particles) (from Cyclopes somehow) (TODO: texture)
+X X X Magic feather
+X X _ Dragon's Tooth (to summon Sparti)
+X X X Healing rod (cannot be used on self) (healing projectiles)
+X X _ Helm of Darkness (grants invisibility w/o particles) (from Cyclopes somehow)
 X X X Flint Knife
-~ _ _ Snake skin and Purified snake skin (from Gorgons)
+X X X Snake skin and Purified snake skin (from Gorgons)
 
 ## Achievements
 
@@ -139,6 +139,8 @@ X Panflute song selection GUI
 ~ Lots of mysterious box functions!
 X Some way to obtain Winged Sandals
 _ Some way to obtain Mysterious Box
+_ Some way to encounter Geryon
+_ Some way to encounter Cerberus
 ~ Block and Item tags (wooden_doors, etc.)
 _ Olive forest biome
 
@@ -146,14 +148,28 @@ _ Olive forest biome
 
 _Can I do something with these?_
 
+- Thunderbolt
 - Belt of Aphrodite (maybe allows disguise as other player?)
+- Armor of Achilles (Hephaestus; said to be impenetrable)
+- Aegis (Zeus' shield)
+- Adamant Scythe (Kronus)
+- Special swords: Harpe (sword used to slay Medusa); Sword of Peleus (ensures victory in battle/hunt) (one-shot all animals?)
+- Special bows: Apollo, Artemis, Eurytus
+- Thyrsus: staff with pinecone and ivy leaves used by Dionysus
+- Amazonian Girdle (Hippolyta)
+- Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
+- Conch shell (Triton) (Raises waves)
+- Bag of Wind
 - Palladium (statue that provides safety)
 - River Styx
-- Midas touch
-- Tantalus
+- Story of King Midas (gold touch)
+- Story of Circe (sorcerer who turns people to pigs)
+- Story of Labyrinth (Minotaur, Golden String, etc)
 - Demeter (goddess of growth/fertility/crops)
 - Sphinx
 - Hydra
+- Stymphalian birds (iron wings/claws/beaks)
+- Golden Ram (Golden Fleece)
 - Nemean Lion (invulnerable to physical damage)
 - Charybdis (monster in whirlpool)
 - Telchine (seal hands)

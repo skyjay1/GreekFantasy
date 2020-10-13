@@ -78,7 +78,7 @@ public class GeryonEntity extends MonsterEntity {
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 120.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.20D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.16D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.5D)
@@ -214,7 +214,8 @@ public class GeryonEntity extends MonsterEntity {
       for(final Entity e : targets) {
         addSmashParticlesAt(e);
       }
-      // spawn block particles at this entity
+      // add sound and block particles here
+      world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_IRON_GOLEM_ATTACK, this.getSoundCategory(), 2.0F, 0.4F, false);
       addBlockParticles(45);
       break;
     case SUMMON_COW_CLIENT:

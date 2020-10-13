@@ -11,6 +11,7 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.EffectGoal;
 import greekfantasy.entity.ai.FindBlockGoal;
+import greekfantasy.util.BiomeHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -203,7 +204,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     return this.getVariant().getLootTable();
   }  
   
-  //IAngerable methods
+  // IAngerable methods
   
   @Override
   public void func_230258_H__() { this.setAngerTime(ANGER_RANGE.getRandomWithinRange(this.rand)); }
@@ -223,13 +224,20 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   public boolean canDespawn(double distanceToClosestPlayer) { return !treePos.isPresent() && this.ticksExisted > 2400; }
 
+  // Variant methods
 
   public void setVariant(final DryadEntity.Variant variant) { this.getDataManager().set(DATA_VARIANT, variant.getString()); }
+  
   public boolean isHiding() { return hidingTime > 0; }
+  
   public void setHiding(final boolean hiding) { hidingTime = hiding ? 1 : 0; }
+  
   public DryadEntity.Variant getVariant() { return DryadEntity.Variant.getByName(this.getDataManager().get(DATA_VARIANT)); }
+  
   public Optional<BlockPos> getTreePos() { return treePos; }
+  
   public Optional<Vector3d> getTreeVec() { return treePos.isPresent() ? Optional.of(new Vector3d(treePos.get().getX() + 0.5D, treePos.get().getY() + 1.0D, treePos.get().getZ() + 0.5D)) : Optional.empty(); }
+  
   public void setTreePos(final Optional<BlockPos> pos) {
     treePos = pos;
     if(pos.isPresent()) {
@@ -437,26 +445,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     }
     
     public static Variant getForBiome(final Optional<RegistryKey<Biome>> biome) {
-      final String biomeName = biome.isPresent() ? biome.get().getRegistryName().getPath() : "";
-      if(biomeName.contains("birch")) {
-        return BIRCH;
-      }
-      if(biomeName.contains("dark_forest")) {
-        return DARK_OAK;
-      }
-      if(biomeName.contains("taiga")) {
-        return SPRUCE;
-      }
-      if(biomeName.contains("jungle")) {
-        return JUNGLE;
-      }
-      if(biomeName.contains("savanna")) {
-        return ACACIA;
-      }
-      if(biomeName.contains("olive")) {
-        return OLIVE;
-      }
-      return OAK;
+      return BiomeHelper.getVariantForBiome(biome);
     }
 
     public static Variant getByName(final String n) {

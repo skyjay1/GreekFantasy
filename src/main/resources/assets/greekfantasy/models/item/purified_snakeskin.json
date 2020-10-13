@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "greekfantasy:item/dragon_tooth"
+    "layer0": "greekfantasy:item/purified_snakeskin"
   }
 }

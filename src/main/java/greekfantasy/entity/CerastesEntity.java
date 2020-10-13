@@ -71,7 +71,7 @@ public class CerastesEntity extends CreatureEntity {
   public static boolean canCerastesSpawnOn(final EntityType<? extends MobEntity> entity, final IWorld world, final SpawnReason reason, 
       final BlockPos pos, final Random rand) {
     final BlockPos blockpos = pos.down();
-    return reason == SpawnReason.SPAWNER || world.getBlockState(blockpos.down()).isIn(Blocks.SAND);
+    return reason == SpawnReason.SPAWNER || world.getBlockState(blockpos).isIn(Blocks.SAND);
   }
   
   @Override

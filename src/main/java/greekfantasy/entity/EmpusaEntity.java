@@ -46,7 +46,7 @@ public class EmpusaEntity extends MonsterEntity {
   @Override
   protected void registerGoals() {
     super.registerGoals();
-    this.goalSelector.addGoal(0, new SwimGoal(this));
+    this.goalSelector.addGoal(1, new SwimGoal(this));
     this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
     this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));

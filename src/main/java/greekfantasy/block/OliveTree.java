@@ -22,14 +22,18 @@ public class OliveTree extends Tree {
   @Override
   protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getTreeFeature(final Random rand, final boolean hasNearbyFlora) {
     if(OLIVE_TREE_CONFIGURATION == null) {
-      OLIVE_TREE_CONFIGURATION = GFWorldGen.OLIVE_TREE.withConfiguration(new BaseTreeFeatureConfig.Builder(
-          new SimpleBlockStateProvider(GFRegistry.OLIVE_LOG.getDefaultState()), 
-          new SimpleBlockStateProvider(GFRegistry.OLIVE_LEAVES.getDefaultState()), 
-          new FancyFoliagePlacer(FeatureSpread.func_242252_a(2), FeatureSpread.func_242252_a(4), 4), 
-          new FancyTrunkPlacer(3, 11, 0), new TwoLayerFeature(0, 0, 0, OptionalInt.of(4)))
-          .setIgnoreVines().func_236702_a_(Heightmap.Type.MOTION_BLOCKING).build());
+      OLIVE_TREE_CONFIGURATION = getConfiguredTree();
     }
     return OLIVE_TREE_CONFIGURATION;
+  }
+  
+  public static ConfiguredFeature<BaseTreeFeatureConfig, ?> getConfiguredTree() {
+    return GFWorldGen.OLIVE_TREE.withConfiguration(new BaseTreeFeatureConfig.Builder(
+        new SimpleBlockStateProvider(GFRegistry.OLIVE_LOG.getDefaultState()), 
+        new SimpleBlockStateProvider(GFRegistry.OLIVE_LEAVES.getDefaultState()), 
+        new FancyFoliagePlacer(FeatureSpread.func_242252_a(2), FeatureSpread.func_242252_a(4), 4), 
+        new FancyTrunkPlacer(3, 11, 0), new TwoLayerFeature(0, 0, 0, OptionalInt.of(4)))
+        .setIgnoreVines().func_236702_a_(Heightmap.Type.MOTION_BLOCKING).build());
   }
 
 }

@@ -1,18 +1,20 @@
 package greekfantasy.entity;
 
 import greekfantasy.GFRegistry;
+import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.ITeleporter;
@@ -27,8 +29,11 @@ public class HealingSpellEntity extends ProjectileEntity {
   private HealingSpellEntity(World worldIn, LivingEntity thrower) {
     this(GFRegistry.HEALING_SPELL_ENTITY, worldIn);
     super.setShooter(thrower);
-    this.setPosition(thrower.getPosX() - (double)(thrower.getWidth() + 1.0F) * 0.5D * (double)MathHelper.sin(thrower.renderYawOffset * ((float)Math.PI / 180F)), thrower.getPosYEye() - (double)0.25F, thrower.getPosZ() + (double)(thrower.getWidth() + 1.0F) * 0.5D * (double)MathHelper.cos(thrower.renderYawOffset * ((float)Math.PI / 180F)));
-    addParticles(ParticleTypes.ENCHANTED_HIT, 12);
+    this.setPosition(thrower.getPosX(), thrower.getPosYEye() - 0.1D, thrower.getPosZ());
+    // this unmapped method from ProjectileEntity does some math, then calls #shoot
+    // params: thrower, rotationPitch, rotationYaw, ???, speed, inaccuracy
+    func_234612_a_(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, 0.75F, 0.5F);
+    markVelocityChanged();
   }
   
   public static HealingSpellEntity create(World worldIn, LivingEntity thrower) {
@@ -40,14 +45,15 @@ public class HealingSpellEntity extends ProjectileEntity {
     super.onEntityHit(raytrace);
     Entity thrower = func_234616_v_();
     if (raytrace.getEntity() != thrower && raytrace.getEntity() instanceof LivingEntity) {
-       ((LivingEntity)raytrace.getEntity()).addPotionEffect(new EffectInstance(Effects.INSTANT_HEALTH, 1, 0));
+      final LivingEntity entity = (LivingEntity)raytrace.getEntity();
+      entity.addPotionEffect(new EffectInstance(Effects.INSTANT_HEALTH, 1, 1));
+      addParticles(entity.getCreatureAttribute() == CreatureAttribute.UNDEAD ? ParticleTypes.DAMAGE_INDICATOR : ParticleTypes.HEART, 6 + rand.nextInt(6));
     }
-
- }
+  }
+  
   @Override
   protected void onImpact(RayTraceResult raytrace) {
     super.onImpact(raytrace);
-    addParticles(ParticleTypes.HEART, 6 + rand.nextInt(6));
     if (!this.world.isRemote() && this.isAlive()) {
       remove();
     }
@@ -55,15 +61,37 @@ public class HealingSpellEntity extends ProjectileEntity {
 
   @Override
   public void tick() {
-    Entity entity = func_234616_v_();
-    if (entity instanceof net.minecraft.entity.player.PlayerEntity && !entity.isAlive()) {
+    Entity thrower = func_234616_v_();
+    if (thrower instanceof net.minecraft.entity.player.PlayerEntity && !thrower.isAlive()) {
       remove();
-    } else {
-      // spawn particles
-      addParticles(ParticleTypes.HAPPY_VILLAGER, 2);
-      // super method
-      super.tick();
+      return;
     }
+    // remove if too old
+    if(this.ticksExisted > 300) {
+      remove();
+      return;
+    }
+    // check for impact
+    RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
+    if (raytraceresult != null && raytraceresult.getType() != RayTraceResult.Type.MISS
+        && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+      this.onImpact(raytraceresult);
+    }
+    // particle trail
+    if(this.ticksExisted > 2) {
+      addParticles(ParticleTypes.HAPPY_VILLAGER, 2);
+    }
+    // movement
+    Vector3d motion = this.getMotion();
+    double d0 = this.getPosX() + motion.x;
+    double d1 = this.getPosY() + motion.y;
+    double d2 = this.getPosZ() + motion.z;
+    // lerp rotation and pitch
+    this.func_234617_x_();
+    // actually move the entity
+    this.setPosition(d0, d1, d2);
+    // super method
+    super.tick();
   }
 
   @Override
@@ -86,18 +114,19 @@ public class HealingSpellEntity extends ProjectileEntity {
   
   private void addParticles(final IParticleData type, final int count) {
     if(this.getEntityWorld().isRemote()) {
-      final double x = getPosX() + 0.5D;
+      final double x = getPosX();
       final double y = getPosY() + 0.1D;
-      final double z = getPosZ() + 0.5D;
+      final double z = getPosZ();
       final double motion = 0.08D;
-      final double radius = getWidth();
+      final double width = getWidth() / 2;
+      final double height = getHeight() / 2;
       for (int i = 0; i < count; i++) {
         world.addParticle(type, 
-            x + (world.rand.nextDouble() - 0.5D) * radius, 
-            y + getHeight() / 2, 
-            z + (world.rand.nextDouble() - 0.5D) * radius,
+            x + (world.rand.nextDouble() - 0.5D) * width, 
+            y + height, 
+            z + (world.rand.nextDouble() - 0.5D) * width,
             (world.rand.nextDouble() - 0.5D) * motion, 
-            0.5D,
+            (world.rand.nextDouble() - 0.5D) * motion,
             (world.rand.nextDouble() - 0.5D) * motion);
       }
     }

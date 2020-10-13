@@ -15,6 +15,8 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
@@ -46,14 +48,15 @@ public class OrthusEntity extends MonsterEntity {
   @Override
   protected void registerGoals() {
     super.registerGoals();
-    this.goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
-    this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+    this.goalSelector.addGoal(1, new SwimGoal(this));
+    this.goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
+    this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
+    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     if(GreekFantasy.CONFIG.ORTHUS_ATTACK.get()) {
-      // TODO make goal
       this.goalSelector.addGoal(2, new FireAttackGoal(this));
     }
   }

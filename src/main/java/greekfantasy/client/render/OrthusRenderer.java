@@ -12,10 +12,11 @@ import net.minecraft.util.ResourceLocation;
 
 public class OrthusRenderer<T extends OrthusEntity> extends MobRenderer<T, OrthusModel<T>> {
   
-  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/orthus.png");
+  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/orthus/orthus.png");
 
   public OrthusRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new OrthusModel<T>(0.0F), 0.5F);
+    this.addLayer(new OrthusEyesLayer<>(this));
   }
 
   @Override

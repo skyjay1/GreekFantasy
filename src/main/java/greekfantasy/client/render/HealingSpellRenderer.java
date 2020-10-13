@@ -29,10 +29,10 @@ public class HealingSpellRenderer<T extends HealingSpellEntity> extends EntityRe
   public void render(final T entityIn, final float rotationYawIn, final float ageInTicks, final MatrixStack matrixStackIn,
       final IRenderTypeBuffer bufferIn, final int packedLightIn) {
     matrixStackIn.push();
-    matrixStackIn.scale(SCALE, SCALE, SCALE);
-    final IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutout(getEntityTexture(entityIn)));
+    matrixStackIn.scale(SCALE, -SCALE, SCALE);
+    final IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(getEntityTexture(entityIn)));
     super.render(entityIn, rotationYawIn, ageInTicks, matrixStackIn, bufferIn, packedLightIn);
-    entityModel.render(matrixStackIn, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+    entityModel.render(matrixStackIn, vertexBuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     matrixStackIn.pop();
   }
   

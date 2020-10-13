@@ -222,11 +222,11 @@ public final class GFRegistry {
   @SubscribeEvent
   public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
     GreekFantasy.LOGGER.debug("registerEntities");
-    ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, AraEntity::canSpawnOn, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, false);
+    ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, AraEntity::canAraSpawnOn, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, false);
     CENTAUR_ENTITY = registerEntityType(event, CentaurEntity::new, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, false);
     CYPRIAN_ENTITY = registerEntityType(event, CyprianEntity::new, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, false);
     CERASTES_ENTITY = registerEntityType(event, CerastesEntity::new, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, false);
-    CERBERUS_ENTITY = registerEntityType(event, CerberusEntity::new, CerberusEntity::getAttributes, CerberusEntity::canSpawnOn, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, false);
+    CERBERUS_ENTITY = registerEntityType(event, CerberusEntity::new, CerberusEntity::getAttributes, CerberusEntity::canSpawnOn, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, true);
     CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, false);
     DRYAD_ENTITY = registerEntityType(event, DryadEntity::new, DryadEntity::getAttributes, DryadEntity::canSpawnOn, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, false);
     ELPIS_ENTITY = registerEntityType(event, ElpisEntity::new, ElpisEntity::getAttributes, null, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, false);

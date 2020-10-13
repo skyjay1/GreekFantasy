@@ -1,6 +1,7 @@
 package greekfantasy.entity;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -46,24 +47,27 @@ public class DragonToothEntity extends ProjectileItemEntity {
   @Override
   protected void onEntityHit(EntityRayTraceResult raytrace) {
     super.onEntityHit(raytrace);
-    raytrace.getEntity().attackEntityFrom(DamageSource.causeThrownDamage(this, func_234616_v_()), 0.0F);
+    final float damage = GreekFantasy.CONFIG.doesDragonToothSpawnSparti() ? 0.0F : 1.5F;
+    raytrace.getEntity().attackEntityFrom(DamageSource.causeThrownDamage(this, func_234616_v_()), damage);
   }
 
   @Override
   protected void onImpact(RayTraceResult raytrace) {
     super.onImpact(raytrace);
-    Entity thrower = func_234616_v_();
-
-    if (!this.world.isRemote() && this.isAlive()) {
-      final SpartiEntity sparti = GFRegistry.SPARTI_ENTITY.create(world);
-      sparti.setLocationAndAngles(raytrace.getHitVec().x, raytrace.getHitVec().y, raytrace.getHitVec().z, 0, 0);
-      if (thrower instanceof PlayerEntity) {
-        sparti.rotationPitch = thrower.rotationYaw + 180.0F;
-        sparti.setOwner((PlayerEntity) thrower);
+    if (!this.world.isRemote() && this.isAlive() && GreekFantasy.CONFIG.doesDragonToothSpawnSparti()) {
+      Entity thrower = func_234616_v_();
+      // spawn a configurable number of sparti
+      for(int i = 0, n = GreekFantasy.CONFIG.getNumSpartiSpawned(); i < n; i++) {
+        final SpartiEntity sparti = GFRegistry.SPARTI_ENTITY.create(world);
+        sparti.setLocationAndAngles(raytrace.getHitVec().x, raytrace.getHitVec().y, raytrace.getHitVec().z, 0, 0);
+        if (thrower instanceof PlayerEntity) {
+          sparti.rotationPitch = thrower.rotationYaw + 180.0F;
+          sparti.setOwner((PlayerEntity) thrower);
+        }
+        sparti.setSpawning();
+        sparti.setEquipmentOnSpawn();
+        world.addEntity(sparti);
       }
-      sparti.setSpawning();
-      sparti.setEquipmentOnSpawn();
-      world.addEntity(sparti);
       remove();
     }
   }

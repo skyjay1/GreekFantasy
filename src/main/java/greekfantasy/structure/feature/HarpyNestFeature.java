@@ -8,6 +8,7 @@ import com.mojang.serialization.Codec;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.entity.HarpyEntity;
+import greekfantasy.util.BiomeHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -198,20 +199,7 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
   }
 
   protected static BlockState getLogState(final Optional<RegistryKey<Biome>> biome) {
-    Block log = Blocks.OAK_LOG;    
-    final String biomeName = biome.isPresent() ? biome.get().getRegistryName().getPath() : "";
-    if(biomeName.contains("birch")) {
-      log = Blocks.BIRCH_LOG;
-    } else if(biomeName.contains("dark_forest")) {
-      log = Blocks.DARK_OAK_LOG;
-    } else if(biomeName.contains("taiga")) {
-      log = Blocks.SPRUCE_LOG;
-    } else if(biomeName.contains("jungle")) {
-      log = Blocks.JUNGLE_LOG;
-    } else if(biomeName.contains("savanna")) {
-      log = Blocks.ACACIA_LOG;
-    }
-    return log.getDefaultState().with(RotatedPillarBlock.AXIS, Direction.Axis.Y);
+    return BiomeHelper.getLogForBiome(biome).with(RotatedPillarBlock.AXIS, Direction.Axis.Y);
   }
   
   protected static BlockState getLeavesState(final BlockState log) {
