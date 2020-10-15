@@ -52,7 +52,7 @@ public class ClientForgeEventHandler {
    * This method handles when the player is wearing the winged sandals item.
    * It's a little buggy because the stepHeight applied here doesn't seem to persist
    * more than a tick, but it works and hopefully doesn't break things too much.
-   * @param event
+   * @param event the player tick event (only handles TickEvent.Phase.START)
    **/
   @SubscribeEvent(priority = EventPriority.HIGH)
   public static void onPlayerTick(final PlayerTickEvent event) {

@@ -8,10 +8,18 @@ public class GFConfig {
   public final ForgeConfigSpec.DoubleValue SANDALS_SPEED_BONUS;
   public final ForgeConfigSpec.BooleanValue NERF_AMBROSIA;
   public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
+  public final ForgeConfigSpec.IntValue HEALING_ROD_DURABILITY;
+  public final ForgeConfigSpec.IntValue THUNDERBOLT_DURABILITY;
   private final ForgeConfigSpec.BooleanValue HELM_HIDES_ARMOR;
   private final ForgeConfigSpec.BooleanValue DRAGON_TOOTH_SPAWNS_SPARTI;
+  private final ForgeConfigSpec.BooleanValue SWORD_OF_HUNT_BYPASSES_ARMOR;
+  private final ForgeConfigSpec.IntValue HEALING_ROD_COOLDOWN;
+  private final ForgeConfigSpec.IntValue THUNDERBOLT_COOLDOWN;
   private boolean helmHidesArmor;
   private boolean dragonToothSpawnsSparti;
+  private boolean swordOfHuntBypassesArmor;
+  private int healingRodCooldown;
+  private int thunderboltCooldown;
 
   // effect configs
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
@@ -28,6 +36,7 @@ public class GFConfig {
   public final ForgeConfigSpec.BooleanValue ORTHUS_ATTACK;
   public final ForgeConfigSpec.BooleanValue SHADE_ATTACK;
   public final ForgeConfigSpec.BooleanValue SATYR_ATTACK;
+  public final ForgeConfigSpec.BooleanValue SIREN_ATTACK;
   
   // spawn rate configs
   public final ForgeConfigSpec.IntValue ARA_SPAWN_WEIGHT;
@@ -91,6 +100,14 @@ public class GFConfig {
         .define("helm_hides_armor", true);
     DRAGON_TOOTH_SPAWNS_SPARTI = builder.comment("Whether throwing a dragon tooth can spawn Sparti")
         .define("dragon_tooth_spawns_sparti", true);
+    SWORD_OF_HUNT_BYPASSES_ARMOR = builder.comment("Whether the Sword of the Hunt deals absolute damage to animals")
+        .define("sword_of_hunt_bypasses_armor", true);
+    HEALING_ROD_COOLDOWN = builder.comment("Cooldown time after using the healing rod")
+        .defineInRange("healing_rod_cooldown", 50, 0, 100);
+    HEALING_ROD_DURABILITY = builder.defineInRange("healing_rod_durability", 384, 1, 4000);
+    THUNDERBOLT_COOLDOWN = builder.comment("Cooldown time after using the thunderbolt")
+        .defineInRange("thunderbolt_cooldown", 50, 0, 100);
+    THUNDERBOLT_DURABILITY = builder.defineInRange("thunderbolt_durability", 168, 1, 4000);
     builder.pop();
     // mob attacks
     builder.push("effects");
@@ -115,6 +132,8 @@ public class GFConfig {
         .define("satyr_attack", true);
     SHADE_ATTACK = builder.comment("Whether the Shade can steal player XP")
         .define("shade_attack", true);
+    SIREN_ATTACK = builder.comment("Whether the Siren can charm players")
+        .define("siren_attack", true);
     DRYAD_ANGRY_ON_HARVEST = builder.comment("Whether harvesting log blocks angers nearby dryads")
         .define("dryad_angry_on_harvest", true);
     DRYAD_ANGRY_RANGE = builder.comment("The distance at which dryads become angry when players harvest logs")
@@ -184,6 +203,9 @@ public class GFConfig {
   public void bake() {
     helmHidesArmor = HELM_HIDES_ARMOR.get();
     dragonToothSpawnsSparti = DRAGON_TOOTH_SPAWNS_SPARTI.get();
+    swordOfHuntBypassesArmor = SWORD_OF_HUNT_BYPASSES_ARMOR.get();
+    healingRodCooldown = HEALING_ROD_COOLDOWN.get();
+    thunderboltCooldown = THUNDERBOLT_COOLDOWN.get();
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
@@ -197,6 +219,9 @@ public class GFConfig {
   
   public boolean doesHelmHideArmor() { return helmHidesArmor; }
   public boolean doesDragonToothSpawnSparti() { return dragonToothSpawnsSparti; }
+  public boolean doesSwordOfHuntBypassArmor() { return swordOfHuntBypassesArmor; }
+  public int getHealingRodCooldown() { return healingRodCooldown; }
+  public int getThunderboltCooldown() { return thunderboltCooldown; }
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
   public boolean isOverstepEnabled() { return overstepEnabled; }

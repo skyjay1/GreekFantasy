@@ -1,15 +1,15 @@
 package greekfantasy.client.render;
 
-import greekfantasy.client.model.NymphModel;
+import greekfantasy.client.model.NaiadModel;
 import greekfantasy.entity.NaiadEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
-public class NaiadRenderer<T extends NaiadEntity> extends BipedRenderer<T, NymphModel<T>> {
+public class NaiadRenderer<T extends NaiadEntity> extends BipedRenderer<T, NaiadModel<T>> {
 
   public NaiadRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new NymphModel<T>(0.0F), 0.25F);
+    super(renderManagerIn, new NaiadModel<T>(0.0F), 0.25F);
   }
 
   /**

@@ -20,6 +20,8 @@ import greekfantasy.item.DragonToothItem;
 import greekfantasy.item.HealingRodItem;
 import greekfantasy.item.HelmOfDarknessItem;
 import greekfantasy.item.PanfluteItem;
+import greekfantasy.item.SwordOfTheHuntItem;
+import greekfantasy.item.ThunderboltItem;
 import greekfantasy.item.UnicornHornItem;
 import greekfantasy.item.WingedSandalsItem;
 import greekfantasy.tileentity.StatueTileEntity;
@@ -322,16 +324,20 @@ public final class GFRegistry {
     final boolean nerfAmbrosia = GreekFantasy.CONFIG.NERF_AMBROSIA.get();
     // items
     event.getRegistry().registerAll(
-        new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxDamage(100))
+        new PanfluteItem(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "panflute"),
         new SwordItem(ItemTier.WOOD, 3, -2.0F, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "flint_knife"),
+        new SwordOfTheHuntItem(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(GreekFantasy.MODID, "sword_of_the_hunt"),
         new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "iron_club"),
         new ClubItem(ItemTier.STONE, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "stone_club"),
         new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "wooden_club"),
+        new ThunderboltItem(new Item.Properties().group(GREEK_GROUP).maxDamage(356))
+          .setRegistryName(GreekFantasy.MODID, "thunderbolt"),
         new WingedSandalsItem(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "winged_sandals"),
         new HelmOfDarknessItem(new Item.Properties().group(GREEK_GROUP))

@@ -25,6 +25,7 @@ import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.monster.DrownedEntity;
@@ -65,14 +66,16 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   private UUID angerTarget;
 
   protected boolean swimmingUp;
+  protected boolean isVisuallySwimming;
+  protected float visuallySwimmingPercent;
   
   protected final SwimmerPathNavigator waterNavigator;
   protected final GroundPathNavigator groundNavigator;
     
   public NaiadEntity(final EntityType<? extends NaiadEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.waterNavigator = new SwimmerPathNavigator(this, world);
-    this.groundNavigator = new GroundPathNavigator(this, world);
+    this.waterNavigator = new SwimmerPathNavigator(this, worldIn);
+    this.groundNavigator = new GroundPathNavigator(this, worldIn);
     this.moveController = new SwimmingMovementController<>(this);
     this.setPathPriority(PathNodeType.WATER, 0.0F);
   }
@@ -81,7 +84,7 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.75D);
   }
 
   public static boolean canNaiadSpawnOn(EntityType<? extends WaterMobEntity> entity, IWorld world, SpawnReason reason, BlockPos pos,
@@ -94,11 +97,20 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
     super.registerGoals();
     this.goalSelector.addGoal(1, new GoToWaterGoal(this, 1.0D, 24) {
       @Override
-      public boolean shouldExecute() { return entity.getAttackTarget() == null && entity.getRNG().nextInt(300) == 0 && super.shouldExecute(); }
-      
+      public boolean shouldExecute() { return entity.getAttackTarget() == null && entity.getRNG().nextInt(100) == 0 && super.shouldExecute(); }
     });
-    this.goalSelector.addGoal(2, new SwimUpGoal<>(this, 1.0D, this.world.getSeaLevel()));
-    this.goalSelector.addGoal(2, new RandomWalkingGoal(this, 0.8D, 300));
+    this.goalSelector.addGoal(3, new SwimUpGoal<NaiadEntity>(this, 1.0D, this.world.getSeaLevel()) {
+      @Override
+      public boolean shouldExecute() { return NaiadEntity.this.world.isDaytime() && NaiadEntity.this.rand.nextInt(100) == 0 && super.shouldExecute(); }
+    });
+    this.goalSelector.addGoal(3, new RandomSwimmingGoal(this, 0.8D, 140) {
+      @Override
+      public boolean shouldExecute() { return NaiadEntity.this.isInWater() && super.shouldExecute(); }
+    });
+    this.goalSelector.addGoal(3, new RandomWalkingGoal(this, 0.8D, 180) {
+      @Override
+      public boolean shouldExecute() { return !NaiadEntity.this.isInWater() && super.shouldExecute(); }
+    });
     this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -116,6 +128,20 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   @Override
   public void livingTick() {
     super.livingTick();
+    if(world.isRemote()) {
+      // update visually swimming flag
+      if(this.ticksExisted % 11 == 1) {
+        final BlockState blockBelow = world.getBlockState(this.getPositionUnderneath());
+        this.isVisuallySwimming = (swimmingUp || isSwimming() || isInWater()) && blockBelow.getFluidState().getFluid().isIn(FluidTags.WATER);
+      }
+      // visually swimming percent
+      if(isVisuallySwimming) {
+        this.visuallySwimmingPercent = Math.min(visuallySwimmingPercent + 0.09F, 1.0F);
+      } else {
+        this.visuallySwimmingPercent = Math.max(visuallySwimmingPercent - 0.09F, 0.0F);
+      }
+    }
+
   }
 
   @Override
@@ -178,9 +204,6 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   }
 
   @Override
-  protected float getWaterSlowDown() { return 0.92F; }
-
-  @Override
   public boolean isPushedByWater() { return !isSwimming(); }
 
   @Override
@@ -204,6 +227,11 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
       }
     }
   }
+  
+  @OnlyIn(Dist.CLIENT)
+  public float animateSwimmingPercent() {
+    return isVisuallySwimming ? visuallySwimmingPercent : 0.0F;
+  }
 
   // Variant
 
@@ -213,7 +241,7 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   
   public NaiadEntity.Variant getVariant() {
     return NaiadEntity.Variant.getByName(this.getDataManager().get(DATA_VARIANT));
-  }
+  }  
   
   public static enum Variant implements IStringSerializable {
     OCEAN("ocean"),
@@ -257,4 +285,5 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
       return name;
     }
   }
+
 }

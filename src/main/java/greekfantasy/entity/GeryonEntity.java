@@ -145,7 +145,7 @@ public class GeryonEntity extends MonsterEntity {
   @Override
   protected void damageEntity(final DamageSource source, final float amountIn) {
     float amount = amountIn;
-    if (GreekFantasy.CONFIG.GERYON_RESISTANCE.get()) {
+    if (!source.isDamageAbsolute() && GreekFantasy.CONFIG.GERYON_RESISTANCE.get()) {
       amount *= 0.4F;
     }
     super.damageEntity(source, amount);

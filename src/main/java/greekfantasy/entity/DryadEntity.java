@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IAngerable;
 import net.minecraft.entity.ILivingEntityData;
@@ -162,6 +163,18 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       return !this.world.getBlockState(this.getPosition().up()).isIn(this.getVariant().getBlocks());
     }
     return super.isInvulnerableTo(source);
+  }
+  
+  @Override
+  public boolean attackEntityAsMob(final Entity entity) {
+    if (super.attackEntityAsMob(entity)) {
+      // reset anger
+      if(entity.getUniqueID().equals(this.getAngerTarget())) {
+        this.setAngerTarget(null);
+      }
+      return true;
+    }
+    return false;
   }
 
   @Override

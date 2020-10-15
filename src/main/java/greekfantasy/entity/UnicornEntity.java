@@ -68,7 +68,7 @@ public class UnicornEntity extends AbstractHorseEntity {
   
   @Override
   protected void damageEntity(final DamageSource source, final float amountIn) {
-    super.damageEntity(source, amountIn * 0.5F);
+    super.damageEntity(source, source.isDamageAbsolute() ? amountIn : amountIn * 0.5F);
   }
 
   @Override
@@ -80,6 +80,9 @@ public class UnicornEntity extends AbstractHorseEntity {
     }
     return super.isPotionApplicable(potioneffectIn);
   }
+  
+  @Override
+  public double getMountedYOffset() { return super.getMountedYOffset() - 0.1875D; }
   
   @Override
   protected void playGallopSound(SoundType sound) {

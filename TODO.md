@@ -15,10 +15,10 @@ X ~ _ Satyr
 X ~ _ Centaur
 X X X Minotaur
 X X _ Gorgon (Medusa)
-X X _ Harpy
+X X X Harpy
 X X _ Empusa
 X X X Shade
-~ _ _ Siren (hostile)
+X ~ _ Siren (hostile)
 X X X Cerastes (ram-horned serpent)
 X ~ X Ara (Propoetide)
 X _ _ Cyclopes
@@ -60,6 +60,7 @@ X Cerastes hides in sand
 X Unicorn can be tamed / ridden
 _ Elpis grants something to player
 X Sparti follow player who summoned them (owner)
+_ Siren charms players (forces player to move toward siren)
 
 ## Structures
 
@@ -111,6 +112,8 @@ X X _ Dragon's Tooth (to summon Sparti)
 X X X Healing rod (cannot be used on self) (healing projectiles)
 X X _ Helm of Darkness (grants invisibility w/o particles) (from Cyclopes somehow)
 X X X Flint Knife
+~ X _ Sword of the Hunt (one-shots animals) (TODO: texture)
+~ X _ Thunderbolt (TODO: texture)
 X X X Snake skin and Purified snake skin (from Gorgons)
 
 ## Achievements
@@ -148,12 +151,11 @@ _ Olive forest biome
 
 _Can I do something with these?_
 
-- Thunderbolt
 - Belt of Aphrodite (maybe allows disguise as other player?)
 - Armor of Achilles (Hephaestus; said to be impenetrable)
 - Aegis (Zeus' shield)
 - Adamant Scythe (Kronus)
-- Special swords: Harpe (sword used to slay Medusa); Sword of Peleus (ensures victory in battle/hunt) (one-shot all animals?)
+- Special swords: Harpe (sword used to slay Medusa)
 - Special bows: Apollo, Artemis, Eurytus
 - Thyrsus: staff with pinecone and ivy leaves used by Dionysus
 - Amazonian Girdle (Hippolyta)

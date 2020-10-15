@@ -5,11 +5,9 @@ import com.google.common.collect.Iterables;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import greekfantasy.entity.NaiadEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.util.math.MathHelper;
 
 public class NymphModel<T extends MobEntity> extends BipedModel<T> {
 
@@ -69,16 +67,6 @@ public class NymphModel<T extends MobEntity> extends BipedModel<T> {
   @Override
   public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
     super.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTick);
-    // animate legs (swimming)
-    if(entity.isSwimming() || (entity.isInWater() && !entity.isOnGround())) {
-      final float ticks = entity.ticksExisted + partialTick + entity.getEntityId();
-      final float legAngle = 0.32F;
-      final float legSpeed = 0.09F;
-      final float cosTicks = MathHelper.cos(ticks * legSpeed) * legAngle;
-      final float sinTicks = MathHelper.cos(ticks * legSpeed + (float) Math.PI) * legAngle;
-      bipedRightLeg.rotateAngleX = cosTicks;
-      bipedLeftLeg.rotateAngleX = sinTicks;
-    }
   }
   
   @Override

@@ -108,7 +108,7 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   @Override
   protected void damageEntity(final DamageSource source, final float amountIn) {
     float amount = amountIn;
-    if (GreekFantasy.CONFIG.GIGANTE_RESISTANCE.get()) {
+    if (!source.isDamageAbsolute() && GreekFantasy.CONFIG.GIGANTE_RESISTANCE.get()) {
       amount *= 0.6F;
     }
     super.damageEntity(source, amount);
