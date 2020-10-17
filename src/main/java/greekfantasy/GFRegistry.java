@@ -336,7 +336,8 @@ public final class GFRegistry {
           .setRegistryName(GreekFantasy.MODID, "stone_club"),
         new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "wooden_club"),
-        new ThunderboltItem(new Item.Properties().group(GREEK_GROUP).maxDamage(356))
+        new ThunderboltItem(new Item.Properties().group(GREEK_GROUP)
+            .maxDamage(GreekFantasy.CONFIG.THUNDERBOLT_DURABILITY.get()))
           .setRegistryName(GreekFantasy.MODID, "thunderbolt"),
         new WingedSandalsItem(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "winged_sandals"),
@@ -345,9 +346,11 @@ public final class GFRegistry {
         new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
           .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC))
           .setRegistryName(GreekFantasy.MODID, "ambrosia"),
-        new UnicornHornItem(new Item.Properties().group(GREEK_GROUP).maxDamage(24))
+        new UnicornHornItem(new Item.Properties().group(GREEK_GROUP)
+            .maxDamage(GreekFantasy.CONFIG.UNICORN_HORN_DURABILITY.get()))
           .setRegistryName(GreekFantasy.MODID, "unicorn_horn"),
-        new HealingRodItem(new Item.Properties().group(GREEK_GROUP).maxDamage(168))
+        new HealingRodItem(new Item.Properties().group(GREEK_GROUP)
+            .maxDamage(GreekFantasy.CONFIG.HEALING_ROD_DURABILITY.get()))
           .setRegistryName(GreekFantasy.MODID, "healing_rod"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(GreekFantasy.MODID, "horn"),

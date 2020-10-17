@@ -44,21 +44,29 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.scoreboard.Team;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class SpartiEntity extends CreatureEntity implements IHasOwner {
   protected static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
-  /** The number of ticks left until the entity is no longer 'spawning' **/
-  protected static final DataParameter<Byte> SPAWN_TIME = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.BYTE);
+  protected static final DataParameter<Boolean> SPAWNING = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.BOOLEAN);
+
   protected static final String KEY_SPAWN_TIME = "SpawnTime";
-  
+  protected static final String KEY_LIFE_TICKS = "LifeTicks";
+    
   /** The max time spent 'spawning' **/
-  protected final byte maxSpawnTime = 60;
+  protected final int maxSpawnTime = 60;
+  protected int spawnTime;
+  /** The number of ticks until the entity starts taking damage **/
+  protected boolean limitedLifespan;
+  protected int limitedLifeTicks;
   
   private final EntitySize spawningSize;
   
@@ -95,7 +103,7 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
   protected void registerData() {
     super.registerData();
     this.getDataManager().register(OWNER, Optional.empty());
-    this.getDataManager().register(SPAWN_TIME, Byte.valueOf((byte)0));
+    this.getDataManager().register(SPAWNING, Boolean.valueOf(false));
   }
   
   @Override
@@ -104,8 +112,9 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
     
     // spawn time
     if(isSpawning()) {
-      if(this.isServerWorld()) {
-        decrSpawnTime();
+      // update timer
+      if(--spawnTime <= 0) {
+        setSpawning(false);
       }
       // spawn particles
       int i = MathHelper.floor(this.getPosX());
@@ -123,10 +132,16 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
         }
       }
     }
+
+    // lifespan
+    if (this.limitedLifespan && --this.limitedLifeTicks <= 0) {
+      this.limitedLifeTicks = 40;
+      attackEntityFrom(DamageSource.STARVE, 1.0F);
+    }
   }
   
   public void setEquipmentOnSpawn() {
-    // TODO
+    // TODO what equipment should sparti have?
     this.setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
   }
   
@@ -155,28 +170,29 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
   
   // Spawn methods //
   
-  public void setSpawnTime(final byte spawnTime) { this.getDataManager().set(SPAWN_TIME, spawnTime); }
-  
-  public void decrSpawnTime() { 
-    final byte spawnTime = (byte) (getSpawnTime() - 1);
-    setSpawnTime(spawnTime);
-  }
-  
-  public void setSpawning() { 
-    this.getDataManager().set(SPAWN_TIME, maxSpawnTime); 
+  public void setSpawning(final boolean spawning) {
+    this.spawnTime = spawning ? maxSpawnTime : 0;
+    this.getDataManager().set(SPAWNING, spawning);
     this.recalculateSize();
   }
 
-  public boolean isSpawning() { return getSpawnTime() > 0; }
+  public boolean isSpawningTime() { return spawnTime > 0; }
   
-  public byte getSpawnTime() { return this.getDataManager().get(SPAWN_TIME).byteValue(); }
+  public boolean isSpawning() { return this.getDataManager().get(SPAWNING); }
   
   public float getSpawnTime(final float ageInTicks) {
-    return (float) (getSpawnTime() + (ageInTicks < 1.0F ? ageInTicks : 0));
+    return (float) (spawnTime + (ageInTicks < 1.0F ? ageInTicks : 0));
   }
   
   public float getSpawnPercent(final float ageInTicks) {
     return 1.0F - (getSpawnTime(ageInTicks) / (float)maxSpawnTime);
+  }
+  
+  // Lifespan methods
+
+  public void setLimitedLife(int life) {
+    this.limitedLifespan = true;
+    this.limitedLifeTicks = life;
   }
   
   // Misc. methods //
@@ -184,13 +200,14 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
   @Override
   public void notifyDataManagerChange(final DataParameter<?> key) {
     super.notifyDataManagerChange(key);
-    if(key == SPAWN_TIME) {
+    if(key == SPAWNING) {
+      this.spawnTime = isSpawning() ? maxSpawnTime : 0;
       recalculateSize();
     }
   }
   
   @Override
-  public EntitySize getSize(final Pose poseIn) { return this.isSpawning() ? spawningSize : super.getSize(poseIn); }
+  public EntitySize getSize(final Pose poseIn) { return this.isSpawningTime() ? spawningSize : super.getSize(poseIn); }
   
   @Override
   public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.UNDEAD; }
@@ -199,7 +216,7 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
   public boolean canDespawn(double distanceToClosestPlayer) { return !this.hasOwner(); }
   
   @Override
-  protected float getStandingEyeHeight(Pose pose, EntitySize size) { return this.isSpawning() ? 0.05F : 1.74F; }
+  protected float getStandingEyeHeight(Pose pose, EntitySize size) { return this.isSpawningTime() ? 0.05F : 1.74F; }
   
   @Override
   public double getYOffset() { return -0.6D; }
@@ -222,14 +239,18 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
     writeOwner(compound);
-    compound.putByte(KEY_SPAWN_TIME, getSpawnTime());
+    if (this.limitedLifespan) {
+      compound.putInt(KEY_LIFE_TICKS, this.limitedLifeTicks);
+    }
   }
 
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
     readOwner(compound);
-    setSpawnTime(compound.getByte(KEY_SPAWN_TIME));
+    if (compound.contains(KEY_LIFE_TICKS)) {
+      setLimitedLife(compound.getInt(KEY_LIFE_TICKS));
+    }
   }
   
   // Attack predicate methods //
@@ -270,7 +291,7 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
 
     @Override
     public boolean shouldExecute() {
-      return SpartiEntity.this.isSpawning();
+      return SpartiEntity.this.isSpawningTime();
     }
     
     @Override

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "greekfantasy:item/magic_feather"
+    "layer0": "greekfantasy:item/sword_of_the_hunt"
   }
 }

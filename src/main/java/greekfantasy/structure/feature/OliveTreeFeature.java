@@ -1,12 +1,16 @@
 package greekfantasy.structure.feature;
 
+import java.util.Optional;
 import java.util.Random;
 
 import com.mojang.serialization.Codec;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import net.minecraft.util.Direction;
+import greekfantasy.entity.DryadEntity;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -14,13 +18,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.gen.IWorldGenerationReader;
 import net.minecraft.world.gen.feature.BaseTreeFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.template.BlockIgnoreStructureProcessor;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
 import net.minecraft.world.gen.feature.template.TemplateManager;
-import net.minecraftforge.common.IPlantable;
 
 public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
   
@@ -44,21 +49,39 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
     final Template template = manager.getTemplateDefaulted(getRandomTree(rand));
     
     // position for tree
+    BlockPos placementPos = blockPosIn;
+    if(!config.forcePlacement) {
+      placementPos = getHeightPos(reader, placementPos);
+      if(!isReplaceableAt(reader, placementPos) || !isDirtOrGrassAt(reader, placementPos.down())) {
+        return false;
+      }
+    }
+    
     final BlockPos offset = new BlockPos(-3, 0, -3);
-    final BlockPos pos = blockPosIn.add(offset.rotate(rotation));
-    
-    // conditions for generation
-    if (!config.forcePlacement && !reader.getBlockState(pos).canSustainPlant(reader, pos, Direction.UP, (IPlantable)GFRegistry.OLIVE_SAPLING)) {
-      return false;
-    }   
-    
+    BlockPos pos = placementPos.add(offset.rotate(rotation));
+
     // placement settings
     MutableBoundingBox mbb = new MutableBoundingBox(pos.getX() - 8, pos.getY() - 16, pos.getZ() - 8, pos.getX() + 8, pos.getY() + 16, pos.getZ() + 8);
     PlacementSettings placement = new PlacementSettings()
         .setRotation(rotation).setMirror(mirror).setRandom(rand).setBoundingBox(mbb)
-        .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
-
-    return template.func_237146_a_(reader, pos, pos, placement, rand, 2);
+        .addProcessor(BlockIgnoreStructureProcessor.AIR_AND_STRUCTURE_BLOCK);
+    // actually build using the template
+    template.func_237146_a_(reader, pos, pos, placement, rand, 2);
+    // percent chance to spawn a dryad
+    if(rand.nextInt(100) < GreekFantasy.CONFIG.DRYAD_SPAWN_WEIGHT.get()) {
+      addDryad(reader, rand, placementPos.down());
+    }
+    return true;
+  }
+  
+  protected static void addDryad(final ISeedReader world, final Random rand, final BlockPos pos) {
+    // spawn an olive dryad
+    final DryadEntity entity = GFRegistry.DRYAD_ENTITY.create(world.getWorld());
+    entity.setLocationAndAngles(pos.getX() + rand.nextDouble(), pos.getY() + 0.5D, pos.getZ() + rand.nextDouble(), 0, 0);
+    entity.setVariant(DryadEntity.Variant.OLIVE);
+    entity.setTreePos(Optional.of(pos));
+    entity.setHiding(true);
+    world.addEntity(entity);
   }
   
   private static ResourceLocation getRandomTree(final Random rand) {
@@ -69,5 +92,29 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
     case 2: default: return OLIVE_TREE_2;
     }
   }
+  
+  protected static BlockPos getHeightPos(final ISeedReader world, final BlockPos original) {
+    int y = world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, original).getY();
+    return new BlockPos(original.getX(), y, original.getZ());
+  }
+  
+  protected static boolean isDirtOrGrassAt(IWorldGenerationReader reader, BlockPos pos) {
+    return reader.hasBlockState(pos, state -> {
+      Block block = state.getBlock();
+      return (isDirt(block) || block == Blocks.GRASS_BLOCK);
+    });
+  }
+
+  protected static boolean isPlantAt(IWorldGenerationReader reader, BlockPos pos) {
+    return reader.hasBlockState(pos, state -> {
+      Material m = state.getMaterial();
+      return (m == Material.TALL_PLANTS || m == Material.PLANTS);
+    });
+  }
+  
+  protected static boolean isReplaceableAt(IWorldGenerationReader reader, BlockPos pos) {
+    return (isAirAt(reader, pos) || isPlantAt(reader, pos));
+  }
+  
 
 }

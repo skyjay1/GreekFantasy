@@ -24,7 +24,7 @@ public class SwordOfTheHuntItem extends SwordItem {
         DamageSource source = DamageSource.causeMobDamage(attacker);
         // if config option is enabled, use max damage
         if(GreekFantasy.CONFIG.doesSwordOfHuntBypassArmor()) {
-          amount = target.getMaxHealth();
+          amount = target.getMaxHealth() * 1.25F;
           source.setDamageBypassesArmor().setDamageIsAbsolute();
         }
         target.attackEntityFrom(source, amount);

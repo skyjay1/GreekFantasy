@@ -139,7 +139,7 @@ public final class GFWorldGen {
       event.getGeneration().withFeature(
           GenerationStage.Decoration.SURFACE_STRUCTURES, 
           SMALL_NETHER_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_SPREAD_DOUBLE_PLACEMENT).func_242729_a(GreekFantasy.CONFIG.SMALL_SHRINE_SPREAD.get())
+          .withPlacement(Placements.HEIGHTMAP_SPREAD_DOUBLE_PLACEMENT).func_242729_a(GreekFantasy.CONFIG.SMALL_NETHER_SHRINE_SPREAD.get())
       );
     }
   }
@@ -156,8 +156,8 @@ public final class GFWorldGen {
       registerSpawns(event.getSpawns(), GFRegistry.EMPUSA_ENTITY, GreekFantasy.CONFIG.EMPUSA_SPAWN_WEIGHT.get(), 1, 3);
       registerSpawns(event.getSpawns(), GFRegistry.GORGON_ENTITY, GreekFantasy.CONFIG.GORGON_SPAWN_WEIGHT.get(), 1, 3);
       registerSpawns(event.getSpawns(), GFRegistry.SHADE_ENTITY, GreekFantasy.CONFIG.SHADE_SPAWN_WEIGHT.get(), 1, 1);
-      // non-icy spawns
-      if(category != Biome.Category.ICY) {
+      // non-ocean, non-icy spawns
+      if(category != Biome.Category.OCEAN && category != Biome.Category.ICY) {
         registerSpawns(event.getSpawns(), GFRegistry.ARA_ENTITY, GreekFantasy.CONFIG.ARA_SPAWN_WEIGHT.get(), 2, 5);
         registerSpawns(event.getSpawns(), GFRegistry.MAD_COW_ENTITY, GreekFantasy.CONFIG.MAD_COW_SPAWN_WEIGHT.get(), 1, 1);
         registerSpawns(event.getSpawns(), GFRegistry.MINOTAUR_ENTITY, GreekFantasy.CONFIG.MINOTAUR_SPAWN_WEIGHT.get(), 2, 5);

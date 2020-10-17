@@ -8,17 +8,20 @@ public class GFConfig {
   public final ForgeConfigSpec.DoubleValue SANDALS_SPEED_BONUS;
   public final ForgeConfigSpec.BooleanValue NERF_AMBROSIA;
   public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
+  public final ForgeConfigSpec.IntValue UNICORN_HORN_DURABILITY;
   public final ForgeConfigSpec.IntValue HEALING_ROD_DURABILITY;
   public final ForgeConfigSpec.IntValue THUNDERBOLT_DURABILITY;
   private final ForgeConfigSpec.BooleanValue HELM_HIDES_ARMOR;
   private final ForgeConfigSpec.BooleanValue DRAGON_TOOTH_SPAWNS_SPARTI;
   private final ForgeConfigSpec.BooleanValue SWORD_OF_HUNT_BYPASSES_ARMOR;
   private final ForgeConfigSpec.IntValue HEALING_ROD_COOLDOWN;
+  private final ForgeConfigSpec.BooleanValue THUNDERBOLT_STORMS_ONLY;
   private final ForgeConfigSpec.IntValue THUNDERBOLT_COOLDOWN;
   private boolean helmHidesArmor;
   private boolean dragonToothSpawnsSparti;
   private boolean swordOfHuntBypassesArmor;
   private int healingRodCooldown;
+  private boolean thunderboltStormsOnly;
   private int thunderboltCooldown;
 
   // effect configs
@@ -37,6 +40,17 @@ public class GFConfig {
   public final ForgeConfigSpec.BooleanValue SHADE_ATTACK;
   public final ForgeConfigSpec.BooleanValue SATYR_ATTACK;
   public final ForgeConfigSpec.BooleanValue SIREN_ATTACK;
+  
+  // other special entity abilities
+  public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
+  public final ForgeConfigSpec.BooleanValue GERYON_RESISTANCE;
+  public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
+  private final ForgeConfigSpec.BooleanValue DRYAD_ANGRY_ON_HARVEST;
+  private final ForgeConfigSpec.IntValue DRYAD_ANGRY_RANGE;
+  private final ForgeConfigSpec.IntValue SPARTI_LIFESPAN;
+  private boolean dryadAngryOnHarvest;
+  private int dryadAngryRange;
+  private int spartiLifespan;
   
   // spawn rate configs
   public final ForgeConfigSpec.IntValue ARA_SPAWN_WEIGHT;
@@ -67,15 +81,7 @@ public class GFConfig {
   private int satyrShamanChance;
   private int elpisSpawnChance;
   private int numSpartiSpawned;
-  
-  // other special entity abilities
-  public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
-  public final ForgeConfigSpec.BooleanValue GERYON_RESISTANCE;
-  public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
-  private final ForgeConfigSpec.BooleanValue DRYAD_ANGRY_ON_HARVEST;
-  private final ForgeConfigSpec.IntValue DRYAD_ANGRY_RANGE;
-  private boolean dryadAngryOnHarvest;
-  private int dryadAngryRange;
+ 
   
   // feature configs
   public final ForgeConfigSpec.IntValue HARPY_NEST_SPREAD;
@@ -96,6 +102,7 @@ public class GFConfig {
         .define("nerf_ambrosia", false);
     UNICORN_HORN_CURES_EFFECTS = builder.comment("Whether using the unicorn horn can cure potion effects")
         .define("unicorn_horn_cures_effects", true);
+    UNICORN_HORN_DURABILITY = builder.defineInRange("unicorn_horn_durability", 44, 1, 4000);
     HELM_HIDES_ARMOR = builder.comment("Whether the helm of darkness hides armor")
         .define("helm_hides_armor", true);
     DRAGON_TOOTH_SPAWNS_SPARTI = builder.comment("Whether throwing a dragon tooth can spawn Sparti")
@@ -103,8 +110,10 @@ public class GFConfig {
     SWORD_OF_HUNT_BYPASSES_ARMOR = builder.comment("Whether the Sword of the Hunt deals absolute damage to animals")
         .define("sword_of_hunt_bypasses_armor", true);
     HEALING_ROD_COOLDOWN = builder.comment("Cooldown time after using the healing rod")
-        .defineInRange("healing_rod_cooldown", 50, 0, 100);
+        .defineInRange("healing_rod_cooldown", 35, 0, 100);
     HEALING_ROD_DURABILITY = builder.defineInRange("healing_rod_durability", 384, 1, 4000);
+    THUNDERBOLT_STORMS_ONLY = builder.comment("Whether the Thunderbolt can only be used during storms")
+        .define("thunderbolt_storms_only", true);
     THUNDERBOLT_COOLDOWN = builder.comment("Cooldown time after using the thunderbolt")
         .defineInRange("thunderbolt_cooldown", 50, 0, 100);
     THUNDERBOLT_DURABILITY = builder.defineInRange("thunderbolt_durability", 168, 1, 4000);
@@ -144,6 +153,8 @@ public class GFConfig {
         .define("geryon_resistance", true);
     SHADE_PLAYER_ONLY = builder.comment("Whether shades that spawn when a player dies can only be killed by that player")
         .define("shade_player_only", true);
+    SPARTI_LIFESPAN = builder.comment("Number of seconds until the Sparti begins taking damage")
+        .defineInRange("sparti_lifespan", 300, 1, 8000);
     builder.pop();
     // mob spawns
     builder.push("mob_spawn_weights");
@@ -183,7 +194,7 @@ public class GFConfig {
     builder.push("features");
     HARPY_NEST_SPREAD = builder.worldRestart().defineInRange("harpy_nest_spread", 68, 1, 1000);
     SMALL_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_shrine_spread", 102, 1, 1000);
-    SMALL_NETHER_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_nether_shrine_spread", 90, 1, 1000);
+    SMALL_NETHER_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_nether_shrine_spread", 30, 1, 1000);
     ARA_CAMP_SPREAD = builder.worldRestart().defineInRange("ara_camp_spread", 161, 1, 1000);
     SATYR_CAMP_SPREAD = builder.worldRestart().defineInRange("satyr_camp_spread", 205, 1, 1000);
     builder.pop();
@@ -205,6 +216,7 @@ public class GFConfig {
     dragonToothSpawnsSparti = DRAGON_TOOTH_SPAWNS_SPARTI.get();
     swordOfHuntBypassesArmor = SWORD_OF_HUNT_BYPASSES_ARMOR.get();
     healingRodCooldown = HEALING_ROD_COOLDOWN.get();
+    thunderboltStormsOnly = THUNDERBOLT_STORMS_ONLY.get();
     thunderboltCooldown = THUNDERBOLT_COOLDOWN.get();
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
@@ -215,12 +227,14 @@ public class GFConfig {
     numSpartiSpawned = NUM_SPARTI_SPAWNED.get();
     dryadAngryOnHarvest = DRYAD_ANGRY_ON_HARVEST.get();
     dryadAngryRange = DRYAD_ANGRY_RANGE.get();
+    spartiLifespan = SPARTI_LIFESPAN.get();
   }
   
   public boolean doesHelmHideArmor() { return helmHidesArmor; }
   public boolean doesDragonToothSpawnSparti() { return dragonToothSpawnsSparti; }
   public boolean doesSwordOfHuntBypassArmor() { return swordOfHuntBypassesArmor; }
   public int getHealingRodCooldown() { return healingRodCooldown; }
+  public boolean isThunderboltStormsOnly() { return thunderboltStormsOnly; }
   public int getThunderboltCooldown() { return thunderboltCooldown; }
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
@@ -231,4 +245,5 @@ public class GFConfig {
   public int getNumSpartiSpawned() { return numSpartiSpawned; }
   public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }
   public int getDryadAngryRange() { return dryadAngryRange; }
+  public int getSpartiLifespan() { return spartiLifespan; }
 }

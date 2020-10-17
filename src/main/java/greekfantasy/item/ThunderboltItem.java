@@ -14,6 +14,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 public class ThunderboltItem extends Item {
@@ -27,6 +28,10 @@ public class ThunderboltItem extends Item {
     ItemStack stack = player.getHeldItem(hand);
     // prevent the item from being used up all the way
     if(stack.getMaxDamage() - stack.getDamage() <= 2) {
+      return ActionResult.resultFail(stack);
+    }
+    if(GreekFantasy.CONFIG.isThunderboltStormsOnly() && !world.isRaining() && !world.isThundering()) {
+      player.sendStatusMessage(new TranslationTextComponent("message.thunderbolt_only_when_raining"), true);
       return ActionResult.resultFail(stack);
     }
     

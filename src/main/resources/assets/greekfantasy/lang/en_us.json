@@ -93,6 +93,7 @@
   "advancements.greekfantasy.obtain_ambrosia.description": "<Description goes here>",
   "advancements.greekfantasy.obtain_mysterious_box.title": "Unknown, it burns",
   "advancements.greekfantasy.obtain_mysterious_box.description": "DO NOT OPEN",
+  "message.thunderbolt_only_when_raining": "It must be raining to use this item",
   "gui.statue.rotation": "%1$s Angle: %2$s",
   "gui.statue.gender": "Gender",
   "gui.statue.preset": "Preset",

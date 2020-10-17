@@ -24,7 +24,7 @@ public class SpartiRenderer<T extends SpartiEntity> extends BipedRenderer<T, Spa
       final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
     matrixStackIn.push();
     // if the entity is spawning, shift the entity down
-    if(entityIn.isSpawning()) {
+    if(entityIn.isSpawningTime()) {
       final float height = 1.99F;
       final float translate = 0.035F;
       final float translateY = height * entityIn.getSpawnPercent(partialTick) - height;

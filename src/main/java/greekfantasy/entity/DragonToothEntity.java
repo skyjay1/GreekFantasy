@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -57,14 +58,15 @@ public class DragonToothEntity extends ProjectileItemEntity {
     if (!this.world.isRemote() && this.isAlive() && GreekFantasy.CONFIG.doesDragonToothSpawnSparti()) {
       Entity thrower = func_234616_v_();
       // spawn a configurable number of sparti
-      for(int i = 0, n = GreekFantasy.CONFIG.getNumSpartiSpawned(); i < n; i++) {
+      for(int i = 0, n = GreekFantasy.CONFIG.getNumSpartiSpawned(), life = 20 * GreekFantasy.CONFIG.getSpartiLifespan(); i < n; i++) {
         final SpartiEntity sparti = GFRegistry.SPARTI_ENTITY.create(world);
         sparti.setLocationAndAngles(raytrace.getHitVec().x, raytrace.getHitVec().y, raytrace.getHitVec().z, 0, 0);
         if (thrower instanceof PlayerEntity) {
-          sparti.rotationPitch = thrower.rotationYaw + 180.0F;
+          sparti.rotationPitch = MathHelper.wrapDegrees(thrower.rotationYaw + 180.0F);
           sparti.setOwner((PlayerEntity) thrower);
         }
-        sparti.setSpawning();
+        sparti.setSpawning(true);
+        sparti.setLimitedLife(life);
         sparti.setEquipmentOnSpawn();
         world.addEntity(sparti);
       }

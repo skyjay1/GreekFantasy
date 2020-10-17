@@ -90,8 +90,8 @@ _ _ _ Urn
 X X _ Mysterious box
 X X X Olive basics (log, wood, planks, slab, stair)
 _ _ _ Olive blocks: button, fence, boat, door, trapdoor, stripped log, stripped wood, pressure plate, sign
-X _ _ Olive leaves
-X X _ Olive sapling
+X X X Olive leaves
+X X X Olive sapling
 _ _ _ Grapes / grapevines?
 
 ## Items
@@ -108,12 +108,12 @@ X X X Bull Horn (from Minotaur / Cyprians)
 X X X Unicorn Horn (while holding, cures certain potion effects)
 X X X Ambrosia (like ench. golden apple)
 X X X Magic feather
-X X _ Dragon's Tooth (to summon Sparti)
+X X X Dragon's Tooth (to summon Sparti)
 X X X Healing rod (cannot be used on self) (healing projectiles)
 X X _ Helm of Darkness (grants invisibility w/o particles) (from Cyclopes somehow)
 X X X Flint Knife
-~ X _ Sword of the Hunt (one-shots animals) (TODO: texture)
-~ X _ Thunderbolt (TODO: texture)
+X X _ Sword of the Hunt (one-shots animals)
+X X _ Thunderbolt
 X X X Snake skin and Purified snake skin (from Gorgons)
 
 ## Achievements
