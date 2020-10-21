@@ -2,7 +2,7 @@
   "type": "crafting_shapeless",
   "ingredients": [
 	{ "item": "minecraft:blaze_powder" },
-    { "item": "minecraft:gold_block" },
+    { "item": "greekfantasy:ichor" },
 	{ "item": "minecraft:glowstone_dust" },
     { "item": "minecraft:honey_block" },
 	{ "item": "minecraft:honey_block" },

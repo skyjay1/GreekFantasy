@@ -30,7 +30,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class GorgonEntity extends MonsterEntity {
     
   private static final byte STARE_ATTACK = 9;
-  private final int PETRIFY_DURATION = 20 * 4;
+  private final int PETRIFY_DURATION = 80;
 
   public GorgonEntity(final EntityType<? extends GorgonEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -87,7 +87,6 @@ public class GorgonEntity extends MonsterEntity {
       final List<PlayerEntity> list = this.getEntityWorld().getEntitiesWithinAABB(PlayerEntity.class, this.getBoundingBox().grow(16.0D, 16.0D, 16.0D), 
         e -> e.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null);
       for(final PlayerEntity p : list) {
-        GreekFantasy.LOGGER.debug("spawning gorgon particle for player!");
         world.addParticle(GFRegistry.GORGON_PARTICLE, true, p.getPosX(), p.getPosY(), p.getPosZ(), 0D, 0D, 0D);
       }
     }

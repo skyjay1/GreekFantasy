@@ -21,7 +21,7 @@ public class HealingRodItem extends Item {
   public ActionResult<ItemStack> onItemRightClick(final World world, final PlayerEntity player, final Hand hand) {
     ItemStack stack = player.getHeldItem(hand);
     // prevent the item from being used up all the way
-    if(stack.getMaxDamage() - stack.getDamage() <= 2) {
+    if(stack.getMaxDamage() - stack.getDamage() <= 1) {
       return ActionResult.resultFail(stack);
     }
     player.getCooldownTracker().setCooldown(this, GreekFantasy.CONFIG.getHealingRodCooldown());

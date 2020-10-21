@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    ".I.",
+    ".X.",
+    "..."
+  ],
+  "key": {
+    ".": {
+      "item": "minecraft:gold_nugget"
+    },
+    "I": {
+      "item": "greekfantasy:ichor"
+    },
+    "X": {
+      "item": "minecraft:lodestone"
+    }
+  },
+  "result": {
+    "item": "greekfantasy:thunderbolt"
+  }
+}

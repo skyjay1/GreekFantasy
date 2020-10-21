@@ -84,5 +84,6 @@ public class ClientProxy extends Proxy {
   @Override
   public void registerRenderLayers() {
     RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_SAPLING, RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.REEDS, RenderType.getCutout());
   }
 }

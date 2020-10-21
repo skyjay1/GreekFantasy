@@ -9,6 +9,7 @@ import greekfantasy.block.CappedPillarBlock;
 import greekfantasy.block.MysteriousBoxBlock;
 import greekfantasy.block.NestBlock;
 import greekfantasy.block.OliveTree;
+import greekfantasy.block.ReedsBlock;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.block.VaseBlock;
 import greekfantasy.effect.StunnedEffect;
@@ -80,6 +81,8 @@ import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(GreekFantasy.MODID)
 public final class GFRegistry {
+  
+  private static final String MODID = GreekFantasy.MODID;
 
   //ENTITY TYPES
 
@@ -122,6 +125,8 @@ public final class GFRegistry {
   public static final Item FLINT_KNIFE = null;
   @ObjectHolder("dragon_tooth")
   public static final Item DRAGON_TOOTH = null;
+  @ObjectHolder("ichor")
+  public static final Item ICHOR = null;
 //  @ObjectHolder("winged_sandals")
 //  public static final Item WINGED_SANDALS = null;
 //  @ObjectHolder("ambrosia")
@@ -142,6 +147,8 @@ public final class GFRegistry {
   public static final Item PURIFIED_SNAKESKIN = null;
   
 
+  @ObjectHolder("reeds")
+  public static final Block REEDS = null;
   @ObjectHolder("olive_log")
   public static final Block OLIVE_LOG = null;
   @ObjectHolder("olive_wood")
@@ -249,11 +256,11 @@ public final class GFRegistry {
     // create and register misc. entity types
     EntityType<DragonToothEntity> dragonToothEntityType = EntityType.Builder.create(DragonToothEntity::new, EntityClassification.MISC)
         .size(0.25F, 0.25F).immuneToFire().build("dragon_tooth");
-    event.getRegistry().register(dragonToothEntityType.setRegistryName(GreekFantasy.MODID, "dragon_tooth"));
+    event.getRegistry().register(dragonToothEntityType.setRegistryName(MODID, "dragon_tooth"));
     DRAGON_TOOTH_ENTITY = dragonToothEntityType;
     EntityType<HealingSpellEntity> healingSpellEntityType = EntityType.Builder.create(HealingSpellEntity::new, EntityClassification.MISC)
         .size(0.25F, 0.25F).immuneToFire().build("healing_spell");
-    event.getRegistry().register(healingSpellEntityType.setRegistryName(GreekFantasy.MODID, "healing_spell"));
+    event.getRegistry().register(healingSpellEntityType.setRegistryName(MODID, "healing_spell"));
     HEALING_SPELL_ENTITY = healingSpellEntityType;
   }
   
@@ -262,11 +269,11 @@ public final class GFRegistry {
     GreekFantasy.LOGGER.debug("registerTileEntities");
     event.getRegistry().register(
         TileEntityType.Builder.create(StatueTileEntity::new, LIMESTONE_STATUE, MARBLE_STATUE)
-        .build(null).setRegistryName(GreekFantasy.MODID, "statue_te")
+        .build(null).setRegistryName(MODID, "statue_te")
     );
     event.getRegistry().register(
         TileEntityType.Builder.create(VaseTileEntity::new, TERRACOTTA_VASE)
-        .build(null).setRegistryName(GreekFantasy.MODID, "vase_te")
+        .build(null).setRegistryName(MODID, "vase_te")
     );
   }
   
@@ -282,7 +289,7 @@ public final class GFRegistry {
       final Direction facing = Direction.byHorizontalIndex(data.readByte());
       return new StatueContainer(windowId, inv, new Inventory(2), pose, isFemale, name, blockpos, facing);
     });
-    event.getRegistry().register(containerType.setRegistryName(GreekFantasy.MODID, "statue_container"));
+    event.getRegistry().register(containerType.setRegistryName(MODID, "statue_container"));
   }
 
   @SubscribeEvent
@@ -295,26 +302,28 @@ public final class GFRegistry {
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
     
     event.getRegistry().registerAll(
+        new ReedsBlock(AbstractBlock.Properties.create(Material.OCEAN_PLANT).doesNotBlockMovement().zeroHardnessAndResistance().tickRandomly().sound(SoundType.CROP))
+          .setRegistryName(MODID, "reeds"),
         new SaplingBlock(new OliveTree(), AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly()
             .zeroHardnessAndResistance().notSolid().sound(SoundType.PLANT))
-          .setRegistryName(GreekFantasy.MODID, "olive_sapling"),
+          .setRegistryName(MODID, "olive_sapling"),
         new NestBlock(AbstractBlock.Properties.create(Material.ORGANIC, MaterialColor.BROWN).hardnessAndResistance(0.5F).sound(SoundType.PLANT)
             .setNeedsPostProcessing((s, r, p) -> true).notSolid())
-          .setRegistryName(GreekFantasy.MODID, "nest"),
+          .setRegistryName(MODID, "nest"),
         new CappedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)
             .setNeedsPostProcessing((s, r, p) -> true).notSolid())
-          .setRegistryName(GreekFantasy.MODID, "marble_pillar"),
+          .setRegistryName(MODID, "marble_pillar"),
         new CappedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)
             .setNeedsPostProcessing((s, r, p) -> true).notSolid())
-          .setRegistryName(GreekFantasy.MODID, "limestone_pillar"),
+          .setRegistryName(MODID, "limestone_pillar"),
         new StatueBlock(StatueBlock.StatueMaterial.MARBLE)
-          .setRegistryName(GreekFantasy.MODID, "marble_statue"),
+          .setRegistryName(MODID, "marble_statue"),
         new StatueBlock(StatueBlock.StatueMaterial.LIMESTONE)
-          .setRegistryName(GreekFantasy.MODID, "limestone_statue"),
+          .setRegistryName(MODID, "limestone_statue"),
         new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
-          .setRegistryName(GreekFantasy.MODID, "terracotta_vase"),
+          .setRegistryName(MODID, "terracotta_vase"),
         new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
-          .setRegistryName(GreekFantasy.MODID, "mysterious_box")
+          .setRegistryName(MODID, "mysterious_box")
     );
   }
 
@@ -324,49 +333,54 @@ public final class GFRegistry {
     final boolean nerfAmbrosia = GreekFantasy.CONFIG.NERF_AMBROSIA.get();
     // items
     event.getRegistry().registerAll(
-        new PanfluteItem(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "panflute"),
+        new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
+          .setRegistryName(MODID, "panflute"),
         new SwordItem(ItemTier.WOOD, 3, -2.0F, new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "flint_knife"),
-        new SwordOfTheHuntItem(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "sword_of_the_hunt"),
+          .setRegistryName(MODID, "flint_knife"),
+        new SwordOfTheHuntItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP))
+          .setRegistryName(MODID, "sword_of_the_hunt"),
         new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "iron_club"),
+          .setRegistryName(MODID, "iron_club"),
         new ClubItem(ItemTier.STONE, new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "stone_club"),
+          .setRegistryName(MODID, "stone_club"),
         new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "wooden_club"),
-        new ThunderboltItem(new Item.Properties().group(GREEK_GROUP)
+          .setRegistryName(MODID, "wooden_club"),
+        new ThunderboltItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.THUNDERBOLT_DURABILITY.get()))
-          .setRegistryName(GreekFantasy.MODID, "thunderbolt"),
-        new WingedSandalsItem(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "winged_sandals"),
-        new HelmOfDarknessItem(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "helm_of_darkness"),
+          .setRegistryName(MODID, "thunderbolt"),
+        new WingedSandalsItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
+          .setRegistryName(MODID, "winged_sandals"),
+        new HelmOfDarknessItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
+          .setRegistryName(MODID, "helm_of_darkness"),
         new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
           .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC))
-          .setRegistryName(GreekFantasy.MODID, "ambrosia"),
-        new UnicornHornItem(new Item.Properties().group(GREEK_GROUP)
+          .setRegistryName(MODID, "ambrosia"),
+        new UnicornHornItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.UNICORN_HORN_DURABILITY.get()))
-          .setRegistryName(GreekFantasy.MODID, "unicorn_horn"),
-        new HealingRodItem(new Item.Properties().group(GREEK_GROUP)
+          .setRegistryName(MODID, "unicorn_horn"),
+        new HealingRodItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.HEALING_ROD_DURABILITY.get()))
-          .setRegistryName(GreekFantasy.MODID, "healing_rod"),
+          .setRegistryName(MODID, "healing_rod"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "horn"),
+          .setRegistryName(MODID, "horn"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "golden_bridle"),
+          .setRegistryName(MODID, "golden_bridle"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "magic_feather"),
-        new DragonToothItem(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "dragon_tooth"),
+          .setRegistryName(MODID, "magic_feather"),
+        new DragonToothItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP))
+          .setRegistryName(MODID, "dragon_tooth"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "snakeskin"),
+          .setRegistryName(MODID, "snakeskin"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(GreekFantasy.MODID, "purified_snakeskin")
+          .setRegistryName(MODID, "purified_snakeskin"),
+        new Item(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP)){
+          @Override
+          public boolean hasEffect(ItemStack stack) { return true; }
+        }.setRegistryName(MODID, "ichor")
     );
     
     // block items
+    registerItemBlock(event, REEDS, "reeds");
     registerItemBlock(event, OLIVE_LOG, "olive_log");
     registerItemBlock(event, OLIVE_WOOD, "olive_wood");
     registerItemBlock(event, OLIVE_PLANKS, "olive_planks");
@@ -403,28 +417,29 @@ public final class GFRegistry {
       public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         tooltip.add(new TranslationTextComponent("block.greekfantasy.mysterious_box.tooltip").mergeStyle(TextFormatting.ITALIC, TextFormatting.GRAY));
       }
-    }.setRegistryName(GreekFantasy.MODID, "mysterious_box"));
+    }.setRegistryName(MODID, "mysterious_box"));
   }
   
   @SubscribeEvent
   public static void registerEffects(final RegistryEvent.Register<Effect> event) {
     GreekFantasy.LOGGER.debug("registerEffects");
     event.getRegistry().registerAll(
-        new StunnedEffect().setRegistryName(GreekFantasy.MODID, "stunned"),
-        new StunnedEffect().setRegistryName(GreekFantasy.MODID, "petrified")
+        new StunnedEffect().setRegistryName(MODID, "stunned"),
+        new StunnedEffect().setRegistryName(MODID, "petrified")
     );
   }
   
   @SubscribeEvent
   public static void registerEnchantments(final RegistryEvent.Register<Enchantment> event) {
+    GreekFantasy.LOGGER.debug("registerEnchantments");
     event.getRegistry().register(new OverstepEnchantment(Enchantment.Rarity.UNCOMMON)
-        .setRegistryName(GreekFantasy.MODID, "overstep"));
+        .setRegistryName(MODID, "overstep"));
   }
 
   @SubscribeEvent
   public static void registerParticleTypes(final RegistryEvent.Register<ParticleType<?>> event) {
     GreekFantasy.LOGGER.debug("registerParticleTypes");
-    event.getRegistry().register(new BasicParticleType(true).setRegistryName(GreekFantasy.MODID, "gorgon_face"));
+    event.getRegistry().register(new BasicParticleType(true).setRegistryName(MODID, "gorgon_face"));
   }
 
   // HELPER METHODS //
@@ -437,7 +452,7 @@ public final class GFRegistry {
     EntityType.Builder<T> entityTypeBuilder = EntityType.Builder.create(factoryIn, classification).size(width, height);
     if (fireproof) entityTypeBuilder.immuneToFire();
     EntityType<T> entityType = entityTypeBuilder.build(name);
-    entityType.setRegistryName(GreekFantasy.MODID, name);
+    entityType.setRegistryName(MODID, name);
     // register the entity type
     event.getRegistry().register(entityType);
     // register attributes
@@ -476,46 +491,46 @@ public final class GFRegistry {
     };
     // register log, planks, and others
     event.getRegistry().registerAll(     
-        log.setRegistryName(GreekFantasy.MODID, registryName + "_log"), 
-        wood.setRegistryName(GreekFantasy.MODID, registryName + "_wood"),
-        planks.setRegistryName(GreekFantasy.MODID, registryName + "_planks"),
+        log.setRegistryName(MODID, registryName + "_log"), 
+        wood.setRegistryName(MODID, registryName + "_wood"),
+        planks.setRegistryName(MODID, registryName + "_planks"),
         new SlabBlock(properties) {
           @Override
           public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
           @Override
           public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 20; }
-        }.setRegistryName(GreekFantasy.MODID, registryName + "_slab"),
+        }.setRegistryName(MODID, registryName + "_slab"),
         new StairsBlock(() -> planks.getDefaultState(), properties){
           @Override
           public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
           @Override
           public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 20; }
-        }.setRegistryName(GreekFantasy.MODID, registryName + "_stairs"),
+        }.setRegistryName(MODID, registryName + "_stairs"),
         new LeavesBlock(AbstractBlock.Properties.create(Material.LEAVES).hardnessAndResistance(0.2F).tickRandomly().sound(SoundType.PLANT)
             .notSolid().setAllowsSpawn(GFRegistry::allowsSpawnOnLeaves).setSuffocates((s, r, p) -> false).setBlocksVision((s, r, p) -> false)) {
           @Override
           public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 30; }
           @Override
           public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 60; }
-        }.setRegistryName(GreekFantasy.MODID, registryName + "_leaves")
+        }.setRegistryName(MODID, registryName + "_leaves")
     );
   }
 
   private static void registerBlockPolishedSlabAndStairs(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {
-    final Block raw = new Block(properties).setRegistryName(GreekFantasy.MODID, registryName);
-    final Block polished = new Block(properties).setRegistryName(GreekFantasy.MODID, "polished_" + registryName);
+    final Block raw = new Block(properties).setRegistryName(MODID, registryName);
+    final Block polished = new Block(properties).setRegistryName(MODID, "polished_" + registryName);
     // raw, slab, and stairs
     event.getRegistry().register(raw);
-    event.getRegistry().register(new SlabBlock(properties).setRegistryName(GreekFantasy.MODID, registryName + "_slab"));
-    event.getRegistry().register(new StairsBlock(() -> raw.getDefaultState(), properties).setRegistryName(GreekFantasy.MODID, registryName + "_stairs"));
+    event.getRegistry().register(new SlabBlock(properties).setRegistryName(MODID, registryName + "_slab"));
+    event.getRegistry().register(new StairsBlock(() -> raw.getDefaultState(), properties).setRegistryName(MODID, registryName + "_stairs"));
     // polished, slab, and stairs
     event.getRegistry().register(polished);
-    event.getRegistry().register(new SlabBlock(properties).setRegistryName(GreekFantasy.MODID, "polished_" + registryName + "_slab"));
-    event.getRegistry().register(new StairsBlock(() -> polished.getDefaultState(), properties).setRegistryName(GreekFantasy.MODID, "polished_" + registryName + "_stairs"));
+    event.getRegistry().register(new SlabBlock(properties).setRegistryName(MODID, "polished_" + registryName + "_slab"));
+    event.getRegistry().register(new StairsBlock(() -> polished.getDefaultState(), properties).setRegistryName(MODID, "polished_" + registryName + "_stairs"));
   }
     
   private static void registerItemBlock(final RegistryEvent.Register<Item> event, final Block block, final String registryName) {
-    event.getRegistry().register(new BlockItem(block, new Item.Properties().group(GREEK_GROUP)).setRegistryName(GreekFantasy.MODID, registryName));
+    event.getRegistry().register(new BlockItem(block, new Item.Properties().group(GREEK_GROUP)).setRegistryName(MODID, registryName));
   }
 
   private static Boolean allowsSpawnOnLeaves(BlockState state, IBlockReader reader, BlockPos pos, EntityType<?> entity) {

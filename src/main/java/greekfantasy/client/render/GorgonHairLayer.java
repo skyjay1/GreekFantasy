@@ -27,13 +27,7 @@ public class GorgonHairLayer<T extends GorgonEntity> extends LayerRenderer<T, Go
             
       // render snake hair
       matrixStackIn.push();
-//      float yaw = MathHelper.lerp(partialTick, entity.prevRotationYaw, entity.rotationYaw) - MathHelper.lerp(partialTick, entity.prevRenderYawOffset, entity.renderYawOffset);
-//      float pitch = MathHelper.lerp(partialTick, entity.prevRotationPitch, entity.rotationPitch);
-//      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(yaw));
-//      matrixStackIn.rotate(Vector3f.XP.rotationDegrees(pitch));
-//      matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-pitch));
-//      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-yaw));
-      this.getEntityModel().renderSnakeHair(matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, entity.ticksExisted + partialTick);
+      this.getEntityModel().renderSnakeHair(matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, entity.ticksExisted + partialTick, 1.0F);
       matrixStackIn.pop();
     }
   }

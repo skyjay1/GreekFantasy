@@ -17,18 +17,21 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particles.BasicParticleType;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
 
 public class GorgonParticle extends Particle {
-  private final GorgonModel<GorgonEntity> model = new GorgonModel<>(0.0F);
-  private final RenderType renderType = RenderType.getEntityTranslucent(GorgonRenderer.TEXTURE);
+  private final GorgonModel<GorgonEntity> model;
+  private final RenderType renderType;
   
   public GorgonParticle(ClientWorld worldIn, double posX, double posY, double posZ, double motX, double motY, double motZ) {
     super(worldIn, posX, posY, posZ, motX, motY, motZ);
-    GreekFantasy.LOGGER.debug("Spawning gorgon particle...");
+    GreekFantasy.LOGGER.debug("Spawning gorgon particle at " + posX + ", " + posY + ", " + posZ);
+    this.model = new GorgonModel<>(0.0F);
+    this.renderType = RenderType.getEntityTranslucent(GorgonRenderer.TEXTURE);
     this.particleGravity = 0.0F;
     this.age = 0;
-    this.maxAge = 90;
+    this.maxAge = 78;
   }
 
   @Override
@@ -36,26 +39,30 @@ public class GorgonParticle extends Particle {
   
   @Override
   public void renderParticle(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTick) {
-    float agePercent = (this.age) / this.maxAge;
-    //float alpha = 0.05F + 0.5F * MathHelper.sin(agePercent * 3.1415927F);
-    float alpha = 0.75F;
+    float agePercent = (this.age + partialTick) / this.maxAge;
+    float cosAge = MathHelper.sin(agePercent * (float)Math.PI);
+    float disZ = 0.65F * (cosAge - 0.5F);
+    this.particleAlpha = 0.05F + 0.75F * (agePercent);
+    
     MatrixStack matrixStack = new MatrixStack();
     
     matrixStack.rotate(renderInfo.getRotation());
-    matrixStack.rotate(Vector3f.XP.rotationDegrees(120.0F)); // 150.0F * agePercent - 60.0F
-    matrixStack.scale(-1.0F, -1.0F, 1.0F);
-    matrixStack.translate(0.0D, -0.5D, 1.5D);
-    // TODO not working :(
-    //matrixStack.rotate(Vector3f.XP.rotationDegrees(180.0F));
-    //matrixStack.scale(-1.0F, -1.0F, 1.0F);
-    //matrixStack.translate(0.0D, 0.25D, 0.0D);
+    matrixStack.rotate(Vector3f.XP.rotationDegrees(180.0F));
     
-    IRenderTypeBuffer.Impl bufferImpl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-    IVertexBuilder vertexBuilder = bufferImpl.getBuffer(this.renderType);
-    this.model.getModelHead().render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, alpha);
-    this.model.renderSnakeHair(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, this.age + partialTick);
+    matrixStack.scale(-1.0F, 1.0F, -1.0F);
+    matrixStack.translate(0.0D, 0.309999D, 1.15D + disZ);
     
-    bufferImpl.finish();
+    IRenderTypeBuffer.Impl renderTypeBuffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+    IVertexBuilder vertexBuilder = renderTypeBuffer.getBuffer(this.renderType);
+    this.model.getModelHead().render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, this.particleAlpha);
+    this.model.renderSnakeHair(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, this.age + partialTick, this.particleAlpha);
+    
+    renderTypeBuffer.finish();
+  }
+
+  @Override
+  public boolean shouldCull() {
+    return false;
   }
   
   public static class Factory implements IParticleFactory<BasicParticleType> {

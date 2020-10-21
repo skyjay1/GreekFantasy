@@ -9,26 +9,26 @@ __Key:__
 __Key:__
 `[Model] [AI] [Loot table]`
 
-X ~ _ Naiad
-X ~ X Dryad
+X X _ Naiad
+X X X Dryad
 X ~ _ Satyr
 X ~ _ Centaur
 X X X Minotaur
-X X _ Gorgon (Medusa)
+X X X Gorgon (Medusa)
 X X X Harpy
 X X _ Empusa
 X X X Shade
-X ~ _ Siren (hostile)
+X X _ Siren (hostile)
 X X X Cerastes (ram-horned serpent)
-X ~ X Ara (Propoetide)
+X X X Ara (Propoetide)
 X _ _ Cyclopes
 X _ _ Gigante
 X ~ X Cyprian Centaurs (bull-horns, hostile)
 X X X Unicorn
-~ X _ Orthus (2-headed dog) (TODO fix model)
+X X _ Orthus (2-headed dog)
 _ _ _ Eurynomos (blue skin; vulture head?)
-X ~ _ Elpis (hope)
-X X _ Sparti
+X X X Elpis (hope)
+X X X Sparti
 _ _ _ Hippocampus
 X X X Mad Cow (summoned by Geryon)
 X _ _ Boss: Cerberus
@@ -45,7 +45,7 @@ _ Dryads trade with player?
 X Satyrs dance around campfires
 X Satyrs summon wolves
 X Satyrs light unlit campfires
-_ Satyrs trade with player (obtain panflute)
+_ Satyrs trade with player? (obtain panflute)
 X Geryon smash attack
 X Geryon summons Mad Cows
 ~ Centaurs / Cyprians shoot arrows (TODO: animation not working)
@@ -58,23 +58,26 @@ X Shade drains XP
 X Orthus breathes fire
 X Cerastes hides in sand
 X Unicorn can be tamed / ridden
-_ Elpis grants something to player
+X Elpis grants something to player
 X Sparti follow player who summoned them (owner)
-_ Siren charms players (forces player to move toward siren)
+X Siren charms players (forces player to move toward siren)
 
 ## Structures
 
-X Harpy Nests
-X Satyr Camps
-_ Centaur Camps
-X Ara Camps
-_ Cyclopes Cave+Pastures
-_ Ruined Temple
-X Small Marble Shrine
-X Small Limestone Shrine
-_ Small Nether Shrine
-X Marble veins
-X Limestone veins
+__Key:__
+`[Design] [Worldgen] [Loot]`
+
+X X X Harpy Nests
+X X ~ Satyr Camps
+_ _ _ Centaur Camps
+X X ~ Ara Camps
+_ _ _ Cyclopes Cave+Pastures
+_ _ _ Ruined Temple
+X X ~ Small Marble Shrine
+X X X Small Limestone Shrine
+X X X Small Nether Shrine
+X X X Marble veins
+X X X Limestone veins
 
 ## Blocks
 
@@ -86,6 +89,8 @@ X X X Limestone (raw, smooth, slab, pillar)
 X X X Marble (raw, smooth, slab, pillar)
 X X X Statues
 X X X Vase
+X X _ Reeds (use for sticks or panflute)
+_ _ _ Gigante Head
 _ _ _ Urn
 X X _ Mysterious box
 X X X Olive basics (log, wood, planks, slab, stair)
@@ -99,22 +104,23 @@ _ _ _ Grapes / grapevines?
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-X X _ Panflute
+X X X Panflute
 X X X Clubs (wood, stone/flint, iron)
 _ _ _ Javelin or Bident (wood, stone/flint, iron)
 X X X Golden bridle (for Unicorn)
 X X X Winged sandals
-X X X Bull Horn (from Minotaur / Cyprians)
+X X X Horn (from Minotaur / Cyprians)
 X X X Unicorn Horn (while holding, cures certain potion effects)
 X X X Ambrosia (like ench. golden apple)
 X X X Magic feather
 X X X Dragon's Tooth (to summon Sparti)
 X X X Healing rod (cannot be used on self) (healing projectiles)
-X X _ Helm of Darkness (grants invisibility w/o particles) (from Cyclopes somehow)
+X X _ Helm of Darkness (hides player _and_ armor) (from Cyclopes somehow)
 X X X Flint Knife
 X X _ Sword of the Hunt (one-shots animals)
-X X _ Thunderbolt
+X X X Thunderbolt
 X X X Snake skin and Purified snake skin (from Gorgons)
+X X X Ichor (from Elpis; crafting component)
 
 ## Achievements
 
@@ -134,12 +140,12 @@ X Kill a Geryon
 X Statue GUI
 X Statue skins
 X "Stunned" effect (prevent movement or item use)
-~ "Petrified" effect
+X "Petrified" effect
 X "Overstep" enchantment
 ~ Panflute songs
 - Loch Lomond, Amazing Grace, LOTR/Hobbit theme, Clementine, Waltzing Matilda, Yellow Rose of Texas, O du lieber Augustin
 X Panflute song selection GUI
-~ Lots of mysterious box functions!
+X Lots of mysterious box functions!
 X Some way to obtain Winged Sandals
 _ Some way to obtain Mysterious Box
 _ Some way to encounter Geryon

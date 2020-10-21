@@ -1,5 +1,6 @@
 package greekfantasy.item;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.LightningBoltEntity;
@@ -7,7 +8,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
@@ -27,9 +27,10 @@ public class ThunderboltItem extends Item {
   public ActionResult<ItemStack> onItemRightClick(final World world, final PlayerEntity player, final Hand hand) {
     ItemStack stack = player.getHeldItem(hand);
     // prevent the item from being used up all the way
-    if(stack.getMaxDamage() - stack.getDamage() <= 2) {
+    if(stack.getMaxDamage() - stack.getDamage() <= 1) {
       return ActionResult.resultFail(stack);
     }
+    // check for config settings and/or rain
     if(GreekFantasy.CONFIG.isThunderboltStormsOnly() && !world.isRaining() && !world.isThundering()) {
       player.sendStatusMessage(new TranslationTextComponent("message.thunderbolt_only_when_raining"), true);
       return ActionResult.resultFail(stack);
@@ -69,7 +70,6 @@ public class ThunderboltItem extends Item {
   }
   
   private boolean isRepairItem(final ItemStack repair) {
-    // TODO what should be used to repair this?
-    return repair.getItem() == Items.IRON_INGOT;
+    return repair.getItem() == GFRegistry.ICHOR;
   }
 }

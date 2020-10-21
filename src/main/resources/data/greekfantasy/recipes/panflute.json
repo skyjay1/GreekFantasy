@@ -1,0 +1,14 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+	{ "item": "greekfantasy:reeds" },
+    { "item": "greekfantasy:reeds" },
+	{ "item": "greekfantasy:reeds" },
+    { "item": "minecraft:string" },
+	{ "item": "minecraft:string" },
+    { "item": "minecraft:string" }
+  ],
+  "result": {
+    "item": "greekfantasy:panflute"
+  }
+}

@@ -119,14 +119,14 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
   }
   
   public void renderSnakeHair(final MatrixStack matrixStackIn, final IVertexBuilder bufferIn, final int packedLightIn, 
-      final int packedOverlayIn, final float ticks) {
+      final int packedOverlayIn, final float ticks, final float colorAlpha) {
     // living animations for each list
     animateSnakes(snakeHair1, ticks, 1.7F);
     animateSnakes(snakeHair2, ticks, 1.03F);
     animateSnakes(snakeHair3, ticks, 0.82F);
     // render each list
     this.snakeHair.copyModelAngles(this.bipedHead);
-    this.snakeHair.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
+    this.snakeHair.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, colorAlpha);
   }
   
   private void animateSnakes(final List<ModelRenderer> list, final float ticks, final float baseAngleX) {

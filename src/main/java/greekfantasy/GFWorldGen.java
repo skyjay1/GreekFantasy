@@ -4,16 +4,20 @@ import greekfantasy.block.OliveTree;
 import greekfantasy.structure.feature.AraCampFeature;
 import greekfantasy.structure.feature.HarpyNestFeature;
 import greekfantasy.structure.feature.OliveTreeFeature;
+import greekfantasy.structure.feature.ReedsFeature;
 import greekfantasy.structure.feature.SatyrCampFeature;
 import greekfantasy.structure.feature.SmallNetherShrineFeature;
 import greekfantasy.structure.feature.SmallShrineFeature;
 import net.minecraft.entity.EntityType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.biome.Biome.Category;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.blockplacer.DoublePlantBlockPlacer;
+import net.minecraft.world.gen.blockstateprovider.SimpleBlockStateProvider;
 import net.minecraft.world.gen.feature.BaseTreeFeatureConfig;
+import net.minecraft.world.gen.feature.BlockClusterFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.Features.Placements;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
@@ -41,8 +45,10 @@ public final class GFWorldGen {
   public static final Feature<NoFeatureConfig> SATYR_CAMP = null;
   @ObjectHolder(GreekFantasy.MODID + ":olive_tree")
   public static final Feature<BaseTreeFeatureConfig> OLIVE_TREE = null;
+  @ObjectHolder(GreekFantasy.MODID + ":reeds")
+  public static final Feature<BlockClusterFeatureConfig> REEDS = null;
   
-  
+
   private static final RuleTest ruleTestStone = new TagMatchRuleTest(BlockTags.BASE_STONE_OVERWORLD);
   
   private GFWorldGen() { }
@@ -76,6 +82,9 @@ public final class GFWorldGen {
     event.getRegistry().register(
         new OliveTreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(GreekFantasy.MODID, "olive_tree"));
+    event.getRegistry().register(
+        new ReedsFeature(BlockClusterFeatureConfig.field_236587_a_)
+          .setRegistryName(GreekFantasy.MODID, "reeds"));
   }
 
   // OTHER SETUP METHODS //
@@ -125,6 +134,16 @@ public final class GFWorldGen {
           SATYR_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
           .withPlacement(Placements.HEIGHTMAP_PLACEMENT).func_242729_a(GreekFantasy.CONFIG.SATYR_CAMP_SPREAD.get())
       );
+      // Reeds
+      event.getGeneration().withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, 
+          REEDS.withConfiguration((new BlockClusterFeatureConfig.Builder(
+              new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
+              new DoublePlantBlockPlacer()))
+                .tries(48)
+                .replaceable()
+                .build())
+          .func_242729_a(15)
+      );
     }
     // biome-specific features
     if(event.getCategory() == Category.FOREST && event.getClimate().temperature > 0.5F) {
@@ -132,6 +151,18 @@ public final class GFWorldGen {
       event.getGeneration().withFeature(
           GenerationStage.Decoration.VEGETAL_DECORATION, 
           OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).func_242729_a(40)
+      );
+    }
+    if(event.getName().toString().contains("swamp")) {
+      // Swamp Reeds
+      event.getGeneration().withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, 
+          REEDS.withConfiguration((new BlockClusterFeatureConfig.Builder(
+              new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
+              new DoublePlantBlockPlacer()))
+                .tries(32)
+                .replaceable()
+                .build())
+          .func_242729_a(3)
       );
     }
     if(event.getCategory() == Biome.Category.NETHER) {
@@ -142,6 +173,12 @@ public final class GFWorldGen {
           .withPlacement(Placements.HEIGHTMAP_SPREAD_DOUBLE_PLACEMENT).func_242729_a(GreekFantasy.CONFIG.SMALL_NETHER_SHRINE_SPREAD.get())
       );
     }
+    
+    
+    //Feature.RANDOM_PATCH.withConfiguration((new BlockClusterFeatureConfig.Builder(new SimpleBlockStateProvider(States.field_244085_x), new DoublePlantBlockPlacer()))
+    //public static final ConfiguredFeature<?, ?> field_243817_aP = func_243968_a("patch_sugar_cane_swamp", (ConfiguredFeature)Feature.RANDOM_PATCH.withConfiguration(Configs.field_243984_h).withPlacement(Placements.field_244002_m).func_242731_b(20));
+    
+    
   }
   
   public static void addBiomeSpawns(final BiomeLoadingEvent event) {

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "half=lower,waterlogged=false": {
+      "model": "greekfantasy:block/reeds_bottom"
+    },
+    "half=lower,waterlogged=true": {
+      "model": "greekfantasy:block/reeds_bottom"
+    },
+    "half=upper,waterlogged=false": {
+      "model": "greekfantasy:block/reeds_top"
+    },
+    "half=upper,waterlogged=true": {
+      "model": "greekfantasy:block/reeds_top"
+    }
+  }
+}
