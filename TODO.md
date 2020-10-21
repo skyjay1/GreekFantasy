@@ -90,7 +90,9 @@ X X X Marble (raw, smooth, slab, pillar)
 X X X Statues
 X X X Vase
 X X _ Reeds (use for sticks or panflute)
-_ _ _ Gigante Head
+X _ _ Gigante Head
+X _ _ Orthus Head
+X _ _ Cerberus Head
 _ _ _ Urn
 X X _ Mysterious box
 X X X Olive basics (log, wood, planks, slab, stair)

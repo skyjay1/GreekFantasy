@@ -3,7 +3,7 @@ package greekfantasy.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.MinotaurModel;
+import greekfantasy.client.render.model.MinotaurModel;
 import greekfantasy.entity.MinotaurEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.BipedRenderer;

@@ -2,7 +2,7 @@ package greekfantasy.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import greekfantasy.client.model.AraModel;
+import greekfantasy.client.render.model.AraModel;
 import greekfantasy.entity.AraEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;

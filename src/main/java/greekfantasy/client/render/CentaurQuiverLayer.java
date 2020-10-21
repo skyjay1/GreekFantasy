@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.CentaurModel;
+import greekfantasy.client.render.model.CentaurModel;
 import greekfantasy.entity.CentaurEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;

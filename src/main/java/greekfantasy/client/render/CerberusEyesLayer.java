@@ -1,7 +1,7 @@
 package greekfantasy.client.render;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.CerberusModel;
+import greekfantasy.client.render.model.CerberusModel;
 import greekfantasy.entity.CerberusEntity;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.IEntityRenderer;

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.HealingSpellModel;
+import greekfantasy.client.render.model.HealingSpellModel;
 import greekfantasy.entity.HealingSpellEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;

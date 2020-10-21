@@ -3,7 +3,7 @@ package greekfantasy.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.client.model.SatyrModel;
+import greekfantasy.client.render.model.SatyrModel;
 import greekfantasy.entity.SatyrEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;

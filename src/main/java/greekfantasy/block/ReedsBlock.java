@@ -23,6 +23,8 @@ import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
@@ -34,15 +36,21 @@ public class ReedsBlock extends DoublePlantBlock implements IWaterLoggable, IGro
 
   public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+  
+  protected static final VoxelShape SHAPE = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
 
   public ReedsBlock(Properties properties) {
     super(properties);
     this.setDefaultState(this.stateContainer.getBaseState().with(WATERLOGGED, false).with(HALF, DoubleBlockHalf.LOWER));
   }
   
+  @Override
   protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
     builder.add(HALF).add(WATERLOGGED);
   }
+  
+  @Override
+  public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) { return SHAPE; }
   
   @Override
   public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand) {

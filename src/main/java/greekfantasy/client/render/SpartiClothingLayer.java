@@ -3,7 +3,7 @@ package greekfantasy.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.SpartiModel;
+import greekfantasy.client.render.model.SpartiModel;
 import greekfantasy.entity.SpartiEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.IEntityRenderer;

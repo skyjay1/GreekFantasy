@@ -1,7 +1,7 @@
 package greekfantasy.client.render;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.GorgonModel;
+import greekfantasy.client.render.model.GorgonModel;
 import greekfantasy.entity.GorgonEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;

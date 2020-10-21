@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.ShadeModel;
+import greekfantasy.client.render.model.ShadeModel;
 import greekfantasy.entity.ShadeEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;

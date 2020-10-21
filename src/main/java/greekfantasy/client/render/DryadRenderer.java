@@ -1,6 +1,6 @@
 package greekfantasy.client.render;
 
-import greekfantasy.client.model.NymphModel;
+import greekfantasy.client.render.model.NymphModel;
 import greekfantasy.entity.DryadEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;

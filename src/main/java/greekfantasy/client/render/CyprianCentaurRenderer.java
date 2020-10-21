@@ -1,6 +1,6 @@
 package greekfantasy.client.render;
 
-import greekfantasy.client.model.CyprianCentaurModel;
+import greekfantasy.client.render.model.CyprianCentaurModel;
 import greekfantasy.entity.CyprianEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 

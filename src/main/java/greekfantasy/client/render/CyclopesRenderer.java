@@ -3,7 +3,7 @@ package greekfantasy.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.CyclopesModel;
+import greekfantasy.client.render.model.CyclopesModel;
 import greekfantasy.entity.CyclopesEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;

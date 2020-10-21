@@ -1,7 +1,7 @@
 package greekfantasy.client.render;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.CerastesModel;
+import greekfantasy.client.render.model.CerastesModel;
 import greekfantasy.entity.CerastesEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;

@@ -3,7 +3,7 @@ package greekfantasy.client.render;
 import java.util.EnumMap;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.CentaurModel;
+import greekfantasy.client.render.model.CentaurModel;
 import greekfantasy.entity.CentaurEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;

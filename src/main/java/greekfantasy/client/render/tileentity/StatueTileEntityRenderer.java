@@ -11,7 +11,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.block.StatueBlock;
-import greekfantasy.client.model.tileentity.StatueModel;
+import greekfantasy.client.render.model.tileentity.StatueModel;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.ModelPart;
 import net.minecraft.client.Minecraft;

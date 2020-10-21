@@ -44,7 +44,7 @@ public class WingedSandalsItem extends ArmorItem {
    
   private static final String TEXTURE = GreekFantasy.MODID + ":textures/models/armor/winged_layer_2.png";
   @OnlyIn(Dist.CLIENT)
-  private greekfantasy.client.model.armor.WingedSandalsModel MODEL;
+  private greekfantasy.client.render.model.armor.WingedSandalsModel MODEL;
   
   protected final Multimap<Attribute, AttributeModifier> attributeModifiers;
   
@@ -145,7 +145,7 @@ public class WingedSandalsItem extends ArmorItem {
   @OnlyIn(Dist.CLIENT)
   public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default) {
     if(MODEL == null) {
-      MODEL = new greekfantasy.client.model.armor.WingedSandalsModel(1.0F);
+      MODEL = new greekfantasy.client.render.model.armor.WingedSandalsModel(1.0F);
     }
     MODEL.isChild = _default.isChild;
     MODEL.isSneak = _default.isSneak;

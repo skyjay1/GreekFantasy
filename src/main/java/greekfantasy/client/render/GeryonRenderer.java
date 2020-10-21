@@ -3,7 +3,7 @@ package greekfantasy.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.GeryonModel;
+import greekfantasy.client.render.model.GeryonModel;
 import greekfantasy.entity.GeryonEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.BipedRenderer;

@@ -1,7 +1,7 @@
 package greekfantasy.client.render;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.HarpyModel;
+import greekfantasy.client.render.model.HarpyModel;
 import greekfantasy.entity.HarpyEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;

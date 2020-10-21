@@ -5,10 +5,12 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import greekfantasy.block.MobHeadBlock;
 import greekfantasy.block.CappedPillarBlock;
 import greekfantasy.block.MysteriousBoxBlock;
 import greekfantasy.block.NestBlock;
 import greekfantasy.block.OliveTree;
+import greekfantasy.block.OrthusHeadBlock;
 import greekfantasy.block.ReedsBlock;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.block.VaseBlock;
@@ -25,6 +27,8 @@ import greekfantasy.item.SwordOfTheHuntItem;
 import greekfantasy.item.ThunderboltItem;
 import greekfantasy.item.UnicornHornItem;
 import greekfantasy.item.WingedSandalsItem;
+import greekfantasy.tileentity.MobHeadTileEntity;
+import greekfantasy.tileentity.MobHeadTileEntity.HeadType;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.tileentity.VaseTileEntity;
 import greekfantasy.util.StatuePose;
@@ -201,11 +205,19 @@ public final class GFRegistry {
   public static final Block TERRACOTTA_VASE = null;
   @ObjectHolder("mysterious_box")
   public static final Block MYSTERIOUS_BOX = null;
+  @ObjectHolder("gigante_head")
+  public static final Block GIGANTE_HEAD = null;
+  @ObjectHolder("orthus_head")
+  public static final Block ORTHUS_HEAD = null;
+  @ObjectHolder("cerberus_head")
+  public static final Block CERBERUS_HEAD = null;
   
   @ObjectHolder("statue_te")
   public static final TileEntityType<StatueTileEntity> STATUE_TE = null;
   @ObjectHolder("vase_te")
   public static final TileEntityType<VaseTileEntity> VASE_TE = null;
+  @ObjectHolder("mob_head_te")
+  public static final TileEntityType<MobHeadTileEntity> BOSS_HEAD_TE = null;
 
   @ObjectHolder("statue_container")
   public static final ContainerType<StatueContainer> STATUE_CONTAINER = null;
@@ -275,6 +287,10 @@ public final class GFRegistry {
         TileEntityType.Builder.create(VaseTileEntity::new, TERRACOTTA_VASE)
         .build(null).setRegistryName(MODID, "vase_te")
     );
+    event.getRegistry().register(
+        TileEntityType.Builder.create(MobHeadTileEntity::new, GIGANTE_HEAD, ORTHUS_HEAD, CERBERUS_HEAD)
+        .build(null).setRegistryName(MODID, "mob_head_te")
+    );
   }
   
   @SubscribeEvent
@@ -323,7 +339,13 @@ public final class GFRegistry {
         new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
           .setRegistryName(MODID, "terracotta_vase"),
         new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
-          .setRegistryName(MODID, "mysterious_box")
+          .setRegistryName(MODID, "mysterious_box"),
+        new MobHeadBlock(HeadType.GIGANTE, AbstractBlock.Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(1.0F).notSolid())
+          .setRegistryName(GreekFantasy.MODID, "gigante_head"),
+        new OrthusHeadBlock(HeadType.ORTHUS, AbstractBlock.Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(1.0F).notSolid())
+          .setRegistryName(GreekFantasy.MODID, "orthus_head"),
+        new MobHeadBlock(HeadType.CERBERUS, AbstractBlock.Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(1.0F).notSolid())
+          .setRegistryName(GreekFantasy.MODID, "cerberus_head")
     );
   }
 
@@ -410,6 +432,10 @@ public final class GFRegistry {
     registerItemBlock(event, MARBLE_STATUE, "marble_statue");
     
     registerItemBlock(event, TERRACOTTA_VASE, "terracotta_vase");
+    
+    registerItemBlock(event, GIGANTE_HEAD, "gigante_head");
+    registerItemBlock(event, ORTHUS_HEAD, "orthus_head");
+    registerItemBlock(event, CERBERUS_HEAD, "cerberus_head");
     
     // mysterious box item
     event.getRegistry().register(new BlockItem(MYSTERIOUS_BOX, new Item.Properties().group(GREEK_GROUP)) {

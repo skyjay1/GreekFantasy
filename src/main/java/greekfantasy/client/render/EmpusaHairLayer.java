@@ -2,7 +2,7 @@ package greekfantasy.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import greekfantasy.client.model.EmpusaModel;
+import greekfantasy.client.render.model.EmpusaModel;
 import greekfantasy.entity.EmpusaEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;

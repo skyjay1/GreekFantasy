@@ -4,6 +4,7 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.gui.StatueScreen;
 import greekfantasy.client.render.*;
+import greekfantasy.client.render.tileentity.MobHeadTileEntityRenderer;
 import greekfantasy.client.render.tileentity.StatueTileEntityRenderer;
 import greekfantasy.client.render.tileentity.VaseTileEntityRenderer;
 import greekfantasy.entity.DragonToothEntity;
@@ -73,6 +74,7 @@ public class ClientProxy extends Proxy {
     GreekFantasy.LOGGER.debug("registerTileEntityRenders");
     ClientRegistry.bindTileEntityRenderer(GFRegistry.STATUE_TE, StatueTileEntityRenderer::new);
     ClientRegistry.bindTileEntityRenderer(GFRegistry.VASE_TE, VaseTileEntityRenderer::new);
+    ClientRegistry.bindTileEntityRenderer(GFRegistry.BOSS_HEAD_TE, MobHeadTileEntityRenderer::new);
   }
   
   @Override

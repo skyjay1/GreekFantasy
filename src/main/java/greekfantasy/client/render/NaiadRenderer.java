@@ -1,6 +1,6 @@
 package greekfantasy.client.render;
 
-import greekfantasy.client.model.NaiadModel;
+import greekfantasy.client.render.model.NaiadModel;
 import greekfantasy.entity.NaiadEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;

@@ -4,8 +4,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.model.GorgonModel;
 import greekfantasy.client.render.GorgonRenderer;
+import greekfantasy.client.render.model.GorgonModel;
 import greekfantasy.entity.GorgonEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.IParticleFactory;
