@@ -55,11 +55,11 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 100.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.20D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.22D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT);
+        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.65D);
   }
   
   public static boolean canGiganteSpawnOn(final EntityType<? extends MobEntity> entity, final IWorld world, final SpawnReason reason, 
@@ -123,9 +123,6 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
     return false;
   }
   
-  @Override
-  public boolean canBePushed() { return false; }
-  
   @Nullable
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
@@ -147,6 +144,16 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   public void readAdditional(CompoundNBT compound) {
      super.readAdditional(compound);
      this.readAngerNBT((ServerWorld)this.world, compound);
+  }
+  
+  @Override
+  public boolean canBePushed() { return false; }
+  
+  @Override
+  public void applyEntityCollision(Entity entityIn) { 
+    if(this.canBePushed()) {
+      super.applyEntityCollision(entityIn);
+    }
   }
   
   // IAngerable methods

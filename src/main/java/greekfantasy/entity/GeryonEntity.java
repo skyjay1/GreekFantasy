@@ -2,14 +2,16 @@ package greekfantasy.entity;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Random;
 
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.SummonMobGoal;
 import greekfantasy.item.ClubItem;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
@@ -22,7 +24,6 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
@@ -36,13 +37,17 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -53,41 +58,77 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class GeryonEntity extends MonsterEntity {
   
   private static final DataParameter<Byte> STATE = EntityDataManager.createKey(GeryonEntity.class, DataSerializers.BYTE);
+  private static final String KEY_STATE = "GeryonState";
   // bytes to use in STATE
   private static final byte NONE = (byte)0;
-  private static final byte SMASH = (byte)1;
-  private static final byte SUMMON_COW = (byte)2;
+  private static final byte SPAWNING = (byte)1;
+  private static final byte SMASH = (byte)2;
+  private static final byte SUMMON_COW = (byte)4;
   // bytes to use in World#setEntityState
   private static final byte SMASH_CLIENT = 9;
   private static final byte SUMMON_COW_CLIENT = 10;
   
-  private static final int MAX_SMASH_TIME = 45;
-  private static final int MAX_SUMMON_TIME = 45;
+  private static final int MAX_SPAWN_TIME = 110;
+  private static final int MAX_SMASH_TIME = 42;
+  private static final int MAX_SUMMON_TIME = 35;
   private static final double SMASH_RANGE = 12.0D;
+  private static final int ATTACK_COOLDOWN = 38;
   
   private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.BLUE, BossInfo.Overlay.PROGRESS)).setDarkenSky(true);
   
+  private int spawnTime;
   private int smashTime;
   private int summonTime;
+  
+  private int attackCooldown;
   
   public GeryonEntity(final EntityType<? extends GeryonEntity> type, final World worldIn) {
     super(type, worldIn);
     this.stepHeight = 1.0F;
+    this.experienceValue = 50;
   }
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 120.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.16D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 160.0D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.21D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.5D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT);
   }
   
-  public static boolean canGeryonSpawnOn(final EntityType<? extends MobEntity> entity, final IWorld world, final SpawnReason reason, 
-      final BlockPos pos, final Random rand) {
-    return world.canBlockSeeSky(pos.up()) && MobEntity.canSpawnOn(entity, world, reason, pos, rand);
+  public static boolean canGeryonSpawnOn(final IWorld world, final BlockPos pos) {    
+    final AxisAlignedBB box = new AxisAlignedBB(pos).expand(-1, 0, -1).expand(1, 5, 1);
+    BlockPos p;
+    BlockState s;
+    // check surrounding area (if it's big enough)
+    for(double x = box.minX; x < box.maxX; x++) {
+      for(double y = box.minY; y < box.maxY; y++) {
+        for(double z = box.minZ; z < box.maxZ; z++) {
+          p = new BlockPos(x, y, z);
+          s = world.getBlockState(p);
+          if(s.isIn(BlockTags.WITHER_IMMUNE)) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+  
+  public static GeryonEntity spawnGeryon(final World world, final BlockPos pos, final float yaw) {
+    GeryonEntity entity = GFRegistry.GERYON_ENTITY.create(world);
+    entity.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
+    entity.renderYawOffset = yaw;
+    entity.setSpawning(true);
+    entity.setHeldItem(Hand.MAIN_HAND, new ItemStack(GFRegistry.IRON_CLUB));
+    world.addEntity(entity);
+    // trigger spawn for nearby players
+    for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(25.0D))) {
+      CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+    }
+    return entity;
   }
   
   @Override
@@ -99,14 +140,15 @@ public class GeryonEntity extends MonsterEntity {
   @Override
   protected void registerGoals() {
     super.registerGoals();
+    this.goalSelector.addGoal(0, new GeryonEntity.SpawningGoal());
     this.goalSelector.addGoal(1, new GeryonEntity.SummonCowGoal(MAX_SUMMON_TIME, 440));
     this.goalSelector.addGoal(2, new GeryonEntity.SmashAttackGoal(SMASH_RANGE, 210));
-    this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
+    this.goalSelector.addGoal(3, new GeryonEntity.MeleeAttackGoal(this, 1.0D, false));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 10.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, IronGolemEntity.class, true));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, false));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, IronGolemEntity.class, false));
   }
   
   @Override
@@ -115,6 +157,22 @@ public class GeryonEntity extends MonsterEntity {
     
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
+    
+    // attack cooldown
+    attackCooldown = Math.max(attackCooldown - 1,  0);
+    
+    // update spawn time
+    if(isSpawning()) {
+      // update timer
+      if(--spawnTime <= 0) {
+        setSpawning(false);
+        if(!world.isRemote()) {
+          destroyIntersectingBlocks(0);
+        }
+      }
+      // spawn particles
+      addBlockParticles(10);
+    }
     
     // update smash attack
     if(this.isSmashAttack()) {
@@ -170,6 +228,13 @@ public class GeryonEntity extends MonsterEntity {
   public boolean canBePushed() { return false; }
   
   @Override
+  public void applyEntityCollision(Entity entityIn) { 
+    if(this.canBePushed()) {
+      super.applyEntityCollision(entityIn);
+    }
+  }
+  
+  @Override
   public boolean isNonBoss() { return false; }
   
   @Override
@@ -179,31 +244,61 @@ public class GeryonEntity extends MonsterEntity {
   protected boolean canBeRidden(Entity entityIn) { return false; }
   
   @Override
+  public boolean isInvulnerableTo(final DamageSource source) {
+    return isSpawning() || source == DamageSource.IN_WALL || super.isInvulnerableTo(source);
+  }
+  
+  @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    final ItemStack club = new ItemStack(GFRegistry.IRON_CLUB);
-    this.setHeldItem(Hand.MAIN_HAND, club);
+    this.setHeldItem(Hand.MAIN_HAND, new ItemStack(GFRegistry.IRON_CLUB));
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
-
   @Override
   public void writeAdditional(CompoundNBT compound) {
      super.writeAdditional(compound);
+     compound.putByte(KEY_STATE, this.getGeryonState());
   }
 
   @Override
   public void readAdditional(CompoundNBT compound) {
      super.readAdditional(compound);
+     this.setGeryonState(compound.getByte(KEY_STATE));
   }
   
-  public boolean isSmashAttack() { return this.getDataManager().get(STATE).byteValue() == SMASH; }
+  public byte getGeryonState() { return this.getDataManager().get(STATE).byteValue(); }
   
-  public void setSmashAttack(final boolean smash) { this.getDataManager().set(STATE, Byte.valueOf(smash ? SMASH : NONE)); }
+  public void setGeryonState(final byte state) { this.getDataManager().set(STATE, Byte.valueOf(state)); }
+  
+  public boolean isNoneState() { return getGeryonState() == NONE; }
+  
+  public boolean isSmashAttack() { return getGeryonState() == SMASH; }
+  
+  public void setSmashAttack(final boolean smash) { setGeryonState(smash ? SMASH : NONE); }
  
-  public boolean isSummoning() { return this.getDataManager().get(STATE).byteValue() == SUMMON_COW; }
+  public boolean isSummoning() { return getGeryonState() == SUMMON_COW; }
   
-  public void setSummoning(final boolean smash) { this.getDataManager().set(STATE, Byte.valueOf(smash ? SUMMON_COW : NONE)); }
+  public void setSummoning(final boolean smash) { setGeryonState(smash ? SUMMON_COW : NONE); }
+  
+  public boolean isSpawning() { return spawnTime > 0 || getGeryonState() == SPAWNING; }
+  
+  public void setSpawning(final boolean spawning) {
+    spawnTime = spawning ? MAX_SPAWN_TIME : 0;
+    setGeryonState(spawning ? SPAWNING : NONE); 
+  }
+  
+  public void setAttackCooldown() { attackCooldown = ATTACK_COOLDOWN; }
+  
+  public boolean hasNoCooldown() { return attackCooldown <= 0; }
+  
+  @Override
+  public void notifyDataManagerChange(final DataParameter<?> key) {
+    super.notifyDataManagerChange(key);
+    if(key == STATE) {
+      this.spawnTime = isSpawning() ? MAX_SPAWN_TIME : 0;
+    }
+  }
   
   @OnlyIn(Dist.CLIENT)
   public void handleStatusUpdate(byte id) {
@@ -248,9 +343,9 @@ public class GeryonEntity extends MonsterEntity {
       final double motion = 4.0D;
       for(int c = 0; c < count; c++) {
         this.world.addParticle(data, 
-           this.getPosX() + (this.rand.nextDouble() - 0.5D) * radius, 
+           this.getPosX() + (this.rand.nextDouble() - 0.5D) * radius * 2, 
            this.getPosY() + 0.1D, 
-           this.getPosZ() + (this.rand.nextDouble() - 0.5D) * radius, 
+           this.getPosZ() + (this.rand.nextDouble() - 0.5D) * radius * 2, 
            motion * (this.rand.nextDouble() - 0.5D), 0.5D, (this.rand.nextDouble() - 0.5D) * motion);
       }
     }
@@ -275,24 +370,22 @@ public class GeryonEntity extends MonsterEntity {
   }
   
   @OnlyIn(Dist.CLIENT)
-  public float getSmashTime(final float partialTick) {
-    return smashTime + (partialTick < 1.0F ? partialTick : 0);
-  }
+  public float getSmashTime(final float partialTick) { return smashTime + (partialTick < 1.0F ? partialTick : 0); }
   
   @OnlyIn(Dist.CLIENT)
-  public float getSmashPercent(final float partialTick) {
-    return smashTime > 0 ? getSmashTime(partialTick) / (float)MAX_SMASH_TIME : 0;
-  }
+  public float getSmashPercent(final float partialTick) { return smashTime > 0 ? getSmashTime(partialTick) / (float)MAX_SMASH_TIME : 0; }
   
   @OnlyIn(Dist.CLIENT)
-  public float getSummonTime(final float partialTick) {
-    return summonTime + (partialTick < 1.0F ? partialTick : 0);
-  }
+  public float getSpawnTime(final float ageInTicks) { return (float) (spawnTime + (ageInTicks < 1.0F ? ageInTicks : 0)); }
   
   @OnlyIn(Dist.CLIENT)
-  public float getSummonPercent(final float partialTick) {
-    return summonTime > 0 ? getSummonTime(partialTick) / (float)MAX_SUMMON_TIME : 0;
-  }
+  public float getSpawnPercent(final float ageInTicks) { return 1.0F - ((float)spawnTime / (float)MAX_SPAWN_TIME); }
+  
+  @OnlyIn(Dist.CLIENT)
+  public float getSummonTime(final float partialTick) { return summonTime + (partialTick < 1.0F ? partialTick : 0); }
+  
+  @OnlyIn(Dist.CLIENT)
+  public float getSummonPercent(final float partialTick) { return summonTime > 0 ? getSummonTime(partialTick) / (float)MAX_SUMMON_TIME : 0; }
   
   /**
    * @param entity the entity to check
@@ -318,6 +411,27 @@ public class GeryonEntity extends MonsterEntity {
     }
   }
   
+  private void destroyIntersectingBlocks(final double offset) {
+    if(!world.getGameRules().getBoolean(GameRules.MOB_GRIEFING)) {
+      return;
+    }
+    final Vector3d facing = Vector3d.fromPitchYaw(this.getPitchYaw());
+    final AxisAlignedBB box = this.getBoundingBox().offset(facing.normalize().scale(offset));
+    BlockPos p;
+    BlockState s;
+    for(double x = box.minX - 0.25D; x < box.maxX + 0.25D; x++) {
+      for(double y = box.minY + 1.1D; y < box.maxY + 0.5D; y++) {
+        for(double z = box.minZ - 0.25D; z < box.maxZ + 0.25D; z++) {
+          p = new BlockPos(x, y, z);
+          s = this.getEntityWorld().getBlockState(p);
+          if((s.isSolid() || s.getMaterial().blocksMovement()) && !s.isIn(BlockTags.WITHER_IMMUNE)) {
+            this.getEntityWorld().destroyBlock(p, true);
+          }
+        }
+      }
+    }
+  }
+  
   // Boss Logic
 
   @Override
@@ -332,13 +446,45 @@ public class GeryonEntity extends MonsterEntity {
     this.bossInfo.removePlayer(player);
   }
   
-  // End Boss Logic
+  // Custom goals
+  
+  class SpawningGoal extends Goal {
+
+    public SpawningGoal() { setMutexFlags(EnumSet.allOf(Goal.Flag.class)); }
+
+    @Override
+    public boolean shouldExecute() { return GeryonEntity.this.isSpawning(); }
+
+    @Override
+    public void tick() { GeryonEntity.this.getNavigator().clearPath(); }
+  }
+  
+  class MeleeAttackGoal extends net.minecraft.entity.ai.goal.MeleeAttackGoal {
+
+    public MeleeAttackGoal(CreatureEntity creature, double speedIn, boolean useLongMemory) {
+      super(creature, speedIn, useLongMemory);
+    }
+    
+    @Override
+    protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
+      if(GeryonEntity.this.hasNoCooldown()) {
+        super.checkAndPerformAttack(enemy, distToEnemySqr);
+      }
+    }
+    
+    @Override
+    protected void func_234039_g_() {
+      super.func_234039_g_();
+      GeryonEntity.this.setAttackCooldown();
+    }
+  }
   
   class SmashAttackGoal extends Goal {
     
     private final double range;
     private final int maxCooldown;
     private int cooldown = 90;
+    private boolean isBlockSmash;
     
     public SmashAttackGoal(final double rangeIn, final int maxCooldownIn) {
       this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
@@ -349,6 +495,9 @@ public class GeryonEntity extends MonsterEntity {
     @Override
     public void startExecuting() {
       GeryonEntity.this.setSmashAttack(true);
+      GeryonEntity.this.getNavigator().getPathToEntity(GeryonEntity.this.getAttackTarget(), 0);
+      isBlockSmash = GeryonEntity.this.getNavigator().noPath();
+          //.getPathToEntity(GeryonEntity.this.getAttackTarget(), 0) == null;
     }
     
     @Override
@@ -357,7 +506,8 @@ public class GeryonEntity extends MonsterEntity {
         cooldown--;
         return false;
       }
-      return GeryonEntity.this.getAttackTarget() != null && !GeryonEntity.this.isSummoning()
+      return GeryonEntity.this.getAttackTarget() != null && GeryonEntity.this.isNoneState()
+          && GeryonEntity.this.hasNoCooldown()
           && GeryonEntity.this.getDistanceSq(GeryonEntity.this.getAttackTarget()) < (range * range);      
     }
     
@@ -370,7 +520,13 @@ public class GeryonEntity extends MonsterEntity {
         GeryonEntity.this.getEntityWorld().setEntityState(GeryonEntity.this, GeryonEntity.SMASH_CLIENT);
         // get a list of nearby entities and use smash attack on each one
         GeryonEntity.this.getEntityWorld().getEntitiesWithinAABBExcludingEntity(GeryonEntity.this, GeryonEntity.this.getBoundingBox().grow(range, range / 2, range))
-          .forEach(e -> GeryonEntity.this.useSmashAttack(e));;
+          .forEach(e -> GeryonEntity.this.useSmashAttack(e));
+        GeryonEntity.this.setAttackCooldown();
+        // destroy nearby blocks
+        if(isBlockSmash) {
+          GreekFantasy.LOGGER.debug("Smash attack destroying blocks!");
+          GeryonEntity.this.destroyIntersectingBlocks(2.5D);
+        }
         // finish task
         this.resetTask();
       }
@@ -386,65 +542,38 @@ public class GeryonEntity extends MonsterEntity {
     public void resetTask() {
       GeryonEntity.this.setSmashAttack(false);
       GeryonEntity.this.smashTime = 0;
+      isBlockSmash = false;
       cooldown = maxCooldown;
     }
   }
   
-  class SummonCowGoal extends Goal {
-    protected final int maxProgress;
-    protected final int maxCooldown;
-    
-    protected int progress;
-    protected int cooldown;
-    
+  class SummonCowGoal extends SummonMobGoal<MadCowEntity> {
+   
     public SummonCowGoal(final int summonProgressIn, final int summonCooldownIn) {
-      this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
-      maxProgress = summonProgressIn;
-      maxCooldown = summonCooldownIn;
-      cooldown = 60;
+      super(GeryonEntity.this, summonProgressIn, summonCooldownIn, GFRegistry.MAD_COW_ENTITY);
     }
     
     @Override
     public boolean shouldExecute() {
-      if(cooldown > 0) {
-        cooldown--;
-      } else {
-        return GeryonEntity.this.getAttackTarget() != null;
-      }
-      return false;
+      return super.shouldExecute() && GeryonEntity.this.hasNoCooldown() && GeryonEntity.this.isNoneState();
     }
     
     @Override
     public void startExecuting() {
+      super.startExecuting();
       GeryonEntity.this.setSummoning(true);
-      this.progress = 1;
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
-      return this.progress > 0 && GeryonEntity.this.getAttackTarget() != null && GeryonEntity.this.isSummoning();
-    }
-    
-    @Override
-    public void tick() {
-      super.tick();
-      GeryonEntity.this.getNavigator().clearPath();
-      GeryonEntity.this.getLookController().setLookPositionWithEntity(GeryonEntity.this.getAttackTarget(), 100.0F, 100.0F);
-      if(progress++ > maxProgress) {
-        // summon mad cow
-        final MadCowEntity madCow = GFRegistry.MAD_COW_ENTITY.create(GeryonEntity.this.getEntityWorld());
-        madCow.setLocationAndAngles(GeryonEntity.this.getPosX(), GeryonEntity.this.getPosY() + 0.5D, GeryonEntity.this.getPosZ(), 0, 0);
-        madCow.setAttackTarget(GeryonEntity.this.getAttackTarget());
-        GeryonEntity.this.getEntityWorld().addEntity(madCow);
-        GeryonEntity.this.getEntityWorld().setEntityState(GeryonEntity.this, SUMMON_COW_CLIENT);
-        resetTask();
-      }
+    protected void summonMob(final MadCowEntity mobEntity) {
+      super.summonMob(mobEntity);
+      GeryonEntity.this.getEntityWorld().setEntityState(GeryonEntity.this, SUMMON_COW_CLIENT);
     }
     
     @Override
     public void resetTask() {
-      this.progress = 0;
-      this.cooldown = maxCooldown;
+      super.resetTask();
+      GeryonEntity.this.setAttackCooldown();
       GeryonEntity.this.setSummoning(false);
     }
   }

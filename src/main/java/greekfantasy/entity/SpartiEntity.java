@@ -58,7 +58,7 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
   protected static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
   protected static final DataParameter<Boolean> SPAWNING = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.BOOLEAN);
 
-  protected static final String KEY_SPAWN_TIME = "SpawnTime";
+  protected static final String KEY_SPAWN_TIME = "Spawning";
   protected static final String KEY_LIFE_TICKS = "LifeTicks";
     
   /** The max time spent 'spawning' **/

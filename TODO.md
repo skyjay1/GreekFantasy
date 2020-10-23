@@ -22,16 +22,16 @@ X X _ Siren (hostile)
 X X X Cerastes (ram-horned serpent)
 X X X Ara (Propoetide)
 X _ _ Cyclopes
-X _ _ Gigante
+X _ ~ Gigante
 X ~ X Cyprian Centaurs (bull-horns, hostile)
 X X X Unicorn
-X X _ Orthus (2-headed dog)
+X X ~ Orthus (2-headed dog)
 _ _ _ Eurynomos (blue skin; vulture head?)
 X X X Elpis (hope)
 X X X Sparti
 _ _ _ Hippocampus
 X X X Mad Cow (summoned by Geryon)
-X _ _ Boss: Cerberus
+X X _ Boss: Cerberus
 ~ X _ Boss: Geryon (3-headed Gigante) (TODO: texture)
 
 
@@ -45,7 +45,6 @@ _ Dryads trade with player?
 X Satyrs dance around campfires
 X Satyrs summon wolves
 X Satyrs light unlit campfires
-_ Satyrs trade with player? (obtain panflute)
 X Geryon smash attack
 X Geryon summons Mad Cows
 ~ Centaurs / Cyprians shoot arrows (TODO: animation not working)
@@ -89,10 +88,10 @@ X X X Limestone (raw, smooth, slab, pillar)
 X X X Marble (raw, smooth, slab, pillar)
 X X X Statues
 X X X Vase
-X X _ Reeds (use for sticks or panflute)
-X _ _ Gigante Head
-X _ _ Orthus Head
-X _ _ Cerberus Head
+X X X Reeds (use for sticks or panflute)
+X X X Gigante Head
+X _ X Orthus Head
+X ? X Cerberus Head
 _ _ _ Urn
 X X _ Mysterious box
 X X X Olive basics (log, wood, planks, slab, stair)
@@ -150,8 +149,8 @@ X Panflute song selection GUI
 X Lots of mysterious box functions!
 X Some way to obtain Winged Sandals
 _ Some way to obtain Mysterious Box
-_ Some way to encounter Geryon
-_ Some way to encounter Cerberus
+X Some way to encounter Geryon
+~ Some way to encounter Cerberus
 ~ Block and Item tags (wooden_doors, etc.)
 _ Olive forest biome
 

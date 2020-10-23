@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.SummonMobGoal;
 import greekfantasy.util.PanfluteMusicManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CampfireBlock;
@@ -28,7 +29,6 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.ai.goal.PanicGoal;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -363,64 +363,21 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     return Optional.empty();
   }
 
-  class SummonAnimalsGoal extends Goal {
-    
-    protected final int maxProgress;
-    protected final int maxCooldown;
-    
-    protected int progress;
-    protected int cooldown;
+  class SummonAnimalsGoal extends SummonMobGoal<WolfEntity> {
     
     public SummonAnimalsGoal(final int summonProgressIn, final int summonCooldownIn) {
-      this.setMutexFlags(EnumSet.noneOf(Goal.Flag.class));
-      maxProgress = summonProgressIn;
-      maxCooldown = summonCooldownIn;
-      cooldown = 60;
-    }
-
-    @Override
-    public boolean shouldExecute() {
-      if(cooldown > 0) {
-        cooldown--;
-      } else {
-        return SatyrEntity.this.getAttackTarget() != null;
-      }
-      return false;
+      super(SatyrEntity.this, summonProgressIn, summonCooldownIn, EntityType.WOLF, 3);
     }
     
     @Override
     public void startExecuting() {
+      super.startExecuting();
       SatyrEntity.this.setSummoning(true);
-      this.progress = 1;
-    }
-    
-    @Override
-    public boolean shouldContinueExecuting() {
-      return this.progress > 0 && SatyrEntity.this.getAttackTarget() != null;
     }
     
     @Override
     public void tick() {
       super.tick();
-      SatyrEntity.this.getNavigator().clearPath();
-      SatyrEntity.this.getLookController().setLookPositionWithEntity(SatyrEntity.this.getAttackTarget(), 100.0F, 100.0F);
-      if(progress++ > maxProgress) {
-        // summon animals
-        final double x = SatyrEntity.this.getPosX();
-        final double y = SatyrEntity.this.getPosY();
-        final double z = SatyrEntity.this.getPosZ();
-        final float yaw = SatyrEntity.this.rotationYaw;
-        final float pitch = SatyrEntity.this.rotationPitch;
-        for(int i = 0; i < 3; i++) {
-          final WolfEntity wolf = EntityType.WOLF.create(SatyrEntity.this.getEntityWorld());
-          wolf.setLocationAndAngles(x, y, z, yaw, pitch);
-          wolf.setAngerTime(800);
-          wolf.setAngerTarget(SatyrEntity.this.getAttackTarget().getUniqueID());
-          SatyrEntity.this.getEntityWorld().addEntity(wolf);
-        }
-        SatyrEntity.this.getEntityWorld().setEntityState(SatyrEntity.this, PLAY_SUMMON_SOUND);
-        resetTask();
-      }
       // soft reset when entity is hurt
       if(SatyrEntity.this.hurtTime != 0) {
         this.progress = 0;
@@ -431,9 +388,15 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     
     @Override
     public void resetTask() {
-      this.progress = 0;
-      this.cooldown = maxCooldown;
+      super.resetTask();
       SatyrEntity.this.setSummoning(false);
+    }
+    
+    @Override
+    protected void summonMob(final WolfEntity mobEntity) {
+      mobEntity.setAngerTime(800);
+      mobEntity.setAngerTarget(SatyrEntity.this.getAttackTarget().getUniqueID());
+      super.summonMob(mobEntity);
     }
     
   }

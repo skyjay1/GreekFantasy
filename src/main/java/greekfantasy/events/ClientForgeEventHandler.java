@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.math.BlockPos;
@@ -115,9 +116,8 @@ public class ClientForgeEventHandler {
     return EnchantmentHelper.getEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
   }
   
-  /** @return whether the player should have the client-side stun/petrify FOV logic applied **/
-  private static boolean isStunned(final PlayerEntity player) {
-    return (player.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null || player.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null);
-  }
-  
+  /** @return whether the entity should have the client-side stun/petrify FOV or particle effects **/
+  private static boolean isStunned(final LivingEntity livingEntity) {
+    return (livingEntity.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null || livingEntity.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null);
+  }  
 }

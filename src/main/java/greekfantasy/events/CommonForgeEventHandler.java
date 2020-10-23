@@ -1,5 +1,6 @@
 package greekfantasy.events;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import greekfantasy.GFRegistry;
@@ -7,14 +8,18 @@ import greekfantasy.GFWorldGen;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.DryadEntity;
+import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.ShadeEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
@@ -49,6 +54,37 @@ public class CommonForgeEventHandler {
         shade.setOwnerUniqueId(PlayerEntity.getOfflineUUID(player.getDisplayName().getUnformattedComponentText()));
         shade.enablePersistence();
         player.getEntityWorld().addEntity(shade);
+      }
+    }
+  }
+  
+  @SubscribeEvent
+  public static void onCowDeath(final LivingDeathEvent event) {
+    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getEntityLiving() instanceof CowEntity) {
+      // check if the cow was killed by a player and if geryon can spawn here
+      final BlockPos deathPos = event.getEntityLiving().getPosition();
+      if(event.getSource().getTrueSource() instanceof PlayerEntity && GeryonEntity.canGeryonSpawnOn(event.getEntityLiving().getEntityWorld(), deathPos)) {
+        // check for Geryon Head blocks nearby
+        final List<BlockPos> heads = new ArrayList<>();
+        final int r = 3;
+        countHeads:
+        for(int x = -r; x <= r; x++) {
+          for(int y = -2; y <= 2; y++) {
+            for(int z = -r; z <= r; z++) {
+              final BlockPos p = deathPos.add(x, y, z);
+              if(event.getEntityLiving().getEntityWorld().getBlockState(p).isIn(GFRegistry.GIGANTE_HEAD)) {
+                heads.add(p);
+              }
+              if(heads.size() >= 3) break countHeads;
+            }
+          }
+        }
+        // if we found at least three heads, remove them and spawn a geryon
+        if(heads.size() >= 3) {
+          heads.subList(0, 3).forEach(p -> event.getEntityLiving().getEntityWorld().destroyBlock(p, false));
+          final float yaw = MathHelper.wrapDegrees(event.getSource().getTrueSource().rotationYaw + 180.0F);
+          GeryonEntity.spawnGeryon(event.getEntityLiving().getEntityWorld(), deathPos, yaw);
+        }
       }
     }
   }

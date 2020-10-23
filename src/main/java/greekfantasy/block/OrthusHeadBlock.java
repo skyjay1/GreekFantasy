@@ -17,7 +17,7 @@ import net.minecraft.world.IBlockReader;
 public class OrthusHeadBlock extends MobHeadBlock {
   
   private static final VoxelShape GROUND_SHAPE = Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 7.5D, 12.0D);
-  
+    
   private static final Map<Direction, VoxelShape> WALL_SHAPES = Maps.newEnumMap(ImmutableMap.of(
       Direction.NORTH, Block.makeCuboidShape(4.0D, 2.0D, 8.0D, 12.0D, 9.5D, 16.0D), 
       Direction.SOUTH, Block.makeCuboidShape(4.0D, 2.0D, 0.0D, 12.0D, 9.5D, 8.0D), 

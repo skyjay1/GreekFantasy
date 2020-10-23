@@ -14,13 +14,10 @@ import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class MadCowEntity extends CowEntity implements IMob {
-  
-  private static final ResourceLocation LOOT_TABLE = new ResourceLocation("minecraft", "entities/cow");
-  
+    
   // used to coordinate custom attack goal and run around goal
   private boolean isAttacking;
     
@@ -49,16 +46,11 @@ public class MadCowEntity extends CowEntity implements IMob {
   public void livingTick() {
     super.livingTick();
     // slowly lose health
-    if(!this.isNoDespawnRequired() && this.rand.nextInt(800) == 0) {
+    if(!this.isNoDespawnRequired() && this.rand.nextInt(400) == 0) {
       this.attackEntityFrom(DamageSource.STARVE, 1.0F);
     }
   }
-  
-  @Override
-  public ResourceLocation getLootTable() {
-    return LOOT_TABLE;
-  }
-  
+
   class AttackGoal extends MeleeAttackGoal {
     
     private final int maxCooldown;

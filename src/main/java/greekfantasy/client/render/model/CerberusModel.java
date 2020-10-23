@@ -1,6 +1,8 @@
 package greekfantasy.client.render.model;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.entity.CerberusEntity;
 import net.minecraft.client.renderer.entity.model.AgeableModel;
@@ -25,6 +27,8 @@ public class CerberusModel<T extends CerberusEntity> extends AgeableModel<T> {
   private final ModelRenderer legBackLeft;
   private final ModelRenderer tail1;
   private final ModelRenderer tail2;
+  
+  float color = 1.0F;
 
   public CerberusModel(final float modelSize) {
     super();
@@ -149,20 +153,28 @@ public class CerberusModel<T extends CerberusEntity> extends AgeableModel<T> {
     this.legFrontLeft.rotateAngleX = limbSwingCos * legAngle;
     
     // animate mouths
+    final float howlingTimeLeft = 1.0F - entity.getSummonPercent(partialTick);
     final float mouthAngle = 0.26F;
-    this.mouth1.rotateAngleX = mouthAngle - MathHelper.cos((ticks + 0.0F) * 0.28F) * mouthAngle * 0.3F;
-    this.mouth2.rotateAngleX = mouthAngle - MathHelper.cos((ticks + 0.9F) * 0.19F) * mouthAngle * 0.3F;
-    this.mouth3.rotateAngleX = mouthAngle - MathHelper.cos((ticks + 0.4F) * 0.24F) * mouthAngle * 0.3F;
+    this.mouth1.rotateAngleX = (mouthAngle - MathHelper.cos((ticks + 0.0F) * 0.28F) * mouthAngle * 0.3F) * howlingTimeLeft;
+    this.mouth2.rotateAngleX = (mouthAngle - MathHelper.cos((ticks + 0.9F) * 0.19F) * mouthAngle * 0.3F) * howlingTimeLeft;
+    this.mouth3.rotateAngleX = (mouthAngle - MathHelper.cos((ticks + 0.4F) * 0.24F) * mouthAngle * 0.3F) * howlingTimeLeft;
   }
 
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw,
       float rotationPitch) {
+    // set color if the entity is spawning
+    color = entity.isSpawning() ? entity.getSpawnPercent(partialTick) : 1.0F;
+    // prepare animations
     final float ticks = entity.ticksExisted + partialTick;
+    final float howlingTime = entity.getSummonPercent(partialTick);
+    final float howlingTimeLeft = 1.0F - howlingTime;
+    // update neck angles
+    final float howlingAngle = howlingTime > 0 ? -4.0F * (float)Math.pow(2.0F * howlingTime - 1.0F, 2) + 5.0F : 1.0F;
     final float neckAngleX = 0.10F;
-    final float neck1X = -0.2618F + MathHelper.cos((ticks + 0.1F) * 0.049F) * neckAngleX;
-    final float neck2X = -0.1745F + MathHelper.cos((ticks + 0.9F) * 0.059F) * neckAngleX;
-    final float neck3X = -0.1745F + MathHelper.cos((ticks + 1.5F) * 0.055F) * neckAngleX;
+    final float neck1X = -0.2618F * howlingAngle + MathHelper.cos((ticks + 0.1F) * 0.049F) * neckAngleX * howlingTimeLeft;
+    final float neck2X = -0.1745F * howlingAngle + MathHelper.cos((ticks + 0.9F) * 0.059F) * neckAngleX * howlingTimeLeft;
+    final float neck3X = -0.1745F * howlingAngle + MathHelper.cos((ticks + 1.5F) * 0.055F) * neckAngleX * howlingTimeLeft;
     this.neck1.rotateAngleX = neck1X;
     this.neck2.rotateAngleX = neck2X;
     this.neck3.rotateAngleX = neck3X;
@@ -170,12 +182,18 @@ public class CerberusModel<T extends CerberusEntity> extends AgeableModel<T> {
     // update head angles
     final float offsetX = 0.2309F;
     final float pitch = rotationPitch * 0.017453292F;
-    final float yaw = rotationYaw * 0.017453292F;
-    this.head1.rotateAngleX = pitch - neck1.rotateAngleX;
+    final float yaw = rotationYaw * 0.017453292F * howlingTimeLeft;
+    this.head1.rotateAngleX = (pitch - neck1.rotateAngleX) * howlingTimeLeft;
     this.head1.rotateAngleY = yaw;
-    this.head2.rotateAngleX = pitch - neck2.rotateAngleX;
-    this.head2.rotateAngleY = yaw * 0.8F + offsetX;
-    this.head3.rotateAngleX = pitch - neck3.rotateAngleX;
-    this.head3.rotateAngleY = yaw * 0.8F - offsetX;
+    this.head2.rotateAngleX = (pitch - neck2.rotateAngleX) * howlingTimeLeft;
+    this.head2.rotateAngleY = (yaw * 0.8F + offsetX);
+    this.head3.rotateAngleX = (pitch - neck3.rotateAngleX) * howlingTimeLeft;
+    this.head3.rotateAngleY = (yaw * 0.8F - offsetX);
+  }
+  
+  @Override
+  public void render(final MatrixStack matrixStackIn, final IVertexBuilder vertexBuilder, final int packedLightIn, final int packedOverlayIn, 
+      final float redIn, final float greenIn, final float blueIn, final float alphaIn) {
+    super.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, color, color, alphaIn);
   }
 }

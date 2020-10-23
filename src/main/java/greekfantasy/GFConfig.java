@@ -28,15 +28,16 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_USE;
   private final ForgeConfigSpec.BooleanValue OVERSTEP_ENABLED;
+  private final ForgeConfigSpec.BooleanValue SMASHING_ENABLED;
   private boolean stunPreventsJump;
   private boolean stunPreventsUse;
   private boolean overstepEnabled;
+  private boolean smashingEnabled;
   
   // special attack configs
   public final ForgeConfigSpec.BooleanValue EMPUSA_ATTACK;
   public final ForgeConfigSpec.BooleanValue GORGON_ATTACK;
   public final ForgeConfigSpec.BooleanValue MINOTAUR_ATTACK;
-  public final ForgeConfigSpec.BooleanValue ORTHUS_ATTACK;
   public final ForgeConfigSpec.BooleanValue SHADE_ATTACK;
   public final ForgeConfigSpec.BooleanValue SATYR_ATTACK;
   public final ForgeConfigSpec.BooleanValue SIREN_ATTACK;
@@ -126,6 +127,8 @@ public class GFConfig {
         .define("stun_prevents_use", true);
     OVERSTEP_ENABLED = builder.comment("Whether 'overstep' effect can modify player step height")
         .define("enable_overstep", true);
+    SMASHING_ENABLED = builder.comment("Whether 'smashing' enchantment can be used")
+        .define("enable_smashing", true);
     builder.pop();
     // mob abilities
     builder.push("mob_abilities");
@@ -135,8 +138,6 @@ public class GFConfig {
         .define("gorgon_attack", true);
     MINOTAUR_ATTACK = builder.comment("Whether the Minotaur can charge and stun players")
         .define("minotaur_attack", true);
-    ORTHUS_ATTACK = builder.comment("Whether the Orthus can breath fire")
-        .define("orthus_attack", true);
     SATYR_ATTACK = builder.comment("Whether the Satyr can summon wolves")
         .define("satyr_attack", true);
     SHADE_ATTACK = builder.comment("Whether the Shade can steal player XP")
@@ -221,6 +222,7 @@ public class GFConfig {
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
+    smashingEnabled = SMASHING_ENABLED.get();
     shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
     elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
@@ -239,6 +241,7 @@ public class GFConfig {
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
   public boolean isOverstepEnabled() { return overstepEnabled; }
+  public boolean isSmashingEnabled() { return smashingEnabled; }
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
   public int getSatyrShamanChance() { return satyrShamanChance; }
   public int getElpisSpawnChance() { return elpisSpawnChance; }
