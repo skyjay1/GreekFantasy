@@ -128,6 +128,8 @@ public class GeryonEntity extends MonsterEntity {
     for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(25.0D))) {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
     }
+    // play sound
+    // TODO
     return entity;
   }
   

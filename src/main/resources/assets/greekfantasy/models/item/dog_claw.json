@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "greekfantasy:item/reeds"
+    "layer0": "greekfantasy:item/dog_claw"
   }
 }

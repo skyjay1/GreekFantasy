@@ -23,6 +23,7 @@ import greekfantasy.item.ClubItem;
 import greekfantasy.item.DragonToothItem;
 import greekfantasy.item.HealingRodItem;
 import greekfantasy.item.HelmOfDarknessItem;
+import greekfantasy.item.OrthusHeadItem;
 import greekfantasy.item.PanfluteItem;
 import greekfantasy.item.SwordOfTheHuntItem;
 import greekfantasy.item.ThunderboltItem;
@@ -44,7 +45,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
-import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityClassification;
@@ -111,6 +111,7 @@ public final class GFRegistry {
   public static EntityType<MinotaurEntity> MINOTAUR_ENTITY;
   public static EntityType<NaiadEntity> NAIAD_ENTITY;
   public static EntityType<OrthusEntity> ORTHUS_ENTITY;
+  public static EntityType<OrthusHeadItemEntity> ORTHUS_HEAD_ITEM_ENTITY;
   public static EntityType<SatyrEntity> SATYR_ENTITY;
   public static EntityType<ShadeEntity> SHADE_ENTITY;
   public static EntityType<SirenEntity> SIREN_ENTITY;
@@ -152,7 +153,6 @@ public final class GFRegistry {
   @ObjectHolder("purified_snakeskin")
   public static final Item PURIFIED_SNAKESKIN = null;
   
-
   @ObjectHolder("reeds")
   public static final Block REEDS = null;
   @ObjectHolder("olive_log")
@@ -276,6 +276,10 @@ public final class GFRegistry {
         .size(0.25F, 0.25F).immuneToFire().build("healing_spell");
     event.getRegistry().register(healingSpellEntityType.setRegistryName(MODID, "healing_spell"));
     HEALING_SPELL_ENTITY = healingSpellEntityType;
+    EntityType<OrthusHeadItemEntity> orthusHeadItemEntityType = EntityType.Builder.create(OrthusHeadItemEntity::new, EntityClassification.MISC)
+        .trackingRange(6).func_233608_b_(20).build("orthus_head_item");
+    event.getRegistry().register(orthusHeadItemEntityType.setRegistryName(MODID, "orthus_head_item"));
+    ORTHUS_HEAD_ITEM_ENTITY = orthusHeadItemEntityType;
   }
   
   @SubscribeEvent
@@ -376,9 +380,6 @@ public final class GFRegistry {
           .setRegistryName(MODID, "winged_sandals"),
         new HelmOfDarknessItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
           .setRegistryName(MODID, "helm_of_darkness"),
-        new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
-          .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC))
-          .setRegistryName(MODID, "ambrosia"),
         new UnicornHornItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.UNICORN_HORN_DURABILITY.get()))
           .setRegistryName(MODID, "unicorn_horn"),
@@ -386,7 +387,12 @@ public final class GFRegistry {
             .maxDamage(GreekFantasy.CONFIG.HEALING_ROD_DURABILITY.get()))
           .setRegistryName(MODID, "healing_rod"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(MODID, "horn"),
+          .setRegistryName(MODID, "horn"));
+    
+    event.getRegistry().registerAll(
+        new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
+            .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC).containerItem(GFRegistry.HORN))
+            .setRegistryName(MODID, "ambrosia"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "golden_bridle"),
         new Item(new Item.Properties().group(GREEK_GROUP))
@@ -400,7 +406,13 @@ public final class GFRegistry {
         new Item(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP)){
           @Override
           public boolean hasEffect(ItemStack stack) { return true; }
-        }.setRegistryName(MODID, "ichor")
+        }.setRegistryName(MODID, "ichor"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+        .setRegistryName(MODID, "dog_claw"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+        .setRegistryName(MODID, "fiery_hide"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+        .setRegistryName(MODID, "styxian_shard")
     );
     
     // block items
@@ -438,7 +450,7 @@ public final class GFRegistry {
     event.getRegistry().register(new BlockItem(GIGANTE_HEAD, new Item.Properties()
         .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeGiganteHeadISTER))
         .setRegistryName(MODID, "gigante_head"));
-    event.getRegistry().register(new BlockItem(ORTHUS_HEAD, new Item.Properties()
+    event.getRegistry().register(new OrthusHeadItem(ORTHUS_HEAD, new Item.Properties()
         .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeOrthusHeadISTER))
         .setRegistryName(MODID, "orthus_head"));
     event.getRegistry().register(new BlockItem(CERBERUS_HEAD, new Item.Properties()

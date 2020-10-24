@@ -31,7 +31,6 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
@@ -75,16 +74,18 @@ public class CerberusEntity extends CreatureEntity {
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
   }
   
-  public static CerberusEntity spawnCerberus(final World world, final BlockPos pos, final float yaw) {
+  public static CerberusEntity spawnCerberus(final World world, final Vector3d pos) {
     CerberusEntity entity = GFRegistry.CERBERUS_ENTITY.create(world);
-    entity.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
-    entity.renderYawOffset = yaw;
+    entity.setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), 0.0F, 0.0F);
+    entity.renderYawOffset = 0.0F;
     entity.setSpawning(true);
     world.addEntity(entity);
     // trigger spawn for nearby players
     for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(25.0D))) {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
     }
+    // play sound
+    // TODO
     return entity;
   }
   
@@ -144,6 +145,13 @@ public class CerberusEntity extends CreatureEntity {
     // spawn particles
     if (world.isRemote() && this.isFiring()) {
       spawnFireParticles();
+    }
+  }
+  
+  @Override
+  public void applyEntityCollision(Entity entityIn) { 
+    if(this.canBePushed() && !this.isSpawning()) {
+      super.applyEntityCollision(entityIn);
     }
   }
  

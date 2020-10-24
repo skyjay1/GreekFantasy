@@ -125,6 +125,7 @@ X X X Ichor - crafting component from Elpis
 _ _ _ Dog claw (or tooth) - crafting component from Orthus
 _ _ _ Fiery hide - crafting component from Cerberus (helm of darkness)
 _ _ _ Styxian fragment - crafting component from Cyclopes (helm of darkness)
+_ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 
 ## Achievements
 

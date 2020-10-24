@@ -28,7 +28,7 @@ public class CerberusRenderer<T extends CerberusEntity> extends MobRenderer<T, C
   protected void preRenderCallback(final T entity, MatrixStack matrix, float f) {
     // if the entity is spawning, shift the entity down
     if(entity.isSpawning()) {
-      final float height = 1.9F;
+      final float height = 2.4F;
       final float translate = 0.039F;
       final float translateY = height * entity.getSpawnPercent(f) - height;
       final float translateX = translate * (entity.getRNG().nextFloat() - 0.5F);
