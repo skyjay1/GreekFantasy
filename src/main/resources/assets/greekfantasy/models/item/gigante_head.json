@@ -1,0 +1,30 @@
+{
+  "parent": "minecraft:item/template_skull",
+    "display": {
+        "gui": {
+            "rotation": [ 30, 225, 0 ],
+            "translation": [ -12, 6, 6 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "thirdperson_righthand": {
+            "rotation": [ 75, 45, 0 ],
+            "translation": [ 9, 0, 5 ],
+            "scale": [ 0.68, 0.68, 0.68 ]
+        },
+        "firstperson_righthand": {
+            "rotation": [ 15, 45, 0 ],
+            "translation": [ 16, 0, 2 ],
+            "scale": [ 0.88, 0.88, 0.88 ]
+        },
+        "fixed": {
+            "rotation": [ 0, 0, 0 ],
+            "translation": [ 3.37, 3.37, 15],
+            "scale":[ 1.15, 1.15, 1.15 ]
+        },
+        "ground": {
+            "rotation": [ 0, 0, 0 ],
+            "translation": [ 2, 3, 8 ],
+            "scale": [ 0.65, 0.65, 0.65 ]
+        }
+    }
+}

@@ -7,10 +7,12 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 
 public class SmashingEnchantment extends Enchantment {
@@ -32,17 +34,23 @@ public class SmashingEnchantment extends Enchantment {
   private void useSmashAttack(final LivingEntity user, final Entity target) {
     // if entitiy is touching the ground, knock it into the air and apply stun
     if(target.isOnGround() && !isExemptFromSmashAttack(target)) {
-      target.addVelocity(0.0D, 0.65D, 0.0D);
+      target.addVelocity(0.0D, 0.35D, 0.0D);
       target.attackEntityFrom(DamageSource.causeMobDamage(user), 0.25F);
       // stun effect (for living entities)
       if(target instanceof LivingEntity) {
-        ((LivingEntity)target).addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 65, 0));
+        ((LivingEntity)target).addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 60, 0));
       }
     }
   }
   
   @Override
   public void onEntityDamaged(LivingEntity user, Entity target, int level) {
+    // check for cooldown
+    final ItemStack item = user.getHeldItem(Hand.MAIN_HAND);
+    if(user instanceof PlayerEntity && ((PlayerEntity)user).getCooldownTracker().hasCooldown(item.getItem())) {
+      return;
+    }
+    // stun entities within range
     final double range = BASE_RANGE + 2.0D * level;
     final AxisAlignedBB aabb = new AxisAlignedBB(target.getPosition().up()).grow(range, BASE_RANGE, range);
     user.getEntityWorld().getEntitiesWithinAABBExcludingEntity(user, aabb)

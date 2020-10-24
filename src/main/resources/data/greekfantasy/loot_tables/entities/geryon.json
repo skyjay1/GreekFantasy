@@ -6,6 +6,24 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "greekfantasy:ambrosia"
+        }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:set_count",
+          "count": {
+            "min": 0,
+            "max": 5
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
           "name": "greekfantasy:iron_club",
           "functions": [
             {

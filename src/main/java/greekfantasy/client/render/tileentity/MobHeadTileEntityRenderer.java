@@ -10,8 +10,12 @@ import greekfantasy.client.render.model.tileentity.OrthusHeadModel;
 import greekfantasy.tileentity.MobHeadTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 
@@ -68,4 +72,40 @@ public class MobHeadTileEntityRenderer extends TileEntityRenderer<MobHeadTileEnt
     void setWallRotations(final boolean onWall);
     void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha);
   }
+  
+  public static class OrthusItemStackRenderer extends ItemStackTileEntityRenderer {
+    final OrthusHeadModel orthusHeadModel = new OrthusHeadModel();
+    @Override
+    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int i1, int i2) {
+      matrixStack.push();
+      matrixStack.scale(-1.0F, -1.0F, 1.0F);
+      IVertexBuilder vertexBuilder = buffer.getBuffer(orthusHeadModel.getRenderType(MobHeadTileEntity.HeadType.ORTHUS.getTexture()));
+      orthusHeadModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+      matrixStack.pop();
+    }
+  }
+  
+  public static class GiganteItemStackRenderer extends ItemStackTileEntityRenderer {
+    final GiganteHeadModel giganteHeadModel = new GiganteHeadModel();
+    @Override
+    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int i1, int i2) {
+      matrixStack.push();
+      matrixStack.scale(-1.0F, -1.0F, 1.0F);
+      IVertexBuilder vertexBuilder = buffer.getBuffer(giganteHeadModel.getRenderType(MobHeadTileEntity.HeadType.GIGANTE.getTexture()));
+      giganteHeadModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+      matrixStack.pop();
+    }
+  }
+  
+  public static class CerberusItemStackRenderer extends ItemStackTileEntityRenderer {
+    final CerberusHeadModel cerberusHeadModel = new CerberusHeadModel();
+    @Override
+    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int i1, int i2) {
+      matrixStack.push();
+      matrixStack.scale(-1.0F, -1.0F, 1.0F);
+      IVertexBuilder vertexBuilder = buffer.getBuffer(cerberusHeadModel.getRenderType(MobHeadTileEntity.HeadType.CERBERUS.getTexture()));
+      cerberusHeadModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+      matrixStack.pop();
+    }
+  };
 }

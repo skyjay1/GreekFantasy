@@ -4,6 +4,8 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -25,9 +27,11 @@ public class MobHeadTileEntity extends TileEntity {
     return headType;
   }
 
-  public void setHeadType(HeadType headType) {
-    this.headType = headType;
-    markDirty();
+  public void setHeadType(HeadType headTypeIn) {
+    if(headType != headTypeIn) {
+      this.headType = headTypeIn;
+      markDirty();
+    }
   }
   
   public boolean onWall() {
@@ -35,8 +39,10 @@ public class MobHeadTileEntity extends TileEntity {
   }
   
   public void setWall(final boolean isOnWall) {
-    wall = isOnWall;
-    markDirty();
+    if(wall != isOnWall) {
+      wall = isOnWall;
+      markDirty();
+    }
   }
 
   // CLIENT-SERVER SYNC
@@ -52,8 +58,17 @@ public class MobHeadTileEntity extends TileEntity {
   @Override
   public void handleUpdateTag(final BlockState state, final CompoundNBT tag) {
     super.handleUpdateTag(state, tag);
-    headType = HeadType.getById(tag.getByte(KEY_HEAD));
-    wall = tag.getBoolean(KEY_WALL);
+    read(tag);
+  }
+  
+  @Override
+  public SUpdateTileEntityPacket getUpdatePacket() {
+    return new SUpdateTileEntityPacket(getPos(), -1, getUpdateTag());
+  }
+  
+  @Override
+  public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket pkt) {
+    read(pkt.getNbtCompound());
   }
   
   // NBT / SAVING
@@ -61,8 +76,7 @@ public class MobHeadTileEntity extends TileEntity {
   @Override
   public void read(BlockState state, CompoundNBT nbt) {
     super.read(state, nbt);
-    headType = HeadType.getById(nbt.getByte(KEY_HEAD));
-    wall = nbt.getBoolean(KEY_WALL);
+    read(nbt);
   }
 
   @Override
@@ -71,6 +85,11 @@ public class MobHeadTileEntity extends TileEntity {
     nbt.putByte(KEY_HEAD, headType.getId());
     nbt.putBoolean(KEY_WALL, wall);
     return nbt;
+  }
+  
+  protected void read(final CompoundNBT nbt) {
+    setHeadType(HeadType.getById(nbt.getByte(KEY_HEAD)));
+    setWall(nbt.getBoolean(KEY_WALL));
   }
   
   // OTHER //

@@ -92,7 +92,7 @@ public class GeryonEntity extends MonsterEntity {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 160.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.21D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.98D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.5D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT);

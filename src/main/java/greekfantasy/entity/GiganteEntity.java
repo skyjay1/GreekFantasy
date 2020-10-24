@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IAngerable;
 import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -21,7 +22,6 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -43,6 +43,10 @@ import net.minecraft.world.server.ServerWorld;
 
 public class GiganteEntity extends CreatureEntity implements IAngerable {
   
+  private static final int ATTACK_COOLDOWN = 32;
+
+  private int attackCooldown;
+  
   private static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(20, 39);
   private int angerTime;
   private UUID angerTarget;
@@ -50,15 +54,16 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   public GiganteEntity(final EntityType<? extends GiganteEntity> type, final World worldIn) {
     super(type, worldIn);
     this.stepHeight = 1.0F;
+    this.experienceValue = 10;
   }
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 100.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.22D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.9D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.2D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.65D);
   }
   
@@ -71,7 +76,7 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   @Override
   protected void registerGoals() {
     super.registerGoals();
-    this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
+    this.goalSelector.addGoal(3, new GiganteEntity.MeleeAttackGoal(this, 1.0D, false));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 10.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -82,8 +87,12 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   @Override
   public void livingTick() {
     super.livingTick();
+    
+    // attack cooldown
+    attackCooldown = Math.max(attackCooldown - 1,  0);
 
-    if (horizontalMag(this.getMotion()) > (double)2.5000003E-7F && this.rand.nextInt(5) == 0) {
+    // particles
+    if (world.isRemote() && horizontalMag(this.getMotion()) > (double)2.5000003E-7F && this.rand.nextInt(5) == 0) {
        int i = MathHelper.floor(this.getPosX());
        int j = MathHelper.floor(this.getPosY() - (double)0.2F);
        int k = MathHelper.floor(this.getPosZ());
@@ -94,7 +103,7 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
        }
     }
 
-    if (!this.world.isRemote) {
+    if (!this.world.isRemote()) {
        this.func_241359_a_((ServerWorld)this.world, true);
     }
 
@@ -169,6 +178,30 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   @Override
   public UUID getAngerTarget() { return this.angerTarget; }
   
-  // End IAngerable methods
+  // Cooldown methods
+  
+  public void setAttackCooldown() { attackCooldown = ATTACK_COOLDOWN; }
+  
+  public boolean hasNoCooldown() { return attackCooldown <= 0; }
+  
+  class MeleeAttackGoal extends net.minecraft.entity.ai.goal.MeleeAttackGoal {
+
+    public MeleeAttackGoal(CreatureEntity creature, double speedIn, boolean useLongMemory) {
+      super(creature, speedIn, useLongMemory);
+    }
+    
+    @Override
+    protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
+      if(GiganteEntity.this.hasNoCooldown()) {
+        super.checkAndPerformAttack(enemy, distToEnemySqr);
+      }
+    }
+    
+    @Override
+    protected void func_234039_g_() {
+      super.func_234039_g_();
+      GiganteEntity.this.setAttackCooldown();
+    }
+  }
 
 }

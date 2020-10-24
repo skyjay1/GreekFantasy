@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.entity.CerberusEntity;
 import net.minecraft.client.renderer.entity.model.AgeableModel;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 
@@ -41,77 +42,24 @@ public class CerberusModel<T extends CerberusEntity> extends AgeableModel<T> {
     body.setTextureOffset(0, 12).addBox(-4.0F, -17.0F, 0.0F, 8.0F, 7.0F, 9.0F, modelSize);
 
     neck1 = new ModelRenderer(this);
-    neck1.setRotationPoint(0.0F, 12.0F, -6.0F);
-    neck1.setTextureOffset(50, 18).addBox(-1.5F, -4.0F, -3.0F, 3.0F, 4.0F, 3.0F, modelSize);
-
     head1 = new ModelRenderer(this);
-    head1.setRotationPoint(0.0F, -4.0F, -3.0F);
-    neck1.addChild(head1);
-    head1.setTextureOffset(0, 0).addBox(-2.5F, -2.0F, -5.0F, 5.0F, 6.0F, 5.0F, modelSize);
-    head1.setTextureOffset(21, 0).addBox(-1.5F, 1.0F, -9.0F, 3.0F, 2.0F, 4.0F, modelSize);
-    head1.setTextureOffset(16, 0).addBox(-2.5F, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
-    head1.setTextureOffset(16, 0).addBox(0.5F, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, 0.0F, true);
-
     mouth1 = new ModelRenderer(this);
-    mouth1.setRotationPoint(0.0F, 3.0F, -5.0F);
-    head1.addChild(mouth1);
-    mouth1.setTextureOffset(21, 6).addBox(-1.5F, 0.0F, -4.0F, 3.0F, 1.0F, 4.0F, modelSize);
-
+    initCerberusHead(this, neck1, head1, mouth1, 0.0F, 12.0F, -6.0F, 0.0F);    
+    
     neck2 = new ModelRenderer(this);
-    neck2.setRotationPoint(4.0F, 14.0F, -5.0F);
-    neck2.rotateAngleY = -0.5236F;
-    neck2.setTextureOffset(50, 17).addBox(-2.0F, -4.0F, -3.0F, 3.0F, 4.0F, 3.0F, modelSize);
-
     head2 = new ModelRenderer(this);
-    head2.setRotationPoint(0.0F, -4.0F, -3.0F);
-    neck2.addChild(head2);
-    head2.setTextureOffset(0, 0).addBox(-3.0F, -2.0F, -5.0F, 5.0F, 6.0F, 5.0F, modelSize);
-    head2.setTextureOffset(21, 0).addBox(-2.0F, 1.0F, -9.0F, 3.0F, 2.0F, 4.0F, modelSize);
-    head2.setTextureOffset(16, 0).addBox(-3.0F, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
-    head2.setTextureOffset(16, 0).addBox(0.0F, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, 0.0F, true);
-
     mouth2 = new ModelRenderer(this);
-    mouth2.setRotationPoint(-1.0F, 3.0F, -5.0F);
-    head2.addChild(mouth2);
-    mouth2.setTextureOffset(21, 6).addBox(-1.0F, 0.0F, -4.0F, 3.0F, 1.0F, 4.0F, modelSize);
+    initCerberusHead(this, neck2, head2, mouth2, 4.0F, 14.0F, -5.0F, -0.5236F);
 
     neck3 = new ModelRenderer(this);
-    neck3.setRotationPoint(-4.0F, 14.0F, -5.0F);
-    neck3.rotateAngleY = 0.5236F;
-    neck3.setTextureOffset(50, 17).addBox(-1.0F, -4.0F, -3.0F, 3.0F, 4.0F, 3.0F, modelSize);
-
     head3 = new ModelRenderer(this);
-    head3.setRotationPoint(0.0F, -4.0F, -3.0F);
-    neck3.addChild(head3);
-    head3.setTextureOffset(0, 0).addBox(-2.0F, -2.0F, -5.0F, 5.0F, 6.0F, 5.0F, modelSize);
-    head3.setTextureOffset(21, 0).addBox(-1.0F, 1.0F, -9.0F, 3.0F, 2.0F, 4.0F, modelSize);
-    head3.setTextureOffset(16, 0).addBox(-2.0F, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
-    head3.setTextureOffset(16, 0).addBox(1.0F, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, 0.0F, true);
-
     mouth3 = new ModelRenderer(this);
-    mouth3.setRotationPoint(0.0F, 3.0F, -5.0F);
-    head3.addChild(mouth3);
-    mouth3.setTextureOffset(21, 6).addBox(-1.0F, 0.0F, -4.0F, 3.0F, 1.0F, 4.0F, modelSize);
+    initCerberusHead(this, neck3, head3, mouth3, -4.0F, 14.0F, -5.0F, 0.5236F);
 
-    legFrontRight = new ModelRenderer(this);
-    legFrontRight.setRotationPoint(-3.0F, 14.0F, -2.0F);
-    legFrontRight.setTextureOffset(37, 0).addBox(-1.0F, 4.0F, -2.0F, 3.0F, 6.0F, 3.0F, modelSize);
-    legFrontRight.setTextureOffset(33, 10).addBox(-1.5F, -2.0F, -2.5F, 4.0F, 6.0F, 4.0F, modelSize);
-
-    legBackRight = new ModelRenderer(this);
-    legBackRight.setRotationPoint(-3.0F, 14.0F, 7.0F);
-    legBackRight.setTextureOffset(37, 0).addBox(-1.0F, 4.0F, -2.0F, 3.0F, 6.0F, 3.0F, modelSize);
-    legBackRight.setTextureOffset(33, 10).addBox(-1.5F, -2.0F, -2.5F, 4.0F, 6.0F, 4.0F, modelSize);
-
-    legFrontLeft = new ModelRenderer(this);
-    legFrontLeft.setRotationPoint(3.0F, 14.0F, -2.0F);
-    legFrontLeft.setTextureOffset(37, 0).addBox(-2.0F, 4.0F, -2.0F, 3.0F, 6.0F, 3.0F, modelSize);
-    legFrontLeft.setTextureOffset(33, 10).addBox(-2.5F, -2.0F, -2.5F, 4.0F, 6.0F, 4.0F, modelSize);
-
-    legBackLeft = new ModelRenderer(this);
-    legBackLeft.setRotationPoint(3.0F, 14.0F, 7.0F);
-    legBackLeft.setTextureOffset(37, 0).addBox(-2.0F, 4.0F, -2.0F, 3.0F, 6.0F, 3.0F, modelSize);
-    legBackLeft.setTextureOffset(33, 10).addBox(-2.5F, -2.0F, -2.5F, 4.0F, 6.0F, 4.0F, modelSize);
+    legFrontRight = makeLegModel(this, -3.0F, 14.0F, -2.0F);
+    legBackRight = makeLegModel(this, -3.0F, 14.0F, 7.0F);
+    legFrontLeft = makeLegModel(this, 3.0F, 14.0F, -2.0F);
+    legBackLeft = makeLegModel(this, 3.0F, 14.0F, 7.0F);
 
     tail1 = new ModelRenderer(this);
     tail1.setRotationPoint(0.0F, 7.0F, 9.0F);
@@ -195,5 +143,36 @@ public class CerberusModel<T extends CerberusEntity> extends AgeableModel<T> {
   public void render(final MatrixStack matrixStackIn, final IVertexBuilder vertexBuilder, final int packedLightIn, final int packedOverlayIn, 
       final float redIn, final float greenIn, final float blueIn, final float alphaIn) {
     super.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, color, color, alphaIn);
+  }
+  
+  public static ModelRenderer makeLegModel(final Model model, final float rotX, final float rotY, final float rotZ) {
+    final ModelRenderer leg = new ModelRenderer(model);
+    leg.setRotationPoint(rotX, rotY, rotZ);
+    leg.setTextureOffset(37, 0).addBox(-2.0F, 4.0F, -2.0F, 3.0F, 6.0F, 3.0F, 0.0F);
+    leg.setTextureOffset(33, 10).addBox(-2.5F, -2.0F, -2.5F, 4.0F, 6.0F, 4.0F, 0.0F);
+    return leg;
+  }
+  
+  public static void initCerberusHead(final Model model, final ModelRenderer neck, final ModelRenderer head, 
+      final ModelRenderer mouth, final float rotX, final float rotY, final float rotZ, final float neckY) {
+    initCerberusHead(model, head, mouth, 0.0F, -4.0F, -3.0F);
+    neck.setRotationPoint(rotX, rotY, rotZ);
+    neck.rotateAngleY = neckY;
+    neck.setTextureOffset(50, 17).addBox(-1.5F, -4.0F, -3.0F, 3.0F, 4.0F, 3.0F, 0.0F);
+    neck.addChild(head);
+  }
+  
+  public static void initCerberusHead(final Model model, final ModelRenderer head, final ModelRenderer mouth, 
+      final float rotX, final float rotY, final float rotZ) {
+    // init head boxes and rotation points
+    head.setRotationPoint(rotX, rotY, rotZ);
+    head.setTextureOffset(0, 0).addBox(-2.5F, -2.0F, -5.0F, 5.0F, 6.0F, 5.0F, 0.0F);
+    head.setTextureOffset(21, 0).addBox(-1.5F, 1.0F, -9.0F, 3.0F, 2.0F, 4.0F, 0.0F);
+    head.setTextureOffset(16, 0).addBox(-2.5F, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, 0.0F);
+    head.setTextureOffset(16, 0).addBox(0.5F, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, 0.0F, true);
+    // init mouth
+    mouth.setRotationPoint(0.0F, 3.0F, -5.0F);
+    mouth.setTextureOffset(21, 6).addBox(-1.5F, 0.0F, -4.0F, 3.0F, 1.0F, 4.0F, 0.0F);
+    head.addChild(mouth);
   }
 }

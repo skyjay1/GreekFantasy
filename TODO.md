@@ -121,7 +121,10 @@ X X X Flint Knife
 X X _ Sword of the Hunt (one-shots animals)
 X X X Thunderbolt
 X X X Snake skin and Purified snake skin (from Gorgons)
-X X X Ichor (from Elpis; crafting component)
+X X X Ichor - crafting component from Elpis
+_ _ _ Dog claw (or tooth) - crafting component from Orthus
+_ _ _ Fiery hide - crafting component from Cerberus (helm of darkness)
+_ _ _ Styxian fragment - crafting component from Cyclopes (helm of darkness)
 
 ## Achievements
 

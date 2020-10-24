@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.entity.CerberusEntity;
-import greekfantasy.entity.GeryonEntity;
 import greekfantasy.tileentity.MobHeadTileEntity;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
@@ -43,9 +42,6 @@ public class MobHeadBlock extends HorizontalBlock {
   private static final Predicate<BlockState> CERBERUS_BODY = b -> b.isIn(BlockTags.SOUL_SPEED_BLOCKS);
   private BlockPattern CERBERUS_PATTERN;
   
-//  private static final Predicate<BlockState> GERYON_BODY = b -> b.isIn(BlockTags.SOUL_SPEED_BLOCKS);
-//  private BlockPattern GERYON_PATTERN;
-  
   public MobHeadBlock(final MobHeadTileEntity.HeadType head, Properties prop) {
     super(prop);
     headType = head;
@@ -72,19 +68,6 @@ public class MobHeadBlock extends HorizontalBlock {
   @Override
   public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
     // attempt to spawn boss
-//    if(headType == MobHeadTileEntity.HeadType.GIGANTE) {
-//      // attempt to spawn a geryon
-//      final BlockPattern pattern = getGeryonPattern();
-//      final BlockPattern.PatternHelper patternHelper = pattern.match(worldIn, pos);
-//      if(patternHelper != null) {
-//        // the entity was found, remove blocks
-//        removeMatchingBlocks(worldIn, pattern, patternHelper);
-//        // prepare an entity to spawn
-//        final BlockPos p = patternHelper.translateOffset(1, 4, 0).getPos();
-//        GeryonEntity geryon = GFRegistry.GERYON_ENTITY.create(worldIn);
-//        placeEntity(worldIn, geryon, p, patternHelper.getForwards().getAxis());
-//      }
-//    } else 
     if(headType == MobHeadTileEntity.HeadType.ORTHUS) {
       // attempt to spawn a cerberus
       final BlockPattern pattern = getCerberusPattern();
@@ -157,16 +140,6 @@ public class MobHeadBlock extends HorizontalBlock {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
     }
   }
-  
-//  private BlockPattern getGeryonPattern() {
-//    if(GERYON_PATTERN == null) {
-//      GERYON_PATTERN = BlockPatternBuilder.start().aisle("^^^", "###", "###", "###", "###")
-//        .where('^', CachedBlockInfo.hasState(BlockStateMatcher.forBlock(GFRegistry.GIGANTE_HEAD)))
-//        .where('#', CachedBlockInfo.hasState(GERYON_BODY))
-//        .where('~', CachedBlockInfo.hasState(BlockMaterialMatcher.forMaterial(Material.AIR))).build();
-//    }
-//    return GERYON_PATTERN;
-//  }
   
   private BlockPattern getCerberusPattern() {
     if(CERBERUS_PATTERN == null) {

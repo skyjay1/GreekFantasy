@@ -44,6 +44,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityClassification;
@@ -434,9 +435,15 @@ public final class GFRegistry {
     
     registerItemBlock(event, TERRACOTTA_VASE, "terracotta_vase");
     
-    registerItemBlock(event, GIGANTE_HEAD, "gigante_head");
-    registerItemBlock(event, ORTHUS_HEAD, "orthus_head");
-    registerItemBlock(event, CERBERUS_HEAD, "cerberus_head");
+    event.getRegistry().register(new BlockItem(GIGANTE_HEAD, new Item.Properties()
+        .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeGiganteHeadISTER))
+        .setRegistryName(MODID, "gigante_head"));
+    event.getRegistry().register(new BlockItem(ORTHUS_HEAD, new Item.Properties()
+        .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeOrthusHeadISTER))
+        .setRegistryName(MODID, "orthus_head"));
+    event.getRegistry().register(new BlockItem(CERBERUS_HEAD, new Item.Properties()
+        .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeCerberusHeadISTER))
+        .setRegistryName(MODID, "cerberus_head"));
     
     // mysterious box item
     event.getRegistry().register(new BlockItem(MYSTERIOUS_BOX, new Item.Properties().group(GREEK_GROUP)) {

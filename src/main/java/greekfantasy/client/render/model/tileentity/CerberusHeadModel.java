@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.client.render.CerberusRenderer;
+import greekfantasy.client.render.model.CerberusModel;
 import greekfantasy.client.render.tileentity.MobHeadTileEntityRenderer.IWallModel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.IHasHead;
@@ -25,16 +26,8 @@ public class CerberusHeadModel extends Model implements IHasHead, IWallModel {
     this.textureHeight = 64;
     
     cerberusHead = new ModelRenderer(this);
-    cerberusHead.setRotationPoint(-4.5F, -4.0F, 0.0F);
-    cerberusHead.setTextureOffset(0, 0).addBox(-2.5F, -2.0F, -5.0F, 5.0F, 6.0F, 5.0F, modelSize);
-    cerberusHead.setTextureOffset(21, 0).addBox(-1.5F, 1.0F, -9.0F, 3.0F, 2.0F, 4.0F, modelSize);
-    cerberusHead.setTextureOffset(16, 0).addBox(-2.5F, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, modelSize);
-    cerberusHead.setTextureOffset(16, 0).addBox(0.5F, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, 0.0F, true);
-
     cerberusMouth = new ModelRenderer(this);
-    cerberusMouth.setRotationPoint(0.0F, 3.0F, -5.0F);
-    cerberusMouth.setTextureOffset(21, 6).addBox(-1.5F, 0.0F, -4.0F, 3.0F, 1.0F, 4.0F, modelSize);
-    cerberusHead.addChild(cerberusMouth);
+    CerberusModel.initCerberusHead(this, cerberusHead, cerberusMouth, -4.5F, -4.0F, 0.0F);
   }
 
   @Override
