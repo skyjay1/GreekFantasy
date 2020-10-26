@@ -4,16 +4,20 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -22,11 +26,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class HelmOfDarknessItem extends ArmorItem {
+  protected static final IArmorMaterial MATERIAL = new HelmOfDarknessArmorMaterial();
    
   private static final String TEXTURE = GreekFantasy.MODID + ":textures/models/armor/winged_layer_2.png";
 
   public HelmOfDarknessItem(Properties builderIn) {
-    super(ArmorMaterial.IRON, EquipmentSlotType.HEAD, builderIn);
+    super(MATERIAL, EquipmentSlotType.HEAD, builderIn);
   }
 
   /**
@@ -64,5 +69,25 @@ public class HelmOfDarknessItem extends ArmorItem {
   @Override
   public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type) {
     return TEXTURE;
+  }
+  
+  public static class HelmOfDarknessArmorMaterial implements IArmorMaterial {
+    private static final String NAME = "helm_of_darkness";
+    @Override
+    public int getDamageReductionAmount(EquipmentSlotType arg0) { return 2; }
+    @Override
+    public int getDurability(EquipmentSlotType arg0) { return 363; }
+    @Override
+    public int getEnchantability() { return 15; }
+    @Override
+    public float getKnockbackResistance() { return 0.0F; }
+    @Override
+    public String getName() { return NAME; }
+    @Override
+    public Ingredient getRepairMaterial() { return Ingredient.fromItems(GFRegistry.STYXIAN_SHARD); }
+    @Override
+    public SoundEvent getSoundEvent() { return SoundEvents.ITEM_ARMOR_EQUIP_IRON; }
+    @Override
+    public float getToughness() { return 0.1F; }
   }
 }

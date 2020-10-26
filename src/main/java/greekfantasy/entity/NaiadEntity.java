@@ -60,11 +60,13 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   
   private static final DataParameter<String> DATA_VARIANT = EntityDataManager.createKey(NaiadEntity.class, DataSerializers.STRING);
   private static final String KEY_VARIANT = "Variant";
+  private static final String KEY_AGE = "Age";
   
   private static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(10, 26);
   private int angerTime;
   private UUID angerTarget;
 
+  protected int age;
   protected boolean swimmingUp;
   protected boolean isVisuallySwimming;
   protected float visuallySwimmingPercent;
@@ -128,6 +130,9 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   @Override
   public void livingTick() {
     super.livingTick();
+    // update age
+    ++age;
+    // update swimming (client)
     if(world.isRemote()) {
       // update visually swimming flag
       if(this.ticksExisted % 11 == 1) {
@@ -148,6 +153,7 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
     compound.putString(KEY_VARIANT, this.getDataManager().get(DATA_VARIANT));
+    compound.putInt(KEY_AGE, age);
     this.writeAngerNBT(compound);
   }
 
@@ -155,7 +161,13 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
     this.setVariant(NaiadEntity.Variant.getByName(compound.getString(KEY_VARIANT)));
+    age = compound.getInt(KEY_AGE);
     this.readAngerNBT((ServerWorld)this.world, compound);
+  }
+  
+  @Override
+  public ResourceLocation getLootTable() {
+    return this.getVariant().getLootTable();
   }
   
   // IAngerable methods
@@ -179,6 +191,11 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
     final NaiadEntity.Variant variant = NaiadEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
     this.setVariant(variant);
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+  }
+  
+  @Override
+  public boolean canDespawn(final double disToPlayer) {
+    return this.age > 8400 && disToPlayer > 8.0D;
   }
   
   // Swimming methods
@@ -249,10 +266,12 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
     
     private final String name;
     private final ResourceLocation texture;
+    private final ResourceLocation lootTable;
     
     private Variant(final String nameIn) {
       name = nameIn;
       texture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/naiad/" + name + ".png");
+      lootTable = new ResourceLocation(GreekFantasy.MODID, "entities/naiad/" + name);
     }
     
     public static Variant getByName(final String n) {
@@ -274,6 +293,10 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
 
     public ResourceLocation getTexture() {
       return texture;
+    }
+    
+    public ResourceLocation getLootTable() {
+      return lootTable;
     }
   
     public byte getId() {

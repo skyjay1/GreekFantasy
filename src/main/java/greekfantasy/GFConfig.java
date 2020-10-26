@@ -195,7 +195,7 @@ public class GFConfig {
     builder.push("features");
     HARPY_NEST_SPREAD = builder.worldRestart().defineInRange("harpy_nest_spread", 68, 1, 1000);
     SMALL_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_shrine_spread", 102, 1, 1000);
-    SMALL_NETHER_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_nether_shrine_spread", 30, 1, 1000);
+    SMALL_NETHER_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_nether_shrine_spread", 11, 1, 1000);
     ARA_CAMP_SPREAD = builder.worldRestart().defineInRange("ara_camp_spread", 161, 1, 1000);
     SATYR_CAMP_SPREAD = builder.worldRestart().defineInRange("satyr_camp_spread", 205, 1, 1000);
     builder.pop();

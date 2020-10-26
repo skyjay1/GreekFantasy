@@ -5,10 +5,11 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 
-public class CyprianEntity extends CentaurEntity {
+public class CyprianEntity extends CentaurEntity implements IMob {
 
   public CyprianEntity(final EntityType<? extends CyprianEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -26,6 +27,8 @@ public class CyprianEntity extends CentaurEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    // this goal has a custom predicate to make sure the centaur entity is not also a cyprian entity (don't attack teammates)
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, CentaurEntity.class, 10, true, false, e -> e.getClass() == CentaurEntity.class));
   }
   
   @Override
@@ -33,6 +36,7 @@ public class CyprianEntity extends CentaurEntity {
     return true;
   }
   
+  @Override
   public boolean hasBullHead() {
     return true;
   }

@@ -4,15 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import greekfantasy.GFRegistry;
+import greekfantasy.GFWorldGen;
+import greekfantasy.GreekFantasy;
 import greekfantasy.entity.DryadEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 
 public final class BiomeHelper {
+  
+  public static final ResourceLocation TAG_OLIVE_LOGS = new ResourceLocation(GreekFantasy.MODID, "olive_logs");
   
   private BiomeHelper() { }
   
@@ -31,6 +39,10 @@ public final class BiomeHelper {
       initLogMap();
     }
     return (biome.flatMap(b -> Optional.ofNullable(LOG_MAP.get(b))).orElse(Blocks.OAK_LOG)).getDefaultState();
+  }
+  
+  public static ITag<Block> getOliveLogs() {
+    return BlockTags.getCollection().get(TAG_OLIVE_LOGS);
   }
 
   private static void initDryadMap() {
@@ -73,6 +85,8 @@ public final class BiomeHelper {
     DRYAD_MAP.put(Biomes.SNOWY_TAIGA_HILLS, DryadEntity.Variant.SPRUCE);
     DRYAD_MAP.put(Biomes.SNOWY_TAIGA_MOUNTAINS, DryadEntity.Variant.SPRUCE);
     DRYAD_MAP.put(Biomes.SNOWY_TUNDRA, DryadEntity.Variant.SPRUCE);
+    // Olive biomes
+    DRYAD_MAP.put(GFWorldGen.OLIVE_FOREST, DryadEntity.Variant.OLIVE);
   }
   
   private static void initLogMap() {
@@ -115,5 +129,7 @@ public final class BiomeHelper {
     LOG_MAP.put(Biomes.SNOWY_TAIGA_HILLS, Blocks.SPRUCE_LOG);
     LOG_MAP.put(Biomes.SNOWY_TAIGA_MOUNTAINS, Blocks.SPRUCE_LOG);
     LOG_MAP.put(Biomes.SNOWY_TUNDRA, Blocks.SPRUCE_LOG);
+    // Olive biomes
+    LOG_MAP.put(GFWorldGen.OLIVE_FOREST, GFRegistry.OLIVE_LOG);
   }
 }

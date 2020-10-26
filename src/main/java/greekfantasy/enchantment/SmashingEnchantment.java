@@ -2,7 +2,7 @@ package greekfantasy.enchantment;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.GeryonEntity;
+import greekfantasy.item.ClubItem;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.entity.Entity;
@@ -28,13 +28,13 @@ public class SmashingEnchantment extends Enchantment {
    * @return whether the given entity should not be affected by smash attack
    **/
   private boolean isExemptFromSmashAttack(final Entity entity) {
-    return entity.hasNoGravity();
+    return !entity.isNonBoss() || entity.hasNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY;
   }
   
-  private void useSmashAttack(final LivingEntity user, final Entity target) {
+  private void useSmashAttack(final LivingEntity user, final Entity target, final int level) {
     // if entitiy is touching the ground, knock it into the air and apply stun
     if(target.isOnGround() && !isExemptFromSmashAttack(target)) {
-      target.addVelocity(0.0D, 0.35D, 0.0D);
+      target.addVelocity(0.0D, 0.35D + (0.05D * level), 0.0D);
       target.attackEntityFrom(DamageSource.causeMobDamage(user), 0.25F);
       // stun effect (for living entities)
       if(target instanceof LivingEntity) {
@@ -47,14 +47,14 @@ public class SmashingEnchantment extends Enchantment {
   public void onEntityDamaged(LivingEntity user, Entity target, int level) {
     // check for cooldown
     final ItemStack item = user.getHeldItem(Hand.MAIN_HAND);
-    if(user instanceof PlayerEntity && ((PlayerEntity)user).getCooldownTracker().hasCooldown(item.getItem())) {
+    if(!(item.getItem() instanceof ClubItem) || (user instanceof PlayerEntity && ((PlayerEntity)user).getCooledAttackStrength(0.25F) < 0.9F)) {
       return;
     }
     // stun entities within range
     final double range = BASE_RANGE + 2.0D * level;
     final AxisAlignedBB aabb = new AxisAlignedBB(target.getPosition().up()).grow(range, BASE_RANGE, range);
     user.getEntityWorld().getEntitiesWithinAABBExcludingEntity(user, aabb)
-      .forEach(e -> useSmashAttack(user, e));
+      .forEach(e -> useSmashAttack(user, e, level));
   }
   
   @Override 

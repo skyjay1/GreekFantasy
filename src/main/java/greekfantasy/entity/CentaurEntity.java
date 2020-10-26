@@ -87,8 +87,8 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
     this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
-    this.targetSelector.addGoal(4, new ResetAngerGoal<>(this, true));
+    this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
+    this.targetSelector.addGoal(5, new ResetAngerGoal<>(this, true));
   }
 
   @Override

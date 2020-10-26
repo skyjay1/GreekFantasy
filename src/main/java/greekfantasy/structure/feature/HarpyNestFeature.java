@@ -213,6 +213,8 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
       return Blocks.BIRCH_LEAVES.getDefaultState();
     } else if(log.isIn(BlockTags.JUNGLE_LOGS)) {
       return Blocks.JUNGLE_LEAVES.getDefaultState();
+    } else if(log.isIn(BiomeHelper.getOliveLogs())) {
+      return GFRegistry.OLIVE_LEAVES.getDefaultState();
     } else {
       return Blocks.OAK_LEAVES.getDefaultState();
     }

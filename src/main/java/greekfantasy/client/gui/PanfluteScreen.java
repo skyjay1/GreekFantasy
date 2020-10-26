@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public class PanfluteScreen extends Screen {
@@ -64,7 +65,7 @@ public class PanfluteScreen extends Screen {
     // populate songs list (alphabetically)
     if(songs.isEmpty()) {
       songs.addAll(GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries());
-      songs.sort((e1, e2) -> e1.getValue().getName().getUnformattedComponentText().compareTo(e2.getValue().getName().getUnformattedComponentText()));
+      songs.sort((e1, e2) -> e1.getValue().getName().getString().compareTo(e2.getValue().getName().getString()));
     }
     // determine currently selected song
     if(panfluteItem.getOrCreateTag().contains(PanfluteItem.KEY_SONG)) {
@@ -153,10 +154,17 @@ public class PanfluteScreen extends Screen {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         PanfluteScreen.this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
         this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
+        // style the name and credits
+        IFormattableTextComponent name = song.getName().deepCopy();
+        IFormattableTextComponent credits = song.getCredits().deepCopy();
+        if(selected) {
+          name.mergeStyle(TextFormatting.GRAY);
+          credits.mergeStyle(TextFormatting.GRAY);
+        }
         // draw song name string
-        drawStringToFit(matrixStack, song.getName(), this.x + 3, this.y + 4, this.width - 6);
+        drawStringToFit(matrixStack, name, this.x + 3, this.y + 4, this.width - 6);
         // draw credits string
-        drawStringToFit(matrixStack, song.getCredits(), this.x + 3, this.y + PanfluteScreen.this.font.FONT_HEIGHT + 6, this.width - 6);
+        drawStringToFit(matrixStack, credits, this.x + 3, this.y + PanfluteScreen.this.font.FONT_HEIGHT + 5, this.width - 6);
       }
     }
     
@@ -171,7 +179,7 @@ public class PanfluteScreen extends Screen {
      **/
     protected void drawStringToFit(MatrixStack matrixStack, ITextComponent text, int x, int y, int maxWidth) {
       float scale = 1.0F;
-      while(PanfluteScreen.this.font.getWordWrappedHeight(text.getUnformattedComponentText(), (int) (maxWidth / scale)) > PanfluteScreen.this.font.FONT_HEIGHT && scale > 0.25F) {
+      while(PanfluteScreen.this.font.getWordWrappedHeight(text.getString(), (int) (maxWidth / scale)) > PanfluteScreen.this.font.FONT_HEIGHT && scale > 0.25F) {
         scale -= 0.1F;
       }
       RenderSystem.pushMatrix();

@@ -78,6 +78,7 @@
   "block.greekfantasy.gigante_head": "Gigante Head",
   "block.greekfantasy.orthus_head": "Orthus Head",
   "block.greekfantasy.cerberus_head": "Cerberus Head",
+  "block.greekfantasy.wild_rose": "Wild Rose",
   "effect.greekfantasy.stunned": "Stunned",
   "effect.greekfantasy.petrified": "Petrified",
   "enchantment.greekfantasy.overstep": "Overstep",
@@ -114,10 +115,16 @@
   "gui.statue.left_leg": "Left Leg",
   "gui.statue.right_leg": "Right Leg",
   "gui.panflute.title": "Panflute Songs",
+  "song.augustin.name": "O du lieber Augustin",
+  "song.augustin.credits": "Traditional Austrian",
   "song.greensleeves.name": "Greensleeves",
   "song.greensleeves.credits": "Traditional English",
+  "song.lotr.name": "Lord of the Rings",
+  "song.lotr.credits": "2001 Howard Shore",
   "song.sarias_song.name": "Saria's Song",
   "song.sarias_song.credits": "1998 Koji Kondo",
   "song.sound_of_silence.name": "The Sound of Silence",
-  "song.sound_of_silence.credits": "1964 Paul Simon"
+  "song.sound_of_silence.credits": "1964 Paul Simon",
+  "song.waltzing_matilda.name": "Waltzing Matilda",
+  "song.waltzing_matilda.credits": "Traditional Australian"
 }

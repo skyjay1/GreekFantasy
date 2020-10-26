@@ -394,7 +394,7 @@ public class GeryonEntity extends MonsterEntity {
    * @return whether the given entity should not be affected by smash attack
    **/
   private boolean isExemptFromSmashAttack(final Entity entity) {
-    return entity.getType() == GFRegistry.MAD_COW_ENTITY || entity.hasNoGravity();
+    return !entity.isNonBoss() || entity.hasNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY || entity.getType() == GFRegistry.MAD_COW_ENTITY;
   }
   
   /**

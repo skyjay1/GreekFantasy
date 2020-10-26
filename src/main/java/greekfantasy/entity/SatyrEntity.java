@@ -118,7 +118,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
     this.goalSelector.addGoal(2, new SatyrEntity.DancingGoal(0.75D, 880));
-    this.goalSelector.addGoal(3, new SatyrEntity.PanicGoal(this, 1.1D));
+    this.goalSelector.addGoal(3, new SatyrEntity.PanicGoal(this, 1.3D));
     this.goalSelector.addGoal(4, new SatyrEntity.StartDancingGoal(0.9D, 22, 12, 420));
     this.goalSelector.addGoal(4, new SatyrEntity.LightCampfireGoal(0.9D, 12, 10, 60, 500));
     this.goalSelector.addGoal(4, new RandomWalkingGoal(this, 0.8D, 160) {

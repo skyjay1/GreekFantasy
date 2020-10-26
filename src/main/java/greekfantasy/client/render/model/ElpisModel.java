@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import greekfantasy.entity.ElpisEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 
 public class ElpisModel<T extends ElpisEntity> extends BipedModel<T> {
@@ -43,6 +44,11 @@ public class ElpisModel<T extends ElpisEntity> extends BipedModel<T> {
   
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch) {
+    if(!entity.getHeldItem(Hand.MAIN_HAND).isEmpty() || !entity.getHeldItem(Hand.OFF_HAND).isEmpty()) {
+      this.leftArmPose = this.rightArmPose = ArmPose.ITEM;
+    } else {
+      this.leftArmPose = this.rightArmPose = ArmPose.EMPTY;
+    }
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, rotationYaw, rotationPitch);
     // set leg rotation
     bipedRightLeg.setRotationPoint(0.0F, 12.0F, -2.0F);

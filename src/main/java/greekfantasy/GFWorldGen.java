@@ -10,9 +10,19 @@ import greekfantasy.structure.feature.SmallNetherShrineFeature;
 import greekfantasy.structure.feature.SmallShrineFeature;
 import net.minecraft.entity.EntityType;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.Category;
+import net.minecraft.world.biome.BiomeAmbience;
+import net.minecraft.world.biome.BiomeContainer;
+import net.minecraft.world.biome.BiomeGenerationSettings;
+import net.minecraft.world.biome.BiomeMaker;
+import net.minecraft.world.biome.DefaultBiomeFeatures;
 import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraft.world.biome.MoodSoundAmbience;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.blockplacer.DoublePlantBlockPlacer;
 import net.minecraft.world.gen.blockstateprovider.SimpleBlockStateProvider;
@@ -23,8 +33,15 @@ import net.minecraft.world.gen.feature.Features.Placements;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.feature.structure.StructureFeatures;
 import net.minecraft.world.gen.feature.template.RuleTest;
 import net.minecraft.world.gen.feature.template.TagMatchRuleTest;
+import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
+import net.minecraft.world.gen.placement.Placement;
+import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilders;
+import net.minecraftforge.common.BiomeManager;
+import net.minecraftforge.common.BiomeManager.BiomeEntry;
+import net.minecraftforge.common.BiomeManager.BiomeType;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
@@ -48,12 +65,21 @@ public final class GFWorldGen {
   @ObjectHolder(GreekFantasy.MODID + ":reeds")
   public static final Feature<BlockClusterFeatureConfig> REEDS = null;
   
+  @ObjectHolder(GreekFantasy.MODID + ":olive_forest")
+  public static final Biome OLIVE_FOREST_BIOME = null;
+  
+  public static RegistryKey<Biome> OLIVE_FOREST;
+  
 
   private static final RuleTest ruleTestStone = new TagMatchRuleTest(BlockTags.BASE_STONE_OVERWORLD);
   
   private GFWorldGen() { }
   
-  
+  @SubscribeEvent
+  public static void registerBiomes(final RegistryEvent.Register<Biome> event) {
+    final Biome oliveForestBiome = makeOliveForest(0.1F, 0.2F).setRegistryName(GreekFantasy.MODID, "olive_forest");
+    event.getRegistry().register(oliveForestBiome);
+  }
 
   @SubscribeEvent
   public static void registerStructures(final RegistryEvent.Register<Structure<?>> event) {
@@ -88,6 +114,11 @@ public final class GFWorldGen {
   }
 
   // OTHER SETUP METHODS //
+  
+  public static void finishBiomeSetup() {
+    OLIVE_FOREST = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, new ResourceLocation(GreekFantasy.MODID, "olive_forest"));
+    BiomeManager.addBiome(BiomeType.WARM, new BiomeEntry(OLIVE_FOREST, 10));
+  }
 
   public static void addBiomeFeatures(final BiomeLoadingEvent event) {
     if(event.getCategory() != Biome.Category.NETHER && event.getCategory() != Biome.Category.THEEND) {
@@ -141,8 +172,10 @@ public final class GFWorldGen {
               new DoublePlantBlockPlacer()))
                 .tries(48)
                 .replaceable()
+                .xSpread(3)
+                .zSpread(3)
                 .build())
-          .func_242729_a(15)
+          .func_242729_a(4)
       );
     }
     // biome-specific features
@@ -153,6 +186,16 @@ public final class GFWorldGen {
           OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).func_242729_a(40)
       );
     }
+    if(new ResourceLocation(GreekFantasy.MODID, "olive_forest").equals(event.getName())) {
+      event.getGeneration().withFeature(
+          GenerationStage.Decoration.VEGETAL_DECORATION, 
+          OliveTree.getConfiguredTree()
+            .withPlacement(Placements.VEGETATION_PLACEMENT)
+            .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
+            .withPlacement(Placement.field_242902_f.configure(new AtSurfaceWithExtraConfig(10, 0.1F, 1)))
+      );
+    }
+      
     if(event.getName().toString().contains("swamp")) {
       // Swamp Reeds
       event.getGeneration().withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, 
@@ -161,8 +204,10 @@ public final class GFWorldGen {
               new DoublePlantBlockPlacer()))
                 .tries(32)
                 .replaceable()
+                .xSpread(1)
+                .ySpread(3)
+                .zSpread(1)
                 .build())
-          .func_242729_a(3)
       );
     }
     if(event.getCategory() == Biome.Category.NETHER) {
@@ -170,15 +215,9 @@ public final class GFWorldGen {
       event.getGeneration().withFeature(
           GenerationStage.Decoration.SURFACE_STRUCTURES, 
           SMALL_NETHER_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_SPREAD_DOUBLE_PLACEMENT).func_242729_a(GreekFantasy.CONFIG.SMALL_NETHER_SHRINE_SPREAD.get())
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).func_242729_a(GreekFantasy.CONFIG.SMALL_NETHER_SHRINE_SPREAD.get())
       );
-    }
-    
-    
-    //Feature.RANDOM_PATCH.withConfiguration((new BlockClusterFeatureConfig.Builder(new SimpleBlockStateProvider(States.field_244085_x), new DoublePlantBlockPlacer()))
-    //public static final ConfiguredFeature<?, ?> field_243817_aP = func_243968_a("patch_sugar_cane_swamp", (ConfiguredFeature)Feature.RANDOM_PATCH.withConfiguration(Configs.field_243984_h).withPlacement(Placements.field_244002_m).func_242731_b(20));
-    
-    
+    }    
   }
   
   public static void addBiomeSpawns(final BiomeLoadingEvent event) {
@@ -235,5 +274,59 @@ public final class GFWorldGen {
   
   private static MobSpawnInfo.Builder registerSpawns(final MobSpawnInfoBuilder builder, final EntityType<?> entity, final int weight, final int min, final int max) {
     return builder.withSpawner(entity.getClassification(), new MobSpawnInfo.Spawners(entity, weight, min, max));
+  }
+  
+  private static Biome makeOliveForest(float depth, float scale) {
+    MobSpawnInfo.Builder builder = new MobSpawnInfo.Builder();
+    DefaultBiomeFeatures.withPassiveMobs(builder);
+    DefaultBiomeFeatures.withBatsAndHostiles(builder);
+
+    BiomeGenerationSettings.Builder biomeGenBuilder = (new BiomeGenerationSettings.Builder())
+        .withSurfaceBuilder(ConfiguredSurfaceBuilders.field_244178_j);
+    DefaultBiomeFeatures.withStrongholdAndMineshaft(biomeGenBuilder);
+    biomeGenBuilder.withStructure(StructureFeatures.field_244159_y);
+    
+    DefaultBiomeFeatures.withCavesAndCanyons(biomeGenBuilder);
+    
+    DefaultBiomeFeatures.withLavaAndWaterLakes(biomeGenBuilder);
+    DefaultBiomeFeatures.withMonsterRoom(biomeGenBuilder);
+    DefaultBiomeFeatures.withAllForestFlowerGeneration(biomeGenBuilder);
+    DefaultBiomeFeatures.withCommonOverworldBlocks(biomeGenBuilder);
+    DefaultBiomeFeatures.withOverworldOres(biomeGenBuilder);
+    DefaultBiomeFeatures.withDisks(biomeGenBuilder);
+    
+    DefaultBiomeFeatures.withDefaultFlowers(biomeGenBuilder);
+    DefaultBiomeFeatures.withForestGrass(biomeGenBuilder);
+    DefaultBiomeFeatures.withNormalMushroomGeneration(biomeGenBuilder);
+    DefaultBiomeFeatures.withSugarCaneAndPumpkins(biomeGenBuilder);
+    DefaultBiomeFeatures.withLavaAndWaterSprings(biomeGenBuilder);
+    DefaultBiomeFeatures.withFrozenTopLayer(biomeGenBuilder);
+    
+    return (new Biome.Builder())
+      .precipitation(Biome.RainType.RAIN)
+      .category(Biome.Category.FOREST)
+      .depth(depth)
+      .scale(scale)
+      .temperature(0.6F)
+      .downfall(0.6F)
+      .setEffects((new BiomeAmbience.Builder())
+        .withFoliageColor(10729111)
+        .withGrassColor(8955507)
+        .setWaterColor(4159204)
+        .setWaterFogColor(329011)
+        .setFogColor(12638463)
+        .withSkyColor(getSkyColorWithTemperatureModifier(0.6F))
+        .setMoodSound(MoodSoundAmbience.DEFAULT_CAVE)
+        .build())
+      .withMobSpawnSettings(builder.copy())
+      .withGenerationSettings(biomeGenBuilder.build())
+      .build();
+  }
+  
+  private static int getSkyColorWithTemperatureModifier(float t) {
+    float f1 = t;
+    f1 /= 3.0F;
+    f1 = MathHelper.clamp(f1, -1.0F, 1.0F);
+    return MathHelper.hsvToRGB(0.62222224F - f1 * 0.05F, 0.5F + f1 * 0.1F, 1.0F);
   }
 }

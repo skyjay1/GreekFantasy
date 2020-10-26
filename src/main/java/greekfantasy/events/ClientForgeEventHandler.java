@@ -89,22 +89,7 @@ public class ClientForgeEventHandler {
       }
     }
   }
-  
-  /**
-   * Used to register block color handlers.
-   * Currently used to color Olive Leaves.
-   * @param event the ColorHandlerEvent (Block)
-   **/
-  @SubscribeEvent
-  public static void onBlockColors(final ColorHandlerEvent.Block event) {
-    event.getBlockColors().register(new IBlockColor() {
-      @Override
-      public int getColor(BlockState stateIn, IBlockDisplayReader world, BlockPos pos, int color) {
-        return 0x738269;
-      }
-    }, GFRegistry.OLIVE_LEAVES);
-  }
-  
+
   /** @return whether the player is wearing the Helm of Darkness **/
   private static boolean hasHelmOfDarkness(final PlayerEntity player) {
     return player.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.HELM_OF_DARKNESS;

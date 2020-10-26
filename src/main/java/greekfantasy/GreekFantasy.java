@@ -60,7 +60,7 @@ public class GreekFantasy {
   }
 
   public static void setup(final FMLCommonSetupEvent event) {
-    
+    GFWorldGen.finishBiomeSetup();
   }
   
   public static void loadConfig(final ModConfig.Loading event) {

@@ -56,9 +56,6 @@ public class CUpdatePanflutePacket {
         // make sure they are holding a panflute in this slot
         if(message.getSlot() >= 0 && message.getSlot() < player.inventory.getSizeInventory()) {
           final ItemStack stack = player.inventory.getStackInSlot(message.getSlot());
-          // DEBUG
-          GreekFantasy.LOGGER.debug("message slot = " + message.getSlot() + ", stack = " + stack.toString());
-          
           if(stack.getItem() == GFRegistry.PANFLUTE) {
             // update the song stored in the panflute NBT
             stack.getOrCreateTag().putString(PanfluteItem.KEY_SONG, message.getSongName());

@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.Predicate;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
@@ -25,7 +26,7 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.item.BoatEntity;
+import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.datasync.DataParameter;
@@ -39,21 +40,26 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
   
-  private static final DataParameter<Boolean> CHARMING = EntityDataManager.createKey(SirenEntity.class, DataSerializers.BOOLEAN);
-  
-  private boolean swimmingUp;
-  
+  private static final DataParameter<Boolean> CHARMING = EntityDataManager.createKey(SirenEntity.class, DataSerializers.BOOLEAN); 
   private final AttributeModifier attackModifier = new AttributeModifier("Charm attack bonus", 2.0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
+  private final Predicate<LivingEntity> AVOID_PREDICATE = entity -> {
+    return !SirenEntity.this.isCharming() && EntityPredicates.CAN_AI_TARGET.test(entity);
+  };
+  
+  private boolean swimmingUp;
+  private float swimmingPercent;
+  
   public SirenEntity(final EntityType<? extends SirenEntity> type, final World worldIn) {
     super(type, worldIn);
     this.navigator = new SwimmerPathNavigator(this, worldIn);
@@ -64,7 +70,7 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.5D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
   }
   
   // copied from DolphinEntity
@@ -84,18 +90,19 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
     super.registerGoals();
     
     this.goalSelector.addGoal(3, new SwimUpGoal<SirenEntity>(this, 1.0D, this.world.getSeaLevel() + 1));
-    this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
-    this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
-    this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 8.0F));
+    this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
+    // add configurable goals
     if(GreekFantasy.CONFIG.SIREN_ATTACK.get()) {
       this.goalSelector.addGoal(2, new CharmAttackGoal(250, 100, 24));
-      this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, PlayerEntity.class, 10.0F, 1.2D, 1.0D, (entity) -> {
-        return EntityPredicates.CAN_AI_TARGET.test(entity) && !this.isCharming();
-     }));
+      this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, PlayerEntity.class, 10.0F, 1.2D, 1.0D, AVOID_PREDICATE));
+      this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, SpartiEntity.class, 10.0F, 1.2D, 1.0D, AVOID_PREDICATE));
+      this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, IronGolemEntity.class, 10.0F, 1.2D, 1.0D, AVOID_PREDICATE));
     } else {
       this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
     }
+    this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
   }
 
   @Override
@@ -112,6 +119,18 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
     if(this.isCharming() && rand.nextInt(7) == 0) {
       final float color = 0.065F + rand.nextFloat() * 0.025F;
       world.addParticle(ParticleTypes.NOTE, this.getPosX(), this.getPosYEye() + 0.15D, this.getPosZ(), color, 0.0D, 0.0D);
+    }
+    
+    // swimming
+    if(this.world.isRemote()) {
+      final double motionY = this.getMotion().getY();
+      if(!isSwimming() && !isInWater() || this.isSwingInProgress) {
+        swimmingPercent = 0;
+      } else if(motionY > -0.01) {
+        swimmingPercent = Math.min(swimmingPercent + 0.1F, 1.0F);
+      } else {
+        swimmingPercent = Math.max(swimmingPercent - 0.1F, 0.0F);
+      }
     }
   }
 //
@@ -173,6 +192,13 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
     this.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(attackModifier);
     // apply stunned effect
     target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 3 * 20, 0, false, false, true));
+  }
+  
+  // Client methods
+  
+  @OnlyIn(Dist.CLIENT)
+  public float getSwimmingPercent(final float partialTick) {
+    return swimmingPercent + (partialTick < 1.0F ? partialTick * 0.1F : 0);
   }
   
   // Charming goal
@@ -256,13 +282,4 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
       entity.velocityChanged = true;
     }
   }
-  
-//  class SwimUpGoal extends greekfantasy.entity.ai.SwimUpGoal<SirenEntity> {
-//
-//    public SwimUpGoal(double speedIn, int seaLevel) {
-//      super(SirenEntity.this, speedIn, seaLevel);
-//    }
-//    
-//  }
-
 }

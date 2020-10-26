@@ -73,9 +73,7 @@ public class PanfluteSongs extends JsonReloadListener {
     jsons.forEach((key, input) -> SONGS.put(key, parse(input)));
     SONG_LOOKUP.clear();
     SONGS.forEach((rl, s) -> SONG_LOOKUP.put(s, rl));
-    // print contents of the map
-    final StringBuilder builder = new StringBuilder("Parsing PanfluteSongs map. Entries: {\n");
-    SONGS.keySet().forEach(id -> builder.append(id.toString()).append("\n"));
-    GreekFantasy.LOGGER.debug(builder.append("}").toString());
+    // print size of the map for debugging purposes
+    GreekFantasy.LOGGER.debug("Parsing PanfluteSongs map. Found " + SONGS.size() + " entries");
   }
 }

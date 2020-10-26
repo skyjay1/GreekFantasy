@@ -39,7 +39,7 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
 
   @Override
   public boolean func_241855_a(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
-      final BlockPos blockPosIn, final BaseTreeFeatureConfig config) {    
+      final BlockPos blockPosIn, final BaseTreeFeatureConfig config) {
     // rotation / mirror
     Mirror mirror = Mirror.NONE;
     Rotation rotation = Rotation.randomRotation(rand);
@@ -51,8 +51,9 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
     // position for tree
     BlockPos placementPos = blockPosIn;
     if(!config.forcePlacement) {
+      // placementPos = placementPos.add(rand.nextInt(12) + 2, 0, rand.nextInt(12) + 2)
       placementPos = getHeightPos(reader, placementPos);
-      if(!isReplaceableAt(reader, placementPos) || !isDirtOrGrassAt(reader, placementPos.down())) {
+      if(!isDirtOrGrassAt(reader, placementPos.down()) || !isAllReplaceable(reader, placementPos.add(2, 1, 2), 3, 3)) {
         return false;
       }
     }
@@ -68,7 +69,7 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
     // actually build using the template
     template.func_237146_a_(reader, pos, pos, placement, rand, 2);
     // percent chance to spawn a dryad
-    if(rand.nextInt(100) < GreekFantasy.CONFIG.DRYAD_SPAWN_WEIGHT.get()) {
+    if(config.forcePlacement && rand.nextInt(100) < GreekFantasy.CONFIG.DRYAD_SPAWN_WEIGHT.get()) {
       addDryad(reader, rand, placementPos.down());
     }
     return true;
@@ -96,6 +97,19 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
   protected static BlockPos getHeightPos(final ISeedReader world, final BlockPos original) {
     int y = world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, original).getY();
     return new BlockPos(original.getX(), y, original.getZ());
+  }
+  
+  protected static boolean isAllReplaceable(ISeedReader world, final BlockPos corner, final int width, final int height) {
+    for(int i = 0; i < width; i++) {
+      for(int j = 0; j < height; j++) {
+        for(int k = 0; k < width; k++) {
+          if(!isReplaceableAt(world, corner.add(i, j, k))) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
   }
   
   protected static boolean isDirtOrGrassAt(IWorldGenerationReader reader, BlockPos pos) {

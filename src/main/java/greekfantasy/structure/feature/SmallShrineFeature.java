@@ -57,7 +57,7 @@ public class SmallShrineFeature extends Feature<NoFeatureConfig> {
     PlacementSettings placement = new PlacementSettings()
         .setRotation(rotation).setMirror(mirror).setRandom(rand).setBoundingBox(mbb)
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
-    
+
     // actually generate the structure
     return template.func_237146_a_(reader, pos, pos, placement, rand, 2);
   }

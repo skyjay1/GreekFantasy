@@ -27,6 +27,22 @@
           "name": "minecraft:flint"
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "greekfantasy:flint_knife",
+          "conditions": [
+            {
+              "condition": "minecraft:random_chance_with_looting",
+              "chance": 0.075,
+              "looting_multiplier": 0.05
+            }
+          ]
+        }
+      ]
     }
   ]
 }

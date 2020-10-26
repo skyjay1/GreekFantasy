@@ -22,7 +22,7 @@ public class OrthusHeadItem extends BlockItem {
   public Entity createEntity(World world, Entity location, ItemStack itemstack) {
     final OrthusHeadItemEntity e = OrthusHeadItemEntity.create(world, location.getPosX(), location.getPosY(), location.getPosZ(), itemstack);
     e.setMotion(location.getMotion());
-    e.setDefaultPickupDelay();
+    e.setPickupDelay(40);
     return e;
   }
 

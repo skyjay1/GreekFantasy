@@ -16,7 +16,7 @@ public class SirenModel<T extends SirenEntity> extends BipedModel<T> {
   private final ModelRenderer lowerTail1;
   private final ModelRenderer lowerTail2;
   
-  private final float swimSpeed = 0.12F;
+  private final float swimSpeed = 0.14F;
 
   public SirenModel(final float modelSize) {
     super(modelSize, 0.0F, 64, 64);
@@ -70,7 +70,8 @@ public class SirenModel<T extends SirenEntity> extends BipedModel<T> {
       float headPitch) {
     super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     // swimming animation
-    if((entityIn.isSwimming() || entityIn.isInWater()) && entityIn.getMotion().y > 0.01F && !entityIn.isSwingInProgress) {
+    final float swimming = entityIn.getSwimmingPercent(ageInTicks);
+    if(swimming > 0) {
       final float ticks = ageInTicks + entityIn.getEntityId();
       final float cosTicks = MathHelper.cos(ticks * swimSpeed * 0.75F) * 0.5F + 0.5F;
       final float minX = -0.09F;
@@ -78,10 +79,10 @@ public class SirenModel<T extends SirenEntity> extends BipedModel<T> {
       final float minZ = 0.52F;
       final float maxZ = 1.08F;
       // animate arms
-      bipedRightArm.rotateAngleX = -minX - cosTicks * (maxX - minX);
-      bipedRightArm.rotateAngleZ = minZ + cosTicks * (maxZ - minZ);
-      bipedLeftArm.rotateAngleX = -minX - cosTicks * (maxX - minX);
-      bipedLeftArm.rotateAngleZ = -minZ - cosTicks * (maxZ - minZ);
+      bipedRightArm.rotateAngleX = (-minX - cosTicks * (maxX - minX)) * swimming;
+      bipedRightArm.rotateAngleZ = (minZ + cosTicks * (maxZ - minZ)) * swimming;
+      bipedLeftArm.rotateAngleX = (-minX - cosTicks * (maxX - minX)) * swimming;
+      bipedLeftArm.rotateAngleZ = (-minZ - cosTicks * (maxZ - minZ)) * swimming;
     }
     // singing animation
     if(entityIn.isCharming()) {

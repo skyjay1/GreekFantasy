@@ -48,7 +48,7 @@ public class ScrollButton extends Button {
     if(this.visible) {
       screen.getMinecraft().getTextureManager().bindTexture(texture);
       final int uOffset = this.enabled ? 0 : uWidth;
-      final int yOffset = MathHelper.clamp((int)(scrollAmount * this.height - this.vHeight / 2), 0, this.height - vHeight);
+      final int yOffset = MathHelper.clamp((int)(scrollAmount * this.height - this.vHeight / 2), 0, this.height - vHeight + 1);
       this.blit(matrixStack, this.x + 1, this.y + yOffset, u + uOffset, v, uWidth, vHeight);
     }
   }

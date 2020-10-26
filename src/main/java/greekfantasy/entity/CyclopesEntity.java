@@ -12,12 +12,15 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -37,27 +40,31 @@ public class CyclopesEntity extends MonsterEntity {
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 36.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.0D)
+        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.5D);
   }
   
   public static boolean canCyclopesSpawnOn(final EntityType<? extends MonsterEntity> entity, final IServerWorld world, final SpawnReason reason, 
       final BlockPos pos, final Random rand) {
-    // TODO refine
-    return world.canBlockSeeSky(pos.up()) && MonsterEntity.canMonsterSpawnInLight(entity, world, reason, pos, rand);
+    return MonsterEntity.canMonsterSpawnInLight(entity, world, reason, pos, rand);
   }
 
   @Override
   protected void registerGoals() {
     super.registerGoals();
+    this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, MobEntity.class, 24.0F, 1.2D, 1.1D, (entity) -> {
+      return !entity.isSpectator() && entity.hasCustomName() && "Nobody".equals(entity.getCustomName().getUnformattedComponentText());
+    }));
     this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
+    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolemEntity.class, true));
   }
   
   @Nullable

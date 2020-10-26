@@ -24,6 +24,7 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -77,6 +78,7 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(3, new GiganteEntity.MeleeAttackGoal(this, 1.0D, false));
+    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.9D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 10.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));

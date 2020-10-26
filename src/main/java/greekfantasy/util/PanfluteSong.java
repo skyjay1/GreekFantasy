@@ -27,7 +27,7 @@ public class PanfluteSong {
   }
   /** @return an translated text component for the name **/
   public IFormattableTextComponent getCredits() { 
-    return new TranslationTextComponent(getCreditsTranslationKey()).mergeStyle(TextFormatting.DARK_GRAY); 
+    return new TranslationTextComponent(getCreditsTranslationKey()).mergeStyle(TextFormatting.ITALIC); 
   }
   /** @return the number of ticks between playing notes **/
   public int getInterval() { return interval; }

@@ -5,7 +5,6 @@ import greekfantasy.client.gui.GuiLoader;
 import greekfantasy.util.PanfluteMusicManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -20,7 +19,6 @@ public class PanfluteItem extends Item {
   
   public static final ResourceLocation DEFAULT_SONG = new ResourceLocation(GreekFantasy.MODID, "greensleeves");
   public static final String KEY_SONG = "Song";
-
 
   public PanfluteItem(final Properties properties) {
     super(properties);
@@ -57,12 +55,17 @@ public class PanfluteItem extends Item {
   @Override
   public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
     ItemStack itemstack = playerIn.getHeldItem(Hand.MAIN_HAND);
-    // Check if player is sneaking - if so, open song selection GUI instead
-    if(itemstack.getItem() == this && playerIn.isSneaking() && worldIn.isRemote()) {
-      GuiLoader.openPanfluteGui(playerIn, playerIn.inventory.currentItem, itemstack);
-      return ActionResult.resultPass(itemstack);
-    }
     playerIn.setActiveHand(handIn);
     return ActionResult.resultConsume(itemstack);
+  }
+  
+  @Override
+  public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
+    int timeUsed = getUseDuration(stack) - timeLeft;
+    // Check if player stopped using the item very soon after starting - if so, open song selection GUI instead
+    if(timeUsed < 10 && stack.getItem() == this && worldIn.isRemote() && entityLiving instanceof PlayerEntity) {
+      PlayerEntity player = (PlayerEntity)entityLiving;
+      GuiLoader.openPanfluteGui(player, player.inventory.currentItem, stack);
+    }
   }
 }

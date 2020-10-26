@@ -3,11 +3,15 @@ package greekfantasy.entity;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import greekfantasy.GFRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.FlyingMovementController;
@@ -17,6 +21,7 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.IFlyingAnimal;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -34,6 +39,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -46,6 +53,8 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   private static final String KEY_AGE = "ElpisAge";
   private static final String KEY_DESPAWN_TIMER = "DespawnTimer";
   
+  private static final Supplier<Item> TRADE_ITEM = () -> Items.HONEY_BOTTLE;
+  private static final Supplier<ItemStack> TRADE_RESULT = () -> new ItemStack(GFRegistry.ICHOR);
   public static final int wanderDistance = 8;
   private static final int maxAge = 4800;
   private static final int maxDespawnTime = 40;
@@ -83,7 +92,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(1, new ElpisEntity.DoNothingGoal());
-    this.goalSelector.addGoal(2, new ElpisEntity.TradeGoal(() -> new ItemStack(GFRegistry.ICHOR), 80));
+    this.goalSelector.addGoal(2, new ElpisEntity.TradeGoal(TRADE_RESULT, 80));
     this.goalSelector.addGoal(3, new ElpisEntity.PanicGoal(1.0D));
     this.goalSelector.addGoal(4, new ElpisEntity.MoveRandomGoal(20, wanderDistance, 0.75D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
@@ -107,6 +116,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
         remove();
       }
     }
+   
     // spawn particles when trading
     if (this.isTrading() && rand.nextInt(5) == 0) {
       spawnParticle(ParticleTypes.HAPPY_VILLAGER, false);
@@ -122,7 +132,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   @Override
   protected ActionResultType func_230254_b_(final PlayerEntity player, final Hand hand) { // processInteract
     ItemStack stack = player.getHeldItem(hand);
-    if(stack.getItem() == Items.HONEY_BOTTLE) {
+    if(stack.getItem() == TRADE_ITEM.get()) {
       this.setState(STATE_TRADING);
       // reduce stack size
       if(!player.isCreative()) {
@@ -204,6 +214,14 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
       }
     }
   }
+  
+  @Override
+  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+      @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+    spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    this.setLeftHanded(false);
+    return spawnDataIn;
+  }
  
   public BlockPos getWanderCenter() {
     final BlockPos home = this.getHomePosition();
@@ -226,13 +244,44 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   
   // state methods
   
-  public void setState(final byte state) { this.getDataManager().set(STATE, state); }
+  public void setState(final byte state) { 
+    this.getDataManager().set(STATE, state); 
+    // update trading
+    if(state == STATE_TRADING) {
+      if(this.getHeldItem(Hand.OFF_HAND).isEmpty()) {
+        this.setHeldItem(Hand.OFF_HAND, new ItemStack(TRADE_ITEM.get()));
+      }
+    } else if(this.getHeldItem(Hand.OFF_HAND).getItem() == TRADE_ITEM.get()) {
+      this.setHeldItem(Hand.OFF_HAND, ItemStack.EMPTY);
+    }
+  }
   
   public byte getState() { return this.getDataManager().get(STATE).byteValue(); }
   
   public boolean isTrading() { return getState() == STATE_TRADING; }
   
   public boolean isDespawning() { return getState() == STATE_DESPAWNING; }
+  
+  // Client methods
+  
+  @OnlyIn(Dist.CLIENT)
+  public float getAlpha(final float partialTick) {
+    final byte state = this.getState();
+    switch(state) {
+    case STATE_TRADING: return 1.0F;
+    case STATE_DESPAWNING: return 1.0F - getDespawnPercent(partialTick);
+    default:
+      final float minAlpha = 0.18F;
+      final float cosAlpha = 0.5F + 0.5F * MathHelper.cos((this.getEntityId() + this.ticksExisted + partialTick) * 0.025F);
+      return MathHelper.clamp(cosAlpha, minAlpha, 1.0F);
+    }
+  }
+  
+  @OnlyIn(Dist.CLIENT)
+  public float getDespawnPercent(final float partialTick) {
+    return (float)despawnTime / (float)maxDespawnTime;
+  }
+
   
   // Trading goal
   
@@ -273,7 +322,9 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
     
     @Override
     public void resetTask() {
-      ElpisEntity.this.setState(STATE_NONE);
+      if(ElpisEntity.this.isTrading()) {
+        ElpisEntity.this.setState(STATE_NONE);
+      }
       progress = 0;
     }    
   }
@@ -335,23 +386,4 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
       }
     }
   }
-
-  @OnlyIn(Dist.CLIENT)
-  public float getAlpha(final float partialTick) {
-    final byte state = this.getState();
-    switch(state) {
-    case STATE_TRADING: return 1.0F;
-    case STATE_DESPAWNING: return 1.0F - getDespawnPercent(partialTick);
-    default:
-      final float minAlpha = 0.18F;
-      final float cosAlpha = 0.5F + 0.5F * MathHelper.cos((this.getEntityId() + this.ticksExisted + partialTick) * 0.025F);
-      return MathHelper.clamp(cosAlpha, minAlpha, 1.0F);
-    }
-  }
-  
-  @OnlyIn(Dist.CLIENT)
-  public float getDespawnPercent(final float partialTick) {
-    return (float)despawnTime / (float)maxDespawnTime;
-  }
-
 }

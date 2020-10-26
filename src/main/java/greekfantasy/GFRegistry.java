@@ -1,6 +1,7 @@
 package greekfantasy;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
@@ -14,6 +15,7 @@ import greekfantasy.block.OrthusHeadBlock;
 import greekfantasy.block.ReedsBlock;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.block.VaseBlock;
+import greekfantasy.block.WildRoseBlock;
 import greekfantasy.effect.StunnedEffect;
 import greekfantasy.enchantment.OverstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
@@ -47,6 +49,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType;
@@ -69,6 +72,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Effect;
+import net.minecraft.potion.Effects;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -152,6 +156,8 @@ public final class GFRegistry {
   public static final Item SNAKESKIN = null;
   @ObjectHolder("purified_snakeskin")
   public static final Item PURIFIED_SNAKESKIN = null;
+  @ObjectHolder("styxian_shard")
+  public static final Item STYXIAN_SHARD = null;
   
   @ObjectHolder("reeds")
   public static final Block REEDS = null;
@@ -171,6 +177,8 @@ public final class GFRegistry {
   public static final Block OLIVE_SAPLING = null;
   @ObjectHolder("nest")
   public static final Block NEST_BLOCK = null;
+  @ObjectHolder("wild_rose")
+  public static final Block WILD_ROSE = null;
   @ObjectHolder("limestone")
   public static final Block LIMESTONE = null;
   @ObjectHolder("limestone_slab")
@@ -231,15 +239,17 @@ public final class GFRegistry {
   
   @ObjectHolder("overstep")
   public static final Enchantment OVERSTEP_ENCHANTMENT = null;
+  @ObjectHolder("smashing")
+  public static final Enchantment SMASHING_ENCHANTMENT = null;
   
   @ObjectHolder("gorgon_face")
   public static final BasicParticleType GORGON_PARTICLE = new BasicParticleType(true);
 
-  public static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
+  protected static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
     @Override
     public ItemStack createIcon() { return new ItemStack(PANFLUTE); }
   };
-
+  
   // REGISTRY METHODS //
 
   @SubscribeEvent
@@ -258,7 +268,7 @@ public final class GFRegistry {
     GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, false);
     GORGON_ENTITY = registerEntityType(event, GorgonEntity::new, GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, false);
     HARPY_ENTITY = registerEntityType(event, HarpyEntity::new, HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, false);
-    MAD_COW_ENTITY = registerEntityType(event, MadCowEntity::new, MadCowEntity::getAttributes, null, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, false);
+    MAD_COW_ENTITY = registerEntityType(event, MadCowEntity::new, MadCowEntity::getAttributes, MadCowEntity::canSpawnOn, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, false);
     MINOTAUR_ENTITY = registerEntityType(event, MinotaurEntity::new, MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight, "minotaur", 0.7F, 1.8F, EntityClassification.MONSTER, false);
     NAIAD_ENTITY = registerEntityType(event, NaiadEntity::new, NaiadEntity::getAttributes, NaiadEntity::canNaiadSpawnOn, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, false);
     ORTHUS_ENTITY = registerEntityType(event, OrthusEntity::new, OrthusEntity::getAttributes, OrthusEntity::canSpawnOn, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, true);
@@ -268,18 +278,9 @@ public final class GFRegistry {
     SPARTI_ENTITY = registerEntityType(event, SpartiEntity::new, SpartiEntity::getAttributes, null, "sparti", 0.6F, 1.98F, EntityClassification.CREATURE, false);
     UNICORN_ENTITY = registerEntityType(event, UnicornEntity::new, UnicornEntity::getAttributes, UnicornEntity::canSpawnOn, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, false);
     // create and register misc. entity types
-    EntityType<DragonToothEntity> dragonToothEntityType = EntityType.Builder.create(DragonToothEntity::new, EntityClassification.MISC)
-        .size(0.25F, 0.25F).immuneToFire().build("dragon_tooth");
-    event.getRegistry().register(dragonToothEntityType.setRegistryName(MODID, "dragon_tooth"));
-    DRAGON_TOOTH_ENTITY = dragonToothEntityType;
-    EntityType<HealingSpellEntity> healingSpellEntityType = EntityType.Builder.create(HealingSpellEntity::new, EntityClassification.MISC)
-        .size(0.25F, 0.25F).immuneToFire().build("healing_spell");
-    event.getRegistry().register(healingSpellEntityType.setRegistryName(MODID, "healing_spell"));
-    HEALING_SPELL_ENTITY = healingSpellEntityType;
-    EntityType<OrthusHeadItemEntity> orthusHeadItemEntityType = EntityType.Builder.create(OrthusHeadItemEntity::new, EntityClassification.MISC)
-        .trackingRange(6).func_233608_b_(20).build("orthus_head_item");
-    event.getRegistry().register(orthusHeadItemEntityType.setRegistryName(MODID, "orthus_head_item"));
-    ORTHUS_HEAD_ITEM_ENTITY = orthusHeadItemEntityType;
+    DRAGON_TOOTH_ENTITY = registerEntityType(event, DragonToothEntity::new, "dragon_tooth", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().trackingRange(4).func_233608_b_(10));
+    HEALING_SPELL_ENTITY = registerEntityType(event, HealingSpellEntity::new, "healing_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().trackingRange(4).func_233608_b_(10));
+    ORTHUS_HEAD_ITEM_ENTITY = registerEntityType(event, OrthusHeadItemEntity::new, "orthus_head_item", 0.25F, 0.25F, EntityClassification.MISC, b -> b.trackingRange(6).func_233608_b_(20));
   }
   
   @SubscribeEvent
@@ -332,6 +333,8 @@ public final class GFRegistry {
         new NestBlock(AbstractBlock.Properties.create(Material.ORGANIC, MaterialColor.BROWN).hardnessAndResistance(0.5F).sound(SoundType.PLANT)
             .setNeedsPostProcessing((s, r, p) -> true).notSolid())
           .setRegistryName(MODID, "nest"),
+        new WildRoseBlock(Effects.SATURATION, 9, AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().zeroHardnessAndResistance().sound(SoundType.PLANT))
+          .setRegistryName(GreekFantasy.MODID, "wild_rose"),
         new CappedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)
             .setNeedsPostProcessing((s, r, p) -> true).notSolid())
           .setRegistryName(MODID, "marble_pillar"),
@@ -417,14 +420,15 @@ public final class GFRegistry {
     
     // block items
     registerItemBlock(event, REEDS, "reeds");
+    registerItemBlock(event, OLIVE_SAPLING, "olive_sapling");
+    registerItemBlock(event, NEST_BLOCK, "nest");
+    registerItemBlock(event, WILD_ROSE, "wild_rose");
     registerItemBlock(event, OLIVE_LOG, "olive_log");
     registerItemBlock(event, OLIVE_WOOD, "olive_wood");
     registerItemBlock(event, OLIVE_PLANKS, "olive_planks");
     registerItemBlock(event, OLIVE_SLAB, "olive_slab");
     registerItemBlock(event, OLIVE_STAIRS, "olive_stairs");
     registerItemBlock(event, OLIVE_LEAVES, "olive_leaves");
-    registerItemBlock(event, OLIVE_SAPLING, "olive_sapling");
-    registerItemBlock(event, NEST_BLOCK, "nest");
     
     registerItemBlock(event, MARBLE, "marble");
     registerItemBlock(event, MARBLE_SLAB, "marble_slab");
@@ -491,18 +495,26 @@ public final class GFRegistry {
   }
 
   // HELPER METHODS //
+  
+  private static <T extends Entity> EntityType<T> registerEntityType(final RegistryEvent.Register<EntityType<?>> event,
+      final IFactory<T> factoryIn, final String name, final float width, final float height, 
+      final EntityClassification classification, final Consumer<EntityType.Builder<T>> builderSpecs) {
+    // make the entity type
+    EntityType.Builder<T> entityTypeBuilder = EntityType.Builder.create(factoryIn, classification).size(width, height);
+    builderSpecs.accept(entityTypeBuilder);
+    EntityType<T> entityType = entityTypeBuilder.build(name);
+    entityType.setRegistryName(MODID, name);
+    // register the entity type
+    event.getRegistry().register(entityType);
+    return entityType;
+  }
 
   private static <T extends MobEntity> EntityType<T> registerEntityType(final RegistryEvent.Register<EntityType<?>> event,
       final IFactory<T> factoryIn, final Supplier<AttributeModifierMap.MutableAttribute> mapSupplier, 
       @Nullable final EntitySpawnPlacementRegistry.IPlacementPredicate<T> placementPredicate, final String name,
       final float width, final float height, final EntityClassification classification, final boolean fireproof) {
     // make the entity type
-    EntityType.Builder<T> entityTypeBuilder = EntityType.Builder.create(factoryIn, classification).size(width, height);
-    if (fireproof) entityTypeBuilder.immuneToFire();
-    EntityType<T> entityType = entityTypeBuilder.build(name);
-    entityType.setRegistryName(MODID, name);
-    // register the entity type
-    event.getRegistry().register(entityType);
+    EntityType<T> entityType = registerEntityType(event, factoryIn, name, width, height, classification, fireproof ? b -> b.immuneToFire() : b -> {});
     // register attributes
     if(mapSupplier != null) {
       GlobalEntityTypeAttributes.put(entityType, mapSupplier.get().create());

@@ -48,8 +48,6 @@ public class ReedsFeature extends Feature<BlockClusterFeatureConfig> {
           placed++;
       } 
     } 
-    // DEBUG
-    if(placed > 0) GreekFantasy.LOGGER.debug("Placed " + placed + " reeds near " + mutpos);
     return (placed > 0);
   }
 

@@ -11,8 +11,9 @@ __Key:__
 
 X X _ Naiad
 X X X Dryad
-X ~ _ Satyr
-X ~ _ Centaur
+X X X Satyr
+~ ~ _ Centaur (TODO: more textures)
+~ ~ X Cyprian Centaur (bull-head, hostile) (TODO: more textures)
 X X X Minotaur
 X X X Gorgon (Medusa)
 X X X Harpy
@@ -21,18 +22,17 @@ X X X Shade
 X X _ Siren (hostile)
 X X X Cerastes (ram-horned serpent)
 X X X Ara (Propoetide)
-X _ _ Cyclopes
-X _ ~ Gigante
-X ~ X Cyprian Centaurs (bull-horns, hostile)
+X X X Cyclopes
+X X ~ Gigante
 X X X Unicorn
 X X ~ Orthus (2-headed dog)
-_ _ _ Eurynomos (blue skin; vulture head?)
 X X X Elpis (hope)
 X X X Sparti
-_ _ _ Hippocampus
 X X X Mad Cow (summoned by Geryon)
-X X _ Boss: Cerberus
-~ X _ Boss: Geryon (3-headed Gigante) (TODO: texture)
+X X X Boss: Cerberus
+~ X ~ Boss: Geryon (3-headed Gigante) (TODO: texture, better loot)
+_ _ _ Hippocampus
+_ _ _ Eurynomos (blue skin; vulture head?)
 
 
 ## Entity AI
@@ -67,16 +67,16 @@ __Key:__
 `[Design] [Worldgen] [Loot]`
 
 X X X Harpy Nests
-X X ~ Satyr Camps
-_ _ _ Centaur Camps
-X X ~ Ara Camps
-_ _ _ Cyclopes Cave+Pastures
-_ _ _ Ruined Temple
-X X ~ Small Marble Shrine
+X X _ Satyr Camps
+X X _ Ara Camps
+X X _ Small Marble Shrine
 X X X Small Limestone Shrine
 X X X Small Nether Shrine
 X X X Marble veins
 X X X Limestone veins
+_ _ _ Centaur Camps
+_ _ _ Cyclopes Cave+Pastures
+_ _ _ Ruined Temple
 
 ## Blocks
 
@@ -90,14 +90,14 @@ X X X Statues
 X X X Vase
 X X X Reeds (use for sticks or panflute)
 X X X Gigante Head
-X _ X Orthus Head
-X ? X Cerberus Head
-_ _ _ Urn
-X X _ Mysterious box
+X X X Orthus Head
+X X X Cerberus Head
+X X X Mysterious box
 X X X Olive basics (log, wood, planks, slab, stair)
 _ _ _ Olive blocks: button, fence, boat, door, trapdoor, stripped log, stripped wood, pressure plate, sign
 X X X Olive leaves
 X X X Olive sapling
+_ _ _ Urn?
 _ _ _ Grapes / grapevines?
 
 ## Items
@@ -107,7 +107,6 @@ __Key:__
 
 X X X Panflute
 X X X Clubs (wood, stone/flint, iron)
-_ _ _ Javelin or Bident (wood, stone/flint, iron)
 X X X Golden bridle (for Unicorn)
 X X X Winged sandals
 X X X Horn (from Minotaur / Cyprians)
@@ -116,15 +115,17 @@ X X X Ambrosia (like ench. golden apple)
 X X X Magic feather
 X X X Dragon's Tooth (to summon Sparti)
 X X X Healing rod (cannot be used on self) (healing projectiles)
-X X _ Helm of Darkness (hides player _and_ armor) (from Cyclopes somehow)
+X X X Helm of Darkness (hides player _and_ armor) (from Cyclopes somehow)
 X X X Flint Knife
-X X _ Sword of the Hunt (one-shots animals)
+X X X Sword of the Hunt (one-shots animals)
 X X X Thunderbolt
 X X X Snake skin and Purified snake skin (from Gorgons)
 X X X Ichor - crafting component from Elpis
 _ _ _ Dog claw (or tooth) - crafting component from Orthus
-_ _ _ Fiery hide - crafting component from Cerberus (helm of darkness)
-_ _ _ Styxian fragment - crafting component from Cyclopes (helm of darkness)
+_ X _ Fiery hide - crafting component from Cerberus (helm of darkness)
+_ X X Styxian shard - crafting component from Cyclopes (helm of darkness)
+_ X X Wild Rose - crafting component from Satyr (sword of the hunt)
+_ _ _ Javelin or Bident (wood, stone/flint, iron)
 _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 
 ## Achievements
@@ -147,16 +148,14 @@ X Statue skins
 X "Stunned" effect (prevent movement or item use)
 X "Petrified" effect
 X "Overstep" enchantment
-~ Panflute songs
-- Loch Lomond, Amazing Grace, LOTR/Hobbit theme, Clementine, Waltzing Matilda, Yellow Rose of Texas, O du lieber Augustin
+X "Smashing" enchantment
+X Panflute songs
 X Panflute song selection GUI
 X Lots of mysterious box functions!
-X Some way to obtain Winged Sandals
-_ Some way to obtain Mysterious Box
 X Some way to encounter Geryon
-~ Some way to encounter Cerberus
+X Some way to encounter Cerberus
 ~ Block and Item tags (wooden_doors, etc.)
-_ Olive forest biome
+X Olive forest biome
 
 ## Misc Ideas and Inspirations
 

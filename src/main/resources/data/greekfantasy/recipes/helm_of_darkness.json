@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " O ",
+    "###",
+    "# #"
+  ],
+  "key": {
+    "#": {
+      "item": "greekfantasy:styxian_shard"
+    },
+    "O": {
+      "item": "greekfantasy:fiery_hide"
+    }
+  },
+  "result": {
+    "item": "greekfantasy:helm_of_darkness"
+  }
+}

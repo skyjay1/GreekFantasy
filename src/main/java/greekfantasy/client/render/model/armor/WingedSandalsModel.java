@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class WingedSandalsModel  extends BipedModel<LivingEntity> {
+public class WingedSandalsModel extends BipedModel<LivingEntity> {
   
   private final ModelRenderer leftWing1;
   private final ModelRenderer leftWing2;

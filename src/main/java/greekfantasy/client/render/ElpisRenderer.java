@@ -12,6 +12,12 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.IEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.ElytraLayer;
+import net.minecraft.client.renderer.entity.layers.HeadLayer;
+import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.entity.model.IHasArm;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class ElpisRenderer<T extends ElpisEntity> extends BipedRenderer<T, ElpisModel<T>> {
@@ -21,6 +27,12 @@ public class ElpisRenderer<T extends ElpisEntity> extends BipedRenderer<T, Elpis
   
   public ElpisRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new ElpisModel<T>(0.0F), 0.0F);
+    // remove render layers
+    this.layerRenderers.clear();
+    // add custom implementation of render layers (specifically, the held item layer)
+    addLayer(new HeadLayer<>(this, 1.0F, 1.0F, 1.0F));
+    addLayer(new ElytraLayer<>(this));
+    addLayer(new ElpisRenderer.HeldItemLayer<>(this));
   }
 
   @Override
@@ -48,5 +60,21 @@ public class ElpisRenderer<T extends ElpisEntity> extends BipedRenderer<T, Elpis
   protected RenderType func_230496_a_(final T entity, boolean isVisible, boolean isVisibleToPlayer, boolean isGlowing) {
     final ResourceLocation tex = this.getEntityTexture(entity);
     return entity.isGlowing() ? RenderType.getOutline(tex) : RenderType.getEntityTranslucent(tex);
+  }
+  
+  public static class HeldItemLayer<T extends LivingEntity, M extends EntityModel<T> & IHasArm> extends net.minecraft.client.renderer.entity.layers.HeldItemLayer<T, M> {
+
+    public HeldItemLayer(IEntityRenderer<T, M> renderer) {
+      super(renderer);
+    }
+    
+    @Override
+    public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entity,
+        float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+      final float unscale = 1 / ElpisRenderer.SCALE;
+      matrixStackIn.scale(unscale, unscale, unscale);
+      matrixStackIn.translate(-0.4D, -0.42D, 0.18D);
+      super.render(matrixStackIn, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch);
+    }
   }
 }

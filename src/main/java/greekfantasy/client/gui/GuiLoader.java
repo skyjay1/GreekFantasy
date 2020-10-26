@@ -15,7 +15,6 @@ public final class GuiLoader {
       return;
     }
     // open the gui
-    GreekFantasy.LOGGER.debug("slot = " + itemSlot);
     Minecraft.getInstance().displayGuiScreen(new PanfluteScreen(itemSlot, itemstack));
   }
 }

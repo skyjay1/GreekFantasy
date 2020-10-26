@@ -32,10 +32,10 @@ public class SwimUpGoal<T extends CreatureEntity & ISwimmingMob> extends Goal {
 
   @Override
   public void tick() {
-    if (entity.getPosY() < (this.targetY - 1) && (entity.getNavigator().noPath() || isCloseToPathTarget())) {
+    if (entity.getPosY() < (this.targetY - 0.5D) && (entity.getNavigator().noPath() || isCloseToPathTarget())) {
 
       Vector3d vec = RandomPositionGenerator.findRandomTargetBlockTowards(entity, 4, 8,
-          new Vector3d(entity.getPosX(), this.targetY - 1, entity.getPosZ()));
+          new Vector3d(entity.getPosX(), this.targetY - 0.5D, entity.getPosZ()));
 
       if (vec == null) {
         this.obstructed = true;

@@ -6,6 +6,8 @@ import java.util.Random;
 import com.mojang.serialization.Codec;
 
 import greekfantasy.GreekFantasy;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -36,7 +38,7 @@ public class SmallNetherShrineFeature extends Feature<NoFeatureConfig> {
     final Template template = manager.getTemplateDefaulted(STRUCTURE);
     
     // position for generation
-    Optional<BlockPos> optionalPos = getRandomPositionInChunk(reader, blockPosIn, 126 - template.getSize().getY(), rand);
+    Optional<BlockPos> optionalPos = getRandomPositionInChunk(reader, blockPosIn, rand);
     
     // check for valid position
     if(!optionalPos.isPresent()) {
@@ -54,19 +56,21 @@ public class SmallNetherShrineFeature extends Feature<NoFeatureConfig> {
         .setRotation(rotation).setMirror(mirror).setRandom(rand).setBoundingBox(mbb)
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
     
+    // DEBUG
+    GreekFantasy.LOGGER.debug("Generating nether shrine near " + pos);
     // actually generate the structure
     return template.func_237146_a_(reader, pos, pos, placement, rand, 2);
   }
   
   // try to find a valid position in this chunk
-  private Optional<BlockPos> getRandomPositionInChunk(final ISeedReader reader, final BlockPos blockPosIn, 
-      final int maxY, final Random rand) {
+  private Optional<BlockPos> getRandomPositionInChunk(final ISeedReader reader, final BlockPos blockPosIn, final Random rand) {
     for(int i = 0; i < 20; i++) {
       BlockPos pos = new BlockPos(
         blockPosIn.getX() + 4 + rand.nextInt(8), 
-        3 + rand.nextInt(maxY - 3), 
+        32 + rand.nextInt(120 - 32), 
         blockPosIn.getZ() + 4 + rand.nextInt(8));
-      if(reader.getBlockState(pos).isSolid() && !reader.getBlockState(pos.up(1)).isSolid()) {
+      final BlockState state = reader.getBlockState(pos);
+      if(state.isSolid() && state.getMaterial() != Material.PLANTS && !reader.getBlockState(pos.up(1)).isSolid()) {
         return Optional.of(pos);
       }
     }
