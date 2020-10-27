@@ -77,7 +77,8 @@ public final class GFWorldGen {
   
   @SubscribeEvent
   public static void registerBiomes(final RegistryEvent.Register<Biome> event) {
-    final Biome oliveForestBiome = makeOliveForest(0.1F, 0.2F).setRegistryName(GreekFantasy.MODID, "olive_forest");
+    final Biome oliveForestBiome = makeOliveForest(0.1F, 0.2F)
+        .setRegistryName(new ResourceLocation(GreekFantasy.MODID, "olive_forest"));
     event.getRegistry().register(oliveForestBiome);
   }
 

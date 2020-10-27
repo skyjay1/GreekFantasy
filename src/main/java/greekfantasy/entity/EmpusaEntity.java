@@ -54,7 +54,7 @@ public class EmpusaEntity extends MonsterEntity {
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     if(GreekFantasy.CONFIG.EMPUSA_ATTACK.get()) {
-      this.goalSelector.addGoal(1, new DrainAttackGoal(this));
+      this.goalSelector.addGoal(2, new DrainAttackGoal(this));
     }
   }
   

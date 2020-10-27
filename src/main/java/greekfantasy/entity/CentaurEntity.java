@@ -19,8 +19,9 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.passive.horse.CoatColors;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -66,8 +67,8 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
   private float prevRearingAmount;
   private int rearingCounter;
   
-  private final RangedAttackGoal aiArrowAttack = new RangedAttackGoal(this, 1.0D, 50, 15.0F);
-  private final MeleeAttackGoal aiMeleeAttack = new MeleeAttackGoal(this, 1.2D, false);
+  private RangedAttackGoal aiArrowAttack = new CentaurEntity.RangedAttackGoal(this, 1.0D, this.hasBullHead() ? 50 : 35, 15.0F);
+  private MeleeAttackGoal aiMeleeAttack = new MeleeAttackGoal(this, 1.2D, false);
 
   public CentaurEntity(final EntityType<? extends CentaurEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -75,7 +76,7 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 34.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.5D);
@@ -84,8 +85,10 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
   @Override
   protected void registerGoals() {
     super.registerGoals();
-    this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(1, new SwimGoal(this));
+    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+    this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
     this.targetSelector.addGoal(5, new ResetAngerGoal<>(this, true));
@@ -107,6 +110,10 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
     // anger timer
     if (!this.world.isRemote()) {
       this.func_241359_a_((ServerWorld) this.world, true);
+      // reset aggroed
+//      if(this.isAggressive() && this.getAttackTarget() == null) {
+//        this.setAggroed(false);
+//      }
     }
   }
 
@@ -148,9 +155,9 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
         this.goalSelector.removeGoal(this.aiArrowAttack);
         ItemStack itemstack = this.getHeldItem(ProjectileHelper.getHandWith(this, Items.BOW));
         if (itemstack.getItem() instanceof net.minecraft.item.BowItem) {
-           this.goalSelector.addGoal(4, this.aiArrowAttack);
+           this.goalSelector.addGoal(3, this.aiArrowAttack);
         } else {
-           this.goalSelector.addGoal(4, this.aiMeleeAttack);
+           this.goalSelector.addGoal(3, this.aiMeleeAttack);
         }
      }
   }
@@ -158,16 +165,17 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
   @Override
   public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
      ItemStack itemstack = this.findAmmo(this.getHeldItem(ProjectileHelper.getHandWith(this, Items.BOW)));
-     AbstractArrowEntity abstractarrowentity = this.fireArrow(itemstack, distanceFactor);
+     AbstractArrowEntity arrow = this.fireArrow(itemstack, distanceFactor);
      if (this.getHeldItemMainhand().getItem() instanceof net.minecraft.item.BowItem)
-        abstractarrowentity = ((net.minecraft.item.BowItem)this.getHeldItemMainhand().getItem()).customArrow(abstractarrowentity);
-     double d0 = target.getPosX() - this.getPosX();
-     double d1 = target.getPosYHeight(0.67D) - abstractarrowentity.getPosY();
-     double d2 = target.getPosZ() - this.getPosZ();
+        arrow = ((net.minecraft.item.BowItem)this.getHeldItemMainhand().getItem()).customArrow(arrow);
+     arrow.setPosition(this.getPosX() - (this.getWidth() + 1.0F) * 0.5D * MathHelper.sin(this.renderYawOffset * 0.017453292F), this.getPosYEye() - 0.10000000149011612D, this.getPosZ() + (this.getWidth() + 1.0F) * 0.5D * MathHelper.cos(this.renderYawOffset * 0.017453292F));
+     double d0 = target.getPosX() - arrow.getPosX();
+     double d1 = target.getPosYHeight(0.67D) - arrow.getPosY();
+     double d2 = target.getPosZ() - arrow.getPosZ();
      double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
-     abstractarrowentity.shoot(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.world.getDifficulty().getId() * 4));
+     arrow.shoot(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.world.getDifficulty().getId() * 4));
      this.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
-     this.world.addEntity(abstractarrowentity);
+     this.world.addEntity(arrow);
   }
 
   protected AbstractArrowEntity fireArrow(ItemStack arrowStack, float distanceFactor) {
@@ -301,4 +309,22 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
 
   /** @return whether to render using a bull-headed texture **/
   public boolean hasBullHead() { return false; }
+  
+  class RangedAttackGoal extends net.minecraft.entity.ai.goal.RangedAttackGoal {
+    public RangedAttackGoal(IRangedAttackMob entity, double moveSpeed, int attackInterval, float attackDistance) {
+      super(entity, moveSpeed, attackInterval, attackDistance);
+    }
+    
+    @Override
+    public void startExecuting() {
+      super.startExecuting();
+      CentaurEntity.this.setAggroed(true);
+    }
+    
+    @Override
+    public void resetTask() {
+      super.resetTask();
+      CentaurEntity.this.setAggroed(false);
+    }
+  }
 }

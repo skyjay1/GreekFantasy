@@ -11,11 +11,12 @@ import net.minecraft.util.ResourceLocation;
 
 public class GeryonRenderer<T extends GeryonEntity> extends BipedRenderer<T, GeryonModel<T>> {
   
-  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/geryon.png");
+  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/geryon/geryon.png");
   private static final float SCALE = 2.0F;
   
   public GeryonRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new GeryonModel<T>(0.0F), 0.0F);
+    this.addLayer(new GeryonClothingLayer<>(this));
   }
 
   @Override

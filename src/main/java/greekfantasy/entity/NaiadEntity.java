@@ -103,7 +103,7 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
     });
     this.goalSelector.addGoal(3, new SwimUpGoal<NaiadEntity>(this, 1.0D, this.world.getSeaLevel()) {
       @Override
-      public boolean shouldExecute() { return NaiadEntity.this.world.isDaytime() && NaiadEntity.this.rand.nextInt(100) == 0 && super.shouldExecute(); }
+      public boolean shouldExecute() { return NaiadEntity.this.world.isDaytime() && super.shouldExecute(); }
     });
     this.goalSelector.addGoal(3, new RandomSwimmingGoal(this, 0.8D, 140) {
       @Override

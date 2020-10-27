@@ -135,8 +135,8 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
 
     // lifespan
     if (this.limitedLifespan && --this.limitedLifeTicks <= 0) {
-      this.limitedLifeTicks = 40;
-      attackEntityFrom(DamageSource.STARVE, 1.0F);
+      this.limitedLifeTicks = 20;
+      attackEntityFrom(DamageSource.STARVE, 2.0F);
     }
   }
   

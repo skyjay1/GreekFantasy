@@ -9,11 +9,11 @@ __Key:__
 __Key:__
 `[Model] [AI] [Loot table]`
 
-X X _ Naiad
+X X X Naiad
 X X X Dryad
 X X X Satyr
-~ ~ _ Centaur (TODO: more textures)
-~ ~ X Cyprian Centaur (bull-head, hostile) (TODO: more textures)
+X ~ _ Centaur
+X X ~ Cyprian Centaur (bull-head, hostile) (TODO: add arrows to loot table)
 X X X Minotaur
 X X X Gorgon (Medusa)
 X X X Harpy
@@ -30,7 +30,7 @@ X X X Elpis (hope)
 X X X Sparti
 X X X Mad Cow (summoned by Geryon)
 X X X Boss: Cerberus
-~ X ~ Boss: Geryon (3-headed Gigante) (TODO: texture, better loot)
+X X ~ Boss: Geryon (3-headed Gigante) (TODO: better loot)
 _ _ _ Hippocampus
 _ _ _ Eurynomos (blue skin; vulture head?)
 
@@ -47,7 +47,7 @@ X Satyrs summon wolves
 X Satyrs light unlit campfires
 X Geryon smash attack
 X Geryon summons Mad Cows
-~ Centaurs / Cyprians shoot arrows (TODO: animation not working)
+X Centaurs / Cyprians shoot arrows
 ~ Minotaur charges at player (TODO: extend charge beyond player position)
 X Minotaur is stunned when charge attack misses
 X Gorgon petrifies player
@@ -177,7 +177,7 @@ _Can I do something with these?_
 - Story of King Midas (gold touch)
 - Story of Circe (sorcerer who turns people to pigs)
 - Story of Labyrinth (Minotaur, Golden String, etc)
-- Demeter (goddess of growth/fertility/crops)
+- Demeter (goddess of growth/fertility/crops; seasons)
 - Sphinx
 - Hydra
 - Stymphalian birds (iron wings/claws/beaks)

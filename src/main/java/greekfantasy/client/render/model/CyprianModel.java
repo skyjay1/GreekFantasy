@@ -1,10 +1,13 @@
 package greekfantasy.client.render.model;
 
+import com.google.common.collect.ImmutableList;
+
 import greekfantasy.entity.CyprianEntity;
+import net.minecraft.client.renderer.model.ModelRenderer;
 
-public class CyprianCentaurModel<T extends CyprianEntity> extends CentaurModel<T> {
+public class CyprianModel<T extends CyprianEntity> extends CentaurModel<T> {
 
-  public CyprianCentaurModel(float modelSize) {
+  public CyprianModel(float modelSize) {
     super(modelSize);
     
     // nose
@@ -17,4 +20,7 @@ public class CyprianCentaurModel<T extends CyprianEntity> extends CentaurModel<T
     // hide headwear
     this.bipedHeadwear.showModel = false;
   }
+  
+  @Override
+  protected Iterable<ModelRenderer> getHeadParts() { return ImmutableList.of(); }  
 }

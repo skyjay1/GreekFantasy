@@ -40,7 +40,6 @@ public class WildRoseBlock extends FlowerBlock {
     if (!world.isRemote() && entity instanceof LivingEntity) {
       LivingEntity livingentity = (LivingEntity)entity;
       livingentity.addPotionEffect(new EffectInstance(Effects.ABSORPTION, 80));
-      livingentity.addPotionEffect(new EffectInstance(Effects.GLOWING, 210)); 
     }
   }
 

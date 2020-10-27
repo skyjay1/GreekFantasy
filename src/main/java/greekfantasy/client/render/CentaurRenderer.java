@@ -12,27 +12,16 @@ import net.minecraft.util.ResourceLocation;
 
 public class CentaurRenderer<T extends CentaurEntity> extends BipedRenderer<T,CentaurModel<T>> {
   
-  public static final EnumMap<CoatColors, ResourceLocation> CENTAUR_TEXTURE_MAP = new EnumMap<>(CoatColors.class);
-  public static final EnumMap<CoatColors, ResourceLocation> CYPRIAN_TEXTURE_MAP = new EnumMap<>(CoatColors.class);
+  public static final EnumMap<CoatColors, ResourceLocation> BODY_TEXTURE_MAP = new EnumMap<>(CoatColors.class);
   
   static {
-    // TODO make unique textures and then update these fields
-    // Centaur
-    CENTAUR_TEXTURE_MAP.put(CoatColors.BLACK, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/chestnut.png"));
-    CENTAUR_TEXTURE_MAP.put(CoatColors.BROWN, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/chestnut.png"));
-    CENTAUR_TEXTURE_MAP.put(CoatColors.CHESTNUT, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/chestnut.png"));
-    CENTAUR_TEXTURE_MAP.put(CoatColors.CREAMY, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/chestnut.png"));
-    CENTAUR_TEXTURE_MAP.put(CoatColors.DARKBROWN, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/chestnut.png"));
-    CENTAUR_TEXTURE_MAP.put(CoatColors.GRAY, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/chestnut.png"));
-    CENTAUR_TEXTURE_MAP.put(CoatColors.WHITE, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/chestnut.png"));
-    // Cyprian Centaur
-    CYPRIAN_TEXTURE_MAP.put(CoatColors.BLACK, new ResourceLocation(GreekFantasy.MODID, "textures/entity/cyprian/chestnut.png"));
-    CYPRIAN_TEXTURE_MAP.put(CoatColors.BROWN, new ResourceLocation(GreekFantasy.MODID, "textures/entity/cyprian/chestnut.png"));
-    CYPRIAN_TEXTURE_MAP.put(CoatColors.CHESTNUT, new ResourceLocation(GreekFantasy.MODID, "textures/entity/cyprian/chestnut.png"));
-    CYPRIAN_TEXTURE_MAP.put(CoatColors.CREAMY, new ResourceLocation(GreekFantasy.MODID, "textures/entity/cyprian/chestnut.png"));
-    CYPRIAN_TEXTURE_MAP.put(CoatColors.DARKBROWN, new ResourceLocation(GreekFantasy.MODID, "textures/entity/cyprian/chestnut.png"));
-    CYPRIAN_TEXTURE_MAP.put(CoatColors.GRAY, new ResourceLocation(GreekFantasy.MODID, "textures/entity/cyprian/chestnut.png"));
-    CYPRIAN_TEXTURE_MAP.put(CoatColors.WHITE, new ResourceLocation(GreekFantasy.MODID, "textures/entity/cyprian/chestnut.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.BLACK, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/black.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.BROWN, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/brown.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.CHESTNUT, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/chestnut.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.CREAMY, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/creamy.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.DARKBROWN, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/darkbrown.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.GRAY, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/gray.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.WHITE, new ResourceLocation(GreekFantasy.MODID, "textures/entity/centaur/white.png"));
   }
   
   public CentaurRenderer(final EntityRendererManager renderManagerIn) {
@@ -48,6 +37,6 @@ public class CentaurRenderer<T extends CentaurEntity> extends BipedRenderer<T,Ce
 
   @Override
   public ResourceLocation getEntityTexture(final T entity) {
-    return entity.hasBullHead() ? CYPRIAN_TEXTURE_MAP.get(entity.getCoatColor()) : CENTAUR_TEXTURE_MAP.get(entity.getCoatColor());
+    return BODY_TEXTURE_MAP.get(entity.getCoatColor());
   }
 }

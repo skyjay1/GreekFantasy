@@ -6,13 +6,11 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.entity.CentaurEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.model.ModelHelper;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
 
@@ -124,6 +122,18 @@ public class CentaurModel<T extends CentaurEntity & IRangedAttackMob> extends Bi
   
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch) {
+    // set arm poses
+    final ItemStack bow = entity.getHeldItem(ProjectileHelper.getHandWith(entity, Items.BOW));
+    if (bow.getItem() instanceof net.minecraft.item.BowItem && entity.isAggressive()) {
+       if (entity.getPrimaryHand() == HandSide.RIGHT) {
+          this.rightArmPose = BipedModel.ArmPose.BOW_AND_ARROW;
+       } else {
+          this.leftArmPose = BipedModel.ArmPose.BOW_AND_ARROW;
+       }
+    } else {
+      this.rightArmPose = this.leftArmPose = BipedModel.ArmPose.EMPTY;
+    }
+    // super method
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, rotationYaw, rotationPitch);
     // horse rotation angles
     this.horseBody.rotationPointY = 11.0F;
@@ -134,80 +144,43 @@ public class CentaurModel<T extends CentaurEntity & IRangedAttackMob> extends Bi
     this.bipedHeadwear.setRotationPoint(bipedHead.rotationPointX, bipedHead.rotationPointY, bipedHead.rotationPointZ);
     this.bipedLeftArm.setRotationPoint(4.0F, -15.0F * rearingTime - 8.0F * rearingTimeLeft, -3.0F * rearingTime - 10.5F * rearingTimeLeft);
     this.bipedRightArm.setRotationPoint(-4.0F, bipedLeftArm.rotationPointY, bipedLeftArm.rotationPointZ);
-    this.quiver.setRotationPoint(0.0F, -11.0F * rearingTime - 4.0F * rearingTimeLeft, 1.5F * rearingTime - 6.5F * rearingTimeLeft);
-    // bow angles
-    // TODO something isn't working...
-    final ItemStack bow = entity.getHeldItem(ProjectileHelper.getHandWith(entity, Items.BOW));
-    if (entity.isAggressive() && (bow.isEmpty() || !(bow.getItem() instanceof net.minecraft.item.BowItem))) {
-       float f = MathHelper.sin(this.swingProgress * (float)Math.PI);
-       float f1 = MathHelper.sin((1.0F - (1.0F - this.swingProgress) * (1.0F - this.swingProgress)) * (float)Math.PI);
-       this.bipedRightArm.rotateAngleZ = 0.0F;
-       this.bipedLeftArm.rotateAngleZ = 0.0F;
-       this.bipedRightArm.rotateAngleY = -(0.1F - f * 0.6F);
-       this.bipedLeftArm.rotateAngleY = 0.1F - f * 0.6F;
-       this.bipedRightArm.rotateAngleX = (-(float)Math.PI / 2F);
-       this.bipedLeftArm.rotateAngleX = (-(float)Math.PI / 2F);
-       this.bipedRightArm.rotateAngleX -= f * 1.2F - f1 * 0.4F;
-       this.bipedLeftArm.rotateAngleX -= f * 1.2F - f1 * 0.4F;
-       ModelHelper.func_239101_a_(this.bipedRightArm, this.bipedLeftArm, ageInTicks);
-    }
+    this.quiver.setRotationPoint(0.0F, -11.0F * rearingTime - 4.0F * rearingTimeLeft, 1.5F * rearingTime - 6.5F * rearingTimeLeft);    
   }
   
   @Override
   public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
-    // update pose
-    this.rightArmPose = BipedModel.ArmPose.EMPTY;
-    this.leftArmPose = BipedModel.ArmPose.EMPTY;
-    final ItemStack bow = entity.getHeldItem(ProjectileHelper.getHandWith(entity, Items.BOW));
-    if (bow.getItem() instanceof net.minecraft.item.BowItem && entity.isAggressive()) {
-       if (entity.getPrimaryHand() == HandSide.RIGHT) {
-          this.rightArmPose = BipedModel.ArmPose.BOW_AND_ARROW;
-       } else {
-          this.leftArmPose = BipedModel.ArmPose.BOW_AND_ARROW;
-       }
-    }
-    
-    // call super method
     super.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTick);
-
-    // update rearing angles
-    float rearingTime = entity.getRearingAmount(partialTick);
-    float rearingTimeLeft = 1.0F - rearingTime;
-    boolean tailSwinging = (entity.tailCounter != 0);
-    float ticks = entity.ticksExisted + partialTick;
-     
-    this.horseBody.rotateAngleX = 0.0F;
-   
+    float ticks = entity.ticksExisted + partialTick;   
     float swimmingOffset = entity.isInWater() ? 0.2F : 1.0F;
     float limbSwingCos = MathHelper.cos(swimmingOffset * limbSwing * 0.6662F + 3.1415927F);
     float limbSwingAmountCos = limbSwingCos * 0.8F * limbSwingAmount;
-
+    // body rotations
+    float rearingTime = entity.getRearingAmount(partialTick);
+    float rearingTimeLeft = 1.0F - rearingTime;
+    this.horseBody.rotateAngleX = 0;
     this.horseBody.rotateAngleX = rearingTime * -0.7853982F + rearingTimeLeft * this.horseBody.rotateAngleX;
-    
+    // front leg rotations
     float rearingAmount = 0.2617994F * rearingTime;
     float rearingCos = MathHelper.cos(ticks * 0.6F + 3.1415927F);
-    
     this.leftFrontLeg.rotationPointY = 2.0F * rearingTime + 14.0F * rearingTimeLeft;
     this.leftFrontLeg.rotationPointZ = -6.0F * rearingTime - 10.0F * rearingTimeLeft;
     this.rightFrontLeg.rotationPointY = this.leftFrontLeg.rotationPointY;
     this.rightFrontLeg.rotationPointZ = this.leftFrontLeg.rotationPointZ;
-    
+    // back leg rotations
     float frontAngleCos = (-1.0471976F + rearingCos) * rearingTime + limbSwingAmountCos * rearingTimeLeft;
     float frontAngleSin = (-1.0471976F - rearingCos) * rearingTime - limbSwingAmountCos * rearingTimeLeft;
-    
     this.leftBackLeg.rotateAngleX = rearingAmount - limbSwingCos * 0.5F * limbSwingAmount * rearingTimeLeft;
     this.rightBackLeg.rotateAngleX = rearingAmount + limbSwingCos * 0.5F * limbSwingAmount * rearingTimeLeft;
     this.leftFrontLeg.rotateAngleX = frontAngleCos;
     this.rightFrontLeg.rotateAngleX = frontAngleSin;
-    
+    // tail rotations
+    boolean tailSwinging = (entity.tailCounter != 0);
     this.tail.rotateAngleX = 0.5235988F + limbSwingAmount * 0.75F;
     this.tail.rotationPointY = -5.0F + limbSwingAmount;
     this.tail.rotationPointZ = 2.0F + limbSwingAmount * 2.0F;
-    
     this.tail.rotateAngleY = tailSwinging ? MathHelper.cos(ticks * 0.7F) : 0.0F;
- 
+    // child rotation points
     boolean child = entity.isChild();
-    
     this.horseBody.rotationPointY = child ? 10.8F : 0.0F;
   }
   
@@ -225,4 +198,6 @@ public class CentaurModel<T extends CentaurEntity & IRangedAttackMob> extends Bi
     this.quiver.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
     this.bipedBody.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
   }
+  
+  public ModelRenderer getActualHead() { return bipedHead; }
 }

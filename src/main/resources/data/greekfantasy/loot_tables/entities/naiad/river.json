@@ -6,7 +6,7 @@
 	  "entries": [
 		{
 		  "type": "item",
-		  "name": "minecraft:raw_cod",
+		  "name": "minecraft:cod",
 		  "functions": [
 			{
 			  "function": "set_count",

@@ -17,7 +17,7 @@ public class CyprianEntity extends CentaurEntity implements IMob {
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 22.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.5D);

@@ -526,7 +526,6 @@ public class GeryonEntity extends MonsterEntity {
         GeryonEntity.this.setAttackCooldown();
         // destroy nearby blocks
         if(isBlockSmash) {
-          GreekFantasy.LOGGER.debug("Smash attack destroying blocks!");
           GeryonEntity.this.destroyIntersectingBlocks(2.5D);
         }
         // finish task

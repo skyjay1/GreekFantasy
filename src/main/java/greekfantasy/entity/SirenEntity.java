@@ -52,10 +52,6 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
   
   private static final DataParameter<Boolean> CHARMING = EntityDataManager.createKey(SirenEntity.class, DataSerializers.BOOLEAN); 
   private final AttributeModifier attackModifier = new AttributeModifier("Charm attack bonus", 2.0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
-
-  private final Predicate<LivingEntity> AVOID_PREDICATE = entity -> {
-    return !SirenEntity.this.isCharming() && EntityPredicates.CAN_AI_TARGET.test(entity);
-  };
   
   private boolean swimmingUp;
   private float swimmingPercent;
@@ -94,10 +90,13 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
     // add configurable goals
     if(GreekFantasy.CONFIG.SIREN_ATTACK.get()) {
+      final Predicate<LivingEntity> avoidPred = entity -> {
+        return !SirenEntity.this.isCharming() && EntityPredicates.CAN_AI_TARGET.test(entity);
+      };
       this.goalSelector.addGoal(2, new CharmAttackGoal(250, 100, 24));
-      this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, PlayerEntity.class, 10.0F, 1.2D, 1.0D, AVOID_PREDICATE));
-      this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, SpartiEntity.class, 10.0F, 1.2D, 1.0D, AVOID_PREDICATE));
-      this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, IronGolemEntity.class, 10.0F, 1.2D, 1.0D, AVOID_PREDICATE));
+      this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, PlayerEntity.class, 10.0F, 1.2D, 1.0D, avoidPred));
+      this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, SpartiEntity.class, 10.0F, 1.2D, 1.0D, avoidPred));
+      this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, IronGolemEntity.class, 10.0F, 1.2D, 1.0D, avoidPred));
     } else {
       this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
     }
