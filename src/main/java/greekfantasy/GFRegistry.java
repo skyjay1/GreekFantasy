@@ -17,6 +17,7 @@ import greekfantasy.block.StatueBlock;
 import greekfantasy.block.VaseBlock;
 import greekfantasy.block.WildRoseBlock;
 import greekfantasy.effect.StunnedEffect;
+import greekfantasy.enchantment.HuntingEnchantment;
 import greekfantasy.enchantment.OverstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
 import greekfantasy.entity.*;
@@ -27,7 +28,6 @@ import greekfantasy.item.HealingRodItem;
 import greekfantasy.item.HelmOfDarknessItem;
 import greekfantasy.item.OrthusHeadItem;
 import greekfantasy.item.PanfluteItem;
-import greekfantasy.item.SwordOfTheHuntItem;
 import greekfantasy.item.ThunderboltItem;
 import greekfantasy.item.UnicornHornItem;
 import greekfantasy.item.WingedSandalsItem;
@@ -138,12 +138,6 @@ public final class GFRegistry {
   public static final Item DRAGON_TOOTH = null;
   @ObjectHolder("ichor")
   public static final Item ICHOR = null;
-//  @ObjectHolder("winged_sandals")
-//  public static final Item WINGED_SANDALS = null;
-//  @ObjectHolder("ambrosia")
-//  public static final Item AMBROSIA = null;
-//  @ObjectHolder("unicorn_horn")
-//  public static final Item UNICORN_HORN = null;
   @ObjectHolder("horn")
   public static final Item HORN = null;
   @ObjectHolder("helm_of_darkness")
@@ -368,8 +362,6 @@ public final class GFRegistry {
           .setRegistryName(MODID, "panflute"),
         new SwordItem(ItemTier.WOOD, 3, -2.0F, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "flint_knife"),
-        new SwordOfTheHuntItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP))
-          .setRegistryName(MODID, "sword_of_the_hunt"),
         new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "iron_club"),
         new ClubItem(ItemTier.STONE, new Item.Properties().group(GREEK_GROUP))
@@ -419,37 +411,13 @@ public final class GFRegistry {
     );
     
     // block items
-    registerItemBlock(event, REEDS, "reeds");
-    registerItemBlock(event, OLIVE_SAPLING, "olive_sapling");
-    registerItemBlock(event, NEST_BLOCK, "nest");
-    registerItemBlock(event, WILD_ROSE, "wild_rose");
-    registerItemBlock(event, OLIVE_LOG, "olive_log");
-    registerItemBlock(event, OLIVE_WOOD, "olive_wood");
-    registerItemBlock(event, OLIVE_PLANKS, "olive_planks");
-    registerItemBlock(event, OLIVE_SLAB, "olive_slab");
-    registerItemBlock(event, OLIVE_STAIRS, "olive_stairs");
-    registerItemBlock(event, OLIVE_LEAVES, "olive_leaves");
-    
-    registerItemBlock(event, MARBLE, "marble");
-    registerItemBlock(event, MARBLE_SLAB, "marble_slab");
-    registerItemBlock(event, MARBLE_STAIRS, "marble_stairs");
-    registerItemBlock(event, POLISHED_MARBLE, "polished_marble");
-    registerItemBlock(event, POLISHED_MARBLE_SLAB, "polished_marble_slab");
-    registerItemBlock(event, POLISHED_MARBLE_STAIRS, "polished_marble_stairs");
-    registerItemBlock(event, MARBLE_PILLAR, "marble_pillar");
-
-    registerItemBlock(event, LIMESTONE, "limestone");
-    registerItemBlock(event, LIMESTONE_SLAB, "limestone_slab");
-    registerItemBlock(event, LIMESTONE_STAIRS, "limestone_stairs");
-    registerItemBlock(event, POLISHED_LIMESTONE, "polished_limestone");
-    registerItemBlock(event, POLISHED_LIMESTONE_SLAB, "polished_limestone_slab");
-    registerItemBlock(event, POLISHED_LIMESTONE_STAIRS, "polished_limestone_stairs");
-    registerItemBlock(event, LIMESTONE_PILLAR, "limestone_pillar");
-    
-    registerItemBlock(event, LIMESTONE_STATUE, "limestone_statue");
-    registerItemBlock(event, MARBLE_STATUE, "marble_statue");
-    
-    registerItemBlock(event, TERRACOTTA_VASE, "terracotta_vase");
+    registerItemBlocks(event, REEDS, OLIVE_SAPLING, NEST_BLOCK, WILD_ROSE, 
+        OLIVE_LOG, OLIVE_WOOD, OLIVE_PLANKS, OLIVE_SLAB, OLIVE_STAIRS, OLIVE_LEAVES, 
+        MARBLE, MARBLE_SLAB, MARBLE_STAIRS, POLISHED_MARBLE, POLISHED_MARBLE_SLAB, 
+        POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, 
+        LIMESTONE, LIMESTONE_SLAB, LIMESTONE_STAIRS, POLISHED_LIMESTONE, POLISHED_LIMESTONE_SLAB, 
+        POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, LIMESTONE_STATUE, 
+        TERRACOTTA_VASE);
     
     event.getRegistry().register(new BlockItem(GIGANTE_HEAD, new Item.Properties()
         .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeGiganteHeadISTER))
@@ -486,6 +454,8 @@ public final class GFRegistry {
         .setRegistryName(MODID, "overstep"));
     event.getRegistry().register(new SmashingEnchantment(Enchantment.Rarity.RARE)
         .setRegistryName(MODID, "smashing"));
+    event.getRegistry().register(new HuntingEnchantment(Enchantment.Rarity.COMMON)
+        .setRegistryName(MODID, "hunting"));
   }
 
   @SubscribeEvent
@@ -589,8 +559,14 @@ public final class GFRegistry {
     event.getRegistry().register(new StairsBlock(() -> polished.getDefaultState(), properties).setRegistryName(MODID, "polished_" + registryName + "_stairs"));
   }
     
-  private static void registerItemBlock(final RegistryEvent.Register<Item> event, final Block block, final String registryName) {
-    event.getRegistry().register(new BlockItem(block, new Item.Properties().group(GREEK_GROUP)).setRegistryName(MODID, registryName));
+  private static void registerItemBlock(final RegistryEvent.Register<Item> event, final Block block) {
+    event.getRegistry().register(new BlockItem(block, new Item.Properties().group(GREEK_GROUP)).setRegistryName(block.getRegistryName()));
+  }
+  
+  private static void registerItemBlocks(final RegistryEvent.Register<Item> event, final Block... blocks) {
+    for(final Block b : blocks) {
+      registerItemBlock(event, b);
+    }
   }
 
   private static Boolean allowsSpawnOnLeaves(BlockState state, IBlockReader reader, BlockPos pos, EntityType<?> entity) {

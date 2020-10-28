@@ -46,13 +46,13 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class SpartiEntity extends CreatureEntity implements IHasOwner {
   protected static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
@@ -205,6 +205,18 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
       recalculateSize();
     }
   }
+  
+  @Override
+  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_SKELETON_AMBIENT; }
+
+  @Override
+  protected SoundEvent getHurtSound(DamageSource source) { return SoundEvents.ENTITY_SKELETON_HURT; }
+
+  @Override
+  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_SKELETON_DEATH; }
+
+  @Override
+  protected void playStepSound(BlockPos pos, BlockState blockIn) { this.playSound(SoundEvents.ENTITY_SKELETON_STEP, 0.15F, 1.0F); }
   
   @Override
   public EntitySize getSize(final Pose poseIn) { return this.isSpawningTime() ? spawningSize : super.getSize(poseIn); }

@@ -110,10 +110,6 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
     // anger timer
     if (!this.world.isRemote()) {
       this.func_241359_a_((ServerWorld) this.world, true);
-      // reset aggroed
-//      if(this.isAggressive() && this.getAttackTarget() == null) {
-//        this.setAggroed(false);
-//      }
     }
   }
 

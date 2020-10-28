@@ -7,6 +7,9 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
 public class CyprianEntity extends CentaurEntity implements IMob {
@@ -30,6 +33,18 @@ public class CyprianEntity extends CentaurEntity implements IMob {
     // this goal has a custom predicate to make sure the centaur entity is not also a cyprian entity (don't attack teammates)
     this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, CentaurEntity.class, 10, true, false, e -> e.getClass() == CentaurEntity.class));
   }
+  
+  @Override
+  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_COW_AMBIENT; }
+
+  @Override
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_COW_HURT; }
+
+  @Override
+  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_COW_DEATH; }
+
+  @Override
+  protected float getSoundVolume() { return 0.8F; }
   
   @Override
   protected boolean isDespawnPeaceful() {

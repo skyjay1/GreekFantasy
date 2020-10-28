@@ -190,7 +190,7 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
     this.attackEntityAsMob(target);
     this.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(attackModifier);
     // apply stunned effect
-    target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 3 * 20, 0, false, false, true));
+    target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 4 * 20, 0, false, false, true));
   }
   
   // Client methods

@@ -47,7 +47,7 @@ public class SmashingEnchantment extends Enchantment {
   public void onEntityDamaged(LivingEntity user, Entity target, int level) {
     // check for cooldown
     final ItemStack item = user.getHeldItem(Hand.MAIN_HAND);
-    if(!(item.getItem() instanceof ClubItem) || (user instanceof PlayerEntity && ((PlayerEntity)user).getCooledAttackStrength(0.25F) < 0.9F)) {
+    if(!(item.getItem() instanceof ClubItem)) {
       return;
     }
     // stun entities within range
@@ -58,11 +58,11 @@ public class SmashingEnchantment extends Enchantment {
   }
   
   @Override 
-  public int getMinEnchantability(int level) { return 30; }
+  public int getMinEnchantability(int level) { return 100; }
   @Override
-  public int getMaxEnchantability(int level) { return 50; }
+  public int getMaxEnchantability(int level) { return 100; }
   @Override
-  public boolean isTreasureEnchantment() { return GreekFantasy.CONFIG.isSmashingEnabled(); }
+  public boolean isTreasureEnchantment() { return false; }
   @Override
   public boolean canVillagerTrade() { return false; }
   @Override

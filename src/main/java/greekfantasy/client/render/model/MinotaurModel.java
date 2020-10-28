@@ -29,7 +29,7 @@ public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T>
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, partialTick, rotationYaw, rotationPitch);
-    if(entity.isStomping()) {
+    if(entity.isCharging()) {
       final float ticks = entity.ticksExisted + partialTick;
       final float stompSpeed = entity.getStompingSpeed();
       final float limbSwingSin = MathHelper.cos(ticks * stompSpeed + (float)Math.PI);

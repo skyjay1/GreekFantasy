@@ -31,6 +31,8 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
@@ -125,6 +127,12 @@ public class ShadeEntity extends MonsterEntity {
   }
   
   @Override
+  protected SoundEvent getAmbientSound() { return SoundEvents.AMBIENT_CAVE; }
+  @Override
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_ENDERMAN_HURT; }
+  @Override
+  protected float getSoundVolume() { return 0.8F; }
+  @Override
   public boolean canAttack(final EntityType<?> typeIn) { return typeIn == EntityType.PLAYER; }
   @Override
   public boolean canBePushed() { return false; }
@@ -139,8 +147,11 @@ public class ShadeEntity extends MonsterEntity {
   
   @Nullable
   public UUID getOwnerUniqueId() { return this.dataManager.get(OWNER_UNIQUE_ID).orElse((UUID)null); }
+  
   public void setOwnerUniqueId(@Nullable UUID uniqueId) { this.dataManager.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId)); }
+  
   public int getStoredXP() { return this.getDataManager().get(DATA_XP).intValue(); }
+  
   public void setStoredXP(int xp) { this.getDataManager().set(DATA_XP, xp); }
 
   @Override

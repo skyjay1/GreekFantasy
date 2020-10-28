@@ -33,7 +33,7 @@ public class GeryonRenderer<T extends GeryonEntity> extends BipedRenderer<T, Ger
       final float translateY = height * entity.getSpawnPercent(f) - height;
       final float translateX = translate * (entity.getRNG().nextFloat() - 0.5F);
       final float translateZ = translate * (entity.getRNG().nextFloat() - 0.5F);
-      matrix.translate(translateX, translateY, translateZ);
+      matrix.translate(translateX, -translateY, translateZ);
     }
     matrix.scale(SCALE, SCALE, SCALE);
   }

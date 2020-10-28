@@ -30,8 +30,8 @@ public class WildRoseBlock extends FlowerBlock {
     Vector3d center = shape.getBoundingBox().getCenter();
     double posX = blockpos.getX() + center.x;
     double posZ = blockpos.getZ() + center.z;
-    for (int i = rand.nextInt(3); i > 0; i--) {
-      world.addParticle(ParticleTypes.AMBIENT_ENTITY_EFFECT, posX + rand.nextDouble() / 5.0D, blockpos.getY() + 0.5D - rand.nextDouble(), posZ + rand.nextDouble() / 5.0D, 1.0D, 0.6D, 0.92D);
+    if(rand.nextInt(3) == 0) {
+      world.addParticle(ParticleTypes.ENTITY_EFFECT, posX + rand.nextDouble() / 5.0D, blockpos.getY() + 0.5D - rand.nextDouble(), posZ + rand.nextDouble() / 5.0D, 1.0D, 0.6D, 0.92D);
     } 
   }
   
@@ -39,7 +39,7 @@ public class WildRoseBlock extends FlowerBlock {
   public void onEntityCollision(BlockState blockstate, World world, BlockPos pos, Entity entity) {
     if (!world.isRemote() && entity instanceof LivingEntity) {
       LivingEntity livingentity = (LivingEntity)entity;
-      livingentity.addPotionEffect(new EffectInstance(Effects.ABSORPTION, 80));
+      livingentity.addPotionEffect(new EffectInstance(Effects.ABSORPTION, 78));
     }
   }
 

@@ -14,6 +14,7 @@ import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 
 public class MadCowEntity extends CowEntity implements IMob {
@@ -49,6 +50,11 @@ public class MadCowEntity extends CowEntity implements IMob {
     if(!this.isNoDespawnRequired() && this.rand.nextInt(400) == 0) {
       this.attackEntityFrom(DamageSource.STARVE, 1.0F);
     }
+  }
+  
+  @Override
+  public SoundCategory getSoundCategory() {
+    return SoundCategory.HOSTILE;
   }
 
   class AttackGoal extends MeleeAttackGoal {

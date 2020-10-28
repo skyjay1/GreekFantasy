@@ -21,7 +21,7 @@ public class MinotaurRenderer<T extends MinotaurEntity> extends BipedRenderer<T,
   @Override
   public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
       final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
-    this.entityModel.setStomping(entityIn.isStomping());
+    this.entityModel.setStomping(entityIn.isCharging());
     super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
   }
 

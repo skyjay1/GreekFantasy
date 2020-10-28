@@ -7,32 +7,32 @@ __Key:__
 ## Entity basics
 
 __Key:__
-`[Model] [AI] [Loot table]`
+`[Model] [AI] [Sounds] [Loot table]`
 
-X X X Naiad
-X X X Dryad
-X X X Satyr
-X ~ _ Centaur
-X X ~ Cyprian Centaur (bull-head, hostile) (TODO: add arrows to loot table)
-X X X Minotaur
-X X X Gorgon (Medusa)
-X X X Harpy
-X X _ Empusa
-X X X Shade
-X X _ Siren (hostile)
-X X X Cerastes (ram-horned serpent)
-X X X Ara (Propoetide)
-X X X Cyclopes
-X X ~ Gigante
-X X X Unicorn
-X X ~ Orthus (2-headed dog)
-X X X Elpis (hope)
-X X X Sparti
-X X X Mad Cow (summoned by Geryon)
-X X X Boss: Cerberus
-X X ~ Boss: Geryon (3-headed Gigante) (TODO: better loot)
-_ _ _ Hippocampus
-_ _ _ Eurynomos (blue skin; vulture head?)
+X X _ X Naiad
+X X _ X Dryad
+X X _ X Satyr
+X X _ _ Centaur
+X X X ~ Cyprian Centaur (bull-head, hostile) (TODO: add arrows to loot table)
+X X X X Minotaur
+X X _ X Gorgon (Medusa)
+X X _ X Harpy
+X X _ _ Empusa
+X X X X Shade
+X X _ _ Siren (hostile)
+X X _ X Cerastes (ram-horned serpent)
+X X _ X Ara (Propoetide)
+X X _ X Cyclopes
+X X _ ~ Gigante
+X X X X Unicorn
+X X X X Orthus (2-headed dog)
+X X _ X Elpis (hope)
+X X X X Sparti
+X X X X Mad Cow (summoned by Geryon)
+X X _ X Boss: Cerberus
+X X _ ~ Boss: Geryon (3-headed Gigante) (TODO: better loot)
+_ _ _ _ Hippocampus
+_ _ _ _ Eurynomos (blue skin; vulture head?)
 
 
 ## Entity AI
@@ -48,7 +48,7 @@ X Satyrs light unlit campfires
 X Geryon smash attack
 X Geryon summons Mad Cows
 X Centaurs / Cyprians shoot arrows
-~ Minotaur charges at player (TODO: extend charge beyond player position)
+X Minotaur charges at player
 X Minotaur is stunned when charge attack misses
 X Gorgon petrifies player
 X Harpy looks for nests
@@ -121,10 +121,10 @@ X X X Sword of the Hunt (one-shots animals)
 X X X Thunderbolt
 X X X Snake skin and Purified snake skin (from Gorgons)
 X X X Ichor - crafting component from Elpis
-_ _ _ Dog claw (or tooth) - crafting component from Orthus
-_ X _ Fiery hide - crafting component from Cerberus (helm of darkness)
+_ X X Dog Claw - crafting component from Orthus
+_ X X Fiery hide - crafting component from Cerberus (helm of darkness)
 _ X X Styxian shard - crafting component from Cyclopes (helm of darkness)
-_ X X Wild Rose - crafting component from Satyr (sword of the hunt)
+X X X Wild Rose - crafting component from Satyr (sword of the hunt)
 _ _ _ Javelin or Bident (wood, stone/flint, iron)
 _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 

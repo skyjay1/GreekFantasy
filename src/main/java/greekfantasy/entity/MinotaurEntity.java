@@ -4,6 +4,7 @@ import java.util.EnumSet;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -17,27 +18,32 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class MinotaurEntity extends MonsterEntity {
-  
-  private static final byte STOMPING_START = 4;
-  private static final byte STOMPING_END = 5;
-  private static final byte STUNNED_START = 6;
-  private static final byte STUNNED_END = 7;
-  
-  private boolean isStomping;
-  private boolean isStunned;
+  private static final DataParameter<Byte> STATE = EntityDataManager.createKey(MinotaurEntity.class, DataSerializers.BYTE);
+  private static final String KEY_STATE = "MinotaurState";
+  //bytes to use in STATE
+  private static final byte NONE = (byte) 0;
+  private static final byte CHARGING = (byte) 1;
+  private static final byte STUNNED = (byte) 2;
   
   private final AttributeModifier knockbackModifier = new AttributeModifier("Charge knockback bonus", 2.25F, AttributeModifier.Operation.MULTIPLY_TOTAL);
   private final AttributeModifier attackModifier = new AttributeModifier("Charge attack bonus", 1.75F, AttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -49,10 +55,16 @@ public class MinotaurEntity extends MonsterEntity {
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.27D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.25D);
- }
+  }
+  
+  @Override
+  public void registerData() {
+    super.registerData();
+    this.getDataManager().register(STATE, Byte.valueOf(NONE));
+  }
   
   @Override
   protected void registerGoals() {
@@ -60,23 +72,19 @@ public class MinotaurEntity extends MonsterEntity {
     this.goalSelector.addGoal(0, new StunnedGoal(this));
     this.goalSelector.addGoal(1, new SwimGoal(this));
     this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, false));
-    //this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     if(GreekFantasy.CONFIG.MINOTAUR_ATTACK.get()) {
-      this.goalSelector.addGoal(2, new ChargeAttackGoal(this, 1.68D));
+      this.goalSelector.addGoal(2, new ChargeAttackGoal(1.68D));
     }
   }
  
   @Override
   public void livingTick() {
     super.livingTick();
-    
-    if(this.isServerWorld() && this.isStomping() && this.getAttackTarget() == null) {
-      this.setStomping(false);
-    }
     
     // spawn particles
     if (world.isRemote() && this.isStunned()) {
@@ -85,58 +93,59 @@ public class MinotaurEntity extends MonsterEntity {
   }
   
   @Override
+  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_COW_AMBIENT; }
+
+  @Override
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_COW_HURT; }
+
+  @Override
+  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_COW_DEATH; }
+
+  @Override
+  protected float getSoundVolume() { return 0.8F; }
+  
+  @Override
+  protected void playStepSound(BlockPos pos, BlockState blockIn) {
+    this.playSound(SoundEvents.ENTITY_COW_STEP, 0.15F, 1.0F);
+  }
+  
+  @Override
   public boolean attackEntityFrom(final DamageSource source, final float amount) {
     if(this.isServerWorld()) {
-      this.setStomping(false);
+      this.setCharging(false);
       this.setStunned(false);
     }
     return super.attackEntityFrom(source, amount);
   }
-  
-  @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
-    switch(id) {
-    case STOMPING_START:
-      this.isStomping = true;
-      break;
-    case STOMPING_END:
-      this.isStomping = false;
-      break;
-    case STUNNED_START:
-      this.isStunned = true;
-      this.isStomping = false;
-      break;
-    case STUNNED_END:
-      this.isStunned = false;
-      break;
-    default:
-      super.handleStatusUpdate(id);
-      break;
-    }
-  }
-  
-  public void setStomping(final boolean stomping) {
-    this.isStomping = stomping;
-    if(this.isServerWorld()) {
-      this.world.setEntityState(this, stomping ? STOMPING_START : STOMPING_END);
-    }
+ 
+  @Override
+  public void writeAdditional(CompoundNBT compound) {
+     super.writeAdditional(compound);
+     compound.putByte(KEY_STATE, this.getMinotaurState());
   }
 
-  public boolean isStomping() {
-    return this.isStomping;
+  @Override
+  public void readAdditional(CompoundNBT compound) {
+     super.readAdditional(compound);
+     this.setMinotaurState(compound.getByte(KEY_STATE));
   }
+  
+  public byte getMinotaurState() { return this.getDataManager().get(STATE).byteValue(); }
+  
+  public void setMinotaurState(final byte state) { this.getDataManager().set(STATE, Byte.valueOf(state)); }
+  
+  public boolean isNoneState() { return getMinotaurState() == NONE; }
+  
+  public boolean isCharging() { return getMinotaurState() == CHARGING; }
+  
+  public boolean isStunned() { return getMinotaurState() == STUNNED; }
+  
+  public void setCharging(final boolean charging) { setMinotaurState(charging ? CHARGING : NONE); }
+  
+  public void setStunned(final boolean stunned) { setMinotaurState(stunned ? STUNNED : NONE); }
 
   public float getStompingSpeed() {
     return 0.58F;
-  }
-  
-  public void setStunned(final boolean stunned) {
-    this.isStunned = stunned;
-    this.world.setEntityState(this, stunned ? STUNNED_START : STUNNED_END);    
-  }
-
-  public boolean isStunned() {
-    return this.isStunned;
   }
   
   public void spawnStunnedParticles() {
@@ -161,7 +170,7 @@ public class MinotaurEntity extends MonsterEntity {
     this.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(attackModifier);
     this.getAttribute(Attributes.ATTACK_KNOCKBACK).removeModifier(this.knockbackModifier);
     // apply stunned effect
-    target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 5 * 20, 0, false, false, true));
+    target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 4 * 20, 0, false, false, true));
   }
   
   static class StunnedGoal extends Goal {
@@ -203,19 +212,19 @@ public class MinotaurEntity extends MonsterEntity {
     }
   }
   
-  static class ChargeAttackGoal extends Goal {
+  class ChargeAttackGoal extends Goal {
     
-    private final MinotaurEntity entity;
+    private final int maxCooldown = 200;
+    private final int maxCharging = 40;
+    private final double minRange = 2.5D;
     private final double speed;
-    private final int MAX_COOLDOWN = 200;
-    private final int MAX_STOMPING = 40;
-    private int stompingTimer;
-    private int cooldown = MAX_COOLDOWN;
+
+    private int chargingTimer;
+    private int cooldown = maxCooldown;
     private Vector3d targetPos;
     
-    protected ChargeAttackGoal(final MinotaurEntity entityIn, final double speedIn) {
+    protected ChargeAttackGoal(final double speedIn) {
       this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-      entity = entityIn;
       speed = speedIn;
       targetPos = null;
     }
@@ -230,9 +239,9 @@ public class MinotaurEntity extends MonsterEntity {
       // attack targetPos is more than 3 blocks away
       if(this.cooldown > 0) {
         cooldown--;
-      } else if (this.entity.getAttackTarget() != null && !this.entity.getMoveHelper().isUpdating() 
-          && entity.getRNG().nextInt(7) == 0 && hasDirectPath(this.entity.getAttackTarget())
-          && entity.getDistanceSq(this.entity.getAttackTarget()) > 9.0D) {
+      } else if (MinotaurEntity.this.isNoneState() && MinotaurEntity.this.getAttackTarget() != null 
+          && !MinotaurEntity.this.getMoveHelper().isUpdating() && hasDirectPath(MinotaurEntity.this.getAttackTarget())
+          && MinotaurEntity.this.getDistanceSq(MinotaurEntity.this.getAttackTarget()) > (minRange * minRange)) {
         return true;
       }
       return false;
@@ -240,59 +249,82 @@ public class MinotaurEntity extends MonsterEntity {
     
     @Override
     public boolean shouldContinueExecuting() { 
-      return (this.entity.isStomping() && this.entity.getAttackTarget() != null 
-              && this.entity.getAttackTarget().isAlive()) && hasDirectPath(this.entity.getAttackTarget()); 
+      return (MinotaurEntity.this.isCharging() && MinotaurEntity.this.getAttackTarget() != null 
+              && MinotaurEntity.this.getAttackTarget().isAlive()) && hasDirectPath(MinotaurEntity.this.getAttackTarget()); 
     }
     
     @Override
     public void startExecuting() {
-      this.entity.setStomping(true);
-      this.stompingTimer = 1;
+      MinotaurEntity.this.setCharging(true);
+      this.chargingTimer = 1;
     }
 
     @Override
     public void tick() {
-      LivingEntity target = this.entity.getAttackTarget();
-      final boolean hitTarget = this.entity.getDistanceSq(target) < 1.1D;
+      LivingEntity target = MinotaurEntity.this.getAttackTarget();
+      final double disSqToTargetEntity = MinotaurEntity.this.getDistanceSq(target);
+      final boolean hitTarget = disSqToTargetEntity < 1.1D;
       final boolean hasTarget = targetPos != null;
-      final boolean finished = hitTarget || (hasTarget && this.entity.getDistanceSq(targetPos) < 0.9D);
-      final boolean isStomping = stompingTimer > 0 && stompingTimer++ < MAX_STOMPING;
+      final boolean finished = hitTarget || (hasTarget && MinotaurEntity.this.getDistanceSq(targetPos) < 0.9D);
+      final boolean isCharging = chargingTimer > 0 && chargingTimer++ < maxCharging;
       if(finished) {
         // if charge attack hit the player
         if(hitTarget) {
-          this.entity.applyChargeAttack(target);
+          MinotaurEntity.this.applyChargeAttack(target);
         } else {
-          this.entity.setStunned(true);
+          MinotaurEntity.this.setStunned(true);
         }
         // reset values
         resetTask();
-      } else if(isStomping) {
-        // prevent the entity from moving
-        this.entity.getNavigator().clearPath();
-        this.entity.getLookController().setLookPosition(target.getEyePosition(1.0F));
+      } else if(isCharging) {
+        // prevent the entity from moving while preparing to charge attack
+        MinotaurEntity.this.getNavigator().clearPath();
+        MinotaurEntity.this.getLookController().setLookPosition(target.getEyePosition(1.0F));
       } else if(hasTarget) {
-        this.entity.getMoveHelper().setMoveTo(targetPos.x, targetPos.y, targetPos.z, speed);
-        this.entity.getLookController().setLookPosition(targetPos.add(0, target.getEyeHeight(), 0));
+        // continue moving toward the target that was set earlier
+        MinotaurEntity.this.getMoveHelper().setMoveTo(targetPos.x, targetPos.y, targetPos.z, speed);
+        MinotaurEntity.this.getLookController().setLookPosition(targetPos.add(0, target.getEyeHeight(), 0));
       } else {
-        // launch the charge attack
-        // TODO get a vector from entity to targetPos and extend it
-        // to allow minotaur to run past the player position
-        this.targetPos = target.getPositionVec();
+        // determine where the charge attack should target
+        this.targetPos = getExtendedTarget(target, MathHelper.sqrt(disSqToTargetEntity) + 8.0D);
       }
     }
     
     @Override
     public void resetTask() { 
-      this.entity.setStomping(false);
-      this.stompingTimer = 0;
-      this.cooldown = MAX_COOLDOWN;
+      if(MinotaurEntity.this.isCharging()) {
+        MinotaurEntity.this.setCharging(false);
+      }
+      this.chargingTimer = 0;
+      this.cooldown = maxCooldown;
       this.targetPos = null;
     }
     
+    private Vector3d getExtendedTarget(final LivingEntity targetEntity, final double maxDistance) {
+      Vector3d start = MinotaurEntity.this.getPositionVec().add(0, 0.1D, 0);
+      Vector3d target = targetEntity.getPositionVec().add(0, 0.1D, 0);
+      Vector3d end = target;
+      Vector3d vecDiff = end.subtract(start);
+      double length = vecDiff.length();
+      vecDiff = vecDiff.normalize();
+      // repeatedly scale the vector
+      do {
+        target = end;
+        end = start.add(vecDiff.scale(++length));
+      } while(length < maxDistance && hasDirectPath(end));
+      // the vector has either reached max length, or encountered a block
+      return target;
+    }
+    
+    /** @return whether there is an unobstructed straight path from the entity to the target entity **/
     private boolean hasDirectPath(final LivingEntity target) {
-      Vector3d vector3d = new Vector3d(this.entity.getPosX(), this.entity.getPosY() + 0.1D, this.entity.getPosZ());
-      Vector3d vector3d1 = new Vector3d(target.getPosX(), target.getPosY() + 0.1D, target.getPosZ());
-      return this.entity.world.rayTraceBlocks(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this.entity)).getType() == RayTraceResult.Type.MISS;
+      return hasDirectPath(target.getPositionVec().add(0, 0.1D, 0));
+    }
+    
+    /** @return whether there is an unobstructed straight path from the entity to the target position **/
+    private boolean hasDirectPath(final Vector3d target) {
+      Vector3d start = MinotaurEntity.this.getPositionVec().add(0, 0.1D, 0);
+      return MinotaurEntity.this.world.rayTraceBlocks(new RayTraceContext(start, target, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, MinotaurEntity.this)).getType() == RayTraceResult.Type.MISS;
     }
   }  
 }

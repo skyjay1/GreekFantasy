@@ -74,7 +74,7 @@ public class GeryonEntity extends MonsterEntity {
   private static final double SMASH_RANGE = 12.0D;
   private static final int ATTACK_COOLDOWN = 38;
   
-  private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.BLUE, BossInfo.Overlay.PROGRESS)).setDarkenSky(true);
+  private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.RED, BossInfo.Overlay.PROGRESS)).setDarkenSky(true);
   
   private int spawnTime;
   private int smashTime;
@@ -381,7 +381,7 @@ public class GeryonEntity extends MonsterEntity {
   public float getSpawnTime(final float ageInTicks) { return (float) (spawnTime + (ageInTicks < 1.0F ? ageInTicks : 0)); }
   
   @OnlyIn(Dist.CLIENT)
-  public float getSpawnPercent(final float ageInTicks) { return 1.0F - ((float)spawnTime / (float)MAX_SPAWN_TIME); }
+  public float getSpawnPercent(final float ageInTicks) { return spawnTime > 0 ? 1.0F - (getSpawnTime(ageInTicks) / (float)MAX_SPAWN_TIME) : 1.0F; }
   
   @OnlyIn(Dist.CLIENT)
   public float getSummonTime(final float partialTick) { return summonTime + (partialTick < 1.0F ? partialTick : 0); }
