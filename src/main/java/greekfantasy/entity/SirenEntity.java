@@ -39,6 +39,7 @@ import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorld;
@@ -82,10 +83,8 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
   }
   
   @Override
-  protected void registerGoals() {
-    super.registerGoals();
-    
-    this.goalSelector.addGoal(3, new SwimUpGoal<SirenEntity>(this, 1.0D, this.world.getSeaLevel() + 1));
+  protected void registerGoals() {    
+    this.goalSelector.addGoal(3, new SwimUpGoal<SirenEntity>(this, 1.0D, this.world.getSeaLevel() + 2));
     this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 8.0F));
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
     // add configurable goals
@@ -117,6 +116,7 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
     // singing
     if(this.isCharming() && rand.nextInt(7) == 0) {
       final float color = 0.065F + rand.nextFloat() * 0.025F;
+      this.playSound(SoundEvents.ENTITY_GHAST_WARN, 1.8F, color * 15);
       world.addParticle(ParticleTypes.NOTE, this.getPosX(), this.getPosYEye() + 0.15D, this.getPosZ(), color, 0.0D, 0.0D);
     }
     
@@ -132,16 +132,6 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
       }
     }
   }
-//
-//  @Override
-//  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
-//      @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-//    if(this.rand.nextFloat() < 0.05F) {
-//      final ItemStack trident = new ItemStack(Items.TRIDENT);
-//      this.setHeldItem(Hand.MAIN_HAND, trident);
-//    }
-//    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-//  }
   
   // Swimming methods
 
@@ -163,7 +153,7 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
   }
 
   @Override
-  public boolean isPushedByWater() { return !isSwimming(); }
+  public boolean isPushedByWater() { return false; }
 
   @Override
   public boolean isSwimmingUpCalculated() {

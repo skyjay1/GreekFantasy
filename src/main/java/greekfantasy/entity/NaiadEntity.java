@@ -7,14 +7,17 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GoToWaterGoal;
 import greekfantasy.entity.ai.SwimUpGoal;
 import greekfantasy.entity.ai.SwimmingMovementController;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IAngerable;
 import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.MoverType;
@@ -24,13 +27,18 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
+import net.minecraft.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.monster.DrownedEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.TridentEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -39,12 +47,16 @@ import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.pathfinding.SwimmerPathNavigator;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.RangedInteger;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.TickRangeConverter;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
@@ -56,7 +68,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngerable {
+public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngerable, IRangedAttackMob {
   
   private static final DataParameter<String> DATA_VARIANT = EntityDataManager.createKey(NaiadEntity.class, DataSerializers.STRING);
   private static final String KEY_VARIANT = "Variant";
@@ -86,7 +98,7 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.75D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
   }
 
   public static boolean canNaiadSpawnOn(EntityType<? extends WaterMobEntity> entity, IWorld world, SpawnReason reason, BlockPos pos,
@@ -101,22 +113,21 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
       @Override
       public boolean shouldExecute() { return entity.getAttackTarget() == null && entity.getRNG().nextInt(100) == 0 && super.shouldExecute(); }
     });
-    this.goalSelector.addGoal(3, new SwimUpGoal<NaiadEntity>(this, 1.0D, this.world.getSeaLevel()) {
-      @Override
-      public boolean shouldExecute() { return NaiadEntity.this.world.isDaytime() && super.shouldExecute(); }
-    });
-    this.goalSelector.addGoal(3, new RandomSwimmingGoal(this, 0.8D, 140) {
+    this.goalSelector.addGoal(2, new NaiadEntity.TridentAttackGoal(this, 1.0D, 36, 12));
+    this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
+    this.goalSelector.addGoal(4, new SwimUpGoal<NaiadEntity>(this, 1.0D, this.world.getSeaLevel()));
+    this.goalSelector.addGoal(4, new RandomSwimmingGoal(this, 0.8D, 140) {
       @Override
       public boolean shouldExecute() { return NaiadEntity.this.isInWater() && super.shouldExecute(); }
     });
-    this.goalSelector.addGoal(3, new RandomWalkingGoal(this, 0.8D, 180) {
+    this.goalSelector.addGoal(4, new RandomWalkingGoal(this, 0.8D, 180) {
       @Override
       public boolean shouldExecute() { return !NaiadEntity.this.isInWater() && super.shouldExecute(); }
     });
-    this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, DrownedEntity.class, true));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, DrownedEntity.class, false));
     this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
     this.targetSelector.addGoal(4, new ResetAngerGoal<>(this, true));
   }
@@ -137,7 +148,7 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
       // update visually swimming flag
       if(this.ticksExisted % 11 == 1) {
         final BlockState blockBelow = world.getBlockState(this.getPositionUnderneath());
-        this.isVisuallySwimming = (swimmingUp || isSwimming() || isInWater()) && blockBelow.getFluidState().getFluid().isIn(FluidTags.WATER);
+        this.isVisuallySwimming = this.getMotion().getY() > -0.01D && (swimmingUp || isSwimming() || isInWater()) && blockBelow.getFluidState().getFluid().isIn(FluidTags.WATER);
       }
       // visually swimming percent
       if(isVisuallySwimming) {
@@ -146,7 +157,25 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
         this.visuallySwimmingPercent = Math.max(visuallySwimmingPercent - 0.09F, 0.0F);
       }
     }
-
+  }
+  
+  @Override
+  public boolean isInvulnerableTo(final DamageSource source) {
+    // immune to damage from other naiads
+    if(source.getTrueSource() != null && source.getTrueSource().getType() == GFRegistry.NAIAD_ENTITY) {
+      return true;
+    }
+    return super.isInvulnerableTo(source);
+  }
+  
+  @Override
+  protected void damageEntity(final DamageSource source, final float amountIn) {
+    float amount = amountIn;
+    if (!source.isDamageAbsolute() && source.getTrueSource() instanceof MobEntity
+        && ((MobEntity)source.getTrueSource()).getCreatureAttribute() == CreatureAttribute.UNDEAD) {
+      amount *= 0.6F;
+    }
+    super.damageEntity(source, amount);
   }
 
   @Override
@@ -190,12 +219,29 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
     final NaiadEntity.Variant variant = NaiadEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
     this.setVariant(variant);
+    final float tridentChance = (variant == Variant.OCEAN) ? 0.25F : 0.14F;
+    if(this.rand.nextFloat() < tridentChance) {
+      final ItemStack trident = new ItemStack(Items.TRIDENT);
+      this.setHeldItem(Hand.MAIN_HAND, trident);
+    }
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
   @Override
   public boolean canDespawn(final double disToPlayer) {
     return this.age > 8400 && disToPlayer > 8.0D;
+  }
+  
+  @Override
+  public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
+    TridentEntity trident = new TridentEntity(this.world, this, new ItemStack(Items.TRIDENT));
+    double dx = target.getPosX() - getPosX();
+    double dy = target.getPosYHeight(0.33D) - trident.getPosY();
+    double dz = target.getPosZ() - getPosZ();
+    double dis = MathHelper.sqrt(dx * dx + dz * dz);
+    trident.shoot(dx, dy + dis * 0.2D, dz, 1.6F, (14 - this.world.getDifficulty().getId() * 4));
+    playSound(SoundEvents.ENTITY_DROWNED_SHOOT, 1.0F, 1.0F / (getRNG().nextFloat() * 0.4F + 0.8F));
+    this.world.addEntity(trident);
   }
   
   // Swimming methods
@@ -221,7 +267,7 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   }
 
   @Override
-  public boolean isPushedByWater() { return !isSwimming(); }
+  public boolean isPushedByWater() { return false; }
 
   @Override
   public boolean isSwimmingUpCalculated() {
@@ -247,7 +293,7 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   
   @OnlyIn(Dist.CLIENT)
   public float animateSwimmingPercent() {
-    return isVisuallySwimming ? visuallySwimmingPercent : 0.0F;
+    return visuallySwimmingPercent;
   }
 
   // Variant
@@ -308,5 +354,30 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
       return name;
     }
   }
+  
+  class TridentAttackGoal extends RangedAttackGoal {
 
+    public TridentAttackGoal(final NaiadEntity entityIn, double moveSpeed, int attackInterval, float attackDistance) {
+      super(entityIn, moveSpeed, attackInterval, attackDistance);
+    }
+
+    @Override
+    public boolean shouldExecute() {
+      return (super.shouldExecute() && NaiadEntity.this.getHeldItemMainhand().getItem() == Items.TRIDENT);
+    }
+
+    @Override
+    public void startExecuting() {
+      super.startExecuting();
+      NaiadEntity.this.setAggroed(true);
+      NaiadEntity.this.setActiveHand(Hand.MAIN_HAND);
+    }
+
+    @Override
+    public void resetTask() {
+      super.resetTask();
+      NaiadEntity.this.resetActiveHand();
+      NaiadEntity.this.setAggroed(false);
+    }
+  }
 }

@@ -67,13 +67,14 @@ public class CommonForgeEventHandler {
         // check for Geryon Head blocks nearby
         final List<BlockPos> heads = new ArrayList<>();
         final int r = 3;
+        BlockPos pos;
         countHeads:
         for(int x = -r; x <= r; x++) {
           for(int y = -2; y <= 2; y++) {
             for(int z = -r; z <= r; z++) {
-              final BlockPos p = deathPos.add(x, y, z);
-              if(event.getEntityLiving().getEntityWorld().getBlockState(p).isIn(GFRegistry.GIGANTE_HEAD)) {
-                heads.add(p);
+              pos = deathPos.add(x, y, z);
+              if(event.getEntityLiving().getEntityWorld().getBlockState(pos).isIn(GFRegistry.GIGANTE_HEAD)) {
+                heads.add(pos);
               }
               if(heads.size() >= 3) break countHeads;
             }

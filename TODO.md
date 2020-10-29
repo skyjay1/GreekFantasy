@@ -12,25 +12,25 @@ __Key:__
 X X _ X Naiad
 X X _ X Dryad
 X X _ X Satyr
-X X _ _ Centaur
-X X X ~ Cyprian Centaur (bull-head, hostile) (TODO: add arrows to loot table)
+X X _ X Centaur
+X X X X Cyprian Centaur (bull-head, hostile)
 X X X X Minotaur
-X X _ X Gorgon (Medusa)
-X X _ X Harpy
-X X _ _ Empusa
+X X X X Gorgon (Medusa)
+X X X X Harpy
+X X _ ~ Empusa
 X X X X Shade
-X X _ _ Siren (hostile)
-X X _ X Cerastes (ram-horned serpent)
+X X _ ~ Siren (hostile)
+X X X X Cerastes (ram-horned serpent)
 X X _ X Ara (Propoetide)
 X X _ X Cyclopes
-X X _ ~ Gigante
+X X X X Gigante
 X X X X Unicorn
 X X X X Orthus (2-headed dog)
-X X _ X Elpis (hope)
+X X X X Elpis (hope)
 X X X X Sparti
 X X X X Mad Cow (summoned by Geryon)
 X X _ X Boss: Cerberus
-X X _ ~ Boss: Geryon (3-headed Gigante) (TODO: better loot)
+X X _ X Boss: Geryon (3-headed Gigante)
 _ _ _ _ Hippocampus
 _ _ _ _ Eurynomos (blue skin; vulture head?)
 
@@ -60,6 +60,7 @@ X Unicorn can be tamed / ridden
 X Elpis grants something to player
 X Sparti follow player who summoned them (owner)
 X Siren charms players (forces player to move toward siren)
+X Naiad can hold/throw trident
 
 ## Structures
 
@@ -121,9 +122,9 @@ X X X Sword of the Hunt (one-shots animals)
 X X X Thunderbolt
 X X X Snake skin and Purified snake skin (from Gorgons)
 X X X Ichor - crafting component from Elpis
-_ X X Dog Claw - crafting component from Orthus
-_ X X Fiery hide - crafting component from Cerberus (helm of darkness)
-_ X X Styxian shard - crafting component from Cyclopes (helm of darkness)
+X X X Dog Claw - crafting component from Orthus
+X X X Fiery hide - crafting component from Cerberus (helm of darkness)
+X X X Styxian shard - crafting component from Cyclopes (helm of darkness)
 X X X Wild Rose - crafting component from Satyr (sword of the hunt)
 _ _ _ Javelin or Bident (wood, stone/flint, iron)
 _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
@@ -149,7 +150,7 @@ X "Stunned" effect (prevent movement or item use)
 X "Petrified" effect
 X "Overstep" enchantment
 X "Smashing" enchantment
-X Panflute songs
+X Panflute songs TODO "Tetris Theme"
 X Panflute song selection GUI
 X Lots of mysterious box functions!
 X Some way to encounter Geryon

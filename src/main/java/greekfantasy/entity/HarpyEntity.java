@@ -29,6 +29,8 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -116,6 +118,18 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
       }
     }
   }
+  
+  @Override
+  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_PARROT_AMBIENT; }
+
+  @Override
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_PARROT_HURT; }
+
+  @Override
+  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_GHAST_DEATH; }
+
+  @Override
+  protected float getSoundVolume() { return 0.8F; }
   
   @Override
   public void writeAdditional(CompoundNBT compound) {

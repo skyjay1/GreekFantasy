@@ -9,10 +9,51 @@
           "name": "greekfantasy:gigante_head",
           "conditions": [
             {
-              "condition": "minecraft:random_chance",
-              "chance": 0.4
+              "condition": "minecraft:random_chance_with_looting",
+              "chance": 0.65,
+              "looting_multiplier": 0.05
             }
           ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:iron_ingot"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:carrot"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:potato"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:pumpkin"
+        }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:set_count",
+          "count": {
+            "min": 1,
+            "max": 2
+          }
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "condition": "minecraft:random_chance_with_looting",
+          "chance": 0.15,
+          "looting_multiplier": 0.01
         }
       ]
     }

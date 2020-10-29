@@ -33,6 +33,8 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.RangedInteger;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.TickRangeConverter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -144,6 +146,20 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
+  @Override
+  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_VILLAGER_AMBIENT; }
+
+  @Override
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_VILLAGER_HURT; }
+
+  @Override
+  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_VILLAGER_DEATH; }
+
+  @Override
+  protected float getSoundVolume() { return 0.8F; }
+  
+  @Override
+  protected float getSoundPitch() { return 0.12F; }
 
   @Override
   public void writeAdditional(CompoundNBT compound) {

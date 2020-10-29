@@ -29,6 +29,9 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
@@ -203,6 +206,21 @@ public class CerastesEntity extends CreatureEntity {
   protected boolean isDespawnPeaceful() {
     return true;
   }
+  
+  @Override
+  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_SPIDER_AMBIENT; }
+
+  @Override
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_SPIDER_HURT; }
+
+  @Override
+  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_SPIDER_DEATH; }
+
+  @Override
+  protected float getSoundVolume() { return 0.8F; }
+  
+  @Override
+  public SoundCategory getSoundCategory() { return SoundCategory.HOSTILE; }
 
   @Override
   public EntitySize getSize(Pose poseIn) {

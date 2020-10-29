@@ -8,6 +8,7 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
@@ -45,6 +46,9 @@ public class CyprianEntity extends CentaurEntity implements IMob {
 
   @Override
   protected float getSoundVolume() { return 0.8F; }
+  
+  @Override
+  public SoundCategory getSoundCategory() { return SoundCategory.HOSTILE; }
   
   @Override
   protected boolean isDespawnPeaceful() {

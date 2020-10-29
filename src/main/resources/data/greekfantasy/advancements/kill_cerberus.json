@@ -2,13 +2,13 @@
   "parent": "greekfantasy:root",
   "display": {
     "icon": {
-      "item": "greekfantasy:gigante_head"
+      "item": "greekfantasy:cerberus_head"
     },
     "title": {
-      "translate": "advancements.greekfantasy.kill_geryon.title"
+      "translate": "advancements.greekfantasy.kill_cerberus.title"
     },
     "description": {
-      "translate": "advancements.greekfantasy.kill_geryon.description"
+      "translate": "advancements.greekfantasy.kill_cerberus.description"
     },
     "frame": "challenge",
     "show_toast": true,
@@ -16,18 +16,18 @@
     "hidden": false
   },
   "criteria": {
-    "kill_geryon": {
+    "kill_cerberus": {
       "trigger": "minecraft:player_killed_entity",
       "conditions": {
         "entity": {
-          "type": "greekfantasy:geryon"
+          "type": "greekfantasy:cerberus"
 		}
       }
     }
   },
   "requirements": [
     [
-      "kill_geryon"
+      "kill_cerberus"
     ]
   ]
 }

@@ -8,9 +8,8 @@ import greekfantasy.entity.CentaurEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.IRangedAttackMob;
-import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
 
@@ -123,8 +122,8 @@ public class CentaurModel<T extends CentaurEntity & IRangedAttackMob> extends Bi
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch) {
     // set arm poses
-    final ItemStack bow = entity.getHeldItem(ProjectileHelper.getHandWith(entity, Items.BOW));
-    if (bow.getItem() instanceof net.minecraft.item.BowItem && entity.isAggressive()) {
+    final ItemStack item = entity.getHeldItem(Hand.MAIN_HAND);
+    if (item.getItem() instanceof net.minecraft.item.BowItem && entity.isAggressive()) {
        if (entity.getPrimaryHand() == HandSide.RIGHT) {
           this.rightArmPose = BipedModel.ArmPose.BOW_AND_ARROW;
        } else {

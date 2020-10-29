@@ -2,8 +2,7 @@
   "parent": "greekfantasy:root",
   "display": {
     "icon": {
-      "item": "minecraft:wooden_pickaxe",
-      "nbt": "{Damage:0}"
+      "item": "greekfantasy:snakeskin"
     },
     "title": {
       "translate": "advancements.greekfantasy.effect_petrified.title"

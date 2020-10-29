@@ -22,6 +22,9 @@ import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -91,6 +94,18 @@ public class GorgonEntity extends MonsterEntity {
       }
     }
   }
+  
+  @Override
+  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_CAT_HISS; }
+
+  @Override
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_SPIDER_AMBIENT; }
+
+  @Override
+  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_SPIDER_DEATH; }
+
+  @Override
+  protected float getSoundVolume() { return 0.8F; }
   
   public boolean isPlayerStaring(final PlayerEntity player) {
     Vector3d vector3d = player.getLook(1.0F).normalize();

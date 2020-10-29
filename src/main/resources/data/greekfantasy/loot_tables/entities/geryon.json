@@ -6,6 +6,50 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "minecraft:netherite_ingot",
+	      "functions": [
+	        {
+	          "function": "minecraft:set_count",
+	          "count": {
+	            "min": 0,
+	            "max": 2
+	          }
+	        }
+	      ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:netherite_scrap",
+	      "functions": [
+	        {
+	          "function": "minecraft:set_count",
+	          "count": {
+	            "min": 1,
+	            "max": 4
+	          }
+	        }
+	      ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond",
+	      "functions": [
+	        {
+	          "function": "minecraft:set_count",
+	          "count": {
+	            "min": 8,
+	            "max": 22
+	          }
+	        }
+	      ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
           "name": "greekfantasy:ambrosia"
         }
       ],

@@ -1,6 +1,10 @@
 package greekfantasy.client.render.model;
 
 import greekfantasy.entity.NaiadEntity;
+import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
 
 public class NaiadModel<T extends NaiadEntity> extends NymphModel<T> {
@@ -12,6 +16,18 @@ public class NaiadModel<T extends NaiadEntity> extends NymphModel<T> {
   @Override
   public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
       float headPitch) {
+    // set arm poses
+    final ItemStack item = entityIn.getHeldItem(Hand.MAIN_HAND);
+    if (item.getItem() instanceof net.minecraft.item.TridentItem && entityIn.isAggressive()) {
+       if (entityIn.getPrimaryHand() == HandSide.RIGHT) {
+          this.rightArmPose = BipedModel.ArmPose.THROW_SPEAR;
+       } else {
+          this.leftArmPose = BipedModel.ArmPose.THROW_SPEAR;
+       }
+    } else {
+      this.rightArmPose = this.leftArmPose = BipedModel.ArmPose.EMPTY;
+    }
+    // super method
     super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);    
     // correct rotation points
     bipedHead.setRotationPoint(0.0F, 0.0F, 1.5F);
@@ -31,7 +47,7 @@ public class NaiadModel<T extends NaiadEntity> extends NymphModel<T> {
       bipedRightLeg.rotateAngleX = cosTicks * swimming;
       bipedLeftLeg.rotateAngleX = sinTicks * swimming;
       // animate arms
-      if(!entityIn.isSwingInProgress) {
+      if(!entityIn.isSwingInProgress && this.rightArmPose != ArmPose.THROW_SPEAR && this.leftArmPose != ArmPose.THROW_SPEAR) {
         final float cosArms = MathHelper.cos(ticks * legSpeed * 0.5F) * 0.5F + 0.5F;
         final float minX = -0.09F;
         final float maxX = 0.18F;

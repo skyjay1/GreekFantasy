@@ -36,6 +36,7 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -146,6 +147,18 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   }
   
   @Override
+  protected SoundEvent getAmbientSound() { return SoundEvents.BLOCK_NOTE_BLOCK_CHIME; }
+  
+  @Override
+  protected float getSoundVolume() { return 0.8F; }
+  
+//  @Override
+//  protected float getSoundPitch() { return 1.2F + rand.nextFloat() * 0.2F; }
+
+  @Override
+  public SoundCategory getSoundCategory() { return SoundCategory.NEUTRAL; }
+  
+  @Override
   public float getBlockPathWeight(BlockPos pos, IWorldReader worldIn) {
     return worldIn.isAirBlock(pos) ? 10.0F : 0.0F;
   }
@@ -168,11 +181,6 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
     return flyingpathnavigator;
   }
 
-  @Override
-  public SoundCategory getSoundCategory() {
-    return SoundCategory.NEUTRAL;
-  }
-  
   @Override
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
@@ -271,7 +279,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
     case STATE_TRADING: return 1.0F;
     case STATE_DESPAWNING: return 1.0F - getDespawnPercent(partialTick);
     default:
-      final float minAlpha = 0.18F;
+      final float minAlpha = 0.14F;
       final float cosAlpha = 0.5F + 0.5F * MathHelper.cos((this.getEntityId() + this.ticksExisted + partialTick) * 0.025F);
       return MathHelper.clamp(cosAlpha, minAlpha, 1.0F);
     }
@@ -281,7 +289,6 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   public float getDespawnPercent(final float partialTick) {
     return (float)despawnTime / (float)maxDespawnTime;
   }
-
   
   // Trading goal
   
@@ -313,7 +320,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
         final ItemEntity item = new ItemEntity(ElpisEntity.this.world, ElpisEntity.this.getPosX(), 
             ElpisEntity.this.getPosY(), ElpisEntity.this.getPosZ(), result.get());
         ElpisEntity.this.getEntityWorld().addEntity(item);
-        ElpisEntity.this.playSound(SoundEvents.ENTITY_EXPERIENCE_BOTTLE_THROW, 0.8F, 1.0F);
+        ElpisEntity.this.playSound(SoundEvents.ENTITY_PLAYER_LEVELUP, 0.8F, 1.0F);
         // start despawning
         ElpisEntity.this.despawnTime = 1;
         ElpisEntity.this.setState(STATE_DESPAWNING);

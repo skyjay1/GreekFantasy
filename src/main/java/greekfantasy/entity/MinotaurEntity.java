@@ -286,7 +286,7 @@ public class MinotaurEntity extends MonsterEntity {
         MinotaurEntity.this.getLookController().setLookPosition(targetPos.add(0, target.getEyeHeight(), 0));
       } else {
         // determine where the charge attack should target
-        this.targetPos = getExtendedTarget(target, MathHelper.sqrt(disSqToTargetEntity) + 8.0D);
+        this.targetPos = getExtendedTarget(target, disSqToTargetEntity + 16.0D);
       }
     }
     
@@ -300,7 +300,7 @@ public class MinotaurEntity extends MonsterEntity {
       this.targetPos = null;
     }
     
-    private Vector3d getExtendedTarget(final LivingEntity targetEntity, final double maxDistance) {
+    private Vector3d getExtendedTarget(final LivingEntity targetEntity, final double maxDistanceSq) {
       Vector3d start = MinotaurEntity.this.getPositionVec().add(0, 0.1D, 0);
       Vector3d target = targetEntity.getPositionVec().add(0, 0.1D, 0);
       Vector3d end = target;
@@ -311,7 +311,7 @@ public class MinotaurEntity extends MonsterEntity {
       do {
         target = end;
         end = start.add(vecDiff.scale(++length));
-      } while(length < maxDistance && hasDirectPath(end));
+      } while((length * length) < maxDistanceSq && hasDirectPath(end));
       // the vector has either reached max length, or encountered a block
       return target;
     }
