@@ -27,7 +27,7 @@ public class ReedsFeature extends Feature<BlockClusterFeatureConfig> {
     BlockPos pos;
     BlockState state = GFRegistry.REEDS.getDefaultState();
     
-    pos = reader.getHeight(Heightmap.Type.WORLD_SURFACE_WG, blockPosIn);
+    pos = reader.getHeight(Heightmap.Type.WORLD_SURFACE_WG, blockPosIn.add(rand.nextInt(8) - 4, 0, rand.nextInt(8) - 4));
     
     int placed = 0;
     

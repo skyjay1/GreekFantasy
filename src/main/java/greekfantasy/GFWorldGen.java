@@ -171,10 +171,10 @@ public final class GFWorldGen {
               new DoublePlantBlockPlacer()))
                 .tries(48)
                 .replaceable()
-                .xSpread(3)
-                .zSpread(3)
+                .xSpread(4)
+                .zSpread(4)
                 .build())
-          .func_242731_b(4)
+          .func_242731_b(8)
       );
     }
     // biome-specific features
@@ -203,10 +203,11 @@ public final class GFWorldGen {
               new DoublePlantBlockPlacer()))
                 .tries(32)
                 .replaceable()
-                .xSpread(1)
+                .xSpread(3)
                 .ySpread(3)
-                .zSpread(1)
+                .zSpread(3)
                 .build())
+          .func_242731_b(4)
       );
     }
     if(event.getCategory() == Biome.Category.NETHER) {

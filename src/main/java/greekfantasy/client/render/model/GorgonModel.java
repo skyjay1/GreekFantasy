@@ -133,7 +133,7 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
     int i = 0;
     for(final ModelRenderer m : list) {
       // update rotation angles
-      m.rotateAngleX = baseAngleX + (float) Math.cos(ticks * 0.15 + i * 3) * 0.08F;
+      m.rotateAngleX = baseAngleX + (float) Math.cos(ticks * 0.15 + i * 2.89F) * 0.08F;
       i++;
     }
   }

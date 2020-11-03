@@ -54,7 +54,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   private static final String KEY_AGE = "ElpisAge";
   private static final String KEY_DESPAWN_TIMER = "DespawnTimer";
   
-  private static final Supplier<Item> TRADE_ITEM = () -> Items.HONEY_BOTTLE;
+  private static final Supplier<Item> TRADE_ITEM = () -> Items.DIAMOND;
   private static final Supplier<ItemStack> TRADE_RESULT = () -> new ItemStack(GFRegistry.ICHOR);
   public static final int wanderDistance = 8;
   private static final int maxAge = 4800;
