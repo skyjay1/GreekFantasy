@@ -25,6 +25,11 @@
             "rotation": [ 0, 0, 0 ],
             "translation": [ 2, 3, 8 ],
             "scale": [ 0.65, 0.65, 0.65 ]
+        },
+        "head": {
+            "rotation": [ 0, 0, 0 ],
+            "translation": [ 10, 16, 29],
+            "scale":[ 2.8, 2.8, 2.8 ]
         }
     }
 }

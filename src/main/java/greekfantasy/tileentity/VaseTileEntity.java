@@ -18,7 +18,6 @@ public class VaseTileEntity extends TileEntity implements IClearable, IInventory
 
   public VaseTileEntity() {
     super(GFRegistry.VASE_TE);
-    
   }
   
   // CLIENT-SERVER SYNC

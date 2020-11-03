@@ -11,6 +11,7 @@ import greekfantasy.tileentity.MobHeadTileEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
@@ -21,9 +22,9 @@ import net.minecraft.util.math.vector.Vector3f;
 
 public class MobHeadTileEntityRenderer extends TileEntityRenderer<MobHeadTileEntity> {
       
-  protected IWallModel giganteHeadModel;
-  protected IWallModel cerberusHeadModel;
-  protected IWallModel orthusHeadModel;
+  protected Model giganteHeadModel;
+  protected Model cerberusHeadModel;
+  protected Model orthusHeadModel;
   
   public MobHeadTileEntityRenderer(final TileEntityRendererDispatcher rendererDispatcherIn) {
     super(rendererDispatcherIn);
@@ -40,8 +41,8 @@ public class MobHeadTileEntityRenderer extends TileEntityRenderer<MobHeadTileEnt
     final float rotation = tileEntityIn.getBlockState().get(StatueBlock.HORIZONTAL_FACING).getHorizontalAngle();
     final ResourceLocation texture = head.getTexture();
     // determine which model to use
-    final IWallModel model = getModel(head);
-    final float scale = model.getScale();
+    final Model model = getModel(head);
+    final float scale = ((IWallModel)model).getScale();
     matrixStackIn.push();
     // prepare to render model
     
@@ -53,12 +54,12 @@ public class MobHeadTileEntityRenderer extends TileEntityRenderer<MobHeadTileEnt
     IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(texture));
     // render the correct model
     
-    model.setWallRotations(tileEntityIn.onWall());    
+    ((IWallModel)model).setWallRotations(tileEntityIn.onWall());    
     model.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
     matrixStackIn.pop();
   }
  
-  protected IWallModel getModel(final MobHeadTileEntity.HeadType head) {
+  protected Model getModel(final MobHeadTileEntity.HeadType head) {
     switch(head) {
     case GIGANTE: return giganteHeadModel;
     case CERBERUS: return cerberusHeadModel;
@@ -70,7 +71,6 @@ public class MobHeadTileEntityRenderer extends TileEntityRenderer<MobHeadTileEnt
   public interface IWallModel {
     float getScale();
     void setWallRotations(final boolean onWall);
-    void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha);
   }
   
   public static class OrthusItemStackRenderer extends ItemStackTileEntityRenderer {

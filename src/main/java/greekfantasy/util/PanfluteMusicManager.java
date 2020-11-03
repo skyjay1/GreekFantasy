@@ -13,6 +13,16 @@ public final class PanfluteMusicManager {
     
   private PanfluteMusicManager() { }  
  
+  /**
+   * Play part of the given song at the position of the given entity
+   * @param entity the entity
+   * @param songName the resource location of the song
+   * @param worldTime the amount of time the song has been playing,
+   * or the world time for universally synchronized songs
+   * @param volume the song volume for the treble
+   * @param volumeBass the song volume for the bass
+   * @return if the note was successfully played
+   **/
   public static boolean playMusic(final LivingEntity entity, final ResourceLocation songName, final long worldTime, final float volume, final float volumeBass) {
     final Optional<PanfluteSong> song = GreekFantasy.PROXY.PANFLUTE_SONGS.get(songName);
     if(song.isPresent() && song.get().shouldPlayNote(worldTime)) {

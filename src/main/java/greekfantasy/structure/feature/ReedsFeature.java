@@ -5,7 +5,6 @@ import java.util.Random;
 import com.mojang.serialization.Codec;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.GreekFantasy;
 import net.minecraft.block.BlockState;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.tags.FluidTags;
@@ -23,7 +22,7 @@ public class ReedsFeature extends Feature<BlockClusterFeatureConfig> {
   }
 
   @Override
-  public boolean func_241855_a(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
+  public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final BlockClusterFeatureConfig config) {
     BlockPos pos;
     BlockState state = GFRegistry.REEDS.getDefaultState();

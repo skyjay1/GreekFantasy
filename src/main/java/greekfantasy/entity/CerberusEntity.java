@@ -29,6 +29,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
@@ -70,8 +71,9 @@ public class CerberusEntity extends CreatureEntity {
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.23D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.26D)
+        .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.0D);
   }
   
   public static CerberusEntity spawnCerberus(final World world, final Vector3d pos) {
@@ -146,6 +148,11 @@ public class CerberusEntity extends CreatureEntity {
     if (world.isRemote() && this.isFiring()) {
       spawnFireParticles();
     }
+  }
+  
+  @Override
+  public boolean isInvulnerableTo(final DamageSource source) {
+    return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER || super.isInvulnerableTo(source);
   }
   
   @Override

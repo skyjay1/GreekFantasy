@@ -39,7 +39,7 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
   }
 
   @Override
-  public boolean func_241855_a(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
+  public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
     // position for generation
     final BlockPos blockPos = blockPosIn.add( 4 + rand.nextInt(8), 0, 4 + rand.nextInt(8));

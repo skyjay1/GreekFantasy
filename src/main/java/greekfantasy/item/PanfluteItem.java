@@ -49,13 +49,20 @@ public class PanfluteItem extends Item {
     // note: count starts at #getUseDuration and decreases to zero
     final String songKey = stack.getOrCreateTag().getString(KEY_SONG);
     final ResourceLocation songID = songKey.isEmpty() ? DEFAULT_SONG : new ResourceLocation(songKey);
-    PanfluteMusicManager.playMusic(player, songID, getUseDuration(stack) - count, 1.0F, 0.5F);
+    PanfluteMusicManager.playMusic(player, songID, getUseDuration(stack) - count, 1.0F, 0.45F);
   }
 
   @Override
   public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
     ItemStack itemstack = playerIn.getHeldItem(Hand.MAIN_HAND);
-    playerIn.setActiveHand(handIn);
+    // check if player is sneaking and open GUI
+    if(playerIn.isSneaking()) {
+      if(worldIn.isRemote()) {
+        GuiLoader.openPanfluteGui(playerIn, playerIn.inventory.currentItem, itemstack);
+      }
+    } else {
+      playerIn.setActiveHand(handIn);
+    }
     return ActionResult.resultConsume(itemstack);
   }
   

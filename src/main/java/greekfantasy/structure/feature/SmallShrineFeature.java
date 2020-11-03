@@ -9,7 +9,6 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
@@ -31,7 +30,7 @@ public class SmallShrineFeature extends Feature<NoFeatureConfig> {
   }
 
   @Override
-  public boolean func_241855_a(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
+  public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
     // template loading
     final ResourceLocation structure = rand.nextBoolean() ? STRUCTURE_LIMESTONE : STRUCTURE_MARBLE;

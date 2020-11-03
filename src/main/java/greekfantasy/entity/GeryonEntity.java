@@ -93,7 +93,7 @@ public class GeryonEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.MAX_HEALTH, 160.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.21D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.98D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
+        .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.5D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT);
   }
@@ -247,7 +247,7 @@ public class GeryonEntity extends MonsterEntity {
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
-    return isSpawning() || source == DamageSource.IN_WALL || super.isInvulnerableTo(source);
+    return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER || super.isInvulnerableTo(source);
   }
   
   @Override
@@ -394,7 +394,9 @@ public class GeryonEntity extends MonsterEntity {
    * @return whether the given entity should not be affected by smash attack
    **/
   private boolean isExemptFromSmashAttack(final Entity entity) {
-    return !entity.isNonBoss() || entity.hasNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY || entity.getType() == GFRegistry.MAD_COW_ENTITY;
+    return !entity.isNonBoss() || entity.hasNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY 
+        || entity.getType() == GFRegistry.MAD_COW_ENTITY || entity.isSpectator()
+        || (entity instanceof PlayerEntity && ((PlayerEntity)entity).isCreative());
   }
   
   /**

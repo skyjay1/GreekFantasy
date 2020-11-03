@@ -47,7 +47,7 @@ public class GreekFantasy {
     FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::reloadConfig);
     // register config
     GreekFantasy.LOGGER.debug("registerConfig");
-    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, CONFIG_SPEC);
+    ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC);
     // register side-specific or common event handlers
     PROXY.registerEventHandlers();
     // register reload listeners (only applies to client-side)

@@ -14,10 +14,11 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class SmashingEnchantment extends Enchantment {
   
-  private static final double BASE_RANGE = 4.0D;
+  private static final double BASE_RANGE = 2.0D;
 
   public SmashingEnchantment(final Enchantment.Rarity rarity) {
     super(rarity, EnchantmentType.WEAPON, new EquipmentSlotType[] { EquipmentSlotType.MAINHAND });
@@ -28,7 +29,9 @@ public class SmashingEnchantment extends Enchantment {
    * @return whether the given entity should not be affected by smash attack
    **/
   private boolean isExemptFromSmashAttack(final Entity entity) {
-    return !entity.isNonBoss() || entity.hasNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY;
+    return !entity.isNonBoss() || entity.hasNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY
+        || entity.isSpectator()
+        || (entity instanceof PlayerEntity && ((PlayerEntity)entity).isCreative());
   }
   
   private void useSmashAttack(final LivingEntity user, final Entity target, final int level) {
@@ -38,7 +41,7 @@ public class SmashingEnchantment extends Enchantment {
       target.attackEntityFrom(DamageSource.causeMobDamage(user), 0.25F);
       // stun effect (for living entities)
       if(target instanceof LivingEntity) {
-        ((LivingEntity)target).addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 60, 0));
+        ((LivingEntity)target).addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 40 + level * 20, 0));
       }
     }
   }
@@ -50,9 +53,11 @@ public class SmashingEnchantment extends Enchantment {
     if(!(item.getItem() instanceof ClubItem)) {
       return;
     }
-    // stun entities within range
-    final double range = BASE_RANGE + 2.0D * level;
-    final AxisAlignedBB aabb = new AxisAlignedBB(target.getPosition().up()).grow(range, BASE_RANGE, range);
+    // get a bounding box of an area to affect
+    final double range = BASE_RANGE + 1.5D * level;
+    final Vector3d facing = Vector3d.fromPitchYaw(user.getPitchYaw()).normalize();
+    final AxisAlignedBB aabb = new AxisAlignedBB(target.getPosition().up()).grow(range, BASE_RANGE, range).offset(facing.scale(range));
+    // smash attack entities within range
     user.getEntityWorld().getEntitiesWithinAABBExcludingEntity(user, aabb)
       .forEach(e -> useSmashAttack(user, e, level));
   }

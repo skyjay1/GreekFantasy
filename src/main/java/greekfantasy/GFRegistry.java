@@ -26,6 +26,7 @@ import greekfantasy.item.ClubItem;
 import greekfantasy.item.DragonToothItem;
 import greekfantasy.item.HealingRodItem;
 import greekfantasy.item.HelmOfDarknessItem;
+import greekfantasy.item.MobHeadItem;
 import greekfantasy.item.OrthusHeadItem;
 import greekfantasy.item.PanfluteItem;
 import greekfantasy.item.ThunderboltItem;
@@ -256,9 +257,9 @@ public final class GFRegistry {
     CERBERUS_ENTITY = registerEntityType(event, CerberusEntity::new, CerberusEntity::getAttributes, null, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, true);
     CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, false);
     DRYAD_ENTITY = registerEntityType(event, DryadEntity::new, DryadEntity::getAttributes, DryadEntity::canSpawnOn, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, false);
-    ELPIS_ENTITY = registerEntityType(event, ElpisEntity::new, ElpisEntity::getAttributes, null, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, false);
+    ELPIS_ENTITY = registerEntityType(event, ElpisEntity::new, ElpisEntity::getAttributes, null, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, true);
     EMPUSA_ENTITY = registerEntityType(event, EmpusaEntity::new, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, true);
-    GERYON_ENTITY = registerEntityType(event, GeryonEntity::new, GeryonEntity::getAttributes, null, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, false);
+    GERYON_ENTITY = registerEntityType(event, GeryonEntity::new, GeryonEntity::getAttributes, null, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, true);
     GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, false);
     GORGON_ENTITY = registerEntityType(event, GorgonEntity::new, GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, false);
     HARPY_ENTITY = registerEntityType(event, HarpyEntity::new, HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, false);
@@ -419,13 +420,13 @@ public final class GFRegistry {
         POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, LIMESTONE_STATUE, 
         TERRACOTTA_VASE);
     
-    event.getRegistry().register(new BlockItem(GIGANTE_HEAD, new Item.Properties()
+    event.getRegistry().register(new MobHeadItem(GIGANTE_HEAD, new Item.Properties()
         .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeGiganteHeadISTER))
         .setRegistryName(MODID, "gigante_head"));
     event.getRegistry().register(new OrthusHeadItem(ORTHUS_HEAD, new Item.Properties()
         .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeOrthusHeadISTER))
         .setRegistryName(MODID, "orthus_head"));
-    event.getRegistry().register(new BlockItem(CERBERUS_HEAD, new Item.Properties()
+    event.getRegistry().register(new MobHeadItem(CERBERUS_HEAD, new Item.Properties()
         .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeCerberusHeadISTER))
         .setRegistryName(MODID, "cerberus_head"));
     

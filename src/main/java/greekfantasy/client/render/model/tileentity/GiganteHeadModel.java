@@ -30,7 +30,7 @@ public class GiganteHeadModel extends Model implements IHasHead, IWallModel {
   @Override
   public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha) {
-    getModelHead().render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+    bipedHead.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
   }
  
   @Override

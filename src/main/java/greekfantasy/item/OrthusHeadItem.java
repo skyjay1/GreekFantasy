@@ -3,11 +3,10 @@ package greekfantasy.item;
 import greekfantasy.entity.OrthusHeadItemEntity;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class OrthusHeadItem extends BlockItem {
+public class OrthusHeadItem extends MobHeadItem {
 
   public OrthusHeadItem(final Block blockIn, final Properties builder) {
     super(blockIn, builder);

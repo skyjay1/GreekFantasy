@@ -17,9 +17,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.Category;
 import net.minecraft.world.biome.BiomeAmbience;
-import net.minecraft.world.biome.BiomeContainer;
 import net.minecraft.world.biome.BiomeGenerationSettings;
-import net.minecraft.world.biome.BiomeMaker;
 import net.minecraft.world.biome.DefaultBiomeFeatures;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.biome.MoodSoundAmbience;
@@ -128,15 +126,15 @@ public final class GFWorldGen {
         GenerationStage.Decoration.UNDERGROUND_DECORATION,
         Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.MARBLE.getDefaultState(), 33))
           // unmapped methods copied from world.gen.feature.Features
-          // 33 = vein size, 80 = maxY, func_242728_a = spreadHorizontally, func_242731_b = repeat, 
-          .func_242733_d(80).func_242728_a().func_242731_b(10)
+          // 33 = vein size, 80 = maxY, func_242728_a = spreadHorizontally, func_242731_b = repeat
+          .range(80).square().func_242731_b(10)
       );
       // Limestone
       event.getGeneration().withFeature(
         GenerationStage.Decoration.UNDERGROUND_DECORATION,
         Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.LIMESTONE.getDefaultState(), 33))
           // I have no idea what these functions are, I copied them from world.gen.feature.Features
-          .func_242733_d(80).func_242728_a().func_242731_b(10)
+          .range(80).square().func_242731_b(10)
       );
       
       // Harpy Nest
@@ -146,25 +144,25 @@ public final class GFWorldGen {
           HARPY_NEST.withConfiguration(NoFeatureConfig.field_236559_b_)
           // These are copied from Features.DESERT_WELL
           // Placements.HEIGHTMAP_PLACEMENT.func_242728_a()
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).func_242729_a(GreekFantasy.CONFIG.HARPY_NEST_SPREAD.get())
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).chance(GreekFantasy.CONFIG.HARPY_NEST_SPREAD.get())
       );
       // Small Shrine
       event.getGeneration().withFeature(
           GenerationStage.Decoration.SURFACE_STRUCTURES, 
           SMALL_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).func_242729_a(GreekFantasy.CONFIG.SMALL_SHRINE_SPREAD.get())
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).chance(GreekFantasy.CONFIG.SMALL_SHRINE_SPREAD.get())
       );
       // Ara Camp
       event.getGeneration().withFeature(
           GenerationStage.Decoration.SURFACE_STRUCTURES, 
           ARA_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).func_242729_a(GreekFantasy.CONFIG.ARA_CAMP_SPREAD.get())
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).chance(GreekFantasy.CONFIG.ARA_CAMP_SPREAD.get())
       );
       // Satyr Camp
       event.getGeneration().withFeature(
           GenerationStage.Decoration.SURFACE_STRUCTURES, 
           SATYR_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).func_242729_a(GreekFantasy.CONFIG.SATYR_CAMP_SPREAD.get())
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).chance(GreekFantasy.CONFIG.SATYR_CAMP_SPREAD.get())
       );
       // Reeds
       event.getGeneration().withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, 
@@ -176,7 +174,7 @@ public final class GFWorldGen {
                 .xSpread(3)
                 .zSpread(3)
                 .build())
-          .func_242729_a(4)
+          .func_242731_b(4)
       );
     }
     // biome-specific features
@@ -184,7 +182,7 @@ public final class GFWorldGen {
       // Olive Tree
       event.getGeneration().withFeature(
           GenerationStage.Decoration.VEGETAL_DECORATION, 
-          OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).func_242729_a(40)
+          OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).func_242731_b(40)
       );
     }
     if(new ResourceLocation(GreekFantasy.MODID, "olive_forest").equals(event.getName())) {
@@ -193,7 +191,7 @@ public final class GFWorldGen {
           OliveTree.getConfiguredTree()
             .withPlacement(Placements.VEGETATION_PLACEMENT)
             .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
-            .withPlacement(Placement.field_242902_f.configure(new AtSurfaceWithExtraConfig(10, 0.1F, 1)))
+            .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(10, 0.1F, 1)))
       );
     }
       
@@ -216,7 +214,7 @@ public final class GFWorldGen {
       event.getGeneration().withFeature(
           GenerationStage.Decoration.SURFACE_STRUCTURES, 
           SMALL_NETHER_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).func_242729_a(GreekFantasy.CONFIG.SMALL_NETHER_SHRINE_SPREAD.get())
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).func_242731_b(GreekFantasy.CONFIG.SMALL_NETHER_SHRINE_SPREAD.get())
       );
     }    
   }
@@ -285,7 +283,7 @@ public final class GFWorldGen {
     BiomeGenerationSettings.Builder biomeGenBuilder = (new BiomeGenerationSettings.Builder())
         .withSurfaceBuilder(ConfiguredSurfaceBuilders.field_244178_j);
     DefaultBiomeFeatures.withStrongholdAndMineshaft(biomeGenBuilder);
-    biomeGenBuilder.withStructure(StructureFeatures.field_244159_y);
+    biomeGenBuilder.withStructure(StructureFeatures.RUINED_PORTAL);
     
     DefaultBiomeFeatures.withCavesAndCanyons(biomeGenBuilder);
     

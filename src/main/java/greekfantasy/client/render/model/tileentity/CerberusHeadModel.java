@@ -28,12 +28,13 @@ public class CerberusHeadModel extends Model implements IHasHead, IWallModel {
     cerberusHead = new ModelRenderer(this);
     cerberusMouth = new ModelRenderer(this);
     CerberusModel.initCerberusHead(this, cerberusHead, cerberusMouth, -4.5F, -4.0F, 0.0F);
+    cerberusMouth.rotateAngleX = 0.19F;
   }
 
   @Override
   public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha) {
-    getModelHead().render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+    cerberusHead.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
   }
  
   @Override
@@ -42,7 +43,7 @@ public class CerberusHeadModel extends Model implements IHasHead, IWallModel {
   }
 
   @Override
-  public void setWallRotations(boolean onWall) { 
+  public void setWallRotations(boolean onWall) {
     if(onWall) {
       cerberusHead.rotationPointY = -4.5F;
       cerberusMouth.rotateAngleX = 0.19F;

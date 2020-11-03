@@ -31,7 +31,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
@@ -46,7 +45,7 @@ public class MinotaurEntity extends MonsterEntity {
   private static final byte STUNNED = (byte) 2;
   
   private final AttributeModifier knockbackModifier = new AttributeModifier("Charge knockback bonus", 2.25F, AttributeModifier.Operation.MULTIPLY_TOTAL);
-  private final AttributeModifier attackModifier = new AttributeModifier("Charge attack bonus", 1.75F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+  private final AttributeModifier attackModifier = new AttributeModifier("Charge attack bonus", 2.5F, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
   public MinotaurEntity(final EntityType<? extends MinotaurEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -56,7 +55,7 @@ public class MinotaurEntity extends MonsterEntity {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.0D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.25D);
   }
   
