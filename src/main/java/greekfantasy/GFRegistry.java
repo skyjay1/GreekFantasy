@@ -68,6 +68,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
 import net.minecraft.item.Rarity;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.BasicParticleType;
@@ -97,32 +98,32 @@ public final class GFRegistry {
 
   //ENTITY TYPES
 
-  public static EntityType<AraEntity> ARA_ENTITY;
-  public static EntityType<CentaurEntity> CENTAUR_ENTITY;
-  public static EntityType<CerastesEntity> CERASTES_ENTITY;
-  public static EntityType<CerberusEntity> CERBERUS_ENTITY;
-  public static EntityType<CyclopesEntity> CYCLOPES_ENTITY;
-  public static EntityType<CyprianEntity> CYPRIAN_ENTITY;
-  public static EntityType<DragonToothEntity> DRAGON_TOOTH_ENTITY;
-  public static EntityType<DryadEntity> DRYAD_ENTITY;
-  public static EntityType<ElpisEntity> ELPIS_ENTITY;
-  public static EntityType<EmpusaEntity> EMPUSA_ENTITY;
-  public static EntityType<GeryonEntity> GERYON_ENTITY;
-  public static EntityType<GiganteEntity> GIGANTE_ENTITY;
-  public static EntityType<GorgonEntity> GORGON_ENTITY;
-  public static EntityType<HarpyEntity> HARPY_ENTITY;
-  public static EntityType<HealingSpellEntity> HEALING_SPELL_ENTITY;
-  public static EntityType<MadCowEntity> MAD_COW_ENTITY;
-  public static EntityType<MinotaurEntity> MINOTAUR_ENTITY;
-  public static EntityType<NaiadEntity> NAIAD_ENTITY;
-  public static EntityType<OrthusEntity> ORTHUS_ENTITY;
-  public static EntityType<OrthusHeadItemEntity> ORTHUS_HEAD_ITEM_ENTITY;
-  public static EntityType<SatyrEntity> SATYR_ENTITY;
-  public static EntityType<ShadeEntity> SHADE_ENTITY;
-  public static EntityType<SirenEntity> SIREN_ENTITY;
-  public static EntityType<SpartiEntity> SPARTI_ENTITY;
-  public static EntityType<UnicornEntity> UNICORN_ENTITY;
-
+  public static EntityType<AraEntity> ARA_ENTITY = buildEntityType(AraEntity::new, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<CentaurEntity> CENTAUR_ENTITY = buildEntityType(CentaurEntity::new, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<CerberusEntity> CERBERUS_ENTITY = buildEntityType(CerberusEntity::new, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<CyclopesEntity> CYCLOPES_ENTITY = buildEntityType(CyclopesEntity::new, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, b -> {});
+  public static EntityType<CyprianEntity> CYPRIAN_ENTITY = buildEntityType(CyprianEntity::new, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<DragonToothEntity> DRAGON_TOOTH_ENTITY = buildEntityType(DragonToothEntity::new, "dragon_tooth", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().trackingRange(4).func_233608_b_(10));
+  public static EntityType<DryadEntity> DRYAD_ENTITY = buildEntityType(DryadEntity::new, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<ElpisEntity> ELPIS_ENTITY = buildEntityType(ElpisEntity::new, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, b -> b.immuneToFire());
+  public static EntityType<EmpusaEntity> EMPUSA_ENTITY = buildEntityType(EmpusaEntity::new, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<GeryonEntity> GERYON_ENTITY = buildEntityType(GeryonEntity::new, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<GiganteEntity> GIGANTE_ENTITY = buildEntityType(GiganteEntity::new, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<GorgonEntity> GORGON_ENTITY = buildEntityType(GorgonEntity::new, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
+  public static EntityType<HarpyEntity> HARPY_ENTITY = buildEntityType(HarpyEntity::new, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, b -> {});
+  public static EntityType<HealingSpellEntity> HEALING_SPELL_ENTITY = buildEntityType(HealingSpellEntity::new, "healing_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().trackingRange(4).func_233608_b_(10));
+  public static EntityType<MadCowEntity> MAD_COW_ENTITY = buildEntityType(MadCowEntity::new, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<MinotaurEntity> MINOTAUR_ENTITY = buildEntityType(MinotaurEntity::new, "minotaur", 0.7F, 1.8F, EntityClassification.MONSTER, b -> {});
+  public static EntityType<NaiadEntity> NAIAD_ENTITY = buildEntityType(NaiadEntity::new, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, b -> {});
+  public static EntityType<OrthusEntity> ORTHUS_ENTITY = buildEntityType(OrthusEntity::new, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<OrthusHeadItemEntity> ORTHUS_HEAD_ITEM_ENTITY = buildEntityType(OrthusHeadItemEntity::new, "orthus_head_item", 0.25F, 0.25F, EntityClassification.MISC, b -> b.trackingRange(6).func_233608_b_(20));
+  public static EntityType<SatyrEntity> SATYR_ENTITY = buildEntityType(SatyrEntity::new, "satyr", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<ShadeEntity> SHADE_ENTITY = buildEntityType(ShadeEntity::new, "shade", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<SirenEntity> SIREN_ENTITY = buildEntityType(SirenEntity::new, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, b -> {});
+  public static EntityType<SpartiEntity> SPARTI_ENTITY = buildEntityType(SpartiEntity::new, "sparti", 0.6F, 1.98F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<UnicornEntity> UNICORN_ENTITY = buildEntityType(UnicornEntity::new, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
+  
   // OBJECT HOLDERS //
 
   @ObjectHolder("panflute")
@@ -250,32 +251,32 @@ public final class GFRegistry {
   @SubscribeEvent
   public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
     GreekFantasy.LOGGER.debug("registerEntities");
-    ARA_ENTITY = registerEntityType(event, AraEntity::new, AraEntity::getAttributes, AraEntity::canAraSpawnOn, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, false);
-    CENTAUR_ENTITY = registerEntityType(event, CentaurEntity::new, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, false);
-    CYPRIAN_ENTITY = registerEntityType(event, CyprianEntity::new, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, false);
-    CERASTES_ENTITY = registerEntityType(event, CerastesEntity::new, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, false);
-    CERBERUS_ENTITY = registerEntityType(event, CerberusEntity::new, CerberusEntity::getAttributes, null, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, true);
-    CYCLOPES_ENTITY = registerEntityType(event, CyclopesEntity::new, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, false);
-    DRYAD_ENTITY = registerEntityType(event, DryadEntity::new, DryadEntity::getAttributes, DryadEntity::canSpawnOn, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, false);
-    ELPIS_ENTITY = registerEntityType(event, ElpisEntity::new, ElpisEntity::getAttributes, null, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, true);
-    EMPUSA_ENTITY = registerEntityType(event, EmpusaEntity::new, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, true);
-    GERYON_ENTITY = registerEntityType(event, GeryonEntity::new, GeryonEntity::getAttributes, null, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, true);
-    GIGANTE_ENTITY = registerEntityType(event, GiganteEntity::new, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, false);
-    GORGON_ENTITY = registerEntityType(event, GorgonEntity::new, GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, false);
-    HARPY_ENTITY = registerEntityType(event, HarpyEntity::new, HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, false);
-    MAD_COW_ENTITY = registerEntityType(event, MadCowEntity::new, MadCowEntity::getAttributes, MadCowEntity::canSpawnOn, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, false);
-    MINOTAUR_ENTITY = registerEntityType(event, MinotaurEntity::new, MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight, "minotaur", 0.7F, 1.8F, EntityClassification.MONSTER, false);
-    NAIAD_ENTITY = registerEntityType(event, NaiadEntity::new, NaiadEntity::getAttributes, NaiadEntity::canNaiadSpawnOn, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, false);
-    ORTHUS_ENTITY = registerEntityType(event, OrthusEntity::new, OrthusEntity::getAttributes, OrthusEntity::canSpawnOn, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, true);
-    SATYR_ENTITY = registerEntityType(event, SatyrEntity::new, SatyrEntity::getAttributes, SatyrEntity::canSpawnOn, "satyr", 0.67F, 1.8F, EntityClassification.CREATURE, false);
-    SHADE_ENTITY = registerEntityType(event, ShadeEntity::new, ShadeEntity::getAttributes, ShadeEntity::canMonsterSpawnInLight, "shade", 0.67F, 1.8F, EntityClassification.MONSTER, true);
-    SIREN_ENTITY = registerEntityType(event, SirenEntity::new, SirenEntity::getAttributes, SirenEntity::canSirenSpawnOn, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, false);
-    SPARTI_ENTITY = registerEntityType(event, SpartiEntity::new, SpartiEntity::getAttributes, null, "sparti", 0.6F, 1.98F, EntityClassification.CREATURE, false);
-    UNICORN_ENTITY = registerEntityType(event, UnicornEntity::new, UnicornEntity::getAttributes, UnicornEntity::canSpawnOn, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, false);
-    // create and register misc. entity types
-    DRAGON_TOOTH_ENTITY = registerEntityType(event, DragonToothEntity::new, "dragon_tooth", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().trackingRange(4).func_233608_b_(10));
-    HEALING_SPELL_ENTITY = registerEntityType(event, HealingSpellEntity::new, "healing_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().trackingRange(4).func_233608_b_(10));
-    ORTHUS_HEAD_ITEM_ENTITY = registerEntityType(event, OrthusHeadItemEntity::new, "orthus_head_item", 0.25F, 0.25F, EntityClassification.MISC, b -> b.trackingRange(6).func_233608_b_(20));
+    // entity types have already been created, now they are actually registered (along with placements)
+    registerEntityType(event, ARA_ENTITY, AraEntity::getAttributes, AraEntity::canAraSpawnOn);
+    registerEntityType(event, CENTAUR_ENTITY, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn);
+    registerEntityType(event, CYPRIAN_ENTITY, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn);
+    registerEntityType(event, CERASTES_ENTITY, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn);
+    registerEntityType(event, CERBERUS_ENTITY, CerberusEntity::getAttributes, null);
+    registerEntityType(event, CYCLOPES_ENTITY, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn);
+    registerEntityType(event, DRYAD_ENTITY, DryadEntity::getAttributes, DryadEntity::canSpawnOn);
+    registerEntityType(event, ELPIS_ENTITY, ElpisEntity::getAttributes, null);
+    registerEntityType(event, EMPUSA_ENTITY, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight);
+    registerEntityType(event, GERYON_ENTITY, GeryonEntity::getAttributes, null);
+    registerEntityType(event, GIGANTE_ENTITY, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn);
+    registerEntityType(event, GORGON_ENTITY, GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn);
+    registerEntityType(event, HARPY_ENTITY, HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn);
+    registerEntityType(event, MAD_COW_ENTITY, MadCowEntity::getAttributes, MadCowEntity::canSpawnOn);
+    registerEntityType(event, MINOTAUR_ENTITY, MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight);
+    registerEntityType(event, NAIAD_ENTITY, NaiadEntity::getAttributes, NaiadEntity::canNaiadSpawnOn);
+    registerEntityType(event, ORTHUS_ENTITY, OrthusEntity::getAttributes, OrthusEntity::canSpawnOn);
+    registerEntityType(event, SATYR_ENTITY, SatyrEntity::getAttributes, SatyrEntity::canSpawnOn);
+    registerEntityType(event, SHADE_ENTITY, ShadeEntity::getAttributes, ShadeEntity::canMonsterSpawnInLight);
+    registerEntityType(event, SIREN_ENTITY, SirenEntity::getAttributes, SirenEntity::canSirenSpawnOn);
+    registerEntityType(event, SPARTI_ENTITY, SpartiEntity::getAttributes, null);
+    registerEntityType(event, UNICORN_ENTITY, UnicornEntity::getAttributes, UnicornEntity::canSpawnOn);
+    event.getRegistry().register(DRAGON_TOOTH_ENTITY);
+    event.getRegistry().register(HEALING_SPELL_ENTITY);
+    event.getRegistry().register(ORTHUS_HEAD_ITEM_ENTITY);
   }
   
   @SubscribeEvent
@@ -437,6 +438,27 @@ public final class GFRegistry {
         tooltip.add(new TranslationTextComponent("block.greekfantasy.mysterious_box.tooltip").mergeStyle(TextFormatting.ITALIC, TextFormatting.GRAY));
       }
     }.setRegistryName(MODID, "mysterious_box"));
+    
+    // spawn eggs
+    registerSpawnEgg(event, ARA_ENTITY, 0xffffff, 0xbbbbbb);
+    registerSpawnEgg(event, CENTAUR_ENTITY, 0x734933, 0x83251f);
+    registerSpawnEgg(event, CERASTES_ENTITY, 0x847758, 0x997c4d);
+    registerSpawnEgg(event, CYCLOPES_ENTITY, 0xda662c, 0x2c1e0e);
+    registerSpawnEgg(event, CYPRIAN_ENTITY, 0x443626, 0x83251f);
+    registerSpawnEgg(event, DRYAD_ENTITY, 0x443626, 0xfed93f);
+    registerSpawnEgg(event, ELPIS_ENTITY, 0xe7aae4, 0xeeeeee);
+    registerSpawnEgg(event, EMPUSA_ENTITY, 0x222222, 0x83251f);
+    registerSpawnEgg(event, GIGANTE_ENTITY, 0xd3dba7, 0x6a602b);
+    registerSpawnEgg(event, GORGON_ENTITY, 0xb6b6b6, 0x398046);
+    registerSpawnEgg(event, HARPY_ENTITY, 0x724e36, 0x332411);
+    registerSpawnEgg(event, MAD_COW_ENTITY, 0x443626, 0xcf9797);
+    registerSpawnEgg(event, MINOTAUR_ENTITY, 0x443626, 0x734933);
+    registerSpawnEgg(event, NAIAD_ENTITY, 0x7caba1, 0xe67830);
+    registerSpawnEgg(event, ORTHUS_ENTITY, 0x493569, 0xe42e2e);
+    registerSpawnEgg(event, SATYR_ENTITY, 0x54371d, 0xa16648);
+    registerSpawnEgg(event, SHADE_ENTITY, 0x222222, 0x000000);
+    registerSpawnEgg(event, SIREN_ENTITY, 0x729f92, 0x398046);
+    registerSpawnEgg(event, UNICORN_ENTITY, 0xeeeeee, 0xe8e8e8);
   }
   
   @SubscribeEvent
@@ -467,34 +489,49 @@ public final class GFRegistry {
 
   // HELPER METHODS //
   
-  private static <T extends Entity> EntityType<T> registerEntityType(final RegistryEvent.Register<EntityType<?>> event,
-      final IFactory<T> factoryIn, final String name, final float width, final float height, 
+  /**
+   * Builds and returns (but does not register) an entity type with the given information
+   * @param <T> a class that inherits from Entity
+   * @param factoryIn the entity factory, usually [EntityClass]::new
+   * @param name the entity name for use in registration later
+   * @param width the horizontal size of the entity
+   * @param height the vertical size of the entity
+   * @param classification the entity classification
+   * @param builderSpecs a consumer to add other arguments to the builder before the entity type is built
+   * @return an entity type
+   **/
+  private static <T extends Entity> EntityType<T> buildEntityType(final IFactory<T> factoryIn, final String name, final float width, final float height, 
       final EntityClassification classification, final Consumer<EntityType.Builder<T>> builderSpecs) {
-    // make the entity type
     EntityType.Builder<T> entityTypeBuilder = EntityType.Builder.create(factoryIn, classification).size(width, height);
     builderSpecs.accept(entityTypeBuilder);
     EntityType<T> entityType = entityTypeBuilder.build(name);
     entityType.setRegistryName(MODID, name);
-    // register the entity type
-    event.getRegistry().register(entityType);
     return entityType;
   }
 
-  private static <T extends MobEntity> EntityType<T> registerEntityType(final RegistryEvent.Register<EntityType<?>> event,
-      final IFactory<T> factoryIn, final Supplier<AttributeModifierMap.MutableAttribute> mapSupplier, 
-      @Nullable final EntitySpawnPlacementRegistry.IPlacementPredicate<T> placementPredicate, final String name,
-      final float width, final float height, final EntityClassification classification, final boolean fireproof) {
-    // make the entity type
-    EntityType<T> entityType = registerEntityType(event, factoryIn, name, width, height, classification, fireproof ? b -> b.immuneToFire() : b -> {});
+  /**
+   * Registers the given entity type and its associated attributes and placement settings
+   * @param <T> a class that inherits from MobEntity
+   * @param event the registry event
+   * @param entityType the entity type to register
+   * @param mapSupplier the attribute supplier, usually a reference to a static method.
+   * If this value is null, no attributes will be registered.
+   * @param placementPredicate the spawn placement predicate, usually a reference to a static method.
+   * If this value is null, no placement will be registered.
+   **/
+  private static <T extends MobEntity> void registerEntityType(final RegistryEvent.Register<EntityType<?>> event,
+      final EntityType<T> entityType, final Supplier<AttributeModifierMap.MutableAttribute> mapSupplier, 
+      @Nullable final EntitySpawnPlacementRegistry.IPlacementPredicate<T> placementPredicate) {
+    // register the entity type
+    event.getRegistry().register(entityType);
     // register attributes
     if(mapSupplier != null) {
       GlobalEntityTypeAttributes.put(entityType, mapSupplier.get().create());
     }
     // register placement (not used unless spawn information is registered with a biome)
     if(placementPredicate != null) {
-      EntitySpawnPlacementRegistry.register(entityType, classification == EntityClassification.WATER_CREATURE ? PlacementType.IN_WATER : PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, placementPredicate);
+      EntitySpawnPlacementRegistry.register(entityType, entityType.getClassification() == EntityClassification.WATER_CREATURE ? PlacementType.IN_WATER : PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, placementPredicate);
     }
-    return entityType;
   }
   
   private static void registerLogLeavesPlanksEtc(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {
@@ -568,6 +605,12 @@ public final class GFRegistry {
     for(final Block b : blocks) {
       registerItemBlock(event, b);
     }
+  }
+  
+  private static void registerSpawnEgg(final RegistryEvent.Register<Item> event, final EntityType<?> entity, 
+      final int colorBase, final int colorSpots) {
+    event.getRegistry().register(new SpawnEggItem(entity, colorBase, colorSpots, new Item.Properties().group(GREEK_GROUP))
+        .setRegistryName(GreekFantasy.MODID, entity.getRegistryName().getPath() + "_spawn_egg"));
   }
 
   private static Boolean allowsSpawnOnLeaves(BlockState state, IBlockReader reader, BlockPos pos, EntityType<?> entity) {

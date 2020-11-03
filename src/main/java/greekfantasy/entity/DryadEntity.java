@@ -2,6 +2,7 @@ package greekfantasy.entity;
 
 import java.util.EnumSet;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -207,7 +208,12 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    final DryadEntity.Variant variant = DryadEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
+    final DryadEntity.Variant variant;
+    if(reason == SpawnReason.COMMAND || reason == SpawnReason.SPAWN_EGG || reason == SpawnReason.SPAWNER || reason == SpawnReason.DISPENSER) {
+      variant = DryadEntity.Variant.getRandom(worldIn.getRandom());
+    } else {
+      variant = DryadEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
+    }
     this.setVariant(variant);
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
@@ -235,7 +241,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   public float getBrightness() { return 1.0F; }
   @Override
-  public boolean canDespawn(double distanceToClosestPlayer) { return !treePos.isPresent() && this.ticksExisted > 2400; }
+  public boolean canDespawn(double distanceToClosestPlayer) { return !treePos.isPresent() && this.ticksExisted > 4800; }
 
   // Variant methods
 
@@ -459,6 +465,11 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     
     public static Variant getForBiome(final Optional<RegistryKey<Biome>> biome) {
       return BiomeHelper.getVariantForBiome(biome);
+    }
+    
+    public static Variant getRandom(final Random rand) {
+      int len = values().length;
+      return values()[rand.nextInt(len)];
     }
 
     public static Variant getByName(final String n) {

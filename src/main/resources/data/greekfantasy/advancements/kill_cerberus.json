@@ -1,5 +1,5 @@
 {
-  "parent": "greekfantasy:root",
+  "parent": "greekfantasy:summon_cerberus",
   "display": {
     "icon": {
       "item": "greekfantasy:cerberus_head"

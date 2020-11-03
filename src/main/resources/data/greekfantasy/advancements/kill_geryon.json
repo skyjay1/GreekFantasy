@@ -1,8 +1,8 @@
 {
-  "parent": "greekfantasy:root",
+  "parent": "greekfantasy:summon_geryon",
   "display": {
     "icon": {
-      "item": "greekfantasy:gigante_head"
+      "item": "greekfantasy:ambrosia"
     },
     "title": {
       "translate": "advancements.greekfantasy.kill_geryon.title"

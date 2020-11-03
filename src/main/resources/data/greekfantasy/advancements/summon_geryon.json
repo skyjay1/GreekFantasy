@@ -1,0 +1,39 @@
+{
+  "parent": "greekfantasy:root",
+  "display": {
+    "icon": {
+      "item": "greekfantasy:gigante_head"
+    },
+    "title": {
+      "translate": "advancements.greekfantasy.summon_geryon.title"
+    },
+    "description": {
+      "translate": "advancements.greekfantasy.summon_geryon.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "summoned": {
+      "trigger": "minecraft:summoned_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "predicate": {
+              "type": "greekfantasy:geryon"
+            },
+            "entity": "this"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "summoned"
+    ]
+  ]
+}

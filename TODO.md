@@ -19,7 +19,7 @@ X X X X Gorgon (Medusa)
 X X X X Harpy
 X X _ ~ Empusa
 X X X X Shade
-X X ~ ~ Siren (hostile)
+X X X X Siren (hostile)
 X X X X Cerastes (ram-horned serpent)
 X X _ X Ara (Propoetide)
 X X _ X Cyclopes
@@ -47,7 +47,7 @@ X Satyrs summon wolves
 X Satyrs light unlit campfires
 X Geryon smash attack
 X Geryon summons Mad Cows
-X Centaurs / Cyprians shoot arrows
+~ Centaurs / Cyprians shoot arrows (TODO run around while shooting)
 X Minotaur charges at player
 X Minotaur is stunned when charge attack misses
 X Gorgon petrifies player
@@ -157,7 +157,7 @@ X Some way to encounter Geryon
 X Some way to encounter Cerberus
 ~ Block and Item tags (wooden_doors, etc.)
 X Olive forest biome
-_ Spawn eggs
+X Spawn eggs
 
 ## Misc Ideas and Inspirations
 

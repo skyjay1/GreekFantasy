@@ -217,7 +217,12 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    final NaiadEntity.Variant variant = NaiadEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
+    final NaiadEntity.Variant variant;
+    if(reason == SpawnReason.COMMAND || reason == SpawnReason.SPAWN_EGG || reason == SpawnReason.SPAWNER || reason == SpawnReason.DISPENSER) {
+      variant = NaiadEntity.Variant.getRandom(worldIn.getRandom());
+    } else {
+      variant = NaiadEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
+    }
     this.setVariant(variant);
     final float tridentChance = (variant == Variant.OCEAN) ? 0.25F : 0.14F;
     if(this.rand.nextFloat() < tridentChance) {
@@ -335,6 +340,11 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
     
     public static Variant getForBiome(final Optional<RegistryKey<Biome>> biome) {
       return biome.isPresent() && Objects.equals(biome, Optional.of(Biomes.RIVER)) ? RIVER : OCEAN;
+    }
+    
+    public static Variant getRandom(final Random rand) {
+      int len = values().length;
+      return values()[rand.nextInt(len)];
     }
 
     public ResourceLocation getTexture() {
