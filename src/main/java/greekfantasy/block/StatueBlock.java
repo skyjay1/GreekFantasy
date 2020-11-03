@@ -2,6 +2,7 @@ package greekfantasy.block;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.gui.GuiLoader;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.StatuePose;
@@ -129,30 +130,12 @@ public class StatueBlock extends HorizontalBlock {
       if(!stack.isEmpty() && stack.getItem() == Items.NAME_TAG && stack.hasDisplayName()) {        
         teStatue.setTextureName(stack.getDisplayName().getUnformattedComponentText(), true);
         stack.shrink(1);
-        return ActionResultType.SUCCESS;
+        return ActionResultType.CONSUME;
       }
-      // get info to send to the GUI constructor and byte buffer
-      final StatuePose currentPose = teStatue.getStatuePose();
-      final boolean isFemale = teStatue.isStatueFemale();
-      final String name = teStatue.getTextureName();
-      final Direction facing = state.get(HORIZONTAL_FACING);
-      // open the container GUI
-      NetworkHooks.openGui((ServerPlayerEntity)playerIn, 
-        new SimpleNamedContainerProvider((id, inventory, player) -> 
-            new StatueContainer(id, inventory, teStatue, currentPose, isFemale, name, tePos, facing), 
-            StringTextComponent.EMPTY), 
-            buf -> {
-              buf.writeBoolean(isFemale);
-              buf.writeBlockPos(tePos);
-              buf.writeCompoundTag(currentPose.serializeNBT());
-              buf.writeString(name);
-              buf.writeByte(facing.getHorizontalIndex());
-            }
-        );
-      return ActionResultType.CONSUME;
-    } else {
-      return ActionResultType.SUCCESS;
+      // open the statue GUI
+      GuiLoader.openStatueGui(state, tePos, teStatue, (ServerPlayerEntity)playerIn);
     }
+    return ActionResultType.SUCCESS;
   }
   
   @Override

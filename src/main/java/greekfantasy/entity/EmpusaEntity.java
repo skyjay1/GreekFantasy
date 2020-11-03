@@ -19,6 +19,7 @@ import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
@@ -79,6 +80,7 @@ public class EmpusaEntity extends MonsterEntity {
     switch(id) {
     case DRAINING_START:
       this.isDraining = true;
+      this.playSound(SoundEvents.ENTITY_ENDERMAN_SCREAM, this.getSoundVolume(), this.getSoundPitch());
       break;
     case DRAINING_END:
       this.isDraining = false;
@@ -161,7 +163,7 @@ public class EmpusaEntity extends MonsterEntity {
         drainingTime++;
         // stop the entity from moving, and adjust look vecs
         this.entity.getNavigator().clearPath();
-        this.entity.getLookController().setLookPositionWithEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
+        this.entity.faceEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
         // drain health from targetPos
         if(drainingTime > (MAX_DRAIN_TIME / 3) && this.entity.getAttackTarget().hurtTime == 0) {
           final DamageSource src = DamageSource.causeIndirectMagicDamage(this.entity, this.entity);

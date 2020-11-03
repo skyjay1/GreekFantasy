@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import greekfantasy.GFRegistry;
 import greekfantasy.entity.ai.SummonMobGoal;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -30,8 +31,10 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
@@ -87,7 +90,7 @@ public class CerberusEntity extends CreatureEntity {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
     }
     // play sound
-    // TODO
+    world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_WITHER_SPAWN, entity.getSoundCategory(), 1.2F, 1.0F, false);
     return entity;
   }
   
@@ -161,6 +164,26 @@ public class CerberusEntity extends CreatureEntity {
       super.applyEntityCollision(entityIn);
     }
   }
+  
+  @Override
+  protected SoundEvent getAmbientSound() {
+    return SoundEvents.ENTITY_WOLF_GROWL;
+  }
+  
+  @Override
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_WOLF_HURT; }
+
+  @Override
+  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_WOLF_DEATH; }
+
+  @Override
+  protected float getSoundVolume() { return 1.2F; }
+  
+  @Override
+  protected float getSoundPitch() { return 0.4F + rand.nextFloat() * 0.2F; }
+  
+  @Override
+  protected void playStepSound(BlockPos pos, BlockState blockIn) { this.playSound(SoundEvents.ENTITY_WOLF_STEP, 0.15F, 0.6F); }
  
   // Boss logic
 

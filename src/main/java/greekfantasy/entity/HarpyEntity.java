@@ -72,8 +72,8 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
     this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, true));
-    this.goalSelector.addGoal(2, new FindNestGoal(6, 10, 60));
-    this.goalSelector.addGoal(3, new GoToNestGoal(0.9D, 120));
+    this.goalSelector.addGoal(2, new HarpyEntity.FindNestGoal(6, 10, 60));
+    this.goalSelector.addGoal(3, new HarpyEntity.GoToNestGoal(0.9D, 120));
     this.goalSelector.addGoal(4, new WaterAvoidingRandomFlyingGoal(this, 0.9D) {
       @Override
       public boolean shouldExecute() { return !HarpyEntity.this.isGoingToNest && HarpyEntity.this.getRNG().nextInt(200) == 0 && super.shouldExecute(); }
@@ -127,9 +127,12 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
 
   @Override
   protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_GHAST_DEATH; }
-
+  
   @Override
   protected float getSoundVolume() { return 0.8F; }
+  
+  @Override
+  protected float getSoundPitch() { return 0.7F + rand.nextFloat() * 0.2F; }
   
   @Override
   public void writeAdditional(CompoundNBT compound) {
@@ -154,19 +157,19 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
   }
 
   @Override
-  public boolean onLivingFall(float distance, float damageMultiplier) {
-    return false;
-  }
+  public boolean onLivingFall(float distance, float damageMultiplier) { return false; }
 
   @Override
-  protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
-  }
-  
+  protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) { }
+
+  @Override
+  protected boolean makeFlySound() { return true; }
+
   @Override
   protected float playFlySound(float volume) {
     this.playSound(SoundEvents.ENTITY_PARROT_FLY, 0.25F, 0.9F);
     return volume;
- }
+  }
 
   public boolean isFlying() {
     return !this.onGround || this.getMotion().lengthSquared() > 0.06D;

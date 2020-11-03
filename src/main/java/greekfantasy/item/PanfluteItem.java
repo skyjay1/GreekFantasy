@@ -1,7 +1,7 @@
 package greekfantasy.item;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.gui.GuiLoader;
+import greekfantasy.gui.GuiLoader;
 import greekfantasy.util.PanfluteMusicManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;

@@ -8,8 +8,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class MobHeadTileEntity extends TileEntity {
   
@@ -49,7 +47,7 @@ public class MobHeadTileEntity extends TileEntity {
   
   @Override
   public CompoundNBT getUpdateTag() {
-    final CompoundNBT nbt = new CompoundNBT();
+    final CompoundNBT nbt = super.getUpdateTag();
     nbt.putByte(KEY_HEAD, headType.getId());
     nbt.putBoolean(KEY_WALL, wall);
     return nbt;
@@ -90,13 +88,6 @@ public class MobHeadTileEntity extends TileEntity {
   protected void read(final CompoundNBT nbt) {
     setHeadType(HeadType.getById(nbt.getByte(KEY_HEAD)));
     setWall(nbt.getBoolean(KEY_WALL));
-  }
-  
-  // OTHER //
-
-  @OnlyIn(Dist.CLIENT)
-  public double getMaxRenderDistanceSquared() {
-    return 256.0D;
   }
   
   // HEAD TYPE //  

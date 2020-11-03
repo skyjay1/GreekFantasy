@@ -40,6 +40,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -129,7 +130,7 @@ public class GeryonEntity extends MonsterEntity {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
     }
     // play sound
-    // TODO
+    world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_WITHER_SPAWN, entity.getSoundCategory(), 1.2F, 1.0F, false);
     return entity;
   }
   
@@ -256,6 +257,21 @@ public class GeryonEntity extends MonsterEntity {
     this.setHeldItem(Hand.MAIN_HAND, new ItemStack(GFRegistry.IRON_CLUB));
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
+  
+  @Override
+  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_VILLAGER_AMBIENT; }
+
+  @Override
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_VILLAGER_HURT; }
+
+  @Override
+  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_VILLAGER_DEATH; }
+
+  @Override
+  protected float getSoundVolume() { return 1.5F; }
+  
+  @Override
+  protected float getSoundPitch() { return 0.089F; }
   
   @Override
   public void writeAdditional(CompoundNBT compound) {

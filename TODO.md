@@ -19,7 +19,7 @@ X X X X Gorgon (Medusa)
 X X X X Harpy
 X X _ ~ Empusa
 X X X X Shade
-X X _ ~ Siren (hostile)
+X X ~ ~ Siren (hostile)
 X X X X Cerastes (ram-horned serpent)
 X X _ X Ara (Propoetide)
 X X _ X Cyclopes
@@ -29,8 +29,8 @@ X X X X Orthus (2-headed dog)
 X X X X Elpis (hope)
 X X X X Sparti
 X X X X Mad Cow (summoned by Geryon)
-X X _ X Boss: Cerberus
-X X _ X Boss: Geryon (3-headed Gigante)
+X X X X Boss: Cerberus
+X X X X Boss: Geryon (3-headed Gigante)
 _ _ _ _ Hippocampus
 _ _ _ _ Eurynomos (blue skin; vulture head?)
 
@@ -68,9 +68,9 @@ __Key:__
 `[Design] [Worldgen] [Loot]`
 
 X X X Harpy Nests
-X X _ Satyr Camps
-X X _ Ara Camps
-X X _ Small Marble Shrine
+X X X Satyr Camps
+X X X Ara Camps
+X X X Small Marble Shrine
 X X X Small Limestone Shrine
 X X X Small Nether Shrine
 X X X Marble veins
@@ -118,7 +118,6 @@ X X X Dragon's Tooth (to summon Sparti)
 X X X Healing rod (cannot be used on self) (healing projectiles)
 X X X Helm of Darkness (hides player _and_ armor) (from Cyclopes somehow)
 X X X Flint Knife
-X X X Sword of the Hunt (one-shots animals)
 X X X Thunderbolt
 X X X Snake skin and Purified snake skin (from Gorgons)
 X X X Ichor - crafting component from Elpis
@@ -150,13 +149,15 @@ X "Stunned" effect (prevent movement or item use)
 X "Petrified" effect
 X "Overstep" enchantment
 X "Smashing" enchantment
-X Panflute songs TODO "Tetris Theme"
+X "Hunting" enchantment
+X Panflute songs
 X Panflute song selection GUI
 X Lots of mysterious box functions!
 X Some way to encounter Geryon
 X Some way to encounter Cerberus
 ~ Block and Item tags (wooden_doors, etc.)
 X Olive forest biome
+_ Spawn eggs
 
 ## Misc Ideas and Inspirations
 

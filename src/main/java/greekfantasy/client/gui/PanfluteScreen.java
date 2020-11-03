@@ -58,7 +58,7 @@ public class PanfluteScreen extends Screen {
   /** True if there are at least [BTN_VISIBLE] number of songs in the list **/
   private boolean scrollEnabled;
 
-  protected PanfluteScreen(final int itemSlotIn, final ItemStack panfluteItemIn) {
+  public PanfluteScreen(final int itemSlotIn, final ItemStack panfluteItemIn) {
     super(new TranslationTextComponent("gui.panflute.title"));
     itemSlot = itemSlotIn;
     panfluteItem = panfluteItemIn;
