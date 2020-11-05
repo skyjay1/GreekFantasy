@@ -2,7 +2,6 @@ package greekfantasy.block;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.gui.GuiLoader;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.StatuePose;
@@ -47,8 +46,10 @@ public class StatueBlock extends HorizontalBlock {
   
   public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
   
-  protected static final VoxelShape AABB_SLAB_BOTTOM = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
-  protected static final VoxelShape AABB_STATUE = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+  protected static final VoxelShape AABB_STATUE_BOTTOM = VoxelShapes.combine(
+      Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D),
+      Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D),
+      IBooleanFunction.OR);
   protected static final VoxelShape AABB_STATUE_TOP = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 24.0D, 14.0D);
   
   private final StatueMaterial statueMaterial;
@@ -133,21 +134,30 @@ public class StatueBlock extends HorizontalBlock {
         return ActionResultType.CONSUME;
       }
       // open the statue GUI
-      GuiLoader.openStatueGui(state, tePos, teStatue, (ServerPlayerEntity)playerIn);
+      final StatuePose currentPose = teStatue.getStatuePose();
+      final boolean isFemale = teStatue.isStatueFemale();
+      final String name = teStatue.getTextureName();
+      final Direction facing = state.get(StatueBlock.HORIZONTAL_FACING);
+      // open the container GUI
+      NetworkHooks.openGui((ServerPlayerEntity)playerIn, 
+        new SimpleNamedContainerProvider((id, inventory, player) -> 
+            new StatueContainer(id, inventory, teStatue, currentPose, isFemale, name, tePos, facing), 
+            StringTextComponent.EMPTY), 
+            buf -> {
+              buf.writeBoolean(isFemale);
+              buf.writeBlockPos(tePos);
+              buf.writeCompoundTag(currentPose.serializeNBT());
+              buf.writeString(name);
+              buf.writeByte(facing.getHorizontalIndex());
+            }
+        );
     }
     return ActionResultType.SUCCESS;
   }
   
   @Override
-  public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {
-    VoxelShape shape = VoxelShapes.empty();
-    if(state.get(HALF) == DoubleBlockHalf.UPPER) {
-      shape = AABB_STATUE_TOP;
-    } else {
-      shape = VoxelShapes.combine(AABB_SLAB_BOTTOM, AABB_STATUE, IBooleanFunction.OR).simplify();
-    }
-    
-    return shape;
+  public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {    
+    return state.get(HALF) == DoubleBlockHalf.UPPER ? AABB_STATUE_TOP : AABB_STATUE_BOTTOM;
   }
   
   @Override

@@ -7,34 +7,20 @@
       },
       "entries": [
         {
-          "type": "minecraft:alternatives",
-          "children": [
-            {
-              "type": "minecraft:item",
-              "name": "minecraft:apple"
-            },
-            {
-              "type": "minecraft:item",
-              "name": "minecraft:beetroot"
-            },
-            {
-              "type": "minecraft:item",
-              "name": "minecraft:potato"
-            },
-            {
-              "type": "minecraft:item",
-              "name": "minecraft:carrot"
-            }
-          ],
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 1,
-                "max": 4
-              }
-            }
-          ]
+          "type": "minecraft:item",
+          "name": "minecraft:apple"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:beetroot"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:potato"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:carrot"
         },
         {
           "type": "minecraft:item",

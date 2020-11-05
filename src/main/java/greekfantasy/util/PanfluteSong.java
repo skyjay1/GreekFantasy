@@ -2,6 +2,7 @@ package greekfantasy.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Attributes.Name;
 
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -10,12 +11,19 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 public class PanfluteSong {
   
+  public static final PanfluteSong DEFAULT = new PanfluteSong("Error");
+  
   private String name;
   private String credits;
   private int interval;
   private int length;
   private int[] treble;
   private int [] bass;
+  
+  protected PanfluteSong() { }
+  protected PanfluteSong(String def) {
+    name = credits = def;
+  }
   
   /** @return the translation key for the name **/
   public String getNameTranslationKey() { return name; }

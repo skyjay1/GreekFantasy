@@ -48,6 +48,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.BiomeDictionary;
 
 public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
   
@@ -77,9 +78,9 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
       return false;
     }
 
-    Optional<RegistryKey<Biome>> biome = world.func_242406_i(pos);
-    return ((!Objects.equals(biome, Optional.of(Biomes.OCEAN)) || !Objects.equals(biome, Optional.of(Biomes.DEEP_OCEAN)))
-        && world.getFluidState(pos).isTagged(FluidTags.WATER));
+    RegistryKey<Biome> biome = world.func_242406_i(pos).orElse(Biomes.PLAINS);
+    return (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN))
+        && world.getFluidState(pos).isTagged(FluidTags.WATER);
   }
   
   @Override

@@ -21,8 +21,7 @@ public class PanfluteSongs extends JsonReloadListener {
   
   private static final Gson GSON = new GsonBuilder().create();
   
-  protected Map<ResourceLocation, PanfluteSong> SONGS = new HashMap<>();
-  protected Map<PanfluteSong, ResourceLocation> SONG_LOOKUP = new HashMap<>();
+  protected Map<ResourceLocation, Optional<PanfluteSong>> SONGS = new HashMap<>();
   
   public PanfluteSongs(final String folder) {
     super(GSON, folder);
@@ -33,32 +32,20 @@ public class PanfluteSongs extends JsonReloadListener {
    * @return an Optional containing the PanfluteSong if found, otherwise empty
    **/
   public Optional<PanfluteSong> get(final ResourceLocation id) {
-    if(SONGS.containsKey(id)) {
-      return Optional.of(SONGS.get(id));
+    if(!SONGS.containsKey(id)) {
+      GreekFantasy.LOGGER.debug("Could not find song for " + id);
+      SONGS.put(id, Optional.empty());
     }
-    GreekFantasy.LOGGER.debug("Could not find song for " + id);
-    return Optional.empty();
+    return SONGS.get(id);
   }
-  
-  /**
-   * @param song a PanfluteSong
-   * @return an Optional containing the ID of the given song if registered, otherwise empty
-   **/
-  public Optional<ResourceLocation> get(final PanfluteSong song) {
-    if(SONG_LOOKUP.containsKey(song)) {
-      return Optional.of(SONG_LOOKUP.get(song));
-    }
-    GreekFantasy.LOGGER.debug("Could not find ID for " + song.getNameTranslationKey() + ", this means it was not registered!");
-    return Optional.empty();
-  }
-  
+ 
   /** @return a collection of all PanfluteSongs **/
-  public Collection<PanfluteSong> getValues() {
+  public Collection<Optional<PanfluteSong>> getValues() {
     return SONGS.values();
   }
   
   /** @return a collection of all PanfluteSongs **/
-  public Set<Entry<ResourceLocation, PanfluteSong>> getEntries() {
+  public Set<Entry<ResourceLocation, Optional<PanfluteSong>>> getEntries() {
     return SONGS.entrySet();
   }
   
@@ -70,9 +57,7 @@ public class PanfluteSongs extends JsonReloadListener {
   protected void apply(Map<ResourceLocation, JsonElement> jsons, IResourceManager manager, IProfiler profile) {
     // build the maps
     SONGS.clear();
-    jsons.forEach((key, input) -> SONGS.put(key, parse(input)));
-    SONG_LOOKUP.clear();
-    SONGS.forEach((rl, s) -> SONG_LOOKUP.put(s, rl));
+    jsons.forEach((key, input) -> SONGS.put(key, Optional.of(parse(input))));
     // print size of the map for debugging purposes
     GreekFantasy.LOGGER.debug("Parsing PanfluteSongs map. Found " + SONGS.size() + " entries");
   }

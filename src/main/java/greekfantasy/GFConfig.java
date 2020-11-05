@@ -142,7 +142,7 @@ public class GFConfig {
         .define("gorgon_attack", true);
     MINOTAUR_ATTACK = builder.comment("Whether the Minotaur can charge and stun players")
         .define("minotaur_attack", true);
-    SATYR_ATTACK = builder.comment("Whether the Satyr can summon wolves")
+    SATYR_ATTACK = builder.comment("Whether the Satyr Shaman can summon wolves")
         .define("satyr_attack", true);
     SHADE_ATTACK = builder.comment("Whether the Shade can steal player XP")
         .define("shade_attack", true);

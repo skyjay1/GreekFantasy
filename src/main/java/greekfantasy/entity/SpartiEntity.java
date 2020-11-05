@@ -35,6 +35,7 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -141,8 +142,8 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
   }
   
   public void setEquipmentOnSpawn() {
-    // TODO what equipment should sparti have?
     this.setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+    this.setDropChance(EquipmentSlotType.MAINHAND, 0);
   }
   
   @Override

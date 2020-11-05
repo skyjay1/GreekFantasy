@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import greekfantasy.client.network.CUpdatePanflutePacket;
-import greekfantasy.client.network.CUpdateStatuePosePacket;
+import greekfantasy.network.CUpdatePanflutePacket;
+import greekfantasy.network.CUpdateStatuePosePacket;
 import greekfantasy.proxy.ClientProxy;
 import greekfantasy.proxy.Proxy;
 import greekfantasy.proxy.ServerProxy;

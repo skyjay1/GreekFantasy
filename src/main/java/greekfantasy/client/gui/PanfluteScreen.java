@@ -3,13 +3,15 @@ package greekfantasy.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.network.CUpdatePanflutePacket;
 import greekfantasy.item.PanfluteItem;
+import greekfantasy.network.CUpdatePanflutePacket;
 import greekfantasy.util.PanfluteSong;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -41,12 +43,12 @@ public class PanfluteScreen extends Screen {
   private static final int SCROLL_WIDTH = 14;
   private static final int SCROLL_HEIGHT = BTN_HEIGHT * BTN_VISIBLE;
   
-  private final List<Map.Entry<ResourceLocation, PanfluteSong>> songs = new ArrayList<>();
+  private final List<Map.Entry<ResourceLocation, Optional<PanfluteSong>>> songs = new ArrayList<>();
   private final List<PanfluteScreen.SongButton> songButtons = new ArrayList<>();
   private final int itemSlot;
   private final ItemStack panfluteItem;
   
-  private ResourceLocation selectedSong; 
+  private ResourceLocation selectedSong = PanfluteItem.DEFAULT_SONG; 
   private ScrollButton scrollButton;
   
   /** Number of pixels between left side of screen and left side of gui **/
@@ -65,7 +67,8 @@ public class PanfluteScreen extends Screen {
     // populate songs list (alphabetically)
     if(songs.isEmpty()) {
       songs.addAll(GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries());
-      songs.sort((e1, e2) -> e1.getValue().getName().getString().compareTo(e2.getValue().getName().getString()));
+      songs.sort((e1, e2) -> e1.getValue().orElse(PanfluteSong.DEFAULT).getName().getString()
+          .compareTo(e2.getValue().orElse(PanfluteSong.DEFAULT).getName().getString()));
     }
     // determine currently selected song
     if(panfluteItem.getOrCreateTag().contains(PanfluteItem.KEY_SONG)) {
@@ -93,8 +96,8 @@ public class PanfluteScreen extends Screen {
         }));
     // add song buttons
     int i = 0;
-    for(final Map.Entry<ResourceLocation, PanfluteSong> e : songs) {
-      final SongButton b = addButton(new SongButton(i, this, e.getValue(), e.getKey(), guiLeft + BTN_LEFT, 0));
+    for(final Entry<ResourceLocation, Optional<PanfluteSong>> e : songs) {
+      final SongButton b = addButton(new SongButton(i, this, e.getValue().orElse(PanfluteSong.DEFAULT), e.getKey(), guiLeft + BTN_LEFT, 0));
       b.updateLocation(0);
       songButtons.add(b);      
       i++;
@@ -121,7 +124,7 @@ public class PanfluteScreen extends Screen {
   @Override
   public void onClose() {
     // send update packet to server
-    GreekFantasy.CHANNEL.sendToServer(new CUpdatePanflutePacket(this.itemSlot, this.selectedSong.toString()));
+    GreekFantasy.CHANNEL.sendToServer(new CUpdatePanflutePacket(this.itemSlot, this.selectedSong));
     super.onClose();
   }
   
@@ -180,7 +183,7 @@ public class PanfluteScreen extends Screen {
     protected void drawStringToFit(MatrixStack matrixStack, ITextComponent text, int x, int y, int maxWidth) {
       float scale = 1.0F;
       while(PanfluteScreen.this.font.getWordWrappedHeight(text.getString(), (int) (maxWidth / scale)) > PanfluteScreen.this.font.FONT_HEIGHT && scale > 0.25F) {
-        scale -= 0.1F;
+        scale -= 0.05F;
       }
       RenderSystem.pushMatrix();
       RenderSystem.scalef(scale, scale, scale);

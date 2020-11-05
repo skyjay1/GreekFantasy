@@ -25,15 +25,17 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class ClientProxy extends Proxy {
   
+  @Override
   public void registerReloadListeners() {
     super.registerReloadListeners();
     GreekFantasy.LOGGER.debug("registerReloadListeners");
     IResourceManager manager = Minecraft.getInstance().getResourceManager();
     if (manager instanceof IReloadableResourceManager) {
-      ((IReloadableResourceManager)manager).addReloadListener(PANFLUTE_SONGS);
+      ((IReloadableResourceManager) manager).addReloadListener(PANFLUTE_SONGS);
     }
   }
   
+  @Override
   public void registerEventHandlers() { 
     super.registerEventHandlers();
     GreekFantasy.LOGGER.debug("registerClientEventHandlers");

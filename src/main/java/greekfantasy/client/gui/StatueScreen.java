@@ -6,8 +6,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.block.StatueBlock;
-import greekfantasy.client.network.CUpdateStatuePosePacket;
 import greekfantasy.gui.StatueContainer;
+import greekfantasy.network.CUpdateStatuePosePacket;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.ModelPart;
 import greekfantasy.util.StatuePose;

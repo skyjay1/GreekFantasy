@@ -1,4 +1,4 @@
-package greekfantasy.client.network;
+package greekfantasy.network;
 
 import java.util.function.Supplier;
 
@@ -19,10 +19,11 @@ import net.minecraftforge.fml.network.NetworkEvent;
  **/
 public class CUpdateStatuePosePacket {
 
-  private BlockPos blockPos = BlockPos.ZERO;
-  private StatuePose statuePose = StatuePoses.NONE;
-  private boolean statueFemale = false;
-  private String textureName = "";
+  protected static final int NAME_LEN = 16;
+  protected BlockPos blockPos = BlockPos.ZERO;
+  protected StatuePose statuePose = StatuePoses.NONE;
+  protected boolean statueFemale = false;
+  protected String textureName = "";
 
   public CUpdateStatuePosePacket() { }
 
@@ -33,22 +34,6 @@ public class CUpdateStatuePosePacket {
     this.statueFemale = statueFemaleIn;
     this.textureName = textureNameIn;
   }
-
-  public BlockPos getBlockPos() {
-    return this.blockPos;
-  }
-
-  public StatuePose getStatuePose() {
-    return this.statuePose;
-  }
-  
-  public boolean isStatueFemale() {
-    return this.statueFemale;
-  }
-  
-  public String getTextureName() {
-    return this.textureName;
-  }
   
   /**
    * Reads the raw packet data from the data stream.
@@ -57,7 +42,7 @@ public class CUpdateStatuePosePacket {
     final BlockPos blockPos = buf.readBlockPos();
     final CompoundNBT nbt = buf.readCompoundTag();
     final boolean female = buf.readBoolean();
-    final String textureName = buf.readString();
+    final String textureName = buf.readString(NAME_LEN);
     return new CUpdateStatuePosePacket(blockPos, new StatuePose(nbt), female, textureName);
   }
 
@@ -65,10 +50,14 @@ public class CUpdateStatuePosePacket {
    * Writes the raw packet data to the data stream.
    */
   public static void toBytes(final CUpdateStatuePosePacket msg, final PacketBuffer buf) {
-    buf.writeBlockPos(msg.getBlockPos());
-    buf.writeCompoundTag(msg.getStatuePose().serializeNBT());
-    buf.writeBoolean(msg.isStatueFemale());
-    buf.writeString(msg.getTextureName());
+    buf.writeBlockPos(msg.blockPos);
+    buf.writeCompoundTag(msg.statuePose.serializeNBT());
+    buf.writeBoolean(msg.statueFemale);
+    String name = msg.textureName;
+    if(name.length() > NAME_LEN) {
+      name = name.substring(0, NAME_LEN);
+    }
+    buf.writeString(name, NAME_LEN);
   }
 
   public static void handlePacket(final CUpdateStatuePosePacket message, final Supplier<NetworkEvent.Context> contextSupplier) {
@@ -77,14 +66,14 @@ public class CUpdateStatuePosePacket {
       context.enqueueWork(() -> {
         final ServerPlayerEntity player = context.getSender();
         // make sure the player is in range of the given position
-        if (message.getBlockPos().distanceSq(player.getPosition()) < 100.0D) {
-          final TileEntity tileentity = context.getSender().getEntityWorld().getTileEntity(message.getBlockPos());
+        if (message.blockPos.distanceSq(player.getPosition()) < 100.0D) {
+          final TileEntity tileentity = context.getSender().getEntityWorld().getTileEntity(message.blockPos);
           if (tileentity instanceof StatueTileEntity) {
             // update the tile entity using info from this packet
             final StatueTileEntity statueTileEntity = (StatueTileEntity)tileentity;
-            statueTileEntity.setStatuePose(message.getStatuePose());
-            statueTileEntity.setStatueFemale(message.isStatueFemale(), true);
-            statueTileEntity.setTextureName(message.getTextureName(), true);
+            statueTileEntity.setStatuePose(message.statuePose);
+            statueTileEntity.setStatueFemale(message.statueFemale, true);
+            statueTileEntity.setTextureName(message.textureName, true);
           }
         }
       });

@@ -1,24 +1,24 @@
-package greekfantasy.client.network;
+package greekfantasy.network;
 
 import java.util.function.Supplier;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.GreekFantasy;
 import greekfantasy.item.PanfluteItem;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 public class CUpdatePanflutePacket {
 
-  private int slot;
-  private String songName;
+  protected int slot;
+  protected ResourceLocation songName;
   
   public CUpdatePanflutePacket() { }
 
-  public CUpdatePanflutePacket(final int slotIn, final String songNameIn) {
+  public CUpdatePanflutePacket(final int slotIn, final ResourceLocation songNameIn) {
     this.slot = slotIn;
     this.songName = songNameIn;
   }
@@ -27,16 +27,12 @@ public class CUpdatePanflutePacket {
     return this.slot;
   }
   
-  public String getSongName() {
-    return songName;
-  }
-  
   /**
    * Reads the raw packet data from the data stream.
    */
   public static CUpdatePanflutePacket fromBytes(final PacketBuffer buf) {
     final int msgSlot = buf.readInt();
-    final String msgSongName = buf.readString();
+    final ResourceLocation msgSongName = buf.readResourceLocation();
     return new CUpdatePanflutePacket(msgSlot, msgSongName);
   }
 
@@ -45,7 +41,7 @@ public class CUpdatePanflutePacket {
    */
   public static void toBytes(final CUpdatePanflutePacket msg, final PacketBuffer buf) {
     buf.writeInt(msg.getSlot());
-    buf.writeString(msg.getSongName());
+    buf.writeResourceLocation(msg.songName);
   }
 
   public static void handlePacket(final CUpdatePanflutePacket message, final Supplier<NetworkEvent.Context> contextSupplier) {
@@ -58,7 +54,7 @@ public class CUpdatePanflutePacket {
           final ItemStack stack = player.inventory.getStackInSlot(message.getSlot());
           if(stack.getItem() == GFRegistry.PANFLUTE) {
             // update the song stored in the panflute NBT
-            stack.getOrCreateTag().putString(PanfluteItem.KEY_SONG, message.getSongName());
+            stack.getOrCreateTag().putString(PanfluteItem.KEY_SONG, message.songName.toString());
             player.inventory.setInventorySlotContents(message.getSlot(), stack);
           }
         }

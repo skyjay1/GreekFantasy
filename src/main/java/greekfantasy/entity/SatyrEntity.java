@@ -96,7 +96,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     this.setPathPriority(PathNodeType.DANGER_FIRE, -1.0F);
     this.setPathPriority(PathNodeType.DAMAGE_FIRE, -1.0F);
     meleeAttackGoal = new MeleeAttackGoal(this, 1.0D, false);
-    summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 200);
+    summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 280);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -136,20 +136,24 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   
   @Override
   public void livingTick() {
-    super.livingTick();  
-    // play music
-    if(isSummoning()) {
-      PanfluteMusicManager.playMusic(this, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
-    } else if(isDancing()) {
-      PanfluteMusicManager.playMusic(this, DANCING_SONG, world.getGameTime(), 0.84F, 0.28F);
+    super.livingTick();
+    if (this.world.isRemote()) {
+      // play music
+      if(isSummoning()) {
+        PanfluteMusicManager.playMusic(this, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
+      } else if(isDancing()) {
+        PanfluteMusicManager.playMusic(this, DANCING_SONG, world.getGameTime(), 0.84F, 0.28F);
+      }
+    } else {
+      // anger timer
+      this.func_241359_a_((ServerWorld) this.world, true);
+      // campfire checker
+      if(this.ticksExisted % 60 == 1 && campfirePos.isPresent() && !isValidCampfire(world, campfirePos.get())) {
+        campfirePos = Optional.empty();
+        setDancing(false);
+      }
     }
-    
-    // campfire checker
-    if(this.ticksExisted % 60 == 1 && campfirePos.isPresent() && !isValidCampfire(world, campfirePos.get())) {
-      campfirePos = Optional.empty();
-      setDancing(false);
-    }
-    
+
     // dancing timer
     if(isDancing() || isSummoning()) {
       this.holdingPanfluteTime = Math.min(this.holdingPanfluteTime + 1, MAX_PANFLUTE_TIME);
@@ -162,10 +166,8 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       summonTime = 0;
     }
 
-    // anger timer
-    if (!this.world.isRemote()) {
-      this.func_241359_a_((ServerWorld) this.world, true);
-    }
+    
+   
   }
   
   @Override
