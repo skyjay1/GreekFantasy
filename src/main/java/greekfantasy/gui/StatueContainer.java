@@ -44,8 +44,8 @@ public class StatueContainer extends Container {
     this.profile = profileIn;
     // add container inventory
     if(GreekFantasy.CONFIG.STATUES_HOLD_ITEMS.get()) {
-      leftSlot = this.addSlot(new Slot(iinventory, 0, 8, 90));
-      rightSlot = this.addSlot(new Slot(iinventory, 1, 44, 90));
+      rightSlot = this.addSlot(new Slot(iinventory, 0, 44, 90));
+      leftSlot = this.addSlot(new Slot(iinventory, 1, 8, 90));
     }
     // add player inventory
     for (int i = 0; i < 3; ++i) {
@@ -90,5 +90,34 @@ public class StatueContainer extends Container {
   
   public ItemStack getItemRight() {
     return this.rightSlot != null ? this.rightSlot.getStack() : ItemStack.EMPTY;
+  }
+  
+  /**
+   * Handle when the stack in slot {@code index} is shift-clicked. Normally this moves the stack between the player
+   * inventory and the other inventory(s).
+   */
+  @Override
+  public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+     ItemStack itemstack = ItemStack.EMPTY;
+     Slot slot = this.inventorySlots.get(index);
+     if (slot != null && slot.getHasStack()) {
+        ItemStack itemstack1 = slot.getStack();
+        itemstack = itemstack1.copy();
+        if (index < 2) {
+           if (!this.mergeItemStack(itemstack1, 2, this.inventorySlots.size(), false)) {
+              return ItemStack.EMPTY;
+           }
+        } else if (!this.mergeItemStack(itemstack1, 0, 2, true)) {
+           return ItemStack.EMPTY;
+        }
+
+        if (itemstack1.isEmpty()) {
+           slot.putStack(ItemStack.EMPTY);
+        } else {
+           slot.onSlotChanged();
+        }
+     }
+
+     return itemstack;
   }
 }
