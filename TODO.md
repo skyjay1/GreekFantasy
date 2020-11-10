@@ -4,6 +4,13 @@ List of features that could be added to the mod at some point.
 __Key:__
 `X Complete` `~ In Progress` `_ Incomplete`
 
+## Bugs and future updates
+X Reeds are too common and chance is not configurable
+X Nether shrines are too common by default
+_ Summoning animation not playing on dedicated server (Geryon, Sparti)
+_ Structure gen is jenky (check *all* corner blocks)
+X Crash when approaching client (unsafe cast)
+
 ## Entity basics
 
 __Key:__

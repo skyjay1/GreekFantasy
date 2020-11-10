@@ -7,7 +7,6 @@ import com.mojang.serialization.Codec;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.SatyrEntity;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -15,15 +14,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.template.BlockIgnoreStructureProcessor;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
 import net.minecraft.world.gen.feature.template.TemplateManager;
 
-public class SatyrCampFeature extends Feature<NoFeatureConfig> {
+public class SatyrCampFeature extends SimpleTemplateFeature {
   
   private static final ResourceLocation STRUCTURE_CAMPFIRE = new ResourceLocation(GreekFantasy.MODID, "satyr_camp/satyr_campfire");
   private static final ResourceLocation STRUCTURE_TENT_CHEST = new ResourceLocation(GreekFantasy.MODID, "satyr_camp/satyr_tent_with_chest");
@@ -36,19 +33,14 @@ public class SatyrCampFeature extends Feature<NoFeatureConfig> {
   @Override
   public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
-    // DEBUG
-    GreekFantasy.LOGGER.debug("Generating satyr tents near " + blockPosIn);
     // load templates
     final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
-    final Template templateFire = manager.getTemplateDefaulted(STRUCTURE_CAMPFIRE);
-    final Template templateChest = manager.getTemplateDefaulted(STRUCTURE_TENT_CHEST);
-    final Template templateNoChest = manager.getTemplateDefaulted(STRUCTURE_TENT_NOCHEST);
   
     // position for generation
-    final BlockPos tent1Offset = new BlockPos(8 + rand.nextInt(4), 0, rand.nextInt(4) - 2);
-    final BlockPos tent2Offset = new BlockPos(2 + rand.nextInt(4), 0, 7 + rand.nextInt(3));
-    final BlockPos tent3Offset = new BlockPos(2 + rand.nextInt(4), 0, 7 + rand.nextInt(3));
-    final BlockPos tent4Offset = new BlockPos(2 + rand.nextInt(4), 0, 7 + rand.nextInt(3));
+    final BlockPos tent1Offset = new BlockPos(4 + rand.nextInt(4), 0, rand.nextInt(4) - 2);
+    final BlockPos tent2Offset = new BlockPos(2 + rand.nextInt(4), 0, 5 + rand.nextInt(3));
+    final BlockPos tent3Offset = new BlockPos(2 + rand.nextInt(4), 0, 5 + rand.nextInt(3));
+    final BlockPos tent4Offset = new BlockPos(2 + rand.nextInt(4), 0, 5 + rand.nextInt(3));
     
     // placement settings
     Rotation rotation = Rotation.randomRotation(rand);
@@ -59,44 +51,46 @@ public class SatyrCampFeature extends Feature<NoFeatureConfig> {
     
     // generate the campfire
     BlockPos campfirePos = getHeightPos(reader, blockPosIn.add(4 + rand.nextInt(8), 0, 4 + rand.nextInt(8)));
-    if(generateTemplate(reader, templateFire, placement, campfirePos, rand, false, 0)) {
+    if(generateTemplate(reader, manager.getTemplateDefaulted(STRUCTURE_CAMPFIRE), placement, campfirePos, rand, false, 0)) {
+      // add 1-2 satyrs
+      addSatyr(reader, rand, campfirePos.up(), 1 + rand.nextInt(2));
       // generate the first tent
       int tentsGenerated = 0;
       BlockPos tentPos = getHeightPos(reader, campfirePos.add(tent1Offset.rotate(rotation)));
-      //rotation = rotation.add(Rotation.CLOCKWISE_90);
-      if(generateTemplate(reader, templateChest, placement, tentPos, rand, true, tentsGenerated)) {
+      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement, tentPos, rand, true, tentsGenerated)) {
         tentsGenerated++;
       }
       
       // generate the second tent
       tentPos = getHeightPos(reader, campfirePos.add(tent2Offset.rotate(rotation)));
       rotation = rotation.add(Rotation.CLOCKWISE_90);
-      if(generateTemplate(reader, templateNoChest, placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
+      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
         tentsGenerated++;
       }
       
       // generate the third tent
       tentPos = getHeightPos(reader, campfirePos.add(tent3Offset.rotate(rotation)));
       rotation = rotation.add(Rotation.CLOCKWISE_90);
-      if(generateTemplate(reader, templateChest, placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
+      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
         tentsGenerated++;
       }
       
       // generate the fourth tent
       tentPos = getHeightPos(reader, campfirePos.add(tent4Offset.rotate(rotation)));
       rotation = rotation.add(Rotation.CLOCKWISE_90);
-      if(generateTemplate(reader, templateNoChest, placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
+      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
         tentsGenerated++;
-      } 
+      }
+      // DEBUG
+      GreekFantasy.LOGGER.debug("Generated " + tentsGenerated + " satyr tents near " + campfirePos);
+      return true;
     }
-    
-    return true;
+    return false;
   }
  
   protected boolean generateTemplate(final ISeedReader reader, final Template template, final PlacementSettings placement,
       final BlockPos pos, final Random rand, final boolean satyrs, final int tentsGenerated) {
-    final BlockPos offset = new BlockPos(-template.getSize().getX(), 0, -template.getSize().getZ());
-    if(tentsGenerated > 2 || !canPlaceOnBlock(reader, pos) || !canPlaceOnBlock(reader, pos.add(offset.rotate(placement.getRotation())))) {
+    if((tentsGenerated > 2 || !isValidPosition(reader, pos, template.getSize(), placement.getRotation()))) {
       return false;
     }
     // placement settings
@@ -107,15 +101,9 @@ public class SatyrCampFeature extends Feature<NoFeatureConfig> {
     
     // add entities
     if(satyrs) {
-      addSatyr(reader, rand, pos.add(new BlockPos(3, 2, 2).rotate(placement.getRotation())), 1 + rand.nextInt(2));
+      addSatyr(reader, rand, pos.add(new BlockPos(3, 1, 2).rotate(placement.getRotation())), 1 + rand.nextInt(2));
     }
     return true;
-  }
-
-  protected static BlockPos getHeightPos(final ISeedReader world, final BlockPos original) {
-    int y = world.getHeight(Heightmap.Type.WORLD_SURFACE, original).getY();
-    final BlockPos pos = new BlockPos(original.getX(), y, original.getZ());
-    return world.getBlockState(pos).isIn(Blocks.SNOW) ? pos.down(2) : pos.down(1);
   }
 
   protected static void addSatyr(final ISeedReader world, final Random rand, final BlockPos pos, final int count) {
@@ -132,8 +120,13 @@ public class SatyrCampFeature extends Feature<NoFeatureConfig> {
     }
   }
   
-  protected static boolean canPlaceOnBlock(final ISeedReader world, final BlockPos pos) {
-    return pos.getY() > 3 && world.getBlockState(pos).isSolid() && !world.getBlockState(pos.up(3)).isSolid();
+  @Override
+  protected boolean isValidPosition(final ISeedReader reader, final BlockPos pos) {
+    return pos.getY() > 3 && reader.getBlockState(pos).isSolid() && isReplaceableAt(reader, pos.up(3));
   }
 
+  @Override
+  protected ResourceLocation getStructure(Random rand) {
+    return rand.nextBoolean() ? STRUCTURE_TENT_CHEST : STRUCTURE_TENT_NOCHEST;
+  }
 }

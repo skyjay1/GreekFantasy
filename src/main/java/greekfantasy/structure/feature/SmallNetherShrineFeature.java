@@ -6,8 +6,6 @@ import java.util.Random;
 import com.mojang.serialization.Codec;
 
 import greekfantasy.GreekFantasy;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -15,14 +13,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.template.BlockIgnoreStructureProcessor;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
 import net.minecraft.world.gen.feature.template.TemplateManager;
 
-public class SmallNetherShrineFeature extends Feature<NoFeatureConfig> {
+public class SmallNetherShrineFeature extends SimpleTemplateFeature {
   
   private static final ResourceLocation STRUCTURE = new ResourceLocation(GreekFantasy.MODID, "small_nether_shrine");
 
@@ -37,8 +34,12 @@ public class SmallNetherShrineFeature extends Feature<NoFeatureConfig> {
     final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
     final Template template = manager.getTemplateDefaulted(STRUCTURE);
     
+    // rotation / mirror
+    Mirror mirror = Mirror.NONE;
+    Rotation rotation = Rotation.randomRotation(rand);
+    
     // position for generation
-    Optional<BlockPos> optionalPos = getRandomPositionInChunk(reader, blockPosIn, rand);
+    Optional<BlockPos> optionalPos = getRandomPositionInChunk(reader, blockPosIn, template.getSize(), 2, rand, rotation);
     
     // check for valid position
     if(!optionalPos.isPresent()) {
@@ -46,35 +47,39 @@ public class SmallNetherShrineFeature extends Feature<NoFeatureConfig> {
     }
     final BlockPos pos = optionalPos.get();
     
-    // rotation / mirror
-    Mirror mirror = Mirror.NONE;
-    Rotation rotation = Rotation.randomRotation(rand);
-    
     // placement settings
     MutableBoundingBox mbb = new MutableBoundingBox(pos.getX() - 8, pos.getY() - 16, pos.getZ() - 8, pos.getX() + 8, pos.getY() + 16, pos.getZ() + 8);
     PlacementSettings placement = new PlacementSettings()
         .setRotation(rotation).setMirror(mirror).setRandom(rand).setBoundingBox(mbb)
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
-    
-    // DEBUG
-    GreekFantasy.LOGGER.debug("Generating nether shrine near " + pos);
+
     // actually generate the structure
-    return template.func_237146_a_(reader, pos, pos, placement, rand, 2);
+    if(template.func_237146_a_(reader, pos, pos, placement, rand, 2)) {
+      // DEBUG
+      GreekFantasy.LOGGER.debug("Generating nether shrine near " + pos);
+      return true;
+    }
+    return false;
   }
   
   // try to find a valid position in this chunk
-  private Optional<BlockPos> getRandomPositionInChunk(final ISeedReader reader, final BlockPos blockPosIn, final Random rand) {
-    for(int i = 0; i < 20; i++) {
+  private Optional<BlockPos> getRandomPositionInChunk(final ISeedReader reader, final BlockPos blockPosIn, 
+      final BlockPos size, final int down, final Random rand, final Rotation r) {
+    for(int i = 0; i < 5; i++) {
       BlockPos pos = new BlockPos(
         blockPosIn.getX() + 4 + rand.nextInt(8), 
         32 + rand.nextInt(120 - 32), 
         blockPosIn.getZ() + 4 + rand.nextInt(8));
-      final BlockState state = reader.getBlockState(pos);
-      if(state.isSolid() && state.getMaterial() != Material.PLANTS && !reader.getBlockState(pos.up(1)).isSolid()) {
+      if(isValidPosition(reader, pos, size, r)) {
         return Optional.of(pos);
       }
     }
     return Optional.empty();
+  }
+
+  @Override
+  protected ResourceLocation getStructure(Random rand) {
+    return STRUCTURE;
   }
 
 }

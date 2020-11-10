@@ -2,17 +2,12 @@ package greekfantasy.events;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockDisplayReader;
-import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -57,7 +52,8 @@ public class ClientForgeEventHandler {
    **/
   @SubscribeEvent(priority = EventPriority.HIGH)
   public static void onPlayerTick(final PlayerTickEvent event) {
-    if(event.phase == TickEvent.Phase.START && event.side == LogicalSide.CLIENT && GreekFantasy.CONFIG.isOverstepEnabled()) {
+    if(event.phase == TickEvent.Phase.START && event.side == LogicalSide.CLIENT && GreekFantasy.CONFIG.isOverstepEnabled() 
+        && event.player instanceof ClientPlayerEntity) {
       final ClientPlayerEntity player = (ClientPlayerEntity)event.player;
       final Minecraft mc = Minecraft.getInstance();
       final boolean hasOverstep = hasOverstep(player);
@@ -97,7 +93,6 @@ public class ClientForgeEventHandler {
   
   /** @return whether the player should have the client-side overstep step-height logic applied **/
   private static boolean hasOverstep(final PlayerEntity player) {
-    // return player.getItemStackFromSlot(EquipmentSlotType.FEET).getItem() == GFRegistry.WINGED_SANDALS;
     return EnchantmentHelper.getEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
   }
   

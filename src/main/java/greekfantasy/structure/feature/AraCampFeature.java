@@ -17,14 +17,13 @@ import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.template.BlockIgnoreStructureProcessor;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
 import net.minecraft.world.gen.feature.template.TemplateManager;
 
-public class AraCampFeature extends Feature<NoFeatureConfig> {
+public class AraCampFeature extends SimpleTemplateFeature {
   
   private static final ResourceLocation STRUCTURE_TENT_CHEST = new ResourceLocation(GreekFantasy.MODID, "ara_camp/ara_tent_with_chest");
   private static final ResourceLocation STRUCTURE_TENT_NOCHEST = new ResourceLocation(GreekFantasy.MODID, "ara_camp/ara_tent");
@@ -36,12 +35,9 @@ public class AraCampFeature extends Feature<NoFeatureConfig> {
   @Override
   public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
-    // DEBUG
-    GreekFantasy.LOGGER.debug("Generating ara tents near " + blockPosIn);
     // load templates
     final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
-    final Template templateChest = manager.getTemplateDefaulted(STRUCTURE_TENT_CHEST);
-    final Template templateNoChest = manager.getTemplateDefaulted(STRUCTURE_TENT_NOCHEST);
+    int tentsGenerated = 0;
     
     // rotation / mirror
     Rotation rotation = Rotation.randomRotation(rand);
@@ -56,7 +52,9 @@ public class AraCampFeature extends Feature<NoFeatureConfig> {
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
     
     // generate the first tent
-    generateTent(reader, templateChest, placement, tentPos, rand);
+    if(generateTent(reader, manager.getTemplateDefaulted(getStructure(rand)), placement, tentPos, rand)) {
+      tentsGenerated++;
+    }
     
     // position settings for second tent
     final BlockPos tent2Offset = new BlockPos(-1 - rand.nextInt(4), 0, 7 + rand.nextInt(3)).rotate(rotation);
@@ -64,21 +62,19 @@ public class AraCampFeature extends Feature<NoFeatureConfig> {
     rotation = rotation.add(Rotation.CLOCKWISE_90);
     
     // generate the second tent
-    generateTent(reader, templateNoChest, placement.setRotation(rotation), tentPos, rand);
+    if(generateTent(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand)) {
+      tentsGenerated++;
+    }
     
-    return true;
+    // DEBUG
+    if(tentsGenerated > 0) GreekFantasy.LOGGER.debug("Generating " + tentsGenerated + " ara tents near " + tentPos);
+    
+    return tentsGenerated > 0;
   }
   
-  protected static BlockPos getHeightPos(final ISeedReader world, final BlockPos original) {
-    int y = world.getHeight(Heightmap.Type.WORLD_SURFACE, original).getY();
-    final BlockPos pos = new BlockPos(original.getX(), y, original.getZ());
-    return world.getBlockState(pos).isIn(Blocks.SNOW) ? pos.down(3) : pos.down(2);
-  }
-  
-  protected static boolean generateTent(final ISeedReader reader, final Template template, final PlacementSettings placement,
+  protected boolean generateTent(final ISeedReader reader, final Template template, final PlacementSettings placement,
       final BlockPos pos, final Random rand) {
-    final BlockPos offset = new BlockPos(-template.getSize().getX(), 0, -template.getSize().getZ());
-    if(!canPlaceOnBlock(reader, pos) || !canPlaceOnBlock(reader, pos.add(offset.rotate(placement.getRotation())))) {
+    if(!isValidPosition(reader, pos, template.getSize().down(3), placement.getRotation())) {
       return false;
     }
     
@@ -87,10 +83,10 @@ public class AraCampFeature extends Feature<NoFeatureConfig> {
     MutableBoundingBox mbb = new MutableBoundingBox(chunkPos.getXStart() - 8, pos.getY() - 8, chunkPos.getZStart() - 8, chunkPos.getXEnd() + 8, pos.getY() + 16, chunkPos.getZEnd() + 8);
     
     // actually generate the structure
-    template.func_237146_a_(reader, pos, pos, placement.setBoundingBox(mbb), rand, 2);
+    template.func_237146_a_(reader, pos.down(), pos.down(), placement.setBoundingBox(mbb), rand, 2);
     
     // add entities
-    addAra(reader, rand, pos.add(new BlockPos(3, 2, 2).rotate(placement.getRotation())), 1 + rand.nextInt(3));
+    addAra(reader, rand, pos.add(new BlockPos(3, 1, 2).rotate(placement.getRotation())), 1 + rand.nextInt(3));
     return true;
   }
     
@@ -106,6 +102,16 @@ public class AraCampFeature extends Feature<NoFeatureConfig> {
   
   protected static boolean canPlaceOnBlock(final ISeedReader world, final BlockPos pos) {
     return pos.getY() > 3 && world.getBlockState(pos).isSolid() && !world.getBlockState(pos.up(3)).isSolid();
+  }
+  
+  @Override
+  protected boolean isValidPosition(final ISeedReader reader, final BlockPos pos) {
+    return pos.getY() > 3 && reader.getBlockState(pos).isSolid() && isReplaceableAt(reader, pos.up(3));
+  }
+
+  @Override
+  protected ResourceLocation getStructure(Random rand) {
+    return rand.nextInt(100) < 38 ? STRUCTURE_TENT_CHEST : STRUCTURE_TENT_NOCHEST;
   }
 
 }

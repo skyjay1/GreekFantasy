@@ -46,7 +46,7 @@ public class ReedsFeature extends Feature<BlockClusterFeatureConfig> {
           config.blockPlacer.place(reader, mutpos, state, rand);
           placed++;
       } 
-    } 
+    }
     return (placed > 0);
   }
 

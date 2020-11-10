@@ -12,15 +12,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.template.BlockIgnoreStructureProcessor;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
 import net.minecraft.world.gen.feature.template.TemplateManager;
 
-public class SmallShrineFeature extends Feature<NoFeatureConfig> {
+public class SmallShrineFeature extends SimpleTemplateFeature {
   
   private static final ResourceLocation STRUCTURE_LIMESTONE = new ResourceLocation(GreekFantasy.MODID, "small_limestone_shrine");
   private static final ResourceLocation STRUCTURE_MARBLE = new ResourceLocation(GreekFantasy.MODID, "small_marble_shrine");
@@ -33,23 +31,21 @@ public class SmallShrineFeature extends Feature<NoFeatureConfig> {
   public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
     // template loading
-    final ResourceLocation structure = rand.nextBoolean() ? STRUCTURE_LIMESTONE : STRUCTURE_MARBLE;
     final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
-    final Template template = manager.getTemplateDefaulted(structure);
+    final Template template = manager.getTemplateDefaulted(getStructure(rand));
     
     // position for generation
-    final BlockPos blockPos = blockPosIn.add(4 + rand.nextInt(8), 0, 4 + rand.nextInt(8));
-    final int y = reader.getHeight(Heightmap.Type.WORLD_SURFACE, blockPos).getY();
-    BlockPos pos = new BlockPos(blockPos.getX(), y - 1, blockPos.getZ());
-    
-    // check for valid position
-    if(pos.getY() < 3 || !reader.getBlockState(pos).isSolid() || reader.getBlockState(pos.up(1)).isSolid()) {
-      return false;
-    }
+    BlockPos pos = this.getRandomPosition(reader, blockPosIn, rand, 1);
     
     // rotation / mirror
     Mirror mirror = Mirror.NONE;
     Rotation rotation = Rotation.randomRotation(rand);
+    
+    // check for valid position
+    final BlockPos size = template.getSize();
+    if(!isValidPosition(reader, pos, size, rotation)) {
+      return false;
+    }
     
     // placement settings
     MutableBoundingBox mbb = new MutableBoundingBox(pos.getX() - 8, pos.getY() - 16, pos.getZ() - 8, pos.getX() + 8, pos.getY() + 16, pos.getZ() + 8);
@@ -60,5 +56,9 @@ public class SmallShrineFeature extends Feature<NoFeatureConfig> {
     // actually generate the structure
     return template.func_237146_a_(reader, pos, pos, placement, rand, 2);
   }
-
+  
+  @Override
+  protected ResourceLocation getStructure(final Random rand) {
+    return rand.nextBoolean() ? STRUCTURE_LIMESTONE : STRUCTURE_MARBLE;
+  }
 }

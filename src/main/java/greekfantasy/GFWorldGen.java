@@ -156,13 +156,15 @@ public final class GFWorldGen {
       event.getGeneration().withFeature(
           GenerationStage.Decoration.SURFACE_STRUCTURES, 
           ARA_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).chance(GreekFantasy.CONFIG.ARA_CAMP_SPREAD.get())
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
+          .chance(GreekFantasy.CONFIG.ARA_CAMP_SPREAD.get())
       );
       // Satyr Camp
       event.getGeneration().withFeature(
           GenerationStage.Decoration.SURFACE_STRUCTURES, 
           SATYR_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).chance(GreekFantasy.CONFIG.SATYR_CAMP_SPREAD.get())
+          .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
+          .chance(GreekFantasy.CONFIG.SATYR_CAMP_SPREAD.get())
       );
       // Reeds
       event.getGeneration().withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, 
@@ -174,7 +176,8 @@ public final class GFWorldGen {
                 .xSpread(4)
                 .zSpread(4)
                 .build())
-          .func_242731_b(8)
+          .func_242731_b(2)
+          .chance(GreekFantasy.CONFIG.REEDS_SPREAD.get())
       );
     }
     // biome-specific features
@@ -207,7 +210,8 @@ public final class GFWorldGen {
                 .ySpread(3)
                 .zSpread(3)
                 .build())
-          .func_242731_b(4)
+          .func_242731_b(2)
+          .chance(Math.max(1, GreekFantasy.CONFIG.REEDS_SPREAD.get() / 2))
       );
     }
     if(event.getCategory() == Biome.Category.NETHER) {
@@ -215,7 +219,7 @@ public final class GFWorldGen {
       event.getGeneration().withFeature(
           GenerationStage.Decoration.SURFACE_STRUCTURES, 
           SMALL_NETHER_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).func_242731_b(GreekFantasy.CONFIG.SMALL_NETHER_SHRINE_SPREAD.get())
+          .chance(GreekFantasy.CONFIG.SMALL_NETHER_SHRINE_SPREAD.get())
       );
     }    
   }
