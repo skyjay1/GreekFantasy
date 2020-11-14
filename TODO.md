@@ -6,9 +6,15 @@ __Key:__
 
 ## Bugs and future updates
 X Reeds are too common and chance is not configurable
+
 X Nether shrines are too common by default
+
 _ Summoning animation not playing on dedicated server (Geryon, Sparti)
+
 _ Structure gen is jenky (check *all* corner blocks)
+
+_ Make Harpy nests silk touch-able
+
 X Crash when approaching client (unsafe cast)
 
 ## Entity basics
