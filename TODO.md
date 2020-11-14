@@ -15,6 +15,8 @@ _ Structure gen is jenky (check *all* corner blocks)
 
 _ Make Harpy nests silk touch-able
 
+_ Config for olive trees (spawn weight, biome whitelist)
+
 X Crash when approaching client (unsafe cast)
 
 ## Entity basics
