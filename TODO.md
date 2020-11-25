@@ -277,6 +277,10 @@ X "Smashing" enchantment
 
 X "Hunting" enchantment
 
+X "Mirror" enchantment
+
+X "Mirror" effect
+
 X Panflute songs
 
 X Panflute song selection GUI
