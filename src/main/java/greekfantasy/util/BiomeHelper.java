@@ -1,6 +1,8 @@
 package greekfantasy.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -17,6 +19,7 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public final class BiomeHelper {
   
@@ -43,6 +46,58 @@ public final class BiomeHelper {
   
   public static ITag<Block> getOliveLogs() {
     return BlockTags.getCollection().get(TAG_OLIVE_LOGS);
+  }
+  
+  /**
+   * Creates a list of biome names containing the given names
+   * @param netherAndEnd whether to include nether and end biomes
+   * @param oceans whether to include ocean or river biomes
+   * @param names the strings that must be a substring of the biome in order to pass
+   * @return the list of biome names
+   **/
+  public static List<String> getBiomesWithName(final boolean netherAndEnd, final boolean oceans, final String... names) {
+    final List<String> biomes = new ArrayList<>();
+    ForgeRegistries.BIOMES.forEach(b -> {
+      // add biomes whose name contains one of the given names
+      final String biome = b.getRegistryName().toString();
+      final Biome.Category category = b.getCategory();
+      final boolean netherOrEnd = (category == Biome.Category.NETHER || category == Biome.Category.THEEND);
+      final boolean oceanOrRiver = (category == Biome.Category.OCEAN || category == Biome.Category.RIVER);
+      if((!netherOrEnd || netherAndEnd) && (!oceanOrRiver || oceans)) {
+        for(final String n : names) {
+          if(biome.contains(n)) {
+            biomes.add(biome);
+          }
+        }
+      }
+    });
+    return biomes;
+  }
+  
+  public static List<String> getBiomesInCategories(final Biome.Category... categories) {
+    final List<String> biomes = new ArrayList<>();
+    for(final Biome.Category c : categories) {
+      // add each biome from that category
+      biomes.addAll(getBiomesInCategory(c));
+    }
+    return biomes;
+  }
+  
+  public static List<String> getBiomesInCategory(final Biome.Category category) {
+    final List<String> biomes = new ArrayList<>();
+    ForgeRegistries.BIOMES.forEach(b -> {
+      if(b.getCategory() == category) {
+        // biome is in whitelist, add it to the list
+        biomes.add(b.getRegistryName().toString());
+      }
+    });
+    return biomes;
+  }
+ 
+  public static List<String> concat(final List<String> list1, final List<String> list2) {
+    final List<String> list = new ArrayList<>(list1);
+    list.addAll(list2);
+    return list;
   }
 
   private static void initDryadMap() {

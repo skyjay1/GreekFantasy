@@ -8,6 +8,7 @@ import greekfantasy.structure.feature.ReedsFeature;
 import greekfantasy.structure.feature.SatyrCampFeature;
 import greekfantasy.structure.feature.SmallNetherShrineFeature;
 import greekfantasy.structure.feature.SmallShrineFeature;
+import greekfantasy.util.BiomeWhitelistConfig;
 import net.minecraft.entity.EntityType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RegistryKey;
@@ -15,7 +16,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.Category;
 import net.minecraft.world.biome.BiomeAmbience;
 import net.minecraft.world.biome.BiomeGenerationSettings;
 import net.minecraft.world.biome.DefaultBiomeFeatures;
@@ -26,6 +26,7 @@ import net.minecraft.world.gen.blockplacer.DoublePlantBlockPlacer;
 import net.minecraft.world.gen.blockstateprovider.SimpleBlockStateProvider;
 import net.minecraft.world.gen.feature.BaseTreeFeatureConfig;
 import net.minecraft.world.gen.feature.BlockClusterFeatureConfig;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.Features.Placements;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
@@ -40,7 +41,6 @@ import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilders;
 import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.BiomeManager.BiomeEntry;
 import net.minecraftforge.common.BiomeManager.BiomeType;
-import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -75,7 +75,7 @@ public final class GFWorldGen {
   
   @SubscribeEvent
   public static void registerBiomes(final RegistryEvent.Register<Biome> event) {
-    final Biome oliveForestBiome = makeOliveForest(0.1F, 0.2F)
+    final Biome oliveForestBiome = makeOliveForest(0.1F, 0.16F)
         .setRegistryName(new ResourceLocation(GreekFantasy.MODID, "olive_forest"));
     event.getRegistry().register(oliveForestBiome);
   }
@@ -133,61 +133,49 @@ public final class GFWorldGen {
       event.getGeneration().withFeature(
         GenerationStage.Decoration.UNDERGROUND_DECORATION,
         Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.LIMESTONE.getDefaultState(), 33))
-          // I have no idea what these functions are, I copied them from world.gen.feature.Features
           .range(80).square().func_242731_b(10)
       );
-      
-      // Harpy Nest
-      event.getGeneration().withFeature(
-          GenerationStage.Decoration.VEGETAL_DECORATION, 
-          // NoFeatureConfig.NO_FEATURE_CONFIG
-          HARPY_NEST.withConfiguration(NoFeatureConfig.field_236559_b_)
-          // These are copied from Features.DESERT_WELL
-          // Placements.HEIGHTMAP_PLACEMENT.func_242728_a()
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).chance(GreekFantasy.CONFIG.HARPY_NEST_SPREAD.get())
-      );
-      // Small Shrine
-      event.getGeneration().withFeature(
-          GenerationStage.Decoration.SURFACE_STRUCTURES, 
-          SMALL_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT).chance(GreekFantasy.CONFIG.SMALL_SHRINE_SPREAD.get())
-      );
-      // Ara Camp
-      event.getGeneration().withFeature(
-          GenerationStage.Decoration.SURFACE_STRUCTURES, 
-          ARA_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
-          .chance(GreekFantasy.CONFIG.ARA_CAMP_SPREAD.get())
-      );
-      // Satyr Camp
-      event.getGeneration().withFeature(
-          GenerationStage.Decoration.SURFACE_STRUCTURES, 
-          SATYR_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
-          .chance(GreekFantasy.CONFIG.SATYR_CAMP_SPREAD.get())
-      );
-      // Reeds
-      event.getGeneration().withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, 
-          REEDS.withConfiguration((new BlockClusterFeatureConfig.Builder(
-              new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
-              new DoublePlantBlockPlacer()))
-                .tries(48)
-                .replaceable()
-                .xSpread(4)
-                .zSpread(4)
-                .build())
-          .func_242731_b(2)
-          .chance(GreekFantasy.CONFIG.REEDS_SPREAD.get())
-      );
     }
-    // biome-specific features
-    if(event.getCategory() == Category.FOREST && event.getClimate().temperature > 0.5F) {
-      // Olive Tree
-      event.getGeneration().withFeature(
-          GenerationStage.Decoration.VEGETAL_DECORATION, 
-          OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).func_242731_b(40)
-      );
-    }
+    // Harpy Nest
+    addFeature(event, "harpy_nest", GenerationStage.Decoration.VEGETAL_DECORATION, 
+        HARPY_NEST.withConfiguration(NoFeatureConfig.field_236559_b_) // NoFeatureConfig.NO_FEATURE_CONFIG
+        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    // Small Shrine
+    addFeature(event, "small_shrine", GenerationStage.Decoration.SURFACE_STRUCTURES, 
+      SMALL_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_)
+      .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    // Ara Camp
+    addFeature(event, "ara_camp",GenerationStage.Decoration.SURFACE_STRUCTURES, 
+      ARA_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
+      .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    // Satyr Camp
+    addFeature(event, "satyr_camp", GenerationStage.Decoration.SURFACE_STRUCTURES, 
+      SATYR_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
+      .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    // Reeds
+    addFeature(event, "reeds", GenerationStage.Decoration.VEGETAL_DECORATION, 
+      REEDS.withConfiguration((new BlockClusterFeatureConfig.Builder(
+          new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
+          new DoublePlantBlockPlacer()))
+            .tries(48).replaceable()
+            .xSpread(4).zSpread(4)
+            .build()).func_242731_b(2));
+    // Olive Tree
+    addFeature(event, "olive_tree", GenerationStage.Decoration.VEGETAL_DECORATION, 
+        OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).func_242731_b(40)
+    );    
+    // Swamp reeds
+    addFeature(event, "reeds_swamp", GenerationStage.Decoration.VEGETAL_DECORATION, 
+      REEDS.withConfiguration((new BlockClusterFeatureConfig.Builder(
+          new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
+          new DoublePlantBlockPlacer()))
+            .tries(32).replaceable()
+            .xSpread(3).ySpread(3).zSpread(3)
+            .build()).func_242731_b(2));
+    // Nether shrine
+    addFeature(event, "small_nether_shrine", GenerationStage.Decoration.SURFACE_STRUCTURES, 
+      SMALL_NETHER_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_));
+    // Olive forest (non-configurable)
     if(new ResourceLocation(GreekFantasy.MODID, "olive_forest").equals(event.getName())) {
       event.getGeneration().withFeature(
           GenerationStage.Decoration.VEGETAL_DECORATION, 
@@ -197,87 +185,49 @@ public final class GFWorldGen {
             .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(10, 0.1F, 1)))
       );
     }
-      
-    if(event.getName().toString().contains("swamp")) {
-      // Swamp Reeds
-      event.getGeneration().withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, 
-          REEDS.withConfiguration((new BlockClusterFeatureConfig.Builder(
-              new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
-              new DoublePlantBlockPlacer()))
-                .tries(32)
-                .replaceable()
-                .xSpread(3)
-                .ySpread(3)
-                .zSpread(3)
-                .build())
-          .func_242731_b(2)
-          .chance(Math.max(1, GreekFantasy.CONFIG.REEDS_SPREAD.get() / 2))
-      );
-    }
-    if(event.getCategory() == Biome.Category.NETHER) {
-      // Small Nether Shrine
-      event.getGeneration().withFeature(
-          GenerationStage.Decoration.SURFACE_STRUCTURES, 
-          SMALL_NETHER_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_)
-          .chance(GreekFantasy.CONFIG.SMALL_NETHER_SHRINE_SPREAD.get())
-      );
-    }    
   }
+  
+  private static void addFeature(final BiomeLoadingEvent event, final String featureName, 
+      final GenerationStage.Decoration stage, final ConfiguredFeature<?, ?> feature) {
+    final BiomeWhitelistConfig config = GreekFantasy.CONFIG.FEATURES.get(featureName);
+    if(null == config) {
+      GreekFantasy.LOGGER.error("Error registering features: config for '" + featureName + "` not found!");
+    } else if(config.canSpawnInBiome(event.getName().toString())) {
+      event.getGeneration().withFeature(stage, feature.chance(1000 / config.chance()));
+    }
+  }
+  
   
   public static void addBiomeSpawns(final BiomeLoadingEvent event) {
-    final String name = event.getName().getPath();
-    final boolean isForest = name.contains("forest") || name.contains("taiga") || name.contains("jungle") || name.contains("savanna") || name.contains("wooded");
-    final Biome.Category category = event.getCategory();
-    if(category == Biome.Category.NETHER) {
-      // register nether spawns
-      registerSpawns(event.getSpawns(), GFRegistry.ORTHUS_ENTITY, GreekFantasy.CONFIG.ORTHUS_SPAWN_WEIGHT.get(), 1, 4);
-    } else if(category != Biome.Category.THEEND) {
-      // register overworld spawns
-      registerSpawns(event.getSpawns(), GFRegistry.EMPUSA_ENTITY, GreekFantasy.CONFIG.EMPUSA_SPAWN_WEIGHT.get(), 1, 3);
-      registerSpawns(event.getSpawns(), GFRegistry.GORGON_ENTITY, GreekFantasy.CONFIG.GORGON_SPAWN_WEIGHT.get(), 1, 3);
-      registerSpawns(event.getSpawns(), GFRegistry.SHADE_ENTITY, GreekFantasy.CONFIG.SHADE_SPAWN_WEIGHT.get(), 1, 1);
-      // non-ocean, non-icy spawns
-      if(category != Biome.Category.OCEAN && category != Biome.Category.ICY) {
-        registerSpawns(event.getSpawns(), GFRegistry.ARA_ENTITY, GreekFantasy.CONFIG.ARA_SPAWN_WEIGHT.get(), 2, 5);
-        registerSpawns(event.getSpawns(), GFRegistry.MAD_COW_ENTITY, GreekFantasy.CONFIG.MAD_COW_SPAWN_WEIGHT.get(), 1, 1);
-        registerSpawns(event.getSpawns(), GFRegistry.MINOTAUR_ENTITY, GreekFantasy.CONFIG.MINOTAUR_SPAWN_WEIGHT.get(), 2, 5);
-      }
-      // desert spawns
-      if(category == Biome.Category.DESERT) {
-        registerSpawns(event.getSpawns(), GFRegistry.CERASTES_ENTITY, GreekFantasy.CONFIG.CERASTES_SPAWN_WEIGHT.get(), 1, 2);
-        registerSpawns(event.getSpawns(), GFRegistry.HARPY_ENTITY, GreekFantasy.CONFIG.HARPY_SPAWN_WEIGHT.get(), 1, 3);
-      }
-      // mountains spawns
-      if(category == Biome.Category.EXTREME_HILLS) {
-        registerSpawns(event.getSpawns(), GFRegistry.CYCLOPES_ENTITY, GreekFantasy.CONFIG.CYCLOPES_SPAWN_WEIGHT.get(), 1, 3);
-        registerSpawns(event.getSpawns(), GFRegistry.GIGANTE_ENTITY, GreekFantasy.CONFIG.GIGANTE_SPAWN_WEIGHT.get(), 1, 4);
-      }
-      // plains spawns
-      if(category == Biome.Category.PLAINS) {
-        registerSpawns(event.getSpawns(), GFRegistry.UNICORN_ENTITY, GreekFantasy.CONFIG.UNICORN_SPAWN_WEIGHT.get(), 2, 5);
-      }
-      // plains + taiga spawns
-      if(category == Biome.Category.PLAINS || name.contains("taiga")) {
-        registerSpawns(event.getSpawns(), GFRegistry.CENTAUR_ENTITY, GreekFantasy.CONFIG.CENTAUR_SPAWN_WEIGHT.get(), 2, 4);
-        registerSpawns(event.getSpawns(), GFRegistry.CYPRIAN_ENTITY, GreekFantasy.CONFIG.CYPRIAN_SPAWN_WEIGHT.get(), 2, 3);
-      }
-      // forest spawns
-      if(isForest) {
-        registerSpawns(event.getSpawns(), GFRegistry.DRYAD_ENTITY, GreekFantasy.CONFIG.DRYAD_SPAWN_WEIGHT.get(), 1, 2);
-        registerSpawns(event.getSpawns(), GFRegistry.SATYR_ENTITY, GreekFantasy.CONFIG.SATYR_SPAWN_WEIGHT.get(), 2, 5);
-      }
-      // water spawns
-      if(category == Biome.Category.OCEAN) {
-        registerSpawns(event.getSpawns(), GFRegistry.SIREN_ENTITY, GreekFantasy.CONFIG.SIREN_SPAWN_WEIGHT.get(), 2, 5);
-      }
-      if(category == Biome.Category.OCEAN || category == Biome.Category.RIVER) {
-        registerSpawns(event.getSpawns(), GFRegistry.NAIAD_ENTITY, GreekFantasy.CONFIG.NAIAD_SPAWN_WEIGHT.get(), 2, 5);
-      }
-    }
+    addSpawns(event, GFRegistry.ARA_ENTITY, 2, 5);
+    addSpawns(event, GFRegistry.CENTAUR_ENTITY, 2, 4);
+    addSpawns(event, GFRegistry.CERASTES_ENTITY, 1, 2);
+    addSpawns(event, GFRegistry.CYCLOPES_ENTITY, 1, 3);
+    addSpawns(event, GFRegistry.CYPRIAN_ENTITY, 1, 3);
+    addSpawns(event, GFRegistry.DRYAD_ENTITY, 1, 3);
+    addSpawns(event, GFRegistry.EMPUSA_ENTITY, 1, 2);
+    addSpawns(event, GFRegistry.GIGANTE_ENTITY, 1, 4);
+    addSpawns(event, GFRegistry.GORGON_ENTITY, 1, 2);
+    addSpawns(event, GFRegistry.HARPY_ENTITY, 1, 3);
+    addSpawns(event, GFRegistry.MAD_COW_ENTITY, 1, 1);
+    addSpawns(event, GFRegistry.MINOTAUR_ENTITY, 3, 5);
+    addSpawns(event, GFRegistry.NAIAD_ENTITY, 2, 5);
+    addSpawns(event, GFRegistry.ORTHUS_ENTITY, 1, 4);
+    addSpawns(event, GFRegistry.SATYR_ENTITY, 2, 5);
+    addSpawns(event, GFRegistry.SHADE_ENTITY, 1, 1);
+    addSpawns(event, GFRegistry.SIREN_ENTITY, 2, 4);
+    addSpawns(event, GFRegistry.UNICORN_ENTITY, 2, 5);
   }
   
-  private static MobSpawnInfo.Builder registerSpawns(final MobSpawnInfoBuilder builder, final EntityType<?> entity, final int weight, final int min, final int max) {
-    return builder.withSpawner(entity.getClassification(), new MobSpawnInfo.Spawners(entity, weight, min, max));
+  private static void addSpawns(final BiomeLoadingEvent event, final EntityType<?> entity, final int min, final int max) {
+    final String name = entity.getRegistryName().getPath();
+    final String biome = event.getName().toString();
+    final BiomeWhitelistConfig config = GreekFantasy.CONFIG.MOB_SPAWNS.get(name);
+    if(null == config) {
+      GreekFantasy.LOGGER.error("Error registering spawns: config for '" + name + "` not found!");
+    } else if(config.canSpawnInBiome(biome)) {
+      event.getSpawns().withSpawner(entity.getClassification(), new MobSpawnInfo.Spawners(entity, config.chance(), min, max));
+    }
   }
   
   private static Biome makeOliveForest(float depth, float scale) {

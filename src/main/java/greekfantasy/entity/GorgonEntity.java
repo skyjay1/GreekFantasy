@@ -6,6 +6,7 @@ import java.util.List;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -20,9 +21,11 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
@@ -31,9 +34,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class GorgonEntity extends MonsterEntity {
-    
+  
   private static final byte STARE_ATTACK = 9;
-  private final int PETRIFY_DURATION = 80;
+  private static final int PETRIFY_DURATION = 80;
 
   public GorgonEntity(final EntityType<? extends GorgonEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -57,7 +60,7 @@ public class GorgonEntity extends MonsterEntity {
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     if(GreekFantasy.CONFIG.GORGON_ATTACK.get()) {
-      this.goalSelector.addGoal(3, new StareAttackGoal(this));
+      this.goalSelector.addGoal(3, new StareAttackGoal(this, PETRIFY_DURATION + 10));
     }
   }
   
@@ -117,6 +120,17 @@ public class GorgonEntity extends MonsterEntity {
     return d1 > 1.0D - 0.025D / d0 ? player.canEntityBeSeen(this) : false;
   }
   
+  public boolean isImmuneToStareAttack(final LivingEntity target) {
+    if(target.getActivePotionEffect(GFRegistry.MIRROR_EFFECT) != null || target.isSpectator() || !target.isNonBoss() 
+        || (target instanceof PlayerEntity && ((PlayerEntity)target).isCreative())) {
+      return true;
+    }
+    if(EnchantmentHelper.getEnchantments(target.getHeldItem(Hand.OFF_HAND)).containsKey(GFRegistry.MIRROR_ENCHANTMENT)) {
+      return true;
+    }
+    return false;
+  }
+  
   public boolean useStareAttack(final LivingEntity target) {
     target.addPotionEffect(new EffectInstance(GFRegistry.PETRIFIED_EFFECT, PETRIFY_DURATION, 0, false, false, true));
     if(this.isServerWorld()) {
@@ -125,15 +139,21 @@ public class GorgonEntity extends MonsterEntity {
     return false;
   }
   
+  public static boolean isMirrorShield(final ItemStack stack) {
+    return EnchantmentHelper.getEnchantments(stack).containsKey(GFRegistry.MIRROR_ENCHANTMENT);
+  }
+  
   public static class StareAttackGoal extends Goal {
     private final GorgonEntity entity;
-    private final int MAX_COOLDOWN = 50;
-    private int cooldown = MAX_COOLDOWN;
+    private final int maxCooldown;
+    private int cooldown;
     private List<PlayerEntity> trackedPlayers = new ArrayList<>();
     
-    public StareAttackGoal(final GorgonEntity entityIn) {
+    public StareAttackGoal(final GorgonEntity entityIn, final int cooldown) {
        this.setMutexFlags(EnumSet.of(Goal.Flag.LOOK));
        this.entity = entityIn;
+       this.maxCooldown = cooldown;
+       this.cooldown = cooldown / 4;
     }
 
     @Override
@@ -142,7 +162,7 @@ public class GorgonEntity extends MonsterEntity {
         cooldown--;
       } else {
         this.trackedPlayers = this.entity.getEntityWorld().getEntitiesWithinAABB(PlayerEntity.class, this.entity.getBoundingBox().grow(16.0D, 16.0D, 16.0D), 
-            e -> this.entity.canAttack(e) && this.entity.isPlayerStaring((PlayerEntity)e));
+            e -> this.entity.canAttack(e)&& !this.entity.isImmuneToStareAttack(e) && this.entity.isPlayerStaring((PlayerEntity)e));
         return !this.trackedPlayers.isEmpty();
       }
       return false;
@@ -155,7 +175,7 @@ public class GorgonEntity extends MonsterEntity {
         this.entity.getLookController().setLookPositionWithEntity(trackedPlayers.get(0), 100.0F, 100.0F);
         trackedPlayers.forEach(e -> this.entity.useStareAttack(e));
         trackedPlayers.clear();
-        this.cooldown = MAX_COOLDOWN;
+        this.cooldown = maxCooldown;
       }
     }
     
@@ -166,7 +186,7 @@ public class GorgonEntity extends MonsterEntity {
     
     @Override
     public void resetTask() {
-      this.cooldown = MAX_COOLDOWN;
+      this.cooldown = maxCooldown;
     }
   }
   

@@ -2,6 +2,7 @@ package greekfantasy.entity;
 
 import java.util.EnumSet;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -55,7 +56,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 
-public class SpartiEntity extends CreatureEntity implements IHasOwner {
+public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEntity> {
   protected static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
   protected static final DataParameter<Boolean> SPAWNING = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.BOOLEAN);
 
@@ -89,7 +90,7 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
     this.goalSelector.addGoal(0, new SpartiEntity.SpawningGoal());
     this.goalSelector.addGoal(1, new SwimGoal(this));
     this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
-    this.goalSelector.addGoal(3, new HasOwnerFollowGoal<>(this, 1.0D, 24.0F, 5.0F, false));
+    this.goalSelector.addGoal(3, new HasOwnerFollowGoal<>(this, 1.0D, 16.0F, 5.0F, false));
     this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.78D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
@@ -168,6 +169,15 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
     }
     return null;
   }
+  
+  @Override
+  public boolean isTamingItem(final ItemStack item) { return false; }
+  
+  @Override
+  public float getHealAmount(final ItemStack item) { return 0; }
+  
+  @Override
+  public int getTameChance(final Random rand) { return 0; }
   
   // Spawn methods //
   
@@ -267,25 +277,6 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
   }
   
   // Attack predicate methods //
-  
-  @Override
-  public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner) {
-    if (!(target instanceof CreeperEntity) && !(target instanceof GhastEntity)) {
-      if (target instanceof SpartiEntity) {
-        SpartiEntity spartiEntity = (SpartiEntity) target;
-        return !spartiEntity.hasOwner() || spartiEntity.getOwner() != owner;
-      } else if (target instanceof PlayerEntity && owner instanceof PlayerEntity
-          && !((PlayerEntity) owner).canAttackPlayer((PlayerEntity) target)) {
-        return false;
-      } else if (target instanceof AbstractHorseEntity && ((AbstractHorseEntity) target).isTame()) {
-        return false;
-      } else {
-        return !(target instanceof TameableEntity) || !((TameableEntity) target).isTamed();
-      }
-    } else {
-      return false;
-    }
-  }
 
   @Override
   public boolean canAttack(LivingEntity entity) {
@@ -295,6 +286,7 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner {
     return super.canAttack(entity);
   }
   
+  // Goals //
   
   class SpawningGoal extends Goal {
     

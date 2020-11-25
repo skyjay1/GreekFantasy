@@ -1,13 +1,10 @@
 package greekfantasy.structure.feature;
 
-import java.util.Optional;
 import java.util.Random;
 
 import com.mojang.serialization.Codec;
 
-import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.DryadEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -68,21 +65,7 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
         .addProcessor(BlockIgnoreStructureProcessor.AIR_AND_STRUCTURE_BLOCK);
     // actually build using the template
     template.func_237146_a_(reader, pos, pos, placement, rand, 2);
-    // percent chance to spawn a dryad
-    if(config.forcePlacement && rand.nextInt(100) < GreekFantasy.CONFIG.DRYAD_SPAWN_WEIGHT.get()) {
-      addDryad(reader, rand, placementPos.down());
-    }
     return true;
-  }
-  
-  protected static void addDryad(final ISeedReader world, final Random rand, final BlockPos pos) {
-    // spawn an olive dryad
-    final DryadEntity entity = GFRegistry.DRYAD_ENTITY.create(world.getWorld());
-    entity.setLocationAndAngles(pos.getX() + rand.nextDouble(), pos.getY() + 0.5D, pos.getZ() + rand.nextDouble(), 0, 0);
-    entity.setVariant(DryadEntity.Variant.OLIVE);
-    entity.setTreePos(Optional.of(pos));
-    entity.setHiding(true);
-    world.addEntity(entity);
   }
   
   private static ResourceLocation getRandomTree(final Random rand) {

@@ -79,6 +79,23 @@
           ]
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:shield",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly",
+              "enchantments": [
+                "greekfantasy:mirror"
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

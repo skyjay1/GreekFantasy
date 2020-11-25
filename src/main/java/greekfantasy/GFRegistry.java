@@ -16,8 +16,10 @@ import greekfantasy.block.ReedsBlock;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.block.VaseBlock;
 import greekfantasy.block.WildRoseBlock;
+import greekfantasy.effect.MirrorEffect;
 import greekfantasy.effect.StunnedEffect;
 import greekfantasy.enchantment.HuntingEnchantment;
+import greekfantasy.enchantment.MirrorEnchantment;
 import greekfantasy.enchantment.OverstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
 import greekfantasy.entity.*;
@@ -67,14 +69,20 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
+import net.minecraft.item.Items;
 import net.minecraft.item.Rarity;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.SwordItem;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionUtils;
+import net.minecraft.potion.Potions;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -86,6 +94,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -232,11 +241,20 @@ public final class GFRegistry {
   public static final Effect STUNNED_EFFECT = null;
   @ObjectHolder("petrified")
   public static final Effect PETRIFIED_EFFECT = null;
+  @ObjectHolder("mirror")
+  public static final Effect MIRROR_EFFECT = null;
   
   @ObjectHolder("overstep")
   public static final Enchantment OVERSTEP_ENCHANTMENT = null;
   @ObjectHolder("smashing")
   public static final Enchantment SMASHING_ENCHANTMENT = null;
+  @ObjectHolder("mirror")
+  public static final Enchantment MIRROR_ENCHANTMENT = null;
+  
+  @ObjectHolder("mirror")
+  public static final Potion MIRROR_POTION = null;
+  @ObjectHolder("long_mirror")
+  public static final Potion LONG_MIRROR_POTION = null;
   
   @ObjectHolder("gorgon_face")
   public static final BasicParticleType GORGON_PARTICLE = new BasicParticleType(true);
@@ -466,7 +484,17 @@ public final class GFRegistry {
     GreekFantasy.LOGGER.debug("registerEffects");
     event.getRegistry().registerAll(
         new StunnedEffect().setRegistryName(MODID, "stunned"),
-        new StunnedEffect().setRegistryName(MODID, "petrified")
+        new StunnedEffect().setRegistryName(MODID, "petrified"),
+        new MirrorEffect().setRegistryName(MODID, "mirror")
+    );
+  }
+  
+  @SubscribeEvent
+  public static void registerPotions(final RegistryEvent.Register<Potion> event) {
+    GreekFantasy.LOGGER.debug("registerPotions");
+    event.getRegistry().registerAll(
+        new Potion(new EffectInstance(MIRROR_EFFECT, 3600)).setRegistryName(MODID, "mirror"),
+        new Potion("mirror", new EffectInstance(MIRROR_EFFECT, 9600)).setRegistryName(MODID, "long_mirror")
     );
   }
   
@@ -479,12 +507,32 @@ public final class GFRegistry {
         .setRegistryName(MODID, "smashing"));
     event.getRegistry().register(new HuntingEnchantment(Enchantment.Rarity.COMMON)
         .setRegistryName(MODID, "hunting"));
+    event.getRegistry().register(new MirrorEnchantment(Enchantment.Rarity.VERY_RARE)
+        .setRegistryName(MODID, "mirror"));
   }
 
   @SubscribeEvent
   public static void registerParticleTypes(final RegistryEvent.Register<ParticleType<?>> event) {
     GreekFantasy.LOGGER.debug("registerParticleTypes");
     event.getRegistry().register(new BasicParticleType(true).setRegistryName(MODID, "gorgon_face"));
+  }
+  
+  public static void finishBrewingRecipes() {
+    final ItemStack mirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), MIRROR_POTION);
+    final ItemStack splashMirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), MIRROR_POTION);
+    final ItemStack lingeringMirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), MIRROR_POTION);
+    // Add brewing recipes for Mirror potion
+    BrewingRecipeRegistry.addRecipe(
+        Ingredient.fromStacks(PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), Potions.AWKWARD)), 
+        Ingredient.fromStacks(new ItemStack(SNAKESKIN)), mirror);
+    BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
+        PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), LONG_MIRROR_POTION));
+    BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.GUNPOWDER)), splashMirror);
+    BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.DRAGON_BREATH)), lingeringMirror);
+    BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(splashMirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
+        PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), LONG_MIRROR_POTION));
+    BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(lingeringMirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
+        PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), LONG_MIRROR_POTION));
   }
 
   // HELPER METHODS //
@@ -616,4 +664,5 @@ public final class GFRegistry {
   private static Boolean allowsSpawnOnLeaves(BlockState state, IBlockReader reader, BlockPos pos, EntityType<?> entity) {
     return entity == EntityType.OCELOT || entity == EntityType.PARROT || entity == DRYAD_ENTITY;
   }
+
 }

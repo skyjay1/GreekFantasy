@@ -9,7 +9,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.TargetGoal;
 
-public class HasOwnerHurtByTargetGoal<T extends MobEntity & IHasOwner> extends TargetGoal {
+public class HasOwnerHurtByTargetGoal<T extends MobEntity & IHasOwner<T>> extends TargetGoal {
   private T entity;
   private LivingEntity attacker;
   private int timestamp;

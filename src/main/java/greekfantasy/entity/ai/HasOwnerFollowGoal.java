@@ -13,7 +13,7 @@ import net.minecraft.pathfinding.WalkNodeProcessor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 
-public class HasOwnerFollowGoal<T extends MobEntity & IHasOwner> extends Goal {
+public class HasOwnerFollowGoal<T extends MobEntity & IHasOwner<T>> extends Goal {
   private final T entity;
   private LivingEntity owner;
   private final IWorldReader world;
@@ -42,10 +42,7 @@ public class HasOwnerFollowGoal<T extends MobEntity & IHasOwner> extends Goal {
     if (owner == null) {
       return false;
     }
-    if (owner.isSpectator()) {
-      return false;
-    }
-    if (this.entity.getDistanceSq(owner) < (this.farDist * this.farDist)) {
+    if (owner.isSpectator() || this.entity.getDistanceSq(owner) < (this.farDist * this.farDist)) {
       return false;
     }
     this.owner = owner;
@@ -90,7 +87,7 @@ public class HasOwnerFollowGoal<T extends MobEntity & IHasOwner> extends Goal {
       return;
     }
 
-    if (this.entity.getDistanceSq(this.owner) >= 144.0D) {
+    if (this.entity.getDistanceSq(this.owner) >= 4 * (this.farDist * this.farDist)) {
       tryToTeleportNearEntity();
     } else {
       this.navigator.tryMoveToEntityLiving(this.owner, this.followSpeed);

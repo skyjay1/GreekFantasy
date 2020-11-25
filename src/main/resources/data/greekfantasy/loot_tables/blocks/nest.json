@@ -9,7 +9,7 @@
           "children": [
             {
               "type": "minecraft:item",
-              "name": "minecraft:stone",
+              "name": "greekfantasy:nest",
               "conditions": [
                 {
                   "condition": "minecraft:match_tool",

@@ -1,8 +1,17 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
+import javax.annotation.Nullable;
+
+import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.HasOwnerBegGoal;
+import greekfantasy.entity.ai.HasOwnerFollowGoal;
+import greekfantasy.entity.ai.HasOwnerHurtByTargetGoal;
+import greekfantasy.entity.ai.HasOwnerHurtTargetGoal;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.CreatureEntity;
@@ -25,21 +34,40 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags.IOptionalNamedTag;
 
-public class CerastesEntity extends CreatureEntity {
+public class CerastesEntity extends CreatureEntity implements IHasOwner<CerastesEntity> {
+  
+  protected static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(CerastesEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+  protected static final ResourceLocation FOOD = new ResourceLocation(GreekFantasy.MODID, "cerastes_food");
   
   private static final byte STANDING_START = 4;
   private static final byte STANDING_END = 5;
@@ -61,6 +89,9 @@ public class CerastesEntity extends CreatureEntity {
   public CerastesEntity(final EntityType<? extends CerastesEntity> type, final World worldIn) {
     super(type, worldIn);
     this.hiddenSize = EntitySize.flexible(0.8F, 0.2F);
+    this.setPathPriority(PathNodeType.DAMAGE_CACTUS, -0.5F);
+    this.setPathPriority(PathNodeType.DANGER_CACTUS, -0.5F);
+    this.setPathPriority(PathNodeType.WATER, -1.0F);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -78,11 +109,19 @@ public class CerastesEntity extends CreatureEntity {
   }
   
   @Override
+  protected void registerData() {
+    super.registerData();
+    this.getDataManager().register(OWNER, Optional.empty());
+  }
+  
+  @Override
   protected void registerGoals() {
     super.registerGoals();
-    this.goalSelector.addGoal(1, new HideGoal(this));
+    this.goalSelector.addGoal(0, new CerastesEntity.BegGoal(6.0F));
+    this.goalSelector.addGoal(1, new CerastesEntity.HideGoal(this));
     this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false));
-    this.goalSelector.addGoal(3, new GoToSandGoal(10, 0.8F));
+    this.goalSelector.addGoal(2, new HasOwnerFollowGoal<>(this, 1.0D, 8.0F, 2.0F, false));
+    this.goalSelector.addGoal(3, new CerastesEntity.GoToSandGoal(10, 0.8F));
     this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D){
       @Override
       public boolean shouldExecute() {
@@ -92,9 +131,13 @@ public class CerastesEntity extends CreatureEntity {
     });
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 4.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
-    this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, false, false));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, RabbitEntity.class, false, false));
+    this.targetSelector.addGoal(1, new HasOwnerHurtByTargetGoal<>(this));
+    this.targetSelector.addGoal(1, new HasOwnerHurtTargetGoal<>(this));
+    this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, false, false, 
+        e -> !isOwner(e) && !(e instanceof PlayerEntity && hasTamingItemInHand((PlayerEntity)e))));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, RabbitEntity.class, false, false));
+
   }
   
   @Override
@@ -170,14 +213,16 @@ public class CerastesEntity extends CreatureEntity {
   @Override
   protected void collideWithEntity(final Entity entityIn) {
     if (entityIn instanceof LivingEntity) {
+      final LivingEntity entity = (LivingEntity) entityIn;
       // un-hide and stand up
-      if(this.isServerWorld()) {
+      if(!this.world.isRemote()) {
         this.setHiding(false);
         this.setStanding(true);
-      }
-      // sometimes set as attack targetPos
-      if(this.getAttackTarget() == null && this.canAttack(entityIn.getType()) && this.getRNG().nextBoolean()) {
-        this.setAttackTarget((LivingEntity) entityIn);
+        // sometimes set as attack target
+        if(this.getAttackTarget() == null && this.canAttack(entity.getType()) && this.getRNG().nextBoolean()
+            && (!this.hasOwner() || this.shouldAttackEntity(entity, this.getOwner()))) {
+          this.setAttackTarget(entity);
+        }
       }
     }
     super.collideWithEntity(entityIn);
@@ -195,7 +240,7 @@ public class CerastesEntity extends CreatureEntity {
   public boolean attackEntityAsMob(final Entity entity) {
     if (super.attackEntityAsMob(entity)) {
       if (entity instanceof LivingEntity) {
-        ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.POISON, 7 * 20, 0));
+        ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.POISON, 5 * 20, 0));
       }
       return true;
     }
@@ -232,6 +277,86 @@ public class CerastesEntity extends CreatureEntity {
     return this.isHiding() ? hiddenSize.height * 0.85F : super.getStandingEyeHeight(pose, size);
   }
 
+  @Override
+  public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
+    if (tryTameOrHeal(this, player, hand)) {
+      return ActionResultType.SUCCESS;
+    }
+
+    return super.func_230254_b_(player, hand);
+  }
+  
+  // Owner methods //
+
+  @Override
+  public Optional<UUID> getOwnerID() {
+    return this.getDataManager().get(OWNER);
+  }
+
+  @Override
+  public void setOwner(@Nullable final UUID uuid) {
+    this.getDataManager().set(OWNER, Optional.ofNullable(uuid));
+  }
+
+  @Override
+  public LivingEntity getOwner() {
+    if (hasOwner()) {
+      return this.getEntityWorld().getPlayerByUuid(getOwnerID().get());
+    }
+    return null;
+  }
+  
+  @Override
+  public boolean canAttack(LivingEntity entity) {
+    if (isOwner(entity)) {
+      return false;
+    }
+    return super.canAttack(entity);
+  }
+  
+  @Override
+  public boolean isTamingItem(final ItemStack item) {
+    IOptionalNamedTag<Item> tag = ItemTags.createOptional(FOOD);
+    return !item.isEmpty() && tag.contains(item.getItem());
+  }
+
+  @Override
+  public void onDeath(DamageSource cause) {
+    if (!this.world.isRemote && this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES)
+        && this.getOwner() instanceof ServerPlayerEntity) {
+      this.getOwner().sendMessage(this.getCombatTracker().getDeathMessage(), Util.DUMMY_UUID);
+    }
+    super.onDeath(cause);
+  }
+
+  //Team methods //
+
+  @Override
+  public Team getTeam() {
+    return getOwnerTeam(super.getTeam());
+  }
+
+  @Override
+  public boolean isOnSameTeam(final Entity entity) {
+    return isOnSameTeamAs(entity) || super.isOnSameTeam(entity);
+  }
+
+  // NBT methods //
+
+  @Override
+  public void writeAdditional(CompoundNBT compound) {
+    super.writeAdditional(compound);
+    writeOwner(compound);
+  }
+
+  @Override
+  public void readAdditional(CompoundNBT compound) {
+    super.readAdditional(compound);
+    readOwner(compound);
+  }
+
+  // standing / hiding methods
+
   public void setStanding(final boolean standing) {
     this.isStanding = standing;
     if(standing) this.isHiding = false;
@@ -265,6 +390,22 @@ public class CerastesEntity extends CreatureEntity {
   
   public float getHidingTime(final float partialTick) {
     return hidingTime;
+  }
+
+  // Goals //
+  
+  class BegGoal extends HasOwnerBegGoal<CerastesEntity> {
+
+    public BegGoal(float minDistance) {
+      super(CerastesEntity.this, minDistance);
+    }
+
+    @Override
+    public void startExecuting() {
+      super.startExecuting();
+      CerastesEntity.this.setStanding(false);
+      CerastesEntity.this.setHiding(false);
+    }
   }
   
   class GoToSandGoal extends MoveToBlockGoal {

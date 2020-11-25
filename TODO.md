@@ -13,9 +13,11 @@ _ Summoning animation not playing on dedicated server (Geryon, Sparti)
 
 _ Structure gen is jenky (check *all* corner blocks)
 
-_ Make Harpy nests silk touch-able
+X Make Harpy nests silk touch-able
 
-_ Config for olive trees (spawn weight, biome whitelist)
+X Config for olive trees (spawn weight, biome whitelist)
+
+X Config for mob spawn biomes
 
 X Crash when approaching client (unsafe cast)
 
@@ -113,6 +115,8 @@ X Orthus breathes fire
 
 X Cerastes hides in sand
 
+X Cerastes can be tamed (rabbit meat?)
+
 X Unicorn can be tamed / ridden
 
 X Elpis grants something to player
@@ -155,7 +159,7 @@ _ _ _ Ruined Temple
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-X X ~ Harpy Nest
+X X X Harpy Nest
 
 X X X Limestone (raw, smooth, slab, pillar)
 

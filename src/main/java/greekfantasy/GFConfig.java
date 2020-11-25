@@ -1,5 +1,13 @@
 package greekfantasy;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import greekfantasy.util.BiomeHelper;
+import greekfantasy.util.BiomeWhitelistConfig;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class GFConfig {
@@ -30,11 +38,13 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue OVERSTEP_ENABLED;
   private final ForgeConfigSpec.BooleanValue SMASHING_ENABLED;
   private final ForgeConfigSpec.BooleanValue HUNTING_ENABLED;
+  private final ForgeConfigSpec.BooleanValue MIRROR_ENABLED;
   private boolean stunPreventsJump;
   private boolean stunPreventsUse;
   private boolean overstepEnabled;
   private boolean smashingEnabled;
   private boolean huntingEnabled;
+  private boolean mirrorEnabled;
   
   // special attack configs
   public final ForgeConfigSpec.BooleanValue EMPUSA_ATTACK;
@@ -55,26 +65,8 @@ public class GFConfig {
   private int dryadAngryRange;
   private int spartiLifespan;
   
-  // spawn rate configs
-  public final ForgeConfigSpec.IntValue ARA_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue CENTAUR_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue CERASTES_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue CERBERUS_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue CYCLOPES_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue CYPRIAN_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue DRYAD_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue EMPUSA_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue GIGANTE_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue GORGON_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue HARPY_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue MAD_COW_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue MINOTAUR_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue NAIAD_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue ORTHUS_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue SATYR_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue SHADE_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue SIREN_SPAWN_WEIGHT;
-  public final ForgeConfigSpec.IntValue UNICORN_SPAWN_WEIGHT;
+  // spawn configs
+  public final Map<String, BiomeWhitelistConfig> MOB_SPAWNS = new HashMap<>();
   // special spawn configs
   private final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
   private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
@@ -84,15 +76,9 @@ public class GFConfig {
   private int satyrShamanChance;
   private int elpisSpawnChance;
   private int numSpartiSpawned;
- 
   
   // feature configs
-  public final ForgeConfigSpec.IntValue HARPY_NEST_SPREAD;
-  public final ForgeConfigSpec.IntValue SMALL_SHRINE_SPREAD;
-  public final ForgeConfigSpec.IntValue SMALL_NETHER_SHRINE_SPREAD;
-  public final ForgeConfigSpec.IntValue ARA_CAMP_SPREAD;
-  public final ForgeConfigSpec.IntValue SATYR_CAMP_SPREAD;
-  public final ForgeConfigSpec.IntValue REEDS_SPREAD;
+  public final Map<String, BiomeWhitelistConfig> FEATURES = new HashMap<>();
   
   // other
   public final ForgeConfigSpec.BooleanValue STATUES_HOLD_ITEMS;
@@ -128,12 +114,14 @@ public class GFConfig {
         .define("stun_prevents_jump", true);
     STUN_PREVENTS_USE = builder.comment("When stunned, players are prevented from using items")
         .define("stun_prevents_use", true);
-    OVERSTEP_ENABLED = builder.comment("Whether 'overstep' effect can modify player step height")
+    OVERSTEP_ENABLED = builder.comment("Whether 'overstep' enchantment can modify player step height")
         .define("enable_overstep", true);
     SMASHING_ENABLED = builder.comment("Whether 'smashing' enchantment can be used")
         .define("enable_smashing", true);
     HUNTING_ENABLED = builder.comment("Whether 'hunting' enchantment can be used")
         .define("enable_hunting", true);
+    MIRROR_ENABLED = builder.comment("Whether 'mirror' enchantment can be used")
+        .define("enable_mirror", true);
     builder.pop();
     // mob abilities
     builder.push("mob_abilities");
@@ -162,53 +150,64 @@ public class GFConfig {
     SPARTI_LIFESPAN = builder.comment("Number of seconds until the Sparti begins taking damage")
         .defineInRange("sparti_lifespan", 300, 1, 8000);
     builder.pop();
-    // mob spawns
-    builder.push("mob_spawn_weights");
-    ARA_SPAWN_WEIGHT = builder.worldRestart().defineInRange("ara_spawn_weight", 10, 0, 100);
-    CERBERUS_SPAWN_WEIGHT = builder.worldRestart().defineInRange("cerberus_spawn_weight", 10, 0, 100);
-    CENTAUR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("centaur_spawn_weight", 15, 0, 100);
-    CERASTES_SPAWN_WEIGHT = builder.worldRestart().defineInRange("cerastes_spawn_weight", 30, 0, 100);
-    CYCLOPES_SPAWN_WEIGHT = builder.worldRestart().defineInRange("cyclopes_spawn_weight", 20, 0, 100);
-    CYPRIAN_SPAWN_WEIGHT = builder.worldRestart().defineInRange("cyprian_spawn_weight", 10, 0, 100);
-    DRYAD_SPAWN_WEIGHT = builder.worldRestart().defineInRange("dryad_spawn_weight", 24, 0, 100);
-    EMPUSA_SPAWN_WEIGHT = builder.worldRestart().defineInRange("empusa_spawn_weight", 80, 0, 100);
-    GIGANTE_SPAWN_WEIGHT = builder.worldRestart().defineInRange("gigante_spawn_weight", 20, 0, 100);
-    GORGON_SPAWN_WEIGHT = builder.worldRestart().defineInRange("gorgon_spawn_weight", 16, 0, 100);
-    HARPY_SPAWN_WEIGHT = builder.worldRestart().defineInRange("harpy_spawn_weight", 8, 0, 100);
-    MAD_COW_SPAWN_WEIGHT = builder.worldRestart().defineInRange("mad_cow_spawn_weight", 2, 0, 100);
-    MINOTAUR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("minotaur_spawn_weight", 60, 0, 100);
-    NAIAD_SPAWN_WEIGHT = builder.worldRestart().defineInRange("naiad_spawn_weight", 10, 0, 100);
-    ORTHUS_SPAWN_WEIGHT = builder.worldRestart().defineInRange("orthus_spawn_weight", 20, 0, 100);
-    SATYR_SPAWN_WEIGHT = builder.worldRestart().defineInRange("satyr_spawn_weight", 22, 0, 100);
-    SHADE_SPAWN_WEIGHT = builder.worldRestart().defineInRange("shade_spawn_weight", 10, 0, 100);
-    SIREN_SPAWN_WEIGHT = builder.worldRestart().defineInRange("siren_spawn_weight", 10, 0, 100);
-    UNICORN_SPAWN_WEIGHT = builder.worldRestart().defineInRange("unicorn_spawn_weight", 11, 0, 100);
-    builder.pop();
     // mob spawn specials
     builder.push("mob_spawn_specials"); 
     SHADE_SPAWN_ON_DEATH = builder.comment("Whether a shade can spawn when players die")
         .define("shade_spawn_on_death", true);
     SATYR_SHAMAN_CHANCE = builder.comment("Percent chance that a satyr will be a shaman")
-        .defineInRange("satyr_shaman_chance", 20, 0, 100);
+        .defineInRange("satyr_shaman_chance", 24, 0, 100);
     ELPIS_SPAWN_CHANCE = builder.comment("Percent chance that opening a mysterious box spawns an Elpis")
         .defineInRange("elpis_spawn_chance", 60, 0, 100);
     NUM_SPARTI_SPAWNED = builder.comment("Number of Sparti spawned by using a dragon tooth")
         .defineInRange("num_sparti_spawned", 1, 1, 8);
     builder.pop();
-    // feature configs
-    builder.comment("structure and feature spread (higher number = less common)");
-    builder.push("features");
-    HARPY_NEST_SPREAD = builder.worldRestart().defineInRange("harpy_nest_spread", 58, 1, 1000);
-    SMALL_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_shrine_spread", 42, 1, 1000);
-    SMALL_NETHER_SHRINE_SPREAD = builder.worldRestart().defineInRange("small_nether_shrine_spread", 50, 1, 1000);
-    ARA_CAMP_SPREAD = builder.worldRestart().defineInRange("ara_camp_spread", 29, 1, 1000);
-    SATYR_CAMP_SPREAD = builder.worldRestart().defineInRange("satyr_camp_spread", 22, 1, 1000);
-    REEDS_SPREAD = builder.worldRestart().defineInRange("reeds_spread", 4, 1, 1000);
-    builder.pop();
     // other
     builder.push("other");
     STATUES_HOLD_ITEMS = builder.comment("Whether statues can hold items (kinda buggy when disabled)")
         .define("statues_hold_items", true);
+    builder.pop();
+    // mob spawns
+    builder.push("mob_spawns");
+    final List<String> nether = BiomeHelper.getBiomesInCategory(Biome.Category.NETHER);
+    final List<String> netherEndOceanIcy = BiomeHelper.getBiomesInCategories(Biome.Category.NETHER, Biome.Category.THEEND, Biome.Category.OCEAN, Biome.Category.ICY);
+    final List<String> plains = BiomeHelper.getBiomesInCategory(Biome.Category.PLAINS);
+    final List<String> taiga = BiomeHelper.getBiomesWithName(false, false, "taiga");
+    final List<String> forest = BiomeHelper.getBiomesWithName(false, false, "forest", "taiga", "jungle", "savanna", "wooded");
+    final List<String> swamp = BiomeHelper.getBiomesWithName(false, false, "swamp");
+    final List<String> hills = BiomeHelper.getBiomesInCategory(Biome.Category.EXTREME_HILLS);
+    final List<String> desert = BiomeHelper.getBiomesInCategory(Biome.Category.DESERT);
+    final List<String> ocean = BiomeHelper.getBiomesInCategory(Biome.Category.OCEAN);
+    final List<String> oceanOrRiver = BiomeHelper.getBiomesInCategories(Biome.Category.OCEAN, Biome.Category.RIVER);
+    final List<String> plainsAndTaiga = BiomeHelper.concat(plains, taiga);
+    MOB_SPAWNS.put("ara", new BiomeWhitelistConfig(builder, "ara_spawn", 10, false, netherEndOceanIcy));
+    MOB_SPAWNS.put("centaur", new BiomeWhitelistConfig(builder, "centaur_spawn", 15, true, plainsAndTaiga));
+    MOB_SPAWNS.put("cerastes", new BiomeWhitelistConfig(builder, "cerastes_spawn", 30, true, desert));
+    MOB_SPAWNS.put("cyclopes", new BiomeWhitelistConfig(builder, "cyclopes_spawn", 20, true, hills));
+    MOB_SPAWNS.put("cyprian", new BiomeWhitelistConfig(builder, "cyprian_spawn", 10, true, plainsAndTaiga));
+    MOB_SPAWNS.put("dryad", new BiomeWhitelistConfig(builder, "dryad_spawn", 24, true, forest));
+    MOB_SPAWNS.put("empusa", new BiomeWhitelistConfig(builder, "empusa_spawn", 75, false, netherEndOceanIcy));
+    MOB_SPAWNS.put("gigante", new BiomeWhitelistConfig(builder, "gigante_spawn", 10, true, hills));
+    MOB_SPAWNS.put("gorgon", new BiomeWhitelistConfig(builder, "gorgon_spawn", 16, false, netherEndOceanIcy));
+    MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 10, true, desert));
+    MOB_SPAWNS.put("mad_cow", new BiomeWhitelistConfig(builder, "mad_cow_spawn", 2, false, netherEndOceanIcy));
+    MOB_SPAWNS.put("minotaur", new BiomeWhitelistConfig(builder, "minotaur_spawn", 60, false, netherEndOceanIcy));
+    MOB_SPAWNS.put("naiad", new BiomeWhitelistConfig(builder, "naiad_spawn", 10, true, oceanOrRiver));
+    MOB_SPAWNS.put("orthus", new BiomeWhitelistConfig(builder, "orthus_spawn", 20, true, nether));
+    MOB_SPAWNS.put("satyr", new BiomeWhitelistConfig(builder, "satyr_spawn", 22, true, forest));
+    MOB_SPAWNS.put("shade", new BiomeWhitelistConfig(builder, "shade_spawn", 10, false, new ArrayList<>()));
+    MOB_SPAWNS.put("siren", new BiomeWhitelistConfig(builder, "siren_spawn", 10, true, ocean));
+    MOB_SPAWNS.put("unicorn", new BiomeWhitelistConfig(builder, "unicorn_spawn", 11, true, plains));
+    builder.pop();
+    // feature configs
+    builder.push("features");
+    FEATURES.put("harpy_nest", new BiomeWhitelistConfig(builder, "harpy_nest", 17, false, netherEndOceanIcy));
+    FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 23, false, netherEndOceanIcy));
+    FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 20, true, nether));
+    FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 34, false, netherEndOceanIcy));
+    FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 45, false, BiomeHelper.concat(netherEndOceanIcy, desert)));
+    FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, netherEndOceanIcy));
+    FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 990, true, swamp));
+    FEATURES.put("olive_tree", new BiomeWhitelistConfig(builder, "olive_tree", 30, true, forest));
     builder.pop();
   }
   
@@ -230,6 +229,7 @@ public class GFConfig {
     overstepEnabled = OVERSTEP_ENABLED.get();
     smashingEnabled = SMASHING_ENABLED.get();
     huntingEnabled = HUNTING_ENABLED.get();
+    mirrorEnabled = MIRROR_ENABLED.get();
     shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
     elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
@@ -250,11 +250,12 @@ public class GFConfig {
   public boolean isOverstepEnabled() { return overstepEnabled; }
   public boolean isSmashingEnabled() { return smashingEnabled; }
   public boolean isHuntingEnabled() { return huntingEnabled; }
+  public boolean isMirrorEnabled() { return mirrorEnabled; }
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
   public int getSatyrShamanChance() { return satyrShamanChance; }
   public int getElpisSpawnChance() { return elpisSpawnChance; }
   public int getNumSpartiSpawned() { return numSpartiSpawned; }
   public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }
   public int getDryadAngryRange() { return dryadAngryRange; }
-  public int getSpartiLifespan() { return spartiLifespan; }
+  public int getSpartiLifespan() { return spartiLifespan; } 
 }
