@@ -1,6 +1,6 @@
 package greekfantasy.item;
 
-import greekfantasy.entity.DragonToothEntity;
+import greekfantasy.entity.misc.DragonToothEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.render.model.EffectProjectileModel;
-import greekfantasy.entity.misc.HealingSpellEntity;
+import greekfantasy.entity.misc.PoisonSpitEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -13,14 +13,14 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 
-public class HealingSpellRenderer<T extends HealingSpellEntity> extends EntityRenderer<T> {
+public class PoisonSpitRenderer<T extends PoisonSpitEntity> extends EntityRenderer<T> {
   
-  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/healing_spell.png");
+  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/poison_spit.png");
   private static final float SCALE = 0.8F;
   
   protected EffectProjectileModel<T> entityModel;
   
-  public HealingSpellRenderer(final EntityRendererManager renderManagerIn) {
+  public PoisonSpitRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn);
     entityModel = new EffectProjectileModel<T>(0.0F);
   }

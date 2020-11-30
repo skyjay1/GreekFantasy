@@ -2,7 +2,7 @@ package greekfantasy.item;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.HealingSpellEntity;
+import greekfantasy.entity.misc.HealingSpellEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;

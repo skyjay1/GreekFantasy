@@ -1,4 +1,4 @@
-package greekfantasy.entity;
+package greekfantasy.entity.misc;
 
 /**
  * Required to use the greekfantasy.entity.ai.SwimUpGoal

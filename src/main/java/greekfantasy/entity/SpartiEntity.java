@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import greekfantasy.entity.ai.HasOwnerFollowGoal;
 import greekfantasy.entity.ai.HasOwnerHurtByTargetGoal;
 import greekfantasy.entity.ai.HasOwnerHurtTargetGoal;
+import greekfantasy.entity.misc.IHasOwner;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.CreatureEntity;

@@ -17,6 +17,7 @@ import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -159,7 +160,7 @@ public class CommonForgeEventHandler {
     if(event.getEntityLiving().getType() == EntityType.RABBIT) {
       final RabbitEntity rabbit = (RabbitEntity) event.getEntityLiving();
       if(rabbit.getRabbitType() != 99) {
-        rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, 10.0F, 2.2D, 2.2D));
+        rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, e -> !((CerastesEntity)e).isHiding(), 10.0F, 2.2D, 2.2D, EntityPredicates.CAN_AI_TARGET::test));        
       }
     }
   }
@@ -175,6 +176,6 @@ public class CommonForgeEventHandler {
   }
   
   private static boolean isStunned(final LivingEntity entity) {
-    return (entity.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null || entity.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null);
+    return (entity.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null || entity.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null);
   }
 }

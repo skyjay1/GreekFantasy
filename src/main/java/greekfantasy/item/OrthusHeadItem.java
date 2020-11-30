@@ -1,6 +1,6 @@
 package greekfantasy.item;
 
-import greekfantasy.entity.OrthusHeadItemEntity;
+import greekfantasy.entity.misc.OrthusHeadItemEntity;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;

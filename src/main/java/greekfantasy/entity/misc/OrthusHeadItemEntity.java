@@ -1,8 +1,9 @@
-package greekfantasy.entity;
+package greekfantasy.entity.misc;
 
 import java.util.function.Predicate;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.CerberusEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;

@@ -3,15 +3,15 @@ package greekfantasy.client.render.model;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import greekfantasy.entity.HealingSpellEntity;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.entity.projectile.ProjectileEntity;
 
-public class HealingSpellModel<T extends HealingSpellEntity> extends EntityModel<T> {
+public class EffectProjectileModel<T extends ProjectileEntity> extends EntityModel<T> {
   
   private final ModelRenderer cross;
   
-  public HealingSpellModel(final float modelSize) {
+  public EffectProjectileModel(final float modelSize) {
     textureWidth = 16;
     textureHeight = 16;
 

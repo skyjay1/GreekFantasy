@@ -11,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -41,7 +42,14 @@ public class SmashingEnchantment extends Enchantment {
       target.attackEntityFrom(DamageSource.causeMobDamage(user), 0.25F);
       // stun effect (for living entities)
       if(target instanceof LivingEntity) {
-        ((LivingEntity)target).addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 40 + level * 20, 0));
+        final LivingEntity entity = (LivingEntity)target;
+        final int STUN_DURATION = 40 + level * 20;
+        if(GreekFantasy.CONFIG.isStunningNerf()) {
+          entity.addPotionEffect(new EffectInstance(Effects.SLOWNESS, STUN_DURATION, 0));
+          entity.addPotionEffect(new EffectInstance(Effects.WEAKNESS, STUN_DURATION, 0));
+        } else {
+          entity.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, STUN_DURATION, 0));
+        }
       }
     }
   }
@@ -63,9 +71,9 @@ public class SmashingEnchantment extends Enchantment {
   }
   
   @Override 
-  public int getMinEnchantability(int level) { return 100; }
+  public int getMinEnchantability(int level) { return 999; }
   @Override
-  public int getMaxEnchantability(int level) { return 100; }
+  public int getMaxEnchantability(int level) { return 999; }
   @Override
   public boolean isTreasureEnchantment() { return false; }
   @Override

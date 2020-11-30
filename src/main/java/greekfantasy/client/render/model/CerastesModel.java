@@ -119,7 +119,7 @@ public class CerastesModel<T extends CerastesEntity> extends AgeableModel<T> {
     // slithering
     body1.rotateAngleY = limbSwingCos * -0.4F * standingTimeLeft;
     body2.rotateAngleY = limbSwingCos * 0.4F * standingTimeLeft;
-    body3.rotateAngleY = limbSwingCos * -0.75F * standingTimeLeft;
+    body3.rotateAngleY = limbSwingCos * -0.65F * standingTimeLeft;
     body4.rotateAngleY = limbSwingCos * 0.75F * standingTimeLeft;
     body5.rotateAngleY = limbSwingCos * -0.65F;
     body6.rotateAngleY = limbSwingCos * 0.65F;

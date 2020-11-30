@@ -23,6 +23,10 @@ import greekfantasy.enchantment.MirrorEnchantment;
 import greekfantasy.enchantment.OverstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
 import greekfantasy.entity.*;
+import greekfantasy.entity.misc.DragonToothEntity;
+import greekfantasy.entity.misc.HealingSpellEntity;
+import greekfantasy.entity.misc.OrthusHeadItemEntity;
+import greekfantasy.entity.misc.PoisonSpitEntity;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.item.ClubItem;
 import greekfantasy.item.DragonToothItem;
@@ -111,6 +115,7 @@ public final class GFRegistry {
   public static EntityType<CentaurEntity> CENTAUR_ENTITY = buildEntityType(CentaurEntity::new, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerberusEntity> CERBERUS_ENTITY = buildEntityType(CerberusEntity::new, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<CharybdisEntity> CHARYBDIS_ENTITY = buildEntityType(CharybdisEntity::new, "charybdis", 1.9F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<CyclopesEntity> CYCLOPES_ENTITY = buildEntityType(CyclopesEntity::new, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, b -> {});
   public static EntityType<CyprianEntity> CYPRIAN_ENTITY = buildEntityType(CyprianEntity::new, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
   public static EntityType<DragonToothEntity> DRAGON_TOOTH_ENTITY = buildEntityType(DragonToothEntity::new, "dragon_tooth", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
@@ -123,10 +128,12 @@ public final class GFRegistry {
   public static EntityType<HarpyEntity> HARPY_ENTITY = buildEntityType(HarpyEntity::new, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, b -> {});
   public static EntityType<HealingSpellEntity> HEALING_SPELL_ENTITY = buildEntityType(HealingSpellEntity::new, "healing_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
   public static EntityType<MadCowEntity> MAD_COW_ENTITY = buildEntityType(MadCowEntity::new, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, b -> {});
-  public static EntityType<MinotaurEntity> MINOTAUR_ENTITY = buildEntityType(MinotaurEntity::new, "minotaur", 0.7F, 1.8F, EntityClassification.MONSTER, b -> {});
+  public static EntityType<MinotaurEntity> MINOTAUR_ENTITY = buildEntityType(MinotaurEntity::new, "minotaur", 0.7F, 1.94F, EntityClassification.MONSTER, b -> {});
   public static EntityType<NaiadEntity> NAIAD_ENTITY = buildEntityType(NaiadEntity::new, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, b -> {});
   public static EntityType<OrthusEntity> ORTHUS_ENTITY = buildEntityType(OrthusEntity::new, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<OrthusHeadItemEntity> ORTHUS_HEAD_ITEM_ENTITY = buildEntityType(OrthusHeadItemEntity::new, "orthus_head_item", 0.25F, 0.25F, EntityClassification.MISC, b -> b.disableSummoning().trackingRange(6).func_233608_b_(20));
+  public static EntityType<PoisonSpitEntity> POISON_SPIT_ENTITY = buildEntityType(PoisonSpitEntity::new, "poison_spit", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
+  public static EntityType<PythonEntity> PYTHON_ENTITY = buildEntityType(PythonEntity::new, "python", 1.4F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<SatyrEntity> SATYR_ENTITY = buildEntityType(SatyrEntity::new, "satyr", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<ShadeEntity> SHADE_ENTITY = buildEntityType(ShadeEntity::new, "shade", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<SirenEntity> SIREN_ENTITY = buildEntityType(SirenEntity::new, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, b -> {});
@@ -272,9 +279,10 @@ public final class GFRegistry {
     // entity types have already been created, now they are actually registered (along with placements)
     registerEntityType(event, ARA_ENTITY, AraEntity::getAttributes, AraEntity::canAraSpawnOn);
     registerEntityType(event, CENTAUR_ENTITY, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn);
-    registerEntityType(event, CYPRIAN_ENTITY, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn);
     registerEntityType(event, CERASTES_ENTITY, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn);
     registerEntityType(event, CERBERUS_ENTITY, CerberusEntity::getAttributes, null);
+    registerEntityType(event, CHARYBDIS_ENTITY, CharybdisEntity::getAttributes, null);
+    registerEntityType(event, CYPRIAN_ENTITY, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn);
     registerEntityType(event, CYCLOPES_ENTITY, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn);
     registerEntityType(event, DRYAD_ENTITY, DryadEntity::getAttributes, DryadEntity::canSpawnOn);
     registerEntityType(event, ELPIS_ENTITY, ElpisEntity::getAttributes, null);
@@ -287,6 +295,7 @@ public final class GFRegistry {
     registerEntityType(event, MINOTAUR_ENTITY, MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight);
     registerEntityType(event, NAIAD_ENTITY, NaiadEntity::getAttributes, NaiadEntity::canNaiadSpawnOn);
     registerEntityType(event, ORTHUS_ENTITY, OrthusEntity::getAttributes, OrthusEntity::canSpawnOn);
+    registerEntityType(event, PYTHON_ENTITY, PythonEntity::getAttributes, null);
     registerEntityType(event, SATYR_ENTITY, SatyrEntity::getAttributes, SatyrEntity::canSpawnOn);
     registerEntityType(event, SHADE_ENTITY, ShadeEntity::getAttributes, ShadeEntity::canMonsterSpawnInLight);
     registerEntityType(event, SIREN_ENTITY, SirenEntity::getAttributes, SirenEntity::canSirenSpawnOn);
@@ -295,6 +304,7 @@ public final class GFRegistry {
     event.getRegistry().register(DRAGON_TOOTH_ENTITY);
     event.getRegistry().register(HEALING_SPELL_ENTITY);
     event.getRegistry().register(ORTHUS_HEAD_ITEM_ENTITY);
+    event.getRegistry().register(POISON_SPIT_ENTITY);
   }
   
   @SubscribeEvent
@@ -461,6 +471,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, ARA_ENTITY, 0xffffff, 0xbbbbbb);
     registerSpawnEgg(event, CENTAUR_ENTITY, 0x734933, 0x83251f);
     registerSpawnEgg(event, CERASTES_ENTITY, 0x847758, 0x997c4d);
+    registerSpawnEgg(event, CHARYBDIS_ENTITY, 0xeeeeee, 0x000000);
     registerSpawnEgg(event, CYCLOPES_ENTITY, 0xda662c, 0x2c1e0e);
     registerSpawnEgg(event, CYPRIAN_ENTITY, 0x443626, 0x83251f);
     registerSpawnEgg(event, DRYAD_ENTITY, 0x443626, 0xfed93f);
@@ -473,6 +484,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, MINOTAUR_ENTITY, 0x443626, 0x734933);
     registerSpawnEgg(event, NAIAD_ENTITY, 0x7caba1, 0xe67830);
     registerSpawnEgg(event, ORTHUS_ENTITY, 0x493569, 0xe42e2e);
+    registerSpawnEgg(event, PYTHON_ENTITY, 0x3a8228, 0x1e4c11);
     registerSpawnEgg(event, SATYR_ENTITY, 0x54371d, 0xa16648);
     registerSpawnEgg(event, SHADE_ENTITY, 0x222222, 0x000000);
     registerSpawnEgg(event, SIREN_ENTITY, 0x729f92, 0x398046);

@@ -2,7 +2,7 @@ package greekfantasy.entity.ai;
 
 import java.util.EnumSet;
 
-import greekfantasy.entity.IHasOwner;
+import greekfantasy.entity.misc.IHasOwner;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;

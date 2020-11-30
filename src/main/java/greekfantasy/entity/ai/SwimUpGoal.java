@@ -1,6 +1,6 @@
 package greekfantasy.entity.ai;
 
-import greekfantasy.entity.ISwimmingMob;
+import greekfantasy.entity.misc.ISwimmingMob;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;

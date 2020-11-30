@@ -7,7 +7,7 @@ import greekfantasy.client.render.*;
 import greekfantasy.client.render.tileentity.MobHeadTileEntityRenderer;
 import greekfantasy.client.render.tileentity.StatueTileEntityRenderer;
 import greekfantasy.client.render.tileentity.VaseTileEntityRenderer;
-import greekfantasy.entity.DragonToothEntity;
+import greekfantasy.entity.misc.*;
 import greekfantasy.events.ClientForgeEventHandler;
 import greekfantasy.events.ClientModEventHandler;
 import net.minecraft.client.Minecraft;
@@ -51,6 +51,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYPRIAN_ENTITY, CyprianRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CERASTES_ENTITY, CerastesRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CERBERUS_ENTITY, CerberusRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CHARYBDIS_ENTITY, CharybdisRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYCLOPES_ENTITY, CyclopesRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DRAGON_TOOTH_ENTITY, m -> new SpriteRenderer<DragonToothEntity>(m, Minecraft.getInstance().getItemRenderer()));
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DRYAD_ENTITY, DryadRenderer::new);
@@ -66,6 +67,8 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.NAIAD_ENTITY, NaiadRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ORTHUS_ENTITY, OrthusRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ORTHUS_HEAD_ITEM_ENTITY, m -> new ItemRenderer(m, Minecraft.getInstance().getItemRenderer()));
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.POISON_SPIT_ENTITY, PoisonSpitRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.PYTHON_ENTITY, PythonRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SATYR_ENTITY, SatyrRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SHADE_ENTITY, ShadeRenderer::new);  
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SIREN_ENTITY, SirenRenderer::new);
@@ -89,6 +92,7 @@ public class ClientProxy extends Proxy {
   
   @Override
   public void registerRenderLayers() {
+    GreekFantasy.LOGGER.debug("registerRenderLayers");
     RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_SAPLING, RenderType.getCutout());
     RenderTypeLookup.setRenderLayer(GFRegistry.REEDS, RenderType.getCutout());
     RenderTypeLookup.setRenderLayer(GFRegistry.WILD_ROSE, RenderType.getCutout());

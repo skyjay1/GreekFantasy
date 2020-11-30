@@ -73,7 +73,7 @@ public class CerberusEntity extends CreatureEntity {
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 120.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.26D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.0D);

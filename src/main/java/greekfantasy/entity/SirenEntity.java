@@ -10,6 +10,7 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.SwimUpGoal;
 import greekfantasy.entity.ai.SwimmingMovementController;
+import greekfantasy.entity.misc.ISwimmingMob;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -54,6 +55,8 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
   
   private static final DataParameter<Boolean> CHARMING = EntityDataManager.createKey(SirenEntity.class, DataSerializers.BOOLEAN); 
   private final AttributeModifier attackModifier = new AttributeModifier("Charm attack bonus", 2.0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
+
+  private static final int STUN_DURATION = 80;
   
   private boolean swimmingUp;
   private float swimmingPercent;
@@ -181,7 +184,12 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
     this.attackEntityAsMob(target);
     this.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(attackModifier);
     // apply stunned effect
-    target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 4 * 20, 0, false, false, true));
+    if(GreekFantasy.CONFIG.isStunningNerf()) {
+      target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, STUN_DURATION, 0));
+      target.addPotionEffect(new EffectInstance(Effects.WEAKNESS, STUN_DURATION, 0));
+    } else {
+      target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, STUN_DURATION, 0));
+    }
   }
   
   // Client methods

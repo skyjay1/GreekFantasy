@@ -3,6 +3,7 @@ package greekfantasy.entity;
 import greekfantasy.GFRegistry;
 import net.minecraft.block.SoundType;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.EffectType;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
@@ -43,7 +45,8 @@ public class UnicornEntity extends AbstractHorseEntity {
    }));
   }
   
-  // CALLED FROM ON INITIAL SPAWN
+  // CALLED FROM ON INITIAL SPAWN //
+  
   @Override
   protected void func_230273_eI_() {
     this.getAttribute(Attributes.MAX_HEALTH).setBaseValue((double)this.getModifiedMaxHealth());
@@ -64,6 +67,19 @@ public class UnicornEntity extends AbstractHorseEntity {
   @Override
   protected double getModifiedMovementSpeed() {
     return super.getModifiedMovementSpeed() + 0.16F;
+  }
+  
+  // MISC //
+
+  /**
+   * Called when the mob's health reaches 0.
+   */
+  public void onDeath(DamageSource cause) {
+    super.onDeath(cause);
+    if(cause.getTrueSource() instanceof LivingEntity) {
+      LivingEntity killer = (LivingEntity)cause.getTrueSource();
+      killer.addPotionEffect(new EffectInstance(Effects.UNLUCK, 10_000, 0, false, false, true, new EffectInstance(Effects.BAD_OMEN, 10_000, 0)));
+    }
   }
   
   @Override
@@ -88,12 +104,13 @@ public class UnicornEntity extends AbstractHorseEntity {
   protected void playGallopSound(SoundType sound) {
     super.playGallopSound(sound);
     if (this.rand.nextInt(10) == 0) {
-       this.playSound(SoundEvents.ENTITY_HORSE_BREATHE, sound.getVolume() * 0.6F, sound.getPitch());
+      this.playSound(SoundEvents.ENTITY_HORSE_BREATHE, sound.getVolume() * 0.6F, sound.getPitch());
     }
 
     ItemStack stack = this.horseChest.getStackInSlot(1);
-    if (isArmor(stack)) stack.onHorseArmorTick(world, this);
- }
+    if (isArmor(stack))
+      stack.onHorseArmorTick(world, this);
+  }
   
   @Override
   protected SoundEvent getAmbientSound() {

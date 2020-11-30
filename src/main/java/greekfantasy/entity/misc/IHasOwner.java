@@ -1,4 +1,4 @@
-package greekfantasy.entity;
+package greekfantasy.entity.misc;
 
 import java.util.Optional;
 import java.util.Random;

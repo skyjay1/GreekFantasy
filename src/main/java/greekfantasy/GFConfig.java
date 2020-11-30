@@ -46,6 +46,10 @@ public class GFConfig {
   private boolean huntingEnabled;
   private boolean mirrorEnabled;
   
+  // potion configs
+  private final ForgeConfigSpec.BooleanValue MIRROR_POTION;
+  private boolean mirrorPotion;
+  
   // special attack configs
   public final ForgeConfigSpec.BooleanValue EMPUSA_ATTACK;
   public final ForgeConfigSpec.BooleanValue GORGON_ATTACK;
@@ -61,9 +65,13 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue DRYAD_ANGRY_ON_HARVEST;
   private final ForgeConfigSpec.IntValue DRYAD_ANGRY_RANGE;
   private final ForgeConfigSpec.IntValue SPARTI_LIFESPAN;
+  private final ForgeConfigSpec.BooleanValue NERF_STUNNING;
+  private final ForgeConfigSpec.BooleanValue NERF_PARALYSIS;
   private boolean dryadAngryOnHarvest;
   private int dryadAngryRange;
   private int spartiLifespan;
+  private boolean nerfStunning;
+  private boolean nerfParalysis;
   
   // spawn configs
   public final Map<String, BiomeWhitelistConfig> MOB_SPAWNS = new HashMap<>();
@@ -123,6 +131,11 @@ public class GFConfig {
     MIRROR_ENABLED = builder.comment("Whether 'mirror' enchantment can be used")
         .define("enable_mirror", true);
     builder.pop();
+    // potion effects
+    builder.push("potions");
+    MIRROR_POTION = builder.comment("Whether the Potion of Mirroring can prevent paralysis")
+        .define("enable_mirror_potion", true);
+    builder.pop();
     // mob abilities
     builder.push("mob_abilities");
     EMPUSA_ATTACK = builder.comment("Whether the Empusa can drain health")
@@ -149,6 +162,10 @@ public class GFConfig {
         .define("shade_player_only", true);
     SPARTI_LIFESPAN = builder.comment("Number of seconds until the Sparti begins taking damage")
         .defineInRange("sparti_lifespan", 300, 1, 8000);
+    NERF_STUNNING = builder.comment("When true, replaces stunning with Slowness I and Weakness I")
+        .define("nerf_stunning", false);
+    NERF_PARALYSIS = builder.comment("When true, replaces paralysis with Slowness II and Weakness II")
+        .define("nerf_paralysis", false);
     builder.pop();
     // mob spawn specials
     builder.push("mob_spawn_specials"); 
@@ -230,6 +247,7 @@ public class GFConfig {
     smashingEnabled = SMASHING_ENABLED.get();
     huntingEnabled = HUNTING_ENABLED.get();
     mirrorEnabled = MIRROR_ENABLED.get();
+    mirrorPotion = MIRROR_POTION.get();
     shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
     elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
@@ -237,6 +255,8 @@ public class GFConfig {
     dryadAngryOnHarvest = DRYAD_ANGRY_ON_HARVEST.get();
     dryadAngryRange = DRYAD_ANGRY_RANGE.get();
     spartiLifespan = SPARTI_LIFESPAN.get();
+    nerfStunning = NERF_STUNNING.get();
+    nerfParalysis = NERF_PARALYSIS.get();
   }
   
   public boolean doesHelmHideArmor() { return helmHidesArmor; }
@@ -251,11 +271,14 @@ public class GFConfig {
   public boolean isSmashingEnabled() { return smashingEnabled; }
   public boolean isHuntingEnabled() { return huntingEnabled; }
   public boolean isMirrorEnabled() { return mirrorEnabled; }
+  public boolean isMirrorPotionEnabled() { return mirrorPotion; }
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
   public int getSatyrShamanChance() { return satyrShamanChance; }
   public int getElpisSpawnChance() { return elpisSpawnChance; }
   public int getNumSpartiSpawned() { return numSpartiSpawned; }
   public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }
   public int getDryadAngryRange() { return dryadAngryRange; }
-  public int getSpartiLifespan() { return spartiLifespan; } 
+  public int getSpartiLifespan() { return spartiLifespan; }
+  public boolean isStunningNerf() { return nerfStunning; }
+  public boolean isParalysisNerf() { return nerfParalysis; }
 }

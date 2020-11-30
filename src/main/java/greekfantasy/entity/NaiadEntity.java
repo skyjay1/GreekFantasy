@@ -12,6 +12,7 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GoToWaterGoal;
 import greekfantasy.entity.ai.SwimUpGoal;
 import greekfantasy.entity.ai.SwimmingMovementController;
+import greekfantasy.entity.misc.ISwimmingMob;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.EntityType;

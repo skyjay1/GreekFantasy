@@ -1,6 +1,6 @@
 package greekfantasy.entity.ai;
 
-import greekfantasy.entity.ISwimmingMob;
+import greekfantasy.entity.misc.ISwimmingMob;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;

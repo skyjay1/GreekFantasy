@@ -12,6 +12,7 @@ import greekfantasy.entity.ai.HasOwnerBegGoal;
 import greekfantasy.entity.ai.HasOwnerFollowGoal;
 import greekfantasy.entity.ai.HasOwnerHurtByTargetGoal;
 import greekfantasy.entity.ai.HasOwnerHurtTargetGoal;
+import greekfantasy.entity.misc.IHasOwner;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.CreatureEntity;
@@ -49,6 +50,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -219,8 +221,10 @@ public class CerastesEntity extends CreatureEntity implements IHasOwner<Cerastes
         this.setHiding(false);
         this.setStanding(true);
         // sometimes set as attack target
-        if(this.getAttackTarget() == null && this.canAttack(entity.getType()) && this.getRNG().nextBoolean()
-            && (!this.hasOwner() || this.shouldAttackEntity(entity, this.getOwner()))) {
+        if(this.getAttackTarget() == null && this.canAttack(entity.getType()) 
+            && EntityPredicates.CAN_AI_TARGET.test(entity)
+            && (!this.hasOwner() || this.shouldAttackEntity(entity, this.getOwner()))
+            && this.getRNG().nextBoolean()) {
           this.setAttackTarget(entity);
         }
       }

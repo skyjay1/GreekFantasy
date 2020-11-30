@@ -24,6 +24,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -121,18 +122,27 @@ public class GorgonEntity extends MonsterEntity {
   }
   
   public boolean isImmuneToStareAttack(final LivingEntity target) {
-    if(target.getActivePotionEffect(GFRegistry.MIRROR_EFFECT) != null || target.isSpectator() || !target.isNonBoss() 
-        || (target instanceof PlayerEntity && ((PlayerEntity)target).isCreative())) {
+    // check for mirror potion effect
+    if((GreekFantasy.CONFIG.isMirrorPotionEnabled() && target.getActivePotionEffect(GFRegistry.MIRROR_EFFECT) != null) 
+        || target.isSpectator() || !target.isNonBoss() || (target instanceof PlayerEntity && ((PlayerEntity)target).isCreative())) {
       return true;
     }
-    if(EnchantmentHelper.getEnchantments(target.getHeldItem(Hand.OFF_HAND)).containsKey(GFRegistry.MIRROR_ENCHANTMENT)) {
+    // check for mirror enchantment
+    if(GreekFantasy.CONFIG.isMirrorEnabled() && EnchantmentHelper.getEnchantments(target.getHeldItem(Hand.OFF_HAND)).containsKey(GFRegistry.MIRROR_ENCHANTMENT)) {
       return true;
     }
     return false;
   }
   
   public boolean useStareAttack(final LivingEntity target) {
-    target.addPotionEffect(new EffectInstance(GFRegistry.PETRIFIED_EFFECT, PETRIFY_DURATION, 0, false, false, true));
+    // apply potion effect
+    if(GreekFantasy.CONFIG.isParalysisNerf()) {
+      target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, PETRIFY_DURATION, 1, false, false, true));
+      target.addPotionEffect(new EffectInstance(Effects.WEAKNESS, PETRIFY_DURATION, 1, false, false, true));
+    } else {
+      target.addPotionEffect(new EffectInstance(GFRegistry.PETRIFIED_EFFECT, PETRIFY_DURATION, 0, false, false, true));
+    }
+    // update client-state
     if(this.isServerWorld()) {
       this.world.setEntityState(this, STARE_ATTACK);
     }

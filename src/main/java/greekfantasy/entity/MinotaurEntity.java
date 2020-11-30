@@ -27,6 +27,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
@@ -43,6 +44,8 @@ public class MinotaurEntity extends MonsterEntity {
   private static final byte NONE = (byte) 0;
   private static final byte CHARGING = (byte) 1;
   private static final byte STUNNED = (byte) 2;
+  
+  private static final int STUN_DURATION = 80;
   
   private final AttributeModifier knockbackModifier = new AttributeModifier("Charge knockback bonus", 2.25F, AttributeModifier.Operation.MULTIPLY_TOTAL);
   private final AttributeModifier attackModifier = new AttributeModifier("Charge attack bonus", 2.5F, AttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -169,7 +172,12 @@ public class MinotaurEntity extends MonsterEntity {
     this.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(attackModifier);
     this.getAttribute(Attributes.ATTACK_KNOCKBACK).removeModifier(this.knockbackModifier);
     // apply stunned effect
-    target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 4 * 20, 0, false, false, true));
+    if(GreekFantasy.CONFIG.isStunningNerf()) {
+      target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, STUN_DURATION, 0));
+      target.addPotionEffect(new EffectInstance(Effects.WEAKNESS, STUN_DURATION, 0));
+    } else {
+      target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, STUN_DURATION, 0));
+    }
   }
   
   static class StunnedGoal extends Goal {

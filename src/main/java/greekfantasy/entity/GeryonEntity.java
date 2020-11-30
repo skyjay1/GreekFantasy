@@ -37,6 +37,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
@@ -74,6 +75,7 @@ public class GeryonEntity extends MonsterEntity {
   private static final int MAX_SUMMON_TIME = 35;
   private static final double SMASH_RANGE = 12.0D;
   private static final int ATTACK_COOLDOWN = 38;
+  private static final int STUN_DURATION = 35;
   
   private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.RED, BossInfo.Overlay.PROGRESS)).setDarkenSky(true);
   
@@ -426,11 +428,21 @@ public class GeryonEntity extends MonsterEntity {
       entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) this.getAttribute(Attributes.ATTACK_DAMAGE).getValue());
       // stun effect (for living entities)
       if(entity instanceof LivingEntity) {
-        ((LivingEntity)entity).addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, 35, 0));
+        final LivingEntity target = (LivingEntity)entity;
+        if(GreekFantasy.CONFIG.isStunningNerf()) {
+          target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, STUN_DURATION, 0));
+          target.addPotionEffect(new EffectInstance(Effects.WEAKNESS, STUN_DURATION, 0));
+        } else {
+          target.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, STUN_DURATION, 0));
+        }
       }
     }
   }
   
+  /**
+   * Breaks blocks within this entity's bounding box
+   * @param offset the forward distance to offset the bounding box
+   **/
   private void destroyIntersectingBlocks(final double offset) {
     if(!world.getGameRules().getBoolean(GameRules.MOB_GRIEFING)) {
       return;

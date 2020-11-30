@@ -1,7 +1,8 @@
-package greekfantasy.entity;
+package greekfantasy.entity.misc;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.SpartiEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
