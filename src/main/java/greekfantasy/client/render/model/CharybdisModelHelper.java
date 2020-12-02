@@ -1,8 +1,8 @@
 package greekfantasy.client.render.model;
 
+import greekfantasy.entity.CharybdisEntity;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.LivingEntity;
 
 public final class CharybdisModelHelper {
   
@@ -168,12 +168,12 @@ public final class CharybdisModelHelper {
       armEnd.setTextureOffset(73, 10).addBox(-1.0F, -8.0F, -2.5F, 1.0F, 8.0F, 5.0F, 0.0F, false);
     }
     
-    public void setRotationAngles(LivingEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float idleSwingCos) {
+    public void setRotationAngles(CharybdisEntity entity, float idleSwingCos, float throwingTimeLeft, float throwingZ) {
       // animate arms
-      armLower.rotateAngleX = rotateAngleX - idleSwingCos * 0.14F;
-      armLower.rotateAngleZ = -1.2217F + idleSwingCos * 0.09F;
-      armMiddle.rotateAngleZ = idleSwingCos * 0.14F;
-      armEnd.rotateAngleZ = idleSwingCos * 0.14F;
+      armLower.rotateAngleX = rotateAngleX - (idleSwingCos * 0.14F) * throwingTimeLeft;
+      armLower.rotateAngleZ = -1.2217F + idleSwingCos * 0.09F * throwingTimeLeft + 1.15F * throwingZ;
+      armMiddle.rotateAngleZ = idleSwingCos * 0.14F * throwingTimeLeft + 0.26F * throwingZ;
+      armEnd.rotateAngleZ = idleSwingCos * 0.14F * throwingTimeLeft + 0.36F * throwingZ;
     }
     
   }

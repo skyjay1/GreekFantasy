@@ -10,9 +10,9 @@ import net.minecraft.util.math.vector.Vector3d;
 
 public class SwimUpGoal<T extends CreatureEntity & ISwimmingMob> extends Goal {
   protected final T entity;
-  private final double speed;
-  private final int targetY;
-  private boolean obstructed;
+  protected final double speed;
+  protected final int targetY;
+  protected boolean obstructed;
 
   public SwimUpGoal(T entityIn, double speedIn, int seaLevel) {
     this.entity = entityIn;
@@ -57,7 +57,7 @@ public class SwimUpGoal<T extends CreatureEntity & ISwimmingMob> extends Goal {
     entity.setSwimmingUp(false);
   }
 
-  private boolean isCloseToPathTarget() {
+  protected boolean isCloseToPathTarget() {
     Path path = entity.getNavigator().getPath();
     if (path != null) {
       BlockPos pos = path.getTarget();

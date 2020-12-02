@@ -276,7 +276,8 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
       final double motion = 0.06D + 0.009D * (1.0D - (disSq / (range * range)));
       final Vector3d vec = SirenEntity.this.getPositionVec().subtract(entity.getPositionVec())
           .normalize().scale(motion);
-      entity.addVelocity(vec.x, vec.y, vec.z);
+      entity.setMotion(entity.getMotion().add(vec).mul(0.5D, 1.0D, 0.5D));
+      entity.addVelocity(0, 0.001D, 0);
       entity.velocityChanged = true;
     }
   }

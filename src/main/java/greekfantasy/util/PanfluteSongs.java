@@ -16,28 +16,25 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.network.SPanfluteSongPacket;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.LogicalSidedProvider;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class PanfluteSongs extends JsonReloadListener {
   
   private static final Gson GSON = new GsonBuilder().create();
   
   protected Map<ResourceLocation, Optional<PanfluteSong>> SONGS = new HashMap<>();
-  
-//  private Optional<Runnable> syncOnReloadCallback = Optional.empty();
-  
+    
   public PanfluteSongs(final String folder) {
     super(GSON, folder);
-//    this.syncOnReloadCallback = Optional.of(() -> {
-//      for(final Entry<ResourceLocation, Optional<PanfluteSong>> e : GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries()) {
-//        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SPanfluteSongPacket(e.getKey(), e.getValue().get()));
-//      }
-//    });
   }
   
   /**
@@ -93,19 +90,18 @@ public class PanfluteSongs extends JsonReloadListener {
     jsons.forEach((key, input) -> SONGS.put(key, Optional.of(GSON.fromJson(input, PanfluteSong.class))));
     // print size of the map for debugging purposes
     GreekFantasy.LOGGER.debug("Parsing PanfluteSongs map. Found " + SONGS.size() + " entries");
-//    boolean isServer = GreekFantasy.PROXY instanceof greekfantasy.proxy.ServerProxy;
-//    try {
-//      LogicalSidedProvider.INSTANCE.get(LogicalSide.SERVER);
-//    } catch (NullPointerException e) {
-//      isServer = false;
-//    }
-//    // if we're on the server, send syncing packets
-//    if (isServer == true) {
-//      GreekFantasy.LOGGER.debug("PanfluteSongs: syncOnReloadCallback");
-//      for(final Entry<ResourceLocation, Optional<PanfluteSong>> e : GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries()) {
-//        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SPanfluteSongPacket(e.getKey(), e.getValue().get()));
-//      }
-//      this.syncOnReloadCallback.ifPresent(Runnable::run);
-//    }
+    boolean isServer = true;
+    try {
+      LogicalSidedProvider.INSTANCE.get(LogicalSide.SERVER);
+    } catch (Exception e) {
+      isServer = false;
+    }
+    // if we're on the server, send syncing packets
+    if (isServer == true) {
+      GreekFantasy.LOGGER.debug("PanfluteSongs: syncOnReloadCallback");
+      for(final Entry<ResourceLocation, Optional<PanfluteSong>> e : getEntries()) {
+        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SPanfluteSongPacket(e.getKey(), e.getValue().get()));
+      }
+    }
   }
 }

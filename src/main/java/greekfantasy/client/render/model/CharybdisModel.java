@@ -2,12 +2,9 @@ package greekfantasy.client.render.model;
 
 import com.google.common.collect.ImmutableList;
 
-import greekfantasy.client.render.model.CharybdisModelHelper.ArmModel;
 import greekfantasy.entity.CharybdisEntity;
 import net.minecraft.client.renderer.entity.model.AgeableModel;
-import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
 
 public class CharybdisModel extends AgeableModel<CharybdisEntity> {
@@ -31,9 +28,9 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
     textureWidth = 128;
     textureHeight = 128;
     
-    float r90 = (float) Math.toRadians(90);
-    float r180 = (float) Math.toRadians(180);
-    float r270 = (float) Math.toRadians(270);
+    final float r90 = (float) Math.toRadians(90);
+    final float r180 = (float) Math.toRadians(180);
+    final float r270 = (float) Math.toRadians(270);
    
     body = new ModelRenderer(this);
     body.setRotationPoint(0.0F, 24.0F, 0.0F);
@@ -108,27 +105,33 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
   @Override
   public void setRotationAngles(CharybdisEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch) {
     // animate arms
+    final float swirlingTime = entity.isSwirling() ? entity.getSwirlPercent() : 0;
+    final float throwingTime = entity.isThrowing() ? entity.getThrowPercent() : 0;
+    final float throwingTimeLeft = 1.0F - throwingTime;
+    final float throwingZ = 0.9F - 2F * Math.abs(throwingTime - 0.5F);
+    final float swirlingMult = 0.058F + 0.14F * Math.min(swirlingTime * 10.0F, 1.0F);
     for(int i = 0, l = armsArray.length; i < l; i++) {
-      armsArray[i].setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, MathHelper.cos(ageInTicks * 0.055F + i * 1.62F));
+      armsArray[i].setRotationAngles(entity, MathHelper.cos(ageInTicks * swirlingMult + i * 1.62F), throwingTimeLeft, throwingZ);
     }
     // animate fringes
     // body1
-    float cosX = MathHelper.cos(ageInTicks * 0.025F) * 0.24F;
+    final float idleCos = MathHelper.cos(ageInTicks * 0.064F);
+    float cosX = idleCos * 0.44F;
     for(int i = 0, l = body1Fringe.length; i < l; i++) {
       body1Fringe[i].rotateAngleX = cosX;
     }
     // body2
-    cosX = MathHelper.cos(ageInTicks * 0.025F) * 0.42F;
+    cosX = idleCos * 0.62F;
     for(int i = 0, l = body2Fringe.length; i < l; i++) {
       body2Fringe[i].rotateAngleY = cosX;
     }
     // body3
-    cosX = MathHelper.cos(ageInTicks * 0.025F) * 0.38F;
+    cosX = idleCos * 0.58F;
     for(int i = 0, l = body3Fringe.length; i < l; i++) {
       body3Fringe[i].rotateAngleY = cosX;
     }
     // body4
-    cosX = MathHelper.cos(ageInTicks * 0.025F) * 0.34F;
+    cosX = idleCos * 0.54F;
     for(int i = 0, l = body4Fringe.length; i < l; i++) {
       body4Fringe[i].rotateAngleY = cosX;
     }
