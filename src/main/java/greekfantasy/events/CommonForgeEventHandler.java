@@ -2,6 +2,8 @@ package greekfantasy.events;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Map.Entry;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GFWorldGen;
@@ -10,27 +12,34 @@ import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.ShadeEntity;
+import greekfantasy.network.SPanfluteSongPacket;
+import greekfantasy.util.PanfluteSong;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class CommonForgeEventHandler {
   
@@ -156,11 +165,11 @@ public class CommonForgeEventHandler {
    * @param event the spawn event
    **/
   @SubscribeEvent
-  public static void onLivingSpawn(final LivingSpawnEvent event) {
-    if(event.getEntityLiving().getType() == EntityType.RABBIT) {
+  public static void onLivingSpawn(final LivingSpawnEvent.SpecialSpawn event) {
+    if(event.getEntityLiving().getType() == EntityType.RABBIT && !event.getEntityLiving().getEntityWorld().isRemote()) {
       final RabbitEntity rabbit = (RabbitEntity) event.getEntityLiving();
       if(rabbit.getRabbitType() != 99) {
-        rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, e -> !((CerastesEntity)e).isHiding(), 10.0F, 2.2D, 2.2D, EntityPredicates.CAN_AI_TARGET::test));        
+        rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, e -> !((CerastesEntity)e).isHiding(), 6.0F, 2.2D, 2.2D, EntityPredicates.CAN_AI_TARGET::test));        
       }
     }
   }
@@ -173,6 +182,30 @@ public class CommonForgeEventHandler {
   public static void onBiomeLoad(final BiomeLoadingEvent event) {
     GFWorldGen.addBiomeFeatures(event);
     GFWorldGen.addBiomeSpawns(event);
+  }
+  
+  /**
+   * Used to sync panflute songs from the server to each client
+   * @param event the player login event
+   **/
+  @SubscribeEvent
+  public static void onPlayerLogin(final PlayerEvent.PlayerLoggedInEvent event) {
+    PlayerEntity player = event.getPlayer();
+    if (player instanceof ServerPlayerEntity) {
+      for(final Entry<ResourceLocation, Optional<PanfluteSong>> e : GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries()) {
+        GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SPanfluteSongPacket(e.getKey(), e.getValue().get()));
+      }
+    }
+  }
+  
+  /**
+   * Used to sync panflute songs when resources are reloaded
+   * @param event
+   **/
+  @SubscribeEvent
+  public static void onAddReloadListeners(final AddReloadListenerEvent event) {
+    GreekFantasy.LOGGER.debug("onAddReloadListeners");
+    event.addListener(GreekFantasy.PROXY.PANFLUTE_SONGS);
   }
   
   private static boolean isStunned(final LivingEntity entity) {

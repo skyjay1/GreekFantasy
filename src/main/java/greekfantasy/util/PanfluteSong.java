@@ -1,8 +1,11 @@
 package greekfantasy.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.jar.Attributes.Name;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -11,18 +14,33 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 public class PanfluteSong {
   
-  public static final PanfluteSong DEFAULT = new PanfluteSong("Error");
+  public static final PanfluteSong EMPTY = new PanfluteSong("Error", "Error", 0, 0, Arrays.asList(), Arrays.asList());
+  
+  public static final Codec<PanfluteSong> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+      Codec.STRING.fieldOf("name").forGetter(PanfluteSong::getNameTranslationKey),
+      Codec.STRING.fieldOf("credits").forGetter(PanfluteSong::getCreditsTranslationKey),
+      Codec.INT.fieldOf("interval").forGetter(PanfluteSong::getInterval),
+      Codec.INT.fieldOf("length").forGetter(PanfluteSong::getLength),
+      Codec.INT.listOf().fieldOf("treble").forGetter(PanfluteSong::getTreble),
+      Codec.INT.listOf().fieldOf("bass").forGetter(PanfluteSong::getBass)
+    ).apply(instance, PanfluteSong::new));
   
   private String name;
   private String credits;
   private int interval;
   private int length;
-  private int[] treble;
-  private int [] bass;
+  private List<Integer> treble;
+  private List<Integer> bass;
   
   protected PanfluteSong() { }
-  protected PanfluteSong(String def) {
-    name = credits = def;
+  protected PanfluteSong(final String lName, final String lCredits, final int lInterval, final int lLength,
+      final List<Integer> lTreble, final List<Integer> lBass) {
+    name = lName;
+    credits = lCredits;
+    interval = lInterval;
+    length = lLength;
+    treble = lTreble;
+    bass = lBass;
   }
   
   /** @return the translation key for the name **/
@@ -42,9 +60,9 @@ public class PanfluteSong {
   /** @return the number of notes in the song **/
   public int getLength() { return length; }
   /** @return the treble notes **/
-  public int[] getTreble() { return treble; }
+  public List<Integer> getTreble() { return treble; }
   /** @return the bass notes **/
-  public int[] getBass() { return bass; }
+  public List<Integer> getBass() { return bass; }
   
   /**
    * @param worldTime the world interval
@@ -83,11 +101,11 @@ public class PanfluteSong {
    * @param maxLength the maximum number of notes from the array to use
    * @return a set of notes to play
    **/
-  public static List<Integer> getNotes(final int[] notes, final long worldTime, final int playSpeed, final int maxLength) {
+  public static List<Integer> getNotes(final List<Integer> notes, final long worldTime, final int playSpeed, final int maxLength) {
     final List<Integer> noteSet = new ArrayList<>();
     // get the current note
     final int currentIndex = Math.abs((int)(worldTime / playSpeed)) % maxLength;
-    final int currentNote = currentIndex >= notes.length ? 0 : MathHelper.clamp(notes[currentIndex], 0, 24);
+    final int currentNote = currentIndex >= notes.size() ? 0 : MathHelper.clamp(notes.get(currentIndex), 0, 24);
     if(currentNote > 0) {
       noteSet.add(Integer.valueOf(currentNote));
     }

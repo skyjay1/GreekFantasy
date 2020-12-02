@@ -67,8 +67,8 @@ public class PanfluteScreen extends Screen {
     // populate songs list (alphabetically)
     if(songs.isEmpty()) {
       songs.addAll(GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries());
-      songs.sort((e1, e2) -> e1.getValue().orElse(PanfluteSong.DEFAULT).getName().getString()
-          .compareTo(e2.getValue().orElse(PanfluteSong.DEFAULT).getName().getString()));
+      songs.sort((e1, e2) -> e1.getValue().orElse(PanfluteSong.EMPTY).getName().getString()
+          .compareTo(e2.getValue().orElse(PanfluteSong.EMPTY).getName().getString()));
     }
     // determine currently selected song
     if(panfluteItem.getOrCreateTag().contains(PanfluteItem.KEY_SONG)) {
@@ -97,7 +97,7 @@ public class PanfluteScreen extends Screen {
     // add song buttons
     int i = 0;
     for(final Entry<ResourceLocation, Optional<PanfluteSong>> e : songs) {
-      final SongButton b = addButton(new SongButton(i, this, e.getValue().orElse(PanfluteSong.DEFAULT), e.getKey(), guiLeft + BTN_LEFT, 0));
+      final SongButton b = addButton(new SongButton(i, this, e.getValue().orElse(PanfluteSong.EMPTY), e.getKey(), guiLeft + BTN_LEFT, 0));
       b.updateLocation(0);
       songButtons.add(b);      
       i++;

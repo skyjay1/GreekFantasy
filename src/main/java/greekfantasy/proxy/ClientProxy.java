@@ -28,11 +28,11 @@ public class ClientProxy extends Proxy {
   @Override
   public void registerReloadListeners() {
     super.registerReloadListeners();
-    GreekFantasy.LOGGER.debug("registerReloadListeners");
-    IResourceManager manager = Minecraft.getInstance().getResourceManager();
-    if (manager instanceof IReloadableResourceManager) {
-      ((IReloadableResourceManager) manager).addReloadListener(PANFLUTE_SONGS);
-    }
+//    GreekFantasy.LOGGER.debug("registerReloadListeners");
+//    IResourceManager manager = Minecraft.getInstance().getResourceManager();
+//    if (manager instanceof IReloadableResourceManager) {
+//      ((IReloadableResourceManager) manager).addReloadListener(PANFLUTE_SONGS);
+//    }
   }
   
   @Override
