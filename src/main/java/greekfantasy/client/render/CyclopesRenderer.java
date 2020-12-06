@@ -15,7 +15,7 @@ public class CyclopesRenderer<T extends CyclopesEntity> extends BipedRenderer<T,
   private static final float SCALE = 1.15F;
 
   public CyclopesRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new CyclopesModel<T>(0.0F), 0.0F);
+    super(renderManagerIn, new CyclopesModel<T>(0.0F), 0.5F);
   }
 
   @Override

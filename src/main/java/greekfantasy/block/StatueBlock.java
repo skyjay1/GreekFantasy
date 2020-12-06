@@ -130,7 +130,9 @@ public class StatueBlock extends HorizontalBlock {
       final ItemStack stack = playerIn.getHeldItem(handIn);
       if(!stack.isEmpty() && stack.getItem() == Items.NAME_TAG && stack.hasDisplayName()) {        
         teStatue.setTextureName(stack.getDisplayName().getUnformattedComponentText(), true);
-        stack.shrink(1);
+		if(!playerIn.isCreative()) {
+		  stack.shrink(1);
+		}
         return ActionResultType.CONSUME;
       }
       // open the statue GUI

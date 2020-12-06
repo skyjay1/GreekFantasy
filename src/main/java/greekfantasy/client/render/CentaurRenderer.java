@@ -29,7 +29,7 @@ public class CentaurRenderer<T extends CentaurEntity> extends BipedRenderer<T,Ce
   }
   
   public CentaurRenderer(final EntityRendererManager renderManagerIn, final CentaurModel<T> model) {
-    super(renderManagerIn, model, 0.5F);
+    super(renderManagerIn, model, 0.75F);
     this.addLayer(new CentaurHorseLayer<T>(this));
     this.addLayer(new CentaurQuiverLayer<T>(this));
     //this.addLayer(new HeldItemLayer<>(this));

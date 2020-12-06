@@ -24,17 +24,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class ClientProxy extends Proxy {
-  
-  @Override
-  public void registerReloadListeners() {
-    super.registerReloadListeners();
-//    GreekFantasy.LOGGER.debug("registerReloadListeners");
-//    IResourceManager manager = Minecraft.getInstance().getResourceManager();
-//    if (manager instanceof IReloadableResourceManager) {
-//      ((IReloadableResourceManager) manager).addReloadListener(PANFLUTE_SONGS);
-//    }
-  }
-  
+
   @Override
   public void registerEventHandlers() { 
     super.registerEventHandlers();
@@ -47,6 +37,7 @@ public class ClientProxy extends Proxy {
   public void registerEntityRenders() {
     GreekFantasy.LOGGER.debug("registerEntityRenders");
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ARA_ENTITY, AraRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.AUTOMATON_ENTITY, AutomatonRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CENTAUR_ENTITY, CentaurRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYPRIAN_ENTITY, CyprianRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CERASTES_ENTITY, CerastesRenderer::new);

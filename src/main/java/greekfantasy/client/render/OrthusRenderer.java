@@ -16,7 +16,7 @@ public class OrthusRenderer<T extends OrthusEntity> extends MobRenderer<T, Orthu
   public static final float SCALE = 1.2F;
   
   public OrthusRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new OrthusModel<T>(0.0F), 0.5F);
+    super(renderManagerIn, new OrthusModel<T>(0.0F), 0.4F);
     this.addLayer(new OrthusEyesLayer<>(this));
   }
 

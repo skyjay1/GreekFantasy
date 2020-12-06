@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 public class CharybdisRenderer extends MobRenderer<CharybdisEntity, CharybdisModel> {
   
   private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/charybdis.png");
-  private static final float SCALE = 2.0F;
+  private static final float SCALE = 4.0F;
   
   public CharybdisRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new CharybdisModel(0.0F), 1.0F);

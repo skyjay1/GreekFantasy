@@ -2,9 +2,14 @@ package greekfantasy.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import greekfantasy.GreekFantasy;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -14,7 +19,6 @@ public class BiomeWhitelistConfig {
   protected final ForgeConfigSpec.IntValue spawnChance;
   protected final ForgeConfigSpec.BooleanValue whitelist;
   protected final ConfigValue<List<? extends String>> spawnBiomes;
-  protected final List<String> biomeKeys = new ArrayList<>();
   
   /**
    * @param builder the config spec builder
@@ -29,7 +33,7 @@ public class BiomeWhitelistConfig {
     builder.push(nameIn);
     spawnChance = builder.worldRestart().defineInRange("chance", weight, 0, 1000);
     whitelist = builder.worldRestart().define("whitelist", isWhitelist);
-    spawnBiomes = builder.worldRestart().defineList("biomes", biomes, o -> o instanceof String);
+    spawnBiomes = builder.worldRestart().defineList("biome_types", biomes, o -> o instanceof String);
     builder.pop();
   }
     
@@ -37,29 +41,37 @@ public class BiomeWhitelistConfig {
   
   public boolean isWhitelist() { return whitelist.get(); }
   
-  public List<? extends String> biomeStrings() { return spawnBiomes.get(); }
+  public List<? extends String> biomeTypes() { return spawnBiomes.get(); }
   
-  public boolean canSpawnInBiome(final String biomeKey) {
+  public boolean canSpawnInBiome(final RegistryKey<Biome> biomeKey) {
     // spawns when whitelist=true and hasBiome=true OR whitelist=false and hasBiome=false
     return isWhitelist() == hasBiome(biomeKey);
   }
   
-  public boolean hasBiome(final String biomeKey) { 
-    if(biomeKeys.isEmpty()) {
-      populateBiomeList();
-    }
-    return biomeKeys.contains(biomeKey);
-  }
-  
-  public void populateBiomeList() {
-    biomeKeys.clear();
-    for(final String s : biomeStrings()) {
-      final ResourceLocation r = new ResourceLocation(s);
-      if(ForgeRegistries.BIOMES.containsKey(r)) {
-        biomeKeys.add(s);
-      } else {
-        GreekFantasy.LOGGER.error("Could not parse biome '" + s + "' from config for '" + name + "'");
+  public boolean hasBiome(final RegistryKey<Biome> biome) { 
+//    if(biomeKeys.isEmpty()) {
+//      populateBiomeList();
+//    }
+    // check each entry to see if it matches one of the types
+    final List<? extends String> spawnBiomeList = spawnBiomes.get();
+    final Set<Type> types = BiomeDictionary.getTypes(biome);
+    for(final BiomeDictionary.Type t : types) {
+      if(spawnBiomeList.contains(t.getName())) {
+        return true;
       }
     }
+    return false;
   }
+//  
+//  public void populateBiomeList() {
+//    biomeKeys.clear();
+//    for(final String s : biomeStrings()) {
+//      final ResourceLocation r = new ResourceLocation(s);
+//      if(ForgeRegistries.BIOMES.containsKey(r)) {
+//        biomeKeys.add(s);
+//      } else {
+//        GreekFantasy.LOGGER.error("Could not parse biome type '" + s + "' from config for '" + name + "'");
+//      }
+//    }
+//  }
 }

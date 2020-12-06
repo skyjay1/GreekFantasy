@@ -15,7 +15,7 @@ public class PythonRenderer<T extends PythonEntity> extends MobRenderer<T, Pytho
   public static final float SCALE = 1.4F;
 
   public PythonRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new PythonModel<T>(0.0F), 0.0F);
+    super(renderManagerIn, new PythonModel<T>(0.0F), 1.0F);
   }
 
   @Override

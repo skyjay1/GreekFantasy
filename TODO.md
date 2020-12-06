@@ -44,14 +44,18 @@ __Key:__
 - X X X X Boss: Cerberus
 - X X X X Boss: Geryon (3-headed Gigante)
 - X _ _ _ Boss: Python (summoned with Cerastes)
+- X X _ _ Boss: Charybdis
+- _ _ _ _ Boss: Automaton (gold? copper? ichor?)
+- _ _ _ _ Fury (Nether; like harpy w/ bat wings)
 - _ _ _ _ Makhai (6 arms)
-- _ _ _ _ Hippocampus
 - _ _ _ _ Eurynomos (blue skin; vulture head?)
-- _ _ _ _ Stymphalian birds (iron wings/claws/beaks)
+- _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
 
 ## Entity AI
 
 - X Python spits poison
+- X Charybdis swirls target entities
+- X Charybdis throws entities
 - _ Stymphalian birds throw feathers that do damage
 - X Dryads hide in trees
 - X Dryads are angry when player chops wood
@@ -158,6 +162,8 @@ __Key:__
 - X Obtain Ambrosia
 - X Obtain Winged Sandals (Much Fast, So Speed!)
 - X Kill a Geryon
+- _ Kill a Python
+- _ Kill a Charybdis
 
 ## Other
 
@@ -189,16 +195,14 @@ _Can I do something with these?_
 - Hydra
 - Golden Ram (Golden Fleece)
 - Nemean Lion (invulnerable to physical damage)
-- Charybdis (monster in whirlpool)
 - Telchine (seal hands)
 - Yale (Latin "Centicore")
 - Colchis Bull (giant bronze bull)
+- Hippocampus
 - Lamia (demon)
 - Daemon (spirit of specific trait, emotion, object, etc)
 - Phoenix
 - Pegasus (and bull-like twin, Chrysaor)
-- Automaton (possibly a boss created using gold blocks and ichor)
-- Fury (harpy-like but with bat wings)
 - Werewolf
 - Underworld pomegranate tree
 - Belt of Aphrodite (maybe allows disguise as other player?)

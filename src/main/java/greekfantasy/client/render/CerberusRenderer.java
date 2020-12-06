@@ -15,7 +15,7 @@ public class CerberusRenderer<T extends CerberusEntity> extends MobRenderer<T, C
   public static final float SCALE = 1.9F;
   
   public CerberusRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new CerberusModel<T>(0.0F), 0.5F);
+    super(renderManagerIn, new CerberusModel<T>(0.0F), 1.0F);
     this.addLayer(new CerberusEyesLayer<>(this));
   }
 

@@ -38,6 +38,7 @@ import net.minecraft.world.gen.feature.template.TagMatchRuleTest;
 import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilders;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.BiomeManager.BiomeEntry;
 import net.minecraftforge.common.BiomeManager.BiomeType;
@@ -117,6 +118,7 @@ public final class GFWorldGen {
   public static void finishBiomeSetup() {
     OLIVE_FOREST = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, new ResourceLocation(GreekFantasy.MODID, "olive_forest"));
     BiomeManager.addBiome(BiomeType.WARM, new BiomeEntry(OLIVE_FOREST, 10));
+    BiomeDictionary.addTypes(OLIVE_FOREST, BiomeDictionary.Type.FOREST, BiomeDictionary.Type.OVERWORLD);
   }
 
   public static void addBiomeFeatures(final BiomeLoadingEvent event) {
@@ -190,9 +192,10 @@ public final class GFWorldGen {
   private static void addFeature(final BiomeLoadingEvent event, final String featureName, 
       final GenerationStage.Decoration stage, final ConfiguredFeature<?, ?> feature) {
     final BiomeWhitelistConfig config = GreekFantasy.CONFIG.FEATURES.get(featureName);
+    final RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
     if(null == config) {
-      GreekFantasy.LOGGER.error("Error registering features: config for '" + featureName + "` not found!");
-    } else if(config.canSpawnInBiome(event.getName().toString())) {
+      GreekFantasy.LOGGER.error("Error registering features: config for '" + featureName + "' not found!");
+    } else if(config.canSpawnInBiome(key)) {
       event.getGeneration().withFeature(stage, feature.chance(1000 / config.chance()));
     }
   }
@@ -221,11 +224,11 @@ public final class GFWorldGen {
   
   private static void addSpawns(final BiomeLoadingEvent event, final EntityType<?> entity, final int min, final int max) {
     final String name = entity.getRegistryName().getPath();
-    final String biome = event.getName().toString();
     final BiomeWhitelistConfig config = GreekFantasy.CONFIG.MOB_SPAWNS.get(name);
+    final RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
     if(null == config) {
-      GreekFantasy.LOGGER.error("Error registering spawns: config for '" + name + "` not found!");
-    } else if(config.canSpawnInBiome(biome)) {
+      GreekFantasy.LOGGER.error("Error registering spawns: config for '" + name + "' not found!");
+    } else if(config.canSpawnInBiome(key)) {
       event.getSpawns().withSpawner(entity.getClassification(), new MobSpawnInfo.Spawners(entity, config.chance(), min, max));
     }
   }

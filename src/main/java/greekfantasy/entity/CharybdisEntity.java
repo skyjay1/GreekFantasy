@@ -28,6 +28,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
@@ -44,7 +45,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   private static final byte THROWING = (byte)4;
   
   // other constants for attack, spawn, etc.
-  private static final double RANGE = 9.0D;
+  private static final double RANGE = 10.0D;
   private static final int SWIRL_TIME = 240;
   private static final int THROW_TIME = 34;
  
@@ -88,29 +89,33 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
   @Override
   public void livingTick() {
+
     super.livingTick();
+//    this.setPosition(this.prevPosX, this.getPosY(), this.prevPosZ);
 
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
     
-    // spawn particles around targeted entities
-    if(this.world.isRemote() && isSwirling()) {
-      List<Entity> targets = getEntitiesInRange(RANGE);
-      for(final Entity e : targets) {
-        final double motion = 0.08D;
-        final double radius = e.getWidth();
-        final double x = e.getPosX();
-        final double y = e.getPosY() + radius / 2;
-        final double z = e.getPosZ();
-        for (int i = 0; i < 5; i++) {
-          world.addParticle(ParticleTypes.BUBBLE, 
-              x + (world.rand.nextDouble() - 0.5D) * radius, 
-              y, 
-              z + (world.rand.nextDouble() - 0.5D) * radius,
-              (world.rand.nextDouble() - 0.5D) * motion, 
-              0.5D,
-              (world.rand.nextDouble() - 0.5D) * motion);
-        }
+    // spawn particles
+    if(this.world.isRemote() && ticksExisted % 3 == 0 && this.isInWaterOrBubbleColumn()/* && isSwirling()*/) {
+      // spawn particles at targeted entities
+      getEntitiesInRange(RANGE).forEach(e -> bubbles(e.getPosX(), e.getPosY(), e.getPosZ(), e.getWidth(), 5));;
+      // spawn particles in spiral
+      float maxY = this.getHeight() * 1.65F;
+      float y = 0;
+      float nY = 120;
+      float dY = maxY / nY;
+      double posX = this.getPosX();
+      double posY = this.getPosY();
+      double posZ = this.getPosZ();
+      // for each y-position, increase the angle and spawn particle here
+      for(float a = 0, nA = 28 + rand.nextInt(4), dA = (2 * (float)Math.PI) / nA; y < maxY; a += dA) {
+        float radius = y * 0.5F;
+        float cosA = MathHelper.cos(a) * radius;
+        float sinA = MathHelper.sin(a) * radius;
+        //bubbles(posX + cosA, posY + y, posZ + sinA, 0.125D, 1);
+        world.addParticle(ParticleTypes.BUBBLE, posX + cosA, posY + y - (maxY * 0.4), posZ + sinA, 0.0D, 0.085D, 0.0D);
+        y += dY;
       }
     }
     
@@ -148,6 +153,12 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
   @Override
   protected void updateAir(int air) { }
+  
+  @Override
+  public boolean canBePushed() { return false; }
+  
+  @Override
+  protected void collideWithNearbyEntities() { }
   
   // Boss //
 
@@ -254,7 +265,20 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   }
   
   public List<Entity> getEntitiesInRange(final double range) {
-    return getEntityWorld().getEntitiesInAABBexcluding(this, getBoundingBox().grow(range, range / 2, range), EntityPredicates.CAN_AI_TARGET);
+    return getEntityWorld().getEntitiesInAABBexcluding(this, getBoundingBox().grow(range, range / 2, range), EntityPredicates.CAN_AI_TARGET.and(e -> e.isInWaterOrBubbleColumn()));
+  }
+  
+  public void bubbles(final double posX, final double posY, final double posZ, final double radius, final int count) {
+    final double motion = 0.08D;
+    for (int i = 0; i < count; i++) {
+      world.addParticle(ParticleTypes.BUBBLE, 
+          posX + (world.rand.nextDouble() - 0.5D) * radius, 
+          posY, 
+          posZ + (world.rand.nextDouble() - 0.5D) * radius,
+          (world.rand.nextDouble() - 0.5D) * motion, 
+          0.5D,
+          (world.rand.nextDouble() - 0.5D) * motion);
+    }
   }
   
   // Goals //
@@ -338,24 +362,25 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
       // move tracked entities
       for(final Entity e : trackedEntities) {
         // try to break boats
-        if(e instanceof BoatEntity/* && entity.getRNG().nextInt(8) == 0*/) {
-//          e.attackEntityFrom(DamageSource.causeMobDamage(entity), 1.0F);
+        if(e instanceof BoatEntity) {
+          if(entity.getRNG().nextInt(8) == 0) {
+            e.attackEntityFrom(DamageSource.causeMobDamage(entity), 2.0F);
+          }
           continue;
         }
         // distance math
         double dx = entity.getPosX() - e.getPositionVec().x;
-        double dy = entity.getPosY() - e.getPositionVec().y;
+        //double dy = entity.getPosY() - e.getPositionVec().y;
         double dz = entity.getPosZ() - e.getPositionVec().z;
         final double horizDisSq = dx * dx + dz * dz;
-        final double vertDisSq = dy * dy;
-        if(horizDisSq > widthSq) {
-          // move the target toward this entity
-          swirlEntity(e, horizDisSq);
-        } else if(vertDisSq < heightSq){
+        if(entity.getBoundingBox().intersects(e.getBoundingBox())) {
           // damage the entity and steal some health
           if(e.attackEntityFrom(DamageSource.causeMobDamage(entity), 2.0F)) {
             entity.heal(0.5F);
           }
+        } else {
+          // move the target toward this entity
+          swirlEntity(e, horizDisSq);
         }
       }
     }
@@ -363,6 +388,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     @Override
     public void resetTask() {
       entity.setState(NONE);
+      entity.swirlTime = 0;
       progressTime = 0;
       cooldownTime = cooldown;
       trackedEntities.clear();
@@ -373,9 +399,9 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
       final double motion = 0.062D + 0.11D * (1.0D - (disSq / (range * range)));
       final Vector3d normalVec = CharybdisEntity.this.getPositionVec().mul(1.0D, 0, 1.0D).subtract(target.getPositionVec().mul(1.0D, 0, 1.0D)).normalize();
       final Vector3d rotatedVec = normalVec.rotateYaw(1.5707963267F).scale(motion);
-      final Vector3d motionVec = target.getMotion().add(normalVec.scale(0.04D)).add(rotatedVec).mul(0.5D, 1.0D, 0.5D);
+      final Vector3d motionVec = target.getMotion().add(normalVec.scale(0.028D)).add(rotatedVec).mul(0.65D, 1.0D, 0.65D);
       target.setMotion(motionVec);
-      target.addVelocity(0, 0.009D, 0);
+      target.addVelocity(0, 0.0068D, 0);
       target.velocityChanged = true;
     }
   }
@@ -443,10 +469,13 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
           // throw the entity upward
           if(horizDisSq > widthSq) {
             // calculate the amount of motion to apply based on distance
-            final double motion = 1.02D + 0.31D * (1.0D - (horizDisSq / (range * range)));
-            target.attackEntityFrom(DamageSource.causeMobDamage(entity), 6.0F);
+            final double motion = 1.08D + 0.31D * (1.0D - (horizDisSq / (range * range)));
             target.addVelocity(0, motion, 0);
             target.velocityChanged = true;
+            // damage boats and other rideable entities
+            if(target instanceof BoatEntity || !target.getPassengers().isEmpty()) {
+              target.attackEntityFrom(DamageSource.causeMobDamage(entity), 6.0F);
+            }
           }
         }
         resetTask();
@@ -456,6 +485,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     @Override
     public void resetTask() {
       entity.setState(NONE);
+      entity.throwTime = 0;
       progressTime = 0;
       cooldownTime = cooldown;
       trackedEntities.clear();

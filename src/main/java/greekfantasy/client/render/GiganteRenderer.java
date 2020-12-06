@@ -15,7 +15,7 @@ public class GiganteRenderer<T extends GiganteEntity> extends BipedRenderer<T, G
   public static final float SCALE = 1.9F;
   
   public GiganteRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new GiganteModel<T>(0.0F), 0.0F);
+    super(renderManagerIn, new GiganteModel<T>(0.0F), 1.0F);
   }
 
   @Override

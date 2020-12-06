@@ -15,7 +15,7 @@ public class GeryonRenderer<T extends GeryonEntity> extends BipedRenderer<T, Ger
   private static final float SCALE = 2.0F;
   
   public GeryonRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new GeryonModel<T>(0.0F), 0.0F);
+    super(renderManagerIn, new GeryonModel<T>(0.0F), 1.0F);
     this.addLayer(new GeryonClothingLayer<>(this));
   }
 

@@ -8,6 +8,7 @@ import java.util.Map;
 import greekfantasy.util.BiomeHelper;
 import greekfantasy.util.BiomeWhitelistConfig;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class GFConfig {
@@ -185,30 +186,27 @@ public class GFConfig {
     builder.pop();
     // mob spawns
     builder.push("mob_spawns");
-    final List<String> nether = BiomeHelper.getBiomesInCategory(Biome.Category.NETHER);
-    final List<String> netherEndOceanIcy = BiomeHelper.getBiomesInCategories(Biome.Category.NETHER, Biome.Category.THEEND, Biome.Category.OCEAN, Biome.Category.ICY);
-    final List<String> plains = BiomeHelper.getBiomesInCategory(Biome.Category.PLAINS);
-    final List<String> taiga = BiomeHelper.getBiomesWithName(false, false, "taiga");
-    final List<String> forest = BiomeHelper.getBiomesWithName(false, false, "forest", "taiga", "jungle", "savanna", "wooded");
-    final List<String> swamp = BiomeHelper.getBiomesWithName(false, false, "swamp");
-    final List<String> hills = BiomeHelper.getBiomesInCategory(Biome.Category.EXTREME_HILLS);
-    final List<String> desert = BiomeHelper.getBiomesInCategory(Biome.Category.DESERT);
-    final List<String> ocean = BiomeHelper.getBiomesInCategory(Biome.Category.OCEAN);
-    final List<String> oceanOrRiver = BiomeHelper.getBiomesInCategories(Biome.Category.OCEAN, Biome.Category.RIVER);
-    final List<String> plainsAndTaiga = BiomeHelper.concat(plains, taiga);
+    final List<String> nether = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.NETHER);
+    final List<String> ocean = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.OCEAN);
+    final List<String> forest = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST, BiomeDictionary.Type.CONIFEROUS, BiomeDictionary.Type.JUNGLE);
+    final List<String> taiga = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.CONIFEROUS);
+    final List<String> mountains = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.MOUNTAIN);
+    final List<String> sandy = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.DRY, BiomeDictionary.Type.SANDY);
+    final List<String> plains = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.PLAINS);
+    final List<String> netherEndOceanIcy = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.NETHER, BiomeDictionary.Type.END, BiomeDictionary.Type.WATER, BiomeDictionary.Type.COLD, BiomeDictionary.Type.SNOWY);
     MOB_SPAWNS.put("ara", new BiomeWhitelistConfig(builder, "ara_spawn", 10, false, netherEndOceanIcy));
-    MOB_SPAWNS.put("centaur", new BiomeWhitelistConfig(builder, "centaur_spawn", 15, true, plainsAndTaiga));
-    MOB_SPAWNS.put("cerastes", new BiomeWhitelistConfig(builder, "cerastes_spawn", 30, true, desert));
-    MOB_SPAWNS.put("cyclopes", new BiomeWhitelistConfig(builder, "cyclopes_spawn", 20, true, hills));
-    MOB_SPAWNS.put("cyprian", new BiomeWhitelistConfig(builder, "cyprian_spawn", 10, true, plainsAndTaiga));
+    MOB_SPAWNS.put("centaur", new BiomeWhitelistConfig(builder, "centaur_spawn", 15, true, plains));
+    MOB_SPAWNS.put("cerastes", new BiomeWhitelistConfig(builder, "cerastes_spawn", 30, true, sandy));
+    MOB_SPAWNS.put("cyclopes", new BiomeWhitelistConfig(builder, "cyclopes_spawn", 20, true, mountains));
+    MOB_SPAWNS.put("cyprian", new BiomeWhitelistConfig(builder, "cyprian_spawn", 10, true, BiomeHelper.concat(plains, taiga)));
     MOB_SPAWNS.put("dryad", new BiomeWhitelistConfig(builder, "dryad_spawn", 24, true, forest));
     MOB_SPAWNS.put("empusa", new BiomeWhitelistConfig(builder, "empusa_spawn", 75, false, netherEndOceanIcy));
-    MOB_SPAWNS.put("gigante", new BiomeWhitelistConfig(builder, "gigante_spawn", 10, true, hills));
+    MOB_SPAWNS.put("gigante", new BiomeWhitelistConfig(builder, "gigante_spawn", 10, true, mountains));
     MOB_SPAWNS.put("gorgon", new BiomeWhitelistConfig(builder, "gorgon_spawn", 16, false, netherEndOceanIcy));
-    MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 10, true, desert));
+    MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 10, true, sandy));
     MOB_SPAWNS.put("mad_cow", new BiomeWhitelistConfig(builder, "mad_cow_spawn", 2, false, netherEndOceanIcy));
     MOB_SPAWNS.put("minotaur", new BiomeWhitelistConfig(builder, "minotaur_spawn", 60, false, netherEndOceanIcy));
-    MOB_SPAWNS.put("naiad", new BiomeWhitelistConfig(builder, "naiad_spawn", 10, true, oceanOrRiver));
+    MOB_SPAWNS.put("naiad", new BiomeWhitelistConfig(builder, "naiad_spawn", 10, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.WATER)));
     MOB_SPAWNS.put("orthus", new BiomeWhitelistConfig(builder, "orthus_spawn", 20, true, nether));
     MOB_SPAWNS.put("satyr", new BiomeWhitelistConfig(builder, "satyr_spawn", 22, true, forest));
     MOB_SPAWNS.put("shade", new BiomeWhitelistConfig(builder, "shade_spawn", 10, false, new ArrayList<>()));
@@ -221,10 +219,10 @@ public class GFConfig {
     FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 23, false, netherEndOceanIcy));
     FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 20, true, nether));
     FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 34, false, netherEndOceanIcy));
-    FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 45, false, BiomeHelper.concat(netherEndOceanIcy, desert)));
+    FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 45, false, BiomeHelper.concat(netherEndOceanIcy, sandy)));
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, netherEndOceanIcy));
-    FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 990, true, swamp));
-    FEATURES.put("olive_tree", new BiomeWhitelistConfig(builder, "olive_tree", 30, true, forest));
+    FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 990, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.SWAMP)));
+    FEATURES.put("olive_tree", new BiomeWhitelistConfig(builder, "olive_tree", 30, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST)));
     builder.pop();
   }
   
