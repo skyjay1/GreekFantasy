@@ -12,11 +12,28 @@
       ]
     },
     {
-	  "rolls": 2,
+	  "rolls": 1,
 	  "entries": [
 		{
 		  "type": "loot_table",
 		  "name": "minecraft:chests/buried_treasure"
+		}
+	  ]
+	},
+	{
+	  "rolls": 1,
+	  "entries": [
+		{
+		  "type": "loot_table",
+		  "name": "minecraft:chests/shipwreck_treasure"
+		},
+		{
+		  "type": "loot_table",
+		  "name": "minecraft:chests/shipwreck_supply"
+		},
+		{
+		  "type": "loot_table",
+		  "name": "minecraft:chests/underwater_ruin_big"
 		}
 	  ]
 	}

@@ -26,7 +26,7 @@ public class BagOfWindItem extends Item {
       return ActionResult.resultFail(stack);
     }
     // give player potion effect
-    player.addPotionEffect(new EffectInstance(Effects.SPEED, GreekFantasy.CONFIG.getBagOfWindDuration(), 2));
+    player.addPotionEffect(new EffectInstance(Effects.SPEED, GreekFantasy.CONFIG.getBagOfWindDuration(), 1));
     player.addPotionEffect(new EffectInstance(Effects.DOLPHINS_GRACE, GreekFantasy.CONFIG.getBagOfWindDuration(), 0));
     player.getCooldownTracker().setCooldown(this, GreekFantasy.CONFIG.getBagOfWindCooldown());
     if(!player.isCreative()) {

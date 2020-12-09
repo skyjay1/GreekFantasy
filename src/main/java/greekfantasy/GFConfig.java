@@ -126,8 +126,8 @@ public class GFConfig {
         .define("thunderbolt_storms_only", true);
     THUNDERBOLT_COOLDOWN = builder.defineInRange("thunderbolt_cooldown", 50, 0, 100);
     THUNDERBOLT_DURABILITY = builder.defineInRange("thunderbolt_durability", 168, 1, 4000);
-    BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 600, 1, 24000);
-    BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 800, 0, 100);
+    BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
+    BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 100);
     BAG_OF_WIND_DURABILITY = builder.defineInRange("bag_of_wind_durability", 24, 1, 4000);
     builder.pop();
     // mob attacks

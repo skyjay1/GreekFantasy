@@ -143,9 +143,9 @@ __Key:__
 - X X X Styxian shard - crafting component from Cyclopes (helm of darkness)
 - X X X Wild Rose - crafting component from Satyr (sword of the hunt)
 - X X X Conch Shell - place and remove water 
-- _ _ _ Talos Heart - crafting component from Talos
+- X _ X Talos Heart - crafting component from Talos (TODO: used for what?)
 - X _ X Tough Snakeskin - crafting component from Python (TODO: used for what?)
-- ~ X X Bag of Wind - gives 30sec speed boost
+- X X X Bag of Wind - gives 30sec speed boost
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Gorgon blood - 50% chance to fully heal, 50% chance to fully kill
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)

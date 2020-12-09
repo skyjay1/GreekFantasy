@@ -380,6 +380,8 @@ public final class GFRegistry {
           .setRegistryName(MODID, "wooden_club"),
         new ConchItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP))
           .setRegistryName(MODID, "conch"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "talos_heart"),
         new ThunderboltItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.THUNDERBOLT_DURABILITY.get()))
           .setRegistryName(MODID, "thunderbolt"),
@@ -458,7 +460,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, ARA_ENTITY, 0xffffff, 0xbbbbbb);
     registerSpawnEgg(event, CENTAUR_ENTITY, 0x734933, 0x83251f);
     registerSpawnEgg(event, CERASTES_ENTITY, 0x847758, 0x997c4d);
-    registerSpawnEgg(event, CHARYBDIS_ENTITY, 0xeeeeee, 0x000000);
+    registerSpawnEgg(event, CHARYBDIS_ENTITY, 0x2e5651, 0x411e5e);
     registerSpawnEgg(event, CYCLOPES_ENTITY, 0xda662c, 0x2c1e0e);
     registerSpawnEgg(event, CYPRIAN_ENTITY, 0x443626, 0x83251f);
     registerSpawnEgg(event, DRYAD_ENTITY, 0x443626, 0xfed93f);
