@@ -93,10 +93,13 @@ public class WingedSandalsItem extends ArmorItem {
       stack.addEnchantment(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
     }
     // add Jump Boost effect
-    if(itemSlot == EquipmentSlotType.FEET.getIndex() && entityIn instanceof LivingEntity) {
+    if(itemSlot == EquipmentSlotType.FEET.getIndex() && stack.getMaxDamage() - stack.getDamage() > 10 && entityIn instanceof LivingEntity) {
       final LivingEntity entity = (LivingEntity)entityIn;
       entity.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 20, 4, false, false, false));
       entity.fallDistance = 0;
+      if(entity.getRNG().nextInt(40) == 0) {
+        stack.damageItem(1, entity, (e) -> e.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+      }
     }
   }
   
@@ -105,13 +108,17 @@ public class WingedSandalsItem extends ArmorItem {
    */
   @Override
   public Multimap<Attribute, AttributeModifier> getAttributeModifiers(final EquipmentSlotType equipmentSlot, final ItemStack stack) {
-    return equipmentSlot == EquipmentSlotType.FEET ? this.attributeModifiers : super.getAttributeModifiers(equipmentSlot, stack);
+    return equipmentSlot == EquipmentSlotType.FEET && (stack.getMaxDamage() - stack.getDamage() > 10) ? this.attributeModifiers : super.getAttributeModifiers(equipmentSlot, stack);
   }
 
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    tooltip.add(new TranslationTextComponent("effect.minecraft.jump_boost").mergeStyle(TextFormatting.AQUA)
+    if(stack.getMaxDamage() - stack.getDamage() <= 10) {
+      tooltip.add(new TranslationTextComponent("item.tooltip.broken").mergeStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
+    } else {
+      tooltip.add(new TranslationTextComponent("effect.minecraft.jump_boost").mergeStyle(TextFormatting.AQUA)
         .appendString(" ").append(new TranslationTextComponent("enchantment.level.5").mergeStyle(TextFormatting.AQUA)));
+    }
   }
 
   /**

@@ -67,7 +67,7 @@ public class AraCampFeature extends SimpleTemplateFeature {
     }
     
     // DEBUG
-    if(tentsGenerated > 0) GreekFantasy.LOGGER.debug("Generating " + tentsGenerated + " ara tents near " + tentPos);
+//    if(tentsGenerated > 0) GreekFantasy.LOGGER.debug("Generating " + tentsGenerated + " ara tents near " + tentPos);
     
     return tentsGenerated > 0;
   }

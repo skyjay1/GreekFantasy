@@ -56,7 +56,7 @@ public class SmallNetherShrineFeature extends SimpleTemplateFeature {
     // actually generate the structure
     if(template.func_237146_a_(reader, pos, pos, placement, rand, 2)) {
       // DEBUG
-      GreekFantasy.LOGGER.debug("Generating nether shrine near " + pos);
+//      GreekFantasy.LOGGER.debug("Generating nether shrine near " + pos);
       return true;
     }
     return false;

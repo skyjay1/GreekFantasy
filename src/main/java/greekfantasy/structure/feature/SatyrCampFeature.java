@@ -82,7 +82,7 @@ public class SatyrCampFeature extends SimpleTemplateFeature {
         tentsGenerated++;
       }
       // DEBUG
-      GreekFantasy.LOGGER.debug("Generated " + tentsGenerated + " satyr tents near " + campfirePos);
+//      GreekFantasy.LOGGER.debug("Generated " + tentsGenerated + " satyr tents near " + campfirePos);
       return true;
     }
     return false;

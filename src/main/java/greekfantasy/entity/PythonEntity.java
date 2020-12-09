@@ -1,7 +1,6 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
-import java.util.List;
 
 import greekfantasy.entity.misc.PoisonSpitEntity;
 import net.minecraft.entity.Entity;
@@ -15,7 +14,9 @@ import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -26,8 +27,6 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
@@ -64,11 +63,11 @@ public class PythonEntity extends MonsterEntity {
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 14.0D) // TODO change this before release
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.29D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 70.0D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.31D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.0D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D);
+        .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D);
   }
   
   @Override
@@ -82,12 +81,12 @@ public class PythonEntity extends MonsterEntity {
     super.registerGoals();
     this.goalSelector.addGoal(1, new SwimGoal(this));
     this.goalSelector.addGoal(3, new PythonEntity.PoisonSpitAttackGoal(165));
-//    this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
-//    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+    this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
+    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.7D));
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-//    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
   }
   
   @Override

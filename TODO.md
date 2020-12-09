@@ -8,11 +8,6 @@ __Key:__
 
 - _ Summoning animation not playing on dedicated server (Geryon, Sparti)
 - _ Structure gen is jenky (check *all* corner blocks)
-- X Killing a unicorn should grant bad luck / bad omen
-- X Cerberus should have more health (or configurable)
-- X Config option for Gorgons to give slowness II and mining fatigue I instead of paralyzing
-- X Some way to convert magic feathers -> regular feathers
-- X Config option to disable mirroring potion effect
 - ? Config option for olive forest biome weight
 - _ Limestone / Marble should have tags
 
@@ -43,9 +38,9 @@ __Key:__
 - X X X X Mad Cow (summoned by Geryon)
 - X X X X Boss: Cerberus
 - X X X X Boss: Geryon (3-headed Gigante)
-- X _ _ _ Boss: Python (summoned with Cerastes)
-- X X _ _ Boss: Charybdis
-- _ _ _ _ Boss: Automaton (gold? copper? ichor?)
+- X X X ~ Boss: Python (summoned with Cerastes)
+- X X _ X Boss: Charybdis
+- X X X _ Boss: Talos (gold? copper? ichor?)
 - _ _ _ _ Fury (Nether; like harpy w/ bat wings)
 - _ _ _ _ Makhai (6 arms)
 - _ _ _ _ Eurynomos (blue skin; vulture head?)
@@ -94,6 +89,7 @@ __Key:__
 - X X X Small Nether Shrine
 - X X X Marble veins
 - X X X Limestone veins
+- X X _ Python Pit
 - _ _ _ Centaur Camps
 - _ _ _ Cyclopes Cave+Pastures
 - _ _ _ Ruined Temple
@@ -117,6 +113,7 @@ __Key:__
 - _ _ _ Olive blocks: button, fence, boat, door, trapdoor, stripped log, stripped wood, pressure plate, sign
 - X X X Olive leaves
 - X X X Olive sapling
+- X X X Ichor Infused Block
 - _ _ _ Urn?
 - _ _ _ Grapes / grapevines?
 
@@ -145,6 +142,10 @@ __Key:__
 - X X X Fiery hide - crafting component from Cerberus (helm of darkness)
 - X X X Styxian shard - crafting component from Cyclopes (helm of darkness)
 - X X X Wild Rose - crafting component from Satyr (sword of the hunt)
+- X X X Conch Shell - place and remove water 
+- _ _ _ Talos Heart - crafting component from Talos
+- X _ X Tough Snakeskin - crafting component from Python (TODO: used for what?)
+- ~ X X Bag of Wind - gives 30sec speed boost
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Gorgon blood - 50% chance to fully heal, 50% chance to fully kill
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)
@@ -214,8 +215,6 @@ _Can I do something with these?_
 - Thyrsus: staff with pinecone and ivy leaves used by Dionysus
 - Amazonian Girdle (Hippolyta)
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
-- Conch shell (Triton) (Raises waves)
-- Bag of Wind
 - Palladium (statue that provides safety)
 - River Styx
 - Story of King Midas (gold touch)

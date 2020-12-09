@@ -7,7 +7,6 @@ import java.util.Map;
 
 import greekfantasy.util.BiomeHelper;
 import greekfantasy.util.BiomeWhitelistConfig;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -20,18 +19,27 @@ public class GFConfig {
   public final ForgeConfigSpec.IntValue UNICORN_HORN_DURABILITY;
   public final ForgeConfigSpec.IntValue HEALING_ROD_DURABILITY;
   public final ForgeConfigSpec.IntValue THUNDERBOLT_DURABILITY;
+  public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURABILITY;
   private final ForgeConfigSpec.BooleanValue HELM_HIDES_ARMOR;
   private final ForgeConfigSpec.BooleanValue DRAGON_TOOTH_SPAWNS_SPARTI;
   private final ForgeConfigSpec.BooleanValue SWORD_OF_HUNT_BYPASSES_ARMOR;
   private final ForgeConfigSpec.IntValue HEALING_ROD_COOLDOWN;
   private final ForgeConfigSpec.BooleanValue THUNDERBOLT_STORMS_ONLY;
   private final ForgeConfigSpec.IntValue THUNDERBOLT_COOLDOWN;
+  private final ForgeConfigSpec.BooleanValue CONCH_ENABLED;
+  private final ForgeConfigSpec.IntValue CONCH_COOLDOWN;
+  private final ForgeConfigSpec.IntValue BAG_OF_WIND_COOLDOWN;
+  public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
   private boolean helmHidesArmor;
   private boolean dragonToothSpawnsSparti;
   private boolean swordOfHuntBypassesArmor;
   private int healingRodCooldown;
   private boolean thunderboltStormsOnly;
   private int thunderboltCooldown;
+  private boolean conchEnabled;
+  private int conchCooldown;
+  private int bagOfWindCooldown;
+  private int bagOfWindDuration;
 
   // effect configs
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
@@ -108,14 +116,19 @@ public class GFConfig {
         .define("dragon_tooth_spawns_sparti", true);
     SWORD_OF_HUNT_BYPASSES_ARMOR = builder.comment("Whether the Sword of the Hunt deals absolute damage to animals")
         .define("sword_of_hunt_bypasses_armor", true);
-    HEALING_ROD_COOLDOWN = builder.comment("Cooldown time after using the healing rod")
-        .defineInRange("healing_rod_cooldown", 35, 0, 100);
+    CONCH_ENABLED = builder.comment("Whether the Conch can place/remove water")
+        .define("conch_enabled", true);
+    CONCH_COOLDOWN = builder.comment("Cooldown time after using the conch")
+        .defineInRange("conch_cooldown", 10, 0, 100);
+    HEALING_ROD_COOLDOWN = builder.defineInRange("healing_rod_cooldown", 35, 0, 100);
     HEALING_ROD_DURABILITY = builder.defineInRange("healing_rod_durability", 384, 1, 4000);
     THUNDERBOLT_STORMS_ONLY = builder.comment("Whether the Thunderbolt can only be used during storms")
         .define("thunderbolt_storms_only", true);
-    THUNDERBOLT_COOLDOWN = builder.comment("Cooldown time after using the thunderbolt")
-        .defineInRange("thunderbolt_cooldown", 50, 0, 100);
+    THUNDERBOLT_COOLDOWN = builder.defineInRange("thunderbolt_cooldown", 50, 0, 100);
     THUNDERBOLT_DURABILITY = builder.defineInRange("thunderbolt_durability", 168, 1, 4000);
+    BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 600, 1, 24000);
+    BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 800, 0, 100);
+    BAG_OF_WIND_DURABILITY = builder.defineInRange("bag_of_wind_durability", 24, 1, 4000);
     builder.pop();
     // mob attacks
     builder.push("effects");
@@ -197,6 +210,7 @@ public class GFConfig {
     MOB_SPAWNS.put("ara", new BiomeWhitelistConfig(builder, "ara_spawn", 10, false, netherEndOceanIcy));
     MOB_SPAWNS.put("centaur", new BiomeWhitelistConfig(builder, "centaur_spawn", 15, true, plains));
     MOB_SPAWNS.put("cerastes", new BiomeWhitelistConfig(builder, "cerastes_spawn", 30, true, sandy));
+    MOB_SPAWNS.put("charybdis", new BiomeWhitelistConfig(builder, "charybdis_spawn", 4, true, ocean));
     MOB_SPAWNS.put("cyclopes", new BiomeWhitelistConfig(builder, "cyclopes_spawn", 20, true, mountains));
     MOB_SPAWNS.put("cyprian", new BiomeWhitelistConfig(builder, "cyprian_spawn", 10, true, BiomeHelper.concat(plains, taiga)));
     MOB_SPAWNS.put("dryad", new BiomeWhitelistConfig(builder, "dryad_spawn", 24, true, forest));
@@ -218,11 +232,12 @@ public class GFConfig {
     FEATURES.put("harpy_nest", new BiomeWhitelistConfig(builder, "harpy_nest", 17, false, netherEndOceanIcy));
     FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 23, false, netherEndOceanIcy));
     FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 20, true, nether));
-    FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 34, false, netherEndOceanIcy));
-    FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 45, false, BiomeHelper.concat(netherEndOceanIcy, sandy)));
+    FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 14, false, netherEndOceanIcy));
+    FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 25, false, BiomeHelper.concat(netherEndOceanIcy, sandy)));
+    FEATURES.put("python_pit", new BiomeWhitelistConfig(builder, "python_pit", 6, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.JUNGLE)));
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, netherEndOceanIcy));
     FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 990, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.SWAMP)));
-    FEATURES.put("olive_tree", new BiomeWhitelistConfig(builder, "olive_tree", 30, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST)));
+    FEATURES.put("olive_tree", new BiomeWhitelistConfig(builder, "olive_tree", 28, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST)));
     builder.pop();
   }
   
@@ -239,6 +254,10 @@ public class GFConfig {
     healingRodCooldown = HEALING_ROD_COOLDOWN.get();
     thunderboltStormsOnly = THUNDERBOLT_STORMS_ONLY.get();
     thunderboltCooldown = THUNDERBOLT_COOLDOWN.get();
+    conchEnabled = CONCH_ENABLED.get();
+    conchCooldown = CONCH_COOLDOWN.get();
+    bagOfWindDuration = BAG_OF_WIND_DURATION.get();
+    bagOfWindCooldown = BAG_OF_WIND_COOLDOWN.get();
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
@@ -263,6 +282,10 @@ public class GFConfig {
   public int getHealingRodCooldown() { return healingRodCooldown; }
   public boolean isThunderboltStormsOnly() { return thunderboltStormsOnly; }
   public int getThunderboltCooldown() { return thunderboltCooldown; }
+  public boolean isConchEnabled() { return conchEnabled; }
+  public int getConchCooldown() { return conchCooldown; }
+  public int getBagOfWindDuration() { return bagOfWindDuration; }
+  public int getBagOfWindCooldown() { return bagOfWindCooldown; }
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
   public boolean isOverstepEnabled() { return overstepEnabled; }

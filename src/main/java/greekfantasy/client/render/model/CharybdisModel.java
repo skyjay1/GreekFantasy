@@ -89,7 +89,7 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
 
     // arms
     arms = new ModelRenderer(this);
-    arms.setRotationPoint(0.0F, -30.0F, 0.0F);
+    arms.setRotationPoint(0.0F, -31.0F, 0.0F);
     arms.addChild(CharybdisModelHelper.makeArmsModel(this, 0, armsArray, 0));
     arms.addChild(CharybdisModelHelper.makeArmsModel(this, r90, armsArray, 3));
     arms.addChild(CharybdisModelHelper.makeArmsModel(this, r180, armsArray, 6));

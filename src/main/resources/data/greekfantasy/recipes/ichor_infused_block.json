@@ -1,0 +1,11 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+	{ "item": "minecraft:gold_block" },
+    { "item": "greekfantasy:ichor" }
+  ],
+  "result": {
+    "item": "greekfantasy:ichor_infused_block",
+    "count": 1
+  }
+}

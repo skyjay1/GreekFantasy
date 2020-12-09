@@ -1,0 +1,63 @@
+package greekfantasy.block;
+
+import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
+
+import greekfantasy.GFRegistry;
+import greekfantasy.entity.TalosEntity;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.pattern.BlockMaterialMatcher;
+import net.minecraft.block.pattern.BlockPattern;
+import net.minecraft.block.pattern.BlockPatternBuilder;
+import net.minecraft.block.pattern.BlockStateMatcher;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.CachedBlockInfo;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
+public class IchorInfusedBlock extends Block {
+  
+  @Nullable
+  private BlockPattern talosPattern;
+  // TODO: change to copper for 1.17
+  private static final Predicate<BlockState> IS_TALOS_BLOCK = (state) -> state != null && (state.isIn(Blocks.GOLD_BLOCK));
+  
+  public IchorInfusedBlock(final Properties properties) {
+    super(properties);
+  }
+  
+  @Override
+  public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    // check if a talos was built
+    BlockPattern pattern = this.getTalosPattern();
+    BlockPattern.PatternHelper helper = pattern.match(worldIn, pos);
+    if(helper != null) {
+      // remove the blocks that were used
+      for (int i = 0; i < pattern.getPalmLength(); ++i) {
+        for (int j = 0; j < pattern.getThumbLength(); ++j) {
+          CachedBlockInfo cachedblockinfo1 = helper.translateOffset(i, j, 0);
+          worldIn.destroyBlock(cachedblockinfo1.getPos(), false);
+        }
+      }
+      // spawn the talos
+      TalosEntity.spawnTalos(worldIn, helper.translateOffset(1, 2, 0).getPos(), 0);
+    }
+  }
+
+  private BlockPattern getTalosPattern() {
+    if (this.talosPattern == null) {
+       this.talosPattern = BlockPatternBuilder.start()
+           //.aisle("~~^^~~", "######", "######", "~~##~~", "~~##~~")
+           .aisle("~^~", "###", "###")
+           .where('^', CachedBlockInfo.hasState(BlockStateMatcher.forBlock(GFRegistry.ICHOR_INFUSED_BLOCK)))
+           .where('#', CachedBlockInfo.hasState(IS_TALOS_BLOCK))
+           .where('~', CachedBlockInfo.hasState(BlockMaterialMatcher.forMaterial(Material.AIR))).build();
+    }
+    return this.talosPattern;
+  }
+}

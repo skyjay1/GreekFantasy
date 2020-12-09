@@ -4,6 +4,7 @@ import greekfantasy.block.OliveTree;
 import greekfantasy.structure.feature.AraCampFeature;
 import greekfantasy.structure.feature.HarpyNestFeature;
 import greekfantasy.structure.feature.OliveTreeFeature;
+import greekfantasy.structure.feature.PythonPitFeature;
 import greekfantasy.structure.feature.ReedsFeature;
 import greekfantasy.structure.feature.SatyrCampFeature;
 import greekfantasy.structure.feature.SmallNetherShrineFeature;
@@ -59,6 +60,8 @@ public final class GFWorldGen {
   public static final Feature<NoFeatureConfig> ARA_CAMP = null;
   @ObjectHolder(GreekFantasy.MODID + ":satyr_camp")
   public static final Feature<NoFeatureConfig> SATYR_CAMP = null;
+  @ObjectHolder(GreekFantasy.MODID + ":python_pit")
+  public static final Feature<NoFeatureConfig> PYTHON_PIT = null;
   @ObjectHolder(GreekFantasy.MODID + ":olive_tree")
   public static final Feature<BaseTreeFeatureConfig> OLIVE_TREE = null;
   @ObjectHolder(GreekFantasy.MODID + ":reeds")
@@ -106,6 +109,9 @@ public final class GFWorldGen {
         new SatyrCampFeature(NoFeatureConfig.field_236558_a_)
           .setRegistryName(GreekFantasy.MODID, "satyr_camp"));
     event.getRegistry().register(
+        new PythonPitFeature(NoFeatureConfig.field_236558_a_)
+          .setRegistryName(GreekFantasy.MODID, "python_pit"));
+    event.getRegistry().register(
         new OliveTreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(GreekFantasy.MODID, "olive_tree"));
     event.getRegistry().register(
@@ -148,11 +154,15 @@ public final class GFWorldGen {
       .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     // Ara Camp
     addFeature(event, "ara_camp",GenerationStage.Decoration.SURFACE_STRUCTURES, 
-      ARA_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
+      ARA_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_).chance(2)
       .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     // Satyr Camp
     addFeature(event, "satyr_camp", GenerationStage.Decoration.SURFACE_STRUCTURES, 
       SATYR_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
+      .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    // Python Pit
+    addFeature(event, "python_pit", GenerationStage.Decoration.SURFACE_STRUCTURES, 
+      PYTHON_PIT.withConfiguration(NoFeatureConfig.field_236559_b_)
       .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     // Reeds
     addFeature(event, "reeds", GenerationStage.Decoration.VEGETAL_DECORATION, 
@@ -200,11 +210,11 @@ public final class GFWorldGen {
     }
   }
   
-  
   public static void addBiomeSpawns(final BiomeLoadingEvent event) {
     addSpawns(event, GFRegistry.ARA_ENTITY, 2, 5);
     addSpawns(event, GFRegistry.CENTAUR_ENTITY, 2, 4);
     addSpawns(event, GFRegistry.CERASTES_ENTITY, 1, 2);
+    addSpawns(event, GFRegistry.CHARYBDIS_ENTITY, 1, 1);
     addSpawns(event, GFRegistry.CYCLOPES_ENTITY, 1, 3);
     addSpawns(event, GFRegistry.CYPRIAN_ENTITY, 1, 3);
     addSpawns(event, GFRegistry.DRYAD_ENTITY, 1, 3);

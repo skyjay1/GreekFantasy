@@ -6,46 +6,20 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import greekfantasy.block.CappedPillarBlock;
-import greekfantasy.block.MobHeadBlock;
-import greekfantasy.block.MysteriousBoxBlock;
-import greekfantasy.block.NestBlock;
-import greekfantasy.block.OliveTree;
-import greekfantasy.block.OrthusHeadBlock;
-import greekfantasy.block.ReedsBlock;
-import greekfantasy.block.StatueBlock;
-import greekfantasy.block.VaseBlock;
-import greekfantasy.block.WildRoseBlock;
-import greekfantasy.effect.MirrorEffect;
-import greekfantasy.effect.StunnedEffect;
-import greekfantasy.enchantment.HuntingEnchantment;
-import greekfantasy.enchantment.MirrorEnchantment;
-import greekfantasy.enchantment.OverstepEnchantment;
-import greekfantasy.enchantment.SmashingEnchantment;
+import greekfantasy.block.*;
+import greekfantasy.effect.*;
+import greekfantasy.enchantment.*;
 import greekfantasy.entity.*;
-import greekfantasy.entity.misc.DragonToothEntity;
-import greekfantasy.entity.misc.HealingSpellEntity;
-import greekfantasy.entity.misc.OrthusHeadItemEntity;
-import greekfantasy.entity.misc.PoisonSpitEntity;
+import greekfantasy.entity.misc.*;
 import greekfantasy.gui.StatueContainer;
-import greekfantasy.item.ClubItem;
-import greekfantasy.item.DragonToothItem;
-import greekfantasy.item.HealingRodItem;
-import greekfantasy.item.HelmOfDarknessItem;
-import greekfantasy.item.MobHeadItem;
-import greekfantasy.item.OrthusHeadItem;
-import greekfantasy.item.PanfluteItem;
-import greekfantasy.item.ThunderboltItem;
-import greekfantasy.item.UnicornHornItem;
-import greekfantasy.item.WingedSandalsItem;
-import greekfantasy.tileentity.MobHeadTileEntity;
+import greekfantasy.item.*;
+import greekfantasy.tileentity.*;
 import greekfantasy.tileentity.MobHeadTileEntity.HeadType;
-import greekfantasy.tileentity.StatueTileEntity;
-import greekfantasy.tileentity.VaseTileEntity;
 import greekfantasy.util.StatuePose;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.RotatedPillarBlock;
 import net.minecraft.block.SaplingBlock;
@@ -112,7 +86,6 @@ public final class GFRegistry {
   //ENTITY TYPES
 
   public static EntityType<AraEntity> ARA_ENTITY = buildEntityType(AraEntity::new, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
-  public static EntityType<AutomatonEntity> AUTOMATON_ENTITY = buildEntityType(AutomatonEntity::new, "automaton", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<CentaurEntity> CENTAUR_ENTITY = buildEntityType(CentaurEntity::new, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerberusEntity> CERBERUS_ENTITY = buildEntityType(CerberusEntity::new, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
@@ -139,6 +112,7 @@ public final class GFRegistry {
   public static EntityType<ShadeEntity> SHADE_ENTITY = buildEntityType(ShadeEntity::new, "shade", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<SirenEntity> SIREN_ENTITY = buildEntityType(SirenEntity::new, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, b -> {});
   public static EntityType<SpartiEntity> SPARTI_ENTITY = buildEntityType(SpartiEntity::new, "sparti", 0.6F, 1.98F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<TalosEntity> TALOS_ENTITY = buildEntityType(TalosEntity::new, "talos", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<UnicornEntity> UNICORN_ENTITY = buildEntityType(UnicornEntity::new, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
   
   // OBJECT HOLDERS //
@@ -234,6 +208,8 @@ public final class GFRegistry {
   public static final Block ORTHUS_HEAD = null;
   @ObjectHolder("cerberus_head")
   public static final Block CERBERUS_HEAD = null;
+  @ObjectHolder("ichor_infused_block")
+  public static final Block ICHOR_INFUSED_BLOCK = null;
   
   @ObjectHolder("statue_te")
   public static final TileEntityType<StatueTileEntity> STATUE_TE = null;
@@ -279,7 +255,7 @@ public final class GFRegistry {
     GreekFantasy.LOGGER.debug("registerEntities");
     // entity types have already been created, now they are actually registered (along with placements)
     registerEntityType(event, ARA_ENTITY, AraEntity::getAttributes, AraEntity::canAraSpawnOn);
-    registerEntityType(event, AUTOMATON_ENTITY, AutomatonEntity::getAttributes, null);
+    registerEntityType(event, TALOS_ENTITY, TalosEntity::getAttributes, null);
     registerEntityType(event, CENTAUR_ENTITY, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn);
     registerEntityType(event, CERASTES_ENTITY, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn);
     registerEntityType(event, CERBERUS_ENTITY, CerberusEntity::getAttributes, null);
@@ -380,7 +356,9 @@ public final class GFRegistry {
         new OrthusHeadBlock(HeadType.ORTHUS, AbstractBlock.Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(1.0F).notSolid())
           .setRegistryName(GreekFantasy.MODID, "orthus_head"),
         new MobHeadBlock(HeadType.CERBERUS, AbstractBlock.Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(1.0F).notSolid())
-          .setRegistryName(GreekFantasy.MODID, "cerberus_head")
+          .setRegistryName(GreekFantasy.MODID, "cerberus_head"),
+        new IchorInfusedBlock(AbstractBlock.Properties.from(Blocks.GOLD_BLOCK))
+          .setRegistryName(MODID, "ichor_infused_block")
     );
   }
 
@@ -400,9 +378,14 @@ public final class GFRegistry {
           .setRegistryName(MODID, "stone_club"),
         new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "wooden_club"),
+        new ConchItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP))
+          .setRegistryName(MODID, "conch"),
         new ThunderboltItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.THUNDERBOLT_DURABILITY.get()))
           .setRegistryName(MODID, "thunderbolt"),
+        new BagOfWindItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP)
+            .maxDamage(GreekFantasy.CONFIG.BAG_OF_WIND_DURABILITY.get()))
+          .setRegistryName(MODID, "bag_of_wind"),
         new WingedSandalsItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
           .setRegistryName(MODID, "winged_sandals"),
         new HelmOfDarknessItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
@@ -430,6 +413,8 @@ public final class GFRegistry {
           .setRegistryName(MODID, "snakeskin"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "purified_snakeskin"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "tough_snakeskin"),
         new Item(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP)){
           @Override
           public boolean hasEffect(ItemStack stack) { return true; }
@@ -449,7 +434,7 @@ public final class GFRegistry {
         POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, 
         LIMESTONE, LIMESTONE_SLAB, LIMESTONE_STAIRS, POLISHED_LIMESTONE, POLISHED_LIMESTONE_SLAB, 
         POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, LIMESTONE_STATUE, 
-        TERRACOTTA_VASE);
+        TERRACOTTA_VASE, ICHOR_INFUSED_BLOCK);
     
     event.getRegistry().register(new MobHeadItem(GIGANTE_HEAD, new Item.Properties()
         .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeGiganteHeadISTER))

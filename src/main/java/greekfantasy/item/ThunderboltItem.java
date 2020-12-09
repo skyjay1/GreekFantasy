@@ -38,16 +38,7 @@ public class ThunderboltItem extends Item {
     
     if(!world.isRemote()) {
       // raytrace
-      final Vector3d startVec = player.getEyePosition(1.0F);
-      final float pitch = (float) Math.toRadians(-player.rotationPitch);
-      final float yaw = (float) Math.toRadians(-player.rotationYaw);
-      float cosYaw = MathHelper.cos(yaw - (float)Math.PI);
-      float sinYaw = MathHelper.sin(yaw - (float)Math.PI);
-      float cosPitch = -MathHelper.cos(pitch);
-      float sinPitch = MathHelper.sin(pitch);
-      final float dis = 64.0F;
-      final Vector3d endVec = startVec.add(sinYaw * cosPitch * dis, sinPitch * dis, cosYaw * cosPitch * dis);
-      RayTraceResult raytrace = player.world.rayTraceBlocks(new RayTraceContext(startVec, endVec, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.ANY, player));
+      final RayTraceResult raytrace = raytraceFromPlayer(world, player, 64.0F);
       // add a lightning bolt at the resulting position
       if(raytrace.getType() != RayTraceResult.Type.MISS) {
         LightningBoltEntity bolt = EntityType.LIGHTNING_BOLT.create(world);
@@ -71,5 +62,18 @@ public class ThunderboltItem extends Item {
   
   private boolean isRepairItem(final ItemStack repair) {
     return repair.getItem() == GFRegistry.ICHOR;
+  }
+  
+  public static RayTraceResult raytraceFromPlayer(final World world, final PlayerEntity player, final float range) {
+    // raytrace
+    final Vector3d startVec = player.getEyePosition(1.0F);
+    final float pitch = (float) Math.toRadians(-player.rotationPitch);
+    final float yaw = (float) Math.toRadians(-player.rotationYaw);
+    float cosYaw = MathHelper.cos(yaw - (float)Math.PI);
+    float sinYaw = MathHelper.sin(yaw - (float)Math.PI);
+    float cosPitch = -MathHelper.cos(pitch);
+    float sinPitch = MathHelper.sin(pitch);
+    final Vector3d endVec = startVec.add(sinYaw * cosPitch * range, sinPitch * range, cosYaw * cosPitch * range);
+    return player.world.rayTraceBlocks(new RayTraceContext(startVec, endVec, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.ANY, player));
   }
 }
