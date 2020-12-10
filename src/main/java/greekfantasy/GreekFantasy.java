@@ -62,8 +62,9 @@ public class GreekFantasy {
   }
 
   public static void setup(final FMLCommonSetupEvent event) {
-    GFWorldGen.finishBiomeSetup();
-    GFRegistry.finishBrewingRecipes();
+    event.enqueueWork(() -> GFWorldGen.registerConfiguredFeatures());
+    event.enqueueWork(() -> GFWorldGen.finishBiomeSetup());
+    event.enqueueWork(() -> GFRegistry.finishBrewingRecipes());
   }
   
   public static void loadConfig(final ModConfig.Loading event) {

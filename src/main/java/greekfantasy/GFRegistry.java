@@ -89,7 +89,7 @@ public final class GFRegistry {
   public static EntityType<CentaurEntity> CENTAUR_ENTITY = buildEntityType(CentaurEntity::new, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerberusEntity> CERBERUS_ENTITY = buildEntityType(CerberusEntity::new, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
-  public static EntityType<CharybdisEntity> CHARYBDIS_ENTITY = buildEntityType(CharybdisEntity::new, "charybdis", 5.9F, 7.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<CharybdisEntity> CHARYBDIS_ENTITY = buildEntityType(CharybdisEntity::new, "charybdis", 5.9F, 7.9F, EntityClassification.WATER_CREATURE, b -> b.immuneToFire());
   public static EntityType<CyclopesEntity> CYCLOPES_ENTITY = buildEntityType(CyclopesEntity::new, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, b -> {});
   public static EntityType<CyprianEntity> CYPRIAN_ENTITY = buildEntityType(CyprianEntity::new, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
   public static EntityType<DragonToothEntity> DRAGON_TOOTH_ENTITY = buildEntityType(DragonToothEntity::new, "dragon_tooth", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
@@ -255,7 +255,6 @@ public final class GFRegistry {
     GreekFantasy.LOGGER.debug("registerEntities");
     // entity types have already been created, now they are actually registered (along with placements)
     registerEntityType(event, ARA_ENTITY, AraEntity::getAttributes, AraEntity::canAraSpawnOn);
-    registerEntityType(event, TALOS_ENTITY, TalosEntity::getAttributes, null);
     registerEntityType(event, CENTAUR_ENTITY, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn);
     registerEntityType(event, CERASTES_ENTITY, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn);
     registerEntityType(event, CERBERUS_ENTITY, CerberusEntity::getAttributes, null);
@@ -278,6 +277,7 @@ public final class GFRegistry {
     registerEntityType(event, SHADE_ENTITY, ShadeEntity::getAttributes, ShadeEntity::canMonsterSpawnInLight);
     registerEntityType(event, SIREN_ENTITY, SirenEntity::getAttributes, SirenEntity::canSirenSpawnOn);
     registerEntityType(event, SPARTI_ENTITY, SpartiEntity::getAttributes, null);
+    registerEntityType(event, TALOS_ENTITY, TalosEntity::getAttributes, null);
     registerEntityType(event, UNICORN_ENTITY, UnicornEntity::getAttributes, UnicornEntity::canSpawnOn);
     event.getRegistry().register(DRAGON_TOOTH_ENTITY);
     event.getRegistry().register(HEALING_SPELL_ENTITY);
@@ -519,6 +519,10 @@ public final class GFRegistry {
   }
   
   public static void finishBrewingRecipes() {
+    // check config settings first
+    if(!GreekFantasy.CONFIG.isMirrorPotionEnabled()) {
+      return;
+    }
     final ItemStack mirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), MIRROR_POTION);
     final ItemStack splashMirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), MIRROR_POTION);
     final ItemStack lingeringMirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), MIRROR_POTION);

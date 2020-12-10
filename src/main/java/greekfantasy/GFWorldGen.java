@@ -16,6 +16,7 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeAmbience;
 import net.minecraft.world.biome.BiomeGenerationSettings;
@@ -32,7 +33,6 @@ import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.Features.Placements;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
-import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructureFeatures;
 import net.minecraft.world.gen.feature.template.RuleTest;
 import net.minecraft.world.gen.feature.template.TagMatchRuleTest;
@@ -50,29 +50,43 @@ import net.minecraftforge.registries.ObjectHolder;
 
 public final class GFWorldGen {
   
-  @ObjectHolder(GreekFantasy.MODID + ":harpy_nest")
-  public static final Feature<NoFeatureConfig> HARPY_NEST = null;
-  @ObjectHolder(GreekFantasy.MODID + ":small_shrine")
-  public static final Feature<NoFeatureConfig> SMALL_SHRINE = null;
-  @ObjectHolder(GreekFantasy.MODID + ":small_nether_shrine")
-  public static final Feature<NoFeatureConfig> SMALL_NETHER_SHRINE = null;
-  @ObjectHolder(GreekFantasy.MODID + ":ara_camp")
-  public static final Feature<NoFeatureConfig> ARA_CAMP = null;
-  @ObjectHolder(GreekFantasy.MODID + ":satyr_camp")
-  public static final Feature<NoFeatureConfig> SATYR_CAMP = null;
-  @ObjectHolder(GreekFantasy.MODID + ":python_pit")
-  public static final Feature<NoFeatureConfig> PYTHON_PIT = null;
-  @ObjectHolder(GreekFantasy.MODID + ":olive_tree")
-  public static final Feature<BaseTreeFeatureConfig> OLIVE_TREE = null;
-  @ObjectHolder(GreekFantasy.MODID + ":reeds")
-  public static final Feature<BlockClusterFeatureConfig> REEDS = null;
+  private static final String MODID = GreekFantasy.MODID;
   
-  @ObjectHolder(GreekFantasy.MODID + ":olive_forest")
+  @ObjectHolder(MODID + ":harpy_nest")
+  public static final Feature<NoFeatureConfig> HARPY_NEST_FEATURE = null;
+  @ObjectHolder(MODID + ":small_shrine")
+  public static final Feature<NoFeatureConfig> SMALL_SHRINE_FEATURE = null;
+  @ObjectHolder(MODID + ":small_nether_shrine")
+  public static final Feature<NoFeatureConfig> SMALL_NETHER_SHRINE_FEATURE = null;
+  @ObjectHolder(MODID + ":ara_camp")
+  public static final Feature<NoFeatureConfig> ARA_CAMP_FEATURE = null;
+  @ObjectHolder(MODID + ":satyr_camp")
+  public static final Feature<NoFeatureConfig> SATYR_CAMP_FEATURE = null;
+  @ObjectHolder(MODID + ":python_pit")
+  public static final Feature<NoFeatureConfig> PYTHON_PIT_FEATURE = null;
+  @ObjectHolder(MODID + ":olive_tree")
+  public static final Feature<BaseTreeFeatureConfig> OLIVE_TREE_FEATURE = null;
+  @ObjectHolder(MODID + ":reeds")
+  public static final Feature<BlockClusterFeatureConfig> REEDS_FEATURE = null;
+  
+  @ObjectHolder(MODID + ":olive_forest")
   public static final Biome OLIVE_FOREST_BIOME = null;
   
-  public static RegistryKey<Biome> OLIVE_FOREST;
-  
+  public static RegistryKey<Biome> OLIVE_FOREST = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, new ResourceLocation(MODID, "olive_forest"));
 
+  private static ConfiguredFeature<?, ?> MARBLE;
+  private static ConfiguredFeature<?, ?> LIMESTONE;
+  private static ConfiguredFeature<?, ?> HARPY_NEST;
+  private static ConfiguredFeature<?, ?> SMALL_SHRINE;
+  private static ConfiguredFeature<?, ?> SMALL_NETHER_SHRINE;
+  private static ConfiguredFeature<?, ?> ARA_CAMP;
+  private static ConfiguredFeature<?, ?> SATYR_CAMP;
+  private static ConfiguredFeature<?, ?> PYTHON_PIT;
+  private static ConfiguredFeature<?, ?> OLIVE_TREE_SINGLE;
+  private static ConfiguredFeature<?, ?> OLIVE_TREE_FOREST;
+  private static ConfiguredFeature<?, ?> REEDS;
+  private static ConfiguredFeature<?, ?> SWAMP_REEDS;
+  
   private static final RuleTest ruleTestStone = new TagMatchRuleTest(BlockTags.BASE_STONE_OVERWORLD);
   
   private GFWorldGen() { }
@@ -80,122 +94,114 @@ public final class GFWorldGen {
   @SubscribeEvent
   public static void registerBiomes(final RegistryEvent.Register<Biome> event) {
     final Biome oliveForestBiome = makeOliveForest(0.1F, 0.16F)
-        .setRegistryName(new ResourceLocation(GreekFantasy.MODID, "olive_forest"));
+        .setRegistryName(new ResourceLocation(MODID, "olive_forest"));
     event.getRegistry().register(oliveForestBiome);
-  }
-
-  @SubscribeEvent
-  public static void registerStructures(final RegistryEvent.Register<Structure<?>> event) {
-    GreekFantasy.LOGGER.debug("registerStructures");
-    // TODO
   }
 
   @SubscribeEvent
   public static void registerFeatures(final RegistryEvent.Register<Feature<?>> event) {
     GreekFantasy.LOGGER.debug("registerFeatures");
-    event.getRegistry().register(
+    event.getRegistry().registerAll(
         new HarpyNestFeature(NoFeatureConfig.field_236558_a_)
-          .setRegistryName(GreekFantasy.MODID, "harpy_nest"));
-    event.getRegistry().register(
+          .setRegistryName(MODID, "harpy_nest"),
         new SmallShrineFeature(NoFeatureConfig.field_236558_a_)
-          .setRegistryName(GreekFantasy.MODID, "small_shrine"));
-    event.getRegistry().register(
+          .setRegistryName(MODID, "small_shrine"),
         new SmallNetherShrineFeature(NoFeatureConfig.field_236558_a_)
-          .setRegistryName(GreekFantasy.MODID, "small_nether_shrine"));
-    event.getRegistry().register(
+          .setRegistryName(MODID, "small_nether_shrine"),
         new AraCampFeature(NoFeatureConfig.field_236558_a_)
-          .setRegistryName(GreekFantasy.MODID, "ara_camp"));
-    event.getRegistry().register(
+          .setRegistryName(MODID, "ara_camp"),
         new SatyrCampFeature(NoFeatureConfig.field_236558_a_)
-          .setRegistryName(GreekFantasy.MODID, "satyr_camp"));
-    event.getRegistry().register(
+          .setRegistryName(MODID, "satyr_camp"),
         new PythonPitFeature(NoFeatureConfig.field_236558_a_)
-          .setRegistryName(GreekFantasy.MODID, "python_pit"));
-    event.getRegistry().register(
+          .setRegistryName(MODID, "python_pit"),
         new OliveTreeFeature(BaseTreeFeatureConfig.CODEC)
-          .setRegistryName(GreekFantasy.MODID, "olive_tree"));
-    event.getRegistry().register(
+          .setRegistryName(MODID, "olive_tree"),
         new ReedsFeature(BlockClusterFeatureConfig.field_236587_a_)
-          .setRegistryName(GreekFantasy.MODID, "reeds"));
+          .setRegistryName(MODID, "reeds"));
   }
+
 
   // OTHER SETUP METHODS //
   
   public static void finishBiomeSetup() {
-    OLIVE_FOREST = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, new ResourceLocation(GreekFantasy.MODID, "olive_forest"));
-    BiomeManager.addBiome(BiomeType.WARM, new BiomeEntry(OLIVE_FOREST, 10));
+    BiomeManager.addBiome(BiomeType.WARM, new BiomeEntry(OLIVE_FOREST, GreekFantasy.CONFIG.OLIVE_FOREST_BIOME_WEIGHT.get()));
     BiomeDictionary.addTypes(OLIVE_FOREST, BiomeDictionary.Type.FOREST, BiomeDictionary.Type.OVERWORLD);
+  }
+  
+  public static void registerConfiguredFeatures() {
+    GreekFantasy.LOGGER.debug("registerConfiguredFeatures");
+    MARBLE = registerFeature("marble", 
+        Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.MARBLE.getDefaultState(), 33))
+        // unmapped methods copied from world.gen.feature.Features
+        // 33 = vein size, 80 = maxY, func_242728_a = spreadHorizontally, func_242731_b = repeat
+        .range(80).square().func_242731_b(10));
+    LIMESTONE = registerFeature("limestone", 
+        Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.LIMESTONE.getDefaultState(), 33))
+        .range(80).square().func_242731_b(10));
+    HARPY_NEST = registerFeature("harpy_nest", 
+        HARPY_NEST_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_) // NoFeatureConfig.NO_FEATURE_CONFIG
+        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    SMALL_SHRINE = registerFeature("small_shrine", 
+        SMALL_SHRINE_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
+        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    SMALL_NETHER_SHRINE = registerFeature("small_nether_shrine",
+        SMALL_NETHER_SHRINE_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_));
+    ARA_CAMP = registerFeature("ara_camp", 
+        ARA_CAMP_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_).chance(2)
+        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    SATYR_CAMP = registerFeature("satyr_camp",
+        SATYR_CAMP_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
+        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    PYTHON_PIT = registerFeature("python_pit",
+        PYTHON_PIT_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
+        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    OLIVE_TREE_SINGLE = registerFeature("olive_tree_single", 
+        OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).func_242731_b(40));
+    OLIVE_TREE_FOREST = registerFeature("olive_tree",
+        OliveTree.getConfiguredTree()
+        .withPlacement(Placements.VEGETATION_PLACEMENT)
+        .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
+        .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(10, 0.1F, 1))));
+    REEDS = registerFeature("reeds",
+        REEDS_FEATURE.withConfiguration((new BlockClusterFeatureConfig.Builder(
+            new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
+            new DoublePlantBlockPlacer()))
+              .tries(48).replaceable()
+              .xSpread(4).zSpread(4)
+              .build()).func_242731_b(2));
+    SWAMP_REEDS = registerFeature("reeds_swamp",
+        REEDS_FEATURE.withConfiguration((new BlockClusterFeatureConfig.Builder(
+            new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
+            new DoublePlantBlockPlacer()))
+              .tries(32).replaceable()
+              .xSpread(3).ySpread(3).zSpread(3)
+              .build()).func_242731_b(2));
+  }
+  
+  private static ConfiguredFeature<?, ?> registerFeature(final String name, final ConfiguredFeature<?, ?> feature) {
+    return Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, name), feature);
   }
 
   public static void addBiomeFeatures(final BiomeLoadingEvent event) {
-    if(event.getCategory() != Biome.Category.NETHER && event.getCategory() != Biome.Category.THEEND) {
-      // Marble
-      event.getGeneration().withFeature(
-        GenerationStage.Decoration.UNDERGROUND_DECORATION,
-        Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.MARBLE.getDefaultState(), 33))
-          // unmapped methods copied from world.gen.feature.Features
-          // 33 = vein size, 80 = maxY, func_242728_a = spreadHorizontally, func_242731_b = repeat
-          .range(80).square().func_242731_b(10)
-      );
-      // Limestone
-      event.getGeneration().withFeature(
-        GenerationStage.Decoration.UNDERGROUND_DECORATION,
-        Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.LIMESTONE.getDefaultState(), 33))
-          .range(80).square().func_242731_b(10)
-      );
-    }
-    // Harpy Nest
-    addFeature(event, "harpy_nest", GenerationStage.Decoration.VEGETAL_DECORATION, 
-        HARPY_NEST.withConfiguration(NoFeatureConfig.field_236559_b_) // NoFeatureConfig.NO_FEATURE_CONFIG
-        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
-    // Small Shrine
-    addFeature(event, "small_shrine", GenerationStage.Decoration.SURFACE_STRUCTURES, 
-      SMALL_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_)
-      .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
-    // Ara Camp
-    addFeature(event, "ara_camp",GenerationStage.Decoration.SURFACE_STRUCTURES, 
-      ARA_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_).chance(2)
-      .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
-    // Satyr Camp
-    addFeature(event, "satyr_camp", GenerationStage.Decoration.SURFACE_STRUCTURES, 
-      SATYR_CAMP.withConfiguration(NoFeatureConfig.field_236559_b_)
-      .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
-    // Python Pit
-    addFeature(event, "python_pit", GenerationStage.Decoration.SURFACE_STRUCTURES, 
-      PYTHON_PIT.withConfiguration(NoFeatureConfig.field_236559_b_)
-      .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
-    // Reeds
-    addFeature(event, "reeds", GenerationStage.Decoration.VEGETAL_DECORATION, 
-      REEDS.withConfiguration((new BlockClusterFeatureConfig.Builder(
-          new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
-          new DoublePlantBlockPlacer()))
-            .tries(48).replaceable()
-            .xSpread(4).zSpread(4)
-            .build()).func_242731_b(2));
-    // Olive Tree
-    addFeature(event, "olive_tree", GenerationStage.Decoration.VEGETAL_DECORATION, 
-        OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).func_242731_b(40)
-    );    
-    // Swamp reeds
-    addFeature(event, "reeds_swamp", GenerationStage.Decoration.VEGETAL_DECORATION, 
-      REEDS.withConfiguration((new BlockClusterFeatureConfig.Builder(
-          new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
-          new DoublePlantBlockPlacer()))
-            .tries(32).replaceable()
-            .xSpread(3).ySpread(3).zSpread(3)
-            .build()).func_242731_b(2));
-    // Nether shrine
-    addFeature(event, "small_nether_shrine", GenerationStage.Decoration.SURFACE_STRUCTURES, 
-      SMALL_NETHER_SHRINE.withConfiguration(NoFeatureConfig.field_236559_b_));
-    // Olive forest (non-configurable)
-    if(new ResourceLocation(GreekFantasy.MODID, "olive_forest").equals(event.getName())) {
-      event.getGeneration().withFeature(
-          GenerationStage.Decoration.VEGETAL_DECORATION, 
-          OliveTree.getConfiguredTree()
-            .withPlacement(Placements.VEGETATION_PLACEMENT)
-            .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
-            .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(10, 0.1F, 1)))
-      );
+    if(event.getCategory() == Biome.Category.NETHER) {
+      addFeature(event, "small_nether_shrine", GenerationStage.Decoration.SURFACE_STRUCTURES, SMALL_NETHER_SHRINE);
+    } else if(event.getCategory() != Biome.Category.THEEND) {
+      // add ore features
+      event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, MARBLE);
+      event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, LIMESTONE);
+      // add custom features
+      addFeature(event, "harpy_nest", GenerationStage.Decoration.VEGETAL_DECORATION, HARPY_NEST);
+      addFeature(event, "small_shrine", GenerationStage.Decoration.SURFACE_STRUCTURES, SMALL_SHRINE);
+      addFeature(event, "ara_camp",GenerationStage.Decoration.SURFACE_STRUCTURES, ARA_CAMP);
+      addFeature(event, "satyr_camp", GenerationStage.Decoration.SURFACE_STRUCTURES, SATYR_CAMP);
+      addFeature(event, "python_pit", GenerationStage.Decoration.SURFACE_STRUCTURES, PYTHON_PIT);
+      addFeature(event, "reeds", GenerationStage.Decoration.VEGETAL_DECORATION, REEDS);
+      addFeature(event, "olive_tree_single", GenerationStage.Decoration.VEGETAL_DECORATION, OLIVE_TREE_SINGLE);    
+      addFeature(event, "reeds_swamp", GenerationStage.Decoration.VEGETAL_DECORATION, SWAMP_REEDS);
+      // add olive forest features
+      if(new ResourceLocation(MODID, "olive_forest").equals(event.getName())) {
+        event.getGeneration().withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, OLIVE_TREE_FOREST);
+      }
     }
   }
   

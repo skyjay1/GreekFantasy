@@ -28,7 +28,7 @@ public class OliveTree extends Tree {
   }
   
   public static ConfiguredFeature<BaseTreeFeatureConfig, ?> getConfiguredTree() {
-    return GFWorldGen.OLIVE_TREE.withConfiguration(new BaseTreeFeatureConfig.Builder(
+    return GFWorldGen.OLIVE_TREE_FEATURE.withConfiguration(new BaseTreeFeatureConfig.Builder(
         new SimpleBlockStateProvider(GFRegistry.OLIVE_LOG.getDefaultState()), 
         new SimpleBlockStateProvider(GFRegistry.OLIVE_LEAVES.getDefaultState()), 
         new FancyFoliagePlacer(FeatureSpread.func_242252_a(2), FeatureSpread.func_242252_a(4), 4), 

@@ -244,9 +244,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
   public byte getState() { return this.getDataManager().get(STATE).byteValue(); }
   
-  public void setState(final byte state) { 
-    GreekFantasy.LOGGER.debug("setting state to " + state);
-    this.getDataManager().set(STATE, Byte.valueOf(state)); }
+  public void setState(final byte state) { this.getDataManager().set(STATE, Byte.valueOf(state)); }
   
   public boolean isNoneState() { return getState() == NONE; }
   

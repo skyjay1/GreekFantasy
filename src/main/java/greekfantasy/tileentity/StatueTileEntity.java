@@ -201,7 +201,14 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
 
   private void inventoryChanged() {
     this.markDirty();
-    this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 3);
+    if(this.world != null) {
+      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 3);
+    }
+//    try {
+//      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 3);
+//    } catch (NullPointerException e) {
+//      GreekFantasy.LOGGER.error("Error updating inventory for StatueTileEntity at " + getPos());
+//    }
   }
 
   public void dropAllItems() {

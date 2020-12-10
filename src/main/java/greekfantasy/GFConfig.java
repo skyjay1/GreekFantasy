@@ -95,6 +95,7 @@ public class GFConfig {
   private int numSpartiSpawned;
   
   // feature configs
+  public final ForgeConfigSpec.IntValue OLIVE_FOREST_BIOME_WEIGHT;
   public final Map<String, BiomeWhitelistConfig> FEATURES = new HashMap<>();
   
   // other
@@ -229,6 +230,7 @@ public class GFConfig {
     builder.pop();
     // feature configs
     builder.push("features");
+    OLIVE_FOREST_BIOME_WEIGHT = builder.defineInRange("olive_forest_weight", 10, 0, 1000);
     FEATURES.put("harpy_nest", new BiomeWhitelistConfig(builder, "harpy_nest", 17, false, netherEndOceanIcy));
     FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 23, false, netherEndOceanIcy));
     FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 20, true, nether));
@@ -237,7 +239,7 @@ public class GFConfig {
     FEATURES.put("python_pit", new BiomeWhitelistConfig(builder, "python_pit", 6, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.JUNGLE)));
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, netherEndOceanIcy));
     FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 990, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.SWAMP)));
-    FEATURES.put("olive_tree", new BiomeWhitelistConfig(builder, "olive_tree", 28, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST)));
+    FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 28, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST)));
     builder.pop();
   }
   
