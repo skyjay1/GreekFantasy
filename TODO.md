@@ -40,7 +40,7 @@ __Key:__
 - X X X X Boss: Geryon (3-headed Gigante)
 - X X X ~ Boss: Python (summoned with Cerastes)
 - X X _ X Boss: Charybdis
-- X X X _ Boss: Talos (gold? copper? ichor?)
+- X X X X Boss: Talos (gold? copper? ichor?)
 - _ _ _ _ Fury (Nether; like harpy w/ bat wings)
 - _ _ _ _ Makhai (6 arms)
 - _ _ _ _ Eurynomos (blue skin; vulture head?)
@@ -114,6 +114,7 @@ __Key:__
 - X X X Olive leaves
 - X X X Olive sapling
 - X X X Ichor Infused Block
+- X X _ Palladium (wooden statue that provides safety)
 - _ _ _ Urn?
 - _ _ _ Grapes / grapevines?
 
@@ -162,9 +163,11 @@ __Key:__
 - X Obtain a Mysterious Box
 - X Obtain Ambrosia
 - X Obtain Winged Sandals (Much Fast, So Speed!)
-- X Kill a Geryon
+- X Summon / Kill a Cerberus
+- X Summon / Kill a Geryon
 - _ Kill a Python
-- _ Kill a Charybdis
+- X Summon / Kill a Talos
+- X Kill a Charybdis
 
 ## Other
 
@@ -215,7 +218,6 @@ _Can I do something with these?_
 - Thyrsus: staff with pinecone and ivy leaves used by Dionysus
 - Amazonian Girdle (Hippolyta)
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
-- Palladium (statue that provides safety)
 - River Styx
 - Story of King Midas (gold touch)
 - Story of Circe (sorcerer who turns people to pigs)

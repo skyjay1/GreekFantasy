@@ -100,6 +100,12 @@ public class GFConfig {
   
   // other
   public final ForgeConfigSpec.BooleanValue STATUES_HOLD_ITEMS;
+  private final ForgeConfigSpec.IntValue PALLADIUM_REFRESH_INTERVAL;
+  private final ForgeConfigSpec.IntValue PALLADIUM_CHUNK_RANGE;
+  private final ForgeConfigSpec.IntValue PALLADIUM_Y_RANGE;
+  private int palladiumRefreshInterval;
+  private int palladiumChunkRange;
+  private int palladiumYRange;
   
   public GFConfig(final ForgeConfigSpec.Builder builder) {
     // items
@@ -197,6 +203,12 @@ public class GFConfig {
     builder.push("other");
     STATUES_HOLD_ITEMS = builder.comment("Whether statues can hold items (kinda buggy when disabled)")
         .define("statues_hold_items", true);
+    PALLADIUM_REFRESH_INTERVAL = builder.comment("The number of server ticks between Palladium updates (increase to reduce lag)")
+        .defineInRange("palladium_refresh_interval", 110, 2, 1000);
+    PALLADIUM_CHUNK_RANGE = builder.comment("The radius (in chunks) of the area protected by Palladium blocks (0=disabled)")
+        .defineInRange("palladium_chunk_range", 1, 0, 2);
+    PALLADIUM_Y_RANGE = builder.comment("The vertical area protected by Palladium blocks, if enabled")
+        .defineInRange("palladium_y_range", 128, 0, 255);
     builder.pop();
     // mob spawns
     builder.push("mob_spawns");
@@ -276,6 +288,9 @@ public class GFConfig {
     spartiLifespan = SPARTI_LIFESPAN.get();
     nerfStunning = NERF_STUNNING.get();
     nerfParalysis = NERF_PARALYSIS.get();
+    palladiumRefreshInterval = PALLADIUM_REFRESH_INTERVAL.get();
+    palladiumChunkRange = PALLADIUM_CHUNK_RANGE.get();
+    palladiumYRange = PALLADIUM_Y_RANGE.get();
   }
   
   public boolean doesHelmHideArmor() { return helmHidesArmor; }
@@ -304,4 +319,7 @@ public class GFConfig {
   public int getSpartiLifespan() { return spartiLifespan; }
   public boolean isStunningNerf() { return nerfStunning; }
   public boolean isParalysisNerf() { return nerfParalysis; }
+  public int getPalladiumRefreshInterval() { return palladiumRefreshInterval; }
+  public int getPalladiumChunkRange() { return palladiumChunkRange; }
+  public int getPalladiumYRange() { return palladiumYRange; }
 }

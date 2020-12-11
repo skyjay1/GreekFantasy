@@ -1,0 +1,39 @@
+{
+  "parent": "greekfantasy:obtain_mysterious_box",
+  "display": {
+    "icon": {
+      "item": "greekfantasy:ichor_infused_block"
+    },
+    "title": {
+      "translate": "advancements.greekfantasy.summon_talos.title"
+    },
+    "description": {
+      "translate": "advancements.greekfantasy.summon_talos.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "summoned": {
+      "trigger": "minecraft:summoned_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "predicate": {
+              "type": "greekfantasy:talos"
+            },
+            "entity": "this"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "summoned"
+    ]
+  ]
+}

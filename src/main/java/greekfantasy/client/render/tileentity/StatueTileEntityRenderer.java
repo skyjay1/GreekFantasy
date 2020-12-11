@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.block.StatueBlock;
+import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.client.render.model.tileentity.StatueModel;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.ModelPart;
@@ -68,6 +69,7 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     // render stone texture
     this.model.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F, upper, isFemaleModel);
     // prepare to render player texture
+    if(te.getStatueMaterial() != StatueMaterial.WOOD) {
     vertexBuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(textureOverlay));
     RenderSystem.enableBlend();
     RenderSystem.blendEquation(32774);
@@ -80,7 +82,7 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     RenderSystem.defaultBlendFunc();
     RenderSystem.defaultAlphaFunc();
     RenderSystem.disableBlend();
-    
+    }
     // render held items
     renderHeldItems(te, partialTicks, matrixStackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, upper);
     matrixStackIn.pop();

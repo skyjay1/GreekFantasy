@@ -164,10 +164,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     // summon timer
     if(summonTime > 0 && summonTime++ > MAX_SUMMON_TIME) {
       summonTime = 0;
-    }
-
-    
-   
+    }   
   }
   
   @Override
@@ -193,8 +190,9 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     if(super.isInvulnerableTo(source)) {
       return true;
     }
-    // fire resistant, but not fire immune
-    return source == DamageSource.IN_FIRE && this.getRNG().nextInt(40) > 0;
+    // immune to fire when on top of campfires
+    final BlockState campfire = world.getBlockState(this.getPositionUnderneath());
+    return source == DamageSource.IN_FIRE && campfire.isIn(BlockTags.CAMPFIRES) && campfire.get(CampfireBlock.LIT);
   }
  
   @Override

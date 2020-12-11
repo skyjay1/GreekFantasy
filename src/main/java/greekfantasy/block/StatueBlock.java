@@ -5,6 +5,8 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.StatuePose;
+import greekfantasy.util.StatuePoses;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -55,7 +57,11 @@ public class StatueBlock extends HorizontalBlock {
   private final StatueMaterial statueMaterial;
     
   public StatueBlock(final StatueMaterial material) {
-    super(Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(1.5F, 6.0F).sound(SoundType.STONE).notSolid());
+    this(material, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(1.5F, 6.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> material.getLightLevel()));
+  }
+  
+  public StatueBlock(final StatueMaterial material, final AbstractBlock.Properties properties) {
+    super(properties);
     this.setDefaultState(this.getStateContainer().getBaseState()
         .with(HALF, DoubleBlockHalf.LOWER).with(HORIZONTAL_FACING, Direction.NORTH));
     this.statueMaterial = material;
@@ -85,7 +91,7 @@ public class StatueBlock extends HorizontalBlock {
     final BlockPos tePos = isUpper ? pos.down() : pos;
     // drop items from inventory
     TileEntity tileentity = worldIn.getTileEntity(tePos);
-    if (!worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
+    if (statueMaterial != StatueMaterial.WOOD && !worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
       InventoryHelper.dropItems(worldIn, pos, ((StatueTileEntity) tileentity).getInventory());
     }
     // replace other block with air
@@ -103,7 +109,7 @@ public class StatueBlock extends HorizontalBlock {
       final BlockPos tePos = isUpper ? pos.down() : pos;
       // drop items from inventory
       TileEntity tileentity = worldIn.getTileEntity(tePos);
-      if (!worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
+      if (statueMaterial != StatueMaterial.WOOD && !worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
         InventoryHelper.dropItems(worldIn, pos, ((StatueTileEntity) tileentity).getInventory());
       }
       // replace other block with air
@@ -122,17 +128,22 @@ public class StatueBlock extends HorizontalBlock {
   @Override
   public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
+    // wood statues do not allow access to GUI
+    if(statueMaterial == StatueMaterial.WOOD) {
+      return ActionResultType.PASS;
+    }
+    // prepare to interact with this block
     final BlockPos tePos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos;
     final TileEntity te = worldIn.getTileEntity(tePos);
     if (playerIn instanceof ServerPlayerEntity && te instanceof StatueTileEntity) {
       final StatueTileEntity teStatue = (StatueTileEntity)te;
-      // handle item interaction
+      // handle nametag interaction
       final ItemStack stack = playerIn.getHeldItem(handIn);
       if(!stack.isEmpty() && stack.getItem() == Items.NAME_TAG && stack.hasDisplayName()) {        
         teStatue.setTextureName(stack.getDisplayName().getUnformattedComponentText(), true);
-		if(!playerIn.isCreative()) {
-		  stack.shrink(1);
-		}
+    		if(!playerIn.isCreative()) {
+    		  stack.shrink(1);
+    		}
         return ActionResultType.CONSUME;
       }
       // open the statue GUI
@@ -171,7 +182,13 @@ public class StatueBlock extends HorizontalBlock {
   public TileEntity createTileEntity(final BlockState state, final IBlockReader world) {
     final StatueTileEntity te = GFRegistry.STATUE_TE.create();
     te.setUpper(state.get(HALF) == DoubleBlockHalf.UPPER);
-    te.setStatueFemale(this.RANDOM.nextBoolean());
+    if(statueMaterial == StatueMaterial.WOOD) {
+      te.setStatueFemale(true);
+      te.setStatuePose(StatuePoses.STANDING_HOLDING_DRAMATIC);
+      te.setInventorySlotContents(1, new ItemStack(Items.SOUL_TORCH));
+    } else {
+      te.setStatueFemale(this.RANDOM.nextBoolean());
+    }
     return te;
   }
   
@@ -180,19 +197,26 @@ public class StatueBlock extends HorizontalBlock {
   }
   
   public static enum StatueMaterial implements IStringSerializable {
-    LIMESTONE("limestone"),
-    MARBLE("marble");
+    LIMESTONE("limestone", 0),
+    MARBLE("marble", 0),
+    WOOD("wood", 11);
     
     private final ResourceLocation stoneTexture;
     private final String name;
+    private final int light;
     
-    private StatueMaterial(final String nameIn) {
+    private StatueMaterial(final String nameIn, final int lightIn) {
       this.name = nameIn;
+      this.light = lightIn;
       this.stoneTexture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + nameIn + ".png");
     }
     
     public ResourceLocation getStoneTexture() {
       return this.stoneTexture;
+    }
+    
+    public int getLightLevel() {
+      return light;
     }
     
     public byte getId() {

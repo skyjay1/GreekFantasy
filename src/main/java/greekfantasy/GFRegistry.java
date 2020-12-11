@@ -198,6 +198,8 @@ public final class GFRegistry {
   public static final Block LIMESTONE_STATUE = null;
   @ObjectHolder("marble_statue")
   public static final Block MARBLE_STATUE = null;
+  @ObjectHolder("palladium")
+  public static final Block PALLADIUM = null;
   @ObjectHolder("terracotta_vase")
   public static final Block TERRACOTTA_VASE = null;
   @ObjectHolder("mysterious_box")
@@ -289,7 +291,7 @@ public final class GFRegistry {
   public static void registerTileEntities(final RegistryEvent.Register<TileEntityType<?>> event) {
     GreekFantasy.LOGGER.debug("registerTileEntities");
     event.getRegistry().register(
-        TileEntityType.Builder.create(StatueTileEntity::new, LIMESTONE_STATUE, MARBLE_STATUE)
+        TileEntityType.Builder.create(StatueTileEntity::new, LIMESTONE_STATUE, MARBLE_STATUE, PALLADIUM)
         .build(null).setRegistryName(MODID, "statue_te")
     );
     event.getRegistry().register(
@@ -347,6 +349,8 @@ public final class GFRegistry {
           .setRegistryName(MODID, "marble_statue"),
         new StatueBlock(StatueBlock.StatueMaterial.LIMESTONE)
           .setRegistryName(MODID, "limestone_statue"),
+        new StatueBlock(StatueBlock.StatueMaterial.WOOD)
+          .setRegistryName(MODID, "palladium"),
         new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
           .setRegistryName(MODID, "terracotta_vase"),
         new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
@@ -433,7 +437,7 @@ public final class GFRegistry {
     registerItemBlocks(event, REEDS, OLIVE_SAPLING, NEST_BLOCK, WILD_ROSE, 
         OLIVE_LOG, OLIVE_WOOD, OLIVE_PLANKS, OLIVE_SLAB, OLIVE_STAIRS, OLIVE_LEAVES, 
         MARBLE, MARBLE_SLAB, MARBLE_STAIRS, POLISHED_MARBLE, POLISHED_MARBLE_SLAB, 
-        POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, 
+        POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, PALLADIUM, 
         LIMESTONE, LIMESTONE_SLAB, LIMESTONE_STAIRS, POLISHED_LIMESTONE, POLISHED_LIMESTONE_SLAB, 
         POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, LIMESTONE_STATUE, 
         TERRACOTTA_VASE, ICHOR_INFUSED_BLOCK);

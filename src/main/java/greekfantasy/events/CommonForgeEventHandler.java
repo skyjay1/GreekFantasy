@@ -1,33 +1,43 @@
 package greekfantasy.events;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.TreeMap;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GFWorldGen;
 import greekfantasy.GreekFantasy;
+import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.network.SPanfluteSongPacket;
+import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.PanfluteSong;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.World;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
@@ -37,11 +47,15 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class CommonForgeEventHandler {
+  
+  // This map tracks Palladium locations per chunk, per world
+  private static Map<RegistryKey<World>, Map<ChunkPos, List<BlockPos>>> palladiumMap = new TreeMap<>();
   
   /**
    * Used to spawn a shade with the player's XP when they die.
@@ -165,11 +179,39 @@ public class CommonForgeEventHandler {
    * @param event the spawn event
    **/
   @SubscribeEvent
-  public static void onLivingSpawn(final LivingSpawnEvent.SpecialSpawn event) {
+  public static void onLivingSpecialSpawn(final LivingSpawnEvent.SpecialSpawn event) {
     if(event.getEntityLiving().getType() == EntityType.RABBIT && !event.getEntityLiving().getEntityWorld().isRemote()) {
       final RabbitEntity rabbit = (RabbitEntity) event.getEntityLiving();
       if(rabbit.getRabbitType() != 99) {
         rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, e -> !((CerastesEntity)e).isHiding(), 6.0F, 2.2D, 2.2D, EntityPredicates.CAN_AI_TARGET::test));        
+      }
+    }
+  }
+  
+  
+  /**
+   * Used to add prevent monsters from spawning near Palladium blocks
+   * @param event the spawn event
+   **/
+  @SubscribeEvent
+  public static void onLivingCheckSpawn(final LivingSpawnEvent.CheckSpawn event) {
+    final int cRadius = GreekFantasy.CONFIG.getPalladiumChunkRange();
+    final int cVertical = GreekFantasy.CONFIG.getPalladiumYRange() / 2; // divide by 2 to center on block
+    if(cRadius > 0 && !event.getEntityLiving().getEntityWorld().isRemote() 
+        && event.getWorld() instanceof World && event.getEntityLiving() instanceof IMob) {
+      // check for nearby Statue Tile Entity
+      final World world = (World)event.getWorld();
+      final BlockPos blockPos = new BlockPos(event.getX(), event.getY(), event.getZ());
+      final ChunkPos chunkPos = new ChunkPos(blockPos);
+      ChunkPos cPos;
+      for(int cX = -cRadius; cX <= cRadius; cX++) {
+        for(int cZ = -cRadius; cZ <= cRadius; cZ++) {
+          cPos = new ChunkPos(chunkPos.x + cX, chunkPos.z + cZ);
+          if(event.getWorld().chunkExists(cPos.x, cPos.z) && !getPalladiumList(world, blockPos, cPos, cVertical).isEmpty()) {
+            event.setResult(Result.DENY);
+            return;
+          }
+        }
       }
     }
   }
@@ -210,5 +252,29 @@ public class CommonForgeEventHandler {
   
   private static boolean isStunned(final LivingEntity entity) {
     return (entity.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null || entity.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null);
+  }
+  
+  private static List<BlockPos> getPalladiumList(final World world, final BlockPos spawnPos, final ChunkPos chunkPos, final int verticalRange) {
+    final RegistryKey<World> dimension = world.getDimensionKey();
+    // every 50 ticks (or immediately if the map has not been filled) recalculate palladium positions
+    if(world.getServer().getTickCounter() % GreekFantasy.CONFIG.getPalladiumRefreshInterval() == 0 
+        || !palladiumMap.containsKey(dimension) || !palladiumMap.get(dimension).containsKey(chunkPos)) {
+//      GreekFantasy.LOGGER.debug("Filling Palladium list for " + dimension.getRegistryName().toString() + " at " + chunkPos.toString());
+      palladiumMap.putIfAbsent(dimension, new HashMap<>());
+      palladiumMap.get(dimension).putIfAbsent(chunkPos, fillPalladiumList(world, spawnPos, chunkPos, verticalRange));
+    }
+    return palladiumMap.get(dimension).get(chunkPos);
+  }
+  
+  private static List<BlockPos> fillPalladiumList(final World world, final BlockPos spawnPos, final ChunkPos chunkPos, final int verticalRange) {
+    // fill Palladium list
+    List<BlockPos> palladiumList = new ArrayList<>();
+    Map<BlockPos, TileEntity> chunkTEMap = world.getChunk(chunkPos.x, chunkPos.z).getTileEntityMap();
+    for(final Entry<BlockPos, TileEntity> e : chunkTEMap.entrySet()) {
+      if(Math.abs(e.getKey().getY() - spawnPos.getY()) < verticalRange && e.getValue() instanceof StatueTileEntity && ((StatueTileEntity)e.getValue()).getStatueMaterial() == StatueMaterial.WOOD) {
+        palladiumList.add(e.getKey());
+      }
+    }
+    return palladiumList;
   }
 }

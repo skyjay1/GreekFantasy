@@ -1,27 +1,27 @@
 {
-  "parent": "greekfantasy:kill_charybdis",
+  "parent": "greekfantasy:summon_talos",
   "display": {
     "icon": {
-      "item": "greekfantasy:winged_sandals"
+      "item": "greekfantasy:talos_heart"
     },
     "title": {
-      "translate": "advancements.greekfantasy.obtain_winged_sandals.title"
+      "translate": "advancements.greekfantasy.kill_talos.title"
     },
     "description": {
-      "translate": "advancements.greekfantasy.obtain_winged_sandals.description"
+      "translate": "advancements.greekfantasy.kill_talos.description"
     },
-    "frame": "task",
+    "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false
   },
   "criteria": {
-    "sandals": {
+    "talos_heart": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "greekfantasy:winged_sandals"
+            "item": "greekfantasy:talos_heart"
           }
         ]
       }
@@ -29,7 +29,7 @@
   },
   "requirements": [
     [
-      "sandals"
+      "talos_heart"
     ]
   ]
 }
