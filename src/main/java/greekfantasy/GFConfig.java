@@ -111,7 +111,7 @@ public class GFConfig {
     // items
     builder.push("items");
     SANDALS_SPEED_BONUS = builder.comment("Winged Sandals speed bonus (1.0 = +100%)").worldRestart()
-        .defineInRange("sandals_speed_bonus", 1.0D, 0.0D, 2.0D);
+        .defineInRange("sandals_speed_bonus", 1.5D, 0.0D, 2.0D);
     NERF_AMBROSIA = builder.comment("When true, ambrosia gives effects of Golden Apple instead of Enchanted Golden Apple")
         .define("nerf_ambrosia", false);
     UNICORN_HORN_CURES_EFFECTS = builder.comment("Whether using the unicorn horn can cure potion effects")
@@ -206,7 +206,7 @@ public class GFConfig {
     PALLADIUM_REFRESH_INTERVAL = builder.comment("The number of server ticks between Palladium updates (increase to reduce lag)")
         .defineInRange("palladium_refresh_interval", 110, 2, 1000);
     PALLADIUM_CHUNK_RANGE = builder.comment("The radius (in chunks) of the area protected by Palladium blocks (0=disabled)")
-        .defineInRange("palladium_chunk_range", 1, 0, 2);
+        .defineInRange("palladium_chunk_range", 2, 0, 3);
     PALLADIUM_Y_RANGE = builder.comment("The vertical area protected by Palladium blocks, if enabled")
         .defineInRange("palladium_y_range", 128, 0, 255);
     builder.pop();

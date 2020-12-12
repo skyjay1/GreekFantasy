@@ -37,6 +37,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
@@ -60,7 +61,7 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
   private static final int MAX_SPAWN_TIME = 94;
   private static final int MAX_SHOOT_TIME = 80;
   private static final int SHOOT_COOLDOWN = 188;
-  private static final int MELEE_COOLDOWN = 48;
+  private static final int MELEE_COOLDOWN = 40;
   
   private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.RED, BossInfo.Overlay.PROGRESS)).setDarkenSky(true);
   
@@ -81,7 +82,7 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 10.0D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT);
+        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.75D);
   }
   
   public static TalosEntity spawnTalos(final World world, final BlockPos pos, final float yaw) {
@@ -177,8 +178,14 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
   @Override
   public boolean attackEntityAsMob(final Entity entityIn) {
     if (super.attackEntityAsMob(entityIn)) {
-      // apply extra upward velocity when attacking
-      entityIn.setMotion(entityIn.getMotion().add(0.0D, (double)0.65F, 0.0D));
+      // apply extra knockback velocity when attacking (ignores knockback resistance)
+      final double knockbackFactor = 0.92D;
+      final Vector3d myPos = this.getPositionVec();
+      final Vector3d ePos = entityIn.getPositionVec();
+      final double dX = Math.signum(ePos.x - myPos.x) * knockbackFactor;
+      final double dZ = Math.signum(ePos.z - myPos.z) * knockbackFactor;
+      entityIn.addVelocity(dX, knockbackFactor / 2.0D, dZ);
+      entityIn.velocityChanged = true;
       this.playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1.0F, 1.0F);
       return true;
     }
@@ -383,6 +390,8 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
     
     @Override
     public void resetTask() {
+      TalosEntity.this.setState(NONE);
+      TalosEntity.this.shootTime = 0;
       super.resetTask();
     }
   }

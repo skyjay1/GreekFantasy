@@ -14,6 +14,7 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -96,7 +97,7 @@ public class StatueBlock extends HorizontalBlock {
     }
     // replace other block with air
     final BlockPos otherHalf = isUpper ? pos.down() : pos.up();
-    worldIn.setBlockState(otherHalf, Blocks.AIR.getDefaultState(), 3);
+    worldIn.destroyBlock(otherHalf, true, player);
     worldIn.playEvent(player, 2001, pos, Block.getStateId(state));
     super.onBlockHarvested(worldIn, pos, state, player);
   }
@@ -114,11 +115,10 @@ public class StatueBlock extends HorizontalBlock {
       }
       // replace other block with air
       final BlockPos otherHalf = isUpper ? pos.down() : pos.up();
-      worldIn.setBlockState(otherHalf, Blocks.AIR.getDefaultState(), 3);
-
+      worldIn.destroyBlock(otherHalf, true);
       super.onReplaced(state, worldIn, pos, newState, isMoving);
     }
- }
+  }
 
   @Override
   public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
@@ -172,7 +172,12 @@ public class StatueBlock extends HorizontalBlock {
   public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {    
     return state.get(HALF) == DoubleBlockHalf.UPPER ? AABB_STATUE_TOP : AABB_STATUE_BOTTOM;
   }
-  
+
+  @Override
+  public PushReaction getPushReaction(BlockState state) {
+    return PushReaction.DESTROY;
+  }
+
   @Override
   public boolean hasTileEntity(final BlockState state) {
     return true;

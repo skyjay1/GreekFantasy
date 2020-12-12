@@ -8,8 +8,7 @@ __Key:__
 
 - _ Summoning animation not playing on dedicated server (Geryon, Sparti)
 - _ Structure gen is jenky (check *all* corner blocks)
-- ? Config option for olive forest biome weight
-- _ Limestone / Marble should have tags
+- _ Statues don't drop as items
 
 ## Entity basics
 
@@ -38,9 +37,9 @@ __Key:__
 - X X X X Mad Cow (summoned by Geryon)
 - X X X X Boss: Cerberus
 - X X X X Boss: Geryon (3-headed Gigante)
-- X X X ~ Boss: Python (summoned with Cerastes)
-- X X _ X Boss: Charybdis
-- X X X X Boss: Talos (gold? copper? ichor?)
+- X X X X Boss: Python
+- X X X X Boss: Charybdis
+- X X X X Boss: Talos
 - _ _ _ _ Fury (Nether; like harpy w/ bat wings)
 - _ _ _ _ Makhai (6 arms)
 - _ _ _ _ Eurynomos (blue skin; vulture head?)
@@ -89,7 +88,7 @@ __Key:__
 - X X X Small Nether Shrine
 - X X X Marble veins
 - X X X Limestone veins
-- X X _ Python Pit
+- X X X Python Pit
 - _ _ _ Centaur Camps
 - _ _ _ Cyclopes Cave+Pastures
 - _ _ _ Ruined Temple
@@ -114,7 +113,7 @@ __Key:__
 - X X X Olive leaves
 - X X X Olive sapling
 - X X X Ichor Infused Block
-- X X _ Palladium (wooden statue that provides safety)
+- X X X Palladium (wooden statue that provides safety)
 - _ _ _ Urn?
 - _ _ _ Grapes / grapevines?
 
@@ -144,7 +143,7 @@ __Key:__
 - X X X Styxian shard - crafting component from Cyclopes (helm of darkness)
 - X X X Wild Rose - crafting component from Satyr (sword of the hunt)
 - X X X Conch Shell - place and remove water 
-- X _ X Talos Heart - crafting component from Talos (TODO: used for what?)
+- X X X Talos Heart - crafting component from Talos
 - X _ X Tough Snakeskin - crafting component from Python (TODO: used for what?)
 - X X X Bag of Wind - gives 30sec speed boost
 - _ _ _ Iron Feather - from Stymphalian bird; throwable

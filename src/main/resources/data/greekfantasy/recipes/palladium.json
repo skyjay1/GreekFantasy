@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    "S#T",
+    " - "
+  ],
+  "key": {
+    "#": { "tag": "minecraft:logs" },
+    "S": { "item": "minecraft:soul_torch" },
+    "T": { "item": "greekfantasy:talos_heart" },
+    "-": { "tag": "minecraft:wooden_slabs" }
+  },
+  "result": {
+    "item": "greekfantasy:bag_of_wind"
+  }
+}

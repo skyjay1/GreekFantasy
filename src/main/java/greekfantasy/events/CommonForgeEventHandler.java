@@ -55,7 +55,8 @@ import net.minecraftforge.fml.network.PacketDistributor;
 public class CommonForgeEventHandler {
   
   // This map tracks Palladium locations per chunk, per world
-  private static Map<RegistryKey<World>, Map<ChunkPos, List<BlockPos>>> palladiumMap = new TreeMap<>();
+  private static Map<RegistryKey<World>, Map<ChunkPos, TimestampList<BlockPos>>> palladiumMap = new TreeMap<>();
+  private static final TimestampList<BlockPos> EMPTY_TIMESTAMP_LIST = new TimestampList<>(0, new ArrayList<>());
   
   /**
    * Used to spawn a shade with the player's XP when they die.
@@ -256,25 +257,51 @@ public class CommonForgeEventHandler {
   
   private static List<BlockPos> getPalladiumList(final World world, final BlockPos spawnPos, final ChunkPos chunkPos, final int verticalRange) {
     final RegistryKey<World> dimension = world.getDimensionKey();
-    // every 50 ticks (or immediately if the map has not been filled) recalculate palladium positions
-    if(world.getServer().getTickCounter() % GreekFantasy.CONFIG.getPalladiumRefreshInterval() == 0 
-        || !palladiumMap.containsKey(dimension) || !palladiumMap.get(dimension).containsKey(chunkPos)) {
-//      GreekFantasy.LOGGER.debug("Filling Palladium list for " + dimension.getRegistryName().toString() + " at " + chunkPos.toString());
-      palladiumMap.putIfAbsent(dimension, new HashMap<>());
-      palladiumMap.get(dimension).putIfAbsent(chunkPos, fillPalladiumList(world, spawnPos, chunkPos, verticalRange));
+    palladiumMap.putIfAbsent(dimension, new HashMap<>());
+    final TimestampList<BlockPos> timestampList = palladiumMap.get(dimension).getOrDefault(chunkPos, EMPTY_TIMESTAMP_LIST);
+    // if the timestamp is too old or the map has not yet been filled, recalculate palladium positions
+    if(timestampList.shouldUpdate(world.getServer().getServerTime()) || !palladiumMap.get(dimension).containsKey(chunkPos)) {
+//      GreekFantasy.LOGGER.debug("Registering Palladium list for " + dimension.getLocation().toString() + " at " + chunkPos.toString());
+      world.getServer().runAsync(() -> {
+//        GreekFantasy.LOGGER.debug("Filling Palladium list for " + dimension.getLocation().toString() + " at " + chunkPos.toString());
+        palladiumMap.get(dimension).put(chunkPos, timestampList.update(world.getServer().getServerTime(), fillPalladiumList(world, spawnPos, chunkPos, verticalRange)));
+      });
     }
-    return palladiumMap.get(dimension).get(chunkPos);
+    return (palladiumMap.get(dimension).getOrDefault(chunkPos, EMPTY_TIMESTAMP_LIST)).list;
   }
   
   private static List<BlockPos> fillPalladiumList(final World world, final BlockPos spawnPos, final ChunkPos chunkPos, final int verticalRange) {
-    // fill Palladium list
+    // iterate through all tile entities in this chunk and fill a list with Palladium entries
     List<BlockPos> palladiumList = new ArrayList<>();
     Map<BlockPos, TileEntity> chunkTEMap = world.getChunk(chunkPos.x, chunkPos.z).getTileEntityMap();
     for(final Entry<BlockPos, TileEntity> e : chunkTEMap.entrySet()) {
-      if(Math.abs(e.getKey().getY() - spawnPos.getY()) < verticalRange && e.getValue() instanceof StatueTileEntity && ((StatueTileEntity)e.getValue()).getStatueMaterial() == StatueMaterial.WOOD) {
+      if(e.getValue() instanceof StatueTileEntity && ((StatueTileEntity)e.getValue()).getStatueMaterial() == StatueMaterial.WOOD && Math.abs(e.getKey().getY() - spawnPos.getY()) < verticalRange) {
         palladiumList.add(e.getKey());
       }
     }
     return palladiumList;
+  }
+  
+  protected static class TimestampList<T> {
+    protected long timestamp;
+    protected final List<T> list = new ArrayList<>();
+    
+    protected TimestampList(final long serverTime, final List<T> listIn) {
+      timestamp = serverTime;
+      list.addAll(listIn);
+    }
+    
+    protected boolean shouldUpdate(final long serverTime) {
+      return serverTime - timestamp > GreekFantasy.CONFIG.getPalladiumRefreshInterval();
+    }
+    
+    protected TimestampList<T> update(final long serverTime, final List<T> listIn) {
+      if(shouldUpdate(serverTime)) {
+        timestamp = serverTime;
+        list.clear();
+        list.addAll(listIn);
+      }
+      return this;
+    }
   }
 }
