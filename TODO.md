@@ -8,6 +8,8 @@ __Key:__
 
 - _ Summoning animation not playing on dedicated server (Geryon, Sparti)
 - _ Structure gen is jenky (check *all* corner blocks)
+- _ Config option to not slowly deplete winged sandals
+- _ Config option for winged sandals to enable flight
 
 ## Entity basics
 
@@ -72,7 +74,8 @@ __Key:__
 - X Cerastes can be tamed (rabbit meat?)
 - X Unicorn can be tamed / ridden
 - X Elpis grants something to player
-- X Sparti follow player who summoned them (owner)- X Siren charms players (forces player to move toward siren)
+- X Sparti follow player who summoned them (owner)
+- X Siren charms players (forces player to move toward siren)
 - X Naiad can hold/throw trident
 
 ## Structures
@@ -178,6 +181,7 @@ __Key:__
 - X "Hunting" enchantment
 - X "Mirror" enchantment
 - X "Mirror" effect
+- _ "Curse of Swine" effect
 - X Panflute songs
 - X Panflute song selection GUI
 - X Lots of mysterious box functions!

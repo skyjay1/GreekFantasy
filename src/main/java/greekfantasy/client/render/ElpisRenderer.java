@@ -31,7 +31,6 @@ public class ElpisRenderer<T extends ElpisEntity> extends BipedRenderer<T, Elpis
     this.layerRenderers.clear();
     // add custom implementation of render layers (specifically, the held item layer)
     addLayer(new HeadLayer<>(this, 1.0F, 1.0F, 1.0F));
-    addLayer(new ElytraLayer<>(this));
     addLayer(new ElpisRenderer.HeldItemLayer<>(this));
   }
 

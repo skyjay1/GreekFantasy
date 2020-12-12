@@ -217,7 +217,7 @@ public class GFConfig {
     final List<String> forest = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST, BiomeDictionary.Type.CONIFEROUS, BiomeDictionary.Type.JUNGLE);
     final List<String> taiga = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.CONIFEROUS);
     final List<String> mountains = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.MOUNTAIN);
-    final List<String> sandy = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.DRY, BiomeDictionary.Type.SANDY);
+    final List<String> sandy = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.MESA, BiomeDictionary.Type.SANDY);
     final List<String> plains = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.PLAINS);
     final List<String> netherEndOceanIcy = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.NETHER, BiomeDictionary.Type.END, BiomeDictionary.Type.WATER, BiomeDictionary.Type.COLD, BiomeDictionary.Type.SNOWY);
     MOB_SPAWNS.put("ara", new BiomeWhitelistConfig(builder, "ara_spawn", 10, false, netherEndOceanIcy));
