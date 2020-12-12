@@ -225,6 +225,7 @@ public final class GFWorldGen {
     addSpawns(event, GFRegistry.CYPRIAN_ENTITY, 1, 3);
     addSpawns(event, GFRegistry.DRYAD_ENTITY, 1, 3);
     addSpawns(event, GFRegistry.EMPUSA_ENTITY, 1, 2);
+    addSpawns(event, GFRegistry.FURY_ENTITY, 3, 3);
     addSpawns(event, GFRegistry.GIGANTE_ENTITY, 1, 4);
     addSpawns(event, GFRegistry.GORGON_ENTITY, 1, 2);
     addSpawns(event, GFRegistry.HARPY_ENTITY, 1, 3);

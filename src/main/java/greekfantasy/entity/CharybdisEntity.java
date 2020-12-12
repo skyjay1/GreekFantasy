@@ -142,7 +142,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     // update swirl attack
     if(isSwirling()) {
       swirlTime++;
-      rotationYaw += 1F;
+      this.setRotation(this.rotationYaw + 1, this.rotationPitch);
     } else if(swirlTime > 0) {
       swirlTime = 0;
     }
@@ -161,7 +161,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   public boolean isNonBoss() { return false; }
   
   @Override
-  public boolean canDespawn(final double disToPlayer) { return false; }
+  public boolean canDespawn(final double disToPlayer) { return this.ticksExisted > 11000 && disToPlayer > 128.0D; }
   
   @Override
   protected boolean canBeRidden(Entity entityIn) { return false; }
@@ -375,14 +375,12 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
         resetTask();
         return;
       }
-      final double widthSq = entity.getWidth() * entity.getWidth();
-      final double heightSq = entity.getHeight() * entity.getHeight();
       // move tracked entities
       for(final Entity e : trackedEntities) {
         // try to break boats
         if(e instanceof BoatEntity) {
           if(entity.getRNG().nextInt(8) == 0) {
-            e.attackEntityFrom(DamageSource.causeMobDamage(entity), 2.0F);
+            e.attackEntityFrom(DamageSource.causeMobDamage(entity), 3.0F);
           }
           continue;
         }

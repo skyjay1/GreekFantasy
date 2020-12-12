@@ -589,7 +589,6 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     protected final int chance;
 
     protected int lightCampfireTimer;
-    
 
     public LightCampfireGoal(double speed, int searchLength, int radius, int maxLightTime, int chanceIn) {
       super(SatyrEntity.this, speed, searchLength, radius);
@@ -638,8 +637,10 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
           this.lightCampfire(campfire.get());
         } else {
           ++this.lightCampfireTimer;
-          SatyrEntity.this.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 1.0F, 1.0F);
-          SatyrEntity.this.swingArm(Hand.MAIN_HAND);
+          if(SatyrEntity.this.getRNG().nextInt(12) == 0) {
+            SatyrEntity.this.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 1.0F, 1.0F);
+            SatyrEntity.this.swingArm(Hand.MAIN_HAND);
+          }
           SatyrEntity.this.getLookController().setLookPosition(Vector3d.copyCenteredHorizontally(campfire.get()));
         }
       }
@@ -647,13 +648,15 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
     
     @Override
-    protected int getRunDelay(CreatureEntity entity) { return 200 + entity.getRNG().nextInt(chance); }
+    protected int getRunDelay(CreatureEntity entity) { return 200 + entity.getRNG().nextInt(chance) + maxLightCampfireTime; }
 
     protected boolean lightCampfire(final BlockPos pos) {
       if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(SatyrEntity.this.world, SatyrEntity.this)) {
         final BlockState state = SatyrEntity.this.world.getBlockState(pos);
         if (state.isIn(BlockTags.CAMPFIRES)) {
-          SatyrEntity.this.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 1.0F, 1.0F);
+          if(SatyrEntity.this.getRNG().nextInt(20) == 0) {
+            SatyrEntity.this.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 1.0F, 1.0F);
+          }
           SatyrEntity.this.world.setBlockState(pos, state.with(CampfireBlock.LIT, Boolean.valueOf(true)), 2);
           SatyrEntity.this.swingArm(Hand.MAIN_HAND);
           return true;

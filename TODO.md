@@ -39,7 +39,7 @@ __Key:__
 - X X X X Boss: Python
 - X X X X Boss: Charybdis
 - X X X X Boss: Talos
-- _ _ _ _ Fury (Nether; like harpy w/ bat wings)
+- X X X _ Fury (TODO: improve texture)
 - _ _ _ _ Makhai (6 arms)
 - _ _ _ _ Eurynomos (blue skin; vulture head?)
 - _ _ _ _ Stymphalian bird (iron wings/claws/beaks)

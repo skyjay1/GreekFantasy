@@ -96,6 +96,7 @@ public final class GFRegistry {
   public static EntityType<DryadEntity> DRYAD_ENTITY = buildEntityType(DryadEntity::new, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<ElpisEntity> ELPIS_ENTITY = buildEntityType(ElpisEntity::new, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, b -> b.immuneToFire());
   public static EntityType<EmpusaEntity> EMPUSA_ENTITY = buildEntityType(EmpusaEntity::new, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<FuryEntity> FURY_ENTITY = buildEntityType(FuryEntity::new, "fury", 0.67F, 1.4F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<GeryonEntity> GERYON_ENTITY = buildEntityType(GeryonEntity::new, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<GiganteEntity> GIGANTE_ENTITY = buildEntityType(GiganteEntity::new, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, b -> {});
   public static EntityType<GorgonEntity> GORGON_ENTITY = buildEntityType(GorgonEntity::new, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
@@ -266,6 +267,7 @@ public final class GFRegistry {
     registerEntityType(event, DRYAD_ENTITY, DryadEntity::getAttributes, DryadEntity::canSpawnOn);
     registerEntityType(event, ELPIS_ENTITY, ElpisEntity::getAttributes, null);
     registerEntityType(event, EMPUSA_ENTITY, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight);
+    registerEntityType(event, FURY_ENTITY, FuryEntity::getAttributes, FuryEntity::canSpawnOn);
     registerEntityType(event, GERYON_ENTITY, GeryonEntity::getAttributes, null);
     registerEntityType(event, GIGANTE_ENTITY, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn);
     registerEntityType(event, GORGON_ENTITY, GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn);
@@ -470,6 +472,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, DRYAD_ENTITY, 0x443626, 0xfed93f);
     registerSpawnEgg(event, ELPIS_ENTITY, 0xe7aae4, 0xeeeeee);
     registerSpawnEgg(event, EMPUSA_ENTITY, 0x222222, 0x83251f);
+    registerSpawnEgg(event, FURY_ENTITY, 0xbd4444, 0x6c2426);
     registerSpawnEgg(event, GIGANTE_ENTITY, 0xd3dba7, 0x6a602b);
     registerSpawnEgg(event, GORGON_ENTITY, 0xb6b6b6, 0x398046);
     registerSpawnEgg(event, HARPY_ENTITY, 0x724e36, 0x332411);

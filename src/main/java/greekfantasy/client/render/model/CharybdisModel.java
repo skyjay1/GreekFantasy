@@ -105,8 +105,8 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
   @Override
   public void setRotationAngles(CharybdisEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch) {
     // animate arms
-    final float swirlingTime = entity.isSwirling() ? entity.getSwirlPercent() : 0;
-    final float throwingTime = entity.isThrowing() ? entity.getThrowPercent() : 0;
+    final float swirlingTime = entity.isSwirling() ? Math.max(1.0F, entity.getSwirlPercent()) : 0;
+    final float throwingTime = entity.isThrowing() ? Math.max(1.0F, entity.getThrowPercent()) : 0;
     final float throwingTimeLeft = 1.0F - throwingTime;
     final float throwingZ = 0.9F - 2F * Math.abs(throwingTime - 0.5F);
     final float swirlingMult = 0.058F + 0.14F * Math.min(swirlingTime * 10.0F, 1.0F);

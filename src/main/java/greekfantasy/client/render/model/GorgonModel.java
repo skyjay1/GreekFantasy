@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.entity.GorgonEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
 public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
@@ -143,33 +144,33 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
       final float ptX = (float) (Math.cos(angle) * radius);
       final float ptZ = (float) (Math.sin(angle) * radius);
       final float angY = (float) (angle - (deltaAngle * 2 * count));
-      final ModelRenderer snake = makeSnake(modelSize, ptX, -8.5F, ptZ, 0, angY, 0);
+      final ModelRenderer snake = makeSnake(this, ptX, -8.5F, ptZ, 0, angY, 0, 46, 52);
       list.add(snake);
       this.snakeHair.addChild(snake);
       count++;
     }
   }
   
-  private ModelRenderer makeSnake(final float modelSize, final float rotX, final float rotY, final float rotZ, 
-      final float angleX, final float angleY, final float angleZ) {
-    final ModelRenderer snakeHair1 = new ModelRenderer(this);
+  public static ModelRenderer makeSnake(final Model model, final float rotX, final float rotY, final float rotZ, 
+      final float angleX, final float angleY, final float angleZ, final int textureX, final int textureY) {
+    final ModelRenderer snakeHair1 = new ModelRenderer(model);
     snakeHair1.setRotationPoint(rotX, rotY, rotZ);
     snakeHair1.rotateAngleX = angleX;
     snakeHair1.rotateAngleY = angleY;
     snakeHair1.rotateAngleZ = angleZ;
-    snakeHair1.setTextureOffset(46, 52).addBox(-0.5F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, modelSize);
+    snakeHair1.setTextureOffset(textureX, textureY).addBox(-0.5F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, 0.0F);
 
-    final ModelRenderer snakeHair2 = new ModelRenderer(this);
+    final ModelRenderer snakeHair2 = new ModelRenderer(model);
     snakeHair2.setRotationPoint(0.0F, -3.0F, 0.0F);
     snakeHair1.addChild(snakeHair2);
     snakeHair2.rotateAngleX = 0.5236F;
-    snakeHair2.setTextureOffset(46, 56).addBox(-0.5F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, modelSize);
+    snakeHair2.setTextureOffset(textureX, textureY + 4).addBox(-0.5F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, 0.0F);
 
-    final ModelRenderer snakeHair3 = new ModelRenderer(this);
+    final ModelRenderer snakeHair3 = new ModelRenderer(model);
     snakeHair3.setRotationPoint(0.0F, -3.0F, -0.5F);
     snakeHair2.addChild(snakeHair3);
     snakeHair3.rotateAngleX = 0.5236F;
-    snakeHair3.setTextureOffset(46, 60).addBox(-1.0F, -1.5F, -1.0F, 2.0F, 2.0F, 2.0F, modelSize);
+    snakeHair3.setTextureOffset(textureX, textureY + 8).addBox(-1.0F, -1.5F, -1.0F, 2.0F, 2.0F, 2.0F, 0.0F);
     
     return snakeHair1;
   }
