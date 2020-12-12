@@ -3,6 +3,7 @@ package greekfantasy.entity;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Random;
 
 import greekfantasy.entity.misc.ISwimmingMob;
 import net.minecraft.block.BlockState;
@@ -12,6 +13,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.MoverType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
@@ -24,16 +26,22 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.server.ServerBossInfo;
+import net.minecraftforge.common.BiomeDictionary;
 
 public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
@@ -64,7 +72,18 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     this.stepHeight = 1.0F;
     this.experienceValue = 50;
   }
-  
+
+  //copied from DolphinEntity
+  public static boolean canCharybdisSpawnOn(final EntityType<? extends WaterMobEntity> entity, final IWorld world,
+      final SpawnReason reason, final BlockPos pos, final Random rand) {
+    if (pos.getY() <= 25 || pos.getY() >= world.getSeaLevel()) {
+      return false;
+    }
+
+    RegistryKey<Biome> biome = world.func_242406_i(pos).orElse(Biomes.PLAINS);
+    return (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN)) && world.getFluidState(pos).isTagged(FluidTags.WATER);
+  }
+
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 14.0D) // TODO change this before release

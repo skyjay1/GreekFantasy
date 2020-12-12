@@ -8,7 +8,6 @@ __Key:__
 
 - _ Summoning animation not playing on dedicated server (Geryon, Sparti)
 - _ Structure gen is jenky (check *all* corner blocks)
-- _ Statues don't drop as items
 
 ## Entity basics
 

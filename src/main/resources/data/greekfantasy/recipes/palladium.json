@@ -2,13 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     " # ",
-    "S#T",
+    "I#O",
     " - "
   ],
   "key": {
     "#": { "tag": "minecraft:logs" },
-    "S": { "item": "minecraft:soul_torch" },
-    "T": { "item": "greekfantasy:talos_heart" },
+    "I": { "item": "minecraft:soul_torch" },
+    "O": { "item": "greekfantasy:talos_heart" },
     "-": { "tag": "minecraft:wooden_slabs" }
   },
   "result": {

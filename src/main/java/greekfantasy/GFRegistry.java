@@ -260,7 +260,7 @@ public final class GFRegistry {
     registerEntityType(event, CENTAUR_ENTITY, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn);
     registerEntityType(event, CERASTES_ENTITY, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn);
     registerEntityType(event, CERBERUS_ENTITY, CerberusEntity::getAttributes, null);
-    registerEntityType(event, CHARYBDIS_ENTITY, CharybdisEntity::getAttributes, null);
+    registerEntityType(event, CHARYBDIS_ENTITY, CharybdisEntity::getAttributes, CharybdisEntity::canCharybdisSpawnOn);
     registerEntityType(event, CYPRIAN_ENTITY, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn);
     registerEntityType(event, CYCLOPES_ENTITY, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn);
     registerEntityType(event, DRYAD_ENTITY, DryadEntity::getAttributes, DryadEntity::canSpawnOn);
