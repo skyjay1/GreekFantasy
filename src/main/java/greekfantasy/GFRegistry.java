@@ -230,8 +230,6 @@ public final class GFRegistry {
   public static final Effect PETRIFIED_EFFECT = null;
   @ObjectHolder("mirror")
   public static final Effect MIRROR_EFFECT = null;
-  @ObjectHolder("swine")
-  public static final Effect SWINE_EFFECT = null;
   
   @ObjectHolder("overstep")
   public static final Enchantment OVERSTEP_ENCHANTMENT = null;
@@ -495,8 +493,7 @@ public final class GFRegistry {
     event.getRegistry().registerAll(
         new StunnedEffect().setRegistryName(MODID, "stunned"),
         new StunnedEffect().setRegistryName(MODID, "petrified"),
-        new MirrorEffect().setRegistryName(MODID, "mirror"),
-        new SwineEffect().setRegistryName(MODID, "swine")
+        new MirrorEffect().setRegistryName(MODID, "mirror")
     );
   }
   

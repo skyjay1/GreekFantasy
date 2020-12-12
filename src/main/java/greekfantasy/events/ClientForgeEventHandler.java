@@ -2,7 +2,6 @@ package greekfantasy.events;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.render.SwineRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -19,9 +18,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 
 public class ClientForgeEventHandler {
-  
-//  private static SwineRenderer<PlayerEntity> playerSwineRenderer;
-  
+    
   /**
    * Used to hide the player and their armor / held items
    * while using the Helm of Darkness.
@@ -33,15 +30,6 @@ public class ClientForgeEventHandler {
     if(GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(event.getPlayer())) {
       event.setCanceled(true);
     }
-    if(isSwine(event.getPlayer())) {
-      event.setCanceled(true);
-      // render pig instead
-//      if(null == playerSwineRenderer) {
-//        Minecraft mc = Minecraft.getInstance();
-//        playerSwineRenderer = new SwineRenderer<PlayerEntity>(mc.getRenderManager());
-//      }
-//      playerSwineRenderer.render(event, event.getPlayer());
-    }
   }
   
   /**
@@ -52,7 +40,7 @@ public class ClientForgeEventHandler {
   @SubscribeEvent(priority = EventPriority.HIGH)
   public static void renderPlayerHand(final RenderHandEvent event) {
     final Minecraft mc = Minecraft.getInstance();
-    if((GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(mc.player)) || (isSwine(mc.player))) {
+    if(GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(mc.player)) {
       event.setCanceled(true);
     }
   }
@@ -112,10 +100,5 @@ public class ClientForgeEventHandler {
   /** @return whether the entity should have the client-side stun/petrify FOV or particle effects **/
   private static boolean isStunned(final LivingEntity livingEntity) {
     return (livingEntity.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null || livingEntity.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null);
-  }
-  
-  /** @return whether the entity should have the Swine effect applied **/
-  private static boolean isSwine(final LivingEntity livingEntity) {
-    return (livingEntity.getActivePotionEffect(GFRegistry.SWINE_EFFECT) != null);
   }
 }
