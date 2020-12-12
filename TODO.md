@@ -148,6 +148,7 @@ __Key:__
 - X X X Talos Heart - crafting component from Talos
 - X _ X Tough Snakeskin - crafting component from Python (TODO: used for what?)
 - X X X Bag of Wind - gives 30sec speed boost
+- _ _ _ Staff of the Swine (Circe) - inflicts Swine effect
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Gorgon blood - 50% chance to fully heal, 50% chance to fully kill
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)
@@ -181,7 +182,7 @@ __Key:__
 - X "Hunting" enchantment
 - X "Mirror" enchantment
 - X "Mirror" effect
-- _ "Curse of Swine" effect
+- X "Swine" effect
 - X Panflute songs
 - X Panflute song selection GUI
 - X Lots of mysterious box functions!
@@ -222,7 +223,6 @@ _Can I do something with these?_
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
 - River Styx
 - Story of King Midas (gold touch)
-- Story of Circe (sorcerer who turns people to pigs)
 - Story of Labyrinth (Minotaur, Golden String, etc)
 - Demeter (goddess of growth/fertility/crops; seasons)
 

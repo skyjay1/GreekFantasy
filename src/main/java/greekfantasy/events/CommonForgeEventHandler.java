@@ -189,7 +189,6 @@ public class CommonForgeEventHandler {
     }
   }
   
-  
   /**
    * Used to add prevent monsters from spawning near Palladium blocks
    * @param event the spawn event

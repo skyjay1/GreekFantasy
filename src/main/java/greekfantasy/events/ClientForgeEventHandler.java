@@ -2,8 +2,11 @@ package greekfantasy.events;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.render.PlayerPigRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.renderer.entity.LivingRenderer;
+import net.minecraft.client.renderer.entity.model.PigModel;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,6 +21,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 
 public class ClientForgeEventHandler {
+  
+  private static PlayerPigRenderer<PlayerEntity> playerPigRenderer;
     
   /**
    * Used to hide the player and their armor / held items
@@ -29,6 +34,14 @@ public class ClientForgeEventHandler {
   public static void renderPlayer(final RenderPlayerEvent.Pre event) {
     if(GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(event.getPlayer())) {
       event.setCanceled(true);
+    } else if(isSwine(event.getPlayer())) {
+      event.setCanceled(true);
+      // render pig instead
+      if(null == playerPigRenderer) {
+        Minecraft mc = Minecraft.getInstance();
+        playerPigRenderer = new PlayerPigRenderer<PlayerEntity>(mc.getRenderManager());
+      }
+      playerPigRenderer.render(event.getPlayer(), event.getPlayer().rotationYaw, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), 15728640);
     }
   }
   
@@ -40,7 +53,7 @@ public class ClientForgeEventHandler {
   @SubscribeEvent(priority = EventPriority.HIGH)
   public static void renderPlayerHand(final RenderHandEvent event) {
     final Minecraft mc = Minecraft.getInstance();
-    if(GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(mc.player)) {
+    if((GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(mc.player)) || (isSwine(mc.player))) {
       event.setCanceled(true);
     }
   }
@@ -100,5 +113,10 @@ public class ClientForgeEventHandler {
   /** @return whether the entity should have the client-side stun/petrify FOV or particle effects **/
   private static boolean isStunned(final LivingEntity livingEntity) {
     return (livingEntity.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null || livingEntity.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null);
+  }
+  
+  /** @return whether the entity should have the Swine effect applied **/
+  private static boolean isSwine(final LivingEntity livingEntity) {
+    return (livingEntity.getActivePotionEffect(GFRegistry.SWINE_EFFECT) != null);
   }
 }
