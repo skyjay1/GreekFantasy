@@ -1,5 +1,9 @@
 package greekfantasy.entity.misc;
 
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 import greekfantasy.GFRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -38,7 +42,9 @@ public class PoisonSpitEntity extends EffectProjectileEntity {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 
-  protected EffectInstance getPotionEffect(final LivingEntity entity) { return new EffectInstance(Effects.POISON, 90, 1); }
+  protected List<EffectInstance> getPotionEffects(final LivingEntity entity) { 
+    return ImmutableList.of(new EffectInstance(Effects.POISON, 90, 1)); 
+  }
   
   protected IParticleData getImpactParticle(final LivingEntity entity) { return ParticleTypes.DAMAGE_INDICATOR; }
   

@@ -1,5 +1,7 @@
 package greekfantasy.entity.misc;
 
+import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -31,8 +33,10 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
     Entity thrower = func_234616_v_();
     if (raytrace.getEntity() != thrower && raytrace.getEntity() instanceof LivingEntity) {
       final LivingEntity entity = (LivingEntity)raytrace.getEntity();
-      // add a potion effect
-      entity.addPotionEffect(getPotionEffect(entity));
+      // add potion effects
+      for(final EffectInstance effect : getPotionEffects(entity)) {
+        entity.addPotionEffect(effect);
+      }
       // impact may inflict damage
       float damage = getImpactDamage(entity);
       if(damage > 0 && thrower instanceof LivingEntity) {
@@ -104,7 +108,7 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
   protected void registerData() {
   }
   
-  abstract EffectInstance getPotionEffect(final LivingEntity entity);
+  abstract List<EffectInstance> getPotionEffects(final LivingEntity entity);
   
   abstract IParticleData getImpactParticle(final LivingEntity entity);
   

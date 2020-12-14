@@ -1,5 +1,10 @@
 package greekfantasy.entity.misc;
 
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.entity.EntityType;
@@ -39,11 +44,12 @@ public class SwineSpellEntity extends EffectProjectileEntity {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 
-  protected EffectInstance getPotionEffect(final LivingEntity entity) {
+  protected List<EffectInstance> getPotionEffects(final LivingEntity entity) {
     final Effect effect = GreekFantasy.CONFIG.isSwineEnabled() ? GFRegistry.SWINE_EFFECT : Effects.SLOWNESS;
-    return new EffectInstance(effect, GreekFantasy.CONFIG.getSwineWandDuration(), 0, false, false, true, 
-        new EffectInstance(Effects.MINING_FATIGUE, GreekFantasy.CONFIG.getSwineWandDuration() - 1, 1, false, false, false,
-        new EffectInstance(Effects.WEAKNESS, GreekFantasy.CONFIG.getSwineWandDuration() - 1, 1, false, false, false))); 
+    return ImmutableList.of(
+        new EffectInstance(effect, GreekFantasy.CONFIG.getSwineWandDuration(), 0, false, false, true), 
+        new EffectInstance(Effects.MINING_FATIGUE, GreekFantasy.CONFIG.getSwineWandDuration() - 1, 1, false, false, false),
+        new EffectInstance(Effects.WEAKNESS, GreekFantasy.CONFIG.getSwineWandDuration() - 1, 1, false, false, false)); 
   }
   
   protected IParticleData getImpactParticle(final LivingEntity entity) { return ParticleTypes.ENCHANT; }

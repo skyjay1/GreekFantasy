@@ -1,5 +1,9 @@
 package greekfantasy.entity.misc;
 
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 import greekfantasy.GFRegistry;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.EntityType;
@@ -38,7 +42,10 @@ public class HealingSpellEntity extends EffectProjectileEntity {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 
-  protected EffectInstance getPotionEffect(final LivingEntity entity) { return new EffectInstance(Effects.INSTANT_HEALTH, 1, 1); }
+  @Override
+  protected List<EffectInstance> getPotionEffects(final LivingEntity entity) { 
+    return ImmutableList.of(new EffectInstance(Effects.INSTANT_HEALTH, 1, 1)); 
+  }
   
   protected IParticleData getImpactParticle(final LivingEntity entity) { return entity.getCreatureAttribute() == CreatureAttribute.UNDEAD ? ParticleTypes.DAMAGE_INDICATOR : ParticleTypes.HEART; }
   

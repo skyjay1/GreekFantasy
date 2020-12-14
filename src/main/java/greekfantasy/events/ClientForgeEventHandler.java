@@ -3,6 +3,7 @@ package greekfantasy.events;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.render.PlayerPigRenderer;
+import greekfantasy.client.render.PlayerSkyjayRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.LogicalSide;
 public class ClientForgeEventHandler {
   
   private static PlayerPigRenderer<PlayerEntity> playerPigRenderer;
+  private static PlayerSkyjayRenderer<PlayerEntity> skyjayRenderer;
     
   /**
    * Used to hide the player and their armor / held items
@@ -39,7 +41,14 @@ public class ClientForgeEventHandler {
         Minecraft mc = Minecraft.getInstance();
         playerPigRenderer = new PlayerPigRenderer<PlayerEntity>(mc.getRenderManager());
       }
-      playerPigRenderer.render(event.getPlayer(), event.getPlayer().rotationYaw, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), 15728640);
+      playerPigRenderer.render(event.getPlayer(), event.getPlayer().rotationYaw, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), 
+          playerPigRenderer.getPackedLight(event.getPlayer(), event.getPartialRenderTick()));//15728640);
+    } else if(!event.isCanceled() && "skyjay1".equals(event.getPlayer().getName().getUnformattedComponentText())) {
+      if(null == skyjayRenderer) {
+        Minecraft mc = Minecraft.getInstance();
+        skyjayRenderer = new PlayerSkyjayRenderer<PlayerEntity>(mc.getRenderManager());
+      }
+      skyjayRenderer.render(event.getPlayer(), event.getPlayer().rotationYaw, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), 15728880);
     }
   }
   
