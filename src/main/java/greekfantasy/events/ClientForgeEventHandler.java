@@ -5,8 +5,6 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.client.render.PlayerPigRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.client.renderer.entity.model.PigModel;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -53,7 +51,8 @@ public class ClientForgeEventHandler {
   @SubscribeEvent(priority = EventPriority.HIGH)
   public static void renderPlayerHand(final RenderHandEvent event) {
     final Minecraft mc = Minecraft.getInstance();
-    if((GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(mc.player)) || (isSwine(mc.player))) {
+    if((GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(mc.player)) 
+        || (isSwine(mc.player) && mc.player.getHeldItemMainhand().isEmpty())) {
       event.setCanceled(true);
     }
   }

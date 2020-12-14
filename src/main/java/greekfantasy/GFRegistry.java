@@ -113,6 +113,7 @@ public final class GFRegistry {
   public static EntityType<ShadeEntity> SHADE_ENTITY = buildEntityType(ShadeEntity::new, "shade", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<SirenEntity> SIREN_ENTITY = buildEntityType(SirenEntity::new, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, b -> {});
   public static EntityType<SpartiEntity> SPARTI_ENTITY = buildEntityType(SpartiEntity::new, "sparti", 0.6F, 1.98F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<SwineSpellEntity> SWINE_SPELL_ENTITY = buildEntityType(SwineSpellEntity::new, "swine_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
   public static EntityType<TalosEntity> TALOS_ENTITY = buildEntityType(TalosEntity::new, "talos", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<UnicornEntity> UNICORN_ENTITY = buildEntityType(UnicornEntity::new, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
   
@@ -289,6 +290,7 @@ public final class GFRegistry {
     event.getRegistry().register(HEALING_SPELL_ENTITY);
     event.getRegistry().register(ORTHUS_HEAD_ITEM_ENTITY);
     event.getRegistry().register(POISON_SPIT_ENTITY);
+    event.getRegistry().register(SWINE_SPELL_ENTITY);
   }
   
   @SubscribeEvent
@@ -406,6 +408,9 @@ public final class GFRegistry {
         new HealingRodItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.HEALING_ROD_DURABILITY.get()))
           .setRegistryName(MODID, "healing_rod"),
+        new SwineWandItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
+            .maxDamage(GreekFantasy.CONFIG.SWINE_WAND_DURABILITY.get()))
+          .setRegistryName(MODID, "swine_wand"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "horn"));
     

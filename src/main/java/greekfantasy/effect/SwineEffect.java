@@ -1,18 +1,14 @@
 package greekfantasy.effect;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifierManager;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectType;
+import net.minecraft.util.SoundEvents;
 
 public class SwineEffect extends Effect {
   
@@ -25,46 +21,13 @@ public class SwineEffect extends Effect {
   
   public void removeAttributesModifiersFromEntity(LivingEntity entityLivingBaseIn, AttributeModifierManager attributeMapIn, int amplifier) {
     super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
-    if(entityLivingBaseIn instanceof PlayerEntity) {
-      ((PlayerEntity)entityLivingBaseIn).setForcedPose(null);
-    }
+    entityLivingBaseIn.playSound(SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, 1.0F,
+        0.9F + entityLivingBaseIn.getRNG().nextFloat() * 0.2F);
   }
 
- public void applyAttributesModifiersToEntity(LivingEntity entityLivingBaseIn, AttributeModifierManager attributeMapIn, int amplifier) {
-   super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
-   if(entityLivingBaseIn instanceof PlayerEntity) {
-     ((PlayerEntity)entityLivingBaseIn).setForcedPose(Pose.FALL_FLYING);
-   }
- }
-  
-  /**
-   * checks if Potion effect is ready to be applied this tick.
-   */
-  @Override
-  public boolean isReady(int duration, int amplifier) {
-    return super.isReady(duration, amplifier);
-//     return true;
-  }
-  
-  @Override
-  public void performEffect(LivingEntity entityLivingBaseIn, int amplifier) {
-//    if(entityLivingBaseIn instanceof PlayerEntity && !entityLivingBaseIn.isSpectator()) {
-//      PlayerEntity player = (PlayerEntity)entityLivingBaseIn;
-//      player.setForcedPose(Pose.FALL_FLYING);
-//    }
-  }
-  
-
-  /**
-   * Get a fresh list of items that can cure this Potion.
-   * All new PotionEffects created from this Potion will call this to initialize the default curative items
-   * @see PotionEffect#getCurativeItems
-   * @return A list of items that can cure this Potion
-   */
-  @Override
-  public List<ItemStack> getCurativeItems() {
-//     ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-//     ret.add(new ItemStack(Items.MILK_BUCKET));
-     return new ArrayList<ItemStack>();
+  public void applyAttributesModifiersToEntity(LivingEntity entityLivingBaseIn, AttributeModifierManager attributeMapIn, int amplifier) {
+    super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
+    entityLivingBaseIn.playSound(SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, 1.0F,
+        0.9F + entityLivingBaseIn.getRNG().nextFloat() * 0.2F);
   }
 }

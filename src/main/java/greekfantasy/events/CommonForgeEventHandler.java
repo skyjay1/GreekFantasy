@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.google.common.collect.ImmutableList;
+
 import java.util.Optional;
 import java.util.TreeMap;
 
@@ -21,12 +24,16 @@ import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.PanfluteSong;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EntityPredicates;
@@ -39,6 +46,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -111,6 +120,40 @@ public class CommonForgeEventHandler {
           final float yaw = MathHelper.wrapDegrees(event.getSource().getTrueSource().rotationYaw + 180.0F);
           GeryonEntity.spawnGeryon(event.getEntityLiving().getEntityWorld(), deathPos, yaw);
         }
+      }
+    }
+  }
+  
+  /**
+   * Used to set the player pose when the Swine effect is enabled.
+   * @param event the PlayerTickEvent
+   **/
+  @SubscribeEvent
+  public static void onLivingTick(final PlayerTickEvent event) {
+    if(event.phase == TickEvent.Phase.START && GreekFantasy.CONFIG.isSwineEnabled()) {
+      final boolean isSwine = isSwine(event.player);
+      final Pose forcedPose = event.player.getForcedPose();
+      // drop armor
+      if(isSwine && GreekFantasy.CONFIG.doesSwineDropArmor() && event.player.getRNG().nextInt(20) == 0) {
+        final Iterable<ItemStack> armor = ImmutableList.copyOf(event.player.getArmorInventoryList());
+        event.player.setItemStackToSlot(EquipmentSlotType.HEAD, ItemStack.EMPTY);
+        event.player.setItemStackToSlot(EquipmentSlotType.CHEST, ItemStack.EMPTY);
+        event.player.setItemStackToSlot(EquipmentSlotType.LEGS, ItemStack.EMPTY);
+        event.player.setItemStackToSlot(EquipmentSlotType.FEET, ItemStack.EMPTY);
+        for(final ItemStack i : armor) {
+          final ItemEntity item = event.player.entityDropItem(i);
+          if(item != null) {
+            item.setNoPickupDelay();
+          }
+        }
+      }
+      // update the forced pose
+      if(isSwine && forcedPose != Pose.FALL_FLYING) {
+        // apply the forced pose
+        event.player.setForcedPose(Pose.FALL_FLYING);
+      } else if(!isSwine && Pose.FALL_FLYING == forcedPose) {
+        // clear the forced pose
+        event.player.setForcedPose(null);
       }
     }
   }
@@ -197,13 +240,14 @@ public class CommonForgeEventHandler {
   public static void onLivingCheckSpawn(final LivingSpawnEvent.CheckSpawn event) {
     final int cRadius = GreekFantasy.CONFIG.getPalladiumChunkRange();
     final int cVertical = GreekFantasy.CONFIG.getPalladiumYRange() / 2; // divide by 2 to center on block
-    if(cRadius > 0 && !event.getEntityLiving().getEntityWorld().isRemote() 
+    if(GreekFantasy.CONFIG.isPalladiumEnabled() && !event.getEntityLiving().getEntityWorld().isRemote() 
         && event.getWorld() instanceof World && event.getEntityLiving() instanceof IMob) {
       // check for nearby Statue Tile Entity
       final World world = (World)event.getWorld();
       final BlockPos blockPos = new BlockPos(event.getX(), event.getY(), event.getZ());
       final ChunkPos chunkPos = new ChunkPos(blockPos);
       ChunkPos cPos;
+      // search each chunk in a square radius centered on this chunk
       for(int cX = -cRadius; cX <= cRadius; cX++) {
         for(int cZ = -cRadius; cZ <= cRadius; cZ++) {
           cPos = new ChunkPos(chunkPos.x + cX, chunkPos.z + cZ);
@@ -250,8 +294,14 @@ public class CommonForgeEventHandler {
     event.addListener(GreekFantasy.PROXY.PANFLUTE_SONGS);
   }
   
+  /** @return whether the entity should have the Stunned or Petrified effect applied **/
   private static boolean isStunned(final LivingEntity entity) {
     return (entity.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null || entity.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null);
+  }
+  
+  /** @return whether the entity should have the Swine effect applied **/
+  private static boolean isSwine(final LivingEntity livingEntity) {
+    return (livingEntity.getActivePotionEffect(GFRegistry.SWINE_EFFECT) != null);
   }
   
   private static List<BlockPos> getPalladiumList(final World world, final BlockPos spawnPos, final ChunkPos chunkPos, final int verticalRange) {
@@ -295,11 +345,9 @@ public class CommonForgeEventHandler {
     }
     
     protected TimestampList<T> update(final long serverTime, final List<T> listIn) {
-      if(shouldUpdate(serverTime)) {
-        timestamp = serverTime;
-        list.clear();
-        list.addAll(listIn);
-      }
+      timestamp = serverTime;
+      list.clear();
+      list.addAll(listIn);
       return this;
     }
   }

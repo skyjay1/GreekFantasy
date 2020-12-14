@@ -148,7 +148,7 @@ __Key:__
 - X X X Talos Heart - crafting component from Talos
 - X _ X Tough Snakeskin - crafting component from Python (TODO: used for what?)
 - X X X Bag of Wind - gives 30sec speed boost
-- _ _ _ Staff of the Swine (Circe) - inflicts Swine effect
+- X X _ Swine Wand - inflicts Swine effect
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Gorgon blood - 50% chance to fully heal, 50% chance to fully kill
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)

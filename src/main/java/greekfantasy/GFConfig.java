@@ -20,6 +20,7 @@ public class GFConfig {
   public final ForgeConfigSpec.IntValue HEALING_ROD_DURABILITY;
   public final ForgeConfigSpec.IntValue THUNDERBOLT_DURABILITY;
   public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURABILITY;
+  public final ForgeConfigSpec.IntValue SWINE_WAND_DURABILITY;
   private final ForgeConfigSpec.BooleanValue HELM_HIDES_ARMOR;
   private final ForgeConfigSpec.BooleanValue DRAGON_TOOTH_SPAWNS_SPARTI;
   private final ForgeConfigSpec.BooleanValue SWORD_OF_HUNT_BYPASSES_ARMOR;
@@ -29,7 +30,9 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue CONCH_ENABLED;
   private final ForgeConfigSpec.IntValue CONCH_COOLDOWN;
   private final ForgeConfigSpec.IntValue BAG_OF_WIND_COOLDOWN;
-  public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
+  private final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
+  private final ForgeConfigSpec.IntValue SWINE_WAND_COOLDOWN;
+  private final ForgeConfigSpec.IntValue SWINE_WAND_DURATION;
   private boolean helmHidesArmor;
   private boolean dragonToothSpawnsSparti;
   private boolean swordOfHuntBypassesArmor;
@@ -40,6 +43,8 @@ public class GFConfig {
   private int conchCooldown;
   private int bagOfWindCooldown;
   private int bagOfWindDuration;
+  private int swineWandCooldown;
+  private int swineWandDuration;
 
   // effect configs
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
@@ -48,12 +53,16 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue SMASHING_ENABLED;
   private final ForgeConfigSpec.BooleanValue HUNTING_ENABLED;
   private final ForgeConfigSpec.BooleanValue MIRROR_ENABLED;
+  private final ForgeConfigSpec.BooleanValue SWINE_ENABLED;
+  private final ForgeConfigSpec.BooleanValue SWINE_DROPS_ARMOR;
   private boolean stunPreventsJump;
   private boolean stunPreventsUse;
   private boolean overstepEnabled;
   private boolean smashingEnabled;
   private boolean huntingEnabled;
   private boolean mirrorEnabled;
+  private boolean swineEnabled;
+  private boolean swineDropsArmor;
   
   // potion configs
   private final ForgeConfigSpec.BooleanValue MIRROR_POTION;
@@ -100,9 +109,11 @@ public class GFConfig {
   
   // other
   public final ForgeConfigSpec.BooleanValue STATUES_HOLD_ITEMS;
+  private final ForgeConfigSpec.BooleanValue PALLADIUM_ENABLED;
   private final ForgeConfigSpec.IntValue PALLADIUM_REFRESH_INTERVAL;
   private final ForgeConfigSpec.IntValue PALLADIUM_CHUNK_RANGE;
   private final ForgeConfigSpec.IntValue PALLADIUM_Y_RANGE;
+  private boolean palladiumEnabled;
   private int palladiumRefreshInterval;
   private int palladiumChunkRange;
   private int palladiumYRange;
@@ -136,6 +147,9 @@ public class GFConfig {
     BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
     BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 100);
     BAG_OF_WIND_DURABILITY = builder.defineInRange("bag_of_wind_durability", 24, 1, 4000);
+    SWINE_WAND_DURATION = builder.defineInRange("swine_wand_duration", 6000, 1, 24000);
+    SWINE_WAND_COOLDOWN = builder.defineInRange("swine_wand_cooldown", 50, 0, 100);
+    SWINE_WAND_DURABILITY = builder.defineInRange("swine_wand_durability", 104, 1, 4000);
     builder.pop();
     // mob attacks
     builder.push("effects");
@@ -151,6 +165,10 @@ public class GFConfig {
         .define("enable_hunting", true);
     MIRROR_ENABLED = builder.comment("Whether 'mirror' enchantment can be used")
         .define("enable_mirror", true);
+    SWINE_ENABLED = builder.comment("Whether 'swine' effect can be used")
+        .define("enable_swine", true);
+    SWINE_DROPS_ARMOR = builder.comment("Whether players under the swine effect drop their armor")
+        .define("swine_drops_armor", true);
     builder.pop();
     // potion effects
     builder.push("potions");
@@ -203,10 +221,12 @@ public class GFConfig {
     builder.push("other");
     STATUES_HOLD_ITEMS = builder.comment("Whether statues can hold items (kinda buggy when disabled)")
         .define("statues_hold_items", true);
+    PALLADIUM_ENABLED = builder.comment("Whether the Palladium can prevent monster spawns")
+        .define("palladium_enabled", true);
     PALLADIUM_REFRESH_INTERVAL = builder.comment("The number of server ticks between Palladium updates (increase to reduce lag)")
         .defineInRange("palladium_refresh_interval", 110, 2, 1000);
-    PALLADIUM_CHUNK_RANGE = builder.comment("The radius (in chunks) of the area protected by Palladium blocks (0=disabled)")
-        .defineInRange("palladium_chunk_range", 2, 0, 3);
+    PALLADIUM_CHUNK_RANGE = builder.comment("The radius (in chunks) of the area protected by Palladium blocks (0=same chunk only)")
+        .defineInRange("palladium_chunk_range", 1, 0, 3);
     PALLADIUM_Y_RANGE = builder.comment("The vertical area protected by Palladium blocks, if enabled")
         .defineInRange("palladium_y_range", 128, 0, 255);
     builder.pop();
@@ -273,12 +293,16 @@ public class GFConfig {
     conchCooldown = CONCH_COOLDOWN.get();
     bagOfWindDuration = BAG_OF_WIND_DURATION.get();
     bagOfWindCooldown = BAG_OF_WIND_COOLDOWN.get();
+    swineWandDuration = SWINE_WAND_DURATION.get();
+    swineWandCooldown = SWINE_WAND_COOLDOWN.get();
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
     smashingEnabled = SMASHING_ENABLED.get();
     huntingEnabled = HUNTING_ENABLED.get();
     mirrorEnabled = MIRROR_ENABLED.get();
+    swineEnabled = SWINE_ENABLED.get();
+    swineDropsArmor = SWINE_DROPS_ARMOR.get();
     mirrorPotion = MIRROR_POTION.get();
     shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
@@ -289,6 +313,7 @@ public class GFConfig {
     spartiLifespan = SPARTI_LIFESPAN.get();
     nerfStunning = NERF_STUNNING.get();
     nerfParalysis = NERF_PARALYSIS.get();
+    palladiumEnabled = PALLADIUM_ENABLED.get();
     palladiumRefreshInterval = PALLADIUM_REFRESH_INTERVAL.get();
     palladiumChunkRange = PALLADIUM_CHUNK_RANGE.get();
     palladiumYRange = PALLADIUM_Y_RANGE.get();
@@ -304,12 +329,16 @@ public class GFConfig {
   public int getConchCooldown() { return conchCooldown; }
   public int getBagOfWindDuration() { return bagOfWindDuration; }
   public int getBagOfWindCooldown() { return bagOfWindCooldown; }
+  public int getSwineWandDuration() { return swineWandDuration; }
+  public int getSwineWandCooldown() { return swineWandCooldown; }
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
   public boolean isOverstepEnabled() { return overstepEnabled; }
   public boolean isSmashingEnabled() { return smashingEnabled; }
   public boolean isHuntingEnabled() { return huntingEnabled; }
   public boolean isMirrorEnabled() { return mirrorEnabled; }
+  public boolean isSwineEnabled() { return swineEnabled; }
+  public boolean doesSwineDropArmor() { return swineDropsArmor; }
   public boolean isMirrorPotionEnabled() { return mirrorPotion; }
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
   public int getSatyrShamanChance() { return satyrShamanChance; }
@@ -320,6 +349,7 @@ public class GFConfig {
   public int getSpartiLifespan() { return spartiLifespan; }
   public boolean isStunningNerf() { return nerfStunning; }
   public boolean isParalysisNerf() { return nerfParalysis; }
+  public boolean isPalladiumEnabled() { return palladiumEnabled; }
   public int getPalladiumRefreshInterval() { return palladiumRefreshInterval; }
   public int getPalladiumChunkRange() { return palladiumChunkRange; }
   public int getPalladiumYRange() { return palladiumYRange; }
