@@ -8,6 +8,7 @@ __Key:__
 
 - _ Summoning animation not playing on dedicated server (Geryon, Sparti)
 - _ Structure gen is jenky (check *all* corner blocks)
+- _ Config option for Satyrs to light campfires
 - _ Config option to not slowly deplete winged sandals
 - _ Config option for winged sandals to enable flight
 
@@ -49,7 +50,8 @@ __Key:__
 ## Entity AI
 
 - X Python spits poison
-- X Charybdis swirls target entities
+- X Talos shoots arrows
+- X Charybdis swirls entities
 - X Charybdis throws entities
 - _ Stymphalian birds throw feathers that do damage
 - X Dryads hide in trees
