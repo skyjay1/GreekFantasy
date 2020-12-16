@@ -133,7 +133,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   @Override
   protected ActionResultType func_230254_b_(final PlayerEntity player, final Hand hand) { // processInteract
     ItemStack stack = player.getHeldItem(hand);
-    if(stack.getItem() == TRADE_ITEM.get()) {
+    if(this.isNoneState() && stack.getItem() == TRADE_ITEM.get()) {
       this.setState(STATE_TRADING);
       // reduce stack size
       if(!player.isCreative()) {
@@ -266,6 +266,8 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   
   public byte getState() { return this.getDataManager().get(STATE).byteValue(); }
   
+  public boolean isNoneState() { return getState() == STATE_NONE; }
+  
   public boolean isTrading() { return getState() == STATE_TRADING; }
   
   public boolean isDespawning() { return getState() == STATE_DESPAWNING; }
@@ -278,7 +280,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
     switch(state) {
     case STATE_TRADING: return 1.0F;
     case STATE_DESPAWNING: return 1.0F - getDespawnPercent(partialTick);
-    default:
+    case STATE_NONE: default:
       final float minAlpha = 0.14F;
       final float cosAlpha = 0.5F + 0.5F * MathHelper.cos((this.getEntityId() + this.ticksExisted + partialTick) * 0.025F);
       return MathHelper.clamp(cosAlpha, minAlpha, 1.0F);

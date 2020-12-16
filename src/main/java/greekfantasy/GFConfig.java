@@ -33,6 +33,7 @@ public class GFConfig {
   private final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
   private final ForgeConfigSpec.IntValue SWINE_WAND_COOLDOWN;
   private final ForgeConfigSpec.IntValue SWINE_WAND_DURATION;
+  private final ForgeConfigSpec.BooleanValue WINGED_SANDALS_DEPLETE;
   private boolean helmHidesArmor;
   private boolean dragonToothSpawnsSparti;
   private boolean swordOfHuntBypassesArmor;
@@ -45,6 +46,7 @@ public class GFConfig {
   private int bagOfWindDuration;
   private int swineWandCooldown;
   private int swineWandDuration;
+  private boolean wingedSandalsDeplete;
 
   // effect configs
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
@@ -75,10 +77,9 @@ public class GFConfig {
   public final ForgeConfigSpec.BooleanValue SHADE_ATTACK;
   public final ForgeConfigSpec.BooleanValue SATYR_ATTACK;
   public final ForgeConfigSpec.BooleanValue SIREN_ATTACK;
-  
-  // other special entity abilities
   public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
   public final ForgeConfigSpec.BooleanValue GERYON_RESISTANCE;
+  public final ForgeConfigSpec.BooleanValue SATYR_LIGHTS_CAMPFIRES;
   public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
   private final ForgeConfigSpec.BooleanValue DRYAD_ANGRY_ON_HARVEST;
   private final ForgeConfigSpec.IntValue DRYAD_ANGRY_RANGE;
@@ -136,8 +137,9 @@ public class GFConfig {
         .define("sword_of_hunt_bypasses_armor", true);
     CONCH_ENABLED = builder.comment("Whether the Conch can place/remove water")
         .define("conch_enabled", true);
-    CONCH_COOLDOWN = builder.comment("Cooldown time after using the conch")
-        .defineInRange("conch_cooldown", 10, 0, 100);
+    CONCH_COOLDOWN = builder.defineInRange("conch_cooldown", 10, 0, 100);
+    WINGED_SANDALS_DEPLETE = builder.comment("Whether the Winged Sandals slowly lose durability")
+        .define("winged_sandals_deplete", false);
     HEALING_ROD_COOLDOWN = builder.defineInRange("healing_rod_cooldown", 35, 0, 100);
     HEALING_ROD_DURABILITY = builder.defineInRange("healing_rod_durability", 384, 1, 4000);
     THUNDERBOLT_STORMS_ONLY = builder.comment("Whether the Thunderbolt can only be used during storms")
@@ -157,18 +159,17 @@ public class GFConfig {
         .define("stun_prevents_jump", true);
     STUN_PREVENTS_USE = builder.comment("When stunned, players are prevented from using items")
         .define("stun_prevents_use", true);
-    OVERSTEP_ENABLED = builder.comment("Whether 'overstep' enchantment can modify player step height")
-        .define("enable_overstep", true);
-    SMASHING_ENABLED = builder.comment("Whether 'smashing' enchantment can be used")
-        .define("enable_smashing", true);
-    HUNTING_ENABLED = builder.comment("Whether 'hunting' enchantment can be used")
-        .define("enable_hunting", true);
-    MIRROR_ENABLED = builder.comment("Whether 'mirror' enchantment can be used")
-        .define("enable_mirror", true);
-    SWINE_ENABLED = builder.comment("Whether 'swine' effect can be used")
-        .define("enable_swine", true);
+    OVERSTEP_ENABLED = builder.define("enable_overstep_enchantment", true);
+    SMASHING_ENABLED = builder.define("enable_smashing_enchantment", true);
+    HUNTING_ENABLED = builder.define("enable_hunting_enchantment", true);
+    MIRROR_ENABLED = builder.define("enable_mirror_enchantment", true);
+    SWINE_ENABLED = builder.define("enable_swine_effect", true);
     SWINE_DROPS_ARMOR = builder.comment("Whether players under the swine effect drop their armor")
         .define("swine_drops_armor", true);
+    NERF_STUNNING = builder.comment("When true, replaces stunning with Slowness I and Weakness I")
+        .define("nerf_stunning", false);
+    NERF_PARALYSIS = builder.comment("When true, replaces paralysis with Slowness II and Weakness II")
+        .define("nerf_paralysis", false);
     builder.pop();
     // potion effects
     builder.push("potions");
@@ -197,14 +198,12 @@ public class GFConfig {
         .define("gigante_resistance", true);
     GERYON_RESISTANCE = builder.comment("Whether the Geryon has damage resistance")
         .define("geryon_resistance", true);
+    SATYR_LIGHTS_CAMPFIRES = builder.comment("Whether the Satyr can light unlit campfires")
+        .define("satyr_lights_campfires", true);
     SHADE_PLAYER_ONLY = builder.comment("Whether shades that spawn when a player dies can only be killed by that player")
         .define("shade_player_only", true);
     SPARTI_LIFESPAN = builder.comment("Number of seconds until the Sparti begins taking damage")
         .defineInRange("sparti_lifespan", 300, 1, 8000);
-    NERF_STUNNING = builder.comment("When true, replaces stunning with Slowness I and Weakness I")
-        .define("nerf_stunning", false);
-    NERF_PARALYSIS = builder.comment("When true, replaces paralysis with Slowness II and Weakness II")
-        .define("nerf_paralysis", false);
     builder.pop();
     // mob spawn specials
     builder.push("mob_spawn_specials"); 
@@ -227,7 +226,7 @@ public class GFConfig {
         .defineInRange("palladium_refresh_interval", 110, 2, 1000);
     PALLADIUM_CHUNK_RANGE = builder.comment("The radius (in chunks) of the area protected by Palladium blocks (0=same chunk only)")
         .defineInRange("palladium_chunk_range", 1, 0, 3);
-    PALLADIUM_Y_RANGE = builder.comment("The vertical area protected by Palladium blocks, if enabled")
+    PALLADIUM_Y_RANGE = builder.comment("The vertical area (in blocks) protected by Palladium blocks")
         .defineInRange("palladium_y_range", 128, 0, 255);
     builder.pop();
     // mob spawns
@@ -295,6 +294,7 @@ public class GFConfig {
     bagOfWindCooldown = BAG_OF_WIND_COOLDOWN.get();
     swineWandDuration = SWINE_WAND_DURATION.get();
     swineWandCooldown = SWINE_WAND_COOLDOWN.get();
+    wingedSandalsDeplete = WINGED_SANDALS_DEPLETE.get();
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
@@ -322,6 +322,7 @@ public class GFConfig {
   public boolean doesHelmHideArmor() { return helmHidesArmor; }
   public boolean doesDragonToothSpawnSparti() { return dragonToothSpawnsSparti; }
   public boolean doesSwordOfHuntBypassArmor() { return swordOfHuntBypassesArmor; }
+  public boolean doesWingedSandalsDeplete() { return wingedSandalsDeplete; }
   public int getHealingRodCooldown() { return healingRodCooldown; }
   public boolean isThunderboltStormsOnly() { return thunderboltStormsOnly; }
   public int getThunderboltCooldown() { return thunderboltCooldown; }

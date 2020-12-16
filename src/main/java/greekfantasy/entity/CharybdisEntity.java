@@ -49,7 +49,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   private static final String KEY_STATE = "CharybdisState";
   // bytes to use in STATE
   private static final byte NONE = (byte)0;
-  private static final byte SPAWNING = (byte)1;
+//  private static final byte SPAWNING = (byte)1;
   private static final byte SWIRLING = (byte)2;
   private static final byte THROWING = (byte)4;
   
@@ -60,7 +60,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
  
   private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.BLUE, BossInfo.Overlay.PROGRESS));
   
-  private int spawnTime;
+//  private int spawnTime;
   private int swirlTime;
   private int throwTime;
   
@@ -86,7 +86,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 14.0D) // TODO change this before release
+        .createMutableAttribute(Attributes.MAX_HEALTH, 60.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.29D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
@@ -103,23 +103,22 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(1, new CharybdisEntity.SwimToSurfaceGoal());
-    this.goalSelector.addGoal(2, new CharybdisEntity.SwirlGoal(SWIRL_TIME, 84, RANGE)); // TODO cooldown = 240
-    this.goalSelector.addGoal(3, new CharybdisEntity.ThrowGoal(THROW_TIME, 82, RANGE * 0.75D)); // TODO cooldown = 220
+    this.goalSelector.addGoal(2, new CharybdisEntity.SwirlGoal(SWIRL_TIME, 114, RANGE));
+    this.goalSelector.addGoal(3, new CharybdisEntity.ThrowGoal(THROW_TIME, 82, RANGE * 0.75D));
   }
   
   @Override
   public void livingTick() {
 
     super.livingTick();
-//    this.setPosition(this.prevPosX, this.getPosY(), this.prevPosZ);
-
+    
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
     
     // spawn particles
     if(this.world.isRemote() && ticksExisted % 3 == 0 && this.isInWaterOrBubbleColumn()/* && isSwirling()*/) {
       // spawn particles at targeted entities
-      getEntitiesInRange(RANGE).forEach(e -> bubbles(e.getPosX(), e.getPosY(), e.getPosZ(), e.getWidth(), 5));;
+      getEntitiesInRange(RANGE).forEach(e -> bubbles(e.getPosX(), e.getPosY(), e.getPosZ(), e.getWidth(), 5));
       // spawn particles in spiral
       float maxY = this.getHeight() * 1.65F;
       float y = 0;
@@ -161,7 +160,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   public boolean isNonBoss() { return false; }
   
   @Override
-  public boolean canDespawn(final double disToPlayer) { return this.ticksExisted > 11000 && disToPlayer > 128.0D; }
+  public boolean canDespawn(final double disToPlayer) { return this.ticksExisted > 11000 && disToPlayer > 64.0D; }
   
   @Override
   protected boolean canBeRidden(Entity entityIn) { return false; }
@@ -173,6 +172,8 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
   @Override
   protected void updateAir(int air) { }
+  
+  // Prevent entity collisions //
   
   @Override
   public boolean canBePushed() { return false; }

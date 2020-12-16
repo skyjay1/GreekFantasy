@@ -120,18 +120,21 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     this.goalSelector.addGoal(2, new SatyrEntity.DancingGoal(0.75D, 880));
     this.goalSelector.addGoal(3, new SatyrEntity.PanicGoal(this, 1.3D));
     this.goalSelector.addGoal(4, new SatyrEntity.StartDancingGoal(0.9D, 22, 12, 420));
-    this.goalSelector.addGoal(4, new SatyrEntity.LightCampfireGoal(0.9D, 12, 10, 60, 500));
-    this.goalSelector.addGoal(4, new RandomWalkingGoal(this, 0.8D, 160) {
+    this.goalSelector.addGoal(6, new RandomWalkingGoal(this, 0.8D, 160) {
       @Override
       public boolean shouldExecute() { 
         return SatyrEntity.this.isIdleState() && SatyrEntity.this.getAttackTarget() == null && super.shouldExecute(); 
       }
     });
-    this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(7, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
     this.targetSelector.addGoal(3, new ResetAngerGoal<>(this, true));
+    // configurable goals
+    if(GreekFantasy.CONFIG.SATYR_LIGHTS_CAMPFIRES.get()) {
+      this.goalSelector.addGoal(5, new SatyrEntity.LightCampfireGoal(0.9D, 12, 10, 60, 500));
+    }
   }
   
   @Override

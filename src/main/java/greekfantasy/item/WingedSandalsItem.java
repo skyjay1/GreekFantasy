@@ -97,7 +97,8 @@ public class WingedSandalsItem extends ArmorItem {
       final LivingEntity entity = (LivingEntity)entityIn;
       entity.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 20, 4, false, false, false));
       entity.fallDistance = 0;
-      if(entity.getRNG().nextInt(40) == 0) {
+      if(GreekFantasy.CONFIG.doesWingedSandalsDeplete()  && entity.getRNG().nextInt(40) == 0
+          && (!(entity instanceof PlayerEntity) || !entity.isSpectator() && !((PlayerEntity)entity).isCreative())) {
         stack.damageItem(1, entity, (e) -> e.sendBreakAnimation(EquipmentSlotType.MAINHAND));
       }
     }

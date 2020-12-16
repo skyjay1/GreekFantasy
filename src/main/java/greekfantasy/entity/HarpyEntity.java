@@ -120,14 +120,20 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
   }
   
   @Override
-  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_PARROT_AMBIENT; }
+  protected SoundEvent getAmbientSound() {
+    return rand.nextFloat() < 0.18F ? SoundEvents.ENTITY_WITCH_AMBIENT : SoundEvents.ENTITY_PARROT_AMBIENT;
+  }
 
   @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_PARROT_HURT; }
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+    return rand.nextFloat() < 0.09F ? SoundEvents.ENTITY_WITCH_HURT : SoundEvents.ENTITY_PARROT_HURT;
+  }
 
   @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_GHAST_DEATH; }
-  
+  protected SoundEvent getDeathSound() {
+    return SoundEvents.ENTITY_GHAST_DEATH;
+  }
+
   @Override
   protected float getSoundVolume() { return 0.8F; }
   

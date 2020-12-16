@@ -76,7 +76,7 @@ public class CerberusEntity extends CreatureEntity {
         .createMutableAttribute(Attributes.MAX_HEALTH, 120.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.26D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 8.0D);
   }
   
   public static CerberusEntity spawnCerberus(final World world, final Vector3d pos) {
