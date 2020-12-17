@@ -40,7 +40,7 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.26D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.5D)
         .createMutableAttribute(Attributes.FLYING_SPEED, 1.28D);
   }
   

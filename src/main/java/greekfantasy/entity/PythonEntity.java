@@ -65,7 +65,7 @@ public class PythonEntity extends MonsterEntity {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 70.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.31D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.0D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.5D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D);
   }

@@ -58,7 +58,7 @@ public class MinotaurEntity extends MonsterEntity {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.0D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.5D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.25D);
   }
   

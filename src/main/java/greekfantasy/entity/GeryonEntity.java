@@ -97,7 +97,7 @@ public class GeryonEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.21D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.98D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 5.0D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT);
   }
   

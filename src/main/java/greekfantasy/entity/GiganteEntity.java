@@ -66,7 +66,7 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.22D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.9D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.2D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 5.5D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.65D);
   }
   

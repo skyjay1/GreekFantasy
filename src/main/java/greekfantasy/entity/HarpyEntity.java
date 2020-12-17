@@ -57,7 +57,7 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.22D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.0D)
         .createMutableAttribute(Attributes.FLYING_SPEED, 1.29D);
   }
   

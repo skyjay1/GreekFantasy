@@ -99,7 +99,7 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.0D);
   }
 
   public static boolean canNaiadSpawnOn(EntityType<? extends WaterMobEntity> entity, IWorld world, SpawnReason reason, BlockPos pos,

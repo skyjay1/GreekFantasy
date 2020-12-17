@@ -81,7 +81,7 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.21D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 10.0D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 9.0D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.75D);
   }
   

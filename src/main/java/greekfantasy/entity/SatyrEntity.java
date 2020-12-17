@@ -103,7 +103,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.0D);
   }
   
   @Override

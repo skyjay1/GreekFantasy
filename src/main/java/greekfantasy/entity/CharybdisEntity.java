@@ -88,7 +88,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 60.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.29D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D);
   }
@@ -392,8 +392,9 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
         final double horizDisSq = dx * dx + dz * dz;
         if(entity.getBoundingBox().intersects(e.getBoundingBox())) {
           // damage the entity and steal some health
-          if(e.attackEntityFrom(DamageSource.causeMobDamage(entity), 2.0F)) {
-            entity.heal(0.5F);
+          final float attack = (float)entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
+          if(e.attackEntityFrom(DamageSource.causeMobDamage(entity), attack)) {
+            entity.heal(attack * 0.25F);
           }
         } else {
           // move the target toward this entity

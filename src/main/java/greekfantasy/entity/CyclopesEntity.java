@@ -43,7 +43,7 @@ public class CyclopesEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.5D);
   }
   
