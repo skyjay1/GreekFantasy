@@ -96,6 +96,7 @@ public final class GFRegistry {
   public static EntityType<DryadEntity> DRYAD_ENTITY = buildEntityType(DryadEntity::new, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<ElpisEntity> ELPIS_ENTITY = buildEntityType(ElpisEntity::new, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, b -> b.immuneToFire());
   public static EntityType<EmpusaEntity> EMPUSA_ENTITY = buildEntityType(EmpusaEntity::new, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<ErymanthianEntity> ERYMANTHIAN_ENTITY = buildEntityType(ErymanthianEntity::new, "erymanthian", 2.653F, 2.66F, EntityClassification.CREATURE, b -> b.immuneToFire());
   public static EntityType<FuryEntity> FURY_ENTITY = buildEntityType(FuryEntity::new, "fury", 0.67F, 1.4F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<GeryonEntity> GERYON_ENTITY = buildEntityType(GeryonEntity::new, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<GiganteEntity> GIGANTE_ENTITY = buildEntityType(GiganteEntity::new, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, b -> {});
@@ -270,6 +271,7 @@ public final class GFRegistry {
     registerEntityType(event, DRYAD_ENTITY, DryadEntity::getAttributes, DryadEntity::canSpawnOn);
     registerEntityType(event, ELPIS_ENTITY, ElpisEntity::getAttributes, null);
     registerEntityType(event, EMPUSA_ENTITY, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight);
+    registerEntityType(event, ERYMANTHIAN_ENTITY, ErymanthianEntity::getAttributes, ErymanthianEntity::canSpawnOn);
     registerEntityType(event, FURY_ENTITY, FuryEntity::getAttributes, FuryEntity::canSpawnOn);
     registerEntityType(event, GERYON_ENTITY, GeryonEntity::getAttributes, null);
     registerEntityType(event, GIGANTE_ENTITY, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn);
@@ -570,7 +572,7 @@ public final class GFRegistry {
    **/
   private static <T extends Entity> EntityType<T> buildEntityType(final IFactory<T> factoryIn, final String name, final float width, final float height, 
       final EntityClassification classification, final Consumer<EntityType.Builder<T>> builderSpecs) {
-    EntityType.Builder<T> entityTypeBuilder = EntityType.Builder.create(factoryIn, classification).size(width, height);
+    EntityType.Builder<T> entityTypeBuilder = EntityType.Builder.create(factoryIn, classification).size(width, height).trackingRange(8);
     builderSpecs.accept(entityTypeBuilder);
     EntityType<T> entityType = entityTypeBuilder.build(name);
     entityType.setRegistryName(MODID, name);

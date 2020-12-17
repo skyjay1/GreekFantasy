@@ -46,6 +46,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DRYAD_ENTITY, DryadRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ELPIS_ENTITY, ElpisRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.EMPUSA_ENTITY, EmpusaRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ERYMANTHIAN_ENTITY, ErymanthianRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.FURY_ENTITY, FuryRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GERYON_ENTITY, GeryonRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GIGANTE_ENTITY, GiganteRenderer::new);

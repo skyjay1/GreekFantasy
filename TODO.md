@@ -39,9 +39,10 @@ __Key:__
 - X X X X Mad Cow (summoned by Geryon)
 - X X X X Boss: Cerberus
 - X X X X Boss: Geryon (3-headed Gigante)
-- X X X X Boss: Python
 - X X X X Boss: Charybdis
 - X X X X Boss: Talos
+- X X X X Miniboss: Python
+- ~ _ X _ Miniboss: Erymanthian (TODO: 2x res texture)
 - X X X _ Fury (TODO: improve texture)
 - _ _ _ _ Makhai (6 arms)
 - _ _ _ _ Eurynomos (blue skin; vulture head?)
