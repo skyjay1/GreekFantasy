@@ -5,11 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.google.common.collect.ImmutableList;
-
 import java.util.Optional;
 import java.util.TreeMap;
+
+import com.google.common.collect.ImmutableList;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GFWorldGen;
@@ -17,6 +16,7 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.DryadEntity;
+import greekfantasy.entity.ErymanthianEntity;
 import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.network.SPanfluteSongPacket;
@@ -27,6 +27,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.HoglinEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.RabbitEntity;
@@ -34,6 +35,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EntityPredicates;
@@ -45,6 +47,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -168,6 +171,27 @@ public class CommonForgeEventHandler {
       // note: PlayerInteractEvent has several children but we receive and cancel all of the ones that can be cancelled
       if(event.isCancelable()) {
         event.setCanceled(true);
+      }
+    }
+  }
+  
+  
+  /**
+   * Used to convert hoglin entities to erymanthian entities
+   * @param event a PlayerInteractEvent.EntityInteract event
+   **/
+  @SubscribeEvent
+  public static void onPlayerInteract(final PlayerInteractEvent.EntityInteract event) {
+    // when player uses poisonous potato on adult hoglin
+    if(event.getTarget().getType() == EntityType.HOGLIN && event.getTarget() instanceof HoglinEntity 
+        && event.getWorld() instanceof ServerWorld && event.getItemStack().getItem() == Items.POISONOUS_POTATO) {
+      final HoglinEntity hoglin = (HoglinEntity)event.getTarget();
+      if(!hoglin.isChild()) {
+        // spawn erymanthian and shrink the item stack
+        ErymanthianEntity.spawnErymanthian((ServerWorld)event.getWorld(), hoglin);
+        if(!event.getPlayer().isCreative()) {
+          event.getItemStack().shrink(1);
+        }
       }
     }
   }
