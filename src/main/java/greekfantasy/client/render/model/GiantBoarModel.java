@@ -3,15 +3,15 @@ package greekfantasy.client.render.model;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import greekfantasy.entity.ErymanthianEntity;
+import greekfantasy.entity.GiantBoarEntity;
 import net.minecraft.client.renderer.entity.model.BoarModel;
 
-public class ErymanthianModel<T extends ErymanthianEntity> extends BoarModel<T> {
+public class GiantBoarModel<T extends GiantBoarEntity> extends BoarModel<T> {
   
   private float colorAlpha = 1.0F;
 
 
-  public ErymanthianModel() {
+  public GiantBoarModel() {
     super();    
   }
   

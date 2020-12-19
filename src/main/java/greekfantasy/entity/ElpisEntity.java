@@ -1,11 +1,13 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
@@ -23,7 +25,6 @@ import net.minecraft.entity.passive.IFlyingAnimal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -33,8 +34,10 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
@@ -46,6 +49,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags.IOptionalNamedTag;
 
 public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   private static final DataParameter<Byte> STATE = EntityDataManager.createKey(ElpisEntity.class, DataSerializers.BYTE);
@@ -54,7 +58,9 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   private static final String KEY_AGE = "ElpisAge";
   private static final String KEY_DESPAWN_TIMER = "DespawnTimer";
   
-  private static final Supplier<Item> TRADE_ITEM = () -> Items.DIAMOND;
+  protected static final IOptionalNamedTag<Item> ELPIS_TRADE = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "elpis_trade"));
+  
+  private static final Predicate<Item> TRADE_ITEM = i -> ELPIS_TRADE.contains(i);
   private static final Supplier<ItemStack> TRADE_RESULT = () -> new ItemStack(GFRegistry.ICHOR);
   public static final int wanderDistance = 8;
   private static final int maxAge = 4800;
@@ -118,9 +124,12 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
       }
     }
    
-    // spawn particles when trading
-    if (this.isTrading() && rand.nextInt(5) == 0) {
+    if (this.isTrading()) {
+      // spawn particles when trading
       spawnParticle(ParticleTypes.HAPPY_VILLAGER, false);
+    } else if(TRADE_ITEM.test(this.getHeldItem(Hand.OFF_HAND).getItem())) {
+      // update held item when done trading
+      this.setHeldItem(Hand.OFF_HAND, ItemStack.EMPTY);
     }
   }
 
@@ -133,8 +142,10 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   @Override
   protected ActionResultType func_230254_b_(final PlayerEntity player, final Hand hand) { // processInteract
     ItemStack stack = player.getHeldItem(hand);
-    if(this.isNoneState() && stack.getItem() == TRADE_ITEM.get()) {
+    if(this.isNoneState() && TRADE_ITEM.test(stack.getItem())) {
       this.setState(STATE_TRADING);
+      // copy itemstack and set held item
+      this.setHeldItem(Hand.OFF_HAND, new ItemStack(stack.getItem()));
       // reduce stack size
       if(!player.isCreative()) {
         stack.shrink(1);
@@ -210,7 +221,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   
   @Override
   public boolean canDespawn(final double disToPlayer) {
-    return this.age > maxAge && disToPlayer > 8.0D;
+    return this.age > maxAge && disToPlayer > 12.0D;
   }
   
   @Override
@@ -254,14 +265,6 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   
   public void setState(final byte state) { 
     this.getDataManager().set(STATE, state); 
-    // update trading
-    if(state == STATE_TRADING) {
-      if(this.getHeldItem(Hand.OFF_HAND).isEmpty()) {
-        this.setHeldItem(Hand.OFF_HAND, new ItemStack(TRADE_ITEM.get()));
-      }
-    } else if(this.getHeldItem(Hand.OFF_HAND).getItem() == TRADE_ITEM.get()) {
-      this.setHeldItem(Hand.OFF_HAND, ItemStack.EMPTY);
-    }
   }
   
   public byte getState() { return this.getDataManager().get(STATE).byteValue(); }

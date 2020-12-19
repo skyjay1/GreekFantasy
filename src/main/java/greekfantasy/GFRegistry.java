@@ -6,15 +6,50 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import greekfantasy.block.*;
-import greekfantasy.effect.*;
-import greekfantasy.enchantment.*;
+import greekfantasy.block.CappedPillarBlock;
+import greekfantasy.block.IchorInfusedBlock;
+import greekfantasy.block.MobHeadBlock;
+import greekfantasy.block.MysteriousBoxBlock;
+import greekfantasy.block.NestBlock;
+import greekfantasy.block.OliveTree;
+import greekfantasy.block.OrthusHeadBlock;
+import greekfantasy.block.ReedsBlock;
+import greekfantasy.block.StatueBlock;
+import greekfantasy.block.VaseBlock;
+import greekfantasy.block.WildRoseBlock;
+import greekfantasy.effect.MirrorEffect;
+import greekfantasy.effect.StunnedEffect;
+import greekfantasy.effect.SwineEffect;
+import greekfantasy.enchantment.HuntingEnchantment;
+import greekfantasy.enchantment.MirrorEnchantment;
+import greekfantasy.enchantment.OverstepEnchantment;
+import greekfantasy.enchantment.SmashingEnchantment;
 import greekfantasy.entity.*;
-import greekfantasy.entity.misc.*;
+import greekfantasy.entity.misc.DragonToothEntity;
+import greekfantasy.entity.misc.HealingSpellEntity;
+import greekfantasy.entity.misc.OrthusHeadItemEntity;
+import greekfantasy.entity.misc.PoisonSpitEntity;
+import greekfantasy.entity.misc.SwineSpellEntity;
 import greekfantasy.gui.StatueContainer;
-import greekfantasy.item.*;
-import greekfantasy.tileentity.*;
+import greekfantasy.item.BagOfWindItem;
+import greekfantasy.item.ClubItem;
+import greekfantasy.item.ConchItem;
+import greekfantasy.item.DragonToothItem;
+import greekfantasy.item.FlintKnifeItem;
+import greekfantasy.item.HealingRodItem;
+import greekfantasy.item.HelmOfDarknessItem;
+import greekfantasy.item.IvorySwordItem;
+import greekfantasy.item.MobHeadItem;
+import greekfantasy.item.OrthusHeadItem;
+import greekfantasy.item.PanfluteItem;
+import greekfantasy.item.SwineWandItem;
+import greekfantasy.item.ThunderboltItem;
+import greekfantasy.item.UnicornHornItem;
+import greekfantasy.item.WingedSandalsItem;
+import greekfantasy.tileentity.MobHeadTileEntity;
 import greekfantasy.tileentity.MobHeadTileEntity.HeadType;
+import greekfantasy.tileentity.StatueTileEntity;
+import greekfantasy.tileentity.VaseTileEntity;
 import greekfantasy.util.StatuePose;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -50,7 +85,6 @@ import net.minecraft.item.ItemTier;
 import net.minecraft.item.Items;
 import net.minecraft.item.Rarity;
 import net.minecraft.item.SpawnEggItem;
-import net.minecraft.item.SwordItem;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.BasicParticleType;
@@ -96,9 +130,9 @@ public final class GFRegistry {
   public static EntityType<DryadEntity> DRYAD_ENTITY = buildEntityType(DryadEntity::new, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<ElpisEntity> ELPIS_ENTITY = buildEntityType(ElpisEntity::new, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, b -> b.immuneToFire());
   public static EntityType<EmpusaEntity> EMPUSA_ENTITY = buildEntityType(EmpusaEntity::new, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
-  public static EntityType<ErymanthianEntity> ERYMANTHIAN_ENTITY = buildEntityType(ErymanthianEntity::new, "erymanthian", 2.653F, 2.66F, EntityClassification.CREATURE, b -> b.immuneToFire());
   public static EntityType<FuryEntity> FURY_ENTITY = buildEntityType(FuryEntity::new, "fury", 0.67F, 1.4F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<GeryonEntity> GERYON_ENTITY = buildEntityType(GeryonEntity::new, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<GiantBoarEntity> GIANT_BOAR_ENTITY = buildEntityType(GiantBoarEntity::new, "giant_boar", 2.653F, 2.66F, EntityClassification.CREATURE, b -> b.immuneToFire());
   public static EntityType<GiganteEntity> GIGANTE_ENTITY = buildEntityType(GiganteEntity::new, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, b -> {});
   public static EntityType<GorgonEntity> GORGON_ENTITY = buildEntityType(GorgonEntity::new, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
   public static EntityType<HarpyEntity> HARPY_ENTITY = buildEntityType(HarpyEntity::new, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, b -> {});
@@ -148,6 +182,8 @@ public final class GFRegistry {
   public static final Item PURIFIED_SNAKESKIN = null;
   @ObjectHolder("styxian_shard")
   public static final Item STYXIAN_SHARD = null;
+  @ObjectHolder("boar_ear")
+  public static final Item BOAR_EAR = null;
   
   @ObjectHolder("reeds")
   public static final Block REEDS = null;
@@ -246,6 +282,10 @@ public final class GFRegistry {
   public static final Potion MIRROR_POTION = null;
   @ObjectHolder("long_mirror")
   public static final Potion LONG_MIRROR_POTION = null;
+  @ObjectHolder("swine")
+  public static final Potion SWINE_POTION = null;
+  @ObjectHolder("long_swine")
+  public static final Potion LONG_SWINE_POTION = null;
   
   @ObjectHolder("gorgon_face")
   public static final BasicParticleType GORGON_PARTICLE = new BasicParticleType(true);
@@ -271,9 +311,9 @@ public final class GFRegistry {
     registerEntityType(event, DRYAD_ENTITY, DryadEntity::getAttributes, DryadEntity::canSpawnOn);
     registerEntityType(event, ELPIS_ENTITY, ElpisEntity::getAttributes, null);
     registerEntityType(event, EMPUSA_ENTITY, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight);
-    registerEntityType(event, ERYMANTHIAN_ENTITY, ErymanthianEntity::getAttributes, ErymanthianEntity::canSpawnOn);
     registerEntityType(event, FURY_ENTITY, FuryEntity::getAttributes, FuryEntity::canSpawnOn);
     registerEntityType(event, GERYON_ENTITY, GeryonEntity::getAttributes, null);
+    registerEntityType(event, GIANT_BOAR_ENTITY, GiantBoarEntity::getAttributes, null);
     registerEntityType(event, GIGANTE_ENTITY, GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn);
     registerEntityType(event, GORGON_ENTITY, GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn);
     registerEntityType(event, HARPY_ENTITY, HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn);
@@ -382,7 +422,7 @@ public final class GFRegistry {
     event.getRegistry().registerAll(
         new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
           .setRegistryName(MODID, "panflute"),
-        new SwordItem(ItemTier.WOOD, 3, -2.0F, new Item.Properties().group(GREEK_GROUP))
+        new FlintKnifeItem(ItemTier.WOOD, 3, -2.0F, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "flint_knife"),
         new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "iron_club"),
@@ -390,6 +430,8 @@ public final class GFRegistry {
           .setRegistryName(MODID, "stone_club"),
         new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "wooden_club"),
+        new IvorySwordItem(ItemTier.IRON, 4, -2.35F, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "ivory_sword"),
         new ConchItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP))
           .setRegistryName(MODID, "conch"),
         new Item(new Item.Properties().group(GREEK_GROUP))
@@ -414,7 +456,11 @@ public final class GFRegistry {
             .maxDamage(GreekFantasy.CONFIG.SWINE_WAND_DURABILITY.get()))
           .setRegistryName(MODID, "swine_wand"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(MODID, "horn"));
+          .setRegistryName(MODID, "horn"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "boar_ear"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "boar_tusk"));
     
     event.getRegistry().registerAll(
         new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
@@ -482,6 +528,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, ELPIS_ENTITY, 0xe7aae4, 0xeeeeee);
     registerSpawnEgg(event, EMPUSA_ENTITY, 0x222222, 0x83251f);
     registerSpawnEgg(event, FURY_ENTITY, 0xbd4444, 0x6c2426);
+    registerSpawnEgg(event, GIANT_BOAR_ENTITY, 0x5b433a, 0xe8a074);
     registerSpawnEgg(event, GIGANTE_ENTITY, 0xd3dba7, 0x6a602b);
     registerSpawnEgg(event, GORGON_ENTITY, 0xb6b6b6, 0x398046);
     registerSpawnEgg(event, HARPY_ENTITY, 0x724e36, 0x332411);
@@ -512,7 +559,9 @@ public final class GFRegistry {
     GreekFantasy.LOGGER.debug("registerPotions");
     event.getRegistry().registerAll(
         new Potion(new EffectInstance(MIRROR_EFFECT, 3600)).setRegistryName(MODID, "mirror"),
-        new Potion("mirror", new EffectInstance(MIRROR_EFFECT, 9600)).setRegistryName(MODID, "long_mirror")
+        new Potion(MODID + ":mirror", new EffectInstance(MIRROR_EFFECT, 9600)).setRegistryName(MODID, "long_mirror"),
+        new Potion(new EffectInstance(SWINE_EFFECT, 3600)).setRegistryName(MODID, "swine"),
+        new Potion(MODID + ":swine", new EffectInstance(SWINE_EFFECT, 9600)).setRegistryName(MODID, "long_swine")
     );
   }
   
@@ -536,25 +585,43 @@ public final class GFRegistry {
   }
   
   public static void finishBrewingRecipes() {
-    // check config settings first
-    if(!GreekFantasy.CONFIG.isMirrorPotionEnabled()) {
-      return;
+    final ItemStack awkward = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), Potions.AWKWARD);
+    // Mirror potion recipes
+    if(GreekFantasy.CONFIG.isMirrorPotionEnabled()) {
+      final ItemStack mirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), MIRROR_POTION);
+      final ItemStack splashMirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), MIRROR_POTION);
+      final ItemStack lingeringMirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), MIRROR_POTION);
+      // Add brewing recipes for Mirror potion
+      BrewingRecipeRegistry.addRecipe(
+          Ingredient.fromStacks(awkward), 
+          Ingredient.fromStacks(new ItemStack(SNAKESKIN)), mirror);
+      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), LONG_MIRROR_POTION));
+      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.GUNPOWDER)), splashMirror);
+      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.DRAGON_BREATH)), lingeringMirror);
+      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(splashMirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), LONG_MIRROR_POTION));
+      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(lingeringMirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), LONG_MIRROR_POTION));
     }
-    final ItemStack mirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), MIRROR_POTION);
-    final ItemStack splashMirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), MIRROR_POTION);
-    final ItemStack lingeringMirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), MIRROR_POTION);
-    // Add brewing recipes for Mirror potion
-    BrewingRecipeRegistry.addRecipe(
-        Ingredient.fromStacks(PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), Potions.AWKWARD)), 
-        Ingredient.fromStacks(new ItemStack(SNAKESKIN)), mirror);
-    BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
-        PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), LONG_MIRROR_POTION));
-    BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.GUNPOWDER)), splashMirror);
-    BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.DRAGON_BREATH)), lingeringMirror);
-    BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(splashMirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
-        PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), LONG_MIRROR_POTION));
-    BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(lingeringMirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
-        PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), LONG_MIRROR_POTION));
+    // Swine potion recipes
+    if(GreekFantasy.CONFIG.isSwinePotionEnabled()) {
+      final ItemStack swine = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), SWINE_POTION);
+      final ItemStack splashSwine = PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), SWINE_POTION);
+      final ItemStack lingeringSwine = PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), SWINE_POTION);
+      // Add brewing recipes for Swine potion
+      BrewingRecipeRegistry.addRecipe(
+          Ingredient.fromStacks(awkward), 
+          Ingredient.fromStacks(new ItemStack(BOAR_EAR)), swine);
+      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(swine), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), LONG_SWINE_POTION));
+      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(swine), Ingredient.fromStacks(new ItemStack(Items.GUNPOWDER)), splashSwine);
+      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(swine), Ingredient.fromStacks(new ItemStack(Items.DRAGON_BREATH)), lingeringSwine);
+      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(splashSwine), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), LONG_SWINE_POTION));
+      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(lingeringSwine), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), LONG_SWINE_POTION));
+    }
   }
 
   // HELPER METHODS //

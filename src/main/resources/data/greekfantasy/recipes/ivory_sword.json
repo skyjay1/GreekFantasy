@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X",
+    "X",
+    "/"
+  ],
+  "key": {
+    "/": {
+      "tag": "forge:rods/wooden"
+    },
+    "X": {
+      "item": "greekfantasy:boar_tusk"
+    }
+  },
+  "result": {
+    "item": "greekfantasy:ivory_sword"
+  }
+}

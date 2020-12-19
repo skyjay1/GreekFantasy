@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.SpawnReason;
@@ -20,6 +21,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
@@ -30,12 +32,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
 import net.minecraft.world.server.ServerWorld;
 
-public class ErymanthianEntity extends HoglinEntity {
+public class GiantBoarEntity extends HoglinEntity {
   
-  private static final DataParameter<Boolean> SPAWNING = EntityDataManager.createKey(ErymanthianEntity.class, DataSerializers.BOOLEAN);
+  private static final DataParameter<Boolean> SPAWNING = EntityDataManager.createKey(GiantBoarEntity.class, DataSerializers.BOOLEAN);
   private static final String KEY_SPAWNING = "Spawning";
   private static final String KEY_SPAWN_TIME = "SpawnTime";
-
   
   private static final int MAX_SPAWN_TIME = 90;
 
@@ -43,10 +44,10 @@ public class ErymanthianEntity extends HoglinEntity {
   
   private int spawnTime;
   
-  public ErymanthianEntity(final EntityType<? extends ErymanthianEntity> type, final World worldIn) {
+  public GiantBoarEntity(final EntityType<? extends GiantBoarEntity> type, final World worldIn) {
     super(type, worldIn);
     this.stepHeight = 1.0F;
-    this.experienceValue = 50;
+    this.experienceValue = 30;
     
   }
   
@@ -59,8 +60,8 @@ public class ErymanthianEntity extends HoglinEntity {
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D);
   }
   
-  public static ErymanthianEntity spawnErymanthian(final ServerWorld world, final HoglinEntity hoglin) {
-    ErymanthianEntity entity = GFRegistry.ERYMANTHIAN_ENTITY.create(world);
+  public static GiantBoarEntity spawnGiantBoar(final ServerWorld world, final HoglinEntity hoglin) {
+    GiantBoarEntity entity = GFRegistry.GIANT_BOAR_ENTITY.create(world);
     entity.copyLocationAndAnglesFrom(hoglin);
     entity.onInitialSpawn(world, world.getDifficultyForLocation(hoglin.getPosition()), SpawnReason.CONVERSION, (ILivingEntityData)null, (CompoundNBT)null);
     if(hoglin.hasCustomName()) {
@@ -69,6 +70,7 @@ public class ErymanthianEntity extends HoglinEntity {
     }
     entity.enablePersistence();
     entity.renderYawOffset = hoglin.renderYawOffset;
+    entity.func_242279_ag(); // setPortalCooldown
     world.addEntity(entity);
     // remove the old hoglin
     hoglin.remove();
@@ -90,7 +92,7 @@ public class ErymanthianEntity extends HoglinEntity {
   @Override
   protected void registerGoals() {
     super.registerGoals();
-    this.goalSelector.addGoal(0, new ErymanthianEntity.SpawningGoal());
+    this.goalSelector.addGoal(0, new GiantBoarEntity.SpawningGoal());
   }
   
   @Override
@@ -100,8 +102,19 @@ public class ErymanthianEntity extends HoglinEntity {
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
     
-    if(spawnTime > 0 && spawnTime++ >= MAX_SPAWN_TIME) {
-      setSpawning(false);
+    if(spawnTime > 0) {
+      // reset attack target
+      this.setAttackTarget(null);
+      // spawn particles
+      final double width = this.getWidth();
+      world.addParticle(ParticleTypes.ENTITY_EFFECT, 
+          this.getPosX() + (rand.nextDouble() - 0.5D) * width, 
+          this.getPosY() + rand.nextDouble(),
+          this.getPosZ() + (rand.nextDouble() - 0.5D) * width, 0.01D, 0.01D, 0.01D);
+      // reset spawning
+      if(spawnTime++ >= MAX_SPAWN_TIME) {
+        setSpawning(false);
+      }
     }
   }
   
@@ -142,15 +155,13 @@ public class ErymanthianEntity extends HoglinEntity {
   }
   
   @Override
-  protected void onGrowingAdult() {
-    this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(6.0D);
-  }
+  protected void onGrowingAdult() { }
   
   @Override
   protected float getSoundVolume() { return 1.5F; }
   
   @Override
-  protected float getSoundPitch() { return 0.54F + rand.nextFloat() * 0.24F; }
+  protected float getSoundPitch() { return 0.62F + rand.nextFloat() * 0.24F; }
 
   // NBT methods //
   
@@ -178,6 +189,15 @@ public class ErymanthianEntity extends HoglinEntity {
   protected void collideWithNearbyEntities() { }
   
   // Boss //
+  
+  @Override
+  public boolean isNonBoss() { return false; }
+  
+  @Override
+  public boolean canDespawn(final double disToPlayer) { return false; }
+  
+  @Override
+  protected boolean canBeRidden(Entity entityIn) { return false; }
 
   @Override
   public void addTrackingPlayer(ServerPlayerEntity player) {
@@ -224,10 +244,10 @@ public class ErymanthianEntity extends HoglinEntity {
     public SpawningGoal() { setMutexFlags(EnumSet.allOf(Goal.Flag.class)); }
 
     @Override
-    public boolean shouldExecute() { return ErymanthianEntity.this.isSpawning(); }
+    public boolean shouldExecute() { return GiantBoarEntity.this.isSpawning(); }
 
     @Override
-    public void tick() { ErymanthianEntity.this.getNavigator().clearPath(); }
+    public void tick() { GiantBoarEntity.this.getNavigator().clearPath(); }
   }
 
 }

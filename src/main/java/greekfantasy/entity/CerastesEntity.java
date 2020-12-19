@@ -69,8 +69,9 @@ import net.minecraftforge.common.Tags.IOptionalNamedTag;
 public class CerastesEntity extends CreatureEntity implements IHasOwner<CerastesEntity> {
   
   protected static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(CerastesEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
-  protected static final ResourceLocation FOOD = new ResourceLocation(GreekFantasy.MODID, "cerastes_food");
   
+  protected static final IOptionalNamedTag<Item> FOOD = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "cerastes_food"));
+
   private static final byte STANDING_START = 4;
   private static final byte STANDING_END = 5;
   private static final byte HIDING_START = 6;
@@ -320,8 +321,7 @@ public class CerastesEntity extends CreatureEntity implements IHasOwner<Cerastes
   
   @Override
   public boolean isTamingItem(final ItemStack item) {
-    IOptionalNamedTag<Item> tag = ItemTags.createOptional(FOOD);
-    return !item.isEmpty() && tag.contains(item.getItem());
+    return !item.isEmpty() && FOOD.contains(item.getItem());
   }
 
   @Override

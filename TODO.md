@@ -8,45 +8,41 @@ __Key:__
 
 - _ Summoning animation not playing on dedicated server (Geryon, Sparti)
 - _ Structure gen is jenky (check *all* corner blocks)
-- X Config option for Satyrs to light campfires
-- X Config option to not slowly deplete winged sandals
 - _ Config option for winged sandals to enable flight
 
 ## Entity basics
 
 __Key:__
-`[Model] [AI] [Sounds] [Loot table]`
+`[Model] [AI] [Sounds] [Loot table] [Spawning]`
 
-- X X _ X Naiad
-- X X _ X Dryad
-- X X _ X Satyr
-- X X _ X Centaur
-- X X X X Cyprian Centaur (bull-head, hostile)
-- X X X X Minotaur
-- X X X X Gorgon (Medusa)
-- X X X X Harpy
-- X X _ ~ Empusa
-- X X X X Shade
-- X X X X Siren (hostile)
-- X X X X Cerastes (ram-horned serpent)
-- X X _ X Ara (Propoetide)
-- X X _ X Cyclopes
-- X X X X Gigante
-- X X X X Unicorn
-- X X X X Orthus (2-headed dog)
-- X X X X Elpis (hope)
-- X X X X Sparti
-- X X X X Mad Cow (summoned by Geryon)
-- X X X X Boss: Cerberus
-- X X X X Boss: Geryon (3-headed Gigante)
-- X X X X Boss: Charybdis
-- X X X X Boss: Talos
-- X X X X Miniboss: Python
-- ~ _ X _ Miniboss: Erymanthian (TODO: 2x res texture)
-- X X X _ Fury (TODO: improve texture)
-- _ _ _ _ Makhai (6 arms)
-- _ _ _ _ Eurynomos (blue skin; vulture head?)
-- _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
+- X X _ X X Naiad
+- X X _ X X Dryad
+- X X _ X X Satyr
+- X X _ X X Centaur
+- X X X X X Cyprian Centaur (bull-head, hostile)
+- X X X X X Minotaur
+- X X X X X Gorgon (Medusa)
+- X X X X X Harpy
+- X X _ ~ X Empusa
+- X X X X X Shade
+- X X X X X Siren (hostile)
+- X X X X X Cerastes (ram-horned serpent)
+- X X _ X X Ara (Propoetide)
+- X X _ X X Cyclopes
+- X X X X X Gigante
+- X X X X X Unicorn
+- X X X X X Orthus (2-headed dog)
+- X X X X X Elpis (hope)
+- X X X X X Sparti
+- X X X X X Mad Cow (summoned by Geryon)
+- X X X X X Boss: Cerberus
+- X X X X X Boss: Geryon (3-headed Gigante)
+- X X X X X Boss: Charybdis
+- X X X X X Boss: Talos
+- X X X X X Miniboss: Python
+- X X X _ ~ Miniboss: Giant Boar
+- X X X _ X Fury (TODO: improve texture)
+- _ _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
 
 ## Entity AI
 
@@ -199,8 +195,10 @@ __Key:__
 
 _Can I do something with these?_
 
+
+- Makhai (6 arms)
+- Eurynomos (blue skin; vulture head?)
 - Arion (very fast horse, tamed with gold)
-- Erymanth Boar
 - Sphinx
 - Hydra
 - Golden Ram (Golden Fleece)
@@ -214,6 +212,9 @@ _Can I do something with these?_
 - Phoenix
 - Pegasus (and bull-like twin, Chrysaor)
 - Werewolf
+- Kyno (dog-head biped; see also "Cynocephaly")
+- Blemmyes (headless biped)
+- Pandos (biped, giant ears)
 - Underworld pomegranate tree
 - Belt of Aphrodite (maybe allows disguise as other player?)
 - Armor of Achilles (Hephaestus; said to be impenetrable)

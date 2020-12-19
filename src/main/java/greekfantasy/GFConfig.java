@@ -68,7 +68,9 @@ public class GFConfig {
   
   // potion configs
   private final ForgeConfigSpec.BooleanValue MIRROR_POTION;
+  private final ForgeConfigSpec.BooleanValue SWINE_POTION;
   private boolean mirrorPotion;
+  private boolean swinePotion;
   
   // special attack configs
   public final ForgeConfigSpec.BooleanValue EMPUSA_ATTACK;
@@ -99,10 +101,12 @@ public class GFConfig {
   private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
   private final ForgeConfigSpec.IntValue ELPIS_SPAWN_CHANCE;
   public final ForgeConfigSpec.IntValue NUM_SPARTI_SPAWNED;
+  private final ForgeConfigSpec.BooleanValue GIANT_BOAR_NON_NETHER;
   private boolean shadeSpawnOnDeath;
   private int satyrShamanChance;
   private int elpisSpawnChance;
   private int numSpartiSpawned;
+  private boolean giantBoarNonNether;
   
   // feature configs
   public final ForgeConfigSpec.IntValue OLIVE_FOREST_BIOME_WEIGHT;
@@ -175,6 +179,8 @@ public class GFConfig {
     builder.push("potions");
     MIRROR_POTION = builder.comment("Whether the Potion of Mirroring can prevent paralysis")
         .define("enable_mirror_potion", true);
+    SWINE_POTION = builder.comment("Whether the Potion of Swine can turn players into pigs")
+        .define("enable_swine_potion", true);
     builder.pop();
     // mob abilities
     builder.push("mob_abilities");
@@ -215,6 +221,8 @@ public class GFConfig {
         .defineInRange("elpis_spawn_chance", 60, 0, 100);
     NUM_SPARTI_SPAWNED = builder.comment("Number of Sparti spawned by using a dragon tooth")
         .defineInRange("num_sparti_spawned", 1, 1, 8);
+    GIANT_BOAR_NON_NETHER = builder.comment("Whether a hoglin must be outside of the nether to be turned to a Giant Boar")
+        .define("giant_boar_non_nether", true);
     builder.pop();
     // other
     builder.push("other");
@@ -304,10 +312,12 @@ public class GFConfig {
     swineEnabled = SWINE_ENABLED.get();
     swineDropsArmor = SWINE_DROPS_ARMOR.get();
     mirrorPotion = MIRROR_POTION.get();
+    swinePotion = SWINE_POTION.get();
     shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
     elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
     numSpartiSpawned = NUM_SPARTI_SPAWNED.get();
+    giantBoarNonNether = GIANT_BOAR_NON_NETHER.get();
     dryadAngryOnHarvest = DRYAD_ANGRY_ON_HARVEST.get();
     dryadAngryRange = DRYAD_ANGRY_RANGE.get();
     spartiLifespan = SPARTI_LIFESPAN.get();
@@ -341,10 +351,12 @@ public class GFConfig {
   public boolean isSwineEnabled() { return swineEnabled; }
   public boolean doesSwineDropArmor() { return swineDropsArmor; }
   public boolean isMirrorPotionEnabled() { return mirrorPotion; }
+  public boolean isSwinePotionEnabled() { return swinePotion; }
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
   public int getSatyrShamanChance() { return satyrShamanChance; }
   public int getElpisSpawnChance() { return elpisSpawnChance; }
   public int getNumSpartiSpawned() { return numSpartiSpawned; }
+  public boolean getGiantBoarNonNether() { return giantBoarNonNether; }
   public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }
   public int getDryadAngryRange() { return dryadAngryRange; }
   public int getSpartiLifespan() { return spartiLifespan; }

@@ -6,24 +6,24 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.render.model.ErymanthianModel;
-import greekfantasy.entity.ErymanthianEntity;
+import greekfantasy.client.render.model.GiantBoarModel;
+import greekfantasy.entity.GiantBoarEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
 
-public class ErymanthianRenderer<T extends ErymanthianEntity> extends MobRenderer<T, ErymanthianModel<T>> {
+public class GiantBoarRenderer<T extends GiantBoarEntity> extends MobRenderer<T, GiantBoarModel<T>> {
 
   private static final ResourceLocation HOGLIN_TEXTURE = new ResourceLocation("textures/entity/hoglin/hoglin.png");
-  private static final ResourceLocation ERYMANTHIAN_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/erymanthian.png");
+  private static final ResourceLocation GIANT_BOAR_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/giant_boar.png");
   public static final float SCALE = 1.9F;
   
   protected boolean isAlphaLayer;
   
-  public ErymanthianRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new ErymanthianModel<>(), 1.0F);
+  public GiantBoarRenderer(final EntityRendererManager renderManagerIn) {
+    super(renderManagerIn, new GiantBoarModel<>(), 1.0F);
   }
   
   @Override
@@ -71,7 +71,7 @@ public class ErymanthianRenderer<T extends ErymanthianEntity> extends MobRendere
 
   @Override
   public ResourceLocation getEntityTexture(T entity) {
-     return ERYMANTHIAN_TEXTURE;
+     return GIANT_BOAR_TEXTURE;
   }
   
   @Override

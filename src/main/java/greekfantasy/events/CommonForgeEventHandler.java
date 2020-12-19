@@ -16,8 +16,8 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.DryadEntity;
-import greekfantasy.entity.ErymanthianEntity;
 import greekfantasy.entity.GeryonEntity;
+import greekfantasy.entity.GiantBoarEntity;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.tileentity.StatueTileEntity;
@@ -34,9 +34,10 @@ import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.RegistryKey;
@@ -48,6 +49,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -65,6 +67,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class CommonForgeEventHandler {
+  // items that can convert hoglins to giant boars
+  protected static final IOptionalNamedTag<Item> GIANT_BOAR_TRIGGER = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "giant_boar_trigger"));
   
   // This map tracks Palladium locations per chunk, per world
   private static Map<RegistryKey<World>, Map<ChunkPos, TimestampList<BlockPos>>> palladiumMap = new TreeMap<>();
@@ -177,18 +181,20 @@ public class CommonForgeEventHandler {
   
   
   /**
-   * Used to convert hoglin entities to erymanthian entities
-   * @param event a PlayerInteractEvent.EntityInteract event
+   * Used to convert hoglin entities to giant boar entities
+   * @param event the PlayerInteractEvent.EntityInteract event
    **/
   @SubscribeEvent
   public static void onPlayerInteract(final PlayerInteractEvent.EntityInteract event) {
-    // when player uses poisonous potato on adult hoglin
-    if(event.getTarget().getType() == EntityType.HOGLIN && event.getTarget() instanceof HoglinEntity 
-        && event.getWorld() instanceof ServerWorld && event.getItemStack().getItem() == Items.POISONOUS_POTATO) {
+    // when player uses poisonous potato on adult hoglin outside of nether
+    if((!GreekFantasy.CONFIG.getGiantBoarNonNether() || event.getWorld().getDimensionKey() != World.THE_NETHER) 
+        && event.getTarget().getType() == EntityType.HOGLIN 
+        && event.getTarget() instanceof HoglinEntity && event.getWorld() instanceof ServerWorld 
+        && GIANT_BOAR_TRIGGER.contains(event.getItemStack().getItem())) {
       final HoglinEntity hoglin = (HoglinEntity)event.getTarget();
       if(!hoglin.isChild()) {
-        // spawn erymanthian and shrink the item stack
-        ErymanthianEntity.spawnErymanthian((ServerWorld)event.getWorld(), hoglin);
+        // spawn giant boar and shrink the item stack
+        GiantBoarEntity.spawnGiantBoar((ServerWorld)event.getWorld(), hoglin);
         if(!event.getPlayer().isCreative()) {
           event.getItemStack().shrink(1);
         }
