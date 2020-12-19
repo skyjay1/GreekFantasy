@@ -24,11 +24,13 @@ import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.PanfluteSong;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.HoglinEntity;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -55,6 +57,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -287,6 +290,22 @@ public class CommonForgeEventHandler {
           }
         }
       }
+    }
+  }
+  
+  /**
+   * Used to prevent certain mobs from attacking players who are under the Swine effect
+   * @param event
+   **/
+  @SubscribeEvent
+  public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
+    if(event.getEntityLiving() instanceof MobEntity && event.getTarget() instanceof PlayerEntity 
+        && GreekFantasy.CONFIG.isSwineEnabled() && GreekFantasy.CONFIG.doesSwinePreventTarget() 
+        && isSwine(event.getTarget()) && event.getTarget() != event.getEntityLiving().getAttackingEntity()
+        && (event.getEntityLiving() instanceof HoglinEntity 
+            || event.getEntityLiving() instanceof GiantBoarEntity
+            || event.getEntityLiving() instanceof AbstractPiglinEntity)) {
+      ((MobEntity)event.getEntityLiving()).setAttackTarget(null);
     }
   }
   

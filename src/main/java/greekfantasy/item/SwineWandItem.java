@@ -1,11 +1,13 @@
 package greekfantasy.item;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.misc.SwineSpellEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
@@ -36,6 +38,6 @@ public class SwineWandItem extends Item {
   
   @Override
   public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-    return !toRepair.isEmpty() && repair.getItem() == this;
+    return repair.getItem() == GFRegistry.BOAR_EAR;
   }
 }

@@ -57,6 +57,7 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue MIRROR_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_DROPS_ARMOR;
+  private final ForgeConfigSpec.BooleanValue SWINE_PREVENTS_TARGET;
   private boolean stunPreventsJump;
   private boolean stunPreventsUse;
   private boolean overstepEnabled;
@@ -65,6 +66,7 @@ public class GFConfig {
   private boolean mirrorEnabled;
   private boolean swineEnabled;
   private boolean swineDropsArmor;
+  private boolean swinePreventsTarget;
   
   // potion configs
   private final ForgeConfigSpec.BooleanValue MIRROR_POTION;
@@ -153,7 +155,7 @@ public class GFConfig {
     BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
     BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 100);
     BAG_OF_WIND_DURABILITY = builder.defineInRange("bag_of_wind_durability", 24, 1, 4000);
-    SWINE_WAND_DURATION = builder.defineInRange("swine_wand_duration", 6000, 1, 24000);
+    SWINE_WAND_DURATION = builder.defineInRange("swine_wand_duration", 9600, 1, 24000);
     SWINE_WAND_COOLDOWN = builder.defineInRange("swine_wand_cooldown", 50, 0, 100);
     SWINE_WAND_DURABILITY = builder.defineInRange("swine_wand_durability", 104, 1, 4000);
     builder.pop();
@@ -170,6 +172,8 @@ public class GFConfig {
     SWINE_ENABLED = builder.define("enable_swine_effect", true);
     SWINE_DROPS_ARMOR = builder.comment("Whether players under the swine effect drop their armor")
         .define("swine_drops_armor", true);
+    SWINE_PREVENTS_TARGET = builder.comment("Whether some monsters ignore players under the swine effect")
+        .define("swine_prevents_target", true);
     NERF_STUNNING = builder.comment("When true, replaces stunning with Slowness I and Weakness I")
         .define("nerf_stunning", false);
     NERF_PARALYSIS = builder.comment("When true, replaces paralysis with Slowness II and Weakness II")
@@ -258,7 +262,7 @@ public class GFConfig {
     MOB_SPAWNS.put("fury", new BiomeWhitelistConfig(builder, "fury_spawn", 9, true, nether));
     MOB_SPAWNS.put("gigante", new BiomeWhitelistConfig(builder, "gigante_spawn", 10, true, mountains));
     MOB_SPAWNS.put("gorgon", new BiomeWhitelistConfig(builder, "gorgon_spawn", 16, false, netherEndOceanIcy));
-    MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 10, true, sandy));
+    MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 10, true, nether));
     MOB_SPAWNS.put("mad_cow", new BiomeWhitelistConfig(builder, "mad_cow_spawn", 2, false, netherEndOceanIcy));
     MOB_SPAWNS.put("minotaur", new BiomeWhitelistConfig(builder, "minotaur_spawn", 60, false, netherEndOceanIcy));
     MOB_SPAWNS.put("naiad", new BiomeWhitelistConfig(builder, "naiad_spawn", 10, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.WATER)));
@@ -311,6 +315,7 @@ public class GFConfig {
     mirrorEnabled = MIRROR_ENABLED.get();
     swineEnabled = SWINE_ENABLED.get();
     swineDropsArmor = SWINE_DROPS_ARMOR.get();
+    swinePreventsTarget = SWINE_PREVENTS_TARGET.get();
     mirrorPotion = MIRROR_POTION.get();
     swinePotion = SWINE_POTION.get();
     shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
@@ -350,6 +355,7 @@ public class GFConfig {
   public boolean isMirrorEnabled() { return mirrorEnabled; }
   public boolean isSwineEnabled() { return swineEnabled; }
   public boolean doesSwineDropArmor() { return swineDropsArmor; }
+  public boolean doesSwinePreventTarget() { return swinePreventsTarget; }
   public boolean isMirrorPotionEnabled() { return mirrorPotion; }
   public boolean isSwinePotionEnabled() { return swinePotion; }
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }

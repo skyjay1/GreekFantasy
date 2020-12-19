@@ -430,7 +430,7 @@ public final class GFRegistry {
           .setRegistryName(MODID, "stone_club"),
         new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "wooden_club"),
-        new IvorySwordItem(ItemTier.IRON, 4, -2.35F, new Item.Properties().group(GREEK_GROUP))
+        new IvorySwordItem(ItemTier.DIAMOND, 3, -2.2F, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "ivory_sword"),
         new ConchItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP))
           .setRegistryName(MODID, "conch"),
@@ -559,9 +559,9 @@ public final class GFRegistry {
     GreekFantasy.LOGGER.debug("registerPotions");
     event.getRegistry().registerAll(
         new Potion(new EffectInstance(MIRROR_EFFECT, 3600)).setRegistryName(MODID, "mirror"),
-        new Potion(MODID + ":mirror", new EffectInstance(MIRROR_EFFECT, 9600)).setRegistryName(MODID, "long_mirror"),
+        new Potion("mirror", new EffectInstance(MIRROR_EFFECT, 9600)).setRegistryName(MODID, "long_mirror"),
         new Potion(new EffectInstance(SWINE_EFFECT, 3600)).setRegistryName(MODID, "swine"),
-        new Potion(MODID + ":swine", new EffectInstance(SWINE_EFFECT, 9600)).setRegistryName(MODID, "long_swine")
+        new Potion("swine", new EffectInstance(SWINE_EFFECT, 9600)).setRegistryName(MODID, "long_swine")
     );
   }
   

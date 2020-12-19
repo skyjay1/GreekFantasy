@@ -25,7 +25,7 @@ public class ClubItem extends TieredItem implements IVanishable {
 
   public static final UUID ATTACK_KNOCKBACK_MODIFIER = UUID.fromString("d5df356d-0c5c-4629-bf18-e8dcde25bcb9");
   public static final UUID MOVE_SPEED_MODIFIER = UUID.fromString("aaa7e73d-1121-45e2-8b0e-dd2042f7dddc");
-  public static final double ATTACK_KNOCKBACK_AMOUNT = 1.75D;
+  public static final double ATTACK_KNOCKBACK_AMOUNT = 1.8D;
   protected final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
   public ClubItem(IItemTier tier, Item.Properties properties) {
