@@ -13,6 +13,7 @@ public class FuryRenderer<T extends FuryEntity> extends BipedRenderer<T, FuryMod
 
   public FuryRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new FuryModel<T>(0.0F), 0.5F);
+    this.addLayer(new FuryHairLayer<>(this));
   }
 
   @Override

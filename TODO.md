@@ -40,7 +40,7 @@ __Key:__
 - X X X X X Boss: Charybdis
 - X X X X X Boss: Talos
 - X X X X X Miniboss: Python
-- X X X _ ~ Miniboss: Giant Boar
+- X X X X X Miniboss: Giant Boar
 - X X X _ X Fury (TODO: improve texture)
 - _ _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
 
@@ -147,7 +147,9 @@ __Key:__
 - X X X Talos Heart - crafting component from Talos
 - X _ X Tough Snakeskin - crafting component from Python (TODO: used for what?)
 - X X X Bag of Wind - gives 30sec speed boost
-- X X _ Swine Wand - inflicts Swine effect
+- X X X Boar ear, boar tusk - crafting component from Giant Boar
+- X X X Ivory sword - extra knockback
+- X X X Swine Wand - inflicts Swine effect
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Gorgon blood - 50% chance to fully heal, 50% chance to fully kill
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)
@@ -156,6 +158,7 @@ __Key:__
 ## Achievements
 
 - X Become petrified
+- X Become cursed with Swine
 - X Encounter Cerastes
 - X Kill Shade
 - _ Anger Dryads by chopping logs

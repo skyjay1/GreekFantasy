@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import greekfantasy.entity.FuryEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
@@ -114,9 +116,6 @@ public class FuryModel<T extends FuryEntity> extends BipedModel<T> {
   protected Iterable<ModelRenderer> getBodyParts() { return Iterables.concat(super.getBodyParts(), ImmutableList.of(this.chest, this.leftWingArm, this.rightWingArm)); }
   
   @Override
-  protected Iterable<ModelRenderer> getHeadParts() { return Iterables.concat(super.getHeadParts(), ImmutableList.of(this.snakeHair)); }
-  
-  @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, partialTick, rotationYaw, rotationPitch);
     bipedHead.setRotationPoint(0.0F, 4.0F, 0.0F);    
@@ -134,26 +133,37 @@ public class FuryModel<T extends FuryEntity> extends BipedModel<T> {
   @Override
   public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
     super.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTick);
-    final float flying = (entity.flyingTime > 0.01F && entity.ticksExisted > 5) ? Math.min(1.0F, entity.flyingTime + (partialTick - (int)partialTick) * 0.1F) : 0.0F;
+    final float flying = (entity.flyingTime > 0.01F && entity.ticksExisted > 5) ? MathHelper.clamp(entity.flyingTime, 0.0F, 1.0F) : 0.0F;
     float ticks = entity.getEntityId() * 2 + entity.ticksExisted + partialTick;
-    final float cosTicks = MathHelper.cos(ticks * (0.1F + flying * 0.55F));
+    final float cosTicks = MathHelper.cos(ticks * (0.2F + flying * 0.25F));
     // left wing
     this.leftWing.rotateAngleY = cosTicks * (0.035F + flying * 0.21F);
     this.leftWing2.rotateAngleY = 0.3491F + cosTicks * (0.05F + flying * 0.11F);
     // right wing
     this.rightWing.rotateAngleY = -cosTicks * (0.035F + flying * 0.21F);
     this.rightWing2.rotateAngleY = -0.3491F - cosTicks * (0.05F + flying * 0.11F);
-    // snake hair
-    animateSnakes(snakeHair1, ticks, 1.7F);
-    animateSnakes(snakeHair2, ticks, 1.03F);
-    animateSnakes(snakeHair3, ticks, 0.82F);
   }
 
   private void animateSnakes(final ModelRenderer[] list, final float ticks, final float baseAngleX) {
     for(int i = 0, l = list.length; i < l; i++) {
       // update rotation angles
-      list[i].rotateAngleX = baseAngleX + (float) Math.cos(ticks * 0.15 + i * 2.89F) * 0.08F;
+      list[i].rotateAngleX = baseAngleX + (float) Math.cos(ticks * 0.32 + i * 2.89F) * 0.08F;
     }
+  }
+  
+  public void renderSnakeHair(final MatrixStack matrixStackIn, final IVertexBuilder bufferIn, final int packedLightIn, 
+      final int packedOverlayIn, final float ticks, final float aggroTime) {
+    // living animations for each list
+    animateSnakes(snakeHair1, ticks, 1.7F);
+    animateSnakes(snakeHair2, ticks, 1.03F);
+    animateSnakes(snakeHair3, ticks, 0.82F);
+    // scale the hair before rendering
+    matrixStackIn.push();
+    this.snakeHair.copyModelAngles(this.bipedHead);
+    final float scale = 0.25F + (aggroTime * 0.75F);
+    matrixStackIn.scale(scale, scale, scale);
+    this.snakeHair.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
+    matrixStackIn.pop();
   }
   
   private List<ModelRenderer> makeSnakes(final float radius, final float deltaAngle, final float modelSize) {

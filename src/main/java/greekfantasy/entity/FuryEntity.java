@@ -24,12 +24,14 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
-public class FuryEntity extends MonsterEntity implements IFlyingAnimal {
-      
+public class FuryEntity extends MonsterEntity implements IFlyingAnimal {  
+  public static final int MAX_AGGRO_TIME = 45;
   public float flyingTime;
+  public int aggroTime;
   
   public FuryEntity(final EntityType<? extends FuryEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -92,6 +94,12 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal {
     } else {
       flyingTime = Math.max(0.0F, flyingTime - 0.1F);
     }
+    // update aggro counter
+    if(this.isAggressive()) {
+      aggroTime= Math.min(aggroTime + 1, MAX_AGGRO_TIME);
+    } else {
+      aggroTime = Math.max(aggroTime - 1, 0);
+    }
   }
   
   @Override
@@ -112,6 +120,7 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal {
   @Override
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
+    
   }
 
   @Override
@@ -136,5 +145,14 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal {
 
   public boolean isFlying() {
     return !this.onGround || this.getMotion().lengthSquared() > 0.06D;
+  }
+  
+  public float getAggroPercent(final float partialTick) {
+    if(aggroTime <= 0) {
+      return 0.0F;
+    }
+    final float prevAggroPercent = Math.max((float)aggroTime - partialTick, 0.0F) / (float)MAX_AGGRO_TIME;
+    final float aggroPercent = (float)aggroTime / (float)MAX_AGGRO_TIME;
+    return MathHelper.lerp(partialTick / 8, prevAggroPercent, aggroPercent); 
   }
 }
