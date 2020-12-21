@@ -18,6 +18,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biome.Category;
 import net.minecraft.world.biome.BiomeAmbience;
 import net.minecraft.world.biome.BiomeGenerationSettings;
 import net.minecraft.world.biome.DefaultBiomeFeatures;
@@ -40,6 +41,7 @@ import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilders;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.BiomeManager.BiomeEntry;
 import net.minecraftforge.common.BiomeManager.BiomeType;
@@ -220,26 +222,30 @@ public final class GFWorldGen {
   }
   
   public static void addBiomeSpawns(final BiomeLoadingEvent event) {
-    addSpawns(event, GFRegistry.ARA_ENTITY, 2, 5);
-    addSpawns(event, GFRegistry.CENTAUR_ENTITY, 2, 4);
-    addSpawns(event, GFRegistry.CERASTES_ENTITY, 1, 2);
-    addSpawns(event, GFRegistry.CHARYBDIS_ENTITY, 1, 1);
-    addSpawns(event, GFRegistry.CYCLOPES_ENTITY, 1, 3);
-    addSpawns(event, GFRegistry.CYPRIAN_ENTITY, 1, 3);
-    addSpawns(event, GFRegistry.DRYAD_ENTITY, 1, 3);
-    addSpawns(event, GFRegistry.EMPUSA_ENTITY, 1, 2);
-    addSpawns(event, GFRegistry.FURY_ENTITY, 3, 3);
-    addSpawns(event, GFRegistry.GIGANTE_ENTITY, 1, 4);
-    addSpawns(event, GFRegistry.GORGON_ENTITY, 1, 2);
-    addSpawns(event, GFRegistry.HARPY_ENTITY, 1, 3);
-    addSpawns(event, GFRegistry.MAD_COW_ENTITY, 1, 1);
-    addSpawns(event, GFRegistry.MINOTAUR_ENTITY, 3, 5);
-    addSpawns(event, GFRegistry.NAIAD_ENTITY, 2, 5);
-    addSpawns(event, GFRegistry.ORTHUS_ENTITY, 1, 4);
-    addSpawns(event, GFRegistry.SATYR_ENTITY, 2, 5);
-    addSpawns(event, GFRegistry.SHADE_ENTITY, 1, 1);
-    addSpawns(event, GFRegistry.SIREN_ENTITY, 2, 4);
-    addSpawns(event, GFRegistry.UNICORN_ENTITY, 2, 5);
+    final RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
+    if(BiomeDictionary.hasType(key, BiomeDictionary.Type.NETHER)) {
+      addSpawns(event, GFRegistry.FURY_ENTITY, 3, 3);
+      addSpawns(event, GFRegistry.ORTHUS_ENTITY, 1, 4);
+    } else if(BiomeDictionary.hasType(key, BiomeDictionary.Type.OVERWORLD)) {
+      addSpawns(event, GFRegistry.ARA_ENTITY, 2, 5);
+      addSpawns(event, GFRegistry.CENTAUR_ENTITY, 2, 4);
+      addSpawns(event, GFRegistry.CERASTES_ENTITY, 1, 2);
+      addSpawns(event, GFRegistry.CHARYBDIS_ENTITY, 1, 1);
+      addSpawns(event, GFRegistry.CYCLOPES_ENTITY, 1, 3);
+      addSpawns(event, GFRegistry.CYPRIAN_ENTITY, 1, 3);
+      addSpawns(event, GFRegistry.DRYAD_ENTITY, 1, 3);
+      addSpawns(event, GFRegistry.EMPUSA_ENTITY, 1, 2);
+      addSpawns(event, GFRegistry.GIGANTE_ENTITY, 1, 4);
+      addSpawns(event, GFRegistry.GORGON_ENTITY, 1, 2);
+      addSpawns(event, GFRegistry.HARPY_ENTITY, 1, 3);
+      addSpawns(event, GFRegistry.MAD_COW_ENTITY, 1, 1);
+      addSpawns(event, GFRegistry.MINOTAUR_ENTITY, 3, 5);
+      addSpawns(event, GFRegistry.NAIAD_ENTITY, 2, 5);
+      addSpawns(event, GFRegistry.SATYR_ENTITY, 2, 5);
+      addSpawns(event, GFRegistry.SHADE_ENTITY, 1, 1);
+      addSpawns(event, GFRegistry.SIREN_ENTITY, 2, 4);
+      addSpawns(event, GFRegistry.UNICORN_ENTITY, 2, 5);
+    }
   }
   
   private static void addSpawns(final BiomeLoadingEvent event, final EntityType<?> entity, final int min, final int max) {
