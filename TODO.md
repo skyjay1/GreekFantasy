@@ -6,9 +6,9 @@ __Key:__
 
 ## Bugs and future updates
 
-- _ Summoning animation not playing on dedicated server (Geryon, Sparti)
-- _ Structure gen is jenky (check *all* corner blocks)
-- _ Config option for winged sandals to enable flight
+- _ Summoning animations not playing on dedicated server
+- _ Structure gen is jenky
+- _ Config option for winged sandals to enable flight?
 
 ## Entity basics
 
@@ -41,11 +41,12 @@ __Key:__
 - X X X X X Boss: Talos
 - X X X X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
-- X X X _ X Fury (TODO: improve texture)
+- X X X _ X Fury
 - _ _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
 
 ## Entity AI
 
+- _ Fury shoots curses (random bad potion effects)
 - X Python spits poison
 - X Talos shoots arrows
 - X Charybdis swirls entities
@@ -76,6 +77,13 @@ __Key:__
 - X Sparti follow player who summoned them (owner)
 - X Siren charms players (forces player to move toward siren)
 - X Naiad can hold/throw trident
+
+## Pantheon
+
+- _ Prestige (capability)
+- _ Altars (statues)
+- _ Gods *or* Muses?
+- _ Rewards and punishments
 
 ## Structures
 
@@ -169,7 +177,7 @@ __Key:__
 - X Obtain Winged Sandals (Much Fast, So Speed!)
 - X Summon / Kill a Cerberus
 - X Summon / Kill a Geryon
-- _ Kill a Python
+- _ Kill all minibosses: Python, Giant Boar
 - X Summon / Kill a Talos
 - X Kill a Charybdis
 
@@ -198,7 +206,8 @@ __Key:__
 
 _Can I do something with these?_
 
-
+- Pantheon: options include Zeus, Poseidon, Hades, Ares, Apollo, Hermes, Hephaestus, Helios and Dionysus, Hera, Demeter, Aphrodite, Athena, Artemis, Hecate, Pan
+- Muses: Calliope, Clio, Erato, Euterpe, Melpomene, Polyhymnia, Terpsichore, Thalia, Urania
 - Makhai (6 arms)
 - Eurynomos (blue skin; vulture head?)
 - Arion (very fast horse, tamed with gold)

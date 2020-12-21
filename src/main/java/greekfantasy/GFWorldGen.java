@@ -124,8 +124,11 @@ public final class GFWorldGen {
   // OTHER SETUP METHODS //
   
   public static void finishBiomeSetup() {
-    BiomeManager.addBiome(BiomeType.WARM, new BiomeEntry(OLIVE_FOREST, GreekFantasy.CONFIG.OLIVE_FOREST_BIOME_WEIGHT.get()));
-    BiomeDictionary.addTypes(OLIVE_FOREST, BiomeDictionary.Type.FOREST, BiomeDictionary.Type.OVERWORLD);
+    final int biomeWeight = GreekFantasy.CONFIG.OLIVE_FOREST_BIOME_WEIGHT.get();
+    if(biomeWeight > 0) {
+      BiomeManager.addBiome(BiomeType.WARM, new BiomeEntry(OLIVE_FOREST, biomeWeight));
+      BiomeDictionary.addTypes(OLIVE_FOREST, BiomeDictionary.Type.FOREST, BiomeDictionary.Type.OVERWORLD);
+    }
   }
   
   public static void registerConfiguredFeatures() {
