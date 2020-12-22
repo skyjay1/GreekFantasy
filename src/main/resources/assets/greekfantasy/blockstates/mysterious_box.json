@@ -1,32 +1,62 @@
 {
   "variants": {
-    "facing=east,open=false": {
+    "waterlogged=false,facing=east,open=false": {
       "model": "greekfantasy:block/mysterious_box",
       "y": 90
     },
-    "facing=north,open=false": {
+    "waterlogged=false,facing=north,open=false": {
       "model": "greekfantasy:block/mysterious_box"
     },
-    "facing=south,open=false": {
+    "waterlogged=false,facing=south,open=false": {
       "model": "greekfantasy:block/mysterious_box",
       "y": 180
     },
-    "facing=west,open=false": {
+    "waterlogged=false,facing=west,open=false": {
       "model": "greekfantasy:block/mysterious_box",
       "y": 270
     },
-    "facing=east,open=true": {
+    "waterlogged=false,facing=east,open=true": {
       "model": "greekfantasy:block/mysterious_box_open",
       "y": 90
     },
-    "facing=north,open=true": {
+    "waterlogged=false,facing=north,open=true": {
       "model": "greekfantasy:block/mysterious_box_open"
     },
-    "facing=south,open=true": {
+    "waterlogged=false,facing=south,open=true": {
       "model": "greekfantasy:block/mysterious_box_open",
       "y": 180
     },
-    "facing=west,open=true": {
+    "waterlogged=false,facing=west,open=true": {
+      "model": "greekfantasy:block/mysterious_box_open",
+      "y": 270
+    },
+    "waterlogged=true,facing=east,open=false": {
+      "model": "greekfantasy:block/mysterious_box",
+      "y": 90
+    },
+    "waterlogged=true,facing=north,open=false": {
+      "model": "greekfantasy:block/mysterious_box"
+    },
+    "waterlogged=true,facing=south,open=false": {
+      "model": "greekfantasy:block/mysterious_box",
+      "y": 180
+    },
+    "waterlogged=true,facing=west,open=false": {
+      "model": "greekfantasy:block/mysterious_box",
+      "y": 270
+    },
+    "waterlogged=true,facing=east,open=true": {
+      "model": "greekfantasy:block/mysterious_box_open",
+      "y": 90
+    },
+    "waterlogged=true,facing=north,open=true": {
+      "model": "greekfantasy:block/mysterious_box_open"
+    },
+    "waterlogged=true,facing=south,open=true": {
+      "model": "greekfantasy:block/mysterious_box_open",
+      "y": 180
+    },
+    "waterlogged=true,facing=west,open=true": {
       "model": "greekfantasy:block/mysterious_box_open",
       "y": 270
     }

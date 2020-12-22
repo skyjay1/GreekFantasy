@@ -1,17 +1,32 @@
 {
   "variants": {
-    "facing=east": {
+    "waterlogged=false,facing=east": {
       "model": "greekfantasy:block/terracotta_vase",
       "y": 90
     },
-    "facing=north": {
+    "waterlogged=false,facing=north": {
       "model": "greekfantasy:block/terracotta_vase"
     },
-    "facing=south": {
+    "waterlogged=false,facing=south": {
       "model": "greekfantasy:block/terracotta_vase",
       "y": 180
     },
-    "facing=west": {
+    "waterlogged=false,facing=west": {
+      "model": "greekfantasy:block/terracotta_vase",
+      "y": 270
+    },
+    "waterlogged=true,facing=east": {
+      "model": "greekfantasy:block/terracotta_vase",
+      "y": 90
+    },
+    "waterlogged=true,facing=north": {
+      "model": "greekfantasy:block/terracotta_vase"
+    },
+    "waterlogged=true,facing=south": {
+      "model": "greekfantasy:block/terracotta_vase",
+      "y": 180
+    },
+    "waterlogged=true,facing=west": {
       "model": "greekfantasy:block/terracotta_vase",
       "y": 270
     }

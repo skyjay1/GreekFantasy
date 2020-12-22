@@ -64,6 +64,9 @@ public class ReedsBlock extends DoublePlantBlock implements IWaterLoggable, IGro
     if (!state.isValidPosition(world, currentPos)) {
       world.getPendingBlockTicks().scheduleTick(currentPos, this, 1);
     }
+    if (state.get(WATERLOGGED)) {
+      world.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+    }
     return super.updatePostPlacement(state, facing, facingState, world, currentPos, facingPos);
   }
 

@@ -10,6 +10,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -17,15 +18,19 @@ import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.DoubleBlockHalf;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -40,13 +45,15 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class StatueBlock extends HorizontalBlock {  
+public class StatueBlock extends HorizontalBlock implements IWaterLoggable {  
   
   public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
+  public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
   
   protected static final VoxelShape AABB_STATUE_BOTTOM = VoxelShapes.combine(
       Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D),
@@ -63,25 +70,27 @@ public class StatueBlock extends HorizontalBlock {
   public StatueBlock(final StatueMaterial material, final AbstractBlock.Properties properties) {
     super(properties);
     this.setDefaultState(this.getStateContainer().getBaseState()
-        .with(HALF, DoubleBlockHalf.LOWER).with(HORIZONTAL_FACING, Direction.NORTH));
+        .with(WATERLOGGED, false).with(HALF, DoubleBlockHalf.LOWER).with(HORIZONTAL_FACING, Direction.NORTH));
     this.statueMaterial = material;
   }
   
   @Override
   protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-    builder.add(HALF, HORIZONTAL_FACING);
+    builder.add(HALF, HORIZONTAL_FACING, WATERLOGGED);
   }
   
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
-    return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+    FluidState fluid = context.getWorld().getFluidState(context.getPos());
+    return this.getDefaultState().with(WATERLOGGED, fluid.isTagged(FluidTags.WATER)).with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
   }
 
   @Override
   public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
     // place upper block
     final Direction facing = state.get(HORIZONTAL_FACING);
-    worldIn.setBlockState(pos.up(), state.with(HALF, DoubleBlockHalf.UPPER).with(HORIZONTAL_FACING, facing), 3);
+    FluidState fluid = worldIn.getFluidState(pos.up());
+    worldIn.setBlockState(pos.up(), state.with(WATERLOGGED, fluid.isTagged(FluidTags.WATER)).with(HALF, DoubleBlockHalf.UPPER).with(HORIZONTAL_FACING, facing), 3);
   }
   
   @Override
@@ -121,7 +130,16 @@ public class StatueBlock extends HorizontalBlock {
 
   @Override
   public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
-    return worldIn.isAirBlock(pos.up());
+    return worldIn.isAirBlock(pos.up()) || worldIn.getBlockState(pos.up()).getMaterial().isReplaceable();
+  }
+  
+  @Override
+  public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
+      BlockPos currentPos, BlockPos facingPos) {
+    if (stateIn.get(WATERLOGGED)) {
+      worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+    }
+    return stateIn;
   }
 
   @Override
@@ -165,6 +183,11 @@ public class StatueBlock extends HorizontalBlock {
         );
     }
     return ActionResultType.SUCCESS;
+  }
+  
+  @Override
+  public FluidState getFluidState(BlockState state) {
+    return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : Fluids.EMPTY.getDefaultState();
   }
   
   @Override

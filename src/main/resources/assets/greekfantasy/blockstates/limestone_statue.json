@@ -1,27 +1,51 @@
 {
   "variants": {
-	"facing=north,half=lower": {
+	"waterlogged=false,facing=north,half=lower": {
 	  "model": "greekfantasy:block/polished_limestone_slab"
 	},
-	"facing=east,half=lower": {
+	"waterlogged=false,facing=east,half=lower": {
 	  "model": "greekfantasy:block/polished_limestone_slab"
 	},
-	"facing=south,half=lower": {
+	"waterlogged=false,facing=south,half=lower": {
 	  "model": "greekfantasy:block/polished_limestone_slab"
 	},
-	"facing=west,half=lower": {
+	"waterlogged=false,facing=west,half=lower": {
 	  "model": "greekfantasy:block/polished_limestone_slab"
 	},
-	"facing=north,half=upper": {
+	"waterlogged=false,facing=north,half=upper": {
 	  "model": "greekfantasy:block/limestone_statue_upper"
 	},
-	"facing=east,half=upper": {
+	"waterlogged=false,facing=east,half=upper": {
 	  "model": "greekfantasy:block/limestone_statue_upper"
 	},
-	"facing=south,half=upper": {
+	"waterlogged=false,facing=south,half=upper": {
 	  "model": "greekfantasy:block/limestone_statue_upper"
 	},
-	"facing=west,half=upper": {
+	"waterlogged=false,facing=west,half=upper": {
+	  "model": "greekfantasy:block/limestone_statue_upper"
+	},
+	"waterlogged=true,facing=north,half=lower": {
+	  "model": "greekfantasy:block/polished_limestone_slab"
+	},
+	"waterlogged=true,facing=east,half=lower": {
+	  "model": "greekfantasy:block/polished_limestone_slab"
+	},
+	"waterlogged=true,facing=south,half=lower": {
+	  "model": "greekfantasy:block/polished_limestone_slab"
+	},
+	"waterlogged=true,facing=west,half=lower": {
+	  "model": "greekfantasy:block/polished_limestone_slab"
+	},
+	"waterlogged=true,facing=north,half=upper": {
+	  "model": "greekfantasy:block/limestone_statue_upper"
+	},
+	"waterlogged=true,facing=east,half=upper": {
+	  "model": "greekfantasy:block/limestone_statue_upper"
+	},
+	"waterlogged=true,facing=south,half=upper": {
+	  "model": "greekfantasy:block/limestone_statue_upper"
+	},
+	"waterlogged=true,facing=west,half=upper": {
 	  "model": "greekfantasy:block/limestone_statue_upper"
 	}
   }
