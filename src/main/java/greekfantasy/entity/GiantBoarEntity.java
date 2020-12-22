@@ -155,6 +155,11 @@ public class GiantBoarEntity extends HoglinEntity {
   }
   
   @Override
+  protected boolean isDespawnPeaceful() {
+    return true;
+  }
+  
+  @Override
   protected void onGrowingAdult() { }
   
   @Override

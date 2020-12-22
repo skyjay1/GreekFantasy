@@ -157,6 +157,11 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   // Misc //
   
   @Override
+  protected boolean isDespawnPeaceful() {
+    return true;
+  }
+  
+  @Override
   public boolean isNonBoss() { return false; }
   
   @Override

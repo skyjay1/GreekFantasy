@@ -56,6 +56,11 @@ public class MadCowEntity extends CowEntity implements IMob {
   public SoundCategory getSoundCategory() {
     return SoundCategory.HOSTILE;
   }
+  
+  @Override
+  protected boolean isDespawnPeaceful() {
+    return true;
+  }
 
   class AttackGoal extends MeleeAttackGoal {
     

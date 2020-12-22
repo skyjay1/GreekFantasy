@@ -274,16 +274,16 @@ public class GFConfig {
     builder.pop();
     // feature configs
     builder.push("features");
-    OLIVE_FOREST_BIOME_WEIGHT = builder.defineInRange("olive_forest_weight", 10, 0, 1000);
-    FEATURES.put("harpy_nest", new BiomeWhitelistConfig(builder, "harpy_nest", 17, false, netherEndOceanIcy));
-    FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 23, false, netherEndOceanIcy));
-    FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 20, true, nether));
-    FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 14, false, netherEndOceanIcy));
-    FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 25, false, BiomeHelper.concat(netherEndOceanIcy, sandy)));
+    OLIVE_FOREST_BIOME_WEIGHT = builder.defineInRange("olive_forest_weight", 9, 0, 1000);
+    FEATURES.put("harpy_nest", new BiomeWhitelistConfig(builder, "harpy_nest", 12, false, netherEndOceanIcy));
+    FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 17, false, netherEndOceanIcy));
+    FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 16, true, nether));
+    FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 10, false, netherEndOceanIcy));
+    FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 15, false, BiomeHelper.concat(netherEndOceanIcy, sandy)));
     FEATURES.put("python_pit", new BiomeWhitelistConfig(builder, "python_pit", 6, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.JUNGLE)));
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, netherEndOceanIcy));
-    FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 990, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.SWAMP)));
-    FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 28, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST)));
+    FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 900, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.SWAMP)));
+    FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 22, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST)));
     builder.pop();
   }
   
