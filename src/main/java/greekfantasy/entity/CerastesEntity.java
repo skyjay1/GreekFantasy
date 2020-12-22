@@ -97,6 +97,12 @@ public class CerastesEntity extends CreatureEntity implements IHasOwner<Cerastes
     this.setPathPriority(PathNodeType.WATER, -1.0F);
   }
   
+  public static boolean canCerastesSpawnOn(final EntityType<? extends MobEntity> entity, final IWorld world, final SpawnReason reason, 
+      final BlockPos pos, final Random rand) {
+    final BlockPos blockpos = pos.down();
+    return reason == SpawnReason.SPAWNER || world.getBlockState(blockpos).isIn(Blocks.SAND);
+  }
+  
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
@@ -104,13 +110,7 @@ public class CerastesEntity extends CreatureEntity implements IHasOwner<Cerastes
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 5.0D);
   }
-  
-  public static boolean canCerastesSpawnOn(final EntityType<? extends MobEntity> entity, final IWorld world, final SpawnReason reason, 
-      final BlockPos pos, final Random rand) {
-    final BlockPos blockpos = pos.down();
-    return reason == SpawnReason.SPAWNER || world.getBlockState(blockpos).isIn(Blocks.SAND);
-  }
-  
+
   @Override
   protected void registerData() {
     super.registerData();

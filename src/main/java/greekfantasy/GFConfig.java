@@ -7,8 +7,10 @@ import java.util.Map;
 
 import greekfantasy.util.BiomeHelper;
 import greekfantasy.util.BiomeWhitelistConfig;
+import net.minecraft.world.Dimension;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
 public class GFConfig {
   
@@ -113,6 +115,10 @@ public class GFConfig {
   // feature configs
   public final ForgeConfigSpec.IntValue OLIVE_FOREST_BIOME_WEIGHT;
   public final Map<String, BiomeWhitelistConfig> FEATURES = new HashMap<>();
+  public final ForgeConfigSpec.BooleanValue IS_SPAWNS_WHITELIST;
+  public final ConfigValue<List<? extends String>> SPAWNS_DIMENSION_WHITELIST;
+//public final ForgeConfigSpec.BooleanValue IS_FEATURES_WHITELIST;
+//public final ConfigValue<List<? extends String>> FEATURES_DIMENSION_WHITELIST;
   
   // other
   public final ForgeConfigSpec.BooleanValue STATUES_HOLD_ITEMS;
@@ -243,6 +249,11 @@ public class GFConfig {
     builder.pop();
     // mob spawns
     builder.push("mob_spawns");
+    final List<String> dimensions = new ArrayList<>();
+    dimensions.add(Dimension.OVERWORLD.getLocation().toString());
+    dimensions.add(Dimension.THE_NETHER.getLocation().toString());
+    IS_SPAWNS_WHITELIST = builder.worldRestart().define("whitelist_dimensions", true);
+    SPAWNS_DIMENSION_WHITELIST = builder.worldRestart().define("dimensions", dimensions);
     final List<String> nether = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.NETHER);
     final List<String> ocean = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.OCEAN);
     final List<String> forest = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST, BiomeDictionary.Type.CONIFEROUS, BiomeDictionary.Type.JUNGLE);
@@ -274,6 +285,8 @@ public class GFConfig {
     builder.pop();
     // feature configs
     builder.push("features");
+//    IS_FEATURES_WHITELIST = builder.worldRestart().define("whitelist_dimensions", true);
+//    FEATURES_DIMENSION_WHITELIST = builder.worldRestart().define("dimensions", dimensions);
     OLIVE_FOREST_BIOME_WEIGHT = builder.defineInRange("olive_forest_weight", 9, 0, 1000);
     FEATURES.put("harpy_nest", new BiomeWhitelistConfig(builder, "harpy_nest", 12, false, netherEndOceanIcy));
     FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 17, false, netherEndOceanIcy));

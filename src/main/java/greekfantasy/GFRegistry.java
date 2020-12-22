@@ -2,6 +2,7 @@ package greekfantasy;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
@@ -102,6 +103,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
@@ -295,6 +297,10 @@ public final class GFRegistry {
     public ItemStack createIcon() { return new ItemStack(PANFLUTE); }
   };
   
+  protected static final Predicate<IServerWorld> DIMENSION_MOB_PLACEMENT = world -> {
+    return GreekFantasy.CONFIG.IS_SPAWNS_WHITELIST.get() == GreekFantasy.CONFIG.SPAWNS_DIMENSION_WHITELIST.get().contains(world.getWorld().getDimensionKey().getLocation().toString());
+  };
+
   // REGISTRY METHODS //
 
   @SubscribeEvent
@@ -667,7 +673,10 @@ public final class GFRegistry {
     }
     // register placement (not used unless spawn information is registered with a biome)
     if(placementPredicate != null) {
-      EntitySpawnPlacementRegistry.register(entityType, entityType.getClassification() == EntityClassification.WATER_CREATURE ? PlacementType.IN_WATER : PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, placementPredicate);
+      final PlacementType placementType = entityType.getClassification() == EntityClassification.WATER_CREATURE ? PlacementType.IN_WATER : PlacementType.ON_GROUND;
+      // wrap the spawn predicate in one that also checks dimension predicate
+      final EntitySpawnPlacementRegistry.IPlacementPredicate<T> placement = (entity, world, reason, pos, rand) -> DIMENSION_MOB_PLACEMENT.test(world) && placementPredicate.test(entity, world, reason, pos, rand);
+      EntitySpawnPlacementRegistry.register(entityType, placementType, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, placement);
     }
   }
   

@@ -80,7 +80,7 @@ __Key:__
 
 ## Pantheon
 
-- _ Prestige (capability)
+- _ Favor (capability)
 - _ Altars (statues)
 - _ Gods *or* Muses?
 - _ Rewards and punishments
