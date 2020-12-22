@@ -41,7 +41,7 @@ __Key:__
 - X X X X X Boss: Talos
 - X X X X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
-- X X X _ X Fury
+- X X X ~ X Fury
 - _ _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
 
 ## Entity AI
