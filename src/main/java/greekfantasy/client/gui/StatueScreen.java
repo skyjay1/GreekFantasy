@@ -15,6 +15,7 @@ import greekfantasy.util.StatuePoses;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.AbstractSlider;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderHelper;
@@ -147,14 +148,25 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
   }
 
   @Override
-  protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+  protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
     this.renderBackground(matrixStack);
     RenderHelper.setupGuiFlatDiffuseLighting();
     RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
     this.minecraft.getTextureManager().bindTexture(SCREEN_TEXTURE);
     this.blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+  }
+  
+  @Override
+  public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    super.render(matrixStack, mouseX, mouseY, partialTicks);
     // draw tile entity preview
-    drawTileEntityOnScreen(matrixStack, this.guiLeft + PREVIEW_X, this.guiTop + PREVIEW_Y, x, y, partialTicks);
+    drawTileEntityOnScreen(matrixStack, this.guiLeft + PREVIEW_X, this.guiTop + PREVIEW_Y, mouseX, mouseY, partialTicks);
+    // draw hovering text LAST
+    for(final Widget b : this.buttons) {
+      if(b.visible && b.isHovered()) {
+        b.renderToolTip(matrixStack, mouseX, mouseY);
+      }
+    }
   }
   
   @Override
@@ -181,6 +193,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     this.updateSliders();
   }
   
+  @SuppressWarnings("deprecation")
   public void drawTileEntityOnScreen(final MatrixStack matrixStackIn, final int posX, final int posY, 
       final float mouseX, final float mouseY, final float partialTicks) {
     float margin = 12;
@@ -271,7 +284,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     
     public IconButton(final StatueScreen screenIn, final int x, final int y, final int tX, final int tY,
         final ITextComponent title, final IPressable pressedAction) {
-      super(x, y, BTN_HEIGHT, BTN_HEIGHT, StringTextComponent.EMPTY, pressedAction);
+      super(x, y, BTN_HEIGHT, BTN_HEIGHT, StringTextComponent.EMPTY, pressedAction, (b, m, bx, by) -> screenIn.renderTooltip(m, screenIn.minecraft.fontRenderer.trimStringToWidth(title, Math.max(screenIn.width / 2 - 43, 170)), bx, by));
       this.textureX = tX;
       this.textureY = tY;
     }
@@ -286,9 +299,6 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
         this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
         // draw button icon
         this.blit(matrixStack, this.x, this.y, getIconX(), getIconY(), this.width, this.height);
-        if(this.isHovered()) {
-          StatueScreen.this.renderTooltip(matrixStack, StatueScreen.this.minecraft.fontRenderer.trimStringToWidth(title, Math.max(StatueScreen.this.width / 2 - 43, 170)), mouseX, mouseY);
-        }
       }
     }
     

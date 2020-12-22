@@ -5,7 +5,7 @@ import java.util.Random;
 /**
  * This class holds several StatuePose presets
  **/
-public class StatuePoses {
+public final class StatuePoses {
   
   private StatuePoses() { }
   
