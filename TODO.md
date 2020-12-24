@@ -41,6 +41,7 @@ __Key:__
 - X X X X X Boss: Talos
 - X X X X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
+- _ _ _ _ _ Miniboss: Medusa
 - X X X ~ X Fury
 - _ _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
 
@@ -208,6 +209,7 @@ _Can I do something with these?_
 
 - Pantheon: options include Zeus, Poseidon, Hades, Ares, Apollo, Hermes, Hephaestus, Helios and Dionysus, Hera, Demeter, Aphrodite, Athena, Artemis, Hecate, Pan
 - Muses: Calliope, Clio, Erato, Euterpe, Melpomene, Polyhymnia, Terpsichore, Thalia, Urania
+- Ophiotaur (kill to obtain heart; use heart to kill a god)
 - Makhai (6 arms)
 - Eurynomos (blue skin; vulture head?)
 - Arion (very fast horse, tamed with gold)
@@ -227,6 +229,7 @@ _Can I do something with these?_
 - Kyno (dog-head biped; see also "Cynocephaly")
 - Blemmyes (headless biped)
 - Pandos (biped, giant ears)
+- Horse of Diomedes (man-eating horse)
 - Underworld pomegranate tree
 - Belt of Aphrodite (maybe allows disguise as other player?)
 - Armor of Achilles (Hephaestus; said to be impenetrable)

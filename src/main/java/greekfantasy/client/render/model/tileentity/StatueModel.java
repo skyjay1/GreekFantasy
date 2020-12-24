@@ -30,6 +30,16 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   protected ModelRenderer bipedRightLeg;
   protected ModelRenderer bipedLeftLeg;
   
+  // layers
+  protected ModelRenderer bipedHeadwear;
+  public final ModelRenderer bipedLeftArmwear;
+  public final ModelRenderer bipedRightArmwear;
+  public final ModelRenderer bipedLeftArmwearSlim;
+  public final ModelRenderer bipedRightArmwearSlim;
+  public final ModelRenderer bipedLeftLegwear;
+  public final ModelRenderer bipedRightLegwear;
+  public final ModelRenderer bipedBodyWear;
+  
   private static final EnumMap<ModelPart, Collection<ModelRenderer>> ROTATION_MAP = new EnumMap<>(ModelPart.class);
   
   public StatueModel() {
@@ -63,11 +73,11 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     // slim arms
     this.bipedLeftArmSlim = new ModelRenderer(this, 32, 48);
     this.bipedLeftArmSlim.addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSizeIn);
-    this.bipedLeftArmSlim.setRotationPoint(5.0F, 2.5F, 0.0F);
+    this.bipedLeftArmSlim.setRotationPoint(5.0F, 2.5F + yOffsetIn, 0.0F);
     this.bipedLeftArmSlim.mirror = true;
     this.bipedRightArmSlim = new ModelRenderer(this, 40, 16);
     this.bipedRightArmSlim.addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSizeIn);
-    this.bipedRightArmSlim.setRotationPoint(-5.0F, 2.5F, 0.0F);
+    this.bipedRightArmSlim.setRotationPoint(-5.0F, 2.5F + yOffsetIn, 0.0F);
     // legs
     this.bipedRightLeg = new ModelRenderer(this, 16, 48);
     this.bipedRightLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
@@ -76,29 +86,59 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     //this.bipedLeftLeg.mirror = true;
     this.bipedLeftLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
     this.bipedLeftLeg.setRotationPoint(2.0F, 12.0F + yOffsetIn, 0.0F);
+    // layers
+    // head
+    this.bipedHeadwear = new ModelRenderer(this, 32, 0);
+    this.bipedHeadwear.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSizeIn + 0.5F);
+    this.bipedHeadwear.setRotationPoint(0.0F, 0.0F + yOffsetIn, 0.0F);
+    // arms
+    this.bipedLeftArmwear = new ModelRenderer(this, 48, 48);
+    this.bipedLeftArmwear.addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn + 0.25F);
+    this.bipedLeftArmwear.setRotationPoint(5.0F, 2.0F + yOffsetIn, 0.0F);
+    this.bipedRightArmwear = new ModelRenderer(this, 40, 32);
+    this.bipedRightArmwear.addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn + 0.25F);
+    this.bipedRightArmwear.setRotationPoint(-5.0F, 2.0F + yOffsetIn, 0.0F); // 10.0F
+    // slim arms
+    this.bipedLeftArmwearSlim = new ModelRenderer(this, 48, 48);
+    this.bipedLeftArmwearSlim.addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSizeIn + 0.25F);
+    this.bipedLeftArmwearSlim.setRotationPoint(5.0F, 2.5F + yOffsetIn, 0.0F);
+    this.bipedRightArmwearSlim = new ModelRenderer(this, 40, 32);
+    this.bipedRightArmwearSlim.addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, modelSizeIn + 0.25F);
+    this.bipedRightArmwearSlim.setRotationPoint(-5.0F, 2.5F + yOffsetIn, 0.0F); // 10.0F
+    // legs
+    this.bipedLeftLegwear = new ModelRenderer(this, 0, 48);
+    this.bipedLeftLegwear.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn + 0.25F);
+    this.bipedLeftLegwear.setRotationPoint(1.9F, 12.0F + yOffsetIn, 0.0F);
+    this.bipedRightLegwear = new ModelRenderer(this, 0, 32);
+    this.bipedRightLegwear.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn + 0.25F);
+    this.bipedRightLegwear.setRotationPoint(-1.9F, 12.0F + yOffsetIn, 0.0F);
+    // body
+    this.bipedBodyWear = new ModelRenderer(this, 16, 32);
+    this.bipedBodyWear.addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSizeIn + 0.25F);
+    this.bipedBodyWear.setRotationPoint(0.0F, 0.0F + yOffsetIn, 0.0F);
     
-    ROTATION_MAP.put(ModelPart.HEAD, ImmutableList.of(this.bipedHead));
-    ROTATION_MAP.put(ModelPart.BODY, ImmutableList.of(this.bipedBody, this.bipedBodyChest));
-    ROTATION_MAP.put(ModelPart.LEFT_ARM, ImmutableList.of(this.bipedLeftArm, this.bipedLeftArmSlim));
-    ROTATION_MAP.put(ModelPart.RIGHT_ARM, ImmutableList.of(this.bipedRightArm, this.bipedRightArmSlim));
-    ROTATION_MAP.put(ModelPart.LEFT_LEG, ImmutableList.of(this.bipedLeftLeg));
-    ROTATION_MAP.put(ModelPart.RIGHT_LEG, ImmutableList.of(this.bipedRightLeg));
+    ROTATION_MAP.put(ModelPart.HEAD, ImmutableList.of(this.bipedHead, this.bipedHeadwear));
+    ROTATION_MAP.put(ModelPart.BODY, ImmutableList.of(this.bipedBody, this.bipedBodyChest, this.bipedBodyWear));
+    ROTATION_MAP.put(ModelPart.LEFT_ARM, ImmutableList.of(this.bipedLeftArm, this.bipedLeftArmSlim, this.bipedLeftArmwear, this.bipedLeftArmwearSlim));
+    ROTATION_MAP.put(ModelPart.RIGHT_ARM, ImmutableList.of(this.bipedRightArm, this.bipedRightArmSlim, this.bipedRightArmwear, this.bipedRightArmwearSlim));
+    ROTATION_MAP.put(ModelPart.LEFT_LEG, ImmutableList.of(this.bipedLeftLeg, this.bipedLeftLegwear));
+    ROTATION_MAP.put(ModelPart.RIGHT_LEG, ImmutableList.of(this.bipedRightLeg, this.bipedRightLegwear));
   }
   
   protected Iterable<ModelRenderer> getUpperParts() { 
-    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedBodyChest); 
+    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedBodyChest, this.bipedHeadwear, this.bipedBodyWear); 
   }
   
   protected Iterable<ModelRenderer> getLowerParts() { 
-    return ImmutableList.of(this.bipedLeftLeg, this.bipedRightLeg); 
+    return ImmutableList.of(this.bipedLeftLeg, this.bipedRightLeg, this.bipedLeftLegwear, this.bipedRightLegwear); 
   }
   
   protected Iterable<ModelRenderer> getSlimArms() { 
-    return ImmutableList.of(this.bipedLeftArmSlim, this.bipedRightArmSlim); 
+    return ImmutableList.of(this.bipedLeftArmSlim, this.bipedRightArmSlim, this.bipedLeftArmwearSlim, this.bipedRightArmwearSlim); 
   }
   
   protected Iterable<ModelRenderer> getArms() { 
-    return ImmutableList.of(this.bipedLeftArm, this.bipedRightArm); 
+    return ImmutableList.of(this.bipedLeftArm, this.bipedRightArm, this.bipedLeftArmwear, this.bipedRightArmwear); 
   }
 
   public void setRotationAngles(final T entity, final float partialTicks) {
@@ -111,9 +151,9 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
       });
     }
     // reset body rotations
-    this.bipedBody.rotateAngleX = 0.0F;
-    this.bipedBody.rotateAngleY = 0.0F;
-    this.bipedBody.rotateAngleZ = 0.0F;
+    this.bipedBody.rotateAngleX = this.bipedBodyWear.rotateAngleX = 0.0F;
+    this.bipedBody.rotateAngleY = this.bipedBodyWear.rotateAngleY = 0.0F;
+    this.bipedBody.rotateAngleZ = this.bipedBodyWear.rotateAngleZ = 0.0F;
     this.bipedBodyChest.rotateAngleX = -0.2182F;
     this.bipedBodyChest.rotateAngleY = 0.0F;
     this.bipedBodyChest.rotateAngleZ = 0.0F;

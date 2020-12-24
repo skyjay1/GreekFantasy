@@ -59,30 +59,29 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     final ResourceLocation textureStone = getStoneTexture(te);
     final ResourceLocation textureOverlay = getOverlayTexture(te);
     matrixStackIn.push();
-    // prepare to render model
+    // prepare to render player texture
     matrixStackIn.translate(0.5D, (double)translateY, 0.5D);
     matrixStackIn.rotate(Vector3f.XP.rotationDegrees(180.0F));
     matrixStackIn.rotate(Vector3f.YP.rotationDegrees(rotation));
-    IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureStone));
+    IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureOverlay));
     this.model.setRotationAngles(te, partialTicks);
     this.model.rotateAroundBody(te.getRotations(ModelPart.BODY), matrixStackIn, partialTicks); 
-    // render stone texture
-    this.model.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F, upper, isFemaleModel);
-    // prepare to render player texture
     if(te.getStatueMaterial() != StatueMaterial.WOOD) {
-    vertexBuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(textureOverlay));
+      // render player texture
+      this.model.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F, upper, isFemaleModel);
+    }
+    // prepare to render stone texture
+    vertexBuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(textureStone));
     RenderSystem.enableBlend();
     RenderSystem.blendEquation(32774);
     RenderSystem.blendFunc(770, 1);
-    //RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.DST_COLOR);
     RenderSystem.alphaFunc(516, 0.0F);
-    // render player texture
-    this.model.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 0.8F, 0.8F, 0.8F, 0.7F, upper, isFemaleModel);
+    // render stone texture
+    this.model.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 0.8F, 0.8F, 0.8F, 0.3F, upper, isFemaleModel);
     // reset RenderSystem values
     RenderSystem.defaultBlendFunc();
     RenderSystem.defaultAlphaFunc();
     RenderSystem.disableBlend();
-    }
     // render held items
     renderHeldItems(te, partialTicks, matrixStackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, upper);
     matrixStackIn.pop();
