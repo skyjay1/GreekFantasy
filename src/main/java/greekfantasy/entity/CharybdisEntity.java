@@ -86,9 +86,9 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 60.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.29D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 160.0D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D)
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.5D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D);
   }
