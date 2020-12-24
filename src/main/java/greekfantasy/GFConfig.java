@@ -78,6 +78,7 @@ public class GFConfig {
   
   // special attack configs
   public final ForgeConfigSpec.BooleanValue EMPUSA_ATTACK;
+  public final ForgeConfigSpec.BooleanValue FURY_ATTACK;
   public final ForgeConfigSpec.BooleanValue GORGON_ATTACK;
   public final ForgeConfigSpec.BooleanValue MINOTAUR_ATTACK;
   public final ForgeConfigSpec.BooleanValue SHADE_ATTACK;
@@ -155,7 +156,7 @@ public class GFConfig {
     HEALING_ROD_COOLDOWN = builder.defineInRange("healing_rod_cooldown", 35, 0, 100);
     HEALING_ROD_DURABILITY = builder.defineInRange("healing_rod_durability", 384, 1, 4000);
     THUNDERBOLT_STORMS_ONLY = builder.comment("Whether the Thunderbolt can only be used during storms")
-        .define("thunderbolt_storms_only", true);
+        .define("thunderbolt_storms_only", false);
     THUNDERBOLT_COOLDOWN = builder.defineInRange("thunderbolt_cooldown", 50, 0, 100);
     THUNDERBOLT_DURABILITY = builder.defineInRange("thunderbolt_durability", 168, 1, 4000);
     BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
@@ -196,6 +197,8 @@ public class GFConfig {
     builder.push("mob_abilities");
     EMPUSA_ATTACK = builder.comment("Whether the Empusa can drain health")
         .define("empusa_attack", true);
+    FURY_ATTACK = builder.comment("Whether the Fury can throw curses")
+        .define("fury_attack", true);
     GORGON_ATTACK = builder.comment("Whether the Gorgon can stun players by staring")
         .define("gorgon_attack", true);
     MINOTAUR_ATTACK = builder.comment("Whether the Minotaur can charge and stun players")

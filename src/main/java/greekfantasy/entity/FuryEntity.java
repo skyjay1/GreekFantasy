@@ -1,12 +1,20 @@
 package greekfantasy.entity;
 
+import java.util.EnumSet;
+
+import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.FollowGoal;
+import greekfantasy.entity.ai.IntervalRangedAttackGoal;
+import greekfantasy.entity.misc.CurseEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.IRangedAttackMob;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.FlyingMovementController;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
@@ -28,7 +36,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
-public class FuryEntity extends MonsterEntity implements IFlyingAnimal {  
+public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedAttackMob {  
   public static final int MAX_AGGRO_TIME = 45;
   public float flyingTime;
   public int aggroTime;
@@ -55,7 +63,7 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, true));
+    this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
     this.goalSelector.addGoal(3, new FollowGoal(this, 1.0D, 6.0F, 12.0F) {
       @Override
       public boolean shouldExecute() { return entity.getRNG().nextInt(110) == 0 && super.shouldExecute(); }
@@ -68,6 +76,9 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal {
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp());
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    if(GreekFantasy.CONFIG.FURY_ATTACK.get()) {
+      this.goalSelector.addGoal(1, new IntervalRangedAttackGoal(this, 210, 2, 200));
+    }
   }
 
   @Override
@@ -154,5 +165,16 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal {
     final float prevAggroPercent = Math.max((float)aggroTime - partialTick, 0.0F) / (float)MAX_AGGRO_TIME;
     final float aggroPercent = (float)aggroTime / (float)MAX_AGGRO_TIME;
     return MathHelper.lerp(partialTick / 8, prevAggroPercent, aggroPercent); 
+  }
+
+  //Ranged Attack //
+
+  @Override
+  public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
+    if (!world.isRemote()) {
+      CurseEntity healingSpell = CurseEntity.create(world, this);
+      world.addEntity(healingSpell);
+    }
+    this.playSound(SoundEvents.ENTITY_LLAMA_SPIT, 1.2F, 1.0F);
   }
 }

@@ -50,7 +50,7 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
   @Override
   protected void onImpact(RayTraceResult raytrace) {
     super.onImpact(raytrace);
-    if (!this.world.isRemote() && this.isAlive()) {
+    if (this.isAlive()) {
       remove();
     }
   }
@@ -68,10 +68,12 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
       return;
     }
     // check for impact
-    RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
-    if (raytraceresult != null && raytraceresult.getType() != RayTraceResult.Type.MISS
-        && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
-      this.onImpact(raytraceresult);
+    if(!this.getEntityWorld().isRemote()) {
+      RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
+      if (raytraceresult != null && raytraceresult.getType() != RayTraceResult.Type.MISS
+          && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+        this.onImpact(raytraceresult);
+      }
     }
     // particle trail
     if(this.ticksExisted > 2) {

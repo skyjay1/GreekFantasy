@@ -37,11 +37,12 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ARA_ENTITY, AraRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.TALOS_ENTITY, TalosRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CENTAUR_ENTITY, CentaurRenderer::new);
-    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYPRIAN_ENTITY, CyprianRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CERASTES_ENTITY, CerastesRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CERBERUS_ENTITY, CerberusRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CHARYBDIS_ENTITY, CharybdisRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CURSE_ENTITY, CurseRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYCLOPES_ENTITY, CyclopesRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYPRIAN_ENTITY, CyprianRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DRAGON_TOOTH_ENTITY, m -> new SpriteRenderer<DragonToothEntity>(m, Minecraft.getInstance().getItemRenderer()));
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DRYAD_ENTITY, DryadRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ELPIS_ENTITY, ElpisRenderer::new);

@@ -1,15 +1,14 @@
 package greekfantasy.entity;
 
-import java.util.EnumSet;
-
+import greekfantasy.entity.ai.IntervalRangedAttackGoal;
 import greekfantasy.entity.misc.PoisonSpitEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
@@ -33,7 +32,7 @@ import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class PythonEntity extends MonsterEntity {
+public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   
   private static final DataParameter<Byte> STATE = EntityDataManager.createKey(PythonEntity.class, DataSerializers.BYTE);
   private static final String KEY_STATE = "PythonState";
@@ -45,10 +44,8 @@ public class PythonEntity extends MonsterEntity {
   private static final byte SPIT_CLIENT = 9;
   
   // other constants for attack, spawn, etc.
-  private static final double SPIT_RANGE = 14.0D;
   private static final int MAX_SPAWN_TIME = 110;
-  private static final int SPIT_INTERVAL = 22;
-  private static final int MAX_SPIT_TIME = SPIT_INTERVAL * 3;
+  private static final int MAX_SPIT_TIME = 66;
   
   private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.GREEN, BossInfo.Overlay.PROGRESS));
   
@@ -80,7 +77,7 @@ public class PythonEntity extends MonsterEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(1, new SwimGoal(this));
-    this.goalSelector.addGoal(3, new PythonEntity.PoisonSpitAttackGoal(165));
+    this.goalSelector.addGoal(3, new PythonEntity.PoisonSpitAttackGoal(this, MAX_SPIT_TIME, 3, 165));
     this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
     this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.7D));
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
@@ -210,102 +207,43 @@ public class PythonEntity extends MonsterEntity {
     }
   }
   
-  // Attack //
-  
-//  @Override
-//  public boolean attackEntityAsMob(final Entity entity) {
-//    if (super.attackEntityAsMob(entity)) {
-//      if (entity instanceof LivingEntity) {
-//        ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.POISON, 3 * 20, 0));
-//      }
-//      return true;
-//    }
-//    return false;
-//  }
-  
-  /**
-   * Applies a smash attack to the given entity
-   * @param entity the target entity
-   **/
-  private void useSpitAttack(final LivingEntity entity) {
+  // Ranged Attack //
+
+  @Override
+  public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
     if(!world.isRemote()) {
       PoisonSpitEntity healingSpell = PoisonSpitEntity.create(world, this);
       world.addEntity(healingSpell);
     }
+    this.playSound(SoundEvents.ENTITY_LLAMA_SPIT, 1.2F, 1.0F);
   }
-
   
+
   // Goals //
   
-  class PoisonSpitAttackGoal extends Goal {
-    private int spitTime;
-    private int maxCooldown;
-    private int cooldown;
+  class PoisonSpitAttackGoal extends IntervalRangedAttackGoal {
     
-    protected PoisonSpitAttackGoal(final int maxCooldownIn) {
-      this.setMutexFlags(EnumSet.allOf(Goal.Flag.class));
-      maxCooldown = maxCooldownIn;
-      cooldown = 30;
+    protected PoisonSpitAttackGoal(final IRangedAttackMob entityIn, final int duration, final int count, final int maxCooldownIn) {
+      super(entityIn, duration, count, maxCooldownIn);
     }
 
     @Override
     public boolean shouldExecute() {  
-      if(this.cooldown > 0) {
-        cooldown--;
-      } else if (PythonEntity.this.getAttackTarget() != null && PythonEntity.this.isNoneState()
-          && PythonEntity.this.canEntityBeSeen(PythonEntity.this.getAttackTarget())
-          && isWithinRange(PythonEntity.this.getAttackTarget())) {
-        return true;
-      }
-      return false;
+      return super.shouldExecute() && PythonEntity.this.isNoneState();
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
-      return PythonEntity.this.isSpitAttack() && PythonEntity.this.getAttackTarget() != null
-          && PythonEntity.this.canEntityBeSeen(PythonEntity.this.getAttackTarget())
-          && isWithinRange(PythonEntity.this.getAttackTarget());
-    }
-   
-    @Override
     public void startExecuting() {
-      this.spitTime = 1;
+      super.startExecuting();
       PythonEntity.this.setSpitAttack(true);
       PythonEntity.this.getEntityWorld().setEntityState(PythonEntity.this, SPIT_CLIENT);
       PythonEntity.this.playSound(SoundEvents.ENTITY_CREEPER_PRIMED, 1.0F, 1.2F);
     }
-    
-    @Override
-    public void tick() {
-      // stop the entity from moving, and adjust look vecs
-      PythonEntity.this.getNavigator().clearPath();
-      PythonEntity.this.faceEntity(PythonEntity.this.getAttackTarget(), 100.0F, 100.0F);
-      PythonEntity.this.getLookController().setLookPositionWithEntity(PythonEntity.this.getAttackTarget(), 100.0F, 100.0F);
-      // spit attack on interval
-      if(spitTime % SPIT_INTERVAL == 0) {
-        PythonEntity.this.useSpitAttack(PythonEntity.this.getAttackTarget());
-        PythonEntity.this.playSound(SoundEvents.ENTITY_LLAMA_SPIT, 1.2F, 1.0F);
-      }
-      // finish the spit attack
-      if(spitTime++ > MAX_SPIT_TIME) {
-        resetTask();
-      }
-    }
-    
+   
     @Override
     public void resetTask() {
+      super.resetTask();
       PythonEntity.this.setSpitAttack(false);
-      this.spitTime = 0;
-      this.cooldown = maxCooldown;
-    }
-    
-    protected boolean isWithinRange(final LivingEntity target) {
-      if(target != null) {
-        final double disSq = PythonEntity.this.getDistanceSq(target);
-        return disSq > 9.0D && disSq < (SPIT_RANGE * SPIT_RANGE);
-      }
-      return false;
     }
   }
-  
 }

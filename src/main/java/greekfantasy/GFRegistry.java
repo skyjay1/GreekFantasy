@@ -26,6 +26,7 @@ import greekfantasy.enchantment.MirrorEnchantment;
 import greekfantasy.enchantment.OverstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
 import greekfantasy.entity.*;
+import greekfantasy.entity.misc.CurseEntity;
 import greekfantasy.entity.misc.DragonToothEntity;
 import greekfantasy.entity.misc.HealingSpellEntity;
 import greekfantasy.entity.misc.OrthusHeadItemEntity;
@@ -126,6 +127,7 @@ public final class GFRegistry {
   public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerberusEntity> CERBERUS_ENTITY = buildEntityType(CerberusEntity::new, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<CharybdisEntity> CHARYBDIS_ENTITY = buildEntityType(CharybdisEntity::new, "charybdis", 5.9F, 7.9F, EntityClassification.WATER_CREATURE, b -> b.immuneToFire());
+  public static EntityType<CurseEntity> CURSE_ENTITY = buildEntityType(CurseEntity::new, "curse", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
   public static EntityType<CyclopesEntity> CYCLOPES_ENTITY = buildEntityType(CyclopesEntity::new, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, b -> {});
   public static EntityType<CyprianEntity> CYPRIAN_ENTITY = buildEntityType(CyprianEntity::new, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
   public static EntityType<DragonToothEntity> DRAGON_TOOTH_ENTITY = buildEntityType(DragonToothEntity::new, "dragon_tooth", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
@@ -334,6 +336,7 @@ public final class GFRegistry {
     registerEntityType(event, SPARTI_ENTITY, SpartiEntity::getAttributes, null);
     registerEntityType(event, TALOS_ENTITY, TalosEntity::getAttributes, null);
     registerEntityType(event, UNICORN_ENTITY, UnicornEntity::getAttributes, UnicornEntity::canSpawnOn);
+    event.getRegistry().register(CURSE_ENTITY);
     event.getRegistry().register(DRAGON_TOOTH_ENTITY);
     event.getRegistry().register(HEALING_SPELL_ENTITY);
     event.getRegistry().register(ORTHUS_HEAD_ITEM_ENTITY);
