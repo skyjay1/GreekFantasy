@@ -8,6 +8,7 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -21,24 +22,46 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class GorgonEntity extends MonsterEntity {
+public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
   
-  private static final byte STARE_ATTACK = 9;
-  private static final int PETRIFY_DURATION = 80;
+  private static final DataParameter<Boolean> MEDUSA = EntityDataManager.createKey(GorgonEntity.class, DataSerializers.BOOLEAN);
+  private static final String KEY_MEDUSA = "Medusa";
+  
+  protected static final byte STARE_ATTACK = 9;
+  protected static final int PETRIFY_DURATION = 80;
+  
+  private static final ResourceLocation MEDUSA_LOOT = new ResourceLocation(GreekFantasy.MODID, "entities/medusa");
+  
+  private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.GREEN, BossInfo.Overlay.PROGRESS));
 
+  private final GorgonEntity.RangedAttackGoal rangedAttackGoal = new RangedAttackGoal(this, 1.0D, 45, 15.0F);
+  
   public GorgonEntity(final EntityType<? extends GorgonEntity> type, final World worldIn) {
     super(type, worldIn);
   }
@@ -46,9 +69,15 @@ public class GorgonEntity extends MonsterEntity {
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.26D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.0D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 16.0D);
+        .createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D);
+  }
+  
+  @Override
+  public void registerData() {
+    super.registerData();
+    this.getDataManager().register(MEDUSA, Boolean.valueOf(false));
   }
   
   @Override
@@ -61,8 +90,25 @@ public class GorgonEntity extends MonsterEntity {
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     if(GreekFantasy.CONFIG.GORGON_ATTACK.get()) {
-      this.goalSelector.addGoal(3, new StareAttackGoal(this, PETRIFY_DURATION + 10));
+      this.goalSelector.addGoal(2, new StareAttackGoal(this, PETRIFY_DURATION + 20));
     }
+  }
+  
+  @Override
+  public void livingTick() {
+    super.livingTick();
+    
+    // boss info
+    this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
+  }
+  
+  @Override
+  public boolean isInvulnerableTo(final DamageSource source) {
+    // immune to damage from other gorgons
+    if(source.getTrueSource() != null && source.getTrueSource().getType() == GFRegistry.GORGON_ENTITY) {
+      return true;
+    }
+    return super.isInvulnerableTo(source);
   }
   
   @OnlyIn(Dist.CLIENT)
@@ -111,6 +157,29 @@ public class GorgonEntity extends MonsterEntity {
   @Override
   protected float getSoundVolume() { return 0.8F; }
   
+  // Ranged Attack //
+
+  @Override
+  public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
+    ItemStack itemstack = this.findAmmo(this.getHeldItem(ProjectileHelper.getHandWith(this, Items.BOW)));
+    AbstractArrowEntity arrow = ProjectileHelper.fireArrow(this, itemstack, distanceFactor);
+    if (this.getHeldItemMainhand().getItem() instanceof net.minecraft.item.BowItem)
+      arrow = ((net.minecraft.item.BowItem) this.getHeldItemMainhand().getItem()).customArrow(arrow);
+    // this is copied from LlamaSpit code, it moves the arrow nearer to the centaur's human-body
+    arrow.setPosition(this.getPosX() - (this.getWidth() + 1.0F) * 0.5D * MathHelper.sin(this.renderYawOffset * 0.017453292F),
+        this.getPosYEye() - 0.1D,
+        this.getPosZ() + (this.getWidth() + 1.0F) * 0.5D * MathHelper.cos(this.renderYawOffset * 0.017453292F));
+    double dx = target.getPosX() - arrow.getPosX();
+    double dy = target.getPosYHeight(0.67D) - arrow.getPosY();
+    double dz = target.getPosZ() - arrow.getPosZ();
+    double dis = (double) MathHelper.sqrt(dx * dx + dz * dz);
+    arrow.shoot(dx, dy + dis * (double) 0.2F, dz, 1.6F, (float) (14 - this.world.getDifficulty().getId() * 4));
+    this.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
+    this.world.addEntity(arrow);
+  }
+  
+  // Stare Attack //
+  
   public boolean isPlayerStaring(final PlayerEntity player) {
     Vector3d vector3d = player.getLook(1.0F).normalize();
     Vector3d vector3d1 = new Vector3d(this.getPosX() - player.getPosX(), this.getPosYEye() - player.getPosYEye(),
@@ -142,6 +211,10 @@ public class GorgonEntity extends MonsterEntity {
     } else {
       target.addPotionEffect(new EffectInstance(GFRegistry.PETRIFIED_EFFECT, PETRIFY_DURATION, 0, false, false, true));
     }
+    // apply medusa effect
+    if(this.isMedusa()) {
+      target.addPotionEffect(new EffectInstance(Effects.WITHER, PETRIFY_DURATION, 0));
+    }
     // update client-state
     if(this.isServerWorld()) {
       this.world.setEntityState(this, STARE_ATTACK);
@@ -152,6 +225,98 @@ public class GorgonEntity extends MonsterEntity {
   public static boolean isMirrorShield(final ItemStack stack) {
     return EnchantmentHelper.getEnchantments(stack).containsKey(GFRegistry.MIRROR_ENCHANTMENT);
   }
+  
+  // States //
+  
+  public void setMedusa(final boolean medusa) { 
+    this.getDataManager().set(MEDUSA, medusa);
+    updateCombatGoal(medusa);
+  }
+  
+  public boolean isMedusa() { return this.getDataManager().get(MEDUSA); }
+  
+  @Override
+  public void notifyDataManagerChange(final DataParameter<?> key) {
+    super.notifyDataManagerChange(key);
+    if(key == MEDUSA) {
+      // update attributes and boss bar visibility
+      if(isMedusa()) {
+        // medusa attributes
+        final double medusaHealth = 84.0D;
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(medusaHealth);
+        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0D);
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.30D);
+        this.setHealth((float)medusaHealth);
+        this.bossInfo.setVisible(true);
+        updateCombatGoal(true);
+      } else {
+        // non-medusa
+        this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(2.0D);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(24.0D);
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.26D);
+        this.bossInfo.setVisible(false);
+        updateCombatGoal(false);
+      }
+    }
+  }
+  
+  public void updateCombatGoal(final boolean medusa) {
+    if(this.isServerWorld()) {
+      if(medusa) {
+        // add bow and goal
+        this.goalSelector.addGoal(3, rangedAttackGoal);
+        if(!(this.getHeldItemMainhand().getItem() instanceof BowItem)) {
+          this.setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.BOW));
+        }
+      } else {
+        // remove bow and goal
+        this.goalSelector.removeGoal(rangedAttackGoal);
+        if(this.getHeldItemMainhand().getItem() instanceof BowItem) {
+          this.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+        }
+      }
+    }
+  }
+  
+  // Boss //
+  
+  @Override
+  public boolean isNonBoss() { return !isMedusa(); }
+  
+  @Override
+  public ResourceLocation getLootTable() {
+    return isMedusa() ? MEDUSA_LOOT : super.getLootTable();
+  }
+
+  @Override
+  public void addTrackingPlayer(ServerPlayerEntity player) {
+    super.addTrackingPlayer(player);
+    this.bossInfo.addPlayer(player);
+    this.bossInfo.setVisible(this.isMedusa()); // just in case de-sync occurs
+  }
+
+  @Override
+  public void removeTrackingPlayer(ServerPlayerEntity player) {
+    super.removeTrackingPlayer(player);
+    this.bossInfo.removePlayer(player);
+  }
+
+  // NBT methods //
+
+  @Override
+  public void writeAdditional(CompoundNBT compound) {
+    super.writeAdditional(compound);
+    compound.putBoolean(KEY_MEDUSA, isMedusa());
+  }
+
+  @Override
+  public void readAdditional(CompoundNBT compound) {
+    super.readAdditional(compound);
+    setMedusa(compound.getBoolean(KEY_MEDUSA));
+    updateCombatGoal(isMedusa());
+  }
+
+  // Goals //
   
   public static class StareAttackGoal extends Goal {
     private final GorgonEntity entity;
@@ -197,6 +362,30 @@ public class GorgonEntity extends MonsterEntity {
     @Override
     public void resetTask() {
       this.cooldown = maxCooldown;
+    }
+  }
+  
+  class RangedAttackGoal extends net.minecraft.entity.ai.goal.RangedAttackGoal {
+    public RangedAttackGoal(IRangedAttackMob entity, double moveSpeed, int attackInterval, float attackDistance) {
+      super(entity, moveSpeed, attackInterval, attackDistance);
+    }
+    
+    @Override
+    public boolean shouldExecute() {
+      return (super.shouldExecute() && GorgonEntity.this.getDistanceSq(GorgonEntity.this.getAttackTarget()) > 16.0D
+         && GorgonEntity.this.getHeldItemMainhand().getItem() instanceof BowItem);
+    }
+    
+    @Override
+    public void startExecuting() {
+      super.startExecuting();
+      GorgonEntity.this.setAggroed(true);
+    }
+    
+    @Override
+    public void resetTask() {
+      super.resetTask();
+      GorgonEntity.this.setAggroed(false);
     }
   }
   

@@ -11,6 +11,9 @@ import greekfantasy.entity.GorgonEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
 
 public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
   private final ModelRenderer chest;
@@ -103,6 +106,18 @@ public class GorgonModel<T extends GorgonEntity> extends BipedModel<T> {
 
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    // set arm poses
+    final ItemStack item = entity.getHeldItem(Hand.MAIN_HAND);
+    if (entity.isMedusa() && item.getItem() instanceof net.minecraft.item.BowItem && entity.isAggressive()) {
+       if (entity.getPrimaryHand() == HandSide.RIGHT) {
+          this.rightArmPose = BipedModel.ArmPose.BOW_AND_ARROW;
+       } else {
+          this.leftArmPose = BipedModel.ArmPose.BOW_AND_ARROW;
+       }
+    } else {
+      this.rightArmPose = this.leftArmPose = BipedModel.ArmPose.EMPTY;
+    }
+    // super method
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     bipedLeftArm.rotationPointZ = -2.0F;
     bipedRightArm.rotationPointZ = -2.0F;

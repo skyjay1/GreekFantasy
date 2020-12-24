@@ -277,7 +277,7 @@ public class GFConfig {
     MOB_SPAWNS.put("fury", new BiomeWhitelistConfig(builder, "fury_spawn", 9, true, nether));
     MOB_SPAWNS.put("gigante", new BiomeWhitelistConfig(builder, "gigante_spawn", 10, true, mountains));
     MOB_SPAWNS.put("gorgon", new BiomeWhitelistConfig(builder, "gorgon_spawn", 16, false, netherEndOceanIcy));
-    MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 10, true, nether));
+    MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 10, true, sandy));
     MOB_SPAWNS.put("mad_cow", new BiomeWhitelistConfig(builder, "mad_cow_spawn", 2, false, netherEndOceanIcy));
     MOB_SPAWNS.put("minotaur", new BiomeWhitelistConfig(builder, "minotaur_spawn", 60, false, netherEndOceanIcy));
     MOB_SPAWNS.put("naiad", new BiomeWhitelistConfig(builder, "naiad_spawn", 10, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.WATER)));

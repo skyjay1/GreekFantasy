@@ -154,7 +154,7 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
   @Override
   public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
      ItemStack itemstack = this.findAmmo(this.getHeldItem(ProjectileHelper.getHandWith(this, Items.BOW)));
-     AbstractArrowEntity arrow = this.fireArrow(itemstack, distanceFactor);
+     AbstractArrowEntity arrow = ProjectileHelper.fireArrow(this, itemstack, distanceFactor);
      if (this.getHeldItemMainhand().getItem() instanceof net.minecraft.item.BowItem)
         arrow = ((net.minecraft.item.BowItem)this.getHeldItemMainhand().getItem()).customArrow(arrow);
      // this is copied from LlamaSpit code, it moves the arrow nearer to the centaur's human-body
@@ -167,12 +167,8 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
      this.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
      this.world.addEntity(arrow);
   }
-
-  protected AbstractArrowEntity fireArrow(ItemStack arrowStack, float distanceFactor) {
-     return ProjectileHelper.fireArrow(this, arrowStack, distanceFactor);
-  }
   
-  // End Ranged Attack methods
+  // NBT Methods
 
   @Override
   public void writeAdditional(CompoundNBT compound) {

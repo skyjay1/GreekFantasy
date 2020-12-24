@@ -21,7 +21,8 @@ __Key:__
 - X X _ X X Centaur
 - X X X X X Cyprian Centaur (bull-head, hostile)
 - X X X X X Minotaur
-- X X X X X Gorgon (Medusa)
+- X X X X X Gorgon
+- X X X _ _ Medusa
 - X X X X X Harpy
 - X X _ ~ X Empusa
 - X X X X X Shade
@@ -197,8 +198,6 @@ __Key:__
 - X Panflute songs
 - X Panflute song selection GUI
 - X Lots of mysterious box functions!
-- X Some way to encounter Geryon
-- X Some way to encounter Cerberus
 - ~ Block and Item tags (wooden_doors, etc.)
 - X Olive forest biome
 - X Spawn eggs

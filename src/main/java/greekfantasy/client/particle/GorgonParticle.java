@@ -28,7 +28,7 @@ public class GorgonParticle extends Particle {
     super(worldIn, posX, posY, posZ, motX, motY, motZ);
     GreekFantasy.LOGGER.debug("Spawning gorgon particle at " + posX + ", " + posY + ", " + posZ);
     this.model = new GorgonModel<>(0.0F);
-    this.renderType = RenderType.getEntityTranslucent(GorgonRenderer.TEXTURE);
+    this.renderType = RenderType.getEntityTranslucent(GorgonRenderer.GORGON_TEXTURE);
     this.particleGravity = 0.0F;
     this.age = 0;
     this.maxAge = 78;
