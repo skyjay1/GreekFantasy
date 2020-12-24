@@ -190,8 +190,8 @@ public final class GFWorldGen {
       addFeature(event, "small_nether_shrine", GenerationStage.Decoration.SURFACE_STRUCTURES, SMALL_NETHER_SHRINE);
     } else if(event.getCategory() != Biome.Category.THEEND) {
       // add ore features
-      event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, MARBLE);
-      event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, LIMESTONE);
+      addFeature(event, "marble", GenerationStage.Decoration.UNDERGROUND_DECORATION, MARBLE);
+      addFeature(event, "limestone", GenerationStage.Decoration.UNDERGROUND_DECORATION, LIMESTONE);
       // add custom features
       addFeature(event, "harpy_nest", GenerationStage.Decoration.VEGETAL_DECORATION, HARPY_NEST);
       addFeature(event, "small_shrine", GenerationStage.Decoration.SURFACE_STRUCTURES, SMALL_SHRINE);
@@ -214,7 +214,7 @@ public final class GFWorldGen {
     final RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
     if(null == config) {
       GreekFantasy.LOGGER.error("Error registering features: config for '" + featureName + "' not found!");
-    } else if(config.canSpawnInBiome(key)) {
+    } else if(config.chance() > 0 && config.canSpawnInBiome(key)) {
       event.getGeneration().withFeature(stage, feature.chance(1000 / config.chance()));
     }
   }

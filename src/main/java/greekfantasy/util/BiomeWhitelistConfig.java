@@ -1,18 +1,14 @@
 package greekfantasy.util;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import greekfantasy.GreekFantasy;
 import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class BiomeWhitelistConfig {
   protected final String name;

@@ -257,6 +257,7 @@ public class GFConfig {
     dimensions.add(Dimension.THE_NETHER.getLocation().toString());
     IS_SPAWNS_WHITELIST = builder.worldRestart().define("whitelist_dimensions", true);
     SPAWNS_DIMENSION_WHITELIST = builder.worldRestart().define("dimensions", dimensions);
+    final List<String> overworld = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.OVERWORLD);
     final List<String> nether = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.NETHER);
     final List<String> ocean = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.OCEAN);
     final List<String> forest = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST, BiomeDictionary.Type.CONIFEROUS, BiomeDictionary.Type.JUNGLE);
@@ -291,6 +292,8 @@ public class GFConfig {
 //    IS_FEATURES_WHITELIST = builder.worldRestart().define("whitelist_dimensions", true);
 //    FEATURES_DIMENSION_WHITELIST = builder.worldRestart().define("dimensions", dimensions);
     OLIVE_FOREST_BIOME_WEIGHT = builder.defineInRange("olive_forest_weight", 9, 0, 1000);
+    FEATURES.put("limestone", new BiomeWhitelistConfig(builder, "limestone", 1000, true, overworld));
+    FEATURES.put("marble", new BiomeWhitelistConfig(builder, "marble", 1000, true, overworld));
     FEATURES.put("harpy_nest", new BiomeWhitelistConfig(builder, "harpy_nest", 12, false, netherEndOceanIcy));
     FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 17, false, netherEndOceanIcy));
     FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 16, true, nether));
