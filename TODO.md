@@ -46,7 +46,7 @@ __Key:__
 
 ## Entity AI
 
-- _ Fury shoots curses (random bad potion effects)
+- X Fury shoots curses (random bad potion effects)
 - X Python spits poison
 - X Talos shoots arrows
 - X Charybdis swirls entities
