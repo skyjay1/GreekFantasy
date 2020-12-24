@@ -31,12 +31,13 @@ public class HuntingEnchantment extends Enchantment {
       return;
     }
     // if it's an animal, use high attack damage
-    if(target instanceof AnimalEntity && (level >= 3 || user.getRNG().nextInt(4 - level) == 0)) {
+    if(target.isNonBoss() && target instanceof AnimalEntity && (level >= 3 || user.getRNG().nextInt(4 - level) == 0)) {
       float amount = 1.0F;
       DamageSource source = DamageSource.causeMobDamage(user);
       // if config option is enabled, use max damage
       if(GreekFantasy.CONFIG.doesSwordOfHuntBypassArmor()) {
-        amount = ((AnimalEntity)target).getMaxHealth() * 1.25F;
+        // max damage is 128 (see issue #20)
+        amount = Math.min(128.0F, ((AnimalEntity)target).getMaxHealth() * 1.25F);
         source.setDamageBypassesArmor().setDamageIsAbsolute();
       }
       target.attackEntityFrom(source, amount);
