@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
@@ -43,6 +47,8 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.api.distmarker.Dist;
@@ -97,7 +103,6 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
   @Override
   public void livingTick() {
     super.livingTick();
-    
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
   }
@@ -109,6 +114,15 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
       return true;
     }
     return super.isInvulnerableTo(source);
+  }
+  
+  @Nullable
+  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+      @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+    if(this.getRNG().nextDouble() * 100.0D < GreekFantasy.CONFIG.getGorgonMedusaChance()) {
+      this.setMedusa(true);
+    }
+    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
   @OnlyIn(Dist.CLIENT)
@@ -144,6 +158,8 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
       }
     }
   }
+  
+  // Sounds //
   
   @Override
   protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_CAT_HISS; }

@@ -104,11 +104,13 @@ public class GFConfig {
   // special spawn configs
   private final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
   private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
+  private final ForgeConfigSpec.DoubleValue GORGON_MEDUSA_CHANCE;
   private final ForgeConfigSpec.IntValue ELPIS_SPAWN_CHANCE;
   public final ForgeConfigSpec.IntValue NUM_SPARTI_SPAWNED;
   private final ForgeConfigSpec.BooleanValue GIANT_BOAR_NON_NETHER;
   private boolean shadeSpawnOnDeath;
   private int satyrShamanChance;
+  private double gorgonMedusaChance;
   private int elpisSpawnChance;
   private int numSpartiSpawned;
   private boolean giantBoarNonNether;
@@ -230,6 +232,8 @@ public class GFConfig {
         .define("shade_spawn_on_death", true);
     SATYR_SHAMAN_CHANCE = builder.comment("Percent chance that a satyr will be a shaman")
         .defineInRange("satyr_shaman_chance", 24, 0, 100);
+    GORGON_MEDUSA_CHANCE = builder.comment("Percent chance that a gorgon will be a medusa")
+        .defineInRange("gorgon_medusa_chance", 0.8D, 0.0D, 100.0D);
     ELPIS_SPAWN_CHANCE = builder.comment("Percent chance that opening a mysterious box spawns an Elpis")
         .defineInRange("elpis_spawn_chance", 60, 0, 100);
     NUM_SPARTI_SPAWNED = builder.comment("Number of Sparti spawned by using a hydra tooth")
@@ -339,6 +343,7 @@ public class GFConfig {
     swinePotion = SWINE_POTION.get();
     shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
+    gorgonMedusaChance = GORGON_MEDUSA_CHANCE.get();
     elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
     numSpartiSpawned = NUM_SPARTI_SPAWNED.get();
     giantBoarNonNether = GIANT_BOAR_NON_NETHER.get();
@@ -379,6 +384,7 @@ public class GFConfig {
   public boolean isSwinePotionEnabled() { return swinePotion; }
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
   public int getSatyrShamanChance() { return satyrShamanChance; }
+  public double getGorgonMedusaChance() { return gorgonMedusaChance; }
   public int getElpisSpawnChance() { return elpisSpawnChance; }
   public int getNumSpartiSpawned() { return numSpartiSpawned; }
   public boolean getGiantBoarNonNether() { return giantBoarNonNether; }
