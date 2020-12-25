@@ -30,7 +30,8 @@ public class HydraHeadEntity extends Entity {
   }
 
   public HydraHeadEntity(HydraEntity hydraEntity, String name) {
-     super(GFRegistry.HYDRA_HEAD_ENTITY, hydraEntity.world);
+//     super(GFRegistry.HYDRA_HEAD_ENTITY, hydraEntity.world);
+     super(hydraEntity.getType(), hydraEntity.world);
      this.setHydra(hydraEntity.getUniqueID());
      this.setPosition(hydraEntity.getPosX(), hydraEntity.getPosY(), hydraEntity.getPosZ());
   }
@@ -89,11 +90,6 @@ public class HydraHeadEntity extends Entity {
     if(hasHydra()) {
       if(world instanceof ServerWorld) {
         return (HydraEntity) ((ServerWorld) world).getEntityByUuid(getHydraID().get());
-      } else {
-        List<HydraEntity> hydraList = world.getEntitiesWithinAABB(GFRegistry.HYDRA_ENTITY, this.getBoundingBox().grow(1.0D), e -> true);
-        if(!hydraList.isEmpty()) {
-          return hydraList.get(0);
-        }
       }
     }
     

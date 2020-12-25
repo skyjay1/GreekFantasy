@@ -18,7 +18,7 @@ public class DragonToothItem extends Item {
   public ActionResult<ItemStack> onItemRightClick(final World world, final PlayerEntity player, final Hand hand) {
     ItemStack stack = player.getHeldItem(hand);
     player.getCooldownTracker().setCooldown(this, 20);
-    // spawn a hydra tooth entity that will then spawn a Sparti
+    // spawn a dragon tooth entity that will then spawn a Sparti
     if(!world.isRemote()) {
       DragonToothEntity dragonTooth = DragonToothEntity.create(world, player);
       // this unmapped method from ProjectileEntity does some math, then calls #shoot
