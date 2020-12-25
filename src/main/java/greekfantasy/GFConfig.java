@@ -144,7 +144,7 @@ public class GFConfig {
     UNICORN_HORN_DURABILITY = builder.defineInRange("unicorn_horn_durability", 44, 1, 4000);
     HELM_HIDES_ARMOR = builder.comment("Whether the helm of darkness hides armor")
         .define("helm_hides_armor", true);
-    DRAGON_TOOTH_SPAWNS_SPARTI = builder.comment("Whether throwing a dragon tooth can spawn Sparti")
+    DRAGON_TOOTH_SPAWNS_SPARTI = builder.comment("Whether throwing a hydra tooth can spawn Sparti")
         .define("dragon_tooth_spawns_sparti", true);
     SWORD_OF_HUNT_BYPASSES_ARMOR = builder.comment("Whether the Sword of the Hunt deals absolute damage to animals")
         .define("sword_of_hunt_bypasses_armor", true);
@@ -232,7 +232,7 @@ public class GFConfig {
         .defineInRange("satyr_shaman_chance", 24, 0, 100);
     ELPIS_SPAWN_CHANCE = builder.comment("Percent chance that opening a mysterious box spawns an Elpis")
         .defineInRange("elpis_spawn_chance", 60, 0, 100);
-    NUM_SPARTI_SPAWNED = builder.comment("Number of Sparti spawned by using a dragon tooth")
+    NUM_SPARTI_SPAWNED = builder.comment("Number of Sparti spawned by using a hydra tooth")
         .defineInRange("num_sparti_spawned", 1, 1, 8);
     GIANT_BOAR_NON_NETHER = builder.comment("Whether a hoglin must be outside of the nether to be turned to a Giant Boar")
         .define("giant_boar_non_nether", true);
