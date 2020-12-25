@@ -345,12 +345,12 @@ public class CommonForgeEventHandler {
   
   /** @return whether the entity should have the Stunned or Petrified effect applied **/
   private static boolean isStunned(final LivingEntity entity) {
-    return (entity.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null || entity.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null);
+    return entity.isPotionActive(GFRegistry.STUNNED_EFFECT) || entity.isPotionActive(GFRegistry.PETRIFIED_EFFECT);
   }
   
   /** @return whether the entity should have the Swine effect applied **/
   private static boolean isSwine(final LivingEntity livingEntity) {
-    return (livingEntity.getActivePotionEffect(GFRegistry.SWINE_EFFECT) != null);
+    return livingEntity.isPotionActive(GFRegistry.SWINE_EFFECT);
   }
   
   private static List<BlockPos> getPalladiumList(final World world, final BlockPos spawnPos, final ChunkPos chunkPos, final int verticalRange) {

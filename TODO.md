@@ -22,7 +22,7 @@ __Key:__
 - X X X X X Cyprian Centaur (bull-head, hostile)
 - X X X X X Minotaur
 - X X X X X Gorgon
-- X X X _ _ Medusa
+- X X X _ X Medusa
 - X X X X X Harpy
 - X X _ ~ X Empusa
 - X X X X X Shade

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import greekfantasy.util.BiomeHelper;
 import greekfantasy.util.BiomeWhitelistConfig;
+import net.minecraft.entity.EntityType;
 import net.minecraft.world.Dimension;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -60,6 +61,8 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue SWINE_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_DROPS_ARMOR;
   private final ForgeConfigSpec.BooleanValue SWINE_PREVENTS_TARGET;
+  private final ForgeConfigSpec.BooleanValue IS_SWINE_ENTITY_WHITELIST;
+  private final ForgeConfigSpec.ConfigValue<List<? extends String>> SWINE_ENTITY_WHITELIST;
   private boolean stunPreventsJump;
   private boolean stunPreventsUse;
   private boolean overstepEnabled;
@@ -183,6 +186,12 @@ public class GFConfig {
         .define("swine_drops_armor", true);
     SWINE_PREVENTS_TARGET = builder.comment("Whether some monsters ignore players under the swine effect")
         .define("swine_prevents_target", true);
+    IS_SWINE_ENTITY_WHITELIST = builder.define("is_swine_entity_whitelist", true);
+    final List<String> swineWhitelist = asList(EntityType.PLAYER, EntityType.VILLAGER, EntityType.ZOMBIE,
+        EntityType.ZOMBIE_VILLAGER, EntityType.HUSK, EntityType.VINDICATOR, EntityType.WANDERING_TRADER,
+        EntityType.ILLUSIONER, EntityType.PILLAGER, GFRegistry.ARA_ENTITY, GFRegistry.DRYAD_ENTITY,
+        GFRegistry.NAIAD_ENTITY, GFRegistry.SATYR_ENTITY);
+    SWINE_ENTITY_WHITELIST = builder.defineList("swine_entity_whitelist", swineWhitelist, o -> o instanceof String);
     NERF_STUNNING = builder.comment("When true, replaces stunning with Slowness I and Weakness I")
         .define("nerf_stunning", false);
     NERF_PARALYSIS = builder.comment("When true, replaces paralysis with Slowness II and Weakness II")
@@ -273,7 +282,7 @@ public class GFConfig {
     MOB_SPAWNS.put("ara", new BiomeWhitelistConfig(builder, "ara_spawn", 10, false, netherEndOceanIcy));
     MOB_SPAWNS.put("centaur", new BiomeWhitelistConfig(builder, "centaur_spawn", 15, true, plains));
     MOB_SPAWNS.put("cerastes", new BiomeWhitelistConfig(builder, "cerastes_spawn", 30, true, sandy));
-    MOB_SPAWNS.put("charybdis", new BiomeWhitelistConfig(builder, "charybdis_spawn", 4, true, ocean));
+    MOB_SPAWNS.put("charybdis", new BiomeWhitelistConfig(builder, "charybdis_spawn", 2, true, ocean));
     MOB_SPAWNS.put("cyclopes", new BiomeWhitelistConfig(builder, "cyclopes_spawn", 20, true, mountains));
     MOB_SPAWNS.put("cyprian", new BiomeWhitelistConfig(builder, "cyprian_spawn", 10, true, BiomeHelper.concat(plains, taiga)));
     MOB_SPAWNS.put("dryad", new BiomeWhitelistConfig(builder, "dryad_spawn", 24, true, forest));
@@ -397,4 +406,15 @@ public class GFConfig {
   public int getPalladiumRefreshInterval() { return palladiumRefreshInterval; }
   public int getPalladiumChunkRange() { return palladiumChunkRange; }
   public int getPalladiumYRange() { return palladiumYRange; }
+  public boolean canSwineApply(final String entityName) {
+    return IS_SWINE_ENTITY_WHITELIST.get() == SWINE_ENTITY_WHITELIST.get().contains(entityName);
+  }
+  
+  private static List<String> asList(final EntityType<?>... types) {
+    final List<String> list = new ArrayList<>();
+    for(final EntityType<?> t : types) {
+      list.add(t.getRegistryName().toString());
+    }
+    return list;
+  }
 }

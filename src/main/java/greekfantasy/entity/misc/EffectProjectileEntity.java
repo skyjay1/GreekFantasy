@@ -37,6 +37,8 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
       for(final EffectInstance effect : getPotionEffects(entity)) {
         entity.addPotionEffect(effect);
       }
+      // this is exposed using AT, hopefully it helps to sync potion effects
+      entity.markPotionsDirty();
       // impact may inflict damage
       float damage = getImpactDamage(entity);
       if(damage > 0 && thrower instanceof LivingEntity) {

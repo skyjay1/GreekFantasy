@@ -2,8 +2,8 @@ package greekfantasy.events;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.render.PlayerPigRenderer;
 import greekfantasy.client.render.PlayerSkyjayRenderer;
+import greekfantasy.client.render.SwineRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -21,28 +22,45 @@ import net.minecraftforge.fml.LogicalSide;
 
 public class ClientForgeEventHandler {
   
-  private static PlayerPigRenderer<PlayerEntity> playerPigRenderer;
+  private static SwineRenderer<LivingEntity> pigRenderer;
   private static PlayerSkyjayRenderer<PlayerEntity> skyjayRenderer;
+  
+  /**
+   * Used to render players as pigs when under the Swine effect
+   * @param event the RenderLivingEvent (Pre)
+   **/
+  @SubscribeEvent(priority = EventPriority.HIGH)
+  public static void renderLiving(final RenderLivingEvent.Pre<LivingEntity, ?> event) {
+    if(isSwine(event.getEntity())) {
+      event.setCanceled(true);
+      // render pig instead
+      if(null == pigRenderer) {
+        Minecraft mc = Minecraft.getInstance();
+        pigRenderer = new SwineRenderer<LivingEntity>(mc.getRenderManager());
+      }
+      pigRenderer.render(event.getEntity(), event.getEntity().rotationYaw, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), 
+          pigRenderer.getPackedLight(event.getEntity(), event.getPartialRenderTick()));
+    }
+  }
     
   /**
    * Used to hide the player and their armor / held items
    * while using the Helm of Darkness.
-   * Also used to render players as pigs when under the Swine effect
    * @param event the RenderPlayerEvent (Pre)
    **/
   @SubscribeEvent(priority = EventPriority.HIGH)
   public static void renderPlayer(final RenderPlayerEvent.Pre event) {
     if(GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(event.getPlayer())) {
       event.setCanceled(true);
-    } else if(isSwine(event.getPlayer())) {
-      event.setCanceled(true);
-      // render pig instead
-      if(null == playerPigRenderer) {
-        Minecraft mc = Minecraft.getInstance();
-        playerPigRenderer = new PlayerPigRenderer<PlayerEntity>(mc.getRenderManager());
-      }
-      playerPigRenderer.render(event.getPlayer(), event.getPlayer().rotationYaw, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), 
-          playerPigRenderer.getPackedLight(event.getPlayer(), event.getPartialRenderTick()));//15728640);
+//    } else if(isSwine(event.getPlayer())) {
+//      event.setCanceled(true);
+//      // render pig instead
+//      if(null == pigRenderer) {
+//        Minecraft mc = Minecraft.getInstance();
+//        pigRenderer = new SwineRenderer<LivingEntity>(mc.getRenderManager());
+//      }
+//      pigRenderer.render(event.getPlayer(), event.getPlayer().rotationYaw, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), 
+//          pigRenderer.getPackedLight(event.getPlayer(), event.getPartialRenderTick()));
     } else if(!event.isCanceled() && "skyjay1".equals(event.getPlayer().getName().getUnformattedComponentText())) {
       if(null == skyjayRenderer) {
         Minecraft mc = Minecraft.getInstance();
@@ -120,11 +138,11 @@ public class ClientForgeEventHandler {
   
   /** @return whether the entity should have the client-side stun/petrify FOV or particle effects **/
   private static boolean isStunned(final LivingEntity livingEntity) {
-    return (livingEntity.getActivePotionEffect(GFRegistry.PETRIFIED_EFFECT) != null || livingEntity.getActivePotionEffect(GFRegistry.STUNNED_EFFECT) != null);
+    return livingEntity.isPotionActive(GFRegistry.PETRIFIED_EFFECT) || livingEntity.isPotionActive(GFRegistry.STUNNED_EFFECT);
   }
   
   /** @return whether the entity should have the Swine effect applied **/
   private static boolean isSwine(final LivingEntity livingEntity) {
-    return (livingEntity.getActivePotionEffect(GFRegistry.SWINE_EFFECT) != null);
+    return livingEntity.isPotionActive(GFRegistry.SWINE_EFFECT);
   }
 }

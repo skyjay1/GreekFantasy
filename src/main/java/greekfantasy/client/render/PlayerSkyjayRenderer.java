@@ -39,6 +39,7 @@ public class PlayerSkyjayRenderer<T extends LivingEntity>  extends EntityRendere
       float netHeadYaw = f1 - f;
       float headPitch = MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch);
       // set the model rotations
+      playerModel.isSneak = entity.isSneaking();
       playerModel.isSitting = entity.isPassenger() && (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
       playerModel.setRotationAngles(entity, 0, 0, partialTicks, netHeadYaw, headPitch);
       // matrix stack transforms
