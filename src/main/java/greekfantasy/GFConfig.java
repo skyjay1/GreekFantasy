@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import greekfantasy.util.BiomeHelper;
 import greekfantasy.util.BiomeWhitelistConfig;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.Dimension;
@@ -80,6 +79,7 @@ public class GFConfig {
   private boolean swinePotion;
   
   // special attack configs
+  public final ForgeConfigSpec.BooleanValue DRAKAINA_ATTACK;
   public final ForgeConfigSpec.BooleanValue EMPUSA_ATTACK;
   public final ForgeConfigSpec.BooleanValue FURY_ATTACK;
   public final ForgeConfigSpec.BooleanValue GORGON_ATTACK;
@@ -187,7 +187,7 @@ public class GFConfig {
     SWINE_PREVENTS_TARGET = builder.comment("Whether some monsters ignore players under the swine effect")
         .define("swine_prevents_target", true);
     IS_SWINE_ENTITY_WHITELIST = builder.define("is_swine_entity_whitelist", true);
-    final List<String> swineWhitelist = asList(EntityType.PLAYER, EntityType.VILLAGER, EntityType.ZOMBIE,
+    final List<String> swineWhitelist = entitiesAsList(EntityType.PLAYER, EntityType.VILLAGER, EntityType.ZOMBIE,
         EntityType.ZOMBIE_VILLAGER, EntityType.HUSK, EntityType.VINDICATOR, EntityType.WANDERING_TRADER,
         EntityType.ILLUSIONER, EntityType.PILLAGER, GFRegistry.ARA_ENTITY, GFRegistry.DRYAD_ENTITY,
         GFRegistry.NAIAD_ENTITY, GFRegistry.SATYR_ENTITY);
@@ -206,6 +206,8 @@ public class GFConfig {
     builder.pop();
     // mob abilities
     builder.push("mob_abilities");
+    DRAKAINA_ATTACK = builder.comment("Whether the Drakaina can use special attacks based on variant")
+        .define("drakaina_attack", true);
     EMPUSA_ATTACK = builder.comment("Whether the Empusa can drain health")
         .define("empusa_attack", true);
     FURY_ATTACK = builder.comment("Whether the Fury can throw curses")
@@ -270,30 +272,32 @@ public class GFConfig {
     dimensions.add(Dimension.THE_NETHER.getLocation().toString());
     IS_SPAWNS_WHITELIST = builder.worldRestart().define("whitelist_dimensions", true);
     SPAWNS_DIMENSION_WHITELIST = builder.worldRestart().define("dimensions", dimensions);
-    final List<String> overworld = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.OVERWORLD);
-    final List<String> nether = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.NETHER);
-    final List<String> ocean = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.OCEAN);
-    final List<String> forest = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST, BiomeDictionary.Type.CONIFEROUS, BiomeDictionary.Type.JUNGLE);
-    final List<String> taiga = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.CONIFEROUS);
-    final List<String> mountains = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.MOUNTAIN);
-    final List<String> sandy = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.MESA, BiomeDictionary.Type.SANDY);
-    final List<String> plains = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.PLAINS);
-    final List<String> netherEndOceanIcy = BiomeHelper.getBiomeTypes(BiomeDictionary.Type.NETHER, BiomeDictionary.Type.END, BiomeDictionary.Type.WATER, BiomeDictionary.Type.COLD, BiomeDictionary.Type.SNOWY);
+    final List<String> overworld = biomesAsList(BiomeDictionary.Type.OVERWORLD);
+    final List<String> nether = biomesAsList(BiomeDictionary.Type.NETHER);
+    final List<String> ocean = biomesAsList(BiomeDictionary.Type.OCEAN);
+    final List<String> forest = biomesAsList(BiomeDictionary.Type.FOREST, BiomeDictionary.Type.CONIFEROUS, BiomeDictionary.Type.JUNGLE);
+    final List<String> taiga = biomesAsList(BiomeDictionary.Type.CONIFEROUS);
+    final List<String> mountains = biomesAsList(BiomeDictionary.Type.MOUNTAIN);
+    final List<String> sandy = biomesAsList(BiomeDictionary.Type.MESA, BiomeDictionary.Type.SANDY);
+    final List<String> plains = biomesAsList(BiomeDictionary.Type.PLAINS);
+    final List<String> endOceanCold = biomesAsList(BiomeDictionary.Type.END, BiomeDictionary.Type.WATER, BiomeDictionary.Type.COLD, BiomeDictionary.Type.SNOWY);
+    final List<String> netherEndOceanIcy = biomesAsList(BiomeDictionary.Type.NETHER, BiomeDictionary.Type.END, BiomeDictionary.Type.WATER, BiomeDictionary.Type.COLD, BiomeDictionary.Type.SNOWY);
     MOB_SPAWNS.put("ara", new BiomeWhitelistConfig(builder, "ara_spawn", 10, false, netherEndOceanIcy));
     MOB_SPAWNS.put("centaur", new BiomeWhitelistConfig(builder, "centaur_spawn", 15, true, plains));
     MOB_SPAWNS.put("cerastes", new BiomeWhitelistConfig(builder, "cerastes_spawn", 30, true, sandy));
     MOB_SPAWNS.put("charybdis", new BiomeWhitelistConfig(builder, "charybdis_spawn", 2, true, ocean));
     MOB_SPAWNS.put("cyclopes", new BiomeWhitelistConfig(builder, "cyclopes_spawn", 20, true, mountains));
-    MOB_SPAWNS.put("cyprian", new BiomeWhitelistConfig(builder, "cyprian_spawn", 10, true, BiomeHelper.concat(plains, taiga)));
+    MOB_SPAWNS.put("cyprian", new BiomeWhitelistConfig(builder, "cyprian_spawn", 10, true, concat(plains, taiga)));
+    MOB_SPAWNS.put("drakaina", new BiomeWhitelistConfig(builder, "drakaina_spawn", 16, false, endOceanCold));
     MOB_SPAWNS.put("dryad", new BiomeWhitelistConfig(builder, "dryad_spawn", 24, true, forest));
     MOB_SPAWNS.put("empusa", new BiomeWhitelistConfig(builder, "empusa_spawn", 75, false, netherEndOceanIcy));
     MOB_SPAWNS.put("fury", new BiomeWhitelistConfig(builder, "fury_spawn", 9, true, nether));
     MOB_SPAWNS.put("gigante", new BiomeWhitelistConfig(builder, "gigante_spawn", 10, true, mountains));
-    MOB_SPAWNS.put("gorgon", new BiomeWhitelistConfig(builder, "gorgon_spawn", 16, false, netherEndOceanIcy));
+    MOB_SPAWNS.put("gorgon", new BiomeWhitelistConfig(builder, "gorgon_spawn", 9, false, netherEndOceanIcy));
     MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 10, true, sandy));
     MOB_SPAWNS.put("mad_cow", new BiomeWhitelistConfig(builder, "mad_cow_spawn", 2, false, netherEndOceanIcy));
     MOB_SPAWNS.put("minotaur", new BiomeWhitelistConfig(builder, "minotaur_spawn", 60, false, netherEndOceanIcy));
-    MOB_SPAWNS.put("naiad", new BiomeWhitelistConfig(builder, "naiad_spawn", 10, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.WATER)));
+    MOB_SPAWNS.put("naiad", new BiomeWhitelistConfig(builder, "naiad_spawn", 10, true, biomesAsList(BiomeDictionary.Type.WATER)));
     MOB_SPAWNS.put("orthus", new BiomeWhitelistConfig(builder, "orthus_spawn", 20, true, nether));
     MOB_SPAWNS.put("satyr", new BiomeWhitelistConfig(builder, "satyr_spawn", 22, true, forest));
     MOB_SPAWNS.put("shade", new BiomeWhitelistConfig(builder, "shade_spawn", 10, false, new ArrayList<>()));
@@ -311,11 +315,11 @@ public class GFConfig {
     FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 17, false, netherEndOceanIcy));
     FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 16, true, nether));
     FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 10, false, netherEndOceanIcy));
-    FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 15, false, BiomeHelper.concat(netherEndOceanIcy, sandy)));
-    FEATURES.put("python_pit", new BiomeWhitelistConfig(builder, "python_pit", 6, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.JUNGLE)));
+    FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 15, false, concat(netherEndOceanIcy, sandy)));
+    FEATURES.put("python_pit", new BiomeWhitelistConfig(builder, "python_pit", 6, true, biomesAsList(BiomeDictionary.Type.JUNGLE)));
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, netherEndOceanIcy));
-    FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 900, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.SWAMP)));
-    FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 22, true, BiomeHelper.getBiomeTypes(BiomeDictionary.Type.FOREST)));
+    FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 900, true, biomesAsList(BiomeDictionary.Type.SWAMP)));
+    FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 22, true, biomesAsList(BiomeDictionary.Type.FOREST)));
     builder.pop();
   }
   
@@ -410,10 +414,24 @@ public class GFConfig {
     return IS_SWINE_ENTITY_WHITELIST.get() == SWINE_ENTITY_WHITELIST.get().contains(entityName);
   }
   
-  private static List<String> asList(final EntityType<?>... types) {
+  private static List<String> concat(final List<String> list1, final List<String> list2) {
+    final List<String> list = new ArrayList<>(list1);
+    list.addAll(list2);
+    return list;
+  }
+  
+  private static List<String> entitiesAsList(final EntityType<?>... types) {
     final List<String> list = new ArrayList<>();
     for(final EntityType<?> t : types) {
       list.add(t.getRegistryName().toString());
+    }
+    return list;
+  }
+  
+  private static List<String> biomesAsList(final BiomeDictionary.Type... types) {
+    final List<String> list = new ArrayList<>();
+    for(final BiomeDictionary.Type t : types) {
+      list.add(t.getName());
     }
     return list;
   }

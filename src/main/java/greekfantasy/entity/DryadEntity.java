@@ -448,7 +448,6 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     private final String name;
     private final Supplier<Block> sapling;
     private final ResourceLocation tag;
-    private final ResourceLocation texture;
     private final ResourceLocation lootTable;
     
     private Variant(final String nameIn, final Supplier<Block> saplingIn) {
@@ -459,12 +458,11 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       name = nameIn;
       sapling = saplingIn;
       tag = new ResourceLocation(modid, name + "_logs");
-      texture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/dryad/" + name + ".png");
       lootTable = new ResourceLocation(GreekFantasy.MODID, "entities/dryad/" + name);
     }
     
     public static Variant getForBiome(final Optional<RegistryKey<Biome>> biome) {
-      return BiomeHelper.getVariantForBiome(biome);
+      return BiomeHelper.getDryadVariantForBiome(biome);
     }
     
     public static Variant getRandom(final Random rand) {
@@ -483,10 +481,6 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       }
       // defaults to OAK
       return OAK;
-    }
-    
-    public ResourceLocation getTexture() {
-      return texture;
     }
     
     public ITag<Block> getBlocks() {

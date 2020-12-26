@@ -1,8 +1,6 @@
 package greekfantasy.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,7 +17,6 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
-import net.minecraftforge.common.BiomeDictionary;
 
 public final class BiomeHelper {
   
@@ -30,7 +27,7 @@ public final class BiomeHelper {
   private static Map<RegistryKey<Biome>, DryadEntity.Variant> DRYAD_MAP = new HashMap<>();
   private static Map<RegistryKey<Biome>, Block> LOG_MAP = new HashMap<>();
   
-  public static DryadEntity.Variant getVariantForBiome(final Optional<RegistryKey<Biome>> biome) {
+  public static DryadEntity.Variant getDryadVariantForBiome(final Optional<RegistryKey<Biome>> biome) {
     if(DRYAD_MAP.isEmpty()) {
       initDryadMap();
     }
@@ -46,20 +43,6 @@ public final class BiomeHelper {
   
   public static ITag<Block> getOliveLogs() {
     return BlockTags.getCollection().get(TAG_OLIVE_LOGS);
-  }
-
-  public static List<String> getBiomeTypes(final BiomeDictionary.Type... types) {
-    final List<String> list = new ArrayList<>();
-    for(final BiomeDictionary.Type t : types) {
-      list.add(t.getName());
-    }
-    return list;
-  }
-  
-  public static List<String> concat(final List<String> list1, final List<String> list2) {
-    final List<String> list = new ArrayList<>(list1);
-    list.addAll(list2);
-    return list;
   }
 
   private static void initDryadMap() {

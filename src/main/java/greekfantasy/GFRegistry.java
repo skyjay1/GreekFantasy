@@ -120,7 +120,7 @@ public final class GFRegistry {
   
   private static final String MODID = GreekFantasy.MODID;
 
-  //ENTITY TYPES
+  // ENTITY TYPES //
 
   public static EntityType<AraEntity> ARA_ENTITY = buildEntityType(AraEntity::new, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<ArionEntity> ARION_ENTITY = buildEntityType(ArionEntity::new, "arion", 1.39F, 1.98F, EntityClassification.CREATURE, b -> b.immuneToFire());
@@ -132,6 +132,7 @@ public final class GFRegistry {
   public static EntityType<CyclopesEntity> CYCLOPES_ENTITY = buildEntityType(CyclopesEntity::new, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, b -> {});
   public static EntityType<CyprianEntity> CYPRIAN_ENTITY = buildEntityType(CyprianEntity::new, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
   public static EntityType<DragonToothEntity> DRAGON_TOOTH_ENTITY = buildEntityType(DragonToothEntity::new, "dragon_tooth", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
+  public static EntityType<DrakainaEntity> DRAKAINA_ENTITY = buildEntityType(DrakainaEntity::new, "drakaina", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
   public static EntityType<DryadEntity> DRYAD_ENTITY = buildEntityType(DryadEntity::new, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<ElpisEntity> ELPIS_ENTITY = buildEntityType(ElpisEntity::new, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, b -> b.immuneToFire());
   public static EntityType<EmpusaEntity> EMPUSA_ENTITY = buildEntityType(EmpusaEntity::new, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
@@ -320,6 +321,7 @@ public final class GFRegistry {
     registerEntityType(event, CHARYBDIS_ENTITY, CharybdisEntity::getAttributes, CharybdisEntity::canCharybdisSpawnOn);
     registerEntityType(event, CYPRIAN_ENTITY, CyprianEntity::getAttributes, CyprianEntity::canSpawnOn);
     registerEntityType(event, CYCLOPES_ENTITY, CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn);
+    registerEntityType(event, DRAKAINA_ENTITY, DrakainaEntity::getAttributes, DrakainaEntity::canMonsterSpawnInLight);
     registerEntityType(event, DRYAD_ENTITY, DryadEntity::getAttributes, DryadEntity::canSpawnOn);
     registerEntityType(event, ELPIS_ENTITY, ElpisEntity::getAttributes, null);
     registerEntityType(event, EMPUSA_ENTITY, EmpusaEntity::getAttributes, EmpusaEntity::canMonsterSpawnInLight);
