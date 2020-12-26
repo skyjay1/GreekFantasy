@@ -98,7 +98,7 @@ public class UnicornEntity extends AbstractHorseEntity {
   }
   
   @Override
-  public double getMountedYOffset() { return super.getMountedYOffset() - 0.1875D; }
+  public double getMountedYOffset() { return super.getMountedYOffset() - 0.25D; }
   
   @Override
   protected void playGallopSound(SoundType sound) {
@@ -197,7 +197,7 @@ public class UnicornEntity extends AbstractHorseEntity {
   
   @Override
   public int getMaxTemper() {
-    return 200;
+    return 160;
   }
 
   @Override

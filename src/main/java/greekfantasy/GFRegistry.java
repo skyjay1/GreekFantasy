@@ -123,6 +123,7 @@ public final class GFRegistry {
   //ENTITY TYPES
 
   public static EntityType<AraEntity> ARA_ENTITY = buildEntityType(AraEntity::new, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<ArionEntity> ARION_ENTITY = buildEntityType(ArionEntity::new, "arion", 1.39F, 1.98F, EntityClassification.CREATURE, b -> b.immuneToFire());
   public static EntityType<CentaurEntity> CENTAUR_ENTITY = buildEntityType(CentaurEntity::new, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerberusEntity> CERBERUS_ENTITY = buildEntityType(CerberusEntity::new, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
@@ -312,6 +313,7 @@ public final class GFRegistry {
     GreekFantasy.LOGGER.debug("registerEntities");
     // entity types have already been created, now they are actually registered (along with placements)
     registerEntityType(event, ARA_ENTITY, AraEntity::getAttributes, AraEntity::canAraSpawnOn);
+    registerEntityType(event, ARION_ENTITY, ArionEntity::getAttributes, ArionEntity::canSpawnOn);
     registerEntityType(event, CENTAUR_ENTITY, CentaurEntity::getAttributes, CentaurEntity::canSpawnOn);
     registerEntityType(event, CERASTES_ENTITY, CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn);
     registerEntityType(event, CERBERUS_ENTITY, CerberusEntity::getAttributes, null);
@@ -532,6 +534,7 @@ public final class GFRegistry {
     
     // spawn eggs
     registerSpawnEgg(event, ARA_ENTITY, 0xffffff, 0xbbbbbb);
+    registerSpawnEgg(event, ARION_ENTITY, 0xdfc014, 0xb58614);
     registerSpawnEgg(event, CENTAUR_ENTITY, 0x734933, 0x83251f);
     registerSpawnEgg(event, CERASTES_ENTITY, 0x847758, 0x997c4d);
     registerSpawnEgg(event, CHARYBDIS_ENTITY, 0x2e5651, 0x411e5e);

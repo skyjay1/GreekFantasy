@@ -73,6 +73,10 @@ repositories {
 		name 'gigaherz'
         url 'https://www.dogforce-games.com/maven/'
     }
+    maven { // JEI
+        name 'mezz'
+        url 'https://dvs1.progwml6.com/files/maven'
+    }
 }
 
 dependencies {
@@ -84,6 +88,9 @@ dependencies {
 
 	compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}:api")
 	runtimeOnly fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
+	
+	compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
+	runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
 }
 processResources {

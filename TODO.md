@@ -24,7 +24,7 @@ __Key:__
 - X X X X X Gorgon
 - X X X _ X Medusa
 - X X X X X Harpy
-- X X _ ~ X Empusa
+- X X _ _ X Empusa
 - X X X X X Shade
 - X X X X X Siren (hostile)
 - X X X X X Cerastes (ram-horned serpent)
@@ -42,8 +42,10 @@ __Key:__
 - X X X X X Boss: Talos
 - X X X X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
-- _ _ _ _ _ Miniboss: Medusa
-- X X X ~ X Fury
+- X X X _ X Miniboss: Medusa
+- X X X _ X Fury
+- _ _ _ _ _ Dracaena (Drakaina)
+- X X X X _ Arion (very fast horse, tamed with gold)
 - _ _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
 
 ## Entity AI
@@ -118,6 +120,7 @@ __Key:__
 - X X X Gigante Head
 - X X X Orthus Head
 - X X X Cerberus Head
+- _ _ _ Other heads: Minotaur, Python, Medusa
 - X X X Mysterious box
 - X X X Olive basics (log, wood, planks, slab, stair)
 - _ _ _ Olive blocks: button, fence, boat, door, trapdoor, stripped log, stripped wood, pressure plate, sign
@@ -211,7 +214,6 @@ _Can I do something with these?_
 - Ophiotaur (kill to obtain heart; use heart to kill a god)
 - Makhai (6 arms)
 - Eurynomos (blue skin; vulture head?)
-- Arion (very fast horse, tamed with gold)
 - Sphinx
 - Hydra
 - Golden Ram (Golden Fleece)
@@ -219,6 +221,7 @@ _Can I do something with these?_
 - Telchine (seal hands)
 - Yale (Latin "Centicore")
 - Colchis Bull (giant bronze bull)
+- Cretan Bull (giant bull)
 - Hippocampus
 - Lamia (demon)
 - Daemon (spirit of specific trait, emotion, object, etc)

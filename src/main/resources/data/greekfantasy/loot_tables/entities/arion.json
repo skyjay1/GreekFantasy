@@ -1,7 +1,6 @@
 {
-  "type": "minecraft:entity",
   "pools": [
-    {
+	{
       "rolls": 1,
       "entries": [
         {
@@ -10,16 +9,19 @@
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 0.0,
-                "max": 1.0,
-                "type": "minecraft:uniform"
+                "min": 4,
+                "max": 8
+              }
+            },
+            {
+              "function": "minecraft:looting_enchant",
+              "count": {
+                "min": 2,
+                "max": 4
               }
             }
           ],
-          "name": "greekfantasy:unicorn_horn"
-        },
-        {
-          "type": "minecraft:empty"
+          "name": "minecraft:gold_nugget"
         }
       ]
     },
