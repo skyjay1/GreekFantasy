@@ -213,9 +213,10 @@ public class ArionEntity extends AbstractChestedHorseEntity {
     if (this.isTame() && !this.isChild()) {
       this.mountTo(player);
       return ActionResultType.func_233537_a_(this.world.isRemote);
-    } else {
-      return super.func_230254_b_(player, hand);
     }
+    // DO NOT CALL SUPER METHOD
+    // return super.func_230254_b_(player, hand);
+    return ActionResultType.PASS;
   }
 
   // NBT //

@@ -542,13 +542,14 @@ public final class GFRegistry {
     registerSpawnEgg(event, CHARYBDIS_ENTITY, 0x2e5651, 0x411e5e);
     registerSpawnEgg(event, CYCLOPES_ENTITY, 0xda662c, 0x2c1e0e);
     registerSpawnEgg(event, CYPRIAN_ENTITY, 0x443626, 0x83251f);
+    registerSpawnEgg(event, DRAKAINA_ENTITY, 0xb6b6b6, 0x398046);
     registerSpawnEgg(event, DRYAD_ENTITY, 0x443626, 0xfed93f);
     registerSpawnEgg(event, ELPIS_ENTITY, 0xe7aae4, 0xeeeeee);
     registerSpawnEgg(event, EMPUSA_ENTITY, 0x222222, 0x83251f);
     registerSpawnEgg(event, FURY_ENTITY, 0xbd4444, 0x6c2426);
     registerSpawnEgg(event, GIANT_BOAR_ENTITY, 0x5b433a, 0xe8a074);
     registerSpawnEgg(event, GIGANTE_ENTITY, 0xd3dba7, 0x6a602b);
-    registerSpawnEgg(event, GORGON_ENTITY, 0xb6b6b6, 0x398046);
+    registerSpawnEgg(event, GORGON_ENTITY, 0xb6b6b6, 0xeeeeee);
     registerSpawnEgg(event, HARPY_ENTITY, 0x724e36, 0x332411);
     registerSpawnEgg(event, MAD_COW_ENTITY, 0x443626, 0xcf9797);
     registerSpawnEgg(event, MINOTAUR_ENTITY, 0x443626, 0x734933);
