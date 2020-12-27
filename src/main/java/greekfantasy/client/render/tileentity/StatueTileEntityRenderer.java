@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -30,20 +29,17 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.model.data.EmptyModelData;
 
+
 public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntity> {
   
   protected static final ResourceLocation STEVE_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/steve.png");
   protected static final ResourceLocation ALEX_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/alex.png");
     
   protected StatueModel<StatueTileEntity> model;
-  
+
   public StatueTileEntityRenderer(final TileEntityRendererDispatcher rendererDispatcherIn) {
-    this(rendererDispatcherIn, new StatueModel<StatueTileEntity>());
-  }
-  
-  public StatueTileEntityRenderer(final TileEntityRendererDispatcher rendererDispatcherIn, final StatueModel<StatueTileEntity> statueModel) {
     super(rendererDispatcherIn);
-    this.model = statueModel;
+    this.model = new StatueModel<StatueTileEntity>();
   }
 
   @Override
@@ -68,7 +64,6 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     final ResourceLocation textureStone = material.getStoneTexture();
     final ResourceLocation textureOverlay = getOverlayTexture(te);
     matrixStackIn.push();
-    this.model.setRotationAngles(te, partialTicks);
     // render base
     if(!upper && !gui) {
       Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(material.getBase(), 
@@ -77,16 +72,15 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     // prepare to render player texture
     matrixStackIn.translate(0.5D, (double)translateY, 0.5D);
     matrixStackIn.rotate(Vector3f.XP.rotationDegrees(180.0F));
-    
-    this.model.rotateAroundBody(te.getRotations(ModelPart.BODY), matrixStackIn, partialTicks);
     if(!gui) {
       matrixStackIn.rotate(Vector3f.YP.rotationDegrees(rotation));
     }
-    IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureOverlay));
-    
+    this.model.setRotationAngles(te, partialTicks);
+    this.model.rotateAroundBody(te.getRotations(ModelPart.BODY), matrixStackIn, partialTicks);
+    IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureOverlay));  
     if(material.hasSkin()) {
       // render player texture
-      this.model.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F, upper, isFemaleModel);
+      this.model.render(te, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F, upper, isFemaleModel);
     }
     // prepare to render stone texture
     vertexBuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(textureStone));
@@ -99,7 +93,7 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
       RenderSystem.alphaFunc(516, 0.0F);
     }
     // render stone texture
-    this.model.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 0.8F, 0.8F, 0.8F, alpha, upper, isFemaleModel);
+    this.model.render(te, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 0.8F, 0.8F, 0.8F, alpha, upper, isFemaleModel);
     // reset RenderSystem values
     if(material.hasSkin()) {
       RenderSystem.defaultBlendFunc();
@@ -116,9 +110,9 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     final boolean isFemale = te.isStatueFemale();
     if(gameProfile != null) {
       Minecraft minecraft = Minecraft.getInstance();
-      Map<Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(gameProfile);
-      if(map.containsKey(Type.SKIN)) {
-        return minecraft.getSkinManager().loadSkin(map.get(Type.SKIN), Type.SKIN);
+      Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(gameProfile);
+      if(map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
+        return minecraft.getSkinManager().loadSkin(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
       }
     }
     return isFemale ? ALEX_TEXTURE : STEVE_TEXTURE;

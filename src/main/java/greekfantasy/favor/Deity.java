@@ -57,10 +57,26 @@ public class Deity implements IDeity {
 
   @Override
   public List<IFavorEffect> getFavorEffects() { return favorEffects; }
-  
 
   @Override
   public Consumer<AltarTileEntity> initAltar() { return initAltar; }
+  
+  @Override
+  public int hashCode() {
+    return name.hashCode();
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (this == other) {
+      return true;
+    } else if (!(other instanceof IDeity)) {
+      return false;
+    } else {
+      IDeity ideity = (IDeity) other;
+      return name.equals(ideity.getName());
+    }
+  }
   
   public static class Builder {
     private final ResourceLocation name;
@@ -85,7 +101,7 @@ public class Deity implements IDeity {
      * @param the favor modifier (positive or negative)
      * @return instance to allow chaining of methods
      */
-    public Builder setFavor(final EntityType<?> entity, int favor) {
+    public Builder addEntity(final EntityType<?> entity, int favor) {
       killFavorMap.put(entity.getRegistryName(), Integer.valueOf(favor));
       return this;
     }
@@ -96,7 +112,7 @@ public class Deity implements IDeity {
      * @param the favor modifier (positive or negative)
      * @return instance to allow chaining of methods
      */
-    public Builder setFavor(final Item item, int favor) {
+    public Builder addItem(final Item item, int favor) {
       itemFavorMap.put(item, Integer.valueOf(favor));
       return this;
     }
@@ -150,8 +166,6 @@ public class Deity implements IDeity {
       initAltar = initAltar.andThen(e -> e.setItem(item, side));
       return this;
     }
-    
-
     
     /**
      * @return the fully built Deity

@@ -32,13 +32,13 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   
   // layers
   protected ModelRenderer bipedHeadwear;
-  public final ModelRenderer bipedLeftArmwear;
-  public final ModelRenderer bipedRightArmwear;
-  public final ModelRenderer bipedLeftArmwearSlim;
-  public final ModelRenderer bipedRightArmwearSlim;
-  public final ModelRenderer bipedLeftLegwear;
-  public final ModelRenderer bipedRightLegwear;
-  public final ModelRenderer bipedBodyWear;
+  protected final ModelRenderer bipedLeftArmwear;
+  protected final ModelRenderer bipedRightArmwear;
+  protected final ModelRenderer bipedLeftArmwearSlim;
+  protected final ModelRenderer bipedRightArmwearSlim;
+  protected final ModelRenderer bipedLeftLegwear;
+  protected final ModelRenderer bipedRightLegwear;
+  protected final ModelRenderer bipedBodyWear;
   
   private static final EnumMap<ModelPart, Collection<ModelRenderer>> ROTATION_MAP = new EnumMap<>(ModelPart.class);
   
@@ -178,7 +178,7 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     // nothing here
   }
   
-  public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
+  public void render(final T entity, MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha, final boolean isUpper, final boolean isFemaleModel) {
     // update which parts can be shown for male/female
     this.bipedBodyChest.showModel = isFemaleModel;

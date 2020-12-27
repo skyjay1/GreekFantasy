@@ -159,7 +159,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     final TileEntity te = worldIn.getTileEntity(tePos);
     
     // DEBUG
-    GreekFantasy.LOGGER.debug("pose = " + ((StatueTileEntity)te).getStatuePose().toString());
+//    GreekFantasy.LOGGER.debug("pose = " + ((StatueTileEntity)te).getStatuePose().toString());
     
     if (playerIn instanceof ServerPlayerEntity && te instanceof StatueTileEntity) {
       final StatueTileEntity teStatue = (StatueTileEntity)te;
@@ -257,7 +257,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
       this.stoneTexture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + nameIn + ".png");
     }
     
-    public boolean hasGui() {  return hasGui; }
+    public boolean hasGui() { return hasGui; }
     
     public boolean dropsItems() { return dropsItems; }
     

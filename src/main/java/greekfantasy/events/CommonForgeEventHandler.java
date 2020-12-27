@@ -19,9 +19,12 @@ import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.GiantBoarEntity;
 import greekfantasy.entity.ShadeEntity;
+import greekfantasy.favor.Favor;
+import greekfantasy.favor.IFavor;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.PanfluteSong;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -52,7 +55,10 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
+import net.minecraftforge.common.capabilities.CapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -169,6 +175,32 @@ public class CommonForgeEventHandler {
   }
   
   /**
+   * Used to attach Favor to players
+   * @param event the capability attach event (Entity)
+   */
+  @SubscribeEvent
+  public static void onAttachCapabilities(final AttachCapabilitiesEvent<Entity> event) {
+    if(event.getObject() instanceof PlayerEntity) {
+      event.addCapability(IFavor.REGISTRY_NAME, new Favor.Provider());
+    }
+  }
+  
+  /**
+   * Used to ensure that favor persists across deaths
+   * @param event the player clone event
+   */
+  @SubscribeEvent
+  public static void onPlayerClone(final PlayerEvent.Clone event) {
+    if(event.isWasDeath()) {
+      LazyOptional<IFavor> original = event.getOriginal().getCapability(GreekFantasy.FAVOR);
+      LazyOptional<IFavor> copy = event.getPlayer().getCapability(GreekFantasy.FAVOR);
+      if(original.isPresent() && copy.isPresent()) {
+        original.ifPresent(f -> f.deserializeNBT(copy.orElseGet(null).serializeNBT()));
+      }
+    }
+  }
+  
+  /**
    * Used to prevent players from using items while stunned.
    * @param event a PlayerInteractEvent or any of its children
    **/
@@ -181,7 +213,6 @@ public class CommonForgeEventHandler {
       }
     }
   }
-  
   
   /**
    * Used to convert hoglin entities to giant boar entities

@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import greekfantasy.favor.Favor;
+import greekfantasy.favor.IFavor;
 import greekfantasy.network.CUpdatePanflutePacket;
 import greekfantasy.network.CUpdateStatuePosePacket;
 import greekfantasy.network.SPanfluteSongPacket;
@@ -13,6 +15,9 @@ import greekfantasy.proxy.Proxy;
 import greekfantasy.proxy.ServerProxy;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -38,6 +43,9 @@ public class GreekFantasy {
   public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(MODID, "channel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 
   public static final Logger LOGGER = LogManager.getFormatterLogger(GreekFantasy.MODID);
+  
+  @CapabilityInject(IFavor.class)
+  public static final Capability<IFavor> FAVOR = null;
 
   public GreekFantasy() {
     // register mod event listeners
@@ -62,6 +70,8 @@ public class GreekFantasy {
   }
 
   public static void setup(final FMLCommonSetupEvent event) {
+    // register capability
+    CapabilityManager.INSTANCE.register(IFavor.class, new Favor.Storage(), Favor::new);
     event.enqueueWork(() -> GFWorldGen.registerConfiguredFeatures());
     event.enqueueWork(() -> GFWorldGen.finishBiomeSetup());
     event.enqueueWork(() -> GFRegistry.finishBrewingRecipes());

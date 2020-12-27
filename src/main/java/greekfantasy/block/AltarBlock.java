@@ -1,7 +1,11 @@
 package greekfantasy.block;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
+import greekfantasy.favor.DeityManager;
+import greekfantasy.favor.FavorManager;
 import greekfantasy.favor.IDeity;
+import greekfantasy.favor.IFavor;
 import greekfantasy.tileentity.AltarTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -17,8 +21,10 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.LazyOptional;
 
 public class AltarBlock extends StatueBlock {
   
@@ -41,7 +47,12 @@ public class AltarBlock extends StatueBlock {
       final IDeity teDeity = teStatue.getDeity();
       if(teDeity != null && teDeity == deity) {
         // TODO handle quests and items here
-        
+        LazyOptional<IFavor> favor = playerIn.getCapability(GreekFantasy.FAVOR);
+        favor.ifPresent(f -> {
+          FavorManager.onUseItem(teStatue, teDeity, playerIn, f.getOrCreateFavor(teDeity), stack);
+          // DEBUG
+          playerIn.sendStatusMessage(new StringTextComponent("favor: " + f.getOrCreateFavor(teDeity).getFavor()), false);
+        });
       }      
     }
     return ActionResultType.SUCCESS;

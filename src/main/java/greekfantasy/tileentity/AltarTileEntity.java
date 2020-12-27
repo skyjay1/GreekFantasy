@@ -15,6 +15,8 @@ public class AltarTileEntity extends StatueTileEntity {
   public AltarTileEntity() {
     super(GFRegistry.ALTAR_TE);
   }
+  
+  // DEITY //
  
   public void setDeity(final IDeity deityIn) { setDeity(deityIn, false); }
   
@@ -28,7 +30,7 @@ public class AltarTileEntity extends StatueTileEntity {
   
   public IDeity getDeity() { return deity; }
   
-  // NBT AND SAVING STUFF //
+  // NBT //
 
   public CompoundNBT buildUpdateTag(final CompoundNBT nbt) {
     nbt.putString(KEY_DEITY, deity.getName().toString());

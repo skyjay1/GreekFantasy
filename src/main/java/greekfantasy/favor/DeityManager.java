@@ -3,13 +3,12 @@ package greekfantasy.favor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.util.StatuePoses;
-import net.minecraft.block.BlockState;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 
 public final class DeityManager {
@@ -19,7 +18,8 @@ public final class DeityManager {
   protected static final Map<ResourceLocation, IDeity> DEITY = new HashMap<>();
   
   // init deities
-  public static final IDeity ZEUS = DeityManager.addDeity(new Deity.Builder(MODID, "zeus").setPose(StatuePoses.WALKING).build());
+  public static final IDeity ZEUS = DeityManager.addDeity(new Deity.Builder(MODID, "zeus").setPose(StatuePoses.WALKING)
+      .addItem(Items.GOLD_INGOT, 10).addItem(Items.BONE, -5).build());
   
   private DeityManager() { }
   
@@ -31,10 +31,6 @@ public final class DeityManager {
     DEITY.put(deity.getName(), deity);
     return deity;
   }
-  
-//  public static boolean hasDeity(final ResourceLocation name) {
-//    return DEITY.containsKey(name);
-//  }
 
   /**
    * @param name the name of the deity

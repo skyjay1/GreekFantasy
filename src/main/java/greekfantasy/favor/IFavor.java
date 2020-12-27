@@ -3,11 +3,14 @@ package greekfantasy.favor;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import greekfantasy.GreekFantasy;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public interface IFavor extends INBTSerializable<CompoundNBT> {
+  
+  public static final ResourceLocation REGISTRY_NAME = new ResourceLocation(GreekFantasy.MODID, "favor");
   
   static final String FAVOR_INFO = "FavorInfo";
 
@@ -19,9 +22,7 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
   
   void setFavor(final IDeity deity, final FavorInfo favorInfo);
   
-  Map<IDeity, FavorInfo> getAllFavor();
-  
-  
+  Map<IDeity, FavorInfo> getAllFavor();  
   
   @Override
   default CompoundNBT serializeNBT() {
