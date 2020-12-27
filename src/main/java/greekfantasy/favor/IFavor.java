@@ -18,7 +18,7 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
    * @param deity the IDeity
    * @return the FavorInfo associated with the given IDeity
    */
-  FavorInfo getOrCreateFavor(final IDeity deity);
+  FavorInfo getFavor(final IDeity deity);
   
   void setFavor(final IDeity deity, final FavorInfo favorInfo);
   

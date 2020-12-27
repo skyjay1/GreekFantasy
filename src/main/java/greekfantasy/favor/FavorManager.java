@@ -12,19 +12,25 @@ import net.minecraft.util.ResourceLocation;
 
 public class FavorManager {
   
-  public static final IFavorEffect NONE = (p, f) -> 1000;
+  
   
   public static boolean onPlayerTick(final PlayerEntity player, final IFavor favor) {
-    final long time = player.getServer().getServerTime();
-    for(final Entry<IDeity, FavorInfo> entry : favor.getAllFavor().entrySet()) {
-      final FavorInfo info = entry.getValue();
-      if(info.canExecute(time)) {
-        final long cooldown = entry.getKey().getRandomEffect(info.getFavor() > 0, player.getRNG()).performEffect(player, info);
-        info.setEffectTimestamp(time);
-        info.setEffectCooldown(cooldown);
+    if(player.ticksExisted > 100) {
+      final long time = player.getServer().getServerTime();
+      FavorInfo info;
+      boolean good;
+      for(final Entry<IDeity, FavorInfo> entry : favor.getAllFavor().entrySet()) {
+        info = entry.getValue();
+        good = info.getFavor() > 0;
+        if(info.canExecute(time)) {
+          final long cooldown = entry.getKey().getRandomEffect(good, player.getRNG()).performEffect(player, info);
+          if(cooldown > 0) {
+            info.setEffectTimestamp(time);
+            info.setEffectCooldown(cooldown);
+          }
+        }
       }
     }
-    
     return false;
   }
   
@@ -41,7 +47,7 @@ public class FavorManager {
       final Map<ResourceLocation, Integer> modifiers = deity.getKillFavorModifiers();
       final ResourceLocation id = entity.getType().getRegistryName();
       if(modifiers.containsKey(id)) {
-        favor.getOrCreateFavor(deity).addFavor(modifiers.get(id).intValue() / 10);
+        favor.getFavor(deity).addFavor(modifiers.get(id).intValue() / 10);
         flag = true;
       }
     }
@@ -61,7 +67,7 @@ public class FavorManager {
       final Map<ResourceLocation, Integer> modifiers = deity.getKillFavorModifiers();
       final ResourceLocation id = entity.getType().getRegistryName();
       if(modifiers.containsKey(id)) {
-        favor.getOrCreateFavor(deity).addFavor(modifiers.get(id));
+        favor.getFavor(deity).addFavor(modifiers.get(id));
         flag = true;
       }
     }

@@ -19,7 +19,7 @@ public class Favor implements IFavor {
   public Favor() { }
 
   @Override
-  public FavorInfo getOrCreateFavor(IDeity deity) {
+  public FavorInfo getFavor(IDeity deity) {
     if(favorMap.containsKey(deity)) {
       return favorMap.get(deity);
     } else {

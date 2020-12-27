@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import greekfantasy.favor.FavorEffects.IFavorEffect;
 import greekfantasy.tileentity.AltarTileEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -41,19 +42,30 @@ public interface IDeity {
   /**
    * @return a list of positive favor effects associated with the deity
    */
-  public List<IFavorEffect> getGoodFavorEffects();
+  public List<WeightedFavorEffect> getGoodFavorEffects();
+  
+  public int getGoodFavorTotalWeight();
   
   /**
    * @return a list of positive favor effects associated with the deity
    */
-  public List<IFavorEffect> getBadFavorEffects();
+  public List<WeightedFavorEffect> getBadFavorEffects();
+  
+  public int getBadFavorTotalWeight();
   
   default IFavorEffect getRandomEffect(final boolean good, final Random rand) {
-    final List<IFavorEffect> effects = good ? getGoodFavorEffects() : getBadFavorEffects();
+    final List<WeightedFavorEffect> effects = good ? getGoodFavorEffects() : getBadFavorEffects();
+    final int weights = good ? getGoodFavorTotalWeight() : getBadFavorTotalWeight();
     if(!effects.isEmpty()) {
-      return effects.get(rand.nextInt(effects.size()));
+      boolean chosen = false;
+      WeightedFavorEffect effect = WeightedFavorEffect.EMPTY;
+      while(!chosen) {
+        effect = effects.get(rand.nextInt(effects.size()));
+        chosen = effect.choose(weights, rand);
+      }
+      return effect.favorEffect;
     }
-    return FavorManager.NONE;
+    return FavorEffects.NONE;
   }
   
   /**
@@ -62,4 +74,12 @@ public interface IDeity {
    * @return a consumer that handles the creation of a new altar
    */
   public Consumer<AltarTileEntity> initAltar();
+  
+  default int calculateTotalWeights(final List<WeightedFavorEffect> list) {
+    int total = 0;
+    for(final WeightedFavorEffect w : list) {
+      total += w.favorWeight;
+    }
+    return total;
+  }
 }

@@ -49,9 +49,9 @@ public class AltarBlock extends StatueBlock {
         // TODO handle quests and items here
         LazyOptional<IFavor> favor = playerIn.getCapability(GreekFantasy.FAVOR);
         favor.ifPresent(f -> {
-          FavorManager.onGiveItem(teStatue, teDeity, playerIn, f.getOrCreateFavor(teDeity), stack);
+          FavorManager.onGiveItem(teStatue, teDeity, playerIn, f.getFavor(teDeity), stack);
           // DEBUG
-          playerIn.sendStatusMessage(new StringTextComponent("favor: " + f.getOrCreateFavor(teDeity).getFavor()), false);
+          playerIn.sendStatusMessage(new StringTextComponent("favor: " + f.getFavor(teDeity).getFavor()), false);
         });
       }      
     }

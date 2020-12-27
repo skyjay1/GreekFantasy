@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import com.google.common.collect.ImmutableList;
 import com.ibm.icu.impl.locale.XCldrStub.ImmutableMap;
 
+import greekfantasy.favor.FavorEffects.IFavorEffect;
 import greekfantasy.tileentity.AltarTileEntity;
 import greekfantasy.util.StatuePose;
 import net.minecraft.entity.EntityType;
@@ -28,13 +29,15 @@ public class Deity implements IDeity {
   private final ResourceLocation texture;
   private final Map<ResourceLocation, Integer> killFavorMap;
   private final Map<Item, Integer> itemFavorMap;
-  private final List<IFavorEffect> goodFavorEffects;
-  private final List<IFavorEffect> badFavorEffects;
+  private final List<WeightedFavorEffect> goodFavorEffects;
+  private final List<WeightedFavorEffect> badFavorEffects;
   private final Consumer<AltarTileEntity> initAltar;
+  private final int goodFavorWeight;
+  private final int badFavorWeight;
 
-  public Deity(final ResourceLocation lName, final ResourceLocation lTexture,
+  private Deity(final ResourceLocation lName, final ResourceLocation lTexture,
       final Map<ResourceLocation, Integer> lKillFavorMap, final Map<Item, Integer> lItemFavorMap,
-      final List<IFavorEffect> lGoodFavorEffects, final List<IFavorEffect> lBadFavorEffects,
+      final List<WeightedFavorEffect> lGoodFavorEffects, final List<WeightedFavorEffect> lBadFavorEffects,
       final Consumer<AltarTileEntity> lInitAltar) {
     name = lName;
     texture = lTexture;
@@ -43,6 +46,8 @@ public class Deity implements IDeity {
     goodFavorEffects = ImmutableList.copyOf(lGoodFavorEffects);
     badFavorEffects = ImmutableList.copyOf(lBadFavorEffects);
     initAltar = lInitAltar;
+    goodFavorWeight = this.calculateTotalWeights(lGoodFavorEffects);
+    badFavorWeight = this.calculateTotalWeights(lBadFavorEffects);
   }
   
   @Override
@@ -58,13 +63,19 @@ public class Deity implements IDeity {
   public Map<Item, Integer> getItemFavorModifiers() { return itemFavorMap; }
 
   @Override
-  public List<IFavorEffect> getGoodFavorEffects() { return goodFavorEffects; }
+  public List<WeightedFavorEffect> getGoodFavorEffects() { return goodFavorEffects; }
   
   @Override
-  public List<IFavorEffect> getBadFavorEffects() { return badFavorEffects; }
+  public List<WeightedFavorEffect> getBadFavorEffects() { return badFavorEffects; }
 
   @Override
   public Consumer<AltarTileEntity> initAltar() { return initAltar; }
+
+  @Override
+  public int getGoodFavorTotalWeight() { return goodFavorWeight; }
+
+  @Override
+  public int getBadFavorTotalWeight() { return badFavorWeight; }
   
   @Override
   public int hashCode() {
@@ -88,8 +99,8 @@ public class Deity implements IDeity {
     private ResourceLocation texture;
     private final Map<ResourceLocation, Integer> killFavorMap = new HashMap<>();
     private final Map<Item, Integer> itemFavorMap = new HashMap<>();
-    private final List<IFavorEffect> goodFavorEffects = new ArrayList<>();
-    private final List<IFavorEffect> badFavorEffects = new ArrayList<>();
+    private final List<WeightedFavorEffect> goodFavorEffects = new ArrayList<>();
+    private final List<WeightedFavorEffect> badFavorEffects = new ArrayList<>();
     private Consumer<AltarTileEntity> initAltar = e -> {};
     
     public Builder(final String modid, final String name) {
@@ -128,8 +139,8 @@ public class Deity implements IDeity {
      * @param effect
      * @return instance to allow chaining of methods
      */
-    public Builder addGoodEffect(final IFavorEffect effect) {
-      goodFavorEffects.add(effect);
+    public Builder addGoodEffect(final IFavorEffect effect, int weight) {
+      goodFavorEffects.add(new WeightedFavorEffect(effect, weight));
       return this;
     }
     
@@ -139,8 +150,8 @@ public class Deity implements IDeity {
      * @param effect
      * @return instance to allow chaining of methods
      */
-    public Builder addBadEffect(final IFavorEffect effect) {
-      badFavorEffects.add(effect);
+    public Builder addBadEffect(final IFavorEffect effect, int weight) {
+      badFavorEffects.add(new WeightedFavorEffect(effect, weight));
       return this;
     }
     
@@ -191,6 +202,7 @@ public class Deity implements IDeity {
       return new Deity(name, texture, killFavorMap, itemFavorMap, goodFavorEffects, badFavorEffects, initAltar);
     }
   }
+
 
 
 

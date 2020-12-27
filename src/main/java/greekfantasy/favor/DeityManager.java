@@ -7,8 +7,10 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.util.StatuePoses;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 
@@ -20,7 +22,11 @@ public final class DeityManager {
   
   // init deities
   public static final IDeity ZEUS = DeityManager.addDeity(new Deity.Builder(MODID, "zeus").setPose(StatuePoses.WALKING)
-      .addItem(Items.GOLD_INGOT, 10).addItem(Items.BONE, -5).build());
+      .addItem(Items.GOLD_INGOT, 20).addItem(Items.BONE, -5)
+      .addEntity(EntityType.COW, -10).addEntity(GFRegistry.ARA_ENTITY, 10)
+      .addEntity(GFRegistry.DRAKAINA_ENTITY, 10).addEntity(GFRegistry.ELPIS_ENTITY, -50)
+      .addEntity(GFRegistry.HARPY_ENTITY, -10).addEntity(GFRegistry.DRYAD_ENTITY, -20)
+      .addEntity(GFRegistry.UNICORN_ENTITY, -20).build());
   
   private DeityManager() { }
   
