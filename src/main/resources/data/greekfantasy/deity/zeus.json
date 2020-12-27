@@ -1,0 +1,37 @@
+{
+  "name": "greekfantasy:zeus",
+  "texture": "greekfantasy:entity/deity/zeus.png",
+  "female": false,
+  "left_hand": {
+  	"id": "minecraft:air",
+  	"Count": 1
+  },
+  "right_hand": {
+  	"id": "greekfantasy:thunderbolt",
+  	"Count": 1
+  },
+  "effects": [
+  	{
+  	  "function": "greekfantasy:effect_regen",
+  	  "minlevel": 0,
+  	  "maxlevel": 99,
+  	  "mincooldown": 1000
+  	}
+  ],
+  "kill_favor_map": [
+  	{
+  	  "key": "minecraft:cow",
+  	  "value": -10
+  	}
+  ],
+  "item_favor_map": [
+  	{
+  	  "key": "minecraft:gold_apple",
+  	  "value": 10
+  	},
+  	{
+  	  "key": "minecraft:bone",
+  	  "value": -5
+  	}
+  ]
+}

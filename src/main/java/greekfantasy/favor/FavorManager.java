@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import greekfantasy.tileentity.AltarTileEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -16,7 +15,7 @@ public class FavorManager {
   
   public static boolean onPlayerTick(final PlayerEntity player, final IFavor favor) {
     if(player.ticksExisted > 100) {
-      final long time = player.getServer().getServerTime();
+      final long time = player.getEntityWorld().getGameTime();
       FavorInfo info;
       for(final Entry<IDeity, FavorInfo> entry : favor.getAllFavor().entrySet()) {
         info = entry.getValue();

@@ -6,6 +6,7 @@ import greekfantasy.favor.Deity;
 import greekfantasy.favor.DeityManager;
 import greekfantasy.favor.IDeity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 
 public class AltarTileEntity extends StatueTileEntity {
@@ -26,6 +27,11 @@ public class AltarTileEntity extends StatueTileEntity {
   public void setDeity(final ResourceLocation deityIn, final boolean refresh) {
     this.deityName = deityIn;
     this.deity = GreekFantasy.PROXY.DEITY.get(deityName).orElse(Deity.EMPTY);
+    if(deity != Deity.EMPTY) {
+      this.setStatueFemale(deity.isFemale(), refresh);
+      this.setItem(deity.getRightHandItem(), HandSide.RIGHT);
+      this.setItem(deity.getLeftHandItem(), HandSide.LEFT);
+    }
     this.markDirty();
     if(refresh) {
       this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);

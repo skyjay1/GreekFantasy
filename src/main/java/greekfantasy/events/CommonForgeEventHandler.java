@@ -404,7 +404,6 @@ public class CommonForgeEventHandler {
   public static void onAddReloadListeners(final AddReloadListenerEvent event) {
     GreekFantasy.LOGGER.debug("onAddReloadListeners");
     event.addListener(GreekFantasy.PROXY.PANFLUTE_SONGS);
-    event.addListener(GreekFantasy.PROXY.FAVOR_EFFECTS);
     event.addListener(GreekFantasy.PROXY.DEITY);
   }
   

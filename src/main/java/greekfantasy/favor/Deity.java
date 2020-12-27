@@ -41,10 +41,10 @@ public class Deity implements IDeity {
       ResourceLocation.CODEC.fieldOf("texture").forGetter(Deity::getTexture),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("kill_favor_map").forGetter(Deity::getKillFavorModifiers),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("item_favor_map").forGetter(Deity::getItemFavorModifiers),
-      FavorEffect.CODEC.listOf().fieldOf("favorEffects").forGetter(Deity::getFavorEffects),
-      Codec.BOOL.fieldOf("isFemale").forGetter(Deity::isFemale),
-      ItemStack.CODEC.fieldOf("leftHandItem").forGetter(Deity::getLeftHandItem),
-      ItemStack.CODEC.fieldOf("rightHandItem").forGetter(Deity::getRightHandItem)
+      FavorEffect.CODEC.listOf().fieldOf("effects").forGetter(Deity::getFavorEffects),
+      Codec.BOOL.fieldOf("female").forGetter(Deity::isFemale),
+      ItemStack.CODEC.fieldOf("left_hand").forGetter(Deity::getLeftHandItem),
+      ItemStack.CODEC.fieldOf("right_hand").forGetter(Deity::getRightHandItem)
     ).apply(instance, Deity::new));
   
   private final ResourceLocation name;

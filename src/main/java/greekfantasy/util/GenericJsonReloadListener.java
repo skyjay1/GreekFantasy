@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -29,15 +28,16 @@ import net.minecraftforge.fml.LogicalSidedProvider;
 
 public class GenericJsonReloadListener<T> extends JsonReloadListener {
   
-  private static final Gson GSON = new GsonBuilder().create();
+  private final Gson GSON;
   
   private final Codec<T> codec;
   private final Consumer<GenericJsonReloadListener<T>> syncOnReload;
   private final Class<T> objClass;
   
-  public GenericJsonReloadListener(final String folder, final Class<T> oClass, final Codec<T> oCodec, 
+  public GenericJsonReloadListener(final Gson gson, final String folder, final Class<T> oClass, final Codec<T> oCodec, 
       Consumer<GenericJsonReloadListener<T>> syncOnReloadConsumer) {
-    super(GSON, folder);
+    super(gson, folder);
+    GSON = gson;
     objClass = oClass;
     codec = oCodec;
     syncOnReload = syncOnReloadConsumer;
