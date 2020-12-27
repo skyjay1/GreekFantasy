@@ -53,7 +53,7 @@ public class CUpdatePanflutePacket {
         if(message.getSlot() >= 0 && message.getSlot() < player.inventory.getSizeInventory()) {
           final ItemStack stack = player.inventory.getStackInSlot(message.getSlot());
           if(stack.getItem() == GFRegistry.PANFLUTE) {
-            // update the song stored in the panflute NBT
+            // update the deity stored in the panflute NBT
             stack.getOrCreateTag().putString(PanfluteItem.KEY_SONG, message.songName.toString());
             player.inventory.setInventorySlotContents(message.getSlot(), stack);
           }

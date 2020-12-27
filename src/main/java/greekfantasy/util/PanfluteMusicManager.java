@@ -14,13 +14,13 @@ public final class PanfluteMusicManager {
   private PanfluteMusicManager() { }  
  
   /**
-   * Play part of the given song at the position of the given entity
+   * Play part of the given deity at the position of the given entity
    * @param entity the entity
-   * @param songName the resource location of the song
-   * @param worldTime the amount of time the song has been playing,
+   * @param deityName the resource location of the deity
+   * @param worldTime the amount of time the deity has been playing,
    * or the world time for universally synchronized songs
-   * @param volume the song volume for the treble
-   * @param volumeBass the song volume for the bass
+   * @param volume the deity volume for the treble
+   * @param volumeBass the deity volume for the bass
    * @return if the note was successfully played
    **/
   public static boolean playMusic(final LivingEntity entity, final ResourceLocation songName, final long worldTime, final float volume, final float volumeBass) {

@@ -12,7 +12,7 @@ public class FavorInfo implements INBTSerializable<CompoundNBT> {
   
   private long favor;
   private long effectTimestamp;
-  private long effectCooldown;
+  private long effectCooldown = 24000;
   
   public FavorInfo() { }
   

@@ -18,16 +18,15 @@ public class FavorManager {
     if(player.ticksExisted > 100) {
       final long time = player.getServer().getServerTime();
       FavorInfo info;
-      boolean good;
       for(final Entry<IDeity, FavorInfo> entry : favor.getAllFavor().entrySet()) {
         info = entry.getValue();
-        good = info.getFavor() > 0;
         if(info.canExecute(time)) {
-          final long cooldown = entry.getKey().getRandomEffect(good, player.getRNG()).performEffect(player, info);
-          if(cooldown > 0) {
-            info.setEffectTimestamp(time);
-            info.setEffectCooldown(cooldown);
+          long cooldown = FavorEffectManager.onFavorEffect(player.getEntityWorld(), player, entry.getKey(), favor, info);
+          if(cooldown <= 0) {
+            cooldown = 1000;
           }
+          info.setEffectTimestamp(time);
+          info.setEffectCooldown(cooldown);
         }
       }
     }
@@ -85,9 +84,8 @@ public class FavorManager {
    */
   public static boolean onGiveItem(final AltarTileEntity altar, final IDeity deity,
       final PlayerEntity playerIn, final FavorInfo favor, final ItemStack item) {
-    final Map<Item, Integer> modifiers = deity.getItemFavorModifiers();
-    if(modifiers.containsKey(item.getItem())) {
-      favor.addFavor(modifiers.get(item.getItem()));
+    if(deity.hasItemFavorModifier(item.getItem())) {
+      favor.addFavor(deity.getItemFavorModifier(item.getItem()));
       if(!playerIn.isCreative()) {
         item.shrink(1);
       }

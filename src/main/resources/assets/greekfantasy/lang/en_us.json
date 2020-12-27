@@ -200,5 +200,7 @@
   "song.sound_of_silence.credits": "1964 Paul Simon",
   "song.waltzing_matilda.name": "Waltzing Matilda",
   "song.waltzing_matilda.credits": "Traditional Australian",
-  "deity.greekfantasy.zeus": "Zeus"
+  "deity.greekfantasy.zeus": "Zeus",
+  "favor.effect.positive": "Your high favor earned a blessing from %1$s",
+  "favor.effect.negative": "Your low favor brought a curse from %1$s"
 }

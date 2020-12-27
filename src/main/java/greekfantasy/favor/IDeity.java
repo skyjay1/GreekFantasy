@@ -3,11 +3,10 @@ package greekfantasy.favor;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Consumer;
 
-import greekfantasy.favor.FavorEffects.IFavorEffect;
-import greekfantasy.tileentity.AltarTileEntity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -35,51 +34,69 @@ public interface IDeity {
   public Map<ResourceLocation, Integer> getKillFavorModifiers();
   
   /**
+   * @param entity the entity type to check
+   * @return true if a favor modifier exists for the entity
+   */
+  default boolean hasEntityavorModifier(final EntityType<?> entity) {
+    return getKillFavorModifiers().containsKey(entity.getRegistryName());
+  }
+  
+  /**
+   * @param entity the entity type to check
+   * @return the favor modifier, or zero if no entity is found
+   */
+  default int getItemFavorModifier(final EntityType<?> entity) {
+    return getKillFavorModifiers().getOrDefault(entity.getRegistryName(), 0);
+  }
+  
+  /**
    * @return a map of item offerings and favor modifiers
    */
-  public Map<Item, Integer> getItemFavorModifiers();
+  public Map<ResourceLocation, Integer> getItemFavorModifiers();
   
   /**
-   * @return a list of positive favor effects associated with the deity
+   * @param item the item to check
+   * @return true if a favor modifier exists for the item
    */
-  public List<WeightedFavorEffect> getGoodFavorEffects();
-  
-  public int getGoodFavorTotalWeight();
+  default boolean hasItemFavorModifier(final Item item) {
+    return getItemFavorModifiers().containsKey(item.getRegistryName());
+  }
   
   /**
-   * @return a list of positive favor effects associated with the deity
+   * @param item the item to check
+   * @return the favor modifier, or zero if no item is found
    */
-  public List<WeightedFavorEffect> getBadFavorEffects();
+  default int getItemFavorModifier(final Item item) {
+    return getItemFavorModifiers().getOrDefault(item.getRegistryName(), 0);
+  }
   
-  public int getBadFavorTotalWeight();
+  /** @return a list of favor effects associated with the deity **/
+  public List<FavorEffect> getFavorEffects();
   
-  default IFavorEffect getRandomEffect(final boolean good, final Random rand) {
-    final List<WeightedFavorEffect> effects = good ? getGoodFavorEffects() : getBadFavorEffects();
-    final int weights = good ? getGoodFavorTotalWeight() : getBadFavorTotalWeight();
+  /**
+   * @param rand a random instance
+   * @return a favor effect chosen at random
+   */
+  default FavorEffect getRandomEffect(final Random rand, final int playerLevel) {
+    final List<FavorEffect> effects = getFavorEffects();
     if(!effects.isEmpty()) {
-      boolean chosen = false;
-      WeightedFavorEffect effect = WeightedFavorEffect.EMPTY;
-      while(!chosen) {
-        effect = effects.get(rand.nextInt(effects.size()));
-        chosen = effect.choose(weights, rand);
+      int tries = 10;
+      while(tries-- >= 0) {
+        final FavorEffect effect = effects.get(rand.nextInt(effects.size()));
+        if(effect.isInRange(playerLevel)) {
+          return effect;
+        }
       }
-      return effect.favorEffect;
     }
-    return FavorEffects.NONE;
+    return FavorEffect.EMPTY;
   }
   
-  /**
-   * Called when a new AltarTileEntity is created.
-   * Used to set pose, male/female, etc.
-   * @return a consumer that handles the creation of a new altar
-   */
-  public Consumer<AltarTileEntity> initAltar();
+  /** @return true if the statue model is female **/
+  public boolean isFemale();
   
-  default int calculateTotalWeights(final List<WeightedFavorEffect> list) {
-    int total = 0;
-    for(final WeightedFavorEffect w : list) {
-      total += w.favorWeight;
-    }
-    return total;
-  }
+  /** @return the item in the statue's right hand **/
+  public ItemStack getRightHandItem();
+  
+  /** @return the item in the statue's left hand **/
+  public ItemStack getLeftHandItem();
 }

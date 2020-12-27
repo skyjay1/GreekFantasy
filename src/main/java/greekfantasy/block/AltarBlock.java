@@ -2,7 +2,7 @@ package greekfantasy.block;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.favor.DeityManager;
+import greekfantasy.favor.Deity;
 import greekfantasy.favor.FavorManager;
 import greekfantasy.favor.IDeity;
 import greekfantasy.favor.IFavor;
@@ -19,6 +19,7 @@ import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
@@ -28,9 +29,9 @@ import net.minecraftforge.common.util.LazyOptional;
 
 public class AltarBlock extends StatueBlock {
   
-  private final IDeity deity;
+  private final ResourceLocation deity;
    
-  public AltarBlock(final IDeity deityIn, final StatueBlock.StatueMaterial material) {
+  public AltarBlock(final ResourceLocation deityIn, final StatueBlock.StatueMaterial material) {
     super(material, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(30.0F, 1200.0F).sound(SoundType.STONE).setLightLevel(b -> material.getLightLevel()).notSolid());
     deity = deityIn;
   }
@@ -68,7 +69,6 @@ public class AltarBlock extends StatueBlock {
     final AltarTileEntity te = GFRegistry.ALTAR_TE.create();
     te.setUpper(state.get(HALF) == DoubleBlockHalf.UPPER);
     te.setDeity(deity);
-    deity.initAltar().accept(te);
     return te;
   }
 }

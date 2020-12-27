@@ -70,7 +70,7 @@ public class PanfluteScreen extends Screen {
       songs.sort((e1, e2) -> e1.getValue().orElse(PanfluteSong.EMPTY).getName().getString()
           .compareTo(e2.getValue().orElse(PanfluteSong.EMPTY).getName().getString()));
     }
-    // determine currently selected song
+    // determine currently selected deity
     if(panfluteItem.getOrCreateTag().contains(PanfluteItem.KEY_SONG)) {
       selectedSong = new ResourceLocation(panfluteItem.getTag().getString(PanfluteItem.KEY_SONG));
     } else {
@@ -94,7 +94,7 @@ public class PanfluteScreen extends Screen {
           updateScroll(b.getScrollAmount());
           isScrolling = false;
         }));
-    // add song buttons
+    // add deity buttons
     int i = 0;
     for(final Entry<ResourceLocation, Optional<PanfluteSong>> e : songs) {
       final SongButton b = addButton(new SongButton(i, this, e.getValue().orElse(PanfluteSong.EMPTY), e.getKey(), guiLeft + BTN_LEFT, 0));
@@ -164,7 +164,7 @@ public class PanfluteScreen extends Screen {
           name.mergeStyle(TextFormatting.GRAY);
           credits.mergeStyle(TextFormatting.GRAY);
         }
-        // draw song name string
+        // draw deity name string
         drawStringToFit(matrixStack, name, this.x + 3, this.y + 4, this.width - 6);
         // draw credits string
         drawStringToFit(matrixStack, credits, this.x + 3, this.y + PanfluteScreen.this.font.FONT_HEIGHT + 5, this.width - 6);

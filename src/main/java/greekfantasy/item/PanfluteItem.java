@@ -69,7 +69,7 @@ public class PanfluteItem extends Item {
   @Override
   public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
     int timeUsed = getUseDuration(stack) - timeLeft;
-    // Check if player stopped using the item very soon after starting - if so, open song selection GUI instead
+    // Check if player stopped using the item very soon after starting - if so, open deity selection GUI instead
     if(timeUsed < 10 && stack.getItem() == this && worldIn.isRemote() && entityLiving instanceof PlayerEntity) {
       PlayerEntity player = (PlayerEntity)entityLiving;
       GuiLoader.openPanfluteGui(player, player.inventory.currentItem, stack);

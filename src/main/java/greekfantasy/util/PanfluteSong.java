@@ -32,7 +32,6 @@ public class PanfluteSong {
   private List<Integer> treble;
   private List<Integer> bass;
   
-  protected PanfluteSong() { }
   protected PanfluteSong(final String lName, final String lCredits, final int lInterval, final int lLength,
       final List<Integer> lTreble, final List<Integer> lBass) {
     name = lName;
@@ -57,7 +56,7 @@ public class PanfluteSong {
   }
   /** @return the number of ticks between playing notes **/
   public int getInterval() { return interval; }
-  /** @return the number of notes in the song **/
+  /** @return the number of notes in the deity **/
   public int getLength() { return length; }
   /** @return the treble notes **/
   public List<Integer> getTreble() { return treble; }

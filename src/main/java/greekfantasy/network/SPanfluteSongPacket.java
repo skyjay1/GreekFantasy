@@ -7,7 +7,6 @@ import com.mojang.serialization.DataResult;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.util.PanfluteSong;
-import greekfantasy.util.PanfluteSongs;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.network.PacketBuffer;
@@ -33,7 +32,7 @@ public class SPanfluteSongPacket {
   public static SPanfluteSongPacket fromBytes(final PacketBuffer buf) {
     final ResourceLocation sName = buf.readResourceLocation();
     final CompoundNBT sNBT = buf.readCompoundTag();
-    final Optional<PanfluteSong> sSong = PanfluteSongs.readSong(sNBT).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read song from NBT for packet\n" + error));
+    final Optional<PanfluteSong> sSong = GreekFantasy.PROXY.PANFLUTE_SONGS.readObject(sNBT).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read deity from NBT for packet\n" + error));
     return new SPanfluteSongPacket(sName, sSong.orElse(PanfluteSong.EMPTY));
   }
 
@@ -41,8 +40,8 @@ public class SPanfluteSongPacket {
    * Writes the raw packet data to the data stream.
    */
   public static void toBytes(final SPanfluteSongPacket msg, final PacketBuffer buf) {
-    DataResult<INBT> nbtResult = PanfluteSongs.writeSong(msg.song);
-    INBT tag = nbtResult.resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to write song to NBT for packet\n" + error)).get();
+    DataResult<INBT> nbtResult = GreekFantasy.PROXY.PANFLUTE_SONGS.writeObject(msg.song);
+    INBT tag = nbtResult.resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to write deity to NBT for packet\n" + error)).get();
     buf.writeResourceLocation(msg.songName);
     buf.writeCompoundTag((CompoundNBT)tag);
   }
