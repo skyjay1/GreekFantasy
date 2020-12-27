@@ -89,7 +89,7 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   @Override
   public void livingTick() {
     super.livingTick();
-
+    
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
    
@@ -122,6 +122,9 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   public boolean isInvulnerableTo(final DamageSource source) {
     return source == DamageSource.IN_WALL || source == DamageSource.WITHER || super.isInvulnerableTo(source);
   }
+  
+  @Override
+  public boolean isOnLadder() { return false; }
   
   // Boss //
 

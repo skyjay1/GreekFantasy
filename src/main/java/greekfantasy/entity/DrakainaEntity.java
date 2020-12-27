@@ -49,6 +49,7 @@ public class DrakainaEntity extends MonsterEntity {
   
   public DrakainaEntity(final EntityType<? extends DrakainaEntity> type, final World worldIn) {
     super(type, worldIn);
+    this.experienceValue = 10;
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {

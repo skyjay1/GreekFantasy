@@ -163,6 +163,7 @@ __Key:__
 - X X X Boar ear, boar tusk - crafting component from Giant Boar
 - X X X Ivory sword - extra knockback
 - X X X Swine Wand - inflicts Swine effect
+- _ _ _ Snake fang
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Gorgon blood - 50% chance to fully heal, 50% chance to fully kill
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)

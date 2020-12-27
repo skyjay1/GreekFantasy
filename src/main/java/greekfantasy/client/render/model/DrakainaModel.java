@@ -28,7 +28,7 @@ public class DrakainaModel<T extends MobEntity> extends BipedModel<T> {
     
     bipedHeadwear = new ModelRenderer(this);
     bipedHeadwear.setRotationPoint(0.0F, 0.0F, -2.0F);
-    bipedHeadwear.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize);
+    bipedHeadwear.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSize + 0.5F);
 
     bipedBody = new ModelRenderer(this);
     bipedBody.setRotationPoint(0.0F, 24.0F, 0.0F);

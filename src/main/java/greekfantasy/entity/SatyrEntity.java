@@ -325,7 +325,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   protected static boolean isValidCampfire(final IWorldReader world, final BlockPos pos) {
     // check if the block is actually a campfire
     final BlockState campfire = world.getBlockState(pos);
-    if(!campfire.isIn(BlockTags.CAMPFIRES) || !campfire.get(CampfireBlock.LIT)) {
+    if(!campfire.isIn(BlockTags.CAMPFIRES) || !campfire.get(CampfireBlock.LIT) || campfire.get(CampfireBlock.WATERLOGGED)) {
       return false;
     }
     // check surrounding area (only flat or passable terrain is allowed)
@@ -358,7 +358,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
         // check for impassable blocks
         final BlockPos p = pos.add(x, 0, z);
         final BlockState state = world.getBlockState(p);
-        if (state.isIn(BlockTags.CAMPFIRES) && (state.get(CampfireBlock.LIT) == lit)) {
+        if (state.isIn(BlockTags.CAMPFIRES) && (state.get(CampfireBlock.LIT) == lit) && !state.get(CampfireBlock.WATERLOGGED)) {
           return Optional.of(p);
         }
       }

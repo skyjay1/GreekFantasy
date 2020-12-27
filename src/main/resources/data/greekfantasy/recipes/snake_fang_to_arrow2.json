@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "greekfantasy:snake_fang" },
+    { "item": "minecraft:arrow" },
+    { "item": "minecraft:arrow" }
+  ],
+  "result": {
+    "item": "minecraft:tipped_arrow",
+    "count": 1,
+    "nbt": "{Potion:\"minecraft:poison\"}"
+  }
+}

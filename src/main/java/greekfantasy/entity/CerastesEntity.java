@@ -256,6 +256,9 @@ public class CerastesEntity extends CreatureEntity implements IHasOwner<Cerastes
   protected boolean isDespawnPeaceful() {
     return true;
   }
+   
+  @Override
+  public boolean isOnLadder() { return false; }
   
   @Override
   protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_SPIDER_AMBIENT; }

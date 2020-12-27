@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "greekfantasy:snakeskin",
+          "name": "greekfantasy:tough_snakeskin",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -22,6 +22,15 @@
         {
           "function": "minecraft:looting_enchant",
           "count": 1
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "greekfantasy:snake_fang"
         }
       ]
     }

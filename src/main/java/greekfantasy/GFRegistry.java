@@ -469,6 +469,8 @@ public final class GFRegistry {
         new HealingRodItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.HEALING_ROD_DURABILITY.get()))
           .setRegistryName(MODID, "healing_rod"),
+        new DragonToothItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP))
+          .setRegistryName(MODID, "dragon_tooth"),
         new SwineWandItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.SWINE_WAND_DURABILITY.get()))
           .setRegistryName(MODID, "swine_wand"),
@@ -477,18 +479,16 @@ public final class GFRegistry {
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "boar_ear"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(MODID, "boar_tusk"));
+          .setRegistryName(MODID, "boar_tusk"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "golden_bridle"));
     
     event.getRegistry().registerAll(
         new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
             .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC).containerItem(GFRegistry.HORN))
             .setRegistryName(MODID, "ambrosia"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(MODID, "golden_bridle"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "magic_feather"),
-        new DragonToothItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP))
-          .setRegistryName(MODID, "dragon_tooth"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "snakeskin"),
         new Item(new Item.Properties().group(GREEK_GROUP))
@@ -500,11 +500,13 @@ public final class GFRegistry {
           public boolean hasEffect(ItemStack stack) { return true; }
         }.setRegistryName(MODID, "ichor"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-        .setRegistryName(MODID, "dog_claw"),
+          .setRegistryName(MODID, "dog_claw"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-        .setRegistryName(MODID, "fiery_hide"),
+          .setRegistryName(MODID, "fiery_hide"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-        .setRegistryName(MODID, "styxian_shard")
+          .setRegistryName(MODID, "styxian_shard"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "snake_fang")
     );
     
     // block items
@@ -542,14 +544,14 @@ public final class GFRegistry {
     registerSpawnEgg(event, CHARYBDIS_ENTITY, 0x2e5651, 0x411e5e);
     registerSpawnEgg(event, CYCLOPES_ENTITY, 0xda662c, 0x2c1e0e);
     registerSpawnEgg(event, CYPRIAN_ENTITY, 0x443626, 0x83251f);
-    registerSpawnEgg(event, DRAKAINA_ENTITY, 0xb6b6b6, 0x398046);
+    registerSpawnEgg(event, DRAKAINA_ENTITY, 0x724e36, 0x398046);
     registerSpawnEgg(event, DRYAD_ENTITY, 0x443626, 0xfed93f);
     registerSpawnEgg(event, ELPIS_ENTITY, 0xe7aae4, 0xeeeeee);
     registerSpawnEgg(event, EMPUSA_ENTITY, 0x222222, 0x83251f);
     registerSpawnEgg(event, FURY_ENTITY, 0xbd4444, 0x6c2426);
     registerSpawnEgg(event, GIANT_BOAR_ENTITY, 0x5b433a, 0xe8a074);
     registerSpawnEgg(event, GIGANTE_ENTITY, 0xd3dba7, 0x6a602b);
-    registerSpawnEgg(event, GORGON_ENTITY, 0xb6b6b6, 0xeeeeee);
+    registerSpawnEgg(event, GORGON_ENTITY, 0x3a8228, 0xbcbcbc);
     registerSpawnEgg(event, HARPY_ENTITY, 0x724e36, 0x332411);
     registerSpawnEgg(event, MAD_COW_ENTITY, 0x443626, 0xcf9797);
     registerSpawnEgg(event, MINOTAUR_ENTITY, 0x443626, 0x734933);
