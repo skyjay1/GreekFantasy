@@ -1,5 +1,7 @@
 package greekfantasy.block;
 
+import java.util.function.Supplier;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.gui.StatueContainer;
@@ -9,6 +11,7 @@ import greekfantasy.util.StatuePoses;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.SoundType;
@@ -35,6 +38,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -61,7 +65,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
       IBooleanFunction.OR);
   protected static final VoxelShape AABB_STATUE_TOP = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 24.0D, 14.0D);
   
-  private final StatueMaterial statueMaterial;
+  protected final StatueMaterial statueMaterial;
     
   public StatueBlock(final StatueMaterial material) {
     this(material, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(1.5F, 6.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> material.getLightLevel()));
@@ -100,7 +104,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     final BlockPos tePos = isUpper ? pos.down() : pos;
     // drop items from inventory
     TileEntity tileentity = worldIn.getTileEntity(tePos);
-    if (statueMaterial != StatueMaterial.WOOD && !worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
+    if (canDropItems(state, worldIn) && !worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
       InventoryHelper.dropItems(worldIn, pos, ((StatueTileEntity) tileentity).getInventory());
     }
     // replace other block with air
@@ -118,7 +122,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
       final BlockPos tePos = isUpper ? pos.down() : pos;
       // drop items from inventory
       TileEntity tileentity = worldIn.getTileEntity(tePos);
-      if (statueMaterial != StatueMaterial.WOOD && !worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
+      if (canDropItems(state, worldIn) && !worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
         InventoryHelper.dropItems(worldIn, pos, ((StatueTileEntity) tileentity).getInventory());
       }
       // replace other block with air
@@ -145,13 +149,18 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   @Override
   public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
+    
     // wood statues do not allow access to GUI
-    if(statueMaterial == StatueMaterial.WOOD) {
+    if(!statueMaterial.hasGui()) {
       return ActionResultType.PASS;
     }
     // prepare to interact with this block
     final BlockPos tePos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos;
     final TileEntity te = worldIn.getTileEntity(tePos);
+    
+    // DEBUG
+    GreekFantasy.LOGGER.debug("pose = " + ((StatueTileEntity)te).getStatuePose().toString());
+    
     if (playerIn instanceof ServerPlayerEntity && te instanceof StatueTileEntity) {
       final StatueTileEntity teStatue = (StatueTileEntity)te;
       // handle nametag interaction
@@ -163,7 +172,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     		}
         return ActionResultType.CONSUME;
       }
-      // open the statue GUI
+      // prepare to open the statue GUI
       final StatuePose currentPose = teStatue.getStatuePose();
       final boolean isFemale = teStatue.isStatueFemale();
       final String name = teStatue.getTextureName();
@@ -212,7 +221,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     if(statueMaterial == StatueMaterial.WOOD) {
       te.setStatueFemale(true);
       te.setStatuePose(StatuePoses.STANDING_HOLDING_DRAMATIC);
-      te.setInventorySlotContents(1, new ItemStack(Items.SOUL_TORCH));
+      te.setItem(new ItemStack(Items.SOUL_TORCH), HandSide.RIGHT);
     } else {
       te.setStatueFemale(this.RANDOM.nextBoolean());
     }
@@ -223,40 +232,48 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     return this.statueMaterial;
   }
   
+  public boolean canDropItems(final BlockState state, final IBlockReader world) {
+    return this.statueMaterial.dropsItems();
+  }
+  
   public static enum StatueMaterial implements IStringSerializable {
-    LIMESTONE("limestone", 0),
-    MARBLE("marble", 0),
-    WOOD("wood", 11);
+    LIMESTONE("limestone", true, true, 0, () -> GFRegistry.POLISHED_LIMESTONE_SLAB.getDefaultState()),
+    MARBLE("marble", true, true, 0, () -> GFRegistry.POLISHED_MARBLE_SLAB.getDefaultState()),
+    WOOD("wood", false, false, 11, () -> Blocks.SPRUCE_SLAB.getDefaultState());
     
     private final ResourceLocation stoneTexture;
     private final String name;
+    private final boolean hasGui;
+    private final boolean dropsItems;
     private final int light;
+    private final Supplier<BlockState> base;
     
-    private StatueMaterial(final String nameIn, final int lightIn) {
+    private StatueMaterial(final String nameIn, final boolean hasGuiIn, final boolean dropsItemsIn, final int lightIn, final Supplier<BlockState> baseIn) {
       this.name = nameIn;
+      this.hasGui = hasGuiIn;
+      this.dropsItems = dropsItemsIn;
       this.light = lightIn;
+      this.base = baseIn;
       this.stoneTexture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + nameIn + ".png");
     }
     
-    public ResourceLocation getStoneTexture() {
-      return this.stoneTexture;
-    }
+    public boolean hasGui() {  return hasGui; }
     
-    public int getLightLevel() {
-      return light;
-    }
+    public boolean dropsItems() { return dropsItems; }
     
-    public byte getId() {
-      return (byte) this.ordinal();
-    }
+    public boolean hasSkin() { return this != WOOD; }
     
-    public static StatueMaterial getById(final byte id) {
-      return values()[id];
-    }
+    public BlockState getBase() { return base.get(); }
+    
+    public ResourceLocation getStoneTexture() { return this.stoneTexture; }
+    
+    public int getLightLevel() { return light; }
+    
+    public byte getId() { return (byte) this.ordinal(); }
+    
+    public static StatueMaterial getById(final byte id) { return values()[id]; }
 
     @Override
-    public String getString() {
-      return name;
-    }
+    public String getString() { return name; }
   }
 }

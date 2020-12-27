@@ -25,6 +25,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.SkullTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.vector.Vector3f;
@@ -48,7 +49,11 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   private GameProfile playerProfile = null;
 
   public StatueTileEntity() {
-    super(GFRegistry.STATUE_TE);
+    this(GFRegistry.STATUE_TE);
+  }
+  
+  public StatueTileEntity(TileEntityType<?> tileEntityTypeIn) {
+    super(tileEntityTypeIn);
   }
   
   public void setUpper(final boolean isUpper) {

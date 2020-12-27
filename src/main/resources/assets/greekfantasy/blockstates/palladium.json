@@ -1,52 +1,5 @@
 {
   "variants": {
-	"waterlogged=false,facing=north,half=lower": {
-	  "model": "greekfantasy:block/palladium_lower"
-	},
-	"waterlogged=false,facing=east,half=lower": {
-	  "model": "greekfantasy:block/palladium_lower"
-	},
-	"waterlogged=false,facing=south,half=lower": {
-	  "model": "greekfantasy:block/palladium_lower"
-	},
-	"waterlogged=false,facing=west,half=lower": {
-	  "model": "greekfantasy:block/palladium_lower"
-	},
-	"waterlogged=false,facing=north,half=upper": {
-	  "model": "greekfantasy:block/palladium_upper"
-	},
-	"waterlogged=false,facing=east,half=upper": {
-	  "model": "greekfantasy:block/palladium_upper"
-	},
-	"waterlogged=false,facing=south,half=upper": {
-	  "model": "greekfantasy:block/palladium_upper"
-	},
-	"waterlogged=false,facing=west,half=upper": {
-	  "model": "greekfantasy:block/palladium_upper"
-	},
-	"waterlogged=true,facing=north,half=lower": {
-	  "model": "greekfantasy:block/palladium_lower"
-	},
-	"waterlogged=true,facing=east,half=lower": {
-	  "model": "greekfantasy:block/palladium_lower"
-	},
-	"waterlogged=true,facing=south,half=lower": {
-	  "model": "greekfantasy:block/palladium_lower"
-	},
-	"waterlogged=true,facing=west,half=lower": {
-	  "model": "greekfantasy:block/palladium_lower"
-	},
-	"waterlogged=true,facing=north,half=upper": {
-	  "model": "greekfantasy:block/palladium_upper"
-	},
-	"waterlogged=true,facing=east,half=upper": {
-	  "model": "greekfantasy:block/palladium_upper"
-	},
-	"waterlogged=true,facing=south,half=upper": {
-	  "model": "greekfantasy:block/palladium_upper"
-	},
-	"waterlogged=true,facing=west,half=upper": {
-	  "model": "greekfantasy:block/palladium_upper"
-	}
+	"": { "model": "greekfantasy:block/palladium_upper" }
   }
 }

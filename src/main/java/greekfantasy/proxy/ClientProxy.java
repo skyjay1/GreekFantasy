@@ -75,6 +75,7 @@ public class ClientProxy extends Proxy {
   public void registerTileEntityRenders() {
     GreekFantasy.LOGGER.debug("registerTileEntityRenders");
     ClientRegistry.bindTileEntityRenderer(GFRegistry.STATUE_TE, StatueTileEntityRenderer::new);
+    ClientRegistry.bindTileEntityRenderer(GFRegistry.ALTAR_TE, AltarTileEntityRenderer::new);
     ClientRegistry.bindTileEntityRenderer(GFRegistry.VASE_TE, VaseTileEntityRenderer::new);
     ClientRegistry.bindTileEntityRenderer(GFRegistry.BOSS_HEAD_TE, MobHeadTileEntityRenderer::new);
   }

@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import greekfantasy.block.AltarBlock;
 import greekfantasy.block.CappedPillarBlock;
 import greekfantasy.block.IchorInfusedBlock;
 import greekfantasy.block.MobHeadBlock;
@@ -32,6 +33,7 @@ import greekfantasy.entity.misc.HealingSpellEntity;
 import greekfantasy.entity.misc.OrthusHeadItemEntity;
 import greekfantasy.entity.misc.PoisonSpitEntity;
 import greekfantasy.entity.misc.SwineSpellEntity;
+import greekfantasy.favor.DeityManager;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.item.BagOfWindItem;
 import greekfantasy.item.ClubItem;
@@ -48,6 +50,7 @@ import greekfantasy.item.SwineWandItem;
 import greekfantasy.item.ThunderboltItem;
 import greekfantasy.item.UnicornHornItem;
 import greekfantasy.item.WingedSandalsItem;
+import greekfantasy.tileentity.AltarTileEntity;
 import greekfantasy.tileentity.MobHeadTileEntity;
 import greekfantasy.tileentity.MobHeadTileEntity.HeadType;
 import greekfantasy.tileentity.StatueTileEntity;
@@ -162,6 +165,7 @@ public final class GFRegistry {
 
   // OBJECT HOLDERS //
 
+  // Item //
   @ObjectHolder("panflute")
   public static final Item PANFLUTE = null;
   @ObjectHolder("iron_club")
@@ -193,6 +197,7 @@ public final class GFRegistry {
   @ObjectHolder("boar_ear")
   public static final Item BOAR_EAR = null;
   
+  // Block //
   @ObjectHolder("reeds")
   public static final Block REEDS = null;
   @ObjectHolder("olive_log")
@@ -260,16 +265,25 @@ public final class GFRegistry {
   @ObjectHolder("ichor_infused_block")
   public static final Block ICHOR_INFUSED_BLOCK = null;
   
+  // Altar //
+  @ObjectHolder("altar_zeus")
+  public static final Block ALTAR_ZEUS = null;
+
+  // Tile Entity //  
   @ObjectHolder("statue_te")
   public static final TileEntityType<StatueTileEntity> STATUE_TE = null;
+  @ObjectHolder("altar_te")
+  public static final TileEntityType<AltarTileEntity> ALTAR_TE = null;
   @ObjectHolder("vase_te")
   public static final TileEntityType<VaseTileEntity> VASE_TE = null;
   @ObjectHolder("mob_head_te")
   public static final TileEntityType<MobHeadTileEntity> BOSS_HEAD_TE = null;
 
+  // Container Type //
   @ObjectHolder("statue_container")
   public static final ContainerType<StatueContainer> STATUE_CONTAINER = null;
   
+  // Effect //
   @ObjectHolder("stunned")
   public static final Effect STUNNED_EFFECT = null;
   @ObjectHolder("petrified")
@@ -279,6 +293,7 @@ public final class GFRegistry {
   @ObjectHolder("swine")
   public static final Effect SWINE_EFFECT = null;
   
+  // Enchantment //
   @ObjectHolder("overstep")
   public static final Enchantment OVERSTEP_ENCHANTMENT = null;
   @ObjectHolder("smashing")
@@ -286,6 +301,7 @@ public final class GFRegistry {
   @ObjectHolder("mirror")
   public static final Enchantment MIRROR_ENCHANTMENT = null;
   
+  // Potion //
   @ObjectHolder("mirror")
   public static final Potion MIRROR_POTION = null;
   @ObjectHolder("long_mirror")
@@ -295,6 +311,7 @@ public final class GFRegistry {
   @ObjectHolder("long_swine")
   public static final Potion LONG_SWINE_POTION = null;
   
+  // Particle Type //
   @ObjectHolder("gorgon_face")
   public static final BasicParticleType GORGON_PARTICLE = new BasicParticleType(true);
 
@@ -360,6 +377,10 @@ public final class GFRegistry {
         .build(null).setRegistryName(MODID, "statue_te")
     );
     event.getRegistry().register(
+        TileEntityType.Builder.create(AltarTileEntity::new, ALTAR_ZEUS)
+        .build(null).setRegistryName(MODID, "altar_te")
+    );
+    event.getRegistry().register(
         TileEntityType.Builder.create(VaseTileEntity::new, TERRACOTTA_VASE)
         .build(null).setRegistryName(MODID, "vase_te")
     );
@@ -416,6 +437,8 @@ public final class GFRegistry {
           .setRegistryName(MODID, "limestone_statue"),
         new StatueBlock(StatueBlock.StatueMaterial.WOOD)
           .setRegistryName(MODID, "palladium"),
+        new AltarBlock(DeityManager.ZEUS, StatueBlock.StatueMaterial.MARBLE)
+          .setRegistryName(MODID, "altar_zeus"),
         new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
           .setRegistryName(MODID, "terracotta_vase"),
         new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
@@ -514,6 +537,7 @@ public final class GFRegistry {
         OLIVE_LOG, OLIVE_WOOD, OLIVE_PLANKS, OLIVE_SLAB, OLIVE_STAIRS, OLIVE_LEAVES, 
         MARBLE, MARBLE_SLAB, MARBLE_STAIRS, POLISHED_MARBLE, POLISHED_MARBLE_SLAB, 
         POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, PALLADIUM, 
+        ALTAR_ZEUS,
         LIMESTONE, LIMESTONE_SLAB, LIMESTONE_STAIRS, POLISHED_LIMESTONE, POLISHED_LIMESTONE_SLAB, 
         POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, LIMESTONE_STATUE, 
         TERRACOTTA_VASE, ICHOR_INFUSED_BLOCK);
