@@ -1,5 +1,6 @@
 package greekfantasy.favor;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -45,10 +46,18 @@ public final class DeityManager {
     return DEITY.get(name);
   }
   
+  
+  /**
+   * @return the the values of all deity
+   */
+  public static Collection<IDeity> getDeityCollection() {
+    return DEITY.values();
+  }
+  
   /**
    * @return the entry set of all deity
    */
-  public static Set<Map.Entry<ResourceLocation, IDeity>> getAllDeity() {
+  public static Set<Map.Entry<ResourceLocation, IDeity>> getDeityEntries() {
     return DEITY.entrySet();
   }
 }

@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 import com.google.common.collect.ImmutableList;
 import com.ibm.icu.impl.locale.XCldrStub.ImmutableMap;
 
-import greekfantasy.GreekFantasy;
 import greekfantasy.tileentity.AltarTileEntity;
 import greekfantasy.util.StatuePose;
 import net.minecraft.entity.EntityType;
@@ -29,17 +28,20 @@ public class Deity implements IDeity {
   private final ResourceLocation texture;
   private final Map<ResourceLocation, Integer> killFavorMap;
   private final Map<Item, Integer> itemFavorMap;
-  private final List<IFavorEffect> favorEffects;
+  private final List<IFavorEffect> goodFavorEffects;
+  private final List<IFavorEffect> badFavorEffects;
   private final Consumer<AltarTileEntity> initAltar;
 
   public Deity(final ResourceLocation lName, final ResourceLocation lTexture,
       final Map<ResourceLocation, Integer> lKillFavorMap, final Map<Item, Integer> lItemFavorMap,
-      final List<IFavorEffect> lFavorEffects, final Consumer<AltarTileEntity> lInitAltar) {
+      final List<IFavorEffect> lGoodFavorEffects, final List<IFavorEffect> lBadFavorEffects,
+      final Consumer<AltarTileEntity> lInitAltar) {
     name = lName;
     texture = lTexture;
     killFavorMap = ImmutableMap.copyOf(lKillFavorMap);
     itemFavorMap = ImmutableMap.copyOf(lItemFavorMap);
-    favorEffects = ImmutableList.copyOf(lFavorEffects);
+    goodFavorEffects = ImmutableList.copyOf(lGoodFavorEffects);
+    badFavorEffects = ImmutableList.copyOf(lBadFavorEffects);
     initAltar = lInitAltar;
   }
   
@@ -56,7 +58,10 @@ public class Deity implements IDeity {
   public Map<Item, Integer> getItemFavorModifiers() { return itemFavorMap; }
 
   @Override
-  public List<IFavorEffect> getFavorEffects() { return favorEffects; }
+  public List<IFavorEffect> getGoodFavorEffects() { return goodFavorEffects; }
+  
+  @Override
+  public List<IFavorEffect> getBadFavorEffects() { return badFavorEffects; }
 
   @Override
   public Consumer<AltarTileEntity> initAltar() { return initAltar; }
@@ -83,7 +88,8 @@ public class Deity implements IDeity {
     private ResourceLocation texture;
     private final Map<ResourceLocation, Integer> killFavorMap = new HashMap<>();
     private final Map<Item, Integer> itemFavorMap = new HashMap<>();
-    private final List<IFavorEffect> favorEffects = new ArrayList<>();
+    private final List<IFavorEffect> goodFavorEffects = new ArrayList<>();
+    private final List<IFavorEffect> badFavorEffects = new ArrayList<>();
     private Consumer<AltarTileEntity> initAltar = e -> {};
     
     public Builder(final String modid, final String name) {
@@ -118,12 +124,23 @@ public class Deity implements IDeity {
     }
     
     /**
-     * Adds a favor effect to the list
+     * Adds a good favor effect to the list
      * @param effect
      * @return instance to allow chaining of methods
      */
-    public Builder addEffect(final IFavorEffect effect) {
-      favorEffects.add(effect);
+    public Builder addGoodEffect(final IFavorEffect effect) {
+      goodFavorEffects.add(effect);
+      return this;
+    }
+    
+
+    /**
+     * Adds a bad favor effect to the list
+     * @param effect
+     * @return instance to allow chaining of methods
+     */
+    public Builder addBadEffect(final IFavorEffect effect) {
+      badFavorEffects.add(effect);
       return this;
     }
     
@@ -171,7 +188,7 @@ public class Deity implements IDeity {
      * @return the fully built Deity
      */
     public Deity build() {
-      return new Deity(name, texture, killFavorMap, itemFavorMap, favorEffects, initAltar);
+      return new Deity(name, texture, killFavorMap, itemFavorMap, goodFavorEffects, badFavorEffects, initAltar);
     }
   }
 

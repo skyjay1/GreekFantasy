@@ -2,6 +2,7 @@ package greekfantasy.favor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import greekfantasy.tileentity.AltarTileEntity;
@@ -38,9 +39,22 @@ public interface IDeity {
   public Map<Item, Integer> getItemFavorModifiers();
   
   /**
-   * @return a list of favor effects associated with the deity
+   * @return a list of positive favor effects associated with the deity
    */
-  public List<IFavorEffect> getFavorEffects();
+  public List<IFavorEffect> getGoodFavorEffects();
+  
+  /**
+   * @return a list of positive favor effects associated with the deity
+   */
+  public List<IFavorEffect> getBadFavorEffects();
+  
+  default IFavorEffect getRandomEffect(final boolean good, final Random rand) {
+    final List<IFavorEffect> effects = good ? getGoodFavorEffects() : getBadFavorEffects();
+    if(!effects.isEmpty()) {
+      return effects.get(rand.nextInt(effects.size()));
+    }
+    return FavorManager.NONE;
+  }
   
   /**
    * Called when a new AltarTileEntity is created.

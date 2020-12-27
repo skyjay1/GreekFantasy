@@ -20,6 +20,7 @@ import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.GiantBoarEntity;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.favor.Favor;
+import greekfantasy.favor.FavorManager;
 import greekfantasy.favor.IFavor;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.tileentity.StatueTileEntity;
@@ -61,6 +62,7 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -108,6 +110,32 @@ public class CommonForgeEventHandler {
     }
   }
   
+  /**
+   * Used to change a player's favor when they attack an entity
+   * @param event the living attack event
+   */
+  @SubscribeEvent
+  public static void onPlayerAttackEntity(final LivingAttackEvent event) {
+    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getSource().getTrueSource() instanceof PlayerEntity) {
+      event.getSource().getTrueSource().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAttackEntity(event.getEntityLiving(), (PlayerEntity)event.getSource().getTrueSource(), f));
+    }
+  }
+  
+  /**
+   * Used to change a player's favor when they kill an entity
+   * @param event the living death event
+   */
+  @SubscribeEvent
+  public static void onPlayerKillEntity(final LivingDeathEvent event) {
+    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getSource().getTrueSource() instanceof PlayerEntity) {
+      event.getSource().getTrueSource().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onKillEntity(event.getEntityLiving(), (PlayerEntity)event.getSource().getTrueSource(), f));
+    }
+  }
+  
+  /**
+   * Used to summon a Geryon when a cow is killed and other spawn conditions are met
+   * @param event the living death event
+   */
   @SubscribeEvent
   public static void onCowDeath(final LivingDeathEvent event) {
     if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getEntityLiving() instanceof CowEntity) {
@@ -142,10 +170,14 @@ public class CommonForgeEventHandler {
   
   /**
    * Used to set the player pose when the Swine effect is enabled.
+   * Also ticks the FavorManager
    * @param event the PlayerTickEvent
    **/
   @SubscribeEvent
   public static void onLivingTick(final PlayerTickEvent event) {
+    if(event.phase == TickEvent.Phase.START && event.player.isServerWorld()) {
+      event.player.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerTick(event.player, f));
+    }
     if(event.phase == TickEvent.Phase.START && GreekFantasy.CONFIG.isSwineEnabled()) {
       final boolean isSwine = isSwine(event.player);
       final Pose forcedPose = event.player.getForcedPose();

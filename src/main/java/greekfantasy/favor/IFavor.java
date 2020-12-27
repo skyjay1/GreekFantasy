@@ -38,7 +38,7 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
 
   @Override
   default void deserializeNBT(final CompoundNBT nbt) {
-    for(final Entry<ResourceLocation, IDeity> entry : DeityManager.getAllDeity()) {
+    for(final Entry<ResourceLocation, IDeity> entry : DeityManager.getDeityEntries()) {
       final String name = entry.getKey().toString();
       if(nbt.contains(entry.getKey().toString())) {
         final CompoundNBT entrynbt = nbt.getCompound(name);

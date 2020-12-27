@@ -38,6 +38,18 @@ public class FavorInfo implements INBTSerializable<CompoundNBT> {
     return Math.abs(favor) >= MIN_FAVOR && time >= (effectTimestamp + effectCooldown); 
   }
   
+  public int getLevel() {
+    // calculate the current level based on favor
+    // TODO math
+    return 0;
+  }
+  
+  public long getFavorToNextLevel() {
+    // calculate the amount of favor needed to advance to the next level
+    // TODO math
+    return 0;
+  }
+  
   @Override
   public CompoundNBT serializeNBT() {
     final CompoundNBT nbt = new CompoundNBT();

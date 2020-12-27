@@ -59,7 +59,7 @@ public class GreekFantasy {
     ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC);
     // register side-specific or common event handlers
     PROXY.registerEventHandlers();
-    // register reload listeners (only applies to client-side)
+    // register reload listeners (not currently used)
     PROXY.registerReloadListeners();
     // register messages
     GreekFantasy.LOGGER.debug("registerNetwork");
