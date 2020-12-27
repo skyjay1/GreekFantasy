@@ -29,15 +29,16 @@ import net.minecraftforge.fml.LogicalSidedProvider;
 public class GenericJsonReloadListener<T> extends JsonReloadListener {
   
   private final Gson GSON;
-  
+  private final String folder;
   private final Codec<T> codec;
   private final Consumer<GenericJsonReloadListener<T>> syncOnReload;
   private final Class<T> objClass;
   
-  public GenericJsonReloadListener(final Gson gson, final String folder, final Class<T> oClass, final Codec<T> oCodec, 
+  public GenericJsonReloadListener(final Gson gson, final String folderIn, final Class<T> oClass, final Codec<T> oCodec, 
       Consumer<GenericJsonReloadListener<T>> syncOnReloadConsumer) {
-    super(gson, folder);
+    super(gson, folderIn);
     GSON = gson;
+    folder = folderIn;
     objClass = oClass;
     codec = oCodec;
     syncOnReload = syncOnReloadConsumer;
@@ -96,9 +97,11 @@ public class GenericJsonReloadListener<T> extends JsonReloadListener {
   protected void apply(Map<ResourceLocation, JsonElement> jsons, IResourceManager manager, IProfiler profile) {
     // build the maps
     OBJECTS.clear();
+    GreekFantasy.LOGGER.debug("Parsing Generic map of type " + objClass.getName());
+    GreekFantasy.LOGGER.debug("Gathering json objects that match " + folder + "/*.json");
     jsons.forEach((key, input) -> OBJECTS.put(key, Optional.of(GSON.fromJson(input, objClass))));
     // print size of the map for debugging purposes
-    GreekFantasy.LOGGER.debug("Parsing Generic map of type " + objClass.getName() + " and found " + OBJECTS.size() + " entries");
+    GreekFantasy.LOGGER.debug("Found " + OBJECTS.size() + " entries");
     boolean isServer = true;
     try {
       LogicalSidedProvider.INSTANCE.get(LogicalSide.SERVER);

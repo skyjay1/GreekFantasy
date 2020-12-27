@@ -8,12 +8,10 @@ import org.apache.logging.log4j.Logger;
 
 import greekfantasy.favor.Deity;
 import greekfantasy.favor.Favor;
-import greekfantasy.favor.FavorEffect;
 import greekfantasy.favor.IFavor;
 import greekfantasy.network.CUpdatePanflutePacket;
 import greekfantasy.network.CUpdateStatuePosePacket;
 import greekfantasy.network.SDeityPacket;
-import greekfantasy.network.SFavorEffectPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.proxy.ClientProxy;
 import greekfantasy.proxy.Proxy;
@@ -75,7 +73,6 @@ public class GreekFantasy {
     CHANNEL.registerMessage(messageId++, CUpdateStatuePosePacket.class, CUpdateStatuePosePacket::toBytes, CUpdateStatuePosePacket::fromBytes, CUpdateStatuePosePacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     CHANNEL.registerMessage(messageId++, CUpdatePanflutePacket.class, CUpdatePanflutePacket::toBytes, CUpdatePanflutePacket::fromBytes, CUpdatePanflutePacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     CHANNEL.registerMessage(messageId++, SPanfluteSongPacket.class, SPanfluteSongPacket::toBytes, SPanfluteSongPacket::fromBytes, SPanfluteSongPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-    CHANNEL.registerMessage(messageId++, SFavorEffectPacket.class, SFavorEffectPacket::toBytes, SFavorEffectPacket::fromBytes, SFavorEffectPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     CHANNEL.registerMessage(messageId++, SDeityPacket.class, SDeityPacket::toBytes, SDeityPacket::fromBytes, SDeityPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
   }
 
@@ -98,12 +95,6 @@ public class GreekFantasy {
   public static void onReloadSongs(final GenericJsonReloadListener<PanfluteSong> listener) {
     for(final Entry<ResourceLocation, Optional<PanfluteSong>> e : listener.getEntries()) {
       GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SPanfluteSongPacket(e.getKey(), e.getValue().get()));
-    }
-  }
-  
-  public static void onReloadFavorEffects(final GenericJsonReloadListener<FavorEffect> listener) {
-    for(final Entry<ResourceLocation, Optional<FavorEffect>> e : listener.getEntries()) {
-      GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SFavorEffectPacket(e.getKey(), e.getValue().get()));
     }
   }
   

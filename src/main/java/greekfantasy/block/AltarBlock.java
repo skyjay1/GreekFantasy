@@ -2,7 +2,6 @@ package greekfantasy.block;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.favor.Deity;
 import greekfantasy.favor.FavorManager;
 import greekfantasy.favor.IDeity;
 import greekfantasy.favor.IFavor;
