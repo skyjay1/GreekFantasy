@@ -2,7 +2,6 @@ package greekfantasy.favor;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.common.collect.Lists;
@@ -19,14 +18,16 @@ public class FavorManager {
   public static boolean onPlayerTick(final PlayerEntity player, final IFavor favor) {
     if(player.ticksExisted > 100 && player.ticksExisted % 50 == 0) {
       final long time = player.getEntityWorld().getGameTime();
+      IDeity deity;
       FavorLevel info;
-      ArrayList<Entry<IDeity, FavorLevel>> entryList = Lists.newArrayList(favor.getAllFavor().entrySet());
+      ArrayList<Entry<ResourceLocation, FavorLevel>> entryList = Lists.newArrayList(favor.getAllFavor().entrySet());
       // order by which deity has the most favor
       Collections.sort(entryList, (e1, e2) -> e1.getValue().compareToAbs(e2.getValue()));
-      for(final Entry<IDeity, FavorLevel> entry : entryList) {
+      for(final Entry<ResourceLocation, FavorLevel> entry : entryList) {
+        deity = DeityManager.getDeity(entry.getKey());
         info = entry.getValue();
         if(favor.canUseEffect(info, time, player.getRNG())) {
-          long cooldown = FavorEffectManager.onFavorEffect(player.getEntityWorld(), player, entry.getKey(), favor, info);
+          long cooldown = FavorEffectManager.onFavorEffect(player.getEntityWorld(), player, deity, favor, info);
           if(cooldown <= 0) {
             cooldown = 1000;
           }
@@ -49,10 +50,9 @@ public class FavorManager {
   public static boolean onAttackEntity(final LivingEntity entity, final PlayerEntity playerIn, final IFavor favor) {
     boolean flag = false;
     for(final IDeity deity : DeityManager.getDeityCollection()) {
-      final Map<ResourceLocation, Integer> modifiers = deity.getKillFavorModifiers();
-      final ResourceLocation id = entity.getType().getRegistryName();
-      if(modifiers.containsKey(id)) {
-        favor.getFavor(deity).addFavor(modifiers.get(id).intValue() / 10);
+      final long favorModifier = deity.getKillFavorModifier(entity.getType()) / 8;
+      if(favorModifier != 0) {
+        favor.getFavor(deity).addFavor(playerIn, deity, favorModifier);
         flag = true;
       }
     }
@@ -70,8 +70,9 @@ public class FavorManager {
   public static boolean onKillEntity(final LivingEntity entity, final PlayerEntity playerIn, final IFavor favor) {
     boolean flag = false;
     for(final IDeity deity : DeityManager.getDeityCollection()) {
-      if(deity.hasKillFavorModifier(entity.getType())) {
-        favor.getFavor(deity).addFavor(deity.getKillFavorModifier(entity.getType()));
+      final long favorModifier = deity.getKillFavorModifier(entity.getType());
+      if(favorModifier != 0) {
+        favor.getFavor(deity).addFavor(playerIn, deity, favorModifier);
         flag = true;
       }
     }
@@ -90,15 +91,14 @@ public class FavorManager {
    */
   public static boolean onGiveItem(final AltarTileEntity altar, final IDeity deity,
       final PlayerEntity playerIn, final FavorLevel info, final ItemStack item) {
-    if(deity.hasItemFavorModifier(item.getItem())) {
-      info.addFavor(deity.getItemFavorModifier(item.getItem()));
+    final long favorModifier = deity.getItemFavorModifier(item.getItem());
+    if(favorModifier != 0) {
+      info.addFavor(playerIn, deity, favorModifier);
       if(!playerIn.isCreative()) {
         item.shrink(1);
       }
-      GreekFantasy.LOGGER.debug("onGiveItem: true");
       return true;
     }
-    GreekFantasy.LOGGER.debug("onGiveItem: false");
     return false;
   }
   

@@ -53,9 +53,14 @@ public class AltarBlock extends StatueBlock {
         LazyOptional<IFavor> favor = playerIn.getCapability(GreekFantasy.FAVOR);
         favor.ifPresent(f -> {
           FavorLevel i = f.getFavor(teDeity);
-          FavorManager.onGiveItem(teStatue, teDeity, playerIn, i, stack);
-          // DEBUG
+          if(FavorManager.onGiveItem(teStatue, teDeity, playerIn, i, stack)) {
+            f.setFavor(teDeity, i);
+          }
+          // print current favor level
           playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", teDeity.getText(), i.getFavor(), i.getFavorToNextLevel(), i.getLevel()), false);
+          // DEBUG
+          GreekFantasy.LOGGER.debug(playerIn.getName().getUnformattedComponentText() + " Favor: " + i.toString());
+          GreekFantasy.LOGGER.debug(teDeity.toString());
         });
       }      
     }

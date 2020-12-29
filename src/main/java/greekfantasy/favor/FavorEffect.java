@@ -52,4 +52,9 @@ public class FavorEffect {
       return playerLevel <= minLevel && playerLevel >= maxLevel;
     }
   }
+  
+  @Override
+  public String toString() {
+    return "function[" + function.toString() + "] level[" + minLevel + ", " + maxLevel + "] cooldown[" + minCooldown + "]";
+  }
 }

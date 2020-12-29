@@ -20,7 +20,7 @@ public class AltarTileEntity extends StatueTileEntity {
     super(GFRegistry.ALTAR_TE);
   }
   
-  // DEITY //
+  // NAME //
  
   public void setDeity(final ResourceLocation deityIn) { setDeity(deityIn, false); }
   

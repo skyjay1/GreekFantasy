@@ -56,7 +56,6 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
-import net.minecraftforge.common.capabilities.CapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -122,26 +121,18 @@ public class CommonForgeEventHandler {
   }
   
   /**
-   * Used to change a player's favor when they kill an entity
+   * Used to change a player's favor when they kill an entity.
+   * Also used to summon a Geryon when a cow is killed and other spawn conditions are met
    * @param event the living death event
    */
   @SubscribeEvent
-  public static void onPlayerKillEntity(final LivingDeathEvent event) {
+  public static void onLivingDeath(final LivingDeathEvent event) {
     if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getSource().getTrueSource() instanceof PlayerEntity) {
+      // update favor manager
       event.getSource().getTrueSource().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onKillEntity(event.getEntityLiving(), (PlayerEntity)event.getSource().getTrueSource(), f));
-    }
-  }
-  
-  /**
-   * Used to summon a Geryon when a cow is killed and other spawn conditions are met
-   * @param event the living death event
-   */
-  @SubscribeEvent
-  public static void onCowDeath(final LivingDeathEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getEntityLiving() instanceof CowEntity) {
       // check if the cow was killed by a player and if geryon can spawn here
       final BlockPos deathPos = event.getEntityLiving().getPosition();
-      if(event.getSource().getTrueSource() instanceof PlayerEntity && GeryonEntity.canGeryonSpawnOn(event.getEntityLiving().getEntityWorld(), deathPos)) {
+      if(event.getEntityLiving() instanceof CowEntity && GeryonEntity.canGeryonSpawnOn(event.getEntityLiving().getEntityWorld(), deathPos)) {
         // check for Geryon Head blocks nearby
         final List<BlockPos> heads = new ArrayList<>();
         final int r = 3;
