@@ -35,8 +35,6 @@ public class Favor implements IFavor {
   @Override
   public void setFavor(ResourceLocation deity, FavorLevel favorLevel) {
     favorMap.put(deity, favorLevel);
-    // DEBUG
-    GreekFantasy.LOGGER.debug("setting Favor for '" + deity.toString() + "': " + favorLevel.toString());
   }
 
   @Override
@@ -64,10 +62,9 @@ public class Favor implements IFavor {
   }
   
   public static class Storage implements IStorage<IFavor> {
-
+    
     @Override
     public INBT writeNBT(Capability<IFavor> capability, IFavor instance, Direction side) {
-      GreekFantasy.LOGGER.debug("Writing Favor capability to NBT:\n" + instance.toString());
       return instance.serializeNBT();
     }
 
@@ -75,7 +72,6 @@ public class Favor implements IFavor {
     public void readNBT(Capability<IFavor> capability, IFavor instance, Direction side, INBT nbt) {
       if(nbt instanceof CompoundNBT) {
         instance.deserializeNBT((CompoundNBT) nbt);
-        GreekFantasy.LOGGER.debug("Reading Favor capability from NBT:\n" + instance.toString());
       } else {
         GreekFantasy.LOGGER.error("Failed to read Favor capability from NBT of type " + (nbt != null ? nbt.getType().getName() : "null"));
       }
@@ -83,8 +79,6 @@ public class Favor implements IFavor {
   }
   
   public static class Provider implements ICapabilitySerializable<CompoundNBT> {
-   
-    
     public IFavor instance = GreekFantasy.FAVOR.getDefaultInstance();
 
     @Override
@@ -101,7 +95,5 @@ public class Favor implements IFavor {
     public void deserializeNBT(CompoundNBT nbt) {
       GreekFantasy.FAVOR.getStorage().readNBT(GreekFantasy.FAVOR, this.instance, null, nbt);
     }
-
   }
-
 }

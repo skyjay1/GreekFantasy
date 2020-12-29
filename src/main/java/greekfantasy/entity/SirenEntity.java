@@ -1,8 +1,6 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
 

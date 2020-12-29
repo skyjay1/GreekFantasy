@@ -86,9 +86,9 @@ public class Deity implements IDeity {
   public String toString() {
     final StringBuilder b = new StringBuilder("Deity:");
     b.append(" name[").append(name.toString()).append("]");
+    b.append(" leftHand[").append(leftHandItem.toString()).append("]");
+    b.append(" rightHand[").append(rightHandItem.toString()).append("]");
 //    b.append(" female[").append(isFemale).append("]");
-//    b.append(" leftHand[").append(leftHandItem.toString()).append("]");
-//    b.append(" rightHand[").append(rightHandItem.toString()).append("]");
 //    b.append("\nfavorEffects[").append(favorEffects.toString()).append("]");
 //    b.append("\nkillFavorMap[").append(killFavorMap.toString()).append("]");
 //    b.append("\nitemFavorMap[").append(itemFavorMap.toString()).append("]");

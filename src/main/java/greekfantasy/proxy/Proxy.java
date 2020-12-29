@@ -1,7 +1,5 @@
 package greekfantasy.proxy;
 
-import com.google.gson.GsonBuilder;
-
 import greekfantasy.GreekFantasy;
 import greekfantasy.events.CommonForgeEventHandler;
 import greekfantasy.favor.Deity;
@@ -11,8 +9,8 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class Proxy {
   
-  public final GenericJsonReloadListener<PanfluteSong> PANFLUTE_SONGS = new GenericJsonReloadListener<>(new GsonBuilder().create(), "songs", PanfluteSong.class, PanfluteSong.CODEC, GreekFantasy::onReloadSongs);
-  public final GenericJsonReloadListener<Deity> DEITY = new GenericJsonReloadListener<>(new GsonBuilder().create(), "deity", Deity.class, Deity.CODEC, GreekFantasy::onReloadDeity);
+  public final GenericJsonReloadListener<PanfluteSong> PANFLUTE_SONGS = new GenericJsonReloadListener<>("songs", PanfluteSong.class, PanfluteSong.CODEC, GreekFantasy::onReloadSongs);
+  public final GenericJsonReloadListener<Deity> DEITY = new GenericJsonReloadListener<>("deity", Deity.class, Deity.CODEC, GreekFantasy::onReloadDeity);
   
   public void registerReloadListeners() { }
 

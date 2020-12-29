@@ -16,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 public class CurseRenderer<T extends ProjectileEntity> extends EntityRenderer<T> {
   
   private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/curse.png");
-  private static final float SCALE = 1.0F;
+//  private static final float SCALE = 1.0F;
   
   protected CurseModel<T> entityModel;
   

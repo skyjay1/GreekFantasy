@@ -10,6 +10,7 @@ __Key:__
 - _ Structure gen is jenky
 - _ Config option for winged sandals to enable flight?
 - _ Statues stopped rendering poses for some reason
+- _ Deity doesn't set items from JSON correctly
 - X Favor capability does not persist when relogging
 - _ Arion needs bug fixes (tame *only* with gold, etc)
 - X FavorInfo level needs proper math

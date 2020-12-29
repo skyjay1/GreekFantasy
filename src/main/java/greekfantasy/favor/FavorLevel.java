@@ -1,13 +1,10 @@
 package greekfantasy.favor;
 
-import greekfantasy.GreekFantasy;
 import greekfantasy.events.FavorChangedEvent;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.LongNBT;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.INBTSerializable;
 
-public class FavorLevel implements INBTSerializable<LongNBT> {
+public class FavorLevel {
   
   public static final int MAX_LEVEL = 10;
   public static final long MAX_FAVOR = calculateFavor(MAX_LEVEL);
@@ -18,9 +15,7 @@ public class FavorLevel implements INBTSerializable<LongNBT> {
   private int level;
   
   public FavorLevel(final long f) { setFavor(f); }
-  
-  public FavorLevel(final LongNBT nbt) { deserializeNBT(nbt); }
-  
+    
   /**
    * @param favorIn the new favor value
    */
@@ -79,7 +74,7 @@ public class FavorLevel implements INBTSerializable<LongNBT> {
   public static long calculateFavor(final int lv) {
     final int l = Math.abs(lv);
     final int sig = (int)Math.signum(lv);
-    return l >= MAX_LEVEL ? MAX_LEVEL : sig * (10 * l * (l + 10 * sig));
+    return  sig * (l >= MAX_LEVEL ? MAX_FAVOR : (10 * l * (l + 10 * sig)));
   }
   
   /**
@@ -93,15 +88,5 @@ public class FavorLevel implements INBTSerializable<LongNBT> {
     if(num < min) return min; 
     else if(num > max) return max;
     else return num;
-  }
-
-  @Override
-  public LongNBT serializeNBT() {
-    return LongNBT.valueOf(favor);
-  }
-
-  @Override
-  public void deserializeNBT(final LongNBT nbt) {
-    setFavor(nbt.getLong());
   }
 }

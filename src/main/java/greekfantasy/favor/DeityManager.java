@@ -7,11 +7,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.util.StatuePoses;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 
 public final class DeityManager {

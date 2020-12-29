@@ -1,7 +1,5 @@
 package greekfantasy.entity;
 
-import java.util.EnumSet;
-
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.FollowGoal;
 import greekfantasy.entity.ai.IntervalRangedAttackGoal;
@@ -14,7 +12,6 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.FlyingMovementController;
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;

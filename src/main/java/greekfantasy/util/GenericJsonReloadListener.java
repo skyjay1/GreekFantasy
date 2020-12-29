@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -28,17 +28,15 @@ import net.minecraftforge.fml.LogicalSidedProvider;
 
 public class GenericJsonReloadListener<T> extends JsonReloadListener {
   
-  private final Gson GSON;
   private final Codec<T> codec;
   private final Consumer<GenericJsonReloadListener<T>> syncOnReload;
   private final Class<T> objClass;
   
   protected Map<ResourceLocation, Optional<T>> OBJECTS = new HashMap<>();
   
-  public GenericJsonReloadListener(final Gson gson, final String folderIn, final Class<T> oClass, final Codec<T> oCodec, 
+  public GenericJsonReloadListener(final String folderIn, final Class<T> oClass, final Codec<T> oCodec, 
       Consumer<GenericJsonReloadListener<T>> syncOnReloadConsumer) {
-    super(gson, folderIn);
-    GSON = gson;
+    super(new GsonBuilder().create(), folderIn);
     objClass = oClass;
     codec = oCodec;
     syncOnReload = syncOnReloadConsumer;
@@ -94,7 +92,7 @@ public class GenericJsonReloadListener<T> extends JsonReloadListener {
   protected void apply(Map<ResourceLocation, JsonElement> jsons, IResourceManager manager, IProfiler profile) {
     // build the maps
     OBJECTS.clear();
-    GreekFantasy.LOGGER.debug("Parsing Generic map of type " + objClass.getName());
+    GreekFantasy.LOGGER.debug("Parsing Reloadable JSON map of type " + objClass.getName());
     jsons.forEach((key, input) -> OBJECTS.put(key, jsonToObject(input).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read JSON object for type" + objClass.getName() + "\n" + error))));
     // print size of the map for debugging purposes
     GreekFantasy.LOGGER.debug("Found " + OBJECTS.size() + " entries");
@@ -106,7 +104,6 @@ public class GenericJsonReloadListener<T> extends JsonReloadListener {
     }
     // if we're on the server, send syncing packets
     if (isServer == true) {
-      GreekFantasy.LOGGER.debug(objClass.getName() + " Map: syncOnReloadCallback");
       syncOnReload.accept(this);
     }
   }

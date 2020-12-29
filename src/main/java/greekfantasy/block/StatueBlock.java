@@ -1,6 +1,5 @@
 package greekfantasy.block;
 
-import java.util.Random;
 import java.util.function.Supplier;
 
 import greekfantasy.GFRegistry;
