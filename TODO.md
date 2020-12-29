@@ -9,6 +9,9 @@ __Key:__
 - _ Summoning animations not playing on dedicated server
 - _ Structure gen is jenky
 - _ Config option for winged sandals to enable flight?
+- _ Statues stopped rendering poses for some reason
+- _ Favor capability does not persist when relogging
+- X FavorInfo level needs proper math
 
 ## Entity basics
 
@@ -84,10 +87,11 @@ __Key:__
 
 ## Pantheon
 
-- _ Favor (capability)
-- _ Altars (statues)
-- _ Gods *or* Muses?
-- _ Rewards and punishments
+- ~ Favor (capability)
+- ~ Altars (statues)
+- ~ Gods *or* Muses?
+- ~ Rewards and punishments
+- ~ Deity datapack support (TODO: dynamically register blocks / itemblocks for altars)
 
 ## Structures
 

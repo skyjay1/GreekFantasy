@@ -29,7 +29,7 @@ public class FavorEffectManager {
     });
   }
 
-  public static long onFavorEffect(final World worldIn, final PlayerEntity playerIn, final IDeity deity, final IFavor favor, final FavorInfo info) {
+  public static long onFavorEffect(final World worldIn, final PlayerEntity playerIn, final IDeity deity, final IFavor favor, final FavorLevel info) {
     final MinecraftServer server = worldIn.getServer();
     if(server != null) {
       final FunctionManager manager = server.getFunctionManager();

@@ -31,14 +31,12 @@ import net.minecraft.util.ResourceLocation;
 public class Deity implements IDeity {
   
   public static final Deity EMPTY = new Deity(
-      new ResourceLocation(GreekFantasy.MODID, "null"), 
-      StatueBlock.StatueMaterial.LIMESTONE.getStoneTexture(),
+      new ResourceLocation(GreekFantasy.MODID, "null"),
       Maps.newHashMap(), Maps.newHashMap(), Arrays.asList(), 
       false, ItemStack.EMPTY, ItemStack.EMPTY);
   
   public static final Codec<Deity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       ResourceLocation.CODEC.fieldOf("name").forGetter(Deity::getName),
-      ResourceLocation.CODEC.fieldOf("texture").forGetter(Deity::getTexture),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("kill_favor_map").forGetter(Deity::getKillFavorModifiers),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("item_favor_map").forGetter(Deity::getItemFavorModifiers),
       FavorEffect.CODEC.listOf().fieldOf("effects").forGetter(Deity::getFavorEffects),
@@ -56,12 +54,12 @@ public class Deity implements IDeity {
   private final ItemStack leftHandItem;
   private final ItemStack rightHandItem;
 
-  private Deity(final ResourceLocation lName, final ResourceLocation lTexture,
-      final Map<ResourceLocation, Integer> lKillFavorMap, final Map<ResourceLocation, Integer> lItemFavorMap,
+  private Deity(final ResourceLocation lName, final Map<ResourceLocation, Integer> lKillFavorMap, 
+      final Map<ResourceLocation, Integer> lItemFavorMap,
       final List<FavorEffect> lFavorEffects, final boolean lIsFemale, 
       final ItemStack lLeftHandItem, final ItemStack lRightHandItem) {
     name = lName;
-    texture = lTexture;
+    texture = new ResourceLocation(lName.getNamespace(), "textures/entity/deity/" + lName.getPath() + ".png");
     killFavorMap = ImmutableMap.copyOf(lKillFavorMap);
     itemFavorMap = ImmutableMap.copyOf(lItemFavorMap);
     favorEffects = ImmutableList.copyOf(lFavorEffects);

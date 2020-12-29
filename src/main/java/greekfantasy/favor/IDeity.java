@@ -37,7 +37,7 @@ public interface IDeity {
    * @param entity the entity type to check
    * @return true if a favor modifier exists for the entity
    */
-  default boolean hasEntityavorModifier(final EntityType<?> entity) {
+  default boolean hasKillFavorModifier(final EntityType<?> entity) {
     return getKillFavorModifiers().containsKey(entity.getRegistryName());
   }
   
@@ -45,7 +45,7 @@ public interface IDeity {
    * @param entity the entity type to check
    * @return the favor modifier, or zero if no entity is found
    */
-  default int getItemFavorModifier(final EntityType<?> entity) {
+  default int getKillFavorModifier(final EntityType<?> entity) {
     return getKillFavorModifiers().getOrDefault(entity.getRegistryName(), 0);
   }
   

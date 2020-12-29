@@ -29,23 +29,20 @@ import net.minecraftforge.fml.LogicalSidedProvider;
 public class GenericJsonReloadListener<T> extends JsonReloadListener {
   
   private final Gson GSON;
-  private final String folder;
   private final Codec<T> codec;
   private final Consumer<GenericJsonReloadListener<T>> syncOnReload;
   private final Class<T> objClass;
+  
+  protected Map<ResourceLocation, Optional<T>> OBJECTS = new HashMap<>();
   
   public GenericJsonReloadListener(final Gson gson, final String folderIn, final Class<T> oClass, final Codec<T> oCodec, 
       Consumer<GenericJsonReloadListener<T>> syncOnReloadConsumer) {
     super(gson, folderIn);
     GSON = gson;
-    folder = folderIn;
     objClass = oClass;
     codec = oCodec;
     syncOnReload = syncOnReloadConsumer;
   }
-  
-  protected Map<ResourceLocation, Optional<T>> OBJECTS = new HashMap<>();
-  
   
   /**
    * Adds a Deity to the map
@@ -98,8 +95,7 @@ public class GenericJsonReloadListener<T> extends JsonReloadListener {
     // build the maps
     OBJECTS.clear();
     GreekFantasy.LOGGER.debug("Parsing Generic map of type " + objClass.getName());
-    GreekFantasy.LOGGER.debug("Gathering json objects that match " + folder + "/*.json");
-    jsons.forEach((key, input) -> OBJECTS.put(key, Optional.of(GSON.fromJson(input, objClass))));
+    jsons.forEach((key, input) -> OBJECTS.put(key, jsonToObject(input).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read JSON object for type" + objClass.getName() + "\n" + error))));
     // print size of the map for debugging purposes
     GreekFantasy.LOGGER.debug("Found " + OBJECTS.size() + " entries");
     boolean isServer = true;

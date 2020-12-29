@@ -2,10 +2,12 @@ package greekfantasy.block;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.favor.FavorLevel;
 import greekfantasy.favor.FavorManager;
 import greekfantasy.favor.IDeity;
 import greekfantasy.favor.IFavor;
 import greekfantasy.tileentity.AltarTileEntity;
+import greekfantasy.util.StatuePoses;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -22,6 +24,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
@@ -45,13 +48,14 @@ public class AltarBlock extends StatueBlock {
       final AltarTileEntity teStatue = (AltarTileEntity)te;
       final ItemStack stack = playerIn.getHeldItem(handIn);
       final IDeity teDeity = teStatue.getDeity();
-      if(teDeity != null && teDeity == deity) {
+      if(teDeity != null && teDeity.getName().equals(deity)) {
         // TODO handle quests and items here
         LazyOptional<IFavor> favor = playerIn.getCapability(GreekFantasy.FAVOR);
         favor.ifPresent(f -> {
-          FavorManager.onGiveItem(teStatue, teDeity, playerIn, f.getFavor(teDeity), stack);
+          FavorLevel i = f.getFavor(teDeity);
+          FavorManager.onGiveItem(teStatue, teDeity, playerIn, i, stack);
           // DEBUG
-          playerIn.sendStatusMessage(new StringTextComponent("favor: " + f.getFavor(teDeity).getFavor()), false);
+          playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", teDeity.getText(), i.getFavor(), i.getFavorToNextLevel(), i.getLevel()), false);
         });
       }      
     }
@@ -68,6 +72,7 @@ public class AltarBlock extends StatueBlock {
     final AltarTileEntity te = GFRegistry.ALTAR_TE.create();
     te.setUpper(state.get(HALF) == DoubleBlockHalf.UPPER);
     te.setDeity(deity);
+    te.setStatuePose(StatuePoses.WALKING);
     return te;
   }
 }

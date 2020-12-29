@@ -75,8 +75,10 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     if(!gui) {
       matrixStackIn.rotate(Vector3f.YP.rotationDegrees(rotation));
     }
-    this.model.setRotationAngles(te, partialTicks);
+    // DEBUG
+//    if(te.getWorld().getGameTime() % 40 == 0) GreekFantasy.LOGGER.debug("Pose: " + te.getStatuePose().toString());
     this.model.rotateAroundBody(te.getRotations(ModelPart.BODY), matrixStackIn, partialTicks);
+    this.model.setRotationAngles(te, partialTicks);
     IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureOverlay));  
     if(material.hasSkin()) {
       // render player texture

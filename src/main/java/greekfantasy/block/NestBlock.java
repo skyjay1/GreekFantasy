@@ -1,5 +1,8 @@
 package greekfantasy.block;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
@@ -32,6 +35,8 @@ public class NestBlock extends Block implements IWaterLoggable {
   protected static final VoxelShape AABB_OCTAL_SE = Block.makeCuboidShape(8.0D, 8.0D, 8.0D, 16.0D, 16.0D, 16.0D);
   protected static final VoxelShape AABB_OCTAL_SW = Block.makeCuboidShape(0.0D, 8.0D, 8.0D, 8.0D, 16.0D, 16.0D);
   protected static final VoxelShape AABB_OCTAL_NW = Block.makeCuboidShape(0.0D, 8.0D, 0.0D, 8.0D, 16.0D, 8.0D);
+  
+  protected static final Map<BlockState, VoxelShape> SHAPE_MAP = new HashMap<>();
 
   public NestBlock(final Block.Properties builder) {
     super(builder);
@@ -69,8 +74,12 @@ public class NestBlock extends Block implements IWaterLoggable {
   }
   
   @Override
-  public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {
+  public VoxelShape getShape(final BlockState blockstate, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {
     VoxelShape shape = AABB_SLAB_BOTTOM;
+    final BlockState state = blockstate.with(WATERLOGGED, false);
+    if(SHAPE_MAP.containsKey(state)) {
+      return SHAPE_MAP.get(state);
+    }
     final boolean north = state.get(NORTH);
     final boolean east = state.get(EAST);
     final boolean south = state.get(SOUTH);
@@ -79,7 +88,8 @@ public class NestBlock extends Block implements IWaterLoggable {
     if(north || west) shape = VoxelShapes.combine(shape, AABB_OCTAL_NW, IBooleanFunction.OR);
     if(south || east) shape = VoxelShapes.combine(shape, AABB_OCTAL_SE, IBooleanFunction.OR);
     if(south || west) shape = VoxelShapes.combine(shape, AABB_OCTAL_SW, IBooleanFunction.OR);
-    
-    return shape.simplify();
+    shape = shape.simplify();
+    SHAPE_MAP.put(state, shape);
+    return shape;
   }
 }

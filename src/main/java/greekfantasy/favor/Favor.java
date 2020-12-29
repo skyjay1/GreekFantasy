@@ -14,30 +14,40 @@ import net.minecraftforge.common.util.LazyOptional;
 
 public class Favor implements IFavor {
   
-  protected final Map<IDeity, FavorInfo> favorMap = new HashMap<>();
+  protected final Map<IDeity, FavorLevel> favorMap = new HashMap<>();
+  private long effectTimestamp;
+  private long effectCooldown = 10000;
   
   public Favor() { }
 
   @Override
-  public FavorInfo getFavor(IDeity deity) {
+  public FavorLevel getFavor(IDeity deity) {
     if(favorMap.containsKey(deity)) {
       return favorMap.get(deity);
     } else {
-      final FavorInfo favorInfo = new FavorInfo();
-      favorMap.put(deity, favorInfo);
-      return favorInfo;
+      final FavorLevel favorLevel = new FavorLevel();
+      favorMap.put(deity, favorLevel);
+      return favorLevel;
     }
   }
 
   @Override
-  public void setFavor(IDeity deity, FavorInfo favorInfo) {
-    favorMap.put(deity, favorInfo);
+  public void setFavor(IDeity deity, FavorLevel favorLevel) {
+    favorMap.put(deity, favorLevel);
   }
 
   @Override
-  public Map<IDeity, FavorInfo> getAllFavor() {
+  public Map<IDeity, FavorLevel> getAllFavor() {
     return favorMap;
   }
+  
+  public long getEffectTimestamp() { return effectTimestamp; }
+
+  public void setEffectTimestamp(long timestamp) { this.effectTimestamp = timestamp; }
+
+  public long getEffectCooldown() { return effectCooldown; }
+
+  public void setEffectCooldown(long cooldown) { this.effectCooldown = cooldown; }
   
   public static class Storage implements IStorage<IFavor> {
 

@@ -202,5 +202,6 @@
   "song.waltzing_matilda.credits": "Traditional Australian",
   "deity.greekfantasy.zeus": "Zeus",
   "favor.effect.positive": "Your high favor earned a blessing from %1$s",
-  "favor.effect.negative": "Your low favor brought a curse from %1$s"
+  "favor.effect.negative": "Your low favor brought a curse from %1$s",
+  "favor.current_favor": "Your favor with %1$s is %2$s / %3$s (Level %4$s)"
 }

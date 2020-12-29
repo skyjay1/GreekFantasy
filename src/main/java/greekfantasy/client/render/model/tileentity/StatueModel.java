@@ -8,8 +8,10 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
+import greekfantasy.GreekFantasy;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.ModelPart;
+import greekfantasy.util.StatuePose;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.IHasArm;
 import net.minecraft.client.renderer.entity.model.IHasHead;
@@ -32,13 +34,13 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   
   // layers
   protected ModelRenderer bipedHeadwear;
-  protected final ModelRenderer bipedLeftArmwear;
-  protected final ModelRenderer bipedRightArmwear;
-  protected final ModelRenderer bipedLeftArmwearSlim;
-  protected final ModelRenderer bipedRightArmwearSlim;
-  protected final ModelRenderer bipedLeftLegwear;
-  protected final ModelRenderer bipedRightLegwear;
-  protected final ModelRenderer bipedBodyWear;
+  protected ModelRenderer bipedLeftArmwear;
+  protected ModelRenderer bipedRightArmwear;
+  protected ModelRenderer bipedLeftArmwearSlim;
+  protected ModelRenderer bipedRightArmwearSlim;
+  protected ModelRenderer bipedLeftLegwear;
+  protected ModelRenderer bipedRightLegwear;
+  protected ModelRenderer bipedBodyWear;
   
   private static final EnumMap<ModelPart, Collection<ModelRenderer>> ROTATION_MAP = new EnumMap<>(ModelPart.class);
   
@@ -142,18 +144,24 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   }
 
   public void setRotationAngles(final T entity, final float partialTicks) {
+    final StatuePose pose = entity.getStatuePose();
+//    if(entity.getWorld().getGameTime() % 40 == 0) GreekFantasy.LOGGER.debug("ModelPose: " + pose.toString());
     for(final Entry<ModelPart, Collection<ModelRenderer>> e : ROTATION_MAP.entrySet()) {
-      final Vector3f rotations = entity.getRotations(e.getKey());
-      e.getValue().forEach(m -> {
+      // set the rotations for each part in the list
+      final Vector3f rotations = pose.getAngles(e.getKey());
+      for(final ModelRenderer m : e.getValue()) {
         m.rotateAngleX = rotations.getX();
         m.rotateAngleY = rotations.getY();
         m.rotateAngleZ = rotations.getZ();
-      });
+      };
     }
     // reset body rotations
-    this.bipedBody.rotateAngleX = this.bipedBodyWear.rotateAngleX = 0.0F;
-    this.bipedBody.rotateAngleY = this.bipedBodyWear.rotateAngleY = 0.0F;
-    this.bipedBody.rotateAngleZ = this.bipedBodyWear.rotateAngleZ = 0.0F;
+    this.bipedBody.rotateAngleX = 0.0F;
+    this.bipedBody.rotateAngleY = 0.0F;
+    this.bipedBody.rotateAngleZ = 0.0F;
+    this.bipedBodyWear.rotateAngleX = 0.0F;
+    this.bipedBodyWear.rotateAngleY = 0.0F;
+    this.bipedBodyWear.rotateAngleZ = 0.0F;
     this.bipedBodyChest.rotateAngleX = -0.2182F;
     this.bipedBodyChest.rotateAngleY = 0.0F;
     this.bipedBodyChest.rotateAngleZ = 0.0F;
