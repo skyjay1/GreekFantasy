@@ -7,53 +7,15 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import greekfantasy.block.AltarBlock;
-import greekfantasy.block.CappedPillarBlock;
-import greekfantasy.block.IchorInfusedBlock;
-import greekfantasy.block.MobHeadBlock;
-import greekfantasy.block.MysteriousBoxBlock;
-import greekfantasy.block.NestBlock;
-import greekfantasy.block.OliveTree;
-import greekfantasy.block.OrthusHeadBlock;
-import greekfantasy.block.ReedsBlock;
-import greekfantasy.block.StatueBlock;
-import greekfantasy.block.VaseBlock;
-import greekfantasy.block.WildRoseBlock;
-import greekfantasy.effect.MirrorEffect;
-import greekfantasy.effect.StunnedEffect;
-import greekfantasy.effect.SwineEffect;
-import greekfantasy.enchantment.HuntingEnchantment;
-import greekfantasy.enchantment.MirrorEnchantment;
-import greekfantasy.enchantment.OverstepEnchantment;
-import greekfantasy.enchantment.SmashingEnchantment;
+import greekfantasy.block.*;
+import greekfantasy.effect.*;
+import greekfantasy.enchantment.*;
 import greekfantasy.entity.*;
-import greekfantasy.entity.misc.CurseEntity;
-import greekfantasy.entity.misc.DragonToothEntity;
-import greekfantasy.entity.misc.HealingSpellEntity;
-import greekfantasy.entity.misc.OrthusHeadItemEntity;
-import greekfantasy.entity.misc.PoisonSpitEntity;
-import greekfantasy.entity.misc.SwineSpellEntity;
+import greekfantasy.entity.misc.*;
 import greekfantasy.gui.StatueContainer;
-import greekfantasy.item.BagOfWindItem;
-import greekfantasy.item.ClubItem;
-import greekfantasy.item.ConchItem;
-import greekfantasy.item.DragonToothItem;
-import greekfantasy.item.FlintKnifeItem;
-import greekfantasy.item.HealingRodItem;
-import greekfantasy.item.HelmOfDarknessItem;
-import greekfantasy.item.IvorySwordItem;
-import greekfantasy.item.MobHeadItem;
-import greekfantasy.item.OrthusHeadItem;
-import greekfantasy.item.PanfluteItem;
-import greekfantasy.item.SwineWandItem;
-import greekfantasy.item.ThunderboltItem;
-import greekfantasy.item.UnicornHornItem;
-import greekfantasy.item.WingedSandalsItem;
-import greekfantasy.tileentity.AltarTileEntity;
-import greekfantasy.tileentity.MobHeadTileEntity;
+import greekfantasy.item.*;
+import greekfantasy.tileentity.*;
 import greekfantasy.tileentity.MobHeadTileEntity.HeadType;
-import greekfantasy.tileentity.StatueTileEntity;
-import greekfantasy.tileentity.VaseTileEntity;
 import greekfantasy.util.StatuePose;
 import greekfantasy.util.StatuePoses;
 import net.minecraft.block.AbstractBlock;
@@ -498,6 +460,8 @@ public final class GFRegistry {
         new SwineWandItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.SWINE_WAND_DURABILITY.get()))
           .setRegistryName(MODID, "swine_wand"),
+        new MirrorItem(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "mirror"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "horn"),
         new Item(new Item.Properties().group(GREEK_GROUP))

@@ -46,12 +46,37 @@
   	}
   ],
   "kill_favor_map": {
-    "minecraft:cow": -10,
-    "greekfantasy:harpy": -5
+    "greekfantasy:cerastes": -5,
+  	"greekfantasy:talos": -15,
+  	"greekfantasy:giant_boar": 15,
+  	"greekfantasy:cyprian": 5,
+  	"greekfantasy:gorgon": 8,
+  	"greekfantasy:drakaina": 5,
+  	"greekfantasy:unicorn": -10,
+  	"greekfantasy:minotaur": 5,
+  	"greekfantasy:elpis": -20,
+    "minecraft:cow": -2,
+  	"minecraft:sheep": -2,
+  	"minecraft:villager": -10
   },
   "item_favor_map": {
+  	"greekfantasy:ambrosia": 80,
+  	"greekfantasy:ichor": 15,
+  	"greekfantasy:purified_snakeskin": 8,
+  	"greekfantasy:tough_snakeskin": 8,
+  	"greekfantasy:olive_sapling": 1,
+  	"greekfantasy:thunderbolt": 20,
+  	"greekfantasy:magic_feather": 5,
   	"minecraft:golden_apple": 10,
-  	"minecraft:bone": -5,
-  	"minecraft:nether_star": 200
+  	"minecraft:diamond": 8,
+  	"minecraft:cooked_beef": 4,
+  	"minecraft:cooked_mutton": 4,
+  	"minecraft:cooked_porkchop": 3,
+  	"minecraft:oak_sapling": 1,
+  	"minecraft:honey_bottle": 2,
+  	"minecraft:poisonous_potato": -2,
+  	"minecraft:bone": -2,
+  	"minecraft:spider_eye": -4,
+  	"minecraft:nether_star": 120
   }
 }

@@ -62,7 +62,7 @@ public final class StatuePoses {
   
   // Array to hold all the poses in this class
   public static final StatuePose[] POSES = new StatuePose[] {
-      STANDING_HOLDING, WALKING, STANDING_HOLDING_DRAMATIC, STANDING_RAISED, WEEPING, DAB
+      STANDING_HOLDING, WALKING, STANDING_HOLDING_DRAMATIC, STANDING_RAISED, WEEPING, DAB, STANDING_MENACING
   };
 
   /**

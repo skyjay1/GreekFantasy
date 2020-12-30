@@ -24,7 +24,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
@@ -63,9 +62,7 @@ public class AltarBlock extends StatueBlock {
 //            }
           }
           // print current favor level
-          playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", teDeity.getText(), i.getFavor(), i.getFavorToNextLevel(), i.getLevel()), false);
-          // DEBUG
-          GreekFantasy.LOGGER.debug(teDeity.toString());
+          i.sendStatusMessage(playerIn, teDeity);
         });
       }      
     }

@@ -2,11 +2,12 @@ package greekfantasy.favor;
 
 import greekfantasy.events.FavorChangedEvent;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
 
 public class FavorLevel {
   
-  public static final int MAX_LEVEL = 10;
+  public static final int MAX_LEVEL = 20;
   public static final long MAX_FAVOR = calculateFavor(MAX_LEVEL);
   
   public static final String FAVOR = "Favor";
@@ -71,6 +72,14 @@ public class FavorLevel {
   
   public int compareToAbs(FavorLevel other) { return (int) (Math.abs(this.getFavor()) - Math.abs(other.getFavor())); }
 
+  /**
+   * Sends a chat message to the player informing them of their current favor level
+   * @param playerIn the player
+   * @param deity the deity associated with this favor level
+   */
+  public void sendStatusMessage(final PlayerEntity playerIn, final IDeity deity) {
+    playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", deity.getText(), getFavor(), getFavorToNextLevel(), getLevel()), false);
+  }
   
   @Override
   public String toString() {
@@ -103,26 +112,5 @@ public class FavorLevel {
     if(num < min) return min; 
     else if(num > max) return max;
     else return num;
-  }
-  
-  /**
-   * Adds or subtracts the given amount from start to tend toward end
-   * @param amount the maximum amount to change (must be positive)
-   * @param start the start value
-   * @param end the end value
-   * @return a number in the range (start, amount]
-   */
-  public static long tend(final long amount, long start, long end) {
-    // swap end / start to make sure end >= start
-    if(end < start) {
-      long tmp = end;
-      end = start;
-      start = tmp;
-    }
-    if(end - start <= amount) {
-      return end;
-    } else {
-      return start + amount;
-    }
   }
 }
