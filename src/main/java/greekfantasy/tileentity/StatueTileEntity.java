@@ -171,9 +171,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     nbt.putBoolean(KEY_FEMALE, statueFemale);
     nbt.put(KEY_POSE, this.statuePose.serializeNBT(new CompoundNBT()));
     nbt.put(KEY_NAME, StringNBT.valueOf(textureName));
-    if(GreekFantasy.CONFIG.STATUES_HOLD_ITEMS.get()) {
-      ItemStackHelper.saveAllItems(nbt, this.inventory, true);
-    }
+    ItemStackHelper.saveAllItems(nbt, this.inventory, true);
     return nbt;
   }
 
@@ -183,9 +181,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     this.setStatuePose(new StatuePose(nbt.getCompound(KEY_POSE)));
     this.setTextureName(nbt.getString(KEY_NAME));
     this.inventory.clear();
-    if(GreekFantasy.CONFIG.STATUES_HOLD_ITEMS.get()) {
-      ItemStackHelper.loadAllItems(nbt, this.inventory);
-    }
+    ItemStackHelper.loadAllItems(nbt, this.inventory);
   }
 
   // INVENTORY //
@@ -209,11 +205,6 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     if(this.world != null) {
       this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 3);
     }
-//    try {
-//      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 3);
-//    } catch (NullPointerException e) {
-//      GreekFantasy.LOGGER.error("Error updating inventory for StatueTileEntity at " + getPos());
-//    }
   }
 
   public void dropAllItems() {

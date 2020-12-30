@@ -14,7 +14,9 @@ public class FavorLevel {
   private long favor;
   private int level;
   
-  public FavorLevel(final long f) { setFavor(f); }
+  public FavorLevel(final long f) {
+    setFavor(f); 
+  }
     
   /**
    * @param favorIn the new favor value
@@ -38,24 +40,37 @@ public class FavorLevel {
    * @param toAdd the amount of favor to add or subtract
    * @return the updated favor value
    */
-  public long addFavor(final PlayerEntity playerIn, final IDeity deityIn, final long toAdd) {
+  public long addFavor(final PlayerEntity playerIn, final IDeity deityIn, final long toAdd, final FavorChangedEvent.Source source) {
     // Post a context-aware event to allow other modifiers
-    final FavorChangedEvent event = new FavorChangedEvent(playerIn, deityIn, favor, favor + toAdd);
+    final FavorChangedEvent event = new FavorChangedEvent(playerIn, deityIn, favor, favor + toAdd, source);
     MinecraftForge.EVENT_BUS.post(event);
     setFavor(event.getNewFavor());
     return favor;
+  }
+  
+  /**
+   * Either adds or removes favor to tend toward zero
+   * @param playerIn the player whose favor is being modified
+   * @param deityIn the deity for which the favor is being modified
+   * @param toAdd the amount of favor to deplete (must be positive)
+   * @return the updated favor value
+   * @see #addFavor(PlayerEntity, IDeity, long)
+   */
+  public long depleteFavor(final PlayerEntity playerIn, final IDeity deityIn, final long toRemove, final FavorChangedEvent.Source source) {
+    return addFavor(playerIn, deityIn, Math.min(Math.abs(favor), Math.abs(toRemove)) * -1 * (long)Math.signum(favor), source);
   }
 
   /** @return the current favor level **/
   public int getLevel() { return level; }
   
   /** @return the favor value required to advance to the next level **/
-  public long getFavorToNextLevel() { return calculateFavor(getLevel()); }
+  public long getFavorToNextLevel() { return calculateFavor(level + (int)Math.signum(favor)); }
   
   /** @return the percent of favor that has been earned (always positive) **/
   public double getPercentFavor() { return Math.abs((double)favor / (double)MAX_FAVOR); }
   
   public int compareToAbs(FavorLevel other) { return (int) (Math.abs(this.getFavor()) - Math.abs(other.getFavor())); }
+
   
   @Override
   public String toString() {
@@ -72,9 +87,9 @@ public class FavorLevel {
   
   /** @return the maximum amount of favor for a given level **/
   public static long calculateFavor(final int lv) {
-    final int l = Math.abs(lv);
+    final int l = Math.min(Math.abs(lv), MAX_LEVEL);
     final int sig = (int)Math.signum(lv);
-    return  sig * (l >= MAX_LEVEL ? MAX_FAVOR : (10 * l * (l + 10 * sig)));
+    return  sig * (10 * l * (l + 10));
   }
   
   /**
@@ -88,5 +103,26 @@ public class FavorLevel {
     if(num < min) return min; 
     else if(num > max) return max;
     else return num;
+  }
+  
+  /**
+   * Adds or subtracts the given amount from start to tend toward end
+   * @param amount the maximum amount to change (must be positive)
+   * @param start the start value
+   * @param end the end value
+   * @return a number in the range (start, amount]
+   */
+  public static long tend(final long amount, long start, long end) {
+    // swap end / start to make sure end >= start
+    if(end < start) {
+      long tmp = end;
+      end = start;
+      start = tmp;
+    }
+    if(end - start <= amount) {
+      return end;
+    } else {
+      return start + amount;
+    }
   }
 }

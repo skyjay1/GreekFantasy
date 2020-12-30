@@ -33,7 +33,6 @@ import greekfantasy.entity.misc.HealingSpellEntity;
 import greekfantasy.entity.misc.OrthusHeadItemEntity;
 import greekfantasy.entity.misc.PoisonSpitEntity;
 import greekfantasy.entity.misc.SwineSpellEntity;
-import greekfantasy.favor.DeityManager;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.item.BagOfWindItem;
 import greekfantasy.item.ClubItem;
@@ -437,7 +436,7 @@ public final class GFRegistry {
           .setRegistryName(MODID, "limestone_statue"),
         new StatueBlock(StatueBlock.StatueMaterial.WOOD)
           .setRegistryName(MODID, "palladium"),
-        new AltarBlock(DeityManager.ZEUS, StatueBlock.StatueMaterial.MARBLE)
+        new AltarBlock(MODID, "zeus", StatueBlock.StatueMaterial.MARBLE)
           .setRegistryName(MODID, "altar_zeus"),
         new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
           .setRegistryName(MODID, "terracotta_vase"),

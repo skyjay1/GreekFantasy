@@ -126,8 +126,7 @@ public class GFConfig {
 //public final ForgeConfigSpec.BooleanValue IS_FEATURES_WHITELIST;
 //public final ConfigValue<List<? extends String>> FEATURES_DIMENSION_WHITELIST;
   
-  // other
-  public final ForgeConfigSpec.BooleanValue STATUES_HOLD_ITEMS;
+  // palladium
   private final ForgeConfigSpec.BooleanValue PALLADIUM_ENABLED;
   private final ForgeConfigSpec.IntValue PALLADIUM_REFRESH_INTERVAL;
   private final ForgeConfigSpec.IntValue PALLADIUM_CHUNK_RANGE;
@@ -136,6 +135,12 @@ public class GFConfig {
   private int palladiumRefreshInterval;
   private int palladiumChunkRange;
   private int palladiumYRange;
+  
+  // favor
+  private final ForgeConfigSpec.BooleanValue FAVOR_DECREASES;
+  private final ForgeConfigSpec.LongValue FAVOR_DECREASE_INTERVAL;
+  private boolean favorDecreases;
+  private long favorDecreaseInterval;
   
   public GFConfig(final ForgeConfigSpec.Builder builder) {
     // items
@@ -252,10 +257,8 @@ public class GFConfig {
     GIANT_BOAR_NON_NETHER = builder.comment("Whether a hoglin must be outside of the nether to be turned to a Giant Boar")
         .define("giant_boar_non_nether", true);
     builder.pop();
-    // other
-    builder.push("other");
-    STATUES_HOLD_ITEMS = builder.comment("Whether statues can hold items (kinda buggy when disabled)")
-        .define("statues_hold_items", true);
+    // palladium
+    builder.push("palladium");
     PALLADIUM_ENABLED = builder.comment("Whether the Palladium can prevent monster spawns")
         .define("palladium_enabled", true);
     PALLADIUM_REFRESH_INTERVAL = builder.comment("The number of server ticks between Palladium updates (increase to reduce lag)")
@@ -264,6 +267,13 @@ public class GFConfig {
         .defineInRange("palladium_chunk_range", 1, 0, 3);
     PALLADIUM_Y_RANGE = builder.comment("The vertical area (in blocks) protected by Palladium blocks")
         .defineInRange("palladium_y_range", 128, 0, 255);
+    builder.pop();
+    // favor
+    builder.push("favor");
+    FAVOR_DECREASES = builder.comment("Whether favor tends toward zero over time")
+        .define("favor_decreases", true);
+    FAVOR_DECREASE_INTERVAL = builder.comment("Number of ticks between decreasing favor, if enabled")
+        .defineInRange("favor_decrease_interval", 3000L, 1L, 96000L);
     builder.pop();
     // mob spawns
     builder.push("mob_spawns");
@@ -354,6 +364,7 @@ public class GFConfig {
     swinePreventsTarget = SWINE_PREVENTS_TARGET.get();
     mirrorPotion = MIRROR_POTION.get();
     swinePotion = SWINE_POTION.get();
+    // other mob spawn specials
     shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
     gorgonMedusaChance = GORGON_MEDUSA_CHANCE.get();
@@ -365,10 +376,14 @@ public class GFConfig {
     spartiLifespan = SPARTI_LIFESPAN.get();
     nerfStunning = NERF_STUNNING.get();
     nerfParalysis = NERF_PARALYSIS.get();
+    // palladium
     palladiumEnabled = PALLADIUM_ENABLED.get();
     palladiumRefreshInterval = PALLADIUM_REFRESH_INTERVAL.get();
     palladiumChunkRange = PALLADIUM_CHUNK_RANGE.get();
     palladiumYRange = PALLADIUM_Y_RANGE.get();
+    // favor
+    favorDecreases = FAVOR_DECREASES.get();
+    favorDecreaseInterval = FAVOR_DECREASE_INTERVAL.get();
   }
   
   public boolean doesHelmHideArmor() { return helmHidesArmor; }
@@ -410,6 +425,8 @@ public class GFConfig {
   public int getPalladiumRefreshInterval() { return palladiumRefreshInterval; }
   public int getPalladiumChunkRange() { return palladiumChunkRange; }
   public int getPalladiumYRange() { return palladiumYRange; }
+  public boolean doesFavorDecrease() { return favorDecreases; }
+  public long getFavorDecreaseInterval() { return favorDecreaseInterval; }
   public boolean canSwineApply(final String entityName) {
     return IS_SWINE_ENTITY_WHITELIST.get() == SWINE_ENTITY_WHITELIST.get().contains(entityName);
   }

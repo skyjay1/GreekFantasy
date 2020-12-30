@@ -3,7 +3,6 @@ package greekfantasy.tileentity;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.favor.Deity;
-import greekfantasy.favor.DeityManager;
 import greekfantasy.favor.IDeity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.HandSide;
@@ -13,8 +12,7 @@ public class AltarTileEntity extends StatueTileEntity {
 
   private static final String KEY_DEITY = "Deity";
   
-  private ResourceLocation deityName = DeityManager.ZEUS;
-  private IDeity deity = Deity.EMPTY;
+  private ResourceLocation deityName = Deity.EMPTY.getName();
 
   public AltarTileEntity() {
     super(GFRegistry.ALTAR_TE);
@@ -26,19 +24,13 @@ public class AltarTileEntity extends StatueTileEntity {
   
   public void setDeity(final ResourceLocation deityIn, final boolean refresh) {
     this.deityName = deityIn;
-    this.deity = GreekFantasy.PROXY.DEITY.get(deityName).orElse(Deity.EMPTY);
-    if(deity != Deity.EMPTY) {
-      this.setStatueFemale(deity.isFemale(), refresh);
-      this.setItem(deity.getRightHandItem(), HandSide.RIGHT);
-      this.setItem(deity.getLeftHandItem(), HandSide.LEFT);
-    }
     this.markDirty();
     if(refresh) {
       this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
     }
   }
   
-  public IDeity getDeity() { return deity; }
+  public IDeity getDeity() { return GreekFantasy.PROXY.DEITY.get(deityName).orElse(Deity.EMPTY); }
   
   // NBT //
 
@@ -49,6 +41,12 @@ public class AltarTileEntity extends StatueTileEntity {
 
   public void readUpdateTag(final CompoundNBT nbt) {
     super.readUpdateTag(nbt);
-    this.setDeity(new ResourceLocation(nbt.getString(KEY_DEITY))); 
+    this.setDeity(new ResourceLocation(nbt.getString(KEY_DEITY)));
+    final IDeity deity = getDeity();
+    if(deity != Deity.EMPTY) {
+      this.setStatueFemale(deity.isFemale());
+      this.setItem(deity.getRightHandItem(), HandSide.RIGHT);
+      this.setItem(deity.getLeftHandItem(), HandSide.LEFT);
+    }
   }
 }

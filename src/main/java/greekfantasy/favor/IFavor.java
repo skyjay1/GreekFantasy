@@ -62,14 +62,14 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
   /** @return a map of all Deity and favor info objects **/
   Map<ResourceLocation, FavorLevel> getAllFavor();
   
-  default void forEach(final BiConsumer<IDeity, FavorLevel> action) {
+  default void forEach(final BiConsumer<Deity, FavorLevel> action) {
     for(final Entry<ResourceLocation, FavorLevel> e : getAllFavor().entrySet()) {
-      action.accept(DeityManager.getDeity(e.getKey()), e.getValue());
+      GreekFantasy.PROXY.DEITY.get(e.getKey()).ifPresent(d -> action.accept(d, e.getValue()));
     }
   }
   
-  default Set<IDeity> getDeitySet() { 
-    return getAllFavor().keySet().stream().map(i -> DeityManager.getDeity(i)).collect(Collectors.toSet()); 
+  default Set<IDeity> getDeitySet() {
+    return getAllFavor().keySet().stream().map(i -> GreekFantasy.PROXY.DEITY.get(i).orElse(Deity.EMPTY)).collect(Collectors.toSet()); 
   }
   
   long getEffectTimestamp();
@@ -83,7 +83,7 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
   default boolean canUseEffect(final FavorLevel info, final long time, final Random rand) { 
     return Math.abs(info.getFavor()) >= MIN_FAVOR 
         && time >= (getEffectTimestamp() + getEffectCooldown())
-        && rand.nextDouble() < info.getPercentFavor(); 
+        && rand.nextDouble() * 0.7D < info.getPercentFavor(); 
   }
   
   @Override

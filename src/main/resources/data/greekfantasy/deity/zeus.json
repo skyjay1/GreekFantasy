@@ -11,10 +11,28 @@
   },
   "effects": [
   	{
-  	  "function": "greekfantasy:effect_regen",
-  	  "minlevel": 0,
-  	  "maxlevel": 99,
-  	  "mincooldown": 1000
+  	  "potion": "{Id:10,Amplifier:0,Duration:200}",
+  	  "minlevel": 1,
+  	  "maxlevel": 4,
+  	  "mincooldown": 300
+  	},
+  	{
+  	  "potion": "{Id:5,Amplifier:1,Duration:900}",
+  	  "minlevel": 2,
+  	  "maxlevel": 10,
+  	  "mincooldown": 400
+  	},
+  	{
+  	  "summon": "{id:\"greekfantasy:harpy\"}",
+  	  "minlevel": -2,
+  	  "maxlevel": -10,
+  	  "mincooldown": 800
+  	},
+  	{
+  	  "function": "greekfantasy:summon_lightning",
+  	  "minlevel": -3,
+  	  "maxlevel": -10,
+  	  "mincooldown": 900
   	}
   ],
   "kill_favor_map": {
@@ -23,6 +41,7 @@
   },
   "item_favor_map": {
   	"minecraft:golden_apple": 10,
-  	"minecraft:bone": -5
+  	"minecraft:bone": -5,
+  	"minecraft:nether_star": 200
   }
 }

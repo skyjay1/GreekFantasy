@@ -1,7 +1,6 @@
 package greekfantasy.gui;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.GreekFantasy;
 import greekfantasy.util.StatuePose;
 import greekfantasy.util.StatuePoses;
 import net.minecraft.entity.player.PlayerEntity;
@@ -43,10 +42,8 @@ public class StatueContainer extends Container {
     this.isFemale = isFemaleIn;
     this.profile = profileIn;
     // add container inventory
-    if(GreekFantasy.CONFIG.STATUES_HOLD_ITEMS.get()) {
-      rightSlot = this.addSlot(new Slot(iinventory, 0, 44, 90));
-      leftSlot = this.addSlot(new Slot(iinventory, 1, 8, 90));
-    }
+    rightSlot = this.addSlot(new Slot(iinventory, 0, 44, 90));
+    leftSlot = this.addSlot(new Slot(iinventory, 1, 8, 90));
     // add player inventory
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 9; ++j) {

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import greekfantasy.GreekFantasy;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -80,14 +81,17 @@ public interface IDeity {
   default FavorEffect getRandomEffect(final Random rand, final int playerLevel) {
     final List<FavorEffect> effects = getFavorEffects();
     if(!effects.isEmpty()) {
+      GreekFantasy.LOGGER.debug("Attempting to find a favor effect to run...");
       int tries = 10;
       while(tries-- >= 0) {
         final FavorEffect effect = effects.get(rand.nextInt(effects.size()));
         if(effect.isInRange(playerLevel)) {
+          GreekFantasy.LOGGER.debug("Found a favor effect to run: " + effect.toString());
           return effect;
         }
       }
     }
+    GreekFantasy.LOGGER.debug("getRandomEffect found no effects to run, returning EMPTY");
     return FavorEffect.EMPTY;
   }
   
