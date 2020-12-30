@@ -55,6 +55,7 @@ import greekfantasy.tileentity.MobHeadTileEntity.HeadType;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.tileentity.VaseTileEntity;
 import greekfantasy.util.StatuePose;
+import greekfantasy.util.StatuePoses;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -101,6 +102,7 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.potion.Potions;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -436,7 +438,7 @@ public final class GFRegistry {
           .setRegistryName(MODID, "limestone_statue"),
         new StatueBlock(StatueBlock.StatueMaterial.WOOD)
           .setRegistryName(MODID, "palladium"),
-        new AltarBlock(MODID, "zeus", StatueBlock.StatueMaterial.MARBLE)
+        new AltarBlock(new ResourceLocation(MODID, "zeus"), StatueBlock.StatueMaterial.MARBLE, StatuePoses.STANDING_MENACING)
           .setRegistryName(MODID, "altar_zeus"),
         new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
           .setRegistryName(MODID, "terracotta_vase"),

@@ -44,6 +44,7 @@ public class AltarTileEntity extends StatueTileEntity {
     this.setDeity(new ResourceLocation(nbt.getString(KEY_DEITY)));
     final IDeity deity = getDeity();
     if(deity != Deity.EMPTY) {
+      GreekFantasy.LOGGER.debug("AltarTileEntity#readUpdateTag - " + deity.toString());
       this.setStatueFemale(deity.isFemale());
       this.setItem(deity.getRightHandItem(), HandSide.RIGHT);
       this.setItem(deity.getLeftHandItem(), HandSide.LEFT);

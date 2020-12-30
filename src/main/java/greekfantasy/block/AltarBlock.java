@@ -8,7 +8,7 @@ import greekfantasy.favor.FavorManager;
 import greekfantasy.favor.IDeity;
 import greekfantasy.favor.IFavor;
 import greekfantasy.tileentity.AltarTileEntity;
-import greekfantasy.util.StatuePoses;
+import greekfantasy.util.StatuePose;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -17,8 +17,6 @@ import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleType;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -34,14 +32,12 @@ import net.minecraftforge.common.util.LazyOptional;
 public class AltarBlock extends StatueBlock {
   
   private final ResourceLocation deity;
+  private final StatuePose pose;
   
-  public AltarBlock(final String modid, final String deity, final StatueBlock.StatueMaterial material) {
-    this(new ResourceLocation(modid, deity), material);
-  }
-   
-  public AltarBlock(final ResourceLocation deityIn, final StatueBlock.StatueMaterial material) {
+  public AltarBlock(final ResourceLocation deityIn, final StatueBlock.StatueMaterial material, final StatuePose statuePose) {
     super(material, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(30.0F, 1200.0F).sound(SoundType.STONE).setLightLevel(b -> material.getLightLevel()).notSolid());
     deity = deityIn;
+    pose = statuePose;
   }
 
   @Override
@@ -73,6 +69,7 @@ public class AltarBlock extends StatueBlock {
         });
       }      
     }
+    worldIn.notifyBlockUpdate(pos, state, state, 2);
     return ActionResultType.SUCCESS;
   }
   
@@ -86,7 +83,7 @@ public class AltarBlock extends StatueBlock {
     final AltarTileEntity te = GFRegistry.ALTAR_TE.create();
     te.setUpper(state.get(HALF) == DoubleBlockHalf.UPPER);
     te.setDeity(deity);
-    te.setStatuePose(StatuePoses.WALKING);
+    te.setStatuePose(pose);
     return te;
   }
 }

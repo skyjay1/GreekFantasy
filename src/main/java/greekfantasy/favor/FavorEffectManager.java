@@ -40,7 +40,7 @@ public class FavorEffectManager {
     if(server != null) {
       boolean flag = false;
       final FavorEffect effect = deity.getRandomEffect(playerIn.getRNG(), info.getLevel());
-      // attempt to run the function, summon, or potion effect in that order
+      // attempt to run the function, summon, or potion effect (exclusively, in that order)
       if(functionFavorEffect(server, worldIn, playerIn, effect.getFunction())) {
         flag = true;
       } else if(summonFavorEffect(worldIn, playerIn, effect.getSummon())) {
@@ -67,6 +67,7 @@ public class FavorEffectManager {
    */
   private static boolean potionFavorEffect(final PlayerEntity playerIn, final Optional<CompoundNBT> potionTag) {
     if(potionTag.isPresent()) {
+      // DEBUG
       GreekFantasy.LOGGER.debug("Potion favor effect is running...");
       return playerIn.addPotionEffect(EffectInstance.read(potionTag.get()));
     }
@@ -75,6 +76,7 @@ public class FavorEffectManager {
   
   private static boolean summonFavorEffect(final World worldIn, final PlayerEntity playerIn, final Optional<CompoundNBT> entityTag) {
     if(entityTag.isPresent()) {
+      // DEBUG
       GreekFantasy.LOGGER.debug("Summon favor effect is running...");
       Optional<EntityType<?>> entityType = EntityType.readEntityType(entityTag.get());
       if(entityType.isPresent()) {
@@ -108,6 +110,7 @@ public class FavorEffectManager {
    */
   private static boolean functionFavorEffect(final MinecraftServer server, final World worldIn, final PlayerEntity playerIn, final Optional<ResourceLocation> function) {
     if(function.isPresent() && server != null) {
+      // DEBUG
       GreekFantasy.LOGGER.debug("Function favor effect is running...");
       // load the functions from the function manager
       final FunctionManager manager = server.getFunctionManager();

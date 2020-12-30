@@ -40,7 +40,9 @@ public class OrthusHeadItemEntity extends ItemEntity {
   @Override
   public void remove() {
     if(!this.world.isRemote() && this.isBurning()) {
-      trySpawnCerberus();
+      if(!trySpawnCerberus(this.getPosition())) {
+        trySpawnCerberus(this.getPosition().up());
+      }
     }
     super.remove();
   }
@@ -50,9 +52,8 @@ public class OrthusHeadItemEntity extends ItemEntity {
    * and, if those conditions are met, spawns a Cerberus
    * at this item's location
    **/
-  protected void trySpawnCerberus() {
+  protected boolean trySpawnCerberus(final BlockPos lavaPos) {
     // check for lava nearby
-    BlockPos lavaPos = this.getPosition();
     Direction dir = hasSquare(lavaPos);
     if(dir != null) {
       // a square of lava was found, check for the frame
@@ -62,8 +63,10 @@ public class OrthusHeadItemEntity extends ItemEntity {
         fillSquare(Blocks.MAGMA_BLOCK.getDefaultState(), lavaPos, dir);
         Vector3d center = this.getPositionVec().add(0, 1.0D, 0);
         CerberusEntity.spawnCerberus(world, center);
+        return true;
       }
     }
+    return false;
   }
   
   /**

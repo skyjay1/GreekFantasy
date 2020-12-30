@@ -2,7 +2,7 @@
   "name": "greekfantasy:zeus",
   "female": false,
   "left_hand": {
-  	"id": "minecraft:oak_sapling",
+  	"id": "minecraft:air",
   	"Count": 1
   },
   "right_hand": {
@@ -11,19 +11,29 @@
   },
   "effects": [
   	{
-  	  "potion": "{Id:10,Amplifier:0,Duration:200}",
+  	  "potion": {
+  	  	"Id": 10,
+  	  	"Amplifier": 0,
+  	  	"Duration": 200
+  	  },
   	  "minlevel": 1,
   	  "maxlevel": 4,
   	  "mincooldown": 300
   	},
   	{
-  	  "potion": "{Id:5,Amplifier:1,Duration:900}",
+  	  "potion": {
+  	  	"Id": 5,
+  	  	"Amplifier": 1,
+  	  	"Duration": 900
+  	  },
   	  "minlevel": 2,
   	  "maxlevel": 10,
   	  "mincooldown": 400
   	},
   	{
-  	  "summon": "{id:\"greekfantasy:harpy\"}",
+  	  "summon": { 
+  	  	"id": "greekfantasy:harpy" 
+  	  },
   	  "minlevel": -2,
   	  "maxlevel": -10,
   	  "mincooldown": 800
