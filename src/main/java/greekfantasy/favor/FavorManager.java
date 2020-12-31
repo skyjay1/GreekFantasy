@@ -29,7 +29,7 @@ public class FavorManager {
       favor.forEach((d, f) -> f.depleteFavor(player, d, 1, Source.PASSIVE));
     }
     // attempt to perform a favor effect
-    if(player.ticksExisted > 10 && time % 100 == 0) {
+    if(!player.isCreative() && !player.isSpectator() && player.ticksExisted > 10 && time % 100 == 0) {
       Optional<Deity> deity;
       FavorLevel info;
       ArrayList<Entry<ResourceLocation, FavorLevel>> entryList = Lists.newArrayList(favor.getAllFavor().entrySet());
@@ -40,7 +40,6 @@ public class FavorManager {
         deity = GreekFantasy.PROXY.DEITY.get(entry.getKey());
         info = entry.getValue();
         if(deity.isPresent() && favor.canUseEffect(info, time, player.getRNG())) {
-          GreekFantasy.LOGGER.debug("FavorManager#onPlayerTick: trigger favor effect!");
           // perform an effect, set the timestamp and cooldown, and exit the loop
           long cooldown = FavorEffectManager.onFavorEffect(player.getEntityWorld(), player, deity.get(), favor, info);
           if(cooldown <= 0) {

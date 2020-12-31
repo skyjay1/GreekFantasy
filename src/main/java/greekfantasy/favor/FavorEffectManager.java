@@ -56,9 +56,10 @@ public class FavorEffectManager {
       } else GreekFantasy.LOGGER.debug("Failed to run any favor effect :(");
       // if any of the effects ran successfully, send a message to the player, play a sound, and set cooldown
       if(flag) {
-        final String message = effect.isPositive() ? "positive" : "negative";
-        final TextFormatting color = effect.isPositive() ? TextFormatting.GREEN : TextFormatting.RED;
-        final SoundEvent sound = effect.isPositive() ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER;
+        final boolean positive = effect.isPositive();
+        final String message = positive ? "positive" : "negative";
+        final TextFormatting color = positive ? TextFormatting.GREEN : TextFormatting.RED;
+        final SoundEvent sound = positive ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER;
         playerIn.sendStatusMessage(new TranslationTextComponent("favor.effect." + message, deity.getText()).mergeStyle(color), false);
         playerIn.playSound(sound, 0.4F, 0.9F + playerIn.getRNG().nextFloat() * 0.2F);
         return effect.getMinCooldown() + playerIn.getRNG().nextInt((int)Math.max(1, effect.getMinCooldown()));
@@ -75,8 +76,6 @@ public class FavorEffectManager {
    */
   private static boolean potionFavorEffect(final PlayerEntity playerIn, final Optional<CompoundNBT> potionTag) {
     if(potionTag.isPresent()) {
-      // DEBUG
-      GreekFantasy.LOGGER.debug("Potion favor effect is running...");
       return playerIn.addPotionEffect(EffectInstance.read(potionTag.get()));
     }
     return false;
@@ -91,8 +90,6 @@ public class FavorEffectManager {
    */
   private static boolean itemFavorEffect(final PlayerEntity playerIn, final Optional<ItemStack> itemTag) {
     if(itemTag.isPresent()) {
-      // DEBUG
-      GreekFantasy.LOGGER.debug("Item favor effect is running...");
       ItemEntity item = playerIn.entityDropItem(itemTag.get());
       if(item != null) {
         item.setNoPickupDelay();
@@ -101,10 +98,15 @@ public class FavorEffectManager {
     return false;
   }
   
+  /**
+   * Summons an entity on a solid block near the player
+   * @param worldIn the world
+   * @param playerIn the player
+   * @param entityTag an optional containing the NBTTagCompound of an entity (or empty)
+   * @return true if the entity was successfully added
+   */
   private static boolean summonFavorEffect(final World worldIn, final PlayerEntity playerIn, final Optional<CompoundNBT> entityTag) {
     if(entityTag.isPresent()) {
-      // DEBUG
-      GreekFantasy.LOGGER.debug("Summon favor effect is running...");
       Optional<EntityType<?>> entityType = EntityType.readEntityType(entityTag.get());
       if(entityType.isPresent()) {
         // create the entity
@@ -113,8 +115,8 @@ public class FavorEffectManager {
         // find a place to spawn the entity
         Random rand = playerIn.getRNG();
         BlockPos spawnPos;
-        for(int attempts = 30, range = 10; attempts > 0; attempts--) {
-          spawnPos = playerIn.getPosition().add(rand.nextInt(range), rand.nextInt(4) - 2, rand.nextInt(range));
+        for(int attempts = 24, range = 10; attempts > 0; attempts--) {
+          spawnPos = playerIn.getPosition().add(rand.nextInt(range) - rand.nextInt(range), rand.nextInt(2) - rand.nextInt(2), rand.nextInt(range) - rand.nextInt(range));
           // check if this is a valid position (solid block with 2 air blocks above it)
           if(worldIn.getBlockState(spawnPos.down()).isSolidSide(worldIn, spawnPos, Direction.UP) && worldIn.isAirBlock(spawnPos) && worldIn.isAirBlock(spawnPos.up())) {
             // spawn the entity here and finish
@@ -137,8 +139,6 @@ public class FavorEffectManager {
    */
   private static boolean functionFavorEffect(final MinecraftServer server, final World worldIn, final PlayerEntity playerIn, final Optional<ResourceLocation> function) {
     if(function.isPresent() && server != null) {
-      // DEBUG
-      GreekFantasy.LOGGER.debug("Function favor effect is running...");
       // load the functions from the function manager
       final FunctionManager manager = server.getFunctionManager();
       if(functions.isEmpty()) {

@@ -62,24 +62,39 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
   /** @return a map of all Deity and favor info objects **/
   Map<ResourceLocation, FavorLevel> getAllFavor();
   
+  /**
+   * Performs an action for each IDeity/FavorLevel pair that is registered
+   * @param action the action to perform
+   */
   default void forEach(final BiConsumer<Deity, FavorLevel> action) {
     for(final Entry<ResourceLocation, FavorLevel> e : getAllFavor().entrySet()) {
       GreekFantasy.PROXY.DEITY.get(e.getKey()).ifPresent(d -> action.accept(d, e.getValue()));
     }
   }
   
+  /** @return a set of all registered IDeity objects **/
   default Set<IDeity> getDeitySet() {
     return getAllFavor().keySet().stream().map(i -> GreekFantasy.PROXY.DEITY.get(i).orElse(Deity.EMPTY)).collect(Collectors.toSet()); 
   }
   
+  /** @return the time of the last favor effect **/
   long getEffectTimestamp();
 
+  /** @param timestamp the current time **/
   void setEffectTimestamp(long timestamp);
 
+  /** @return the time until the next favor effect **/
   long getEffectCooldown();
 
+  /** @param cooldown the amount of time until the next favor effect **/
   void setEffectCooldown(long cooldown);
 
+  /**
+   * @param info the favor level
+   * @param time the current time
+   * @param rand a random instance
+   * @return true if a FavorEffect should be chosen and executed
+   */
   default boolean canUseEffect(final FavorLevel info, final long time, final Random rand) { 
     return Math.abs(info.getFavor()) >= MIN_FAVOR 
         && time >= (getEffectTimestamp() + getEffectCooldown())

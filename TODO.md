@@ -9,11 +9,8 @@ __Key:__
 - _ Summoning animations not playing on dedicated server
 - _ Structure gen is jenky
 - _ Config option for winged sandals to enable flight?
-- X Statues stopped rendering poses for some reason
 - _ Deity doesn't set items from JSON correctly
-- X Favor capability does not persist when relogging
 - _ Arion needs bug fixes (tame *only* with gold, etc)
-- X FavorInfo level needs proper math
 
 ## Entity basics
 
@@ -87,13 +84,16 @@ __Key:__
 - X Siren charms players (forces player to move toward siren)
 - X Naiad can hold/throw trident
 
-## Pantheon
+## Favor
 
-- ~ Favor (capability)
-- ~ Altars (statues)
-- ~ Gods *or* Muses?
-- ~ Rewards and punishments
-- ~ Deity datapack support (TODO: dynamically register blocks / itemblocks for altars)
+- X Favor (capability)
+- X Altars (statues)
+- X Gods *or* Muses?
+- X Rewards and punishments
+- X Deity datapack support
+- _ Favor GUI (using mirror temporarily)
+- _ JEI compatibility
+- _ Datapack support: Dynamically register blocks / itemblocks for altars
 
 ## Structures
 
