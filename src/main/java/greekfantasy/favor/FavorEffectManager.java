@@ -17,6 +17,8 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TextFormatting;
@@ -48,11 +50,13 @@ public class FavorEffectManager {
       } else if(potionFavorEffect(playerIn, effect.getPotion())) {
         flag = true;
       } else GreekFantasy.LOGGER.debug("Failed to run any favor effect :(");
-      // if any of the effects ran successfully, send a message to the player and set cooldown
+      // if any of the effects ran successfully, send a message to the player, play a sound, and set cooldown
       if(flag) {
         final String message = effect.isPositive() ? "positive" : "negative";
         final TextFormatting color = effect.isPositive() ? TextFormatting.GREEN : TextFormatting.RED;
+        final SoundEvent sound = effect.isPositive() ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER;
         playerIn.sendStatusMessage(new TranslationTextComponent("favor.effect." + message, deity.getText()).mergeStyle(color), false);
+        playerIn.playSound(sound, 0.4F, 0.9F + playerIn.getRNG().nextFloat() * 0.2F);
         return effect.getMinCooldown() + playerIn.getRNG().nextInt((int)Math.max(1, effect.getMinCooldown()));
       }
     }

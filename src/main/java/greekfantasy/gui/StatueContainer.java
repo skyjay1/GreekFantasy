@@ -1,6 +1,7 @@
 package greekfantasy.gui;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.block.StatueBlock;
 import greekfantasy.util.StatuePose;
 import greekfantasy.util.StatuePoses;
 import net.minecraft.entity.player.PlayerEntity;
@@ -57,8 +58,7 @@ public class StatueContainer extends Container {
 
   @Override
   public boolean canInteractWith(final PlayerEntity playerIn) {
-    return isWithinUsableDistance(IWorldPosCallable.of(playerIn.getEntityWorld(), getBlockPos()), playerIn, GFRegistry.LIMESTONE_STATUE) ||
-           isWithinUsableDistance(IWorldPosCallable.of(playerIn.getEntityWorld(), getBlockPos()), playerIn, GFRegistry.MARBLE_STATUE);
+    return IWorldPosCallable.of(playerIn.getEntityWorld(), getBlockPos()).applyOrElse((world, pos) -> !(world.getBlockState(pos).getBlock() instanceof StatueBlock) ? false : playerIn.getDistanceSq((double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D) <= 64.0D, true);
   }
 
   public BlockPos getBlockPos() {

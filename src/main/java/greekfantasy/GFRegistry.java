@@ -64,6 +64,7 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.potion.Potions;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -231,12 +232,14 @@ public final class GFRegistry {
   // Altar //
   @ObjectHolder("altar_zeus")
   public static final Block ALTAR_ZEUS = null;
+  @ObjectHolder("altar_hades")
+  public static final Block ALTAR_HADES = null;
+  @ObjectHolder("altar_poseidon")
+  public static final Block ALTAR_POSEIDON = null;
 
   // Tile Entity //  
   @ObjectHolder("statue_te")
   public static final TileEntityType<StatueTileEntity> STATUE_TE = null;
-  @ObjectHolder("altar_te")
-  public static final TileEntityType<AltarTileEntity> ALTAR_TE = null;
   @ObjectHolder("vase_te")
   public static final TileEntityType<VaseTileEntity> VASE_TE = null;
   @ObjectHolder("mob_head_te")
@@ -336,12 +339,8 @@ public final class GFRegistry {
   public static void registerTileEntities(final RegistryEvent.Register<TileEntityType<?>> event) {
     GreekFantasy.LOGGER.debug("registerTileEntities");
     event.getRegistry().register(
-        TileEntityType.Builder.create(StatueTileEntity::new, LIMESTONE_STATUE, MARBLE_STATUE, PALLADIUM)
+        TileEntityType.Builder.create(StatueTileEntity::new, LIMESTONE_STATUE, MARBLE_STATUE, PALLADIUM, ALTAR_HADES, ALTAR_POSEIDON, ALTAR_ZEUS)
         .build(null).setRegistryName(MODID, "statue_te")
-    );
-    event.getRegistry().register(
-        TileEntityType.Builder.create(AltarTileEntity::new, ALTAR_ZEUS)
-        .build(null).setRegistryName(MODID, "altar_te")
     );
     event.getRegistry().register(
         TileEntityType.Builder.create(VaseTileEntity::new, TERRACOTTA_VASE)
@@ -377,6 +376,7 @@ public final class GFRegistry {
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "marble");
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
     
+    final AbstractBlock.Properties deityStatueProperties = Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(15.0F, 6000.0F).sound(SoundType.STONE).notSolid();
     event.getRegistry().registerAll(
         new ReedsBlock(AbstractBlock.Properties.create(Material.OCEAN_PLANT).doesNotBlockMovement().zeroHardnessAndResistance().tickRandomly().sound(SoundType.CROP))
           .setRegistryName(MODID, "reeds"),
@@ -398,10 +398,17 @@ public final class GFRegistry {
           .setRegistryName(MODID, "marble_statue"),
         new StatueBlock(StatueBlock.StatueMaterial.LIMESTONE)
           .setRegistryName(MODID, "limestone_statue"),
-        new StatueBlock(StatueBlock.StatueMaterial.WOOD)
-          .setRegistryName(MODID, "palladium"),
-        new AltarBlock(new ResourceLocation(MODID, "zeus"), StatueBlock.StatueMaterial.MARBLE, StatuePoses.STANDING_MENACING)
+        new StatueBlock(StatueBlock.StatueMaterial.WOOD, te -> {
+          te.setStatuePose(StatuePoses.STANDING_HOLDING_DRAMATIC);
+          te.setStatueFemale(true);
+          te.setItem(new ItemStack(Items.SOUL_TORCH), HandSide.RIGHT);
+        }).setRegistryName(MODID, "palladium"),
+        new StatueBlock(StatueBlock.StatueMaterial.MARBLE, te -> te.setStatuePose(StatuePoses.ZEUS_POSE), deityStatueProperties, new ResourceLocation(MODID, "zeus"))
           .setRegistryName(MODID, "altar_zeus"),
+        new StatueBlock(StatueBlock.StatueMaterial.MARBLE, te -> te.setStatuePose(StatuePoses.ZEUS_POSE), deityStatueProperties, new ResourceLocation(MODID, "hades"))
+          .setRegistryName(MODID, "altar_hades"),
+        new StatueBlock(StatueBlock.StatueMaterial.MARBLE, te -> te.setStatuePose(StatuePoses.ZEUS_POSE), deityStatueProperties, new ResourceLocation(MODID, "poseidon"))
+          .setRegistryName(MODID, "altar_poseidon"),
         new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
           .setRegistryName(MODID, "terracotta_vase"),
         new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
@@ -502,7 +509,7 @@ public final class GFRegistry {
         OLIVE_LOG, OLIVE_WOOD, OLIVE_PLANKS, OLIVE_SLAB, OLIVE_STAIRS, OLIVE_LEAVES, 
         MARBLE, MARBLE_SLAB, MARBLE_STAIRS, POLISHED_MARBLE, POLISHED_MARBLE_SLAB, 
         POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, PALLADIUM, 
-        ALTAR_ZEUS,
+        ALTAR_ZEUS, ALTAR_HADES, ALTAR_POSEIDON,
         LIMESTONE, LIMESTONE_SLAB, LIMESTONE_STAIRS, POLISHED_LIMESTONE, POLISHED_LIMESTONE_SLAB, 
         POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, LIMESTONE_STATUE, 
         TERRACOTTA_VASE, ICHOR_INFUSED_BLOCK);

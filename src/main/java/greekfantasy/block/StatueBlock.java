@@ -1,13 +1,17 @@
 package greekfantasy.block;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.favor.Deity;
+import greekfantasy.favor.FavorLevel;
+import greekfantasy.favor.FavorManager;
+import greekfantasy.favor.IDeity;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.StatuePose;
-import greekfantasy.util.StatuePoses;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -65,17 +69,29 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
       IBooleanFunction.OR);
   protected static final VoxelShape AABB_STATUE_TOP = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 24.0D, 14.0D);
   
-  protected final StatueMaterial statueMaterial;
-    
+  protected final StatueMaterial statueMaterial; 
+  private final ResourceLocation deity;
+  private final Consumer<StatueTileEntity> tileEntityInit;
+  
   public StatueBlock(final StatueMaterial material) {
-    this(material, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(1.5F, 6.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> material.getLightLevel()));
+    this(material, te -> te.setStatueFemale(Math.random() < 0.5D));
   }
   
-  public StatueBlock(final StatueMaterial material, final AbstractBlock.Properties properties) {
+  public StatueBlock(final StatueMaterial material, final Consumer<StatueTileEntity> teInit) {
+    this(material, teInit, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(1.5F, 6.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> material.getLightLevel()));
+  }
+  
+  public StatueBlock(final StatueMaterial material, final Consumer<StatueTileEntity> teInit, final AbstractBlock.Properties properties) {
+    this(material, teInit, properties, Deity.EMPTY.getName());
+  }
+  
+  public StatueBlock(final StatueMaterial material, final Consumer<StatueTileEntity> teInit, final AbstractBlock.Properties properties, final ResourceLocation deityName) {
     super(properties);
     this.setDefaultState(this.getStateContainer().getBaseState()
         .with(WATERLOGGED, false).with(HALF, DoubleBlockHalf.LOWER).with(HORIZONTAL_FACING, Direction.NORTH));
     this.statueMaterial = material;
+    this.tileEntityInit = teInit;
+    this.deity = deityName;
   }
   
   @Override
@@ -149,22 +165,31 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   @Override
   public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
-    
-    // wood statues do not allow access to GUI
-    if(!statueMaterial.hasGui()) {
-      return ActionResultType.PASS;
-    }
     // prepare to interact with this block
     final BlockPos tePos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos;
     final TileEntity te = worldIn.getTileEntity(tePos);
-    
-    // DEBUG
-//    GreekFantasy.LOGGER.debug("pose = " + ((StatueTileEntity)te).getStatuePose().toString());
-    
+    final ItemStack stack = playerIn.getHeldItem(handIn);
+    // player interaction is server side only  
     if (playerIn instanceof ServerPlayerEntity && te instanceof StatueTileEntity) {
       final StatueTileEntity teStatue = (StatueTileEntity)te;
+      // handle deity statue interaction
+      final IDeity teDeity = teStatue.getDeity();
+      if(teDeity != Deity.EMPTY && teDeity.getName().equals(deity)) {
+        playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
+          FavorLevel i = f.getFavor(teDeity);
+          if(FavorManager.onGiveItem(teStatue, teDeity, playerIn, i, stack)) {
+            //f.setFavor(teDeity, i);
+            // spawn particles
+//            for(int j = 0; j < 6 + playerIn.getRNG().nextInt(4); j++) {
+//              playerIn.world.addOptionalParticle(ParticleTypes.HAPPY_VILLAGER, teStatue.getPos().getX() + playerIn.getRNG().nextDouble(), teStatue.getPos().up().getY() + playerIn.getRNG().nextDouble(), teStatue.getPos().getZ() + playerIn.getRNG().nextDouble(), 0, 0, 0);
+//            }
+          }
+          // print current favor level
+          i.sendStatusMessage(playerIn, teDeity);
+        });
+        return ActionResultType.SUCCESS;
+      } 
       // handle nametag interaction
-      final ItemStack stack = playerIn.getHeldItem(handIn);
       if(!stack.isEmpty() && stack.getItem() == Items.NAME_TAG && stack.hasDisplayName()) {        
         teStatue.setTextureName(stack.getDisplayName().getUnformattedComponentText(), true);
     		if(!playerIn.isCreative()) {
@@ -218,13 +243,12 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   public TileEntity createTileEntity(final BlockState state, final IBlockReader world) {
     final StatueTileEntity te = GFRegistry.STATUE_TE.create();
     te.setUpper(state.get(HALF) == DoubleBlockHalf.UPPER);
-    if(statueMaterial == StatueMaterial.WOOD) {
-      te.setStatueFemale(true);
-      te.setStatuePose(StatuePoses.STANDING_HOLDING_DRAMATIC);
-      te.setItem(new ItemStack(Items.SOUL_TORCH), HandSide.RIGHT);
-    } else {
-      te.setStatueFemale(this.RANDOM.nextBoolean());
+    if(hasDeity()) {
+      te.setDeityName(deity.toString());
+      te.setItem(te.getDeity().getRightHandItem(), HandSide.RIGHT);
+      te.setItem(te.getDeity().getLeftHandItem(), HandSide.LEFT);
     }
+    tileEntityInit.accept(te);
     return te;
   }
   
@@ -233,7 +257,11 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   }
   
   public boolean canDropItems(final BlockState state, final IBlockReader world) {
-    return this.statueMaterial.dropsItems();
+    return this.statueMaterial.dropsItems() && !hasDeity();
+  }
+  
+  public boolean hasDeity() {
+    return !deity.equals(Deity.EMPTY.getName());
   }
   
   public static enum StatueMaterial implements IStringSerializable {

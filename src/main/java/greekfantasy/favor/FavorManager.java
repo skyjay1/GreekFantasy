@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.events.FavorChangedEvent.Source;
-import greekfantasy.tileentity.AltarTileEntity;
+import greekfantasy.tileentity.StatueTileEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -103,7 +103,7 @@ public class FavorManager {
    * @param item the item that was used
    * @return true if the item affected the player's favor
    */
-  public static boolean onGiveItem(final AltarTileEntity altar, final IDeity deity,
+  public static boolean onGiveItem(final StatueTileEntity altar, final IDeity deity,
       final PlayerEntity playerIn, final FavorLevel info, final ItemStack item) {
     final long favorModifier = deity.getItemFavorModifier(item.getItem());
     if(favorModifier != 0) {

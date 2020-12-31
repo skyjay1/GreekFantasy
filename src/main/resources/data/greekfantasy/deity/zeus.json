@@ -18,7 +18,7 @@
   	  },
   	  "minlevel": 1,
   	  "maxlevel": 4,
-  	  "mincooldown": 300
+  	  "mincooldown": 3000
   	},
   	{
   	  "potion": {
@@ -28,21 +28,37 @@
   	  },
   	  "minlevel": 2,
   	  "maxlevel": 10,
-  	  "mincooldown": 400
+  	  "mincooldown": 4000
   	},
   	{
   	  "summon": { 
   	  	"id": "greekfantasy:harpy" 
   	  },
   	  "minlevel": -2,
+  	  "maxlevel": -8,
+  	  "mincooldown": 8000
+  	},
+  	{
+  	  "summon": { 
+  	  	"id": "minecraft:creeper",
+  	  	"powered": true,
+  	  	"CustomName": "Wrath of Zeus"
+  	  },
+  	  "minlevel": -6,
   	  "maxlevel": -10,
-  	  "mincooldown": 800
+  	  "mincooldown": 8000
+  	},
+  	{
+  	  "function": "greekfantasy:set_storming",
+  	  "minlevel": -2,
+  	  "maxlevel": -6,
+  	  "mincooldown": 5000
   	},
   	{
   	  "function": "greekfantasy:summon_lightning",
-  	  "minlevel": -3,
+  	  "minlevel": -5,
   	  "maxlevel": -10,
-  	  "mincooldown": 900
+  	  "mincooldown": 9000
   	}
   ],
   "kill_favor_map": {

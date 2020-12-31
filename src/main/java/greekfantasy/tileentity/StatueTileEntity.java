@@ -8,6 +8,8 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.block.StatueBlock.StatueMaterial;
+import greekfantasy.favor.Deity;
+import greekfantasy.favor.IDeity;
 import greekfantasy.util.ModelPart;
 import greekfantasy.util.StatuePose;
 import greekfantasy.util.StatuePoses;
@@ -28,6 +30,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -38,6 +41,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   private static final String KEY_UPPER = "Upper";
   private static final String KEY_FEMALE = "Female";
   private static final String KEY_NAME = "Name";
+  private static final String KEY_DEITY = "Deity";
 
   private final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
 
@@ -45,9 +49,13 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   private boolean upper = false;
   private boolean statueFemale = false;
   private String textureName = "";
+  private String deityName = "";
+  
   @Nullable
   private GameProfile playerProfile = null;
-
+  @Nullable
+  private IDeity deity = Deity.EMPTY;
+  
   public StatueTileEntity() {
     this(GFRegistry.STATUE_TE);
   }
@@ -85,6 +93,8 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     }
     return StatueMaterial.LIMESTONE;
   }
+  
+  // Is Female //
 
   public boolean isStatueFemale() { return statueFemale; }
   
@@ -100,6 +110,8 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
       this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
     }
   }
+  
+  // Texture Name //
   
   public String getTextureName() { return textureName; }
 
@@ -118,6 +130,32 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
       this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
     }
   }
+  
+  // Deity Name //
+  
+  public String getDeityName() { return deityName; }
+  
+  public void setDeityName(final String deityIn) { setDeityName(deityIn, false); }
+  
+  public void setDeityName(final String deityIn, final boolean refresh) {
+    this.deityName = deityIn;
+    this.updateDeity();
+    this.markDirty();
+    if(refresh) {
+      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+    }
+  }
+  
+  // Deity //
+  
+  public IDeity getDeity() { return deity; }
+
+  public void updateDeity() {
+    this.deity = deityName.isEmpty() ? Deity.EMPTY : GreekFantasy.PROXY.DEITY.get(new ResourceLocation(deityName)).orElse(Deity.EMPTY);
+    this.markDirty();
+  }
+  
+  // Player Profile //
   
   @Nullable
   public GameProfile getPlayerProfile() { return this.playerProfile; }
@@ -171,6 +209,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     nbt.putBoolean(KEY_FEMALE, statueFemale);
     nbt.put(KEY_POSE, this.statuePose.serializeNBT(new CompoundNBT()));
     nbt.put(KEY_NAME, StringNBT.valueOf(textureName));
+    nbt.put(KEY_DEITY, StringNBT.valueOf(deityName));
     ItemStackHelper.saveAllItems(nbt, this.inventory, true);
     return nbt;
   }
@@ -180,6 +219,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     this.setStatueFemale(nbt.getBoolean(KEY_FEMALE));
     this.setStatuePose(new StatuePose(nbt.getCompound(KEY_POSE)));
     this.setTextureName(nbt.getString(KEY_NAME));
+    this.setDeityName(nbt.getString(KEY_DEITY));
     this.inventory.clear();
     ItemStackHelper.loadAllItems(nbt, this.inventory);
   }

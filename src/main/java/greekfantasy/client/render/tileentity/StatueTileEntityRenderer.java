@@ -13,6 +13,7 @@ import greekfantasy.block.StatueBlock;
 import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.client.gui.StatueScreen;
 import greekfantasy.client.render.model.tileentity.StatueModel;
+import greekfantasy.favor.Deity;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.ModelPart;
 import net.minecraft.client.Minecraft;
@@ -76,9 +77,8 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
       matrixStackIn.rotate(Vector3f.YP.rotationDegrees(rotation));
     }
     // DEBUG
-//    if(te.getWorld().getGameTime() % 40 == 0) GreekFantasy.LOGGER.debug("Pose: " + te.getStatuePose().toString());
+//    this.model.setRotationAngles(te, partialTicks);
     this.model.rotateAroundBody(te.getRotations(ModelPart.BODY), matrixStackIn, partialTicks);
-    this.model.setRotationAngles(te, partialTicks);
     IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureOverlay));  
     if(material.hasSkin()) {
       // render player texture
@@ -108,6 +108,11 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
   }
 
   protected ResourceLocation getOverlayTexture(final StatueTileEntity te) {
+    // return deity texture
+    if(te.getDeity() != Deity.EMPTY) {
+      return te.getDeity().getTexture();
+    }
+    // return player texture
     final GameProfile gameProfile = te.getPlayerProfile();
     final boolean isFemale = te.isStatueFemale();
     if(gameProfile != null) {
@@ -117,6 +122,7 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
         return minecraft.getSkinManager().loadSkin(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
       }
     }
+    // return default texture
     return isFemale ? ALEX_TEXTURE : STEVE_TEXTURE;
   }
   

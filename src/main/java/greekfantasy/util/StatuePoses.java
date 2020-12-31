@@ -39,13 +39,6 @@ public final class StatuePoses {
       .set(ModelPart.LEFT_LEG, 0, 0, -2)
       .set(ModelPart.RIGHT_LEG, 0, 0, 2);
   
-  public static final StatuePose STANDING_MENACING = new StatuePose()
-      .set(ModelPart.HEAD, 20, 0, 0)
-      .set(ModelPart.RIGHT_ARM, -150, 0F, -10F)
-      .set(ModelPart.LEFT_ARM, -12, 0F, -5F)
-      .set(ModelPart.LEFT_LEG, 0, 0, -2)
-      .set(ModelPart.RIGHT_LEG, 0, 0, 2);
-  
   public static final StatuePose WEEPING = new StatuePose()
       .set(ModelPart.HEAD, 12, 0, 0)
       .set(ModelPart.RIGHT_ARM, -125F, 0, 45F)
@@ -60,9 +53,16 @@ public final class StatuePoses {
       .set(ModelPart.LEFT_LEG, 0, 0, -4)
       .set(ModelPart.RIGHT_LEG, 0, 0, 4);
   
+  public static final StatuePose ZEUS_POSE = new StatuePose()
+      .set(ModelPart.HEAD, 10, 0, 0)
+      .set(ModelPart.RIGHT_ARM, -150, 0F, -10F)
+      .set(ModelPart.LEFT_ARM, -12, 0F, -5F)
+      .set(ModelPart.LEFT_LEG, 0, 0, -2)
+      .set(ModelPart.RIGHT_LEG, 0, 0, 2);
+  
   // Array to hold all the poses in this class
   public static final StatuePose[] POSES = new StatuePose[] {
-      STANDING_HOLDING, WALKING, STANDING_HOLDING_DRAMATIC, STANDING_RAISED, WEEPING, DAB, STANDING_MENACING
+      STANDING_HOLDING, WALKING, STANDING_HOLDING_DRAMATIC, STANDING_RAISED, WEEPING, DAB
   };
 
   /**

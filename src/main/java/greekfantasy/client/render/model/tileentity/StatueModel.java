@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
+import greekfantasy.GreekFantasy;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.ModelPart;
 import greekfantasy.util.StatuePose;
@@ -148,6 +149,8 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     for(final Entry<ModelPart, Collection<ModelRenderer>> e : ROTATION_MAP.entrySet()) {
       // set the rotations for each part in the list
       final Vector3f rotations = pose.getAngles(e.getKey());
+      // DEBUG
+//      GreekFantasy.LOGGER.debug("Setting rotations for " + e.getKey().getString() + " to " + rotations);
       for(final ModelRenderer m : e.getValue()) {
         m.rotateAngleX = rotations.getX();
         m.rotateAngleY = rotations.getY();
@@ -187,6 +190,7 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   
   public void render(final T entity, MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha, final boolean isUpper, final boolean isFemaleModel) {
+    this.setRotationAngles(entity, 0.0F);
     // update which parts can be shown for male/female
     this.bipedBodyChest.showModel = isFemaleModel;
     // determine which parts this block will be rendering

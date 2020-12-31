@@ -1,0 +1,21 @@
+{
+  "name": "greekfantasy:hades",
+  "female": false,
+  "left_hand": {
+  	"id": "minecraft:air",
+  	"Count": 1
+  },
+  "right_hand": {
+  	"id": "minecraft:skull",
+  	"Count": 1
+  },
+  "effects": [
+  	
+  ],
+  "kill_favor_map": {
+    
+  },
+  "item_favor_map": {
+  	
+  }
+}
