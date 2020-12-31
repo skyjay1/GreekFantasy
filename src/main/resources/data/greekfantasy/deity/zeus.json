@@ -2,7 +2,7 @@
   "name": "greekfantasy:zeus",
   "female": false,
   "left_hand": {
-  	"id": "minecraft:air",
+  	"id": "minecraft:oak_sapling",
   	"Count": 1
   },
   "right_hand": {

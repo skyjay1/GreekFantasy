@@ -28,8 +28,8 @@ public class Deity implements IDeity {
   public static final Codec<Deity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       ResourceLocation.CODEC.fieldOf("name").forGetter(Deity::getName),
       Codec.BOOL.fieldOf("female").forGetter(Deity::isFemale),
-      ItemStack.CODEC.fieldOf("left_hand").forGetter(Deity::getLeftHandItem),
-      ItemStack.CODEC.fieldOf("right_hand").forGetter(Deity::getRightHandItem),
+      ItemStack.CODEC.optionalFieldOf("left_hand", ItemStack.EMPTY).forGetter(Deity::getLeftHandItem),
+      ItemStack.CODEC.optionalFieldOf("right_hand", ItemStack.EMPTY).forGetter(Deity::getRightHandItem),
       FavorEffect.CODEC.listOf().fieldOf("effects").forGetter(Deity::getFavorEffects),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("kill_favor_map").forGetter(Deity::getKillFavorModifiers),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("item_favor_map").forGetter(Deity::getItemFavorModifiers)
@@ -44,8 +44,9 @@ public class Deity implements IDeity {
   private final Map<ResourceLocation, Integer> itemFavorMap;
   private final List<FavorEffect> favorEffects;
 
-  private Deity(final ResourceLocation lName,  final boolean lIsFemale, final ItemStack lLeftHandItem, final ItemStack lRightHandItem, 
-      final List<FavorEffect> lFavorEffects, final Map<ResourceLocation, Integer> lKillFavorMap, final Map<ResourceLocation, Integer> lItemFavorMap) {
+  private Deity(final ResourceLocation lName,  final boolean lIsFemale, final ItemStack lLeftHandItem, 
+      final ItemStack lRightHandItem, final List<FavorEffect> lFavorEffects, 
+      final Map<ResourceLocation, Integer> lKillFavorMap, final Map<ResourceLocation, Integer> lItemFavorMap) {
     name = lName;
     texture = new ResourceLocation(lName.getNamespace(), "textures/entity/deity/" + lName.getPath() + ".png");
     killFavorMap = ImmutableMap.copyOf(lKillFavorMap);

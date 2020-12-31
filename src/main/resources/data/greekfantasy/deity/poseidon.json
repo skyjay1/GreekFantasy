@@ -2,7 +2,7 @@
   "name": "greekfantasy:poseidon",
   "female": false,
   "left_hand": {
-  	"id": "minecraft:air",
+  	"id": "greekfantasy:conch",
   	"Count": 1
   },
   "right_hand": {

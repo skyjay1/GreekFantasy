@@ -164,6 +164,10 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   @Override
   public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
+    // do not open gui for wooden statues
+    if(this.statueMaterial == StatueBlock.StatueMaterial.WOOD) {
+      return ActionResultType.PASS;
+    }
     // prepare to interact with this block
     final BlockPos tePos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos;
     final TileEntity te = worldIn.getTileEntity(tePos);

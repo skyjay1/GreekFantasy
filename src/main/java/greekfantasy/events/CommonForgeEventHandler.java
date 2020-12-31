@@ -97,11 +97,11 @@ public class CommonForgeEventHandler {
         // save XP value
         int xp = player.experienceTotal;
         // remove XP from player
-        player.addExperienceLevel(-xp);
+        player.addExperienceLevel(-(player.experienceLevel + 1));
         // give XP to shade and spawn into world
         final ShadeEntity shade = GFRegistry.SHADE_ENTITY.create(player.getEntityWorld());
         shade.setLocationAndAngles(player.getPosX(), player.getPosY(), player.getPosZ(), player.rotationYaw, player.rotationPitch);
-        shade.setStoredXP(xp);
+        shade.setStoredXP((int)(xp * (0.4F + player.getRNG().nextFloat() * 0.2F)));
         shade.setOwnerUniqueId(PlayerEntity.getOfflineUUID(player.getDisplayName().getUnformattedComponentText()));
         shade.enablePersistence();
         player.getEntityWorld().addEntity(shade);

@@ -704,6 +704,8 @@ public final class GFRegistry {
     return new StatueBlock(material, te -> {
         te.setStatuePose(pose);
         te.setDeityName(deityId.toString());
+        // DEBUG
+        GreekFantasy.LOGGER.debug("StatueTileEntityInit consumer - " + te.getDeity().toString());
         te.setItem(te.getDeity().getRightHandItem(), HandSide.RIGHT);
         te.setItem(te.getDeity().getLeftHandItem(), HandSide.LEFT);
       }, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(15.0F, 6000.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> material.getLightLevel()), deityId);
