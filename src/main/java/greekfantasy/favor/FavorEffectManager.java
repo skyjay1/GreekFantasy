@@ -11,7 +11,9 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.FunctionObject;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.server.MinecraftServer;
@@ -42,10 +44,12 @@ public class FavorEffectManager {
     if(server != null) {
       boolean flag = false;
       final FavorEffect effect = deity.getRandomEffect(playerIn.getRNG(), info.getLevel());
-      // attempt to run the function, summon, or potion effect (exclusively, in that order)
+      // attempt to run the function, summon, item, or potion effect (exclusively, in that order)
       if(functionFavorEffect(server, worldIn, playerIn, effect.getFunction())) {
         flag = true;
       } else if(summonFavorEffect(worldIn, playerIn, effect.getSummon())) {
+        flag = true;
+      } else if(itemFavorEffect(playerIn, effect.getItem())) {
         flag = true;
       } else if(potionFavorEffect(playerIn, effect.getPotion())) {
         flag = true;
@@ -74,6 +78,25 @@ public class FavorEffectManager {
       // DEBUG
       GreekFantasy.LOGGER.debug("Potion favor effect is running...");
       return playerIn.addPotionEffect(EffectInstance.read(potionTag.get()));
+    }
+    return false;
+  }
+  
+  
+  /**
+   * Gives an ItemStack to the player by spawning an ItemEntity at the player's position
+   * @param playerIn the player
+   * @param itemTag an optional containing the ItemStack (or empty)
+   * @return true if the item was successfully added
+   */
+  private static boolean itemFavorEffect(final PlayerEntity playerIn, final Optional<ItemStack> itemTag) {
+    if(itemTag.isPresent()) {
+      // DEBUG
+      GreekFantasy.LOGGER.debug("Item favor effect is running...");
+      ItemEntity item = playerIn.entityDropItem(itemTag.get());
+      if(item != null) {
+        item.setNoPickupDelay();
+      }
     }
     return false;
   }

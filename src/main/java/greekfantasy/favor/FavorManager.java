@@ -23,7 +23,7 @@ public class FavorManager {
    * @param favor the player's favor capability
    */
   public static void onPlayerTick(final PlayerEntity player, final IFavor favor) {
-    final long time = player.getEntityWorld().getGameTime();
+    final long time = player.getEntityWorld().getGameTime() + player.getEntityId() * 3;
     // decrease all favor 
     if(player.ticksExisted > 10 && GreekFantasy.CONFIG.doesFavorDecrease() && time % GreekFantasy.CONFIG.getFavorDecreaseInterval() == 0) {
       favor.forEach((d, f) -> f.depleteFavor(player, d, 1, Source.PASSIVE));

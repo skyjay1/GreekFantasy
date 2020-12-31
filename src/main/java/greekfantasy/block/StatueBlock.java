@@ -42,7 +42,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.HandSide;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -186,6 +185,8 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
           }
           // print current favor level
           i.sendStatusMessage(playerIn, teDeity);
+          // DEBUG
+          GreekFantasy.LOGGER.debug(teDeity.toString());
         });
         return ActionResultType.SUCCESS;
       } 
@@ -243,11 +244,6 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   public TileEntity createTileEntity(final BlockState state, final IBlockReader world) {
     final StatueTileEntity te = GFRegistry.STATUE_TE.create();
     te.setUpper(state.get(HALF) == DoubleBlockHalf.UPPER);
-    if(hasDeity()) {
-      te.setDeityName(deity.toString());
-      te.setItem(te.getDeity().getRightHandItem(), HandSide.RIGHT);
-      te.setItem(te.getDeity().getLeftHandItem(), HandSide.LEFT);
-    }
     tileEntityInit.accept(te);
     return te;
   }

@@ -376,7 +376,6 @@ public final class GFRegistry {
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "marble");
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
     
-    final AbstractBlock.Properties deityStatueProperties = Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(15.0F, 6000.0F).sound(SoundType.STONE).notSolid();
     event.getRegistry().registerAll(
         new ReedsBlock(AbstractBlock.Properties.create(Material.OCEAN_PLANT).doesNotBlockMovement().zeroHardnessAndResistance().tickRandomly().sound(SoundType.CROP))
           .setRegistryName(MODID, "reeds"),
@@ -403,12 +402,12 @@ public final class GFRegistry {
           te.setStatueFemale(true);
           te.setItem(new ItemStack(Items.SOUL_TORCH), HandSide.RIGHT);
         }).setRegistryName(MODID, "palladium"),
-        new StatueBlock(StatueBlock.StatueMaterial.MARBLE, te -> te.setStatuePose(StatuePoses.ZEUS_POSE), deityStatueProperties, new ResourceLocation(MODID, "zeus"))
-          .setRegistryName(MODID, "altar_zeus"),
-        new StatueBlock(StatueBlock.StatueMaterial.MARBLE, te -> te.setStatuePose(StatuePoses.ZEUS_POSE), deityStatueProperties, new ResourceLocation(MODID, "hades"))
+        makeDeityStatue("hades", StatuePoses.ZEUS_POSE)
           .setRegistryName(MODID, "altar_hades"),
-        new StatueBlock(StatueBlock.StatueMaterial.MARBLE, te -> te.setStatuePose(StatuePoses.ZEUS_POSE), deityStatueProperties, new ResourceLocation(MODID, "poseidon"))
+        makeDeityStatue("poseidon", StatuePoses.ZEUS_POSE)
           .setRegistryName(MODID, "altar_poseidon"),
+        makeDeityStatue("zeus", StatuePoses.ZEUS_POSE)
+          .setRegistryName(MODID, "altar_zeus"),
         new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
           .setRegistryName(MODID, "terracotta_vase"),
         new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
@@ -691,6 +690,23 @@ public final class GFRegistry {
       final EntitySpawnPlacementRegistry.IPlacementPredicate<T> placement = (entity, world, reason, pos, rand) -> DIMENSION_MOB_PLACEMENT.test(world) && placementPredicate.test(entity, world, reason, pos, rand);
       EntitySpawnPlacementRegistry.register(entityType, placementType, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, placement);
     }
+  }
+  
+  /**
+   * Creates a StatueBlock that is associated with a specific IDeity
+   * @param deityName the deity name
+   * @param pose the statue's initial pose
+   * @return the StatueBlock (registry name is not set)
+   */
+  private static Block makeDeityStatue(final String deityName, final StatuePose pose) {
+    final ResourceLocation deityId = new ResourceLocation(MODID, deityName);
+    final StatueBlock.StatueMaterial material = StatueBlock.StatueMaterial.LIMESTONE;
+    return new StatueBlock(material, te -> {
+        te.setStatuePose(pose);
+        te.setDeityName(deityId.toString());
+        te.setItem(te.getDeity().getRightHandItem(), HandSide.RIGHT);
+        te.setItem(te.getDeity().getLeftHandItem(), HandSide.LEFT);
+      }, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(15.0F, 6000.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> material.getLightLevel()), deityId);
   }
   
   private static void registerLogLeavesPlanksEtc(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {

@@ -2,12 +2,13 @@ package greekfantasy.favor;
 
 import greekfantasy.events.FavorChangedEvent;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
 
 public class FavorLevel {
   
-  public static final int MAX_LEVEL = 20;
+  public static final int MAX_LEVEL = 10;
   public static final long MAX_FAVOR = calculateFavor(MAX_LEVEL);
   
   public static final String FAVOR = "Favor";
@@ -78,7 +79,7 @@ public class FavorLevel {
    * @param deity the deity associated with this favor level
    */
   public void sendStatusMessage(final PlayerEntity playerIn, final IDeity deity) {
-    playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", deity.getText(), getFavor(), getFavorToNextLevel(), getLevel()), false);
+    playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", deity.getText(), getFavor(), getFavorToNextLevel(), getLevel()).mergeStyle(TextFormatting.LIGHT_PURPLE), false);
   }
   
   @Override

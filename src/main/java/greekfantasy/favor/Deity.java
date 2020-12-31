@@ -21,33 +21,31 @@ import net.minecraft.util.ResourceLocation;
 public class Deity implements IDeity {
   
   public static final Deity EMPTY = new Deity(
-      new ResourceLocation(GreekFantasy.MODID, "null"),
-      Maps.newHashMap(), Maps.newHashMap(), Arrays.asList(), 
-      false, ItemStack.EMPTY, ItemStack.EMPTY);
+      new ResourceLocation(GreekFantasy.MODID, "null"), 
+      false, ItemStack.EMPTY, ItemStack.EMPTY, Arrays.asList(),
+      Maps.newHashMap(), Maps.newHashMap());
   
   public static final Codec<Deity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       ResourceLocation.CODEC.fieldOf("name").forGetter(Deity::getName),
-      Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("kill_favor_map").forGetter(Deity::getKillFavorModifiers),
-      Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("item_favor_map").forGetter(Deity::getItemFavorModifiers),
-      FavorEffect.CODEC.listOf().fieldOf("effects").forGetter(Deity::getFavorEffects),
       Codec.BOOL.fieldOf("female").forGetter(Deity::isFemale),
       ItemStack.CODEC.fieldOf("left_hand").forGetter(Deity::getLeftHandItem),
-      ItemStack.CODEC.fieldOf("right_hand").forGetter(Deity::getRightHandItem)
+      ItemStack.CODEC.fieldOf("right_hand").forGetter(Deity::getRightHandItem),
+      FavorEffect.CODEC.listOf().fieldOf("effects").forGetter(Deity::getFavorEffects),
+      Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("kill_favor_map").forGetter(Deity::getKillFavorModifiers),
+      Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("item_favor_map").forGetter(Deity::getItemFavorModifiers)
     ).apply(instance, Deity::new));
   
   private final ResourceLocation name;
   private final ResourceLocation texture;
-  private final Map<ResourceLocation, Integer> killFavorMap;
-  private final Map<ResourceLocation, Integer> itemFavorMap;
-  private final List<FavorEffect> favorEffects;
   private final boolean isFemale;
   private final ItemStack leftHandItem;
   private final ItemStack rightHandItem;
+  private final Map<ResourceLocation, Integer> killFavorMap;
+  private final Map<ResourceLocation, Integer> itemFavorMap;
+  private final List<FavorEffect> favorEffects;
 
-  private Deity(final ResourceLocation lName, final Map<ResourceLocation, Integer> lKillFavorMap, 
-      final Map<ResourceLocation, Integer> lItemFavorMap,
-      final List<FavorEffect> lFavorEffects, final boolean lIsFemale, 
-      final ItemStack lLeftHandItem, final ItemStack lRightHandItem) {
+  private Deity(final ResourceLocation lName,  final boolean lIsFemale, final ItemStack lLeftHandItem, final ItemStack lRightHandItem, 
+      final List<FavorEffect> lFavorEffects, final Map<ResourceLocation, Integer> lKillFavorMap, final Map<ResourceLocation, Integer> lItemFavorMap) {
     name = lName;
     texture = new ResourceLocation(lName.getNamespace(), "textures/entity/deity/" + lName.getPath() + ".png");
     killFavorMap = ImmutableMap.copyOf(lKillFavorMap);
@@ -63,15 +61,6 @@ public class Deity implements IDeity {
 
   @Override
   public ResourceLocation getTexture() { return texture; }
-
-  @Override
-  public Map<ResourceLocation, Integer> getKillFavorModifiers() { return killFavorMap; }
-
-  @Override
-  public Map<ResourceLocation, Integer> getItemFavorModifiers() { return itemFavorMap; }
-
-  @Override
-  public List<FavorEffect> getFavorEffects() { return favorEffects; }
   
   @Override
   public boolean isFemale() { return isFemale; }
@@ -81,15 +70,24 @@ public class Deity implements IDeity {
 
   @Override
   public ItemStack getLeftHandItem() { return leftHandItem; }
-  
+
+  @Override
+  public Map<ResourceLocation, Integer> getKillFavorModifiers() { return killFavorMap; }
+
+  @Override
+  public Map<ResourceLocation, Integer> getItemFavorModifiers() { return itemFavorMap; }
+
+  @Override
+  public List<FavorEffect> getFavorEffects() { return favorEffects; }
+ 
   @Override
   public String toString() {
     final StringBuilder b = new StringBuilder("Deity:");
     b.append(" name[").append(name.toString()).append("]");
     b.append(" leftHand[").append(leftHandItem.toString()).append("]");
     b.append(" rightHand[").append(rightHandItem.toString()).append("]");
-//    b.append(" female[").append(isFemale).append("]");
-//    b.append("\nfavorEffects[").append(favorEffects.toString()).append("]");
+    b.append(" female[").append(isFemale).append("]");
+    b.append("\nfavorEffects[").append(favorEffects.toString()).append("]");
 //    b.append("\nkillFavorMap[").append(killFavorMap.toString()).append("]");
 //    b.append("\nitemFavorMap[").append(itemFavorMap.toString()).append("]");
     return b.toString();
