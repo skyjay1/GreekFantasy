@@ -49,7 +49,7 @@ public class PanfluteScreen extends Screen {
   private final ItemStack panfluteItem;
   
   private ResourceLocation selectedSong = PanfluteItem.DEFAULT_SONG; 
-  private ScrollButton scrollButton;
+  private ScrollButton<PanfluteScreen> scrollButton;
   
   /** Number of pixels between left side of screen and left side of gui **/
   private int guiLeft;
@@ -89,8 +89,8 @@ public class PanfluteScreen extends Screen {
     // add 'done' button
     addButton(new Button(guiLeft, guiTop + SCREEN_HEIGHT + 4, SCREEN_WIDTH, 20, new TranslationTextComponent("gui.done"), c -> this.minecraft.displayGuiScreen(null)));
     // add scroll button
-    scrollButton = addButton(new ScrollButton(this, scrollEnabled, guiLeft + SCROLL_LEFT, guiTop + SCROLL_TOP, SCROLL_WIDTH, SCROLL_HEIGHT, 
-        0, SCREEN_HEIGHT + 2 * BTN_HEIGHT, SCREEN_TEXTURE, b -> isScrolling = true, b -> {
+    scrollButton = addButton(new ScrollButton<>(this, guiLeft + SCROLL_LEFT, guiTop + SCROLL_TOP, SCROLL_WIDTH, SCROLL_HEIGHT, 
+        0, SCREEN_HEIGHT + 2 * BTN_HEIGHT, SCREEN_TEXTURE, s -> s.scrollEnabled, b -> isScrolling = true, b -> {
           updateScroll(b.getScrollAmount());
           isScrolling = false;
         }));
@@ -112,7 +112,7 @@ public class PanfluteScreen extends Screen {
     this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
     this.blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // draw title
-    drawCenteredString(matrixStack, this.font, this.getTitle(), this.width / 2, this.guiTop + 8, 16777215);
+    drawCenteredString(matrixStack, this.font, this.getTitle(), this.width / 2, this.guiTop + 8, 0xFFFFFF);
     // update scroll bar
     if (this.isScrolling && this.scrollEnabled) {
       updateScroll(this.scrollButton.getScrollAmount());

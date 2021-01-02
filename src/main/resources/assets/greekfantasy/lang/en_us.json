@@ -188,6 +188,7 @@
   "gui.statue.right_arm": "Right Arm",
   "gui.statue.left_leg": "Left Leg",
   "gui.statue.right_leg": "Right Leg",
+  "gui.mirror.entity": "Entity",
   "gui.panflute.title": "Panflute Songs",
   "song.augustin.name": "O du lieber Augustin",
   "song.augustin.credits": "Traditional Austrian",
@@ -206,6 +207,9 @@
   "deity.greekfantasy.zeus": "Zeus",
   "deity.greekfantasy.hades": "Hades (WIP)",
   "deity.greekfantasy.poseidon": "Poseidon (WIP)",
+  "favor.favor": "Favor",
+  "favor.level": "Level",
+  "favor.next_level": "Next level",
   "favor.effect.positive": "Your high favor earned a blessing from %1$s",
   "favor.effect.negative": "Your low favor brought a curse from %1$s",
   "favor.current_favor": "Your favor with %1$s is %2$s / %3$s (Level %4$s)"

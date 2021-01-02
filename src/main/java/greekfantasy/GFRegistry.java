@@ -12,7 +12,10 @@ import greekfantasy.effect.*;
 import greekfantasy.enchantment.*;
 import greekfantasy.entity.*;
 import greekfantasy.entity.misc.*;
+import greekfantasy.favor.Favor;
+import greekfantasy.favor.IFavor;
 import greekfantasy.gui.StatueContainer;
+import greekfantasy.gui.DeityContainer;
 import greekfantasy.item.*;
 import greekfantasy.tileentity.*;
 import greekfantasy.tileentity.MobHeadTileEntity.HeadType;
@@ -248,6 +251,8 @@ public final class GFRegistry {
   // Container Type //
   @ObjectHolder("statue_container")
   public static final ContainerType<StatueContainer> STATUE_CONTAINER = null;
+  @ObjectHolder("deity_container")
+  public static final ContainerType<DeityContainer> DEITY_CONTAINER = null;
   
   // Effect //
   @ObjectHolder("stunned")
@@ -355,7 +360,7 @@ public final class GFRegistry {
   @SubscribeEvent
   public static void registerContainers(final RegistryEvent.Register<ContainerType<?>> event) {
     GreekFantasy.LOGGER.debug("registerContainers");
-    ContainerType<StatueContainer> containerType = IForgeContainerType.create((windowId, inv, data) -> {
+    ContainerType<StatueContainer> statueContainer = IForgeContainerType.create((windowId, inv, data) -> {
       final boolean isFemale = data.readBoolean();
       final BlockPos blockpos = data.readBlockPos();
       final CompoundNBT poseTag = data.readCompoundTag();
@@ -364,7 +369,13 @@ public final class GFRegistry {
       final Direction facing = Direction.byHorizontalIndex(data.readByte());
       return new StatueContainer(windowId, inv, new Inventory(2), pose, isFemale, name, blockpos, facing);
     });
-    event.getRegistry().register(containerType.setRegistryName(MODID, "statue_container"));
+    ContainerType<DeityContainer> deityContainer = IForgeContainerType.create((windowId, inv, data) -> {
+      final IFavor favor = GreekFantasy.FAVOR.getDefaultInstance();
+      GreekFantasy.FAVOR.readNBT(favor, null, data.readCompoundTag());
+      return new DeityContainer(windowId, inv, favor);
+    });
+    event.getRegistry().register(statueContainer.setRegistryName(MODID, "statue_container"));
+    event.getRegistry().register(deityContainer.setRegistryName(MODID, "deity_container"));
   }
 
   @SubscribeEvent

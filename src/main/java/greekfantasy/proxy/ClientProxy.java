@@ -2,10 +2,13 @@ package greekfantasy.proxy;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.gui.DeityScreen;
 import greekfantasy.client.gui.StatueScreen;
 import greekfantasy.client.render.*;
-import greekfantasy.client.render.tileentity.*;
-import greekfantasy.entity.misc.*;
+import greekfantasy.client.render.tileentity.MobHeadTileEntityRenderer;
+import greekfantasy.client.render.tileentity.StatueTileEntityRenderer;
+import greekfantasy.client.render.tileentity.VaseTileEntityRenderer;
+import greekfantasy.entity.misc.DragonToothEntity;
 import greekfantasy.events.ClientForgeEventHandler;
 import greekfantasy.events.ClientModEventHandler;
 import net.minecraft.client.Minecraft;
@@ -83,6 +86,7 @@ public class ClientProxy extends Proxy {
   public void registerContainerRenders() {
     GreekFantasy.LOGGER.debug("registerContainerRenders");
     ScreenManager.registerFactory(GFRegistry.STATUE_CONTAINER, StatueScreen::new);
+    ScreenManager.registerFactory(GFRegistry.DEITY_CONTAINER, DeityScreen::new);
   }
   
   @Override
