@@ -11,6 +11,7 @@ __Key:__
 - _ Config option for winged sandals to enable flight?
 - _ Deity doesn't set items from JSON correctly
 - _ Arion needs bug fixes (tame *only* with gold, etc)
+- _ Swine effect not syncing
 
 ## Entity basics
 
@@ -44,7 +45,7 @@ __Key:__
 - X X X X X Boss: Talos
 - X X X X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
-- X X X _ X Miniboss: Medusa
+- X X X X X Miniboss: Medusa
 - X X X _ X Fury
 - X X _ _ X Drakaina
 - X X X X _ Arion (very fast horse, tamed with gold)
@@ -88,7 +89,7 @@ __Key:__
 
 - X Favor (capability)
 - X Altars (statues)
-- X Gods *or* Muses?
+- X Gods
 - X Rewards and punishments
 - X Deity datapack support
 - X Favor GUI

@@ -23,6 +23,7 @@ import greekfantasy.favor.Favor;
 import greekfantasy.favor.FavorManager;
 import greekfantasy.favor.IFavor;
 import greekfantasy.network.SPanfluteSongPacket;
+import greekfantasy.network.SSwineEffectPacket;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.PanfluteSong;
 import net.minecraft.entity.Entity;
@@ -66,6 +67,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -195,6 +197,20 @@ public class CommonForgeEventHandler {
         // clear the forced pose
         event.player.setForcedPose(null);
       }
+    }
+  }
+  
+  /**
+   * Used to notify the client when a server-side entity receives the Swine effect,
+   * since this is not usually synced and the client needs it to affect rendering.
+   * @param event the potion added event
+   */
+  @SubscribeEvent
+  public static void onAddPotion(final PotionEvent.PotionAddedEvent event) {
+    if (!event.getEntityLiving().getEntityWorld().isRemote() && GreekFantasy.CONFIG.isSwineEnabled() 
+        && GreekFantasy.CONFIG.canSwineApply(event.getEntityLiving().getType().getRegistryName().toString())) {
+      final int id = event.getEntityLiving().getEntityId();
+      GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSwineEffectPacket(id, event.getPotionEffect().getDuration()));
     }
   }
   
