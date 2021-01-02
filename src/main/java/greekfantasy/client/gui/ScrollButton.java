@@ -82,14 +82,27 @@ public class ScrollButton<T extends Screen> extends Button {
     }
   }
   
-  private void updateScrollAmount(final double mouseX, final double mouseY) {
+  @Override
+  public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
     if(enabled.test(screen)) {
-      scrollAmount = MathHelper.clamp((float)(mouseY - this.y) / (float)this.height, 0.0F, 1.0F);
+      scrollStartHandler.accept(this);
+      scrollAmount = MathHelper.clamp((float)(scrollAmount - delta), 0.0F, 1.0F);
+      scrollEndHandler.accept(this);
+      return true;
     }
+    return false;
+  }
+  
+  private void updateScrollAmount(final double mouseX, final double mouseY) {
+    scrollAmount = MathHelper.clamp((float)(mouseY - this.y) / (float)this.height, 0.0F, 1.0F);
   }
   
   public float getScrollAmount() {
     return scrollAmount;
   }
   
+  public void resetScroll() {
+    scrollAmount = 0.0F;
+    scrollEndHandler.accept(this);
+  }
 }

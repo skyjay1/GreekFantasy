@@ -100,7 +100,11 @@
   	"greekfantasy:elpis": -20,
     "minecraft:cow": -2,
   	"minecraft:sheep": -2,
-  	"minecraft:villager": -10
+  	"minecraft:villager": -10,
+  	"greekfantasy:orthus": 20,
+    "greekfantasy:cerberus": -2,
+  	"greekfantasy:satyr": -2,
+  	"greekfantasy:charybdis": 10
   },
   "item_favor_map": {
   	"greekfantasy:ambrosia": 80,

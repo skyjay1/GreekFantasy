@@ -91,8 +91,7 @@ __Key:__
 - X Gods *or* Muses?
 - X Rewards and punishments
 - X Deity datapack support
-- _ Favor GUI (using mirror temporarily)
-- _ JEI compatibility
+- X Favor GUI
 - _ Datapack support: Dynamically register blocks / itemblocks for altars
 
 ## Structures

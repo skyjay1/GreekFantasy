@@ -10,6 +10,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.gui.DeityScreen.Mode;
 import greekfantasy.item.PanfluteItem;
 import greekfantasy.network.CUpdatePanflutePacket;
 import greekfantasy.util.PanfluteSong;
@@ -127,6 +128,12 @@ public class PanfluteScreen extends Screen {
     GreekFantasy.CHANNEL.sendToServer(new CUpdatePanflutePacket(this.itemSlot, this.selectedSong));
     super.onClose();
   }
+  
+  @Override
+  public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {
+    double multiplier = 1.0F / this.songButtons.size();
+    return this.scrollButton.mouseScrolled(mouseX, mouseY, scrollAmount * multiplier);
+ }
   
   protected void updateScroll(final float amount) {
     final int startIndex = (int) Math.round(amount * (this.songButtons.size() - BTN_VISIBLE));

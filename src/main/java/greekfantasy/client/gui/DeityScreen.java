@@ -3,6 +3,7 @@ package greekfantasy.client.gui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -15,6 +16,7 @@ import greekfantasy.favor.IDeity;
 import greekfantasy.favor.IFavor;
 import greekfantasy.gui.DeityContainer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -22,7 +24,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -45,8 +46,8 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   
   private static final int FAVOR_WIDTH = 69;
   private static final int FAVOR_HEIGHT = 86;
-  private static final int FAVOR_LEFT = 7;
-  private static final int FAVOR_TOP = 21 + 9;
+  private static final int FAVOR_LEFT = 9;
+  private static final int FAVOR_TOP = 30;
   
   private static final int BTN_LEFT = 7;
   private static final int BTN_TOP = 111;
@@ -54,33 +55,30 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private static final int BTN_HEIGHT = 16;
 
   private static final int ITEM_LEFT = 80;
-  private static final int ITEM_TOP = FAVOR_TOP;
-  private static final int ITEM_WIDTH = 18;
+  private static final int ITEM_TOP = 21;
+  private static final int ITEM_WIDTH = 48;
   private static final int ITEM_HEIGHT = 18;
-  private static final int ITEM_COUNT_X = 5;
+  private static final int ITEM_COUNT_X = 2;
   private static final int ITEM_COUNT_Y = 7;
   
   private static final int ENTITY_LEFT = ITEM_LEFT;
-  private static final int ENTITY_TOP = ITEM_TOP;
-  private static final int ENTITY_COUNT_Y = 14;
-  private static final int ENTITY_WIDTH = ITEM_WIDTH * ITEM_COUNT_X;
+  private static final int ENTITY_TOP = 30;
+  private static final int ENTITY_COUNT_Y = 13;
+  private static final int ENTITY_WIDTH = 90;
   
   private static final int SCROLL_LEFT = 174;
-  private static final int SCROLL_TOP = FAVOR_TOP + 1;
+  private static final int SCROLL_TOP = 22;
   private static final int SCROLL_WIDTH = 14;
   private static final int SCROLL_HEIGHT = 124;
   
-  private final List<IDeity> deityList = new ArrayList<>();
-  private final List<List<Item>> itemList = new ArrayList<>();
-  private final List<List<EntityType<?>>> entityList = new ArrayList<>();
-  
+  private final List<IDeity> deityList = new ArrayList<>();  
   private final DeityScreen.TabButton[] tabButtons = new TabButton[TAB_COUNT];
-  private final DeityScreen.ItemButton[] itemButtons = new ItemButton[ITEM_COUNT_X * ITEM_COUNT_Y];
-  private final ITextComponent[] entityButtons = new ITextComponent[ENTITY_COUNT_Y];
+  private final List<List<DeityScreen.ItemButton>> itemButtons = new ArrayList<>();
+  private final List<List<DeityScreen.EntityButton>> entityButtons = new ArrayList<>();
   
   private ScrollButton<DeityScreen> scrollButton;
   
-  private int selectedDeity;
+  private int selected;
   
   private DeityScreen.Mode mode;
   
@@ -102,31 +100,39 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     if(deityList.isEmpty()) {
       // populate deity list (alphabetically)
       GreekFantasy.PROXY.DEITY.getValues().forEach(o -> deityList.add(o.orElse(Deity.EMPTY)));
-      Collections.sort(deityList, (d1, d2) -> d1.getText().getString().compareTo(d2.getText().getString()));
-      // add item modifier list for each deity
-      deityList.forEach(d -> {
-        final List<Item> dItemList = new ArrayList<>();
-        d.getItemFavorModifiers().forEach((r, i) -> {
-          dItemList.add(ForgeRegistries.ITEMS.getValue(r));
-          Collections.sort(dItemList, (i1, i2) -> d.getItemFavorModifier(i2) - d.getItemFavorModifier(i1));
-        });
-        itemList.add(dItemList);
-      });
+      deityList.sort((d1, d2) -> d1.getText().getString().compareTo(d2.getText().getString()));
       
-      // add entity type modifier list for each deity
-      deityList.forEach(d -> {
-        final List<EntityType<?>> dkillList = new ArrayList<>();
-        d.getKillFavorModifiers().forEach((r, i) -> {
-          dkillList.add(ForgeRegistries.ENTITIES.getValue(r));
-          Collections.sort(dkillList, (i1, i2) -> d.getKillFavorModifier(i2) - d.getKillFavorModifier(i1));
-        });
-        entityList.add(dkillList);
-      });
+      // populate favor modifier lists for each deity
+      for(int deityNum = 0, deityL = deityList.size(); deityNum < deityL; deityNum++) {
+        // determine which deity to populate
+        final IDeity d = deityList.get(deityNum);
+        
+        // add item modifier list for each deity
+        List<DeityScreen.ItemButton> itemButtonList = new ArrayList<>();
+        int itemNum = 0;
+        // create a button for each item and add it to this list
+        for(final Entry<ResourceLocation, Integer> e : d.getItemFavorModifiers().entrySet()) {
+          final Item item = ForgeRegistries.ITEMS.getValue(e.getKey());
+          itemButtonList.add(new ItemButton(itemNum++, this, item, e.getValue(), 0, 0));
+        }
+        itemButtonList.sort(DeityScreen.ItemButton::compareTo);
+        itemButtons.add(itemButtonList);
+        
+        // add entity type modifier list for each deity
+        final List<DeityScreen.EntityButton> entityButtonList = new ArrayList<>();
+        int entityNum = 0;
+        for(final Entry<ResourceLocation, Integer> e : d.getKillFavorModifiers().entrySet()) {
+          final EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(e.getKey());
+          DeityScreen.EntityButton button = new DeityScreen.EntityButton(entityNum++, this, entityType, e.getValue(), 0, 0);
+          entityButtonList.add(button);
+        }
+        entityButtonList.sort(DeityScreen.EntityButton::compareTo);
+        entityButtons.add(entityButtonList);
+      }
     }
-    
-    // determine default scroll
+    // default scroll settings
     isScrolling = false;
-    scrollEnabled = itemList.get(selectedDeity).size() > ITEM_COUNT_X * ITEM_COUNT_Y;
+    scrollEnabled = itemButtons.get(selected).size() > (ITEM_COUNT_X * ITEM_COUNT_Y);
   }
   
   @Override
@@ -142,9 +148,9 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       tabButtons[i] = addButton(new TabButton(this, i, deityList.get(i).getText(), guiLeft + (i * TAB_WIDTH), guiTop - TAB_HEIGHT + 4));
     }
     // add item buttons
-    for(int i = 0, l = ITEM_COUNT_X * ITEM_COUNT_Y; i < l; i++) {
-      itemButtons[i] = addButton(new ItemButton(this, guiLeft + ITEM_LEFT + (i % ITEM_COUNT_X) * ITEM_WIDTH, guiTop + ITEM_TOP + (i / ITEM_COUNT_X) * ITEM_HEIGHT));
-    }
+    itemButtons.forEach(l -> l.forEach(b -> addButton(b)));
+    // add entity type text components
+    entityButtons.forEach(l -> l.forEach(b -> addButton(b)));
     // add scroll button
     scrollButton = addButton(new ScrollButton<>(this, guiLeft + SCROLL_LEFT, guiTop + SCROLL_TOP, SCROLL_WIDTH, SCROLL_HEIGHT, 
         0, SCREEN_HEIGHT + 2 * BTN_HEIGHT, SCREEN_TEXTURE, s -> s.scrollEnabled, b -> isScrolling = true, b -> {
@@ -152,51 +158,28 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
           isScrolling = false;
         }));
     // add mode buttons
-    addButton(new FancyButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP, new TranslationTextComponent("entity.minecraft.item"), b -> updateMode(DeityScreen.Mode.ITEM)));
-    addButton(new FancyButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + BTN_HEIGHT + 4, new TranslationTextComponent("gui.mirror.entity"), b -> updateMode(DeityScreen.Mode.ENTITY)));
+    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP, new TranslationTextComponent("entity.minecraft.item"), DeityScreen.Mode.ITEM));
+    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + BTN_HEIGHT + 4, new TranslationTextComponent("gui.mirror.entity"), DeityScreen.Mode.ENTITY));
     // set selected deity now that things are nonnull
     setSelectedDeity(2);
   }
+
+  @Override
+  protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) { }
   
   @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-    this.renderBackground(matrixStack);
+    this.renderBackground(matrixStack); 
     // draw background image
     this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
     this.blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // draw title
-    drawString(matrixStack, this.font, deityList.get(selectedDeity).getText(), this.guiLeft + FAVOR_LEFT, this.guiTop + 12, 0xFFFFFF);
-    // update scroll bar
-    if (this.isScrolling && this.scrollEnabled) {
-      updateScroll(this.scrollButton.getScrollAmount());
-    }
-    // draw favor values
-    final FavorLevel level = favor.getFavor(deityList.get(selectedDeity));
-    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.favor")
-        .mergeStyle(TextFormatting.BLACK, TextFormatting.BOLD), 
-        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP, 0xFFFFFF);
-    this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(level.getFavor()))
-        .mergeStyle(TextFormatting.DARK_PURPLE), 
-        guiLeft + FAVOR_LEFT, guiTop + ENTITY_TOP + font.FONT_HEIGHT * 1, 0xFFFFFF);
-    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.level")
-        .mergeStyle(TextFormatting.BLACK, TextFormatting.BOLD), 
-        guiLeft + FAVOR_LEFT, guiTop + ENTITY_TOP + font.FONT_HEIGHT * 3, 0xFFFFFF);
-    this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(level.getLevel()))
-        .mergeStyle(TextFormatting.DARK_PURPLE), 
-        guiLeft + FAVOR_LEFT, guiTop + ENTITY_TOP + font.FONT_HEIGHT * 4, 0xFFFFFF);
-    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.next_level")
-        .mergeStyle(TextFormatting.BLACK, TextFormatting.BOLD), 
-        guiLeft + FAVOR_LEFT, guiTop + ENTITY_TOP + font.FONT_HEIGHT * 6, 0xFFFFFF);
-    this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(level.getFavorToNextLevel()))
-        .mergeStyle(TextFormatting.DARK_PURPLE), 
-        guiLeft + FAVOR_LEFT, guiTop + ENTITY_TOP + font.FONT_HEIGHT * 7, 0xFFFFFF);
-    // draw entity values
-    if(mode == DeityScreen.Mode.ENTITY) {
-      for(int i = 0, l = entityButtons.length; i < l; i++) {
-        int x = ENTITY_WIDTH - font.getStringWidth(entityButtons[i].getString());
-        this.font.func_243248_b(matrixStack, entityButtons[i], guiLeft + ENTITY_LEFT + x, guiTop + ENTITY_TOP + i * font.FONT_HEIGHT, 0xFFFFFF);
-      }
-    }
+    drawString(matrixStack, this.font, deityList.get(selected).getText(), this.guiLeft + FAVOR_LEFT, this.guiTop + 6, 0xFFFFFF);
+    // draw "favor modifiers" text
+    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.favor_modifiers").mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
+        guiLeft + (ITEM_LEFT + ITEM_WIDTH * 2) / 2, guiTop + 14, 0xFFFFFF);
+    // draw favor text
+    drawFavorText(matrixStack, mouseX, mouseY);        
     // draw buttons
     super.render(matrixStack, mouseX, mouseY, partialTicks);
     // draw hovering text LAST
@@ -207,8 +190,39 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     }
   }
   
+  @Override
+  public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {
+    double multiplier = 1.0D;
+    if(mode == Mode.ITEM) {
+      multiplier = 1.0F / (itemButtons.get(selected).size() / ITEM_COUNT_X);
+    } else if(mode == Mode.ENTITY) {
+      multiplier = 1.0F / entityButtons.get(selected).size();
+    }
+    return this.scrollButton.mouseScrolled(mouseX, mouseY, scrollAmount * multiplier);
+ }
+  
+  private void drawFavorText(MatrixStack matrixStack, int mouseX, int mouseY) {
+    // draw favor values
+    final FavorLevel level = favor.getFavor(deityList.get(selected));
+    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.favor").mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP, 0xFFFFFF);
+    final long curFavor = level.getFavor();
+    final long nextFavor = level.getFavorToNextLevel();
+    this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(curFavor + " / " + nextFavor))
+        .mergeStyle(TextFormatting.DARK_PURPLE), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 1, 0xFFFFFF);
+    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.level").mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 3, 0xFFFFFF);
+    this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(level.getLevel() + " / " + FavorLevel.MAX_LEVEL)).mergeStyle(TextFormatting.DARK_PURPLE), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 4, 0xFFFFFF);
+    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.next_level").mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 6, 0xFFFFFF);
+    this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(nextFavor - curFavor)).mergeStyle(TextFormatting.DARK_PURPLE), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 7, 0xFFFFFF);
+  }
+  
   private void setSelectedDeity(int index) {
-    selectedDeity = index;
+    selected = index;
     updateMode(Mode.ITEM);
   }
 
@@ -216,83 +230,139 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   protected void updateMode(final DeityScreen.Mode modeIn) {
     mode = modeIn;
     final boolean itemVisible = (mode == Mode.ITEM);
-    for(int i = 0, l = itemButtons.length; i < l; i++) {
-      itemButtons[i].visible = itemVisible;
+    itemButtons.get(selected).forEach(b -> b.visible = itemVisible);
+    if(modeIn == Mode.ITEM) {
+      scrollEnabled = itemButtons.get(selected).size() > (ITEM_COUNT_X * ITEM_COUNT_Y);
+    } else if(modeIn == Mode.ENTITY) {
+      scrollEnabled = entityButtons.get(selected).size() > ENTITY_COUNT_Y;
     }
-    if(mode == Mode.ITEM) {
-      scrollEnabled = itemList.get(selectedDeity).size() > ITEM_COUNT_X * ITEM_COUNT_Y;
-    } else if(mode == Mode.ENTITY) {
-      scrollEnabled = entityList.get(selectedDeity).size() > ENTITY_COUNT_Y;
+    // hide / show the proper item button lists
+    for(int i = 0, l = itemButtons.size(); i < l; i++) {
+      final boolean buttonsVisible = (i == selected && modeIn == Mode.ITEM);
+      itemButtons.get(i).forEach(b -> b.visible = buttonsVisible);
     }
+    // hide / show the proper entity button lists
+    for(int i = 0, l = entityButtons.size(); i < l; i++) {
+      final boolean buttonsVisible = (i == selected && modeIn == Mode.ENTITY);
+      entityButtons.get(i).forEach(b -> b.visible = buttonsVisible);
+    }
+    scrollButton.resetScroll();
     updateScroll(0.0F);
   }
 
   protected void updateScroll(final float amount) {
     if(mode == Mode.ITEM) {
-      // updatee item buttons using scroll value
-      int startIndex = (int) Math.round(amount * (this.itemList.get(selectedDeity).size() / (itemButtons.length)));
-      for(int i = 0, l = itemButtons.length, s = itemList.get(selectedDeity).size(); i < l; i++) {
-        Item item = (i + startIndex) >= s ? Items.AIR : itemList.get(selectedDeity).get(i + startIndex);
-        itemButtons[i].updateItem(item);
-      }
+      final int startIndex = (int) Math.round(amount * ((itemButtons.get(selected).size() / ITEM_COUNT_X) - ITEM_COUNT_Y));
+      itemButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
     } else if(mode == Mode.ENTITY) {
-      // update entity buttons
-      int startIndex = (int) Math.round(amount * (this.entityList.get(selectedDeity).size() / (entityButtons.length)));
-      for(int i = 0, l = entityButtons.length, s = entityList.get(selectedDeity).size(); i < l; i++) {
-        if(i + startIndex < s) {
-          // entity type is within list, update the text component
-          EntityType<?> entity = entityList.get(selectedDeity).get(i + startIndex);
-          final int modifier = deityList.get(selectedDeity).getKillFavorModifier(entity);
-          final TextFormatting color = modifier < 0 ? TextFormatting.DARK_RED : TextFormatting.DARK_GREEN;
-          String spaces = Math.abs(modifier) >= 100 ? " " : (Math.abs(modifier) >= 10 ? "  " : "   ");
-          entityButtons[i] = new TranslationTextComponent(entity.getTranslationKey()).mergeStyle(TextFormatting.BLACK)
-              .append(new StringTextComponent(":" + spaces).mergeStyle(TextFormatting.BLACK))
-              .append(new StringTextComponent((modifier < 0 ? "" : "+") + modifier).mergeStyle(color));
-        } else {
-          // entity type is not within list, clear the text component
-          entityButtons[i] = StringTextComponent.EMPTY;
-        }
-      }
+      final int startIndex = (int) Math.round(amount * (itemButtons.get(selected).size() - ENTITY_COUNT_Y));
+      entityButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
     }
   }
   
-  protected class ItemButton extends Button {
+  protected class ItemButton extends Button implements Comparable<ItemButton> {
     
-    private static final int ITEM_X = 0;
-    private static final int ITEM_Y = 207;
+    private final int index;
+    private final ItemStack item;
+    private final int value;
+    private ITextComponent valueText = StringTextComponent.EMPTY;
     
-    private ItemStack item = ItemStack.EMPTY;
-    private int itemValue;
-    
-    public ItemButton(final DeityScreen gui, final int x, final int y) {
+    public ItemButton(final int indexIn, final DeityScreen gui, final Item itemIn, final int itemValue, final int x, final int y) {
       super(x, y, ITEM_WIDTH, ITEM_HEIGHT, StringTextComponent.EMPTY, b -> {}, (b, m, bx, by) -> gui.renderTooltip(m, b.getMessage(), bx, by));
+      this.index = indexIn;
       this.visible = false;
+      this.visible = true;
+      item = new ItemStack(itemIn);
+      value = itemValue;
+      final String itemValueString = ((itemValue > 0) ? "+" : "") + itemValue;
+      final TextFormatting color = (itemValue > 0) ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
+      valueText = new StringTextComponent(itemValueString).mergeStyle(color);
+      this.setMessage(new TranslationTextComponent(item.getTranslationKey()).append(new StringTextComponent(" " + itemValueString).mergeStyle(color)));
     }
 
     @Override
     public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
-        final int xOffset = ITEM_X + (itemValue < 0 ? ITEM_WIDTH : 0);
-        final int yOffset = ITEM_Y;
-        // draw button background
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        DeityScreen.this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
-        this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
         // draw item
         DeityScreen.this.itemRenderer.renderItemIntoGUI(item, this.x + 1, this.y + 1);
+        // draw string
+        DeityScreen.this.font.func_243248_b(matrixStack, valueText, this.x + 20, this.y + (1 + DeityScreen.this.font.FONT_HEIGHT) / 2, 0xFFFFFF);
+      }
+    }
+
+    /**
+     * Determines whether this button should show on the screen, and if so,
+     * what y-position to assign in order to align with the current scroll value.
+     * @param startIndex the start index of the buttons that are currently visible,
+     * based on the scroll value
+     **/
+    public void updateLocation(final int startIndex) {
+      final int iIndex = (index / DeityScreen.ITEM_COUNT_X);
+      final int sIndex = (startIndex / DeityScreen.ITEM_COUNT_X) * DeityScreen.ITEM_COUNT_X;
+      if(iIndex < sIndex || iIndex >= (sIndex + DeityScreen.ITEM_COUNT_Y)) {
+        this.visible = false;
+        this.isHovered = false;
+      } else {
+        this.visible = true;
+        this.x = DeityScreen.this.guiLeft + DeityScreen.ITEM_LEFT + (index % 2) * ITEM_WIDTH;
+        this.y = DeityScreen.this.guiTop + DeityScreen.ITEM_TOP + DeityScreen.ITEM_HEIGHT * (iIndex - sIndex);
       }
     }
     
-    public void updateItem(final Item i) {
-      if(i == Items.AIR) {
+    @Override
+    public int compareTo(final DeityScreen.ItemButton button) {
+      return button.value - this.value;
+    }
+
+  }
+  
+  protected class EntityButton extends Button implements Comparable<DeityScreen.EntityButton> {
+    
+    private final int index;
+    private final int value;
+    private int rightAlign = -1;
+    
+    public EntityButton(final int indexIn, final DeityScreen gui, final EntityType<?> entityIn, final int entityValue, final int x, final int y) {
+      super(x, y, ENTITY_WIDTH, 9, StringTextComponent.EMPTY, b -> {});
+      index = indexIn;
+      value = entityValue;
+      final TextFormatting color = entityValue < 0 ? TextFormatting.DARK_RED : TextFormatting.DARK_GREEN;
+      String spaces = Math.abs(entityValue) >= 100 ? " " : (Math.abs(entityValue) >= 10 ? "  " : "   ");
+      this.setMessage(new TranslationTextComponent(entityIn.getTranslationKey()).mergeStyle(TextFormatting.BLACK)
+          .append(new StringTextComponent(":" + spaces).mergeStyle(TextFormatting.BLACK))
+          .append(new StringTextComponent((entityValue < 0 ? "" : "+") + entityValue).mergeStyle(color)));
+    }
+    
+    @Override
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+      if(this.visible) {
+        DeityScreen.this.font.func_243248_b(matrixStack, this.getMessage(), this.x, this.y, 0xFFFFFF);
+      }
+    }
+    
+    /**
+     * Determines whether this button should show on the screen, and if so,
+     * what y-position to assign in order to align with the current scroll value.
+     * @param startIndex the start index of the buttons that are currently visible,
+     * based on the scroll value
+     **/
+    public void updateLocation(final int startIndex) {
+      if(index < startIndex || index >= (startIndex + DeityScreen.ENTITY_COUNT_Y)) {
         this.visible = false;
+        this.isHovered = false;
       } else {
         this.visible = true;
-        item = new ItemStack(i);
-        itemValue = DeityScreen.this.deityList.get(selectedDeity).getItemFavorModifier(i);
-        final String title = ((itemValue > 0) ? ": +" : ": ") + itemValue;
-        this.setMessage(new TranslationTextComponent(item.getTranslationKey()).append(new StringTextComponent(title)));
+        this.y = DeityScreen.this.guiTop + DeityScreen.ENTITY_TOP + DeityScreen.this.font.FONT_HEIGHT * (index - startIndex);
+        if(rightAlign < 0) {
+          rightAlign = ENTITY_WIDTH - DeityScreen.this.font.getStringWidth(getMessage().getString());
+        }
+        this.x = DeityScreen.this.guiLeft + DeityScreen.ENTITY_LEFT + rightAlign;
       }
+    }
+
+    @Override
+    public int compareTo(DeityScreen.EntityButton button) {
+      return button.value - this.value;
     }
   }
   
@@ -317,7 +387,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         DeityScreen.this.getMinecraft().getTextureManager().bindTexture(TABS_TEXTURE);
         this.blit(matrixStack, this.x, this.y - selected, xOffset, yOffset - selected, this.width, this.height - selected);
         // draw item
-        DeityScreen.this.itemRenderer.renderItemIntoGUI(item, this.x + (this.width - ITEM_WIDTH) / 2, this.y + (this.height - ITEM_HEIGHT) / 2);
+        DeityScreen.this.itemRenderer.renderItemIntoGUI(item, this.x + (this.width - 16) / 2, this.y + (this.height - 16) / 2);
       }
     }
     
@@ -329,14 +399,17 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     }
     
     public boolean isSelected() {
-      return DeityScreen.this.selectedDeity == id;
+      return DeityScreen.this.selected == id;
     }
   }
   
-  protected class FancyButton extends Button {
+  protected class ModeButton extends Button {
+    
+    private final DeityScreen.Mode screenMode;
    
-    public FancyButton(final DeityScreen screenIn, final int x, final int y, final ITextComponent title, final IPressable pressedAction) {
-      super(x, y, BTN_WIDTH, BTN_HEIGHT, title, pressedAction);
+    public ModeButton(final DeityScreen screenIn, final int x, final int y, final ITextComponent title, final DeityScreen.Mode modeIn) {
+      super(x, y, BTN_WIDTH, BTN_HEIGHT, title, b -> screenIn.updateMode(modeIn));
+      screenMode = modeIn;
     }
 
     public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
@@ -352,17 +425,11 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     }
     
     protected boolean isSelected() {
-      return this.isHovered();
+      return this.isHovered() || DeityScreen.this.mode == screenMode;
     }
   }
   
   protected static enum Mode {
     ITEM, ENTITY;
-  }
-
-  @Override
-  protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
-    // TODO Auto-generated method stub
-    
   }
 }
