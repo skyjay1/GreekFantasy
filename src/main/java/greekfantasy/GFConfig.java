@@ -273,7 +273,7 @@ public class GFConfig {
     FAVOR_DECREASES = builder.comment("Whether favor tends toward zero over time")
         .define("favor_decreases", true);
     FAVOR_DECREASE_INTERVAL = builder.comment("Number of ticks between decreasing favor, if enabled")
-        .defineInRange("favor_decrease_interval", 3000L, 1L, 96000L);
+        .defineInRange("favor_decrease_interval", 4000L, 1L, 96000L);
     builder.pop();
     // mob spawns
     builder.push("mob_spawns");
