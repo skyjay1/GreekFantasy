@@ -2,8 +2,6 @@ package greekfantasy.events;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 
@@ -23,7 +21,6 @@ import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
 import greekfantasy.util.PalladiumSavedData;
-import greekfantasy.util.PanfluteSong;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -189,7 +186,7 @@ public class CommonForgeEventHandler {
    */
   @SubscribeEvent
   public static void onAddPotion(final PotionEvent.PotionAddedEvent event) {
-    if (!event.getEntityLiving().getEntityWorld().isRemote() && GreekFantasy.CONFIG.isSwineEnabled() 
+    if (!event.getEntityLiving().getEntityWorld().isRemote() && GreekFantasy.CONFIG.isSwineEnabled() && isSwine(event.getEntityLiving())
         && GreekFantasy.CONFIG.canSwineApply(event.getEntityLiving().getType().getRegistryName().toString())) {
       final int id = event.getEntityLiving().getEntityId();
       GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSwineEffectPacket(id, event.getPotionEffect().getDuration()));
@@ -217,7 +214,7 @@ public class CommonForgeEventHandler {
       LazyOptional<IFavor> original = event.getOriginal().getCapability(GreekFantasy.FAVOR);
       LazyOptional<IFavor> copy = event.getPlayer().getCapability(GreekFantasy.FAVOR);
       if(original.isPresent() && copy.isPresent()) {
-        original.ifPresent(f -> f.deserializeNBT(copy.orElseGet(null).serializeNBT()));
+        copy.ifPresent(f -> f.deserializeNBT(original.orElseGet(() -> GreekFantasy.FAVOR.getDefaultInstance()).serializeNBT()));
       }
     }
   }

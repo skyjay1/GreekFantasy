@@ -1,7 +1,6 @@
 package greekfantasy.client.gui;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -16,7 +15,6 @@ import greekfantasy.favor.IDeity;
 import greekfantasy.favor.IFavor;
 import greekfantasy.gui.DeityContainer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -226,7 +224,6 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     selected = index;
     updateMode(Mode.ITEM);
   }
-
   
   protected void updateMode(final DeityScreen.Mode modeIn) {
     mode = modeIn;
@@ -253,7 +250,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
 
   protected void updateScroll(final float amount) {
     if(mode == Mode.ITEM) {
-      final int startIndex = (int) Math.round(amount * ((itemButtons.get(selected).size() / ITEM_COUNT_X) - ITEM_COUNT_Y));
+      final int startIndex = (int) Math.round(amount * ((itemButtons.get(selected).size() / ITEM_COUNT_X) - ITEM_COUNT_Y + 1));
       itemButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
     } else if(mode == Mode.ENTITY) {
       final int startIndex = (int) Math.round(amount * (entityButtons.get(selected).size() - ENTITY_COUNT_Y));

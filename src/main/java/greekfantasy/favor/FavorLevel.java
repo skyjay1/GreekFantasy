@@ -40,6 +40,7 @@ public class FavorLevel {
    * @param playerIn the player whose favor is being modified
    * @param deityIn the deity for which the favor is being modified
    * @param toAdd the amount of favor to add or subtract
+   * @param source the cause for the change in favor
    * @return the updated favor value
    */
   public long addFavor(final PlayerEntity playerIn, final IDeity deityIn, final long toAdd, final FavorChangedEvent.Source source) {
@@ -54,9 +55,10 @@ public class FavorLevel {
    * Either adds or removes favor to tend toward zero
    * @param playerIn the player whose favor is being modified
    * @param deityIn the deity for which the favor is being modified
-   * @param toAdd the amount of favor to deplete (must be positive)
+   * @param toRemove the amount of favor to deplete (must be positive)
+   * @param source the cause for the favor depletion (usually PASSIVE)
    * @return the updated favor value
-   * @see #addFavor(PlayerEntity, IDeity, long)
+   * @see #addFavor(PlayerEntity, IDeity, long, greekfantasy.events.FavorChangedEvent.Source)
    */
   public long depleteFavor(final PlayerEntity playerIn, final IDeity deityIn, final long toRemove, final FavorChangedEvent.Source source) {
     return addFavor(playerIn, deityIn, Math.min(Math.abs(favor), Math.abs(toRemove)) * -1 * (long)Math.signum(favor), source);

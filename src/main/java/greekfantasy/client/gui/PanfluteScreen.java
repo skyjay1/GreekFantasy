@@ -10,7 +10,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.gui.DeityScreen.Mode;
 import greekfantasy.item.PanfluteItem;
 import greekfantasy.network.CUpdatePanflutePacket;
 import greekfantasy.util.PanfluteSong;

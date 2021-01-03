@@ -78,7 +78,6 @@ public class FavorManager {
    * @param entity the entity that was killed
    * @param playerIn the player
    * @param favor the player's favor (from capability)
-   * @return true if the kill affected the player's favor
    */
   public static void onKillEntity(final LivingEntity entity, final PlayerEntity playerIn, final IFavor favor) {
     IDeity deity;

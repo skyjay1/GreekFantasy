@@ -1,8 +1,8 @@
 {
   "name": "greekfantasy:hades",
   "female": false,
-  "right_hand": {
-  	"id": "minecraft:skull",
+  "left_hand": {
+  	"id": "minecraft:skeleton_skull",
   	"Count": 1
   },
   "effects": [

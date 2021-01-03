@@ -43,9 +43,9 @@ public class GenericJsonReloadListener<T> extends JsonReloadListener {
   }
   
   /**
-   * Adds a Deity to the map
+   * Adds an object to the map
    * @param id the resource location id
-   * @param effect the favor effect, or null
+   * @param obj the object, or null
    **/
   public void put(final ResourceLocation id, @Nullable final T obj) {
     OBJECTS.put(id, Optional.ofNullable(obj));
@@ -53,7 +53,7 @@ public class GenericJsonReloadListener<T> extends JsonReloadListener {
   
   /**
    * @param id a ResourceLocation name to retrieve
-   * @return an Optional containing the Deity if found, otherwise empty
+   * @return an Optional containing the object if found, otherwise empty
    **/
   public Optional<T> get(final ResourceLocation id) {
     if(!OBJECTS.containsKey(id)) {
@@ -63,12 +63,12 @@ public class GenericJsonReloadListener<T> extends JsonReloadListener {
     return OBJECTS.get(id);
   }
  
-  /** @return a collection of all Deitys **/
+  /** @return a collection of all objects **/
   public Collection<Optional<T>> getValues() {
     return OBJECTS.values();
   }
   
-  /** @return a collection of all Deity entries **/
+  /** @return a collection of all object entries **/
   public Set<Entry<ResourceLocation, Optional<T>>> getEntries() {
     return OBJECTS.entrySet();
   }

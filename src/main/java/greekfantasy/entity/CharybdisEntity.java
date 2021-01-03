@@ -165,7 +165,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   public boolean isNonBoss() { return false; }
   
   @Override
-  public boolean canDespawn(final double disToPlayer) { return this.ticksExisted > 11000 && disToPlayer > 64.0D; }
+  public boolean canDespawn(final double disToPlayer) { return this.ticksExisted > 9600 && disToPlayer > 32.0D; }
   
   @Override
   protected boolean canBeRidden(Entity entityIn) { return false; }
