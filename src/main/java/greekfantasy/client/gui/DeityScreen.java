@@ -212,7 +212,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 1, 0xFFFFFF);
     this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.level").mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 3, 0xFFFFFF);
-    this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(level.getLevel() + " / " + FavorLevel.MAX_LEVEL)).mergeStyle(TextFormatting.DARK_PURPLE), 
+    this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(level.getLevel() + " / " + (int)(FavorLevel.MAX_LEVEL * Math.signum(curFavor + 1)))).mergeStyle(TextFormatting.DARK_PURPLE), 
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 4, 0xFFFFFF);
     this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.next_level").mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 6, 0xFFFFFF);
