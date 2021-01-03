@@ -11,6 +11,7 @@ import greekfantasy.favor.FavorManager;
 import greekfantasy.favor.IDeity;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.tileentity.StatueTileEntity;
+import greekfantasy.util.PalladiumSavedData;
 import greekfantasy.util.StatuePose;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -46,6 +47,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -103,6 +105,17 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     FluidState fluid = context.getWorld().getFluidState(context.getPos());
     return this.getDefaultState().with(WATERLOGGED, fluid.isTagged(FluidTags.WATER)).with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
   }
+  
+  @SuppressWarnings("deprecation")
+  @Override
+  public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+    super.onBlockAdded(state, worldIn, pos, oldState, isMoving);
+    // update palladium data
+    if(statueMaterial == StatueBlock.StatueMaterial.WOOD && worldIn instanceof net.minecraft.world.server.ServerWorld) {
+      PalladiumSavedData data = PalladiumSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)worldIn);
+      data.addPalladium(new ChunkPos(pos), pos);
+    }
+  }
 
   @Override
   public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
@@ -143,6 +156,11 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
       // replace other block with air
       final BlockPos otherHalf = isUpper ? pos.down() : pos.up();
       worldIn.destroyBlock(otherHalf, true);
+      // update palladium data
+      if(statueMaterial == StatueBlock.StatueMaterial.WOOD && worldIn instanceof net.minecraft.world.server.ServerWorld) {
+        PalladiumSavedData data = PalladiumSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)worldIn);
+        data.removePalladium(new ChunkPos(pos), pos);
+      }
       super.onReplaced(state, worldIn, pos, newState, isMoving);
     }
   }
@@ -265,9 +283,11 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   }
   
   public static enum StatueMaterial implements IStringSerializable {
-    LIMESTONE("limestone", true, true, 0, () -> GFRegistry.POLISHED_LIMESTONE_SLAB.getDefaultState()),
-    MARBLE("marble", true, true, 0, () -> GFRegistry.POLISHED_MARBLE_SLAB.getDefaultState()),
-    WOOD("wood", false, false, 11, () -> Blocks.SPRUCE_SLAB.getDefaultState());
+    LIMESTONE("limestone", true, 0, () -> GFRegistry.POLISHED_LIMESTONE_SLAB.getDefaultState()),
+    MARBLE("marble", true, 0, () -> GFRegistry.POLISHED_MARBLE_SLAB.getDefaultState()),
+    WOOD("wood", false, 11, () -> Blocks.SPRUCE_SLAB.getDefaultState()),
+    BLACKSTONE("blackstone", "limestone", false, false, 0, () -> Blocks.POLISHED_BLACKSTONE_SLAB.getDefaultState()),
+    PRISMARINE("prismarine", "limestone", false, false, 0, () -> Blocks.PRISMARINE_BRICK_SLAB.getDefaultState());
     
     private final ResourceLocation stoneTexture;
     private final String name;
@@ -276,13 +296,17 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     private final int light;
     private final Supplier<BlockState> base;
     
-    private StatueMaterial(final String nameIn, final boolean hasGuiIn, final boolean dropsItemsIn, final int lightIn, final Supplier<BlockState> baseIn) {
+    private StatueMaterial(final String nameIn, final boolean hasGuiIn, final int lightIn, final Supplier<BlockState> baseIn) {
+      this(nameIn, nameIn, hasGuiIn, hasGuiIn, lightIn, baseIn);
+    }
+    
+    private StatueMaterial(final String nameIn, final String textureNameIn, final boolean hasGuiIn, final boolean dropsItemsIn, final int lightIn, final Supplier<BlockState> baseIn) {
       this.name = nameIn;
       this.hasGui = hasGuiIn;
       this.dropsItems = dropsItemsIn;
       this.light = lightIn;
       this.base = baseIn;
-      this.stoneTexture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + nameIn + ".png");
+      this.stoneTexture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/" + textureNameIn + ".png");
     }
     
     public boolean hasGui() { return hasGui; }

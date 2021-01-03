@@ -90,7 +90,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   }
   
   public StatueMaterial getStatueMaterial() {
-    if (this.getBlockState().getBlock() instanceof StatueBlock) {
+    if (this.getBlockState() != null && this.getBlockState().getBlock() instanceof StatueBlock) {
       return ((StatueBlock) this.getBlockState().getBlock()).getStatueMaterial();
     }
     return StatueMaterial.LIMESTONE;
@@ -170,26 +170,6 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   private void updatePlayerProfile() {
     this.playerProfile = SkullTileEntity.updateGameProfile(this.playerProfile);
     this.markDirty();
-  }
-  
-  // Palladium //
-
-  @Override
-  public void remove() {
-    if(this.getWorld() instanceof net.minecraft.world.server.ServerWorld) {
-      PalladiumSavedData data = PalladiumSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)this.getWorld());
-      data.removePalladium(new ChunkPos(this.getPos()), this.getPos());
-    }
-    super.remove();
-  }
-
-  @Override
-  public void onLoad() {
-    super.onLoad();
-    if(this.getWorld() instanceof net.minecraft.world.server.ServerWorld) {
-      PalladiumSavedData data = PalladiumSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)this.getWorld());
-      data.addPalladium(new ChunkPos(this.getPos()), this.getPos());
-    }
   }
   
   // NBT AND SAVING STUFF //

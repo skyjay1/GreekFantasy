@@ -1,46 +1,43 @@
 package greekfantasy.entity;
 
-import java.util.UUID;
-
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import net.minecraft.block.SoundType;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.horse.AbstractChestedHorseEntity;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
+import net.minecraft.entity.passive.horse.CoatColors;
+import net.minecraft.entity.passive.horse.CoatTypes;
+import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.HorseArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 
-public class ArionEntity extends AbstractChestedHorseEntity {
-  
-  protected static final UUID ARMOR_MODIFIER_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
-  protected static final String KEY_ARMOR = "ArmorItem";
-  
+public class ArionEntity extends HorseEntity {
+    
   protected static final IOptionalNamedTag<Item> FOOD = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "arion_food"));
-  
+
   public ArionEntity(EntityType<? extends ArionEntity> type, World worldIn) {
-    super(type, worldIn);
+     super(type, worldIn);
+     this.stepHeight = 1.5F;
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return AbstractChestedHorseEntity.func_234234_eJ_();
+    return AbstractHorseEntity.func_234237_fg_().createMutableAttribute(Attributes.ARMOR, 2);
   }
   
   @Override
@@ -48,14 +45,62 @@ public class ArionEntity extends AbstractChestedHorseEntity {
     super.registerGoals();
   }
   
-  // CALLED FROM ON INITIAL SPAWN //
-  
-  @Override
-  protected void func_230273_eI_() {
-    this.getAttribute(Attributes.MAX_HEALTH).setBaseValue((double)this.getModifiedMaxHealth());
-    this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.getModifiedMovementSpeed());
-    this.getAttribute(Attributes.HORSE_JUMP_STRENGTH).setBaseValue(this.getModifiedJumpStrength());
+  public static ArionEntity spawnArion(final ServerWorld world, final PlayerEntity player, final HorseEntity horse) {
+    ArionEntity entity = GFRegistry.ARION_ENTITY.create(world);
+    entity.copyLocationAndAnglesFrom(horse);
+    entity.onInitialSpawn(world, world.getDifficultyForLocation(horse.getPosition()), SpawnReason.CONVERSION, (ILivingEntityData)null, (CompoundNBT)null);
+    if(horse.hasCustomName()) {
+      entity.setCustomName(horse.getCustomName());
+      entity.setCustomNameVisible(horse.isCustomNameVisible());
+    }
+    entity.setTamedBy(player);
+    entity.enablePersistence();
+    entity.renderYawOffset = horse.renderYawOffset;
+    entity.func_242279_ag(); // setPortalCooldown
+    entity.setGrowingAge(horse.getGrowingAge());
+    world.addEntity(entity);
+    // drop the old horse items
+    if (horse.horseChest != null) {
+      for (int i = 0; i < horse.horseChest.getSizeInventory(); ++i) {
+        ItemStack itemstack = horse.horseChest.getStackInSlot(i);
+        if (!itemstack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemstack)) {
+          horse.entityDropItem(itemstack);
+        }
+      }
+    }
+    // remove the old horse
+    horse.remove();
+    // play sound
+    world.playSound(entity.getPosX(), entity.getPosY(), entity.getPosZ(), SoundEvents.ENTITY_PLAYER_LEVELUP, entity.getSoundCategory(), 1.0F, 1.0F, false);
+    return entity;
   }
+
+  @Override
+  public boolean canMateWith(AnimalEntity otherAnimal) {
+     return false;
+  }
+
+  @Override
+  public boolean func_230276_fq_() {
+     return true;
+  }
+
+  @Override
+  public CoatColors func_234239_eK_() {
+    return CoatColors.BLACK;
+  }
+
+  @Override
+  public CoatTypes func_234240_eM_() {
+    return CoatTypes.NONE;
+  }
+
+  @Override
+  public int getMaxTemper() {
+    return 200;
+  }
+  
+  // CALLED FROM ON INITIAL SPAWN //
   
   @Override
   protected float getModifiedMaxHealth() {
@@ -72,92 +117,7 @@ public class ArionEntity extends AbstractChestedHorseEntity {
     return super.getModifiedMovementSpeed() + 0.21F;
   }
   
-  // INVENTORY //
-  
-  @Override
-  protected void func_230275_fc_() {
-    super.func_230275_fc_();
-    if (!this.world.isRemote()) {
-      super.func_230275_fc_();
-      this.initArmor(this.horseChest.getStackInSlot(1));
-   }
-  }
- 
-  private void initArmor(ItemStack p_213804_1_) {
-    if (!this.world.isRemote()) {
-       this.getAttribute(Attributes.ARMOR).removeModifier(ARMOR_MODIFIER_UUID);
-       if (this.isArmor(p_213804_1_)) {
-          int i = ((HorseArmorItem)p_213804_1_.getItem()).getArmorValue();
-          if (i != 0) {
-             this.getAttribute(Attributes.ARMOR).applyNonPersistentModifier(new AttributeModifier(ARMOR_MODIFIER_UUID, "Horse armor bonus", (double)i, AttributeModifier.Operation.ADDITION));
-          }
-       }
-    }
-
- }
-
-  @Override
-  public void onInventoryChanged(IInventory invBasic) {
-    ItemStack itemstack = this.getChestItem();
-    super.onInventoryChanged(invBasic);
-    ItemStack itemstack1 = this.getChestItem();
-    if (this.ticksExisted > 20 && this.isArmor(itemstack1) && itemstack != itemstack1) {
-      this.playSound(SoundEvents.ENTITY_HORSE_ARMOR, 0.5F, 1.0F);
-    }
-
-  }
-
-  public ItemStack getChestItem() {
-    return this.getItemStackFromSlot(EquipmentSlotType.CHEST);
-  }
-  
-  // SOUNDS //
-  
-  @Override
-  protected void playGallopSound(SoundType sound) {
-    super.playGallopSound(sound);
-    if (this.rand.nextInt(10) == 0) {
-      this.playSound(SoundEvents.ENTITY_HORSE_BREATHE, sound.getVolume() * 0.6F, sound.getPitch());
-    }
-
-    ItemStack stack = this.horseChest.getStackInSlot(1);
-    if (isArmor(stack))
-      stack.onHorseArmorTick(world, this);
-  }
-  
-  @Override
-  protected SoundEvent getAmbientSound() {
-    super.getAmbientSound();
-    return SoundEvents.ENTITY_HORSE_AMBIENT;
-  }
-
-  @Override
-  protected SoundEvent getDeathSound() {
-    super.getDeathSound();
-    return SoundEvents.ENTITY_HORSE_DEATH;
-  }
-
-  @Override
-  protected SoundEvent func_230274_fe_() {
-    return SoundEvents.ENTITY_HORSE_EAT;
-  }
-
-  @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-    super.getHurtSound(damageSourceIn);
-    return SoundEvents.ENTITY_HORSE_HURT;
-  }
-
-  @Override
-  protected SoundEvent getAngrySound() {
-    super.getAngrySound();
-    return SoundEvents.ENTITY_HORSE_ANGRY;
-  }
-  
   // MISC //
-  
-  @Override
-  public double getMountedYOffset() { return super.getMountedYOffset() - 0.25D; }
   
   @Override
   protected boolean handleEating(final PlayerEntity player, final ItemStack stack) {
@@ -218,47 +178,4 @@ public class ArionEntity extends AbstractChestedHorseEntity {
     // return super.func_230254_b_(player, hand);
     return ActionResultType.PASS;
   }
-
-  // NBT //
-  
-  @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
-    if (!this.horseChest.getStackInSlot(1).isEmpty()) {
-      compound.put(KEY_ARMOR, this.horseChest.getStackInSlot(1).write(new CompoundNBT()));
-    }
-  }
-
-  @Override
-  public void readAdditional(CompoundNBT compound) {
-     super.readAdditional(compound);
-     if (compound.contains(KEY_ARMOR, 10)) {
-        ItemStack itemstack = ItemStack.read(compound.getCompound(KEY_ARMOR));
-        if (!itemstack.isEmpty() && this.isArmor(itemstack)) {
-           this.horseChest.setInventorySlotContents(1, itemstack);
-        }
-     }
-     this.func_230275_fc_();
-  }
-
-
-  @Override
-  public boolean isArmor(ItemStack stack) {
-    return stack.getItem() instanceof HorseArmorItem;
-  }
-  
-  @Override
-  public int getMaxTemper() {
-    return 200;
-  }
-
-  @Override
-  public boolean canMateWith(final AnimalEntity otherAnimal) {
-    if (otherAnimal == this) {
-      return false;
-    } else {
-      return otherAnimal instanceof ArionEntity && this.canMate() && ((ArionEntity)otherAnimal).canMate();
-    }
-  }
-
 }

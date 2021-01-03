@@ -46,8 +46,12 @@ public class SDeityPacket {
 
   public static void handlePacket(final SDeityPacket message, final Supplier<NetworkEvent.Context> contextSupplier) {
     NetworkEvent.Context context = contextSupplier.get();
+    // DEBUG
+    GreekFantasy.LOGGER.debug("received packet for " + message.deity);
     if (context.getDirection().getReceptionSide() == LogicalSide.CLIENT) {
       context.enqueueWork(() -> {
+        // DEBUG
+        GreekFantasy.LOGGER.debug("handled");
         GreekFantasy.PROXY.DEITY.put(message.deityName, message.deity);
       });
     }

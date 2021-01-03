@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import greekfantasy.GFRegistry;
 import greekfantasy.GFWorldGen;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ArionEntity;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
@@ -18,6 +19,7 @@ import greekfantasy.entity.ShadeEntity;
 import greekfantasy.favor.Favor;
 import greekfantasy.favor.FavorManager;
 import greekfantasy.favor.IFavor;
+import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
 import greekfantasy.util.PalladiumSavedData;
@@ -34,6 +36,7 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.RabbitEntity;
+import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -56,7 +59,6 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -75,7 +77,8 @@ import net.minecraftforge.fml.network.PacketDistributor;
 public class CommonForgeEventHandler {
   // items that can convert hoglins to giant boars
   protected static final IOptionalNamedTag<Item> GIANT_BOAR_TRIGGER = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "giant_boar_trigger"));
-    
+  protected static final IOptionalNamedTag<Item> ARION_TRIGGER = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "arion_trigger"));
+
   /**
    * Used to spawn a shade with the player's XP when they die.
    * @param event the death event
@@ -100,18 +103,7 @@ public class CommonForgeEventHandler {
       }
     }
   }
-  
-  /**
-   * Used to change a player's favor when they attack an entity
-   * @param event the living attack event
-   */
-  @SubscribeEvent
-  public static void onPlayerAttackEntity(final LivingAttackEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getSource().getTrueSource() instanceof PlayerEntity) {
-      event.getSource().getTrueSource().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAttackEntity(event.getEntityLiving(), (PlayerEntity)event.getSource().getTrueSource(), f));
-    }
-  }
-  
+
   /**
    * Used to change a player's favor when they kill an entity.
    * Also used to summon a Geryon when a cow is killed and other spawn conditions are met
@@ -251,7 +243,7 @@ public class CommonForgeEventHandler {
   @SubscribeEvent
   public static void onPlayerInteract(final PlayerInteractEvent.EntityInteract event) {
     // when player uses poisonous potato on adult hoglin outside of nether
-    if((!GreekFantasy.CONFIG.getGiantBoarNonNether() || event.getWorld().getDimensionKey() != World.THE_NETHER) 
+    if(!event.isCanceled() && (!GreekFantasy.CONFIG.getGiantBoarNonNether() || event.getWorld().getDimensionKey() != World.THE_NETHER) 
         && event.getTarget().getType() == EntityType.HOGLIN 
         && event.getTarget() instanceof HoglinEntity && event.getWorld() instanceof ServerWorld 
         && GIANT_BOAR_TRIGGER.contains(event.getItemStack().getItem())) {
@@ -263,19 +255,34 @@ public class CommonForgeEventHandler {
           event.getItemStack().shrink(1);
         }
       }
+    } else if(!event.isCanceled() && event.getTarget().getType() == EntityType.HORSE && event.getTarget() instanceof HorseEntity
+        && event.getWorld() instanceof ServerWorld && ARION_TRIGGER.contains(event.getItemStack().getItem())) {
+      final HorseEntity horse = (HorseEntity)event.getTarget();
+      if(!horse.isChild() && horse.isTame()) {
+        // spawn Arion and shrink the item stack
+        ArionEntity.spawnArion((ServerWorld)event.getWorld(), event.getPlayer(), horse);
+        if(!event.getPlayer().isCreative()) {
+          event.getItemStack().shrink(1);
+        }
+      }
+      
     }
   }
   
   /**
    * Used to prevent players from using items while stunned.
-   * @param event a PlayerInteractEvent or any of its children
+   * Also used to change a player's favor when they attack an entity.
+   * @param event the living attack event
    **/
   @SubscribeEvent
   public static void onPlayerAttack(final AttackEntityEvent event) {
     if(GreekFantasy.CONFIG.doesStunPreventUse() && event.getPlayer().isAlive() && isStunned(event.getPlayer())) {
       event.setCanceled(true);
     }
-  }
+    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getPlayer().isAlive()) {
+      event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAttackEntity(event.getEntityLiving(), event.getPlayer(), f));
+    }
+  }  
   
   /**
    * Used to prevent players (or potentially, other living entities)
@@ -391,16 +398,17 @@ public class CommonForgeEventHandler {
   }
   
   /**
-   * Used to sync panflute songs from the server to each client
+   * Used to sync datapack data from the server to each client
    * @param event the player login event
    **/
   @SubscribeEvent
   public static void onPlayerLogin(final PlayerEvent.PlayerLoggedInEvent event) {
     PlayerEntity player = event.getPlayer();
     if (player instanceof ServerPlayerEntity) {
-      for(final Entry<ResourceLocation, Optional<PanfluteSong>> e : GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries()) {
-        GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SPanfluteSongPacket(e.getKey(), e.getValue().get()));
-      }
+      // sync panflute songs
+      GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SPanfluteSongPacket(e.getKey(), e.getValue().get())));
+      // sync deity
+      GreekFantasy.PROXY.DEITY.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SDeityPacket(e.getKey(), e.getValue().get())));
     }
   }
   
@@ -424,6 +432,4 @@ public class CommonForgeEventHandler {
   private static boolean isSwine(final LivingEntity livingEntity) {
     return livingEntity.isPotionActive(GFRegistry.SWINE_EFFECT);
   }
-  
-  
 }

@@ -10,6 +10,8 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -52,16 +54,9 @@ public class ClientForgeEventHandler {
   public static void renderPlayer(final RenderPlayerEvent.Pre event) {
     if(GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(event.getPlayer())) {
       event.setCanceled(true);
-//    } else if(isSwine(event.getPlayer())) {
-//      event.setCanceled(true);
-//      // render pig instead
-//      if(null == pigRenderer) {
-//        Minecraft mc = Minecraft.getInstance();
-//        pigRenderer = new SwineRenderer<LivingEntity>(mc.getRenderManager());
-//      }
-//      pigRenderer.render(event.getPlayer(), event.getPlayer().rotationYaw, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), 
-//          pigRenderer.getPackedLight(event.getPlayer(), event.getPartialRenderTick()));
-    } else if(!event.isCanceled() && "skyjay1".equals(event.getPlayer().getName().getUnformattedComponentText())) {
+    }
+    final ItemStack item = event.getEntityLiving().getHeldItem(Hand.MAIN_HAND);
+    if(!event.isCanceled() && !item.isEmpty() && item.hasDisplayName() && "skyjay1".equals(item.getDisplayName().getUnformattedComponentText())) {
       if(null == skyjayRenderer) {
         Minecraft mc = Minecraft.getInstance();
         skyjayRenderer = new PlayerSkyjayRenderer<PlayerEntity>(mc.getRenderManager());

@@ -1,6 +1,5 @@
 package greekfantasy.util;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -48,6 +47,10 @@ public class PalladiumSavedData extends WorldSavedData {
    * @return an immutable copy of the palladium block positions
    */
   public Set<BlockPos> getPalladium(final World world, final ChunkPos chunk) {
+// this would occasionally hard-refresh the set, but it's prob not necessary
+//    if(Math.random() < 0.02D) {
+//      putAllPalladium(chunk, fillPalladiumList(world, chunk));
+//    } else 
     if(!palladiumMap.containsKey(chunk)) {
       // add a new palladium set
       addAllPalladium(chunk, fillPalladiumList(world, chunk));
@@ -55,6 +58,11 @@ public class PalladiumSavedData extends WorldSavedData {
     return ImmutableSet.copyOf(palladiumMap.get(chunk));
   }
   
+  /**
+   * Appends the given position to the existing set
+   * @param chunk the chunk
+   * @param pos the palladium position to add
+   */
   public void addPalladium(final ChunkPos chunk, final BlockPos pos) {
     if(!palladiumMap.containsKey(chunk)) {
       palladiumMap.put(chunk, new HashSet<>());
@@ -63,7 +71,12 @@ public class PalladiumSavedData extends WorldSavedData {
     this.markDirty();
   }
   
-  public void addAllPalladium(final ChunkPos chunk, final Collection<BlockPos> pos) {
+  /**
+   * Appends the given positions to the existing set
+   * @param chunk the chunk
+   * @param pos the palladium positions to add
+   */
+  public void addAllPalladium(final ChunkPos chunk, final Set<BlockPos> pos) {
     if(!palladiumMap.containsKey(chunk)) {
       palladiumMap.put(chunk, new HashSet<>());
     }
@@ -71,6 +84,21 @@ public class PalladiumSavedData extends WorldSavedData {
     this.markDirty();
   }
   
+  /**
+   * Replaces the current set of positions with the given set
+   * @param chunk the chunk
+   * @param pos the palladium positions to set
+   */
+  public void putAllPalladium(final ChunkPos chunk, final Set<BlockPos> pos) {
+    palladiumMap.put(chunk, pos);
+    this.markDirty();
+  }
+  
+  /**
+   * Removes the given position from the existing set, if present
+   * @param chunk the chunk
+   * @param pos the palladium position to remove
+   */
   public void removePalladium(final ChunkPos chunk, final BlockPos pos) {
     if(!palladiumMap.containsKey(chunk)) {
       palladiumMap.put(chunk, new HashSet<>());
@@ -98,32 +126,38 @@ public class PalladiumSavedData extends WorldSavedData {
   private static Set<BlockPos> fillPalladiumList(final World world, final ChunkPos chunkPos) {
     // iterate through all tile entities in this chunk and fill a list with Palladium entries
     Set<BlockPos> palladiumSet = new HashSet<>();
-    Map<BlockPos, TileEntity> chunkTEMap = world.getChunk(chunkPos.x, chunkPos.z).getTileEntityMap();
-    for(final Entry<BlockPos, TileEntity> e : chunkTEMap.entrySet()) {
-      if(validate(e.getValue())) {
-        palladiumSet.add(e.getKey());
+    try {
+      Map<BlockPos, TileEntity> chunkTEMap = world.getChunk(chunkPos.x, chunkPos.z).getTileEntityMap();
+      for(final Entry<BlockPos, TileEntity> e : chunkTEMap.entrySet()) {
+        if(validate(e.getValue())) {
+          palladiumSet.add(e.getKey());
+        }
       }
+    } catch(final Exception e) {
+      GreekFantasy.LOGGER.error("Encountered an error trying to fill palladium list (PalladiumSavedData)");
     }
     return palladiumSet;
   }
 
   @Override
   public void read(CompoundNBT nbt) {
-    final ListNBT chunkMap = nbt.getList(KEY_MAP, 10);
-    for(int i = 0, il = chunkMap.size(); i < il; i++) {
-      // chunk contains chunkX, chunkY, and posList
-      final CompoundNBT chunk = chunkMap.getCompound(i);
-      final int chunkX = chunk.getInt(KEY_CHUNK_X);
-      final int chunkZ = chunk.getInt(KEY_CHUNK_Z);
-      // each block pos is stored in posList
-      final ListNBT posList = chunk.getList(KEY_SET, 10);
-      final Set<BlockPos> blockPosSet = new HashSet<>();
-      for(int j = 0, jl = posList.size(); j < jl; j++) {
-        final CompoundNBT posNBT = posList.getCompound(j);
-        blockPosSet.add(new BlockPos(posNBT.getInt(KEY_X), posNBT.getInt(KEY_Y), posNBT.getInt(KEY_Z)));
+    if(nbt.contains(KEY_MAP)) {
+      final ListNBT chunkMap = nbt.getList(KEY_MAP, 10);
+      for(int i = 0, il = chunkMap.size(); i < il; i++) {
+        // chunk contains chunkX, chunkY, and posList
+        final CompoundNBT chunk = chunkMap.getCompound(i);
+        final int chunkX = chunk.getInt(KEY_CHUNK_X);
+        final int chunkZ = chunk.getInt(KEY_CHUNK_Z);
+        // each block pos is stored in posList
+        final ListNBT posList = chunk.getList(KEY_SET, 10);
+        final Set<BlockPos> blockPosSet = new HashSet<>();
+        for(int j = 0, jl = posList.size(); j < jl; j++) {
+          final CompoundNBT posNBT = posList.getCompound(j);
+          blockPosSet.add(new BlockPos(posNBT.getInt(KEY_X), posNBT.getInt(KEY_Y), posNBT.getInt(KEY_Z)));
+        }
+        // that's all the data we need from the compound tag, add it to the map
+        palladiumMap.put(new ChunkPos(chunkX, chunkZ), blockPosSet);
       }
-      // that's all the data we need from the compound tag, add it to the map
-      palladiumMap.put(new ChunkPos(chunkX, chunkZ), blockPosSet);
     }
   }
 

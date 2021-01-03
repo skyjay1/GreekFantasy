@@ -2,8 +2,8 @@
   "name": "greekfantasy:zeus",
   "female": false,
   "left_hand": {
-  	"id": "minecraft:oak_sapling",
-  	"Count": 1
+  	"id": "minecraft:air",
+  	"Count": 0
   },
   "right_hand": {
   	"id": "greekfantasy:thunderbolt",
@@ -18,16 +18,6 @@
   	  },
   	  "minlevel": 1,
   	  "maxlevel": 4,
-  	  "mincooldown": 3500
-  	},
-  	{
-  	  "potion": {
-  	  	"Id": 10,
-  	  	"Amplifier": 1,
-  	  	"Duration": 180
-  	  },
-  	  "minlevel": 5,
-  	  "maxlevel": 10,
   	  "mincooldown": 3500
   	},
   	{
@@ -48,6 +38,15 @@
   	  "minlevel": 6,
   	  "maxlevel": 10,
   	  "mincooldown": 5000
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "greekfantasy:ichor",
+  	  	"Count": 1
+  	  },
+  	  "minlevel": 9,
+  	  "maxlevel": 10,
+  	  "mincooldown": 9000
   	},
   	{
   	  "summon": { 
@@ -92,38 +91,52 @@
     "greekfantasy:cerastes": -5,
   	"greekfantasy:talos": -15,
   	"greekfantasy:giant_boar": 15,
-  	"greekfantasy:cyprian": 5,
+  	"greekfantasy:cyprian": 6,
   	"greekfantasy:gorgon": 8,
-  	"greekfantasy:drakaina": 5,
+  	"greekfantasy:drakaina": 6,
   	"greekfantasy:unicorn": -10,
   	"greekfantasy:minotaur": 5,
   	"greekfantasy:elpis": -20,
-    "minecraft:cow": -2,
-  	"minecraft:sheep": -2,
+  	"greekfantasy:dryad": -8,
+  	"greekfantasy:centaur": -8,
   	"minecraft:villager": -10,
-  	"greekfantasy:orthus": 20,
-    "greekfantasy:cerberus": -2,
-  	"greekfantasy:satyr": -2,
-  	"greekfantasy:charybdis": 10
+  	"minecraft:zombie": 4,
+  	"minecraft:husk": 5,
+  	"minecraft:skeleton": 5,
+  	"minecraft:stray": 6
   },
   "item_favor_map": {
-  	"greekfantasy:ambrosia": 80,
-  	"greekfantasy:ichor": 15,
+  	"greekfantasy:ambrosia": 76,
+  	"greekfantasy:ichor": 21,
   	"greekfantasy:purified_snakeskin": 8,
   	"greekfantasy:tough_snakeskin": 8,
   	"greekfantasy:olive_sapling": 1,
   	"greekfantasy:thunderbolt": 20,
   	"greekfantasy:magic_feather": 5,
-  	"minecraft:golden_apple": 10,
-  	"minecraft:diamond": 8,
+  	"greekfantasy:boar_tusk": 11,
+  	"greekfantasy:boar_ear": 8,
+  	"greekfantasy:styxian_shard": -10,
+  	"greekfantasy:cerberus_head": -95,
+  	"minecraft:golden_apple": 48,
+  	"minecraft:gold_ingot": 5,
+  	"minecraft:emerald": 5,
+  	"minecraft:diamond": 19,
   	"minecraft:cooked_beef": 4,
   	"minecraft:cooked_mutton": 4,
   	"minecraft:cooked_porkchop": 3,
+  	"minecraft:cake": 14,
+  	"minecraft:leather": 2,
   	"minecraft:oak_sapling": 1,
   	"minecraft:honey_bottle": 2,
+  	"minecraft:milk_bucket": 7,
   	"minecraft:poisonous_potato": -2,
+  	"minecraft:nether_star": 120,
+  	"minecraft:smithing_table": 6,
+  	"minecraft:lodestone": 13,
+  	"minecraft:skeleton_skull": 10,
+  	"minecraft:zombie_head": 9,
+  	"minecraft:arrow": 2,
   	"minecraft:bone": -2,
-  	"minecraft:spider_eye": -4,
-  	"minecraft:nether_star": 120
+  	"minecraft:spider_eye": -5
   }
 }

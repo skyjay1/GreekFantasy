@@ -10,8 +10,7 @@ __Key:__
 - _ Structure gen is jenky
 - _ Config option for winged sandals to enable flight?
 - _ Deity doesn't set items from JSON correctly
-- _ Arion needs bug fixes (tame *only* with gold, etc)
-- _ Swine effect not syncing
+- X Swine effect not syncing
 
 ## Entity basics
 
@@ -48,7 +47,7 @@ __Key:__
 - X X X X X Miniboss: Medusa
 - X X X _ X Fury
 - X X _ _ X Drakaina
-- X X X X _ Arion (very fast horse, tamed with gold)
+- X X X X X Arion (very fast horse, use gold)
 - _ _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
 
 ## Entity AI

@@ -46,6 +46,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
@@ -105,6 +106,9 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
     super.livingTick();
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
+    if(this.ticksExisted == 1) {
+      this.bossInfo.setName(this.hasCustomName() ? this.getCustomName() : this.getDisplayName());
+    }
   }
   
   @Override
@@ -247,6 +251,9 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
   public void setMedusa(final boolean medusa) { 
     this.getDataManager().set(MEDUSA, medusa);
     updateCombatGoal(medusa);
+    if(medusa) {
+      this.setCustomName(new TranslationTextComponent(this.getType().getTranslationKey().concat(".medusa")));
+    }
   }
   
   public boolean isMedusa() { return this.getDataManager().get(MEDUSA); }

@@ -12,7 +12,6 @@ import greekfantasy.effect.*;
 import greekfantasy.enchantment.*;
 import greekfantasy.entity.*;
 import greekfantasy.entity.misc.*;
-import greekfantasy.favor.Favor;
 import greekfantasy.favor.IFavor;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.gui.DeityContainer;
@@ -413,11 +412,11 @@ public final class GFRegistry {
           te.setStatueFemale(true);
           te.setItem(new ItemStack(Items.SOUL_TORCH), HandSide.RIGHT);
         }).setRegistryName(MODID, "palladium"),
-        makeDeityStatue("hades", StatuePoses.ZEUS_POSE)
+        makeDeityStatue("hades", StatueBlock.StatueMaterial.BLACKSTONE, StatuePoses.ZEUS_POSE)
           .setRegistryName(MODID, "altar_hades"),
-        makeDeityStatue("poseidon", StatuePoses.ZEUS_POSE)
+        makeDeityStatue("poseidon", StatueBlock.StatueMaterial.PRISMARINE, StatuePoses.ZEUS_POSE)
           .setRegistryName(MODID, "altar_poseidon"),
-        makeDeityStatue("zeus", StatuePoses.ZEUS_POSE)
+        makeDeityStatue("zeus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
           .setRegistryName(MODID, "altar_zeus"),
         new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
           .setRegistryName(MODID, "terracotta_vase"),
@@ -709,17 +708,16 @@ public final class GFRegistry {
    * @param pose the statue's initial pose
    * @return the StatueBlock (registry name is not set)
    */
-  private static Block makeDeityStatue(final String deityName, final StatuePose pose) {
+  private static Block makeDeityStatue(final String deityName, final StatueBlock.StatueMaterial statueMaterial, final StatuePose pose) {
     final ResourceLocation deityId = new ResourceLocation(MODID, deityName);
-    final StatueBlock.StatueMaterial material = StatueBlock.StatueMaterial.LIMESTONE;
-    return new StatueBlock(material, te -> {
+    return new StatueBlock(statueMaterial, te -> {
         te.setStatuePose(pose);
         te.setDeityName(deityId.toString());
         // DEBUG
-        GreekFantasy.LOGGER.debug("StatueTileEntityInit consumer - " + te.getDeity().toString());
+//        GreekFantasy.LOGGER.debug("StatueTileEntityInit consumer - " + te.getDeity().toString());
         te.setItem(te.getDeity().getRightHandItem(), HandSide.RIGHT);
         te.setItem(te.getDeity().getLeftHandItem(), HandSide.LEFT);
-      }, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(15.0F, 6000.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> material.getLightLevel()), deityId);
+      }, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(15.0F, 6000.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> statueMaterial.getLightLevel()), deityId);
   }
   
   private static void registerLogLeavesPlanksEtc(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {

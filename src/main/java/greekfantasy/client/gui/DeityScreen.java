@@ -62,7 +62,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private static final int ITEM_COUNT_Y = 7;
   
   private static final int ENTITY_LEFT = ITEM_LEFT;
-  private static final int ENTITY_TOP = 30;
+  private static final int ENTITY_TOP = 32;
   private static final int ENTITY_COUNT_Y = 13;
   private static final int ENTITY_WIDTH = 90;
   
@@ -99,6 +99,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     // initialize lists (deity, item, entity, etc.)
     if(deityList.isEmpty()) {
       // populate deity list (alphabetically)
+//      deityList.addAll(screenContainer.getFavor().getDeitySet());
       GreekFantasy.PROXY.DEITY.getValues().forEach(o -> deityList.add(o.orElse(Deity.EMPTY)));
       deityList.sort((d1, d2) -> d1.getText().getString().compareTo(d2.getText().getString()));
       
@@ -109,24 +110,24 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         
         // add item modifier list for each deity
         List<DeityScreen.ItemButton> itemButtonList = new ArrayList<>();
-        int itemNum = 0;
         // create a button for each item and add it to this list
         for(final Entry<ResourceLocation, Integer> e : d.getItemFavorModifiers().entrySet()) {
           final Item item = ForgeRegistries.ITEMS.getValue(e.getKey());
-          itemButtonList.add(new ItemButton(itemNum++, this, item, e.getValue(), 0, 0));
+          itemButtonList.add(new ItemButton(this, item, e.getValue(), 0, 0));
         }
         itemButtonList.sort(DeityScreen.ItemButton::compareTo);
+        for(int i = 0, l = itemButtonList.size(); i < l; i++) { itemButtonList.get(i).setIndex(i); }
         itemButtons.add(itemButtonList);
         
         // add entity type modifier list for each deity
         final List<DeityScreen.EntityButton> entityButtonList = new ArrayList<>();
-        int entityNum = 0;
         for(final Entry<ResourceLocation, Integer> e : d.getKillFavorModifiers().entrySet()) {
           final EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(e.getKey());
-          DeityScreen.EntityButton button = new DeityScreen.EntityButton(entityNum++, this, entityType, e.getValue(), 0, 0);
+          DeityScreen.EntityButton button = new DeityScreen.EntityButton(this, entityType, e.getValue(), 0, 0);
           entityButtonList.add(button);
         }
         entityButtonList.sort(DeityScreen.EntityButton::compareTo);
+        for(int i = 0, l = entityButtonList.size(); i < l; i++) { entityButtonList.get(i).setIndex(i); }
         entityButtons.add(entityButtonList);
       }
     }
@@ -255,21 +256,21 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       final int startIndex = (int) Math.round(amount * ((itemButtons.get(selected).size() / ITEM_COUNT_X) - ITEM_COUNT_Y));
       itemButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
     } else if(mode == Mode.ENTITY) {
-      final int startIndex = (int) Math.round(amount * (itemButtons.get(selected).size() - ENTITY_COUNT_Y));
+      final int startIndex = (int) Math.round(amount * (entityButtons.get(selected).size() - ENTITY_COUNT_Y));
       entityButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
     }
   }
   
   protected class ItemButton extends Button implements Comparable<ItemButton> {
     
-    private final int index;
     private final ItemStack item;
     private final int value;
+    
+    private int index;
     private ITextComponent valueText = StringTextComponent.EMPTY;
     
-    public ItemButton(final int indexIn, final DeityScreen gui, final Item itemIn, final int itemValue, final int x, final int y) {
+    public ItemButton(final DeityScreen gui, final Item itemIn, final int itemValue, final int x, final int y) {
       super(x, y, ITEM_WIDTH, ITEM_HEIGHT, StringTextComponent.EMPTY, b -> {}, (b, m, bx, by) -> gui.renderTooltip(m, b.getMessage(), bx, by));
-      this.index = indexIn;
       this.visible = false;
       this.visible = true;
       item = new ItemStack(itemIn);
@@ -288,6 +289,10 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         // draw string
         DeityScreen.this.font.func_243248_b(matrixStack, valueText, this.x + 20, this.y + (1 + DeityScreen.this.font.FONT_HEIGHT) / 2, 0xFFFFFF);
       }
+    }
+    
+    public void setIndex(final int i) {
+      index = i;
     }
 
     /**
@@ -318,13 +323,12 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   
   protected class EntityButton extends Button implements Comparable<DeityScreen.EntityButton> {
     
-    private final int index;
     private final int value;
+    private int index;
     private int rightAlign = -1;
     
-    public EntityButton(final int indexIn, final DeityScreen gui, final EntityType<?> entityIn, final int entityValue, final int x, final int y) {
+    public EntityButton(final DeityScreen gui, final EntityType<?> entityIn, final int entityValue, final int x, final int y) {
       super(x, y, ENTITY_WIDTH, 9, StringTextComponent.EMPTY, b -> {});
-      index = indexIn;
       value = entityValue;
       final TextFormatting color = entityValue < 0 ? TextFormatting.DARK_RED : TextFormatting.DARK_GREEN;
       String spaces = Math.abs(entityValue) >= 100 ? " " : (Math.abs(entityValue) >= 10 ? "  " : "   ");
@@ -338,6 +342,10 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       if(this.visible) {
         DeityScreen.this.font.func_243248_b(matrixStack, this.getMessage(), this.x, this.y, 0xFFFFFF);
       }
+    }
+    
+    public void setIndex(final int i) {
+      index = i;
     }
     
     /**
