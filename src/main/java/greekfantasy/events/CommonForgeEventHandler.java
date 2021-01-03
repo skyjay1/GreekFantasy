@@ -1,19 +1,15 @@
 package greekfantasy.events;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.TreeMap;
 
 import com.google.common.collect.ImmutableList;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GFWorldGen;
 import greekfantasy.GreekFantasy;
-import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
@@ -24,7 +20,7 @@ import greekfantasy.favor.FavorManager;
 import greekfantasy.favor.IFavor;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
-import greekfantasy.tileentity.StatueTileEntity;
+import greekfantasy.util.PalladiumSavedData;
 import greekfantasy.util.PanfluteSong;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -45,9 +41,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -81,11 +75,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 public class CommonForgeEventHandler {
   // items that can convert hoglins to giant boars
   protected static final IOptionalNamedTag<Item> GIANT_BOAR_TRIGGER = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "giant_boar_trigger"));
-  
-  // This map tracks Palladium locations per chunk, per world
-  private static Map<RegistryKey<World>, Map<ChunkPos, TimestampList<BlockPos>>> palladiumMap = new TreeMap<>();
-  private static final TimestampList<BlockPos> EMPTY_TIMESTAMP_LIST = new TimestampList<>(0, new ArrayList<>());
-  
+    
   /**
    * Used to spawn a shade with the player's XP when they die.
    * @param event the death event
@@ -345,18 +335,28 @@ public class CommonForgeEventHandler {
     final int cRadius = GreekFantasy.CONFIG.getPalladiumChunkRange();
     final int cVertical = GreekFantasy.CONFIG.getPalladiumYRange() / 2; // divide by 2 to center on block
     if(GreekFantasy.CONFIG.isPalladiumEnabled() && !event.getEntityLiving().getEntityWorld().isRemote() 
-        && event.getWorld() instanceof World && event.getEntityLiving() instanceof IMob) {
+        && event.getWorld() instanceof ServerWorld && event.getEntityLiving() instanceof IMob && event.getEntityLiving().isNonBoss()) {
       // check for nearby Statue Tile Entity
-      final World world = (World)event.getWorld();
+      final ServerWorld world = (ServerWorld)event.getWorld();
       final BlockPos blockPos = new BlockPos(event.getX(), event.getY(), event.getZ());
       final ChunkPos chunkPos = new ChunkPos(blockPos);
+      final PalladiumSavedData data = PalladiumSavedData.getOrCreate(world);
       ChunkPos cPos;
       // search each chunk in a square radius centered on this chunk
       for(int cX = -cRadius; cX <= cRadius; cX++) {
         for(int cZ = -cRadius; cZ <= cRadius; cZ++) {
           cPos = new ChunkPos(chunkPos.x + cX, chunkPos.z + cZ);
-          if(event.getWorld().chunkExists(cPos.x, cPos.z) && !getPalladiumList(world, blockPos, cPos, cVertical).isEmpty()) {
-            event.setResult(Result.DENY);
+          if(event.getWorld().chunkExists(cPos.x, cPos.z)) {
+            // check each position to see if it's valid and within range
+            for(final BlockPos p : data.getPalladium(world, cPos)) {
+              if(!PalladiumSavedData.validate(world, p)) {
+                data.removePalladium(cPos, p);
+              } else if(Math.abs(p.getY() - blockPos.getY()) < cVertical) {
+                // the position is preventing spawn, set result to DENY
+                event.setResult(Result.DENY);
+                return;
+              }
+            }
             return;
           }
         }
@@ -425,51 +425,5 @@ public class CommonForgeEventHandler {
     return livingEntity.isPotionActive(GFRegistry.SWINE_EFFECT);
   }
   
-  private static List<BlockPos> getPalladiumList(final World world, final BlockPos spawnPos, final ChunkPos chunkPos, final int verticalRange) {
-    final RegistryKey<World> dimension = world.getDimensionKey();
-    palladiumMap.putIfAbsent(dimension, new HashMap<>());
-    final TimestampList<BlockPos> timestampList = palladiumMap.get(dimension).getOrDefault(chunkPos, EMPTY_TIMESTAMP_LIST);
-    // if the timestamp is too old or the map has not yet been filled, recalculate palladium positions
-    if(timestampList.shouldUpdate(world.getServer().getServerTime()) || !palladiumMap.get(dimension).containsKey(chunkPos)) {
-//      GreekFantasy.LOGGER.debug("Registering Palladium list for " + dimension.getLocation().toString() + " at " + chunkPos.toString());
-      world.getServer().runAsync(() -> {
-//        GreekFantasy.LOGGER.debug("Filling Palladium list for " + dimension.getLocation().toString() + " at " + chunkPos.toString());
-        palladiumMap.get(dimension).put(chunkPos, timestampList.update(world.getServer().getServerTime(), fillPalladiumList(world, spawnPos, chunkPos, verticalRange)));
-      });
-    }
-    return (palladiumMap.get(dimension).getOrDefault(chunkPos, EMPTY_TIMESTAMP_LIST)).list;
-  }
   
-  private static List<BlockPos> fillPalladiumList(final World world, final BlockPos spawnPos, final ChunkPos chunkPos, final int verticalRange) {
-    // iterate through all tile entities in this chunk and fill a list with Palladium entries
-    List<BlockPos> palladiumList = new ArrayList<>();
-    Map<BlockPos, TileEntity> chunkTEMap = world.getChunk(chunkPos.x, chunkPos.z).getTileEntityMap();
-    for(final Entry<BlockPos, TileEntity> e : chunkTEMap.entrySet()) {
-      if(e.getValue() instanceof StatueTileEntity && ((StatueTileEntity)e.getValue()).getStatueMaterial() == StatueMaterial.WOOD && Math.abs(e.getKey().getY() - spawnPos.getY()) < verticalRange) {
-        palladiumList.add(e.getKey());
-      }
-    }
-    return palladiumList;
-  }
-  
-  protected static class TimestampList<T> {
-    protected long timestamp;
-    protected final List<T> list = new ArrayList<>();
-    
-    protected TimestampList(final long serverTime, final List<T> listIn) {
-      timestamp = serverTime;
-      list.addAll(listIn);
-    }
-    
-    protected boolean shouldUpdate(final long serverTime) {
-      return serverTime - timestamp > GreekFantasy.CONFIG.getPalladiumRefreshInterval();
-    }
-    
-    protected TimestampList<T> update(final long serverTime, final List<T> listIn) {
-      timestamp = serverTime;
-      list.clear();
-      list.addAll(listIn);
-      return this;
-    }
-  }
 }

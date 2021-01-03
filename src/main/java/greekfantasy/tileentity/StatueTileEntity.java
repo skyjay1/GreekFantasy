@@ -11,6 +11,7 @@ import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.favor.Deity;
 import greekfantasy.favor.IDeity;
 import greekfantasy.util.ModelPart;
+import greekfantasy.util.PalladiumSavedData;
 import greekfantasy.util.StatuePose;
 import greekfantasy.util.StatuePoses;
 import net.minecraft.block.BlockState;
@@ -31,6 +32,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -168,6 +170,26 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   private void updatePlayerProfile() {
     this.playerProfile = SkullTileEntity.updateGameProfile(this.playerProfile);
     this.markDirty();
+  }
+  
+  // Palladium //
+
+  @Override
+  public void remove() {
+    if(this.getWorld() instanceof net.minecraft.world.server.ServerWorld) {
+      PalladiumSavedData data = PalladiumSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)this.getWorld());
+      data.removePalladium(new ChunkPos(this.getPos()), this.getPos());
+    }
+    super.remove();
+  }
+
+  @Override
+  public void onLoad() {
+    super.onLoad();
+    if(this.getWorld() instanceof net.minecraft.world.server.ServerWorld) {
+      PalladiumSavedData data = PalladiumSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)this.getWorld());
+      data.addPalladium(new ChunkPos(this.getPos()), this.getPos());
+    }
   }
   
   // NBT AND SAVING STUFF //
