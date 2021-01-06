@@ -12,9 +12,9 @@
   "effects": [
   	{
   	  "potion": {
-  	  	"Id": 10,
+  	  	"Id": 3,
   	  	"Amplifier": 0,
-  	  	"Duration": 200
+  	  	"Duration": 1100
   	  },
   	  "minlevel": 1,
   	  "maxlevel": 4,
@@ -22,11 +22,41 @@
   	},
   	{
   	  "potion": {
+  	  	"Id": 10,
+  	  	"Amplifier": 0,
+  	  	"Duration": 600
+  	  },
+  	  "minlevel": 3,
+  	  "maxlevel": 6,
+  	  "mincooldown": 3600
+  	},
+  	{
+  	  "potion": {
   	  	"Id": 5,
   	  	"Amplifier": 1,
   	  	"Duration": 900
   	  },
-  	  "minlevel": 2,
+  	  "minlevel": 5,
+  	  "maxlevel": 10,
+  	  "mincooldown": 3800
+  	},
+  	{
+  	  "potion": {
+  	  	"Id": 28,
+  	  	"Amplifier": 0,
+  	  	"Duration": 1200
+  	  },
+  	  "minlevel": 6,
+  	  "maxlevel": 9,
+  	  "mincooldown": 3800
+  	},
+  	{
+  	  "potion": {
+  	  	"Id": 11,
+  	  	"Amplifier": 2,
+  	  	"Duration": 900
+  	  },
+  	  "minlevel": 7,
   	  "maxlevel": 10,
   	  "mincooldown": 4000
   	},
@@ -35,13 +65,22 @@
   	  	"id": "minecraft:emerald",
   	  	"Count": 2
   	  },
-  	  "minlevel": 6,
+  	  "minlevel": 7,
   	  "maxlevel": 10,
   	  "mincooldown": 5000
   	},
   	{
   	  "item": { 
-  	  	"id": "greekfantasy:ichor",
+  	  	"id": "minecraft:iron_nugget",
+  	  	"Count": 3
+  	  },
+  	  "minlevel": 5,
+  	  "maxlevel": 8,
+  	  "mincooldown": 5000
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:ambrosia",
   	  	"Count": 1
   	  },
   	  "minlevel": 9,
@@ -49,10 +88,19 @@
   	  "mincooldown": 9000
   	},
   	{
+  	  "item": { 
+  	  	"id": "greekfantasy:ichor",
+  	  	"Count": 1
+  	  },
+  	  "minlevel": 8,
+  	  "maxlevel": 10,
+  	  "mincooldown": 8500
+  	},
+  	{
   	  "summon": { 
   	  	"id": "greekfantasy:elpis" 
   	  },
-  	  "minlevel": 5,
+  	  "minlevel": 6,
   	  "maxlevel": 10,
   	  "mincooldown": 6000
   	},
@@ -70,7 +118,7 @@
   	  	"powered": true,
   	  	"CustomName": "Wrath of Zeus"
   	  },
-  	  "minlevel": -6,
+  	  "minlevel": -7,
   	  "maxlevel": -10,
   	  "mincooldown": 8000
   	},
@@ -85,6 +133,26 @@
   	  "minlevel": -5,
   	  "maxlevel": -10,
   	  "mincooldown": 9000
+  	},
+  	{
+  	  "potion": {
+  	  	"Id": 2,
+  	  	"Amplifier": 1,
+  	  	"Duration": 600
+  	  },
+  	  "minlevel": -4,
+  	  "maxlevel": -10,
+  	  "mincooldown": 4100
+  	},
+  	{
+  	  "potion": {
+  	  	"Id": 25,
+  	  	"Amplifier": 0,
+  	  	"Duration": 240
+  	  },
+  	  "minlevel": -8,
+  	  "maxlevel": -10,
+  	  "mincooldown": 4900
   	}
   ],
   "kill_favor_map": {
