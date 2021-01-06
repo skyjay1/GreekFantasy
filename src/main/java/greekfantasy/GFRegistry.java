@@ -43,6 +43,7 @@ import net.minecraft.entity.EntityType.IFactory;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
@@ -158,6 +159,8 @@ public final class GFRegistry {
   public static final Item SNAKESKIN = null;
   @ObjectHolder("purified_snakeskin")
   public static final Item PURIFIED_SNAKESKIN = null;
+  @ObjectHolder("tough_snakeskin")
+  public static final Item TOUGH_SNAKESKIN = null;
   @ObjectHolder("styxian_shard")
   public static final Item STYXIAN_SHARD = null;
   @ObjectHolder("boar_ear")
@@ -270,6 +273,8 @@ public final class GFRegistry {
   public static final Enchantment SMASHING_ENCHANTMENT = null;
   @ObjectHolder("mirror")
   public static final Enchantment MIRROR_ENCHANTMENT = null;
+  @ObjectHolder("poison")
+  public static final Enchantment POISON_ENCHANTMENT = null;
   
   // Potion //
   @ObjectHolder("mirror")
@@ -478,6 +483,17 @@ public final class GFRegistry {
           .setRegistryName(MODID, "swine_wand"),
         new MirrorItem(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "mirror"),
+        new SnakeskinArmorItem(EquipmentSlotType.HEAD, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "snakeskin_helmet"),
+        new SnakeskinArmorItem(EquipmentSlotType.CHEST, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "snakeskin_chestplate"),
+        new SnakeskinArmorItem(EquipmentSlotType.LEGS, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "snakeskin_leggings"),
+        new SnakeskinArmorItem(EquipmentSlotType.FEET, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "snakeskin_boots")
+    );
+    
+    event.getRegistry().registerAll(
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "horn"),
         new Item(new Item.Properties().group(GREEK_GROUP))
@@ -485,9 +501,7 @@ public final class GFRegistry {
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "boar_tusk"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(MODID, "golden_bridle"));
-    
-    event.getRegistry().registerAll(
+          .setRegistryName(MODID, "golden_bridle"),
         new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
             .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC).containerItem(GFRegistry.HORN))
             .setRegistryName(MODID, "ambrosia"),
@@ -602,6 +616,8 @@ public final class GFRegistry {
         .setRegistryName(MODID, "smashing"));
     event.getRegistry().register(new HuntingEnchantment(Enchantment.Rarity.COMMON)
         .setRegistryName(MODID, "hunting"));
+    event.getRegistry().register(new PoisonEnchantment(Enchantment.Rarity.RARE)
+        .setRegistryName(MODID, "poison"));
     event.getRegistry().register(new MirrorEnchantment(Enchantment.Rarity.VERY_RARE)
         .setRegistryName(MODID, "mirror"));
   }

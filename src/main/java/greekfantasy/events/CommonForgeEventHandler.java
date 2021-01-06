@@ -186,7 +186,8 @@ public class CommonForgeEventHandler {
    */
   @SubscribeEvent
   public static void onAddPotion(final PotionEvent.PotionAddedEvent event) {
-    if (!event.getEntityLiving().getEntityWorld().isRemote() && GreekFantasy.CONFIG.isSwineEnabled() && isSwine(event.getEntityLiving())
+    if (!event.getEntityLiving().getEntityWorld().isRemote() && GreekFantasy.CONFIG.isSwineEnabled() 
+        && event.getPotionEffect().getPotion() == GFRegistry.SWINE_EFFECT
         && GreekFantasy.CONFIG.canSwineApply(event.getEntityLiving().getType().getRegistryName().toString())) {
       final int id = event.getEntityLiving().getEntityId();
       GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSwineEffectPacket(id, event.getPotionEffect().getDuration()));

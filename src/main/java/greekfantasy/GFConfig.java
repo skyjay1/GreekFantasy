@@ -56,6 +56,7 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue OVERSTEP_ENABLED;
   private final ForgeConfigSpec.BooleanValue SMASHING_ENABLED;
   private final ForgeConfigSpec.BooleanValue HUNTING_ENABLED;
+  private final ForgeConfigSpec.BooleanValue POISON_ENABLED;
   private final ForgeConfigSpec.BooleanValue MIRROR_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_DROPS_ARMOR;
@@ -67,6 +68,7 @@ public class GFConfig {
   private boolean overstepEnabled;
   private boolean smashingEnabled;
   private boolean huntingEnabled;
+  private boolean poisonEnabled;
   private boolean mirrorEnabled;
   private boolean swineEnabled;
   private boolean swineDropsArmor;
@@ -185,6 +187,7 @@ public class GFConfig {
     OVERSTEP_ENABLED = builder.define("enable_overstep_enchantment", true);
     SMASHING_ENABLED = builder.define("enable_smashing_enchantment", true);
     HUNTING_ENABLED = builder.define("enable_hunting_enchantment", true);
+    POISON_ENABLED = builder.define("enable_poison_enchantment", true);
     MIRROR_ENABLED = builder.define("enable_mirror_enchantment", true);
     SWINE_ENABLED = builder.define("enable_swine_effect", true);
     SWINE_DROPS_ARMOR = builder.comment("Whether players under the swine effect drop their armor")
@@ -358,6 +361,7 @@ public class GFConfig {
     overstepEnabled = OVERSTEP_ENABLED.get();
     smashingEnabled = SMASHING_ENABLED.get();
     huntingEnabled = HUNTING_ENABLED.get();
+    poisonEnabled = POISON_ENABLED.get();
     mirrorEnabled = MIRROR_ENABLED.get();
     swineEnabled = SWINE_ENABLED.get();
     swineDropsArmor = SWINE_DROPS_ARMOR.get();
@@ -404,6 +408,7 @@ public class GFConfig {
   public boolean isOverstepEnabled() { return overstepEnabled; }
   public boolean isSmashingEnabled() { return smashingEnabled; }
   public boolean isHuntingEnabled() { return huntingEnabled; }
+  public boolean isPoisonEnabled() { return poisonEnabled; }
   public boolean isMirrorEnabled() { return mirrorEnabled; }
   public boolean isSwineEnabled() { return swineEnabled; }
   public boolean doesSwineDropArmor() { return swineDropsArmor; }
