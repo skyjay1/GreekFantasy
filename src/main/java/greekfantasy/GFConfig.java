@@ -86,6 +86,7 @@ public class GFConfig {
   public final ForgeConfigSpec.BooleanValue FURY_ATTACK;
   public final ForgeConfigSpec.BooleanValue GORGON_ATTACK;
   public final ForgeConfigSpec.BooleanValue MINOTAUR_ATTACK;
+  public final ForgeConfigSpec.BooleanValue ORTHUS_ATTACK;
   public final ForgeConfigSpec.BooleanValue SHADE_ATTACK;
   public final ForgeConfigSpec.BooleanValue SATYR_ATTACK;
   public final ForgeConfigSpec.BooleanValue SIREN_ATTACK;
@@ -224,6 +225,8 @@ public class GFConfig {
         .define("gorgon_attack", true);
     MINOTAUR_ATTACK = builder.comment("Whether the Minotaur can charge and stun players")
         .define("minotaur_attack", true);
+    ORTHUS_ATTACK = builder.comment("Whether the Orthus can shoot fire")
+        .define("orthus_attack", true);
     SATYR_ATTACK = builder.comment("Whether the Satyr Shaman can summon wolves")
         .define("satyr_attack", true);
     SHADE_ATTACK = builder.comment("Whether the Shade can steal player XP")

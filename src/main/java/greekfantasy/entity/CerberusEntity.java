@@ -3,6 +3,7 @@ package greekfantasy.entity;
 import java.util.EnumSet;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.entity.ai.ShootFireGoal;
 import greekfantasy.entity.ai.SummonMobGoal;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BlockState;
@@ -54,7 +55,7 @@ public class CerberusEntity extends CreatureEntity {
   
   private static final double FIRE_RANGE = 6.0D;
   private static final int MAX_SPAWN_TIME = 90;  
-  private static final int MAX_FIRING_TIME = 43;
+  private static final int MAX_FIRING_TIME = 66;
   private static final int MAX_SUMMON_TIME = 35;
 
   // bytes to use in World#setEntityState
@@ -73,7 +74,7 @@ public class CerberusEntity extends CreatureEntity {
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 120.0D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 190.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.26D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 8.0D);
@@ -321,90 +322,32 @@ public class CerberusEntity extends CreatureEntity {
     public void tick() { CerberusEntity.this.getNavigator().clearPath(); }
   }
   
-  class FireAttackGoal extends Goal {
-    private int maxFireBreathingTime;
-    private int fireBreathingTime;
-    private int maxCooldown;
-    private int cooldown;
-    
+  class FireAttackGoal extends ShootFireGoal {
+
     protected FireAttackGoal(final int fireTimeIn, final int maxCooldownIn) {
-      this.setMutexFlags(EnumSet.allOf(Goal.Flag.class));
-      maxFireBreathingTime = fireTimeIn;
-      maxCooldown = maxCooldownIn;
-      cooldown = 30;
+      super(CerberusEntity.this, fireTimeIn, maxCooldownIn, FIRE_RANGE);
     }
 
     @Override
     public boolean shouldExecute() {  
-      if(this.cooldown > 0) {
-        cooldown--;
-      } else if (CerberusEntity.this.getAttackTarget() != null && CerberusEntity.this.isNoneState()
-          && CerberusEntity.this.getDistanceSq(CerberusEntity.this.getAttackTarget()) < (FIRE_RANGE * FIRE_RANGE)
-          && CerberusEntity.this.canEntityBeSeen(CerberusEntity.this.getAttackTarget())) {
-        return true;
-      }
-      return false;
+      return super.shouldExecute() && CerberusEntity.this.isNoneState();
     }
     
     @Override
     public boolean shouldContinueExecuting() {
-      return CerberusEntity.this.isFiring() && CerberusEntity.this.getAttackTarget() != null
-          && CerberusEntity.this.canEntityBeSeen(CerberusEntity.this.getAttackTarget())
-          && CerberusEntity.this.getDistanceSq(CerberusEntity.this.getAttackTarget()) < (FIRE_RANGE * FIRE_RANGE);
+      return super.shouldContinueExecuting() && CerberusEntity.this.isFiring();
     }
    
     @Override
     public void startExecuting() {
-      this.fireBreathingTime = 1;
+      super.startExecuting();
       CerberusEntity.this.setFiring(true);
-      CerberusEntity.this.playSound(SoundEvents.ENTITY_CREEPER_PRIMED, 1.0F, 1.2F);
     }
-    
-    @Override
-    public void tick() {
-      if(fireBreathingTime > 0 && fireBreathingTime < maxFireBreathingTime) {
-        fireBreathingTime++;
-        // stop the entity from moving, and adjust look vecs
-        CerberusEntity.this.getNavigator().clearPath();
-        CerberusEntity.this.faceEntity(CerberusEntity.this.getAttackTarget(), 100.0F, 100.0F);
-        CerberusEntity.this.getLookController().setLookPositionWithEntity(CerberusEntity.this.getAttackTarget(), 100.0F, 100.0F);
-        // set fire to targetPos
-        if(fireBreathingTime > 18 && fireBreathingTime % 7 == 0) {
-          final Vector3d entityPos = new Vector3d(CerberusEntity.this.getPosX(), CerberusEntity.this.getPosYEye(), CerberusEntity.this.getPosZ());
-          igniteInRange(entityPos, CerberusEntity.this.getAttackTarget().getPositionVec(), 0.65D, 5);
-          CerberusEntity.this.playSound(SoundEvents.ITEM_FIRECHARGE_USE, 1.2F, 1.0F);
-        }
-      } else {
-        resetTask();
-      } 
-    }
-    
+   
     @Override
     public void resetTask() {
+      super.resetTask();
       CerberusEntity.this.setFiring(false);
-      this.fireBreathingTime = 0;
-      this.cooldown = maxCooldown;
-    }
-    
-    /**
-     * Ignites all entities along a raytrace given the start and end positions
-     * @param startPos the starting position
-     * @param endPos the ending position
-     * @param radius the radius around each point in the ray to check for entities
-     * @param fireTime the amount of time to set fire to the entity
-     **/
-    private void igniteInRange(final Vector3d startPos, final Vector3d endPos, final double radius, final int fireTime) {    
-      Vector3d vecDifference = endPos.subtract(startPos);
-      // step along the vector created by adding the start position and the difference vector
-      for(double i = 0.1, l = vecDifference.length(), stepSize = radius * 0.75D; i < l; i += stepSize) {
-        Vector3d scaled = startPos.add(vecDifference.scale(i));
-        // make a box at this position along the vector
-        final AxisAlignedBB aabb = new AxisAlignedBB(scaled.x - radius, scaled.y - radius, scaled.z - radius, scaled.x + radius, scaled.y + radius, scaled.z + radius);
-        for(final Entity e : CerberusEntity.this.getEntityWorld().getEntitiesWithinAABBExcludingEntity(CerberusEntity.this, aabb)) {
-          // set fire to any entities inside the box
-          e.setFire(fireTime + CerberusEntity.this.getRNG().nextInt(5) - 2);
-        }
-      }
     }
   }
   
@@ -446,6 +389,4 @@ public class CerberusEntity extends CreatureEntity {
       super.summonMob(mobEntity);
     }
   }
-  
-
 }
