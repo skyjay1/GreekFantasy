@@ -20,20 +20,55 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 public class VaseBlock extends HorizontalBlock implements IWaterLoggable {
   
-  protected static final VoxelShape AABB = Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 15.0D, 12.0D);
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-
+  
+  protected static final VoxelShape BODY = VoxelShapes.or(
+    Block.makeCuboidShape(6.0D, 0.0D, 6.0D, 10.0D, 1.0D, 10.0D), 
+    Block.makeCuboidShape(5.0D, 1.0D, 5.0D, 11.0F, 2.0D, 11.0D),
+    Block.makeCuboidShape(4.0D, 2.0D, 4.0D, 12.0D, 10.0D, 12.0D),
+    Block.makeCuboidShape(5.0D, 10.0D, 5.0D, 11.0D, 12.0D, 11.0D),
+    Block.makeCuboidShape(6.0D, 12.0D, 6.0D, 10.0D, 14.0D, 10.0D),
+    VoxelShapes.combine(
+        Block.makeCuboidShape(5.0D, 14.0D, 5.0D, 11.0D, 15.0D, 11.0D),
+        Block.makeCuboidShape(6.0D, 14.0D, 6.0D, 10.0D, 15.0D, 10.0D), IBooleanFunction.ONLY_FIRST));
+  
+  protected static final VoxelShape HANDLE_Z = VoxelShapes.or(
+    VoxelShapes.combine(
+        Block.makeCuboidShape(12.0D, 3.0D, 7.0D, 14.0D, 9.0D, 9.0D),
+        Block.makeCuboidShape(12.0D, 4.0D, 7.0D, 13.0D, 8.0D, 9.0D),
+        IBooleanFunction.ONLY_FIRST),
+    VoxelShapes.combine(
+        Block.makeCuboidShape(2.0D, 3.0D, 7.0D, 4.0D, 9.0D, 9.0D),
+        Block.makeCuboidShape(3.0D, 4.0D, 7.0D, 4.0D, 8.0D, 9.0D),
+        IBooleanFunction.ONLY_FIRST));
+  
+  protected static final VoxelShape HANDLE_X = VoxelShapes.or(
+    VoxelShapes.combine(
+        Block.makeCuboidShape(7.0D, 3.0D, 2.0D, 9.0D, 9.0D, 4.0D),
+        Block.makeCuboidShape(7.0D, 4.0D, 3.0D, 9.0D, 8.0D, 4.0D),
+        IBooleanFunction.ONLY_FIRST),
+    VoxelShapes.combine(
+        Block.makeCuboidShape(7.0D, 3.0D, 12.0D, 9.0D, 9.0D, 14.0D),
+        Block.makeCuboidShape(7.0D, 4.0D, 12.0D, 9.0D, 8.0D, 13.0D),
+        IBooleanFunction.ONLY_FIRST));
+  
+  protected static final VoxelShape SHAPE_X = VoxelShapes.combine(BODY, HANDLE_X, IBooleanFunction.OR).simplify();
+  protected static final VoxelShape SHAPE_Z = VoxelShapes.combine(BODY, HANDLE_Z, IBooleanFunction.OR).simplify();
+  
   public VaseBlock(final Block.Properties properties) {
     super(properties);
     this.setDefaultState(this.getStateContainer().getBaseState()
@@ -72,10 +107,8 @@ public class VaseBlock extends HorizontalBlock implements IWaterLoggable {
       if(teStack.isEmpty()) {
         // attempt to add item to inventory
         teVase.setInventorySlotContents(0, heldItem.copy());
-        if(!playerIn.isCreative()) {
-          // remove from player
-          playerIn.setHeldItem(handIn, ItemStack.EMPTY);
-        }
+        // remove from player
+        playerIn.setHeldItem(handIn, ItemStack.EMPTY);
       } else if(playerIn.isSneaking() || heldItem.isEmpty()) {
         // attempt to drop item from inventory
         ItemEntity dropItem = new ItemEntity(worldIn, playerIn.getPosX(), playerIn.getPosY(), playerIn.getPosZ(), teVase.removeStackFromSlot(0));
@@ -114,7 +147,7 @@ public class VaseBlock extends HorizontalBlock implements IWaterLoggable {
 
   @Override
   public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {
-    return AABB;
+    return (state.get(HORIZONTAL_FACING).getAxis() == Axis.X) ? SHAPE_X : SHAPE_Z;
   }
   
   @Override

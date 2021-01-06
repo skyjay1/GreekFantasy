@@ -121,6 +121,7 @@ __Key:__
 - X X X Marble (raw, smooth, slab, pillar)
 - X X X Statues
 - X X X Vase
+- X X _ Colored vases (TODO: loot table, recipes)
 - X X X Reeds (use for sticks or panflute)
 - X X X Gigante Head
 - X X X Orthus Head

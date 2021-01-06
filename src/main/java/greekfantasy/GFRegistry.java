@@ -47,6 +47,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.Foods;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -221,8 +222,6 @@ public final class GFRegistry {
   public static final Block MARBLE_STATUE = null;
   @ObjectHolder("palladium")
   public static final Block PALLADIUM = null;
-  @ObjectHolder("terracotta_vase")
-  public static final Block TERRACOTTA_VASE = null;
   @ObjectHolder("mysterious_box")
   public static final Block MYSTERIOUS_BOX = null;
   @ObjectHolder("gigante_head")
@@ -233,6 +232,42 @@ public final class GFRegistry {
   public static final Block CERBERUS_HEAD = null;
   @ObjectHolder("ichor_infused_block")
   public static final Block ICHOR_INFUSED_BLOCK = null;
+  
+  // Vase //
+  @ObjectHolder("terracotta_vase")
+  public static final Block TERRACOTTA_VASE = null;
+  @ObjectHolder("white_terracotta_vase")
+  public static final Block WHITE_TERRACOTTA_VASE = null;
+  @ObjectHolder("orange_terracotta_vase")
+  public static final Block ORANGE_TERRACOTTA_VASE = null;
+  @ObjectHolder("magenta_terracotta_vase")
+  public static final Block MAGENTA_TERRACOTTA_VASE = null;
+  @ObjectHolder("light_blue_terracotta_vase")
+  public static final Block LIGHT_BLUE_TERRACOTTA_VASE = null;
+  @ObjectHolder("yellow_terracotta_vase")
+  public static final Block YELLOW_TERRACOTTA_VASE = null;
+  @ObjectHolder("lime_terracotta_vase")
+  public static final Block LIME_TERRACOTTA_VASE = null;
+  @ObjectHolder("pink_terracotta_vase")
+  public static final Block PINK_TERRACOTTA_VASE = null;
+  @ObjectHolder("gray_terracotta_vase")
+  public static final Block GRAY_TERRACOTTA_VASE = null;
+  @ObjectHolder("light_gray_terracotta_vase")
+  public static final Block LIGHT_GRAY_TERRACOTTA_VASE = null;
+  @ObjectHolder("cyan_terracotta_vase")
+  public static final Block CYAN_TERRACOTTA_VASE = null;
+  @ObjectHolder("purple_terracotta_vase")
+  public static final Block PURPLE_TERRACOTTA_VASE = null;
+  @ObjectHolder("blue_terracotta_vase")
+  public static final Block BLUE_TERRACOTTA_VASE = null;
+  @ObjectHolder("brown_terracotta_vase")
+  public static final Block BROWN_TERRACOTTA_VASE = null;
+  @ObjectHolder("green_terracotta_vase")
+  public static final Block GREEN_TERRACOTTA_VASE = null;
+  @ObjectHolder("red_terracotta_vase")
+  public static final Block RED_TERRACOTTA_VASE = null;
+  @ObjectHolder("black_terracotta_vase")
+  public static final Block BLACK_TERRACOTTA_VASE = null;
   
   // Altar //
   @ObjectHolder("altar_zeus")
@@ -348,11 +383,17 @@ public final class GFRegistry {
   public static void registerTileEntities(final RegistryEvent.Register<TileEntityType<?>> event) {
     GreekFantasy.LOGGER.debug("registerTileEntities");
     event.getRegistry().register(
-        TileEntityType.Builder.create(StatueTileEntity::new, LIMESTONE_STATUE, MARBLE_STATUE, PALLADIUM, ALTAR_HADES, ALTAR_POSEIDON, ALTAR_ZEUS)
+        TileEntityType.Builder.create(StatueTileEntity::new, 
+            LIMESTONE_STATUE, MARBLE_STATUE, PALLADIUM, 
+            ALTAR_HADES, ALTAR_POSEIDON, ALTAR_ZEUS)
         .build(null).setRegistryName(MODID, "statue_te")
     );
     event.getRegistry().register(
-        TileEntityType.Builder.create(VaseTileEntity::new, TERRACOTTA_VASE)
+        TileEntityType.Builder.create(VaseTileEntity::new, TERRACOTTA_VASE, 
+            WHITE_TERRACOTTA_VASE, ORANGE_TERRACOTTA_VASE, MAGENTA_TERRACOTTA_VASE, LIGHT_BLUE_TERRACOTTA_VASE, 
+            YELLOW_TERRACOTTA_VASE, LIME_TERRACOTTA_VASE, PINK_TERRACOTTA_VASE, GRAY_TERRACOTTA_VASE, 
+            LIGHT_GRAY_TERRACOTTA_VASE, CYAN_TERRACOTTA_VASE, PURPLE_TERRACOTTA_VASE, BLUE_TERRACOTTA_VASE, 
+            BROWN_TERRACOTTA_VASE, GREEN_TERRACOTTA_VASE, RED_TERRACOTTA_VASE, BLACK_TERRACOTTA_VASE)
         .build(null).setRegistryName(MODID, "vase_te")
     );
     event.getRegistry().register(
@@ -423,8 +464,6 @@ public final class GFRegistry {
           .setRegistryName(MODID, "altar_poseidon"),
         makeDeityStatue("zeus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
           .setRegistryName(MODID, "altar_zeus"),
-        new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
-          .setRegistryName(MODID, "terracotta_vase"),
         new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
           .setRegistryName(MODID, "mysterious_box"),
         new MobHeadBlock(HeadType.GIGANTE, AbstractBlock.Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(1.0F).notSolid())
@@ -436,6 +475,14 @@ public final class GFRegistry {
         new IchorInfusedBlock(AbstractBlock.Properties.from(Blocks.GOLD_BLOCK))
           .setRegistryName(MODID, "ichor_infused_block")
     );
+    
+    // Vase blocks
+    event.getRegistry().register(new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
+        .setRegistryName(MODID, "terracotta_vase"));
+    for(final DyeColor d : DyeColor.values()) {
+      event.getRegistry().register(new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, d.getMapColor()).hardnessAndResistance(0.5F, 1.0F).notSolid())
+          .setRegistryName(MODID, d.getString() + "_terracotta_vase"));
+    }
   }
 
   @SubscribeEvent
@@ -534,8 +581,12 @@ public final class GFRegistry {
         POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, PALLADIUM, 
         ALTAR_ZEUS, ALTAR_HADES, ALTAR_POSEIDON,
         LIMESTONE, LIMESTONE_SLAB, LIMESTONE_STAIRS, POLISHED_LIMESTONE, POLISHED_LIMESTONE_SLAB, 
-        POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, LIMESTONE_STATUE, 
-        TERRACOTTA_VASE, ICHOR_INFUSED_BLOCK);
+        POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, LIMESTONE_STATUE, ICHOR_INFUSED_BLOCK,
+        TERRACOTTA_VASE, WHITE_TERRACOTTA_VASE, ORANGE_TERRACOTTA_VASE, MAGENTA_TERRACOTTA_VASE, 
+        LIGHT_BLUE_TERRACOTTA_VASE, YELLOW_TERRACOTTA_VASE, LIME_TERRACOTTA_VASE, 
+        PINK_TERRACOTTA_VASE, GRAY_TERRACOTTA_VASE, LIGHT_GRAY_TERRACOTTA_VASE, 
+        CYAN_TERRACOTTA_VASE, PURPLE_TERRACOTTA_VASE, BLUE_TERRACOTTA_VASE,
+        BROWN_TERRACOTTA_VASE, GREEN_TERRACOTTA_VASE, RED_TERRACOTTA_VASE, BLACK_TERRACOTTA_VASE);
     
     event.getRegistry().register(new MobHeadItem(GIGANTE_HEAD, new Item.Properties()
         .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeGiganteHeadISTER))
@@ -729,8 +780,6 @@ public final class GFRegistry {
     return new StatueBlock(statueMaterial, te -> {
         te.setStatuePose(pose);
         te.setDeityName(deityId.toString());
-        // DEBUG
-//        GreekFantasy.LOGGER.debug("StatueTileEntityInit consumer - " + te.getDeity().toString());
         te.setItem(te.getDeity().getRightHandItem(), HandSide.RIGHT);
         te.setItem(te.getDeity().getLeftHandItem(), HandSide.LEFT);
       }, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(15.0F, 6000.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> statueMaterial.getLightLevel()), deityId);

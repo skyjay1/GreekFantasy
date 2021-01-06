@@ -148,7 +148,7 @@ public class CommonForgeEventHandler {
   @SubscribeEvent
   public static void onLivingTick(final PlayerTickEvent event) {
     final boolean tick = (event.phase == TickEvent.Phase.START) && event.player.isAlive();
-    if(tick && event.player.isServerWorld()) {
+    if(tick && !event.player.getEntityWorld().isRemote() && event.player.isServerWorld()) {
       event.player.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerTick(event.player, f));
     }
     if(tick && GreekFantasy.CONFIG.isSwineEnabled()) {

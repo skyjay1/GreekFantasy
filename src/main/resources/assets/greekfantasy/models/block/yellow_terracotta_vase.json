@@ -1,0 +1,6 @@
+{
+  "parent": "greekfantasy:block/vase",
+  "textures": {
+	  	"texture": "greekfantasy:block/yellow_terracotta_vase"
+  }
+}
