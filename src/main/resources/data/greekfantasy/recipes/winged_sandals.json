@@ -17,6 +17,7 @@
   },
   "result": {
     "item": "greekfantasy:winged_sandals",
-    "count": 1
+    "count": 1,
+    "nbt": "{Enchantments:[{id:\"greekfantasy:overstep\",lvl:1}]}"
   }
 }

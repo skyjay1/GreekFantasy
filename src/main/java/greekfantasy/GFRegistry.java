@@ -466,10 +466,6 @@ public final class GFRegistry {
         new BagOfWindItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.BAG_OF_WIND_DURABILITY.get()))
           .setRegistryName(MODID, "bag_of_wind"),
-        new WingedSandalsItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
-          .setRegistryName(MODID, "winged_sandals"),
-        new HelmOfDarknessItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
-          .setRegistryName(MODID, "helm_of_darkness"),
         new UnicornHornItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.UNICORN_HORN_DURABILITY.get()))
           .setRegistryName(MODID, "unicorn_horn"),
@@ -490,7 +486,11 @@ public final class GFRegistry {
         new SnakeskinArmorItem(EquipmentSlotType.LEGS, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "snakeskin_leggings"),
         new SnakeskinArmorItem(EquipmentSlotType.FEET, new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(MODID, "snakeskin_boots")
+          .setRegistryName(MODID, "snakeskin_boots"),
+        new WingedSandalsItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
+          .setRegistryName(MODID, "winged_sandals"),
+        new HelmOfDarknessItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
+          .setRegistryName(MODID, "helm_of_darkness")
     );
     
     event.getRegistry().registerAll(

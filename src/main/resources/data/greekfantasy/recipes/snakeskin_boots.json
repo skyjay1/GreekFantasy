@@ -9,6 +9,8 @@
     "V": { "item": "greekfantasy:snake_fang" }
   },
   "result": {
-    "item": "greekfantasy:snakeskin_boots"
+    "item": "greekfantasy:snakeskin_boots",
+    "count": 1,
+    "nbt": "{Enchantments:[{id:\"greekfantasy:poison\",lvl:1}]}"
   }
 }
