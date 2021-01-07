@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#O#",
+    " # "
+  ],
+  "key": {
+    "#": { "item": "minecraft:terracotta" },
+    "O": { "item": "minecraft:pink_dye" }
+  },
+  "result": {
+    "item": "greekfantasy:pink_terracotta_vase",
+    "count": 3
+  }
+}
