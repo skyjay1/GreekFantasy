@@ -171,7 +171,7 @@ __Key:__
 - X X X Swine Wand - inflicts Swine effect
 - X X X Snake fang
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
-- X X _ Gorgon blood - 50% chance to heal, 50% chance to poison
+- X X X Gorgon blood - 50% chance to heal, 50% chance to poison
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)
 - _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 
