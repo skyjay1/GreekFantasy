@@ -538,13 +538,13 @@ public final class GFRegistry {
           .setRegistryName(MODID, "winged_sandals"),
         new HelmOfDarknessItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
           .setRegistryName(MODID, "helm_of_darkness"),
-        new GorgonBloodItem(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(MODID, "gorgon_blood")
+        new GorgonBloodItem(new Item.Properties().maxStackSize(16).containerItem(Items.GLASS_BOTTLE).group(GREEK_GROUP))
+          .setRegistryName(MODID, "gorgon_blood"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "horn")
     );
     
     event.getRegistry().registerAll(
-        new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(MODID, "horn"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "boar_ear"),
         new Item(new Item.Properties().group(GREEK_GROUP))
@@ -552,8 +552,12 @@ public final class GFRegistry {
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "golden_bridle"),
         new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
-            .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC).containerItem(GFRegistry.HORN))
-            .setRegistryName(MODID, "ambrosia"),
+            .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC)) {
+          @Override
+          public ItemStack getContainerItem(ItemStack itemStack) { return new ItemStack(GFRegistry.HORN); }
+          @Override
+          public boolean hasContainerItem(ItemStack stack) { return true; }
+        }.setRegistryName(MODID, "ambrosia"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "magic_feather"),
         new Item(new Item.Properties().group(GREEK_GROUP))

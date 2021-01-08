@@ -24,11 +24,11 @@ public class VaseTileEntityRenderer extends TileEntityRenderer<VaseTileEntity> {
       int packedLightIn, int packedOverlayIn) {
     final ItemStack itemstack = tileEntityIn.getStackInSlot(0);
     if (!itemstack.isEmpty()) {
-      final float scale = 0.35F;
+      final float scale = 0.315F;
       final float rotation = tileEntityIn.getBlockState().get(VaseBlock.HORIZONTAL_FACING).getHorizontalAngle();
       matrixStackIn.push();
       // transforms
-      matrixStackIn.translate(0.5D, 0.94D, 0.5D);
+      matrixStackIn.translate(0.5D, 0.70D, 0.5D);
       matrixStackIn.rotate(Vector3f.YN.rotationDegrees(rotation));
       matrixStackIn.scale(scale, scale, scale);
       // render the item stack

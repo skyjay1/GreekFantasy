@@ -37,37 +37,34 @@ public class VaseBlock extends HorizontalBlock implements IWaterLoggable {
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
   
   protected static final VoxelShape BODY = VoxelShapes.or(
-    Block.makeCuboidShape(6.0D, 0.0D, 6.0D, 10.0D, 1.0D, 10.0D), 
-    Block.makeCuboidShape(5.0D, 1.0D, 5.0D, 11.0F, 2.0D, 11.0D),
-    Block.makeCuboidShape(4.0D, 2.0D, 4.0D, 12.0D, 10.0D, 12.0D),
-    Block.makeCuboidShape(5.0D, 10.0D, 5.0D, 11.0D, 12.0D, 11.0D),
-    Block.makeCuboidShape(6.0D, 12.0D, 6.0D, 10.0D, 14.0D, 10.0D),
+    Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 8.0D, 12.0D),
+    Block.makeCuboidShape(6.0D, 8.0D, 6.0D, 10.0D, 10.0D, 10.0D),
     VoxelShapes.combine(
-        Block.makeCuboidShape(5.0D, 14.0D, 5.0D, 11.0D, 15.0D, 11.0D),
-        Block.makeCuboidShape(6.0D, 14.0D, 6.0D, 10.0D, 15.0D, 10.0D), IBooleanFunction.ONLY_FIRST));
+        Block.makeCuboidShape(5.0D, 10.0D, 5.0D, 11.0D, 11.0D, 11.0D),
+        Block.makeCuboidShape(6.0D, 10.0D, 6.0D, 10.0D, 11.0D, 10.0D), IBooleanFunction.ONLY_FIRST));
   
   protected static final VoxelShape HANDLE_Z = VoxelShapes.or(
     VoxelShapes.combine(
-        Block.makeCuboidShape(12.0D, 3.0D, 7.0D, 14.0D, 9.0D, 9.0D),
-        Block.makeCuboidShape(12.0D, 4.0D, 7.0D, 13.0D, 8.0D, 9.0D),
+        Block.makeCuboidShape(12.0D, 1.0D, 7.0D, 14.0D, 7.0D, 9.0D),
+        Block.makeCuboidShape(12.0D, 2.0D, 7.0D, 13.0D, 6.0D, 9.0D),
         IBooleanFunction.ONLY_FIRST),
     VoxelShapes.combine(
-        Block.makeCuboidShape(2.0D, 3.0D, 7.0D, 4.0D, 9.0D, 9.0D),
-        Block.makeCuboidShape(3.0D, 4.0D, 7.0D, 4.0D, 8.0D, 9.0D),
+        Block.makeCuboidShape(2.0D, 1.0D, 7.0D, 4.0D, 7.0D, 9.0D),
+        Block.makeCuboidShape(3.0D, 2.0D, 7.0D, 4.0D, 6.0D, 9.0D),
         IBooleanFunction.ONLY_FIRST));
   
   protected static final VoxelShape HANDLE_X = VoxelShapes.or(
     VoxelShapes.combine(
-        Block.makeCuboidShape(7.0D, 3.0D, 2.0D, 9.0D, 9.0D, 4.0D),
-        Block.makeCuboidShape(7.0D, 4.0D, 3.0D, 9.0D, 8.0D, 4.0D),
+        Block.makeCuboidShape(7.0D, 1.0D, 2.0D, 9.0D, 7.0D, 4.0D),
+        Block.makeCuboidShape(7.0D, 2.0D, 3.0D, 9.0D, 6.0D, 4.0D),
         IBooleanFunction.ONLY_FIRST),
     VoxelShapes.combine(
-        Block.makeCuboidShape(7.0D, 3.0D, 12.0D, 9.0D, 9.0D, 14.0D),
-        Block.makeCuboidShape(7.0D, 4.0D, 12.0D, 9.0D, 8.0D, 13.0D),
+        Block.makeCuboidShape(7.0D, 1.0D, 12.0D, 9.0D, 7.0D, 14.0D),
+        Block.makeCuboidShape(7.0D, 2.0D, 12.0D, 9.0D, 6.0D, 13.0D),
         IBooleanFunction.ONLY_FIRST));
   
-  protected static final VoxelShape SHAPE_X = VoxelShapes.combine(BODY, HANDLE_X, IBooleanFunction.OR).simplify();
-  protected static final VoxelShape SHAPE_Z = VoxelShapes.combine(BODY, HANDLE_Z, IBooleanFunction.OR).simplify();
+  protected static final VoxelShape SHAPE_X = VoxelShapes.combine(BODY, HANDLE_X, IBooleanFunction.OR);
+  protected static final VoxelShape SHAPE_Z = VoxelShapes.combine(BODY, HANDLE_Z, IBooleanFunction.OR);
   
   public VaseBlock(final Block.Properties properties) {
     super(properties);
