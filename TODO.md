@@ -46,7 +46,7 @@ __Key:__
 - X X X X X Miniboss: Giant Boar
 - X X X X X Miniboss: Medusa
 - X X X _ X Fury
-- X X _ _ X Drakaina
+- X X _ X X Drakaina
 - X X X X X Arion (very fast horse, use gold)
 - _ _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
 

@@ -1,3 +1,21 @@
 {
-	"parent": "greekfantasy:block/orange_terracotta_vase"
+  "parent":"forge:item/default",
+  "loader":"forge:separate-perspective",
+  "base": {
+    "parent": "greekfantasy:block/orange_terracotta_vase"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "minecraft:item/generated",
+	  "textures": {
+		"layer0": "greekfantasy:item/orange_terracotta_vase"
+	  }
+    },
+    "fixed": {
+      "parent": "minecraft:item/generated",
+	  "textures": {
+		"layer0": "greekfantasy:item/orange_terracotta_vase"
+	  }
+    }
+  }
 }
