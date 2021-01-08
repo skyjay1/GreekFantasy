@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "greekfantasy:olive_log",
-    "greekfantasy:olive_wood"
+    "greekfantasy:olive_wood",
+    "greekfantasy:stripped_olive_log",
+    "greekfantasy:stripped_olive_wood"
   ]
 }

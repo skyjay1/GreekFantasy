@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "greekfantasy:block/stripped_olive_log",
+    "side": "greekfantasy:block/stripped_olive_log"
+  }
+}

@@ -43,18 +43,22 @@ import net.minecraft.entity.EntityType.IFactory;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.AxeItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Foods;
+import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
 import net.minecraft.item.Items;
 import net.minecraft.item.Rarity;
+import net.minecraft.item.ShovelItem;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
@@ -80,6 +84,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
@@ -172,8 +177,12 @@ public final class GFRegistry {
   public static final Block REEDS = null;
   @ObjectHolder("olive_log")
   public static final Block OLIVE_LOG = null;
+  @ObjectHolder("stripped_olive_log")
+  public static final Block STRIPPED_OLIVE_LOG = null;
   @ObjectHolder("olive_wood")
   public static final Block OLIVE_WOOD = null;
+  @ObjectHolder("stripped_olive_wood")
+  public static final Block STRIPPED_OLIVE_WOOD = null;
   @ObjectHolder("olive_planks")
   public static final Block OLIVE_PLANKS = null;
   @ObjectHolder("olive_slab")
@@ -582,7 +591,8 @@ public final class GFRegistry {
     
     // block items
     registerItemBlocks(event, REEDS, OLIVE_SAPLING, NEST_BLOCK, WILD_ROSE, 
-        OLIVE_LOG, OLIVE_WOOD, OLIVE_PLANKS, OLIVE_SLAB, OLIVE_STAIRS, OLIVE_LEAVES, 
+        OLIVE_LOG, STRIPPED_OLIVE_LOG, OLIVE_WOOD, STRIPPED_OLIVE_WOOD, OLIVE_PLANKS, 
+        OLIVE_SLAB, OLIVE_STAIRS, OLIVE_LEAVES, 
         MARBLE, MARBLE_SLAB, MARBLE_STAIRS, POLISHED_MARBLE, POLISHED_MARBLE_SLAB, 
         POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, PALLADIUM, 
         ALTAR_ZEUS, ALTAR_HADES, ALTAR_POSEIDON,
@@ -800,14 +810,43 @@ public final class GFRegistry {
       public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
       @Override
       public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      @Override
+      public BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
+          if (toolType == ToolType.AXE) {
+            return GFRegistry.STRIPPED_OLIVE_LOG.getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
+          }
+          return super.getToolModifiedState(state, world, pos, player, stack, toolType);
+      }
     };
-    // planks block
-    final Block wood = new RotatedPillarBlock(properties){
+    // stripped log block
+    final Block strippedLog = new RotatedPillarBlock(properties){
       @Override
       public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
       @Override
       public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
     };
+    // wood block
+    final Block wood = new RotatedPillarBlock(properties){
+      @Override
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      @Override
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      @Override
+      public BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
+          if (toolType == ToolType.AXE) {
+            return GFRegistry.STRIPPED_OLIVE_WOOD.getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
+          }
+          return super.getToolModifiedState(state, world, pos, player, stack, toolType);
+      }
+    };
+    // stripped wood block
+    final Block strippedWood = new RotatedPillarBlock(properties){
+      @Override
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      @Override
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+    };
+    // planks block
     final Block planks = new Block(properties) {
       @Override
       public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
@@ -816,8 +855,10 @@ public final class GFRegistry {
     };
     // register log, planks, and others
     event.getRegistry().registerAll(     
-        log.setRegistryName(MODID, registryName + "_log"), 
+        log.setRegistryName(MODID, registryName + "_log"),
+        strippedLog.setRegistryName(MODID, "stripped_" + registryName + "_log"),
         wood.setRegistryName(MODID, registryName + "_wood"),
+        strippedWood.setRegistryName(MODID, "stripped_" + registryName + "_wood"),
         planks.setRegistryName(MODID, registryName + "_planks"),
         new SlabBlock(properties) {
           @Override
