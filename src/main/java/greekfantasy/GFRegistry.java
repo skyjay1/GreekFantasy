@@ -537,7 +537,9 @@ public final class GFRegistry {
         new WingedSandalsItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
           .setRegistryName(MODID, "winged_sandals"),
         new HelmOfDarknessItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
-          .setRegistryName(MODID, "helm_of_darkness")
+          .setRegistryName(MODID, "helm_of_darkness"),
+        new GorgonBloodItem(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "gorgon_blood")
     );
     
     event.getRegistry().registerAll(

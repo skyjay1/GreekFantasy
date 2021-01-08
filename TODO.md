@@ -121,7 +121,7 @@ __Key:__
 - X X X Marble (raw, smooth, slab, pillar)
 - X X X Statues
 - X X X Vase
-- X X _ Colored vases (TODO: loot table, recipes)
+- X X X Colored vases
 - X X X Reeds (use for sticks or panflute)
 - X X X Gigante Head
 - X X X Orthus Head
@@ -164,14 +164,14 @@ __Key:__
 - X X X Wild Rose - crafting component from Satyr (sword of the hunt)
 - X X X Conch Shell - place and remove water 
 - X X X Talos Heart - crafting component from Talos
-- X _ X Tough Snakeskin - crafting component from Python (TODO: used for what?)
+- X X X Tough Snakeskin - crafting component from Python and Medusa
 - X X X Bag of Wind - gives 30sec speed boost
 - X X X Boar ear, boar tusk - crafting component from Giant Boar
 - X X X Ivory sword - extra knockback
 - X X X Swine Wand - inflicts Swine effect
 - X X X Snake fang
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
-- _ _ _ Gorgon blood - 50% chance to fully heal, 50% chance to fully kill
+- X X _ Gorgon blood - 50% chance to heal, 50% chance to poison
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)
 - _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 
