@@ -116,7 +116,7 @@
   	  "summon": { 
   	  	"id": "minecraft:creeper",
   	  	"powered": true,
-  	  	"CustomName": "Wrath of Zeus"
+  	  	"CustomName": "\"Wrath of Zeus\""
   	  },
   	  "minlevel": -7,
   	  "maxlevel": -10,
@@ -196,7 +196,7 @@
   	    "type": "player_hurt_entity",
   	    "data": "minecraft:iron_golem"
   	  },
-  	  "chance": 0.05,
+  	  "chance": 0.09,
   	  "level_multiplier": 0.05,
   	  "effect": {
   	    "potion": {

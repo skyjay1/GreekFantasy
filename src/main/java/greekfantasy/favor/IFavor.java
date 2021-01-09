@@ -118,7 +118,6 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
   /**
    * @param info the favor level
    * @param time the current time
-   * @param rand a random instance
    * @return true if a TriggeredFavorEffect should be chosen and executed
    */
   default boolean canUseTriggeredEffect(final FavorLevel info, final long time) { 

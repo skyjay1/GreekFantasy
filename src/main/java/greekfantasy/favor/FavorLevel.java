@@ -9,7 +9,7 @@ import net.minecraftforge.common.MinecraftForge;
 public class FavorLevel {
   
   public static final int MAX_LEVEL = 10;
-  public static final long MAX_FAVOR = calculateFavor(MAX_LEVEL);
+  public static final long MAX_FAVOR = calculateFavor(MAX_LEVEL + 1) - 1;
   
   public static final String FAVOR = "Favor";
     
@@ -81,7 +81,8 @@ public class FavorLevel {
    * @param deity the deity associated with this favor level
    */
   public void sendStatusMessage(final PlayerEntity playerIn, final IDeity deity) {
-    playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", deity.getText(), getFavor(), getFavorToNextLevel(), getLevel()).mergeStyle(TextFormatting.LIGHT_PURPLE), false);
+    long favorToNext = getFavorToNextLevel();
+    playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", deity.getText(), getFavor(), (favorToNext > 0 ? favorToNext : "--"), getLevel()).mergeStyle(TextFormatting.LIGHT_PURPLE), false);
   }
   
   @Override
