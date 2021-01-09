@@ -181,7 +181,13 @@ public final class GFWorldGen {
               .build()).func_242731_b(2));
   }
   
-  private static ConfiguredFeature<?, ?> registerFeature(final String name, final ConfiguredFeature<?, ?> feature) {
+  private static ConfiguredFeature<?, ?> registerFeature(final String name, ConfiguredFeature<?, ?> feature) {
+    final BiomeWhitelistConfig config = GreekFantasy.CONFIG.FEATURES.get(name);
+    if(null == config) {
+      GreekFantasy.LOGGER.error("Error registering features: config for '" + name + "' not found!");
+    } else {
+      feature = feature.chance(1000 / config.chance());
+    }
     return Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, name), feature);
   }
 
@@ -211,11 +217,10 @@ public final class GFWorldGen {
   private static void addFeature(final BiomeLoadingEvent event, final String featureName, 
       final GenerationStage.Decoration stage, final ConfiguredFeature<?, ?> feature) {
     final BiomeWhitelistConfig config = GreekFantasy.CONFIG.FEATURES.get(featureName);
-    final RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
     if(null == config) {
       GreekFantasy.LOGGER.error("Error registering features: config for '" + featureName + "' not found!");
-    } else if(config.chance() > 0 && config.canSpawnInBiome(key)) {
-      event.getGeneration().withFeature(stage, feature.chance(1000 / config.chance()));
+    } else if(config.chance() > 0 && config.canSpawnInBiome(RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName()))) {
+      event.getGeneration().withFeature(stage, feature);
     }
   }
   
