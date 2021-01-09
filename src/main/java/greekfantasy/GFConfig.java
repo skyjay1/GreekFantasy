@@ -1,6 +1,7 @@
 package greekfantasy;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -198,8 +199,9 @@ public class GFConfig {
     IS_SWINE_ENTITY_WHITELIST = builder.define("is_swine_entity_whitelist", true);
     final List<String> swineWhitelist = entitiesAsList(EntityType.PLAYER, EntityType.VILLAGER, EntityType.ZOMBIE,
         EntityType.ZOMBIE_VILLAGER, EntityType.HUSK, EntityType.VINDICATOR, EntityType.WANDERING_TRADER,
-        EntityType.ILLUSIONER, EntityType.PILLAGER, GFRegistry.ARA_ENTITY, GFRegistry.DRYAD_ENTITY,
-        GFRegistry.NAIAD_ENTITY, GFRegistry.SATYR_ENTITY);
+        EntityType.ILLUSIONER, EntityType.PILLAGER);
+    Collections.addAll(swineWhitelist, GreekFantasy.MODID + ":ara", GreekFantasy.MODID + ":dryad", 
+        GreekFantasy.MODID + ":naiad", GreekFantasy.MODID + ":satyr");
     SWINE_ENTITY_WHITELIST = builder.defineList("swine_entity_whitelist", swineWhitelist, o -> o instanceof String);
     NERF_STUNNING = builder.comment("When true, replaces stunning with Slowness I and Weakness I")
         .define("nerf_stunning", false);

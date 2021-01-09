@@ -14,11 +14,13 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.FleeSunGoal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.RestrictSunGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.MonsterEntity;
@@ -29,6 +31,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.IStringSerializable;
@@ -50,6 +53,7 @@ public class DrakainaEntity extends MonsterEntity {
   public DrakainaEntity(final EntityType<? extends DrakainaEntity> type, final World worldIn) {
     super(type, worldIn);
     this.experienceValue = 10;
+    this.setPathPriority(PathNodeType.WATER, -0.5F);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -62,8 +66,9 @@ public class DrakainaEntity extends MonsterEntity {
   @Override
   protected void registerGoals() {
     super.registerGoals();
-    this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false));
+    this.goalSelector.addGoal(1, new RestrictSunGoal(this));
+    this.goalSelector.addGoal(2, new FleeSunGoal(this, 1.0D));
+    this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
     this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
