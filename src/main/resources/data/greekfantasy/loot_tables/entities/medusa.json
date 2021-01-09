@@ -33,8 +33,7 @@
           "name": "greekfantasy:snake_fang"
         }
       ]
-    }
-  ],
+    },
     {
       "rolls": 1,
       "entries": [
@@ -51,4 +50,5 @@
         }
       ]
     }
+  ]
 }

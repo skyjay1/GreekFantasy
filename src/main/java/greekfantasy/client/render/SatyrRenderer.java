@@ -13,28 +13,23 @@ import net.minecraft.util.ResourceLocation;
 public class SatyrRenderer<T extends SatyrEntity> extends BipedRenderer<T, SatyrModel<T>> {
   
   private static final ResourceLocation TEXTURE_SATYR = new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/satyr.png");
-  private static final ResourceLocation TEXTURE_SHAMAN = new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/shaman.png");
+  private static final ResourceLocation TEXTURE_GROVER = new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/grover.png");
 
-  private boolean isShaman;
-  
   public SatyrRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new SatyrModel<T>(0.0F), 0.5F);
+    this.addLayer(new SatyrShamanLayer<>(this));
     this.addLayer(new SatyrPanfluteLayer<>(this));
+    this.addLayer(new SatyrGroverLayer<>(this));
   }
   
   @Override
   public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
       final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
     super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
-    if(entityIn.hasShamanTexture()) {
-      this.isShaman = true;
-      super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
-      this.isShaman = false;
-    }
   }
 
   @Override
   public ResourceLocation getEntityTexture(final T entity) {
-    return isShaman ? TEXTURE_SHAMAN : TEXTURE_SATYR;
+    return (entity.hasCustomName() && "Grover".equals(entity.getCustomName().getUnformattedComponentText())) ? TEXTURE_GROVER : TEXTURE_SATYR;
   }
 }
