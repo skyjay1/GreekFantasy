@@ -15,6 +15,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Direction;
@@ -26,6 +27,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class FavorEffectManager {
   
@@ -91,7 +93,9 @@ public class FavorEffectManager {
    */
   private static boolean potionFavorEffect(final PlayerEntity playerIn, final Optional<CompoundNBT> potionTag) {
     if(potionTag.isPresent()) {
-      return playerIn.addPotionEffect(EffectInstance.read(potionTag.get()));
+      final CompoundNBT nbt = potionTag.get().copy();
+      nbt.putByte("Id", (byte) Effect.getId(ForgeRegistries.POTIONS.getValue(new ResourceLocation(potionTag.get().getString("Potion")))));
+      return playerIn.addPotionEffect(EffectInstance.read(nbt));
     }
     return false;
   }

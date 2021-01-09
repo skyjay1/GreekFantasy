@@ -99,18 +99,15 @@ public interface IDeity {
       final ResourceLocation data, final int playerLevel) {
     final List<TriggeredFavorEffect> effects = getTriggeredFavorEffects();
     if(!effects.isEmpty()) {
-//      GreekFantasy.LOGGER.debug("Attempting to find a triggered favor effect to run...");
       int tries = Math.min(effects.size(), 10);
       while(tries-- > 0) {
         final TriggeredFavorEffect effect = effects.get(rand.nextInt(effects.size()));
         if(effect.getTrigger().getType() == type && data.equals(effect.getTrigger().getData()) 
             && effect.getEffect().isInRange(playerLevel) && rand.nextFloat() < effect.getAdjustedChance(playerLevel)) {
-//          GreekFantasy.LOGGER.debug("Running " + effect.toString());
           return effect;
         }
       }
     }
-//    GreekFantasy.LOGGER.debug("getTriggeredEffect found no effects to run, returning EMPTY");
     return TriggeredFavorEffect.EMPTY;
   }
   

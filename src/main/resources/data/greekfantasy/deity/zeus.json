@@ -12,7 +12,7 @@
   "effects": [
   	{
   	  "potion": {
-  	  	"Id": 3,
+  	  	"Potion": "minecraft:haste",
   	  	"Amplifier": 0,
   	  	"Duration": 1100
   	  },
@@ -22,7 +22,7 @@
   	},
   	{
   	  "potion": {
-  	  	"Id": 10,
+  	  	"Potion": "minecraft:regeneration",
   	  	"Amplifier": 0,
   	  	"Duration": 600
   	  },
@@ -32,7 +32,7 @@
   	},
   	{
   	  "potion": {
-  	  	"Id": 5,
+  	  	"Potion": "minecraft:strength",
   	  	"Amplifier": 1,
   	  	"Duration": 900
   	  },
@@ -42,7 +42,7 @@
   	},
   	{
   	  "potion": {
-  	  	"Id": 28,
+  	  	"Potion": "minecraft:slow_falling",
   	  	"Amplifier": 0,
   	  	"Duration": 1200
   	  },
@@ -52,7 +52,7 @@
   	},
   	{
   	  "potion": {
-  	  	"Id": 11,
+  	  	"Potion": "minecraft:resistance",
   	  	"Amplifier": 2,
   	  	"Duration": 900
   	  },
@@ -136,7 +136,7 @@
   	},
   	{
   	  "potion": {
-  	  	"Id": 2,
+  	  	"Potion": "minecraft:slowness",
   	  	"Amplifier": 1,
   	  	"Duration": 600
   	  },
@@ -146,7 +146,7 @@
   	},
   	{
   	  "potion": {
-  	  	"Id": 25,
+  	  	"Potion": "minecraft:levitation",
   	  	"Amplifier": 0,
   	  	"Duration": 240
   	  },
