@@ -16,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Effect;
 import net.minecraft.util.ResourceLocation;
 
 public class FavorManager {
@@ -51,6 +52,17 @@ public class FavorManager {
   public static void onBreakBlock(final PlayerEntity player, final Block block, final IFavor favor) {
     // attempt to trigger PLAYER_BREAK_BLOCK favor effect
     triggerFavorEffect(FavorEffectTrigger.Type.PLAYER_BREAK_BLOCK, block.getRegistryName(), player, favor);
+  }
+  
+  /**
+   * Called when a potion effect is added to a player
+   * @param player the player
+   * @param effect the potion effect that was added
+   * @param favor the player's favor capability
+   */
+  public static void onAddPotion(final PlayerEntity player, final Effect effect, final IFavor favor) {
+    // attempt to trigger EFFECTS_CHANGED favor effect
+    triggerFavorEffect(FavorEffectTrigger.Type.EFFECTS_CHANGED, effect.getRegistryName(), player, favor);
   }
   
   /**

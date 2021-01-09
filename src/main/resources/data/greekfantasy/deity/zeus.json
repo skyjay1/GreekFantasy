@@ -170,7 +170,61 @@
   	    },
   	    "minlevel": 5,
   	    "maxlevel": 10,
-  	    "mincooldown": 6400
+  	    "mincooldown": 7400
+  	  }
+  	},
+  	{
+  	  "trigger": {
+  	    "type": "player_killed_entity",
+  	    "data": "minecraft:zombie_villager"
+  	  },
+  	  "chance": 0.15,
+  	  "level_multiplier": 0.04,
+  	  "effect": {
+  	    "potion": {
+  	      "Potion": "minecraft:strength",
+  	      "Amplifier": 0,
+  	  	  "Duration": 900
+  	    },
+  	    "minlevel": 1,
+  	    "maxlevel": 10,
+  	    "mincooldown": 6100
+  	  }
+  	},
+  	{
+  	  "trigger": {
+  	    "type": "player_hurt_entity",
+  	    "data": "minecraft:iron_golem"
+  	  },
+  	  "chance": 0.05,
+  	  "level_multiplier": 0.05,
+  	  "effect": {
+  	    "potion": {
+  	      "Potion": "minecraft:weakness",
+  	      "Amplifier": 0,
+  	  	  "Duration": 600
+  	    },
+  	    "minlevel": -1,
+  	    "maxlevel": -10,
+  	    "mincooldown": 5100
+  	  }
+  	},
+  	{
+  	  "trigger": {
+  	    "type": "entity_hurt_player",
+  	    "data": "greekfantasy:minotaur"
+  	  },
+  	  "chance": 0.25,
+  	  "level_multiplier": 0.05,
+  	  "effect": {
+  	    "potion": {
+  	      "Potion": "minecraft:absorption",
+  	      "Amplifier": 2,
+  	  	  "Duration": 600
+  	    },
+  	    "minlevel": 3,
+  	    "maxlevel": 10,
+  	    "mincooldown": 7000
   	  }
   	}
   ],

@@ -191,12 +191,20 @@ public class CommonForgeEventHandler {
    */
   @SubscribeEvent
   public static void onAddPotion(final PotionEvent.PotionAddedEvent event) {
-    if (!event.getEntityLiving().getEntityWorld().isRemote() && GreekFantasy.CONFIG.isSwineEnabled() 
-        && event.getPotionEffect().getPotion() == GFRegistry.SWINE_EFFECT
-        && GreekFantasy.CONFIG.canSwineApply(event.getEntityLiving().getType().getRegistryName().toString())) {
-      final int id = event.getEntityLiving().getEntityId();
-      GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSwineEffectPacket(id, event.getPotionEffect().getDuration()));
+    if(!event.getEntityLiving().getEntityWorld().isRemote()) {
+      // notify favor manager
+      if(event.getEntityLiving() instanceof PlayerEntity) {
+        event.getEntityLiving().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAddPotion((PlayerEntity)event.getEntityLiving(), event.getPotionEffect().getPotion(), f));
+      }
+      // send swine effect packet
+      if (GreekFantasy.CONFIG.isSwineEnabled() 
+          && event.getPotionEffect().getPotion() == GFRegistry.SWINE_EFFECT
+          && GreekFantasy.CONFIG.canSwineApply(event.getEntityLiving().getType().getRegistryName().toString())) {
+        final int id = event.getEntityLiving().getEntityId();
+        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSwineEffectPacket(id, event.getPotionEffect().getDuration()));
+      }
     }
+    
   }
   
   /**
