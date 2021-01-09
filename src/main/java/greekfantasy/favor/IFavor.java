@@ -22,6 +22,8 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
   static final String FAVOR = "Favor";
   static final String TIMESTAMP = "Timestamp";
   static final String COOLDOWN = "Cooldown";
+  static final String TRIGGERED_TIMESTAMP = "TriggeredTimestamp";
+  static final String TRIGGERED_COOLDOWN = "TriggeredCooldown";
   
   public static final long MIN_FAVOR = 10;
 
@@ -88,6 +90,18 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
 
   /** @param cooldown the amount of time until the next favor effect **/
   void setEffectCooldown(long cooldown);
+  
+  /** @return the time of the last favor effect **/
+  long getTriggeredTimestamp();
+
+  /** @param timestamp the current time **/
+  void setTriggeredTimestamp(long timestamp);
+
+  /** @return the time until the next favor effect **/
+  long getTriggeredCooldown();
+
+  /** @param cooldown the amount of time until the next favor effect **/
+  void setTriggeredCooldown(long cooldown);
 
   /**
    * @param info the favor level
@@ -99,6 +113,17 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
     return Math.abs(info.getFavor()) >= MIN_FAVOR 
         && time >= (getEffectTimestamp() + getEffectCooldown())
         && rand.nextDouble() * 0.7D < info.getPercentFavor(); 
+  }
+  
+  /**
+   * @param info the favor level
+   * @param time the current time
+   * @param rand a random instance
+   * @return true if a TriggeredFavorEffect should be chosen and executed
+   */
+  default boolean canUseTriggeredEffect(final FavorLevel info, final long time) { 
+    return Math.abs(info.getFavor()) >= MIN_FAVOR 
+        && time >= (getTriggeredTimestamp() + getTriggeredCooldown()); 
   }
   
   @Override
@@ -114,6 +139,8 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
     nbt.put(FAVOR_LEVELS, deities);
     nbt.putLong(TIMESTAMP, getEffectTimestamp());
     nbt.putLong(COOLDOWN, getEffectCooldown());
+    nbt.putLong(TRIGGERED_TIMESTAMP, getTriggeredTimestamp());
+    nbt.putLong(TRIGGERED_COOLDOWN, getTriggeredCooldown());
     return nbt;
   }
 
@@ -128,5 +155,7 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
     }
     setEffectTimestamp(nbt.getLong(TIMESTAMP));
     setEffectCooldown(nbt.getLong(COOLDOWN));
+    setTriggeredTimestamp(nbt.getLong(TRIGGERED_TIMESTAMP));
+    setTriggeredCooldown(nbt.getLong(TRIGGERED_COOLDOWN));
   }
 }

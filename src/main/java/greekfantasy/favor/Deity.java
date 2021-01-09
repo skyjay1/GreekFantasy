@@ -21,18 +21,18 @@ import net.minecraft.util.ResourceLocation;
 public class Deity implements IDeity {
   
   public static final Deity EMPTY = new Deity(
-      new ResourceLocation(GreekFantasy.MODID, "null"), 
-      false, ItemStack.EMPTY, ItemStack.EMPTY, Arrays.asList(),
-      Maps.newHashMap(), Maps.newHashMap());
+      new ResourceLocation(GreekFantasy.MODID, "null"), false, ItemStack.EMPTY, ItemStack.EMPTY, 
+      Arrays.asList(), Arrays.asList(), Maps.newHashMap(), Maps.newHashMap());
   
   public static final Codec<Deity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       ResourceLocation.CODEC.fieldOf("name").forGetter(Deity::getName),
-      Codec.BOOL.fieldOf("female").forGetter(Deity::isFemale),
+      Codec.BOOL.optionalFieldOf("female", false).forGetter(Deity::isFemale),
       ItemStack.CODEC.optionalFieldOf("left_hand", ItemStack.EMPTY).forGetter(Deity::getLeftHandItem),
       ItemStack.CODEC.optionalFieldOf("right_hand", ItemStack.EMPTY).forGetter(Deity::getRightHandItem),
-      FavorEffect.CODEC.listOf().fieldOf("effects").forGetter(Deity::getFavorEffects),
-      Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("kill_favor_map").forGetter(Deity::getKillFavorModifiers),
-      Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).fieldOf("item_favor_map").forGetter(Deity::getItemFavorModifiers)
+      FavorEffect.CODEC.listOf().optionalFieldOf("effects", Arrays.asList()).forGetter(Deity::getFavorEffects),
+      TriggeredFavorEffect.CODEC.listOf().optionalFieldOf("triggered_effects", Arrays.asList()).forGetter(Deity::getTriggeredFavorEffects),
+      Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).optionalFieldOf("kill_favor_map", Maps.newHashMap()).forGetter(Deity::getKillFavorModifiers),
+      Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).optionalFieldOf("item_favor_map", Maps.newHashMap()).forGetter(Deity::getItemFavorModifiers)
     ).apply(instance, Deity::new));
   
   private final ResourceLocation name;
@@ -43,15 +43,18 @@ public class Deity implements IDeity {
   private final Map<ResourceLocation, Integer> killFavorMap;
   private final Map<ResourceLocation, Integer> itemFavorMap;
   private final List<FavorEffect> favorEffects;
+  private final List<TriggeredFavorEffect> triggeredFavorEffects;
 
-  private Deity(final ResourceLocation lName,  final boolean lIsFemale, final ItemStack lLeftHandItem, 
-      final ItemStack lRightHandItem, final List<FavorEffect> lFavorEffects, 
+  private Deity(final ResourceLocation lName,  final boolean lIsFemale, 
+      final ItemStack lLeftHandItem, final ItemStack lRightHandItem, 
+      final List<FavorEffect> lFavorEffects, final List<TriggeredFavorEffect> lTriggeredFavorEffects, 
       final Map<ResourceLocation, Integer> lKillFavorMap, final Map<ResourceLocation, Integer> lItemFavorMap) {
     name = lName;
     texture = new ResourceLocation(lName.getNamespace(), "textures/entity/deity/" + lName.getPath() + ".png");
     killFavorMap = ImmutableMap.copyOf(lKillFavorMap);
     itemFavorMap = ImmutableMap.copyOf(lItemFavorMap);
     favorEffects = ImmutableList.copyOf(lFavorEffects);
+    triggeredFavorEffects = ImmutableList.copyOf(lTriggeredFavorEffects);
     isFemale = lIsFemale;
     leftHandItem = lLeftHandItem;
     rightHandItem = lRightHandItem;
@@ -80,6 +83,9 @@ public class Deity implements IDeity {
 
   @Override
   public List<FavorEffect> getFavorEffects() { return favorEffects; }
+  
+  @Override
+  public List<TriggeredFavorEffect> getTriggeredFavorEffects() { return triggeredFavorEffects; }
  
   @Override
   public String toString() {
@@ -89,6 +95,7 @@ public class Deity implements IDeity {
     b.append(" rightHand[").append(rightHandItem.toString()).append("]");
     b.append(" female[").append(isFemale).append("]");
     b.append("\nfavorEffects[").append(favorEffects.toString()).append("]");
+    b.append("\ntriggeredFavorEffects[").append(triggeredFavorEffects.toString()).append("]");
 //    b.append("\nkillFavorMap[").append(killFavorMap.toString()).append("]");
 //    b.append("\nitemFavorMap[").append(itemFavorMap.toString()).append("]");
     return b.toString();

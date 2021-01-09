@@ -17,7 +17,9 @@ public class Favor implements IFavor {
   
   protected final Map<ResourceLocation, FavorLevel> favorMap = new HashMap<>();
   private long effectTimestamp;
-  private long effectCooldown = 10000;
+  private long effectCooldown = 10000;  
+  private long triggeredTimestamp;
+  private long triggeredCooldown = 0;//10000;
   
   public Favor() { }
 
@@ -53,10 +55,24 @@ public class Favor implements IFavor {
   public void setEffectCooldown(long cooldown) { this.effectCooldown = cooldown; }
   
   @Override
+  public long getTriggeredTimestamp() { return triggeredTimestamp; }
+  
+  @Override
+  public void setTriggeredTimestamp(long timestamp) { this.triggeredTimestamp = timestamp; }
+  
+  @Override
+  public long getTriggeredCooldown() { return triggeredCooldown; }
+  
+  @Override
+  public void setTriggeredCooldown(long cooldown) { this.triggeredCooldown = cooldown; }
+  
+  @Override
   public String toString() {
     final StringBuilder b = new StringBuilder("Favor:");
     b.append(" effectTimestamp[").append(effectTimestamp).append("]");
     b.append(" effectCooldown[").append(effectCooldown).append("]");
+    b.append(" triggeredTimestamp[").append(triggeredTimestamp).append("]");
+    b.append(" triggeredCooldown[").append(triggeredCooldown).append("]");
     b.append("\nfavorMap[").append(getAllFavor().toString()).append("]");
     return b.toString();
   }

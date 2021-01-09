@@ -2,6 +2,7 @@ package greekfantasy.favor;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 
@@ -10,12 +11,47 @@ import com.google.common.collect.Lists;
 import greekfantasy.GreekFantasy;
 import greekfantasy.events.FavorChangedEvent.Source;
 import greekfantasy.tileentity.StatueTileEntity;
+import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class FavorManager {
+  
+  /**
+   * Called when a living entity kills the player
+   * @param player the player
+   * @param source the true entity that killed the player
+   * @param favor the player's favor capability
+   */
+  public static void onPlayerKilled(final PlayerEntity player, final Entity source, final IFavor favor) {
+    // attempt to trigger ENTITY_KILLED_PLAYER favor effect
+    triggerFavorEffect(FavorEffectTrigger.Type.ENTITY_KILLED_PLAYER, source.getType().getRegistryName(), player, favor);
+  }
+  
+  /**
+   * Called when a living entity hurts the player
+   * @param player the player
+   * @param source the immediate entity that hurt the player
+   * @param favor the player's favor capability
+   */
+  public static void onPlayerHurt(final PlayerEntity player, final Entity source, final IFavor favor) {
+    // attempt to trigger ENTITY_HURT_PLAYER favor effect
+    triggerFavorEffect(FavorEffectTrigger.Type.ENTITY_HURT_PLAYER, source.getType().getRegistryName(), player, favor);
+  }
+  
+  /**
+   * Called when a player breaks a block
+   * @param player the player
+   * @param block the block that was broken
+   * @param favor the player's favor capability
+   */
+  public static void onBreakBlock(final PlayerEntity player, final Block block, final IFavor favor) {
+    // attempt to trigger PLAYER_BREAK_BLOCK favor effect
+    triggerFavorEffect(FavorEffectTrigger.Type.PLAYER_BREAK_BLOCK, block.getRegistryName(), player, favor);
+  }
   
   /**
    * Called every server-side player tick
@@ -62,15 +98,22 @@ public class FavorManager {
    */
   public static void onAttackEntity(final LivingEntity entity, final PlayerEntity playerIn, final IFavor favor) {
     IDeity deity;
-    for(final Optional<Deity> oDeity : GreekFantasy.PROXY.DEITY.getValues()) {
+    final List<Optional<Deity>> deityList = Lists.newArrayList(GreekFantasy.PROXY.DEITY.getValues());
+    // order by which deity has the most favor
+    deityList.sort((o1, o2) -> favor.getFavor(o1.orElse(Deity.EMPTY)).compareToAbs(favor.getFavor(o2.orElse(Deity.EMPTY))));
+    // change favor amounts for each deity
+    for(final Optional<Deity> oDeity : deityList) {
       if(oDeity.isPresent()) {
         deity = oDeity.get();
+        // attempt to modify the player's favor with this deity
         final long favorModifier = deity.getKillFavorModifier(entity.getType()) / 8;
         if(favorModifier != 0) {
           favor.getFavor(deity).addFavor(playerIn, deity, favorModifier, Source.ATTACK_ENTITY);
         }
       }
     }
+    // attempt to trigger PLAYER_HURT_ENTITY favor effect
+    triggerFavorEffect(FavorEffectTrigger.Type.PLAYER_HURT_ENTITY, entity.getType().getRegistryName(), playerIn, favor);
   }
   
   /**
@@ -90,6 +133,8 @@ public class FavorManager {
         }
       }
     }
+    // attempt to trigger PLAYER_KILLED_ENTITY favor effect
+    triggerFavorEffect(FavorEffectTrigger.Type.PLAYER_KILLED_ENTITY, entity.getType().getRegistryName(), playerIn, favor);
   }
 
   /**
@@ -110,6 +155,34 @@ public class FavorManager {
         item.shrink(1);
       }
       return true;
+    }
+    return false;
+  }
+  
+  public static boolean triggerFavorEffect(final FavorEffectTrigger.Type type, final ResourceLocation data, 
+      final PlayerEntity playerIn, final IFavor favor) {
+    final long time = playerIn.getEntityWorld().getGameTime() + playerIn.getEntityId() * 3;
+    final List<Optional<Deity>> deityList = Lists.newArrayList(GreekFantasy.PROXY.DEITY.getValues());
+    // order by which deity has the most favor
+    deityList.sort((o1, o2) -> favor.getFavor(o1.orElse(Deity.EMPTY)).compareToAbs(favor.getFavor(o2.orElse(Deity.EMPTY))));
+    IDeity deity;
+    FavorLevel level;
+    // loop through each deity until one of them can perform an effect
+    for(final Optional<Deity> oDeity : deityList) {
+      if(oDeity.isPresent()) {
+        deity = oDeity.get();
+        level = favor.getFavor(deity);
+        if(favor.canUseTriggeredEffect(level, time)) {
+          // perform an effect, set the timestamp and cooldown, and exit the loop
+          long cooldown = FavorEffectManager.onTriggeredFavorEffect(type, data, playerIn.getEntityWorld(), playerIn, deity, favor, level);
+          if(cooldown <= 0) {
+            cooldown = 200;
+          }
+          favor.setTriggeredTimestamp(time);
+          favor.setTriggeredCooldown(cooldown);
+          return true;
+        }
+      }
     }
     return false;
   }

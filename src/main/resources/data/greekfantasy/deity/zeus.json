@@ -18,7 +18,7 @@
   	  },
   	  "minlevel": 1,
   	  "maxlevel": 4,
-  	  "mincooldown": 3500
+  	  "mincooldown": 6500
   	},
   	{
   	  "potion": {
@@ -28,7 +28,7 @@
   	  },
   	  "minlevel": 3,
   	  "maxlevel": 6,
-  	  "mincooldown": 3600
+  	  "mincooldown": 6600
   	},
   	{
   	  "potion": {
@@ -38,7 +38,7 @@
   	  },
   	  "minlevel": 5,
   	  "maxlevel": 10,
-  	  "mincooldown": 3800
+  	  "mincooldown": 6800
   	},
   	{
   	  "potion": {
@@ -48,7 +48,7 @@
   	  },
   	  "minlevel": 6,
   	  "maxlevel": 9,
-  	  "mincooldown": 3800
+  	  "mincooldown": 6800
   	},
   	{
   	  "potion": {
@@ -58,7 +58,7 @@
   	  },
   	  "minlevel": 7,
   	  "maxlevel": 10,
-  	  "mincooldown": 4000
+  	  "mincooldown": 7000
   	},
   	{
   	  "item": { 
@@ -67,7 +67,7 @@
   	  },
   	  "minlevel": 7,
   	  "maxlevel": 10,
-  	  "mincooldown": 5000
+  	  "mincooldown": 8000
   	},
   	{
   	  "item": { 
@@ -76,7 +76,7 @@
   	  },
   	  "minlevel": 5,
   	  "maxlevel": 8,
-  	  "mincooldown": 5000
+  	  "mincooldown": 8000
   	},
   	{
   	  "item": { 
@@ -85,7 +85,7 @@
   	  },
   	  "minlevel": 9,
   	  "maxlevel": 10,
-  	  "mincooldown": 9000
+  	  "mincooldown": 12000
   	},
   	{
   	  "item": { 
@@ -94,7 +94,7 @@
   	  },
   	  "minlevel": 8,
   	  "maxlevel": 10,
-  	  "mincooldown": 8500
+  	  "mincooldown": 11500
   	},
   	{
   	  "summon": { 
@@ -102,7 +102,7 @@
   	  },
   	  "minlevel": 6,
   	  "maxlevel": 10,
-  	  "mincooldown": 6000
+  	  "mincooldown": 9000
   	},
   	{
   	  "summon": { 
@@ -110,7 +110,7 @@
   	  },
   	  "minlevel": -2,
   	  "maxlevel": -8,
-  	  "mincooldown": 8000
+  	  "mincooldown": 11000
   	},
   	{
   	  "summon": { 
@@ -120,19 +120,19 @@
   	  },
   	  "minlevel": -7,
   	  "maxlevel": -10,
-  	  "mincooldown": 8000
+  	  "mincooldown": 11000
   	},
   	{
   	  "function": "greekfantasy:set_storming",
   	  "minlevel": -3,
   	  "maxlevel": -6,
-  	  "mincooldown": 5000
+  	  "mincooldown": 8000
   	},
   	{
   	  "function": "greekfantasy:summon_lightning",
   	  "minlevel": -5,
   	  "maxlevel": -10,
-  	  "mincooldown": 9000
+  	  "mincooldown": 12000
   	},
   	{
   	  "potion": {
@@ -142,7 +142,7 @@
   	  },
   	  "minlevel": -4,
   	  "maxlevel": -10,
-  	  "mincooldown": 4100
+  	  "mincooldown": 7100
   	},
   	{
   	  "potion": {
@@ -152,7 +152,26 @@
   	  },
   	  "minlevel": -8,
   	  "maxlevel": -10,
-  	  "mincooldown": 4900
+  	  "mincooldown": 7900
+  	}
+  ],
+  "triggered_effects": [
+  	{
+  	  "trigger": {
+  	    "type": "break_block",
+  	    "data": "minecraft:iron_ore"
+  	  },
+  	  "chance": 0.25,
+  	  "level_multiplier": 0.05,
+  	  "effect": {
+  	    "item": { 
+  	  	  "id": "minecraft:iron_ingot",
+  	  	  "Count": 1
+  	    },
+  	    "minlevel": 5,
+  	    "maxlevel": 10,
+  	    "mincooldown": 6400
+  	  }
   	}
   ],
   "kill_favor_map": {

@@ -74,6 +74,9 @@ public interface IDeity {
   /** @return a list of favor effects associated with the deity **/
   public List<FavorEffect> getFavorEffects();
   
+  /** @return a list of triggered favor effects associated with the deity **/
+  public List<TriggeredFavorEffect> getTriggeredFavorEffects();
+  
   /**
    * @param rand a random instance
    * @return a favor effect chosen at random
@@ -81,18 +84,34 @@ public interface IDeity {
   default FavorEffect getRandomEffect(final Random rand, final int playerLevel) {
     final List<FavorEffect> effects = getFavorEffects();
     if(!effects.isEmpty()) {
-      GreekFantasy.LOGGER.debug("Attempting to find a favor effect to run...");
-      int tries = 10;
+      int tries = Math.min(effects.size(), 10);
       while(tries-- >= 0) {
         final FavorEffect effect = effects.get(rand.nextInt(effects.size()));
         if(effect.isInRange(playerLevel)) {
-          GreekFantasy.LOGGER.debug("Found a favor effect to run: " + effect.toString());
           return effect;
         }
       }
     }
-    GreekFantasy.LOGGER.debug("getRandomEffect found no effects to run, returning EMPTY");
     return FavorEffect.EMPTY;
+  }
+  
+  default TriggeredFavorEffect getTriggeredFavorEffect(final Random rand, final FavorEffectTrigger.Type type, 
+      final ResourceLocation data, final int playerLevel) {
+    final List<TriggeredFavorEffect> effects = getTriggeredFavorEffects();
+    if(!effects.isEmpty()) {
+//      GreekFantasy.LOGGER.debug("Attempting to find a triggered favor effect to run...");
+      int tries = Math.min(effects.size(), 10);
+      while(tries-- > 0) {
+        final TriggeredFavorEffect effect = effects.get(rand.nextInt(effects.size()));
+        if(effect.getTrigger().getType() == type && data.equals(effect.getTrigger().getData()) 
+            && effect.getEffect().isInRange(playerLevel) && rand.nextFloat() < effect.getAdjustedChance(playerLevel)) {
+//          GreekFantasy.LOGGER.debug("Running " + effect.toString());
+          return effect;
+        }
+      }
+    }
+//    GreekFantasy.LOGGER.debug("getTriggeredEffect found no effects to run, returning EMPTY");
+    return TriggeredFavorEffect.EMPTY;
   }
   
   /** @return true if the statue model is female **/

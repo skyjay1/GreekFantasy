@@ -1,5 +1,6 @@
 package greekfantasy.events;
 
+import greekfantasy.favor.FavorLevel;
 import greekfantasy.favor.IDeity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.IStringSerializable;
@@ -21,6 +22,7 @@ public class FavorChangedEvent extends PlayerEvent {
   private final FavorChangedEvent.Source source;
   
   private long newFavor;
+  private boolean isLevelChange;
   
   public FavorChangedEvent(final PlayerEntity playerIn, final IDeity deityIn, 
       final long prevFavor, final long curFavor, final FavorChangedEvent.Source sourceIn) {
@@ -29,6 +31,7 @@ public class FavorChangedEvent extends PlayerEvent {
     oldFavor = prevFavor;
     newFavor = curFavor;
     source = sourceIn;
+    isLevelChange = FavorLevel.calculateLevel(curFavor) != FavorLevel.calculateLevel(prevFavor);
   }
   
   public IDeity getDeity() { return deity; }
@@ -37,9 +40,14 @@ public class FavorChangedEvent extends PlayerEvent {
   
   public long getNewFavor() { return newFavor; }
   
-  public void setNewFavor(final long favor) { newFavor = favor; }
+  public void setNewFavor(final long favor) { 
+    newFavor = favor;
+    isLevelChange = FavorLevel.calculateLevel(newFavor) != FavorLevel.calculateLevel(oldFavor);
+  }
   
   public FavorChangedEvent.Source getSource() { return source; }
+  
+  public boolean isLevelChange() { return isLevelChange; }
   
   /**
    * This is used to indicate why the favor is changing

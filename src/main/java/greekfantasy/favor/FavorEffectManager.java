@@ -38,32 +38,47 @@ public class FavorEffectManager {
       }
     });
   }
+  
+  public static long onTriggeredFavorEffect(final FavorEffectTrigger.Type type, final ResourceLocation data, final World worldIn, 
+      final PlayerEntity playerIn, final IDeity deity, final IFavor favor, final FavorLevel level) {
+    final MinecraftServer server = worldIn.getServer();
+    if(server != null) {
+      final TriggeredFavorEffect effect = deity.getTriggeredFavorEffect(playerIn.getRNG(), type, data, level.getLevel());
+      return effect == TriggeredFavorEffect.EMPTY ? -1 : performFavorEffect(server, worldIn, playerIn, deity, effect.getEffect());
+    }
+    return -1;
+  }
 
   public static long onFavorEffect(final World worldIn, final PlayerEntity playerIn, final IDeity deity, final IFavor favor, final FavorLevel info) {
     final MinecraftServer server = worldIn.getServer();
     if(server != null) {
-      boolean flag = false;
       final FavorEffect effect = deity.getRandomEffect(playerIn.getRNG(), info.getLevel());
-      // attempt to run the function, summon, item, or potion effect (exclusively, in that order)
-      if(functionFavorEffect(server, worldIn, playerIn, effect.getFunction())) {
-        flag = true;
-      } else if(summonFavorEffect(worldIn, playerIn, effect.getSummon())) {
-        flag = true;
-      } else if(itemFavorEffect(playerIn, effect.getItem())) {
-        flag = true;
-      } else if(potionFavorEffect(playerIn, effect.getPotion())) {
-        flag = true;
-      } else GreekFantasy.LOGGER.debug("Failed to run any favor effect :(");
-      // if any of the effects ran successfully, send a message to the player, play a sound, and set cooldown
-      if(flag) {
-        final boolean positive = effect.isPositive();
-        final String message = positive ? "positive" : "negative";
-        final TextFormatting color = positive ? TextFormatting.GREEN : TextFormatting.RED;
-        final SoundEvent sound = positive ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER;
-        playerIn.sendStatusMessage(new TranslationTextComponent("favor.effect." + message, deity.getText()).mergeStyle(color), false);
-        playerIn.playSound(sound, 0.4F, 0.9F + playerIn.getRNG().nextFloat() * 0.2F);
-        return effect.getMinCooldown() + playerIn.getRNG().nextInt((int)Math.max(1, effect.getMinCooldown()));
-      }
+      return performFavorEffect(server, worldIn, playerIn, deity, effect);
+    }
+    return -1;
+  }
+  
+  private static long performFavorEffect(final MinecraftServer server, final World worldIn, final PlayerEntity playerIn, final IDeity deity, final FavorEffect effect) {
+    boolean flag = false;
+    // attempt to run the function, summon, item, or potion effect (exclusively, in that order)
+    if(functionFavorEffect(server, worldIn, playerIn, effect.getFunction())) {
+      flag = true;
+    } else if(summonFavorEffect(worldIn, playerIn, effect.getSummon())) {
+      flag = true;
+    } else if(itemFavorEffect(playerIn, effect.getItem())) {
+      flag = true;
+    } else if(potionFavorEffect(playerIn, effect.getPotion())) {
+      flag = true;
+    } else GreekFantasy.LOGGER.debug("Failed to run any part of a favor effect :(");
+    if(flag) {
+      // if any of the effects ran successfully, send a message to the player, play a sound, and return cooldown
+      final boolean positive = effect.isPositive();
+      final String message = positive ? "positive" : "negative";
+      final TextFormatting color = positive ? TextFormatting.GREEN : TextFormatting.RED;
+      final SoundEvent sound = positive ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER;
+      playerIn.sendStatusMessage(new TranslationTextComponent("favor.effect." + message, deity.getText()).mergeStyle(color), false);
+      playerIn.playSound(sound, 0.4F, 0.9F + playerIn.getRNG().nextFloat() * 0.2F);
+      return effect.getMinCooldown() + playerIn.getRNG().nextInt((int)Math.max(1, effect.getMinCooldown()));
     }
     return -1;
   }
@@ -94,6 +109,7 @@ public class FavorEffectManager {
       if(item != null) {
         item.setNoPickupDelay();
       }
+      return true;
     }
     return false;
   }

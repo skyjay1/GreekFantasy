@@ -82,10 +82,15 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent(priority = EventPriority.HIGHEST)
   public static void onPlayerDeath(final LivingDeathEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && GreekFantasy.CONFIG.doesShadeSpawnOnDeath() && event.getEntityLiving() instanceof PlayerEntity) {
+    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getEntityLiving() instanceof PlayerEntity) {
       final PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-      // check pre-conditions
-      if(!player.getEntityWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY) && !player.isSpectator() && player.experienceLevel > 3) {
+      final Entity source = event.getSource().getTrueSource();
+      // trigger FavorManager
+      if(source != null && !player.isSpectator() && !player.isCreative()) {
+        player.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerKilled(player, (LivingEntity)source, f));
+      }
+      // attempt to spawn a shade
+      if(GreekFantasy.CONFIG.doesShadeSpawnOnDeath() && !player.getEntityWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY) && !player.isSpectator() && player.experienceLevel > 3) {
         // save XP value
         int xp = player.experienceTotal;
         // remove XP from player
@@ -296,11 +301,15 @@ public class CommonForgeEventHandler {
   }
   
   /**
-   * Used to anger nearby dryads when the player breaks a log block that may be a tree
+   * Used to update FavorManager when a block is broken by the player.
+   * Also used to anger nearby dryads when the player breaks a log block that may be a tree
    * @param event the block break event
    **/
   @SubscribeEvent
-  public static void onBreakLog(final BlockEvent.BreakEvent event) {
+  public static void onBreakBlock(final BlockEvent.BreakEvent event) {
+    if(event.getPlayer() != null && event.getPlayer().isServerWorld() && !event.getPlayer().isCreative()) {
+      event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onBreakBlock(event.getPlayer(), event.getState().getBlock(), f));
+    }
     if(GreekFantasy.CONFIG.isDryadAngryOnHarvest() && event.getPlayer() != null && !event.getPlayer().isCreative() && event.getState().isIn(BlockTags.LOGS)) {
       // make a list of nearby dryads
       final AxisAlignedBB aabb = new AxisAlignedBB(event.getPos()).grow(GreekFantasy.CONFIG.getDryadAngryRange());

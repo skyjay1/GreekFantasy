@@ -208,7 +208,8 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
           // print current favor level
           i.sendStatusMessage(playerIn, teDeity);
           // DEBUG
-          GreekFantasy.LOGGER.debug(teDeity.toString());
+//          GreekFantasy.LOGGER.debug(teDeity.toString());
+//          GreekFantasy.LOGGER.debug("TriggeredTimestamp: " + f.getTriggeredTimestamp() + " TriggeredCooldown: " + f.getTriggeredCooldown());
         });
         return ActionResultType.SUCCESS;
       } 
