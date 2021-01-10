@@ -33,9 +33,12 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
@@ -107,6 +110,20 @@ public class DrakainaEntity extends MonsterEntity {
 
     super.livingTick();
   }
+  
+  // Sounds //
+
+  @Override
+  protected SoundEvent getAmbientSound() {return SoundEvents.ENTITY_CAT_HISS; }
+
+  @Override
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_SPIDER_AMBIENT; }
+
+  @Override
+  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_SPIDER_DEATH; }
+
+  @Override
+  protected float getSoundVolume() { return 0.68F; }
   
   // MISC //
   

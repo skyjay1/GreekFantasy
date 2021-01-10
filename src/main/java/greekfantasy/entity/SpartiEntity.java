@@ -53,6 +53,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEntity> {
   protected static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
@@ -60,6 +62,8 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
 
   protected static final String KEY_SPAWN_TIME = "Spawning";
   protected static final String KEY_LIFE_TICKS = "LifeTicks";
+  //bytes to use in World#setEntityState
+  private static final byte SPAWN_CLIENT = 9;
     
   /** The max time spent 'spawning' **/
   protected final int maxSpawnTime = 60;
@@ -148,8 +152,10 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+    final ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     setEquipmentOnSpawn();
-    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    setSpawning(true);
+    return data;
   }
 
   // Owner methods //
@@ -183,11 +189,12 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
     this.spawnTime = spawning ? maxSpawnTime : 0;
     this.getDataManager().set(SPAWNING, spawning);
     this.recalculateSize();
+    if(spawning && !world.isRemote()) {
+      world.setEntityState(this, SPAWN_CLIENT);
+    }
   }
-
-  public boolean isSpawningTime() { return spawnTime > 0; }
   
-  public boolean isSpawning() { return this.getDataManager().get(SPAWNING); }
+  public boolean isSpawning() { return spawnTime > 0 || this.getDataManager().get(SPAWNING); }
   
   public float getSpawnTime(final float ageInTicks) {
     return (float) (spawnTime + (ageInTicks < 1.0F ? ageInTicks : 0));
@@ -195,6 +202,19 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
   
   public float getSpawnPercent(final float ageInTicks) {
     return 1.0F - (getSpawnTime(ageInTicks) / (float)maxSpawnTime);
+  }
+  
+  @OnlyIn(Dist.CLIENT)
+  public void handleStatusUpdate(byte id) {
+    switch(id) {
+    case SPAWN_CLIENT:
+      setSpawning(true);
+      spawnTime = maxSpawnTime;
+      break;
+    default:
+      super.handleStatusUpdate(id);
+      break;
+    }
   }
   
   // Lifespan methods
@@ -205,15 +225,6 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
   }
   
   // Misc. methods //
-  
-  @Override
-  public void notifyDataManagerChange(final DataParameter<?> key) {
-    super.notifyDataManagerChange(key);
-    if(key == SPAWNING) {
-      this.spawnTime = isSpawning() ? maxSpawnTime : 0;
-      recalculateSize();
-    }
-  }
   
   @Override
   protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_SKELETON_AMBIENT; }
@@ -228,7 +239,7 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
   protected void playStepSound(BlockPos pos, BlockState blockIn) { this.playSound(SoundEvents.ENTITY_SKELETON_STEP, 0.15F, 1.0F); }
   
   @Override
-  public EntitySize getSize(final Pose poseIn) { return this.isSpawningTime() ? spawningSize : super.getSize(poseIn); }
+  public EntitySize getSize(final Pose poseIn) { return this.isSpawning() ? spawningSize : super.getSize(poseIn); }
   
   @Override
   public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.UNDEAD; }
@@ -237,7 +248,7 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
   public boolean canDespawn(double distanceToClosestPlayer) { return !this.hasOwner(); }
   
   @Override
-  protected float getStandingEyeHeight(Pose pose, EntitySize size) { return this.isSpawningTime() ? 0.05F : 1.74F; }
+  protected float getStandingEyeHeight(Pose pose, EntitySize size) { return this.isSpawning() ? 0.05F : 1.74F; }
   
   @Override
   public double getYOffset() { return -0.6D; }
@@ -294,7 +305,7 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
 
     @Override
     public boolean shouldExecute() {
-      return SpartiEntity.this.isSpawningTime();
+      return SpartiEntity.this.isSpawning();
     }
     
     @Override

@@ -67,8 +67,9 @@ public class GeryonEntity extends MonsterEntity {
   private static final byte SMASH = (byte)2;
   private static final byte SUMMON_COW = (byte)4;
   // bytes to use in World#setEntityState
-  private static final byte SMASH_CLIENT = 9;
-  private static final byte SUMMON_COW_CLIENT = 10;
+  private static final byte SPAWN_CLIENT = 9;
+  private static final byte SMASH_CLIENT = 10;
+  private static final byte SUMMON_COW_CLIENT = 11;
   
   private static final int MAX_SPAWN_TIME = 110;
   private static final int MAX_SMASH_TIME = 42;
@@ -124,9 +125,9 @@ public class GeryonEntity extends MonsterEntity {
     GeryonEntity entity = GFRegistry.GERYON_ENTITY.create(world);
     entity.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
     entity.renderYawOffset = yaw;
-    entity.setSpawning(true);
     entity.setHeldItem(Hand.MAIN_HAND, new ItemStack(GFRegistry.IRON_CLUB));
     world.addEntity(entity);
+    entity.setSpawning(true);
     // trigger spawn for nearby players
     for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(25.0D))) {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
@@ -229,15 +230,15 @@ public class GeryonEntity extends MonsterEntity {
     return 0.82F * this.getJumpFactor();
   }
 
-  @Override
-  public boolean canBePushed() { return false; }
+  // Prevent entity collisions //
   
   @Override
-  public void applyEntityCollision(Entity entityIn) { 
-    if(this.canBePushed()) {
-      super.applyEntityCollision(entityIn);
-    }
-  }
+  public boolean canBePushed() { return false; }
+ 
+  @Override
+  protected void collideWithNearbyEntities() { }
+  
+  // Boss //
   
   @Override
   public boolean isNonBoss() { return false; }
@@ -249,6 +250,18 @@ public class GeryonEntity extends MonsterEntity {
   protected boolean canBeRidden(Entity entityIn) { return false; }
   
   @Override
+  public void addTrackingPlayer(ServerPlayerEntity player) {
+    super.addTrackingPlayer(player);
+    this.bossInfo.addPlayer(player);
+  }
+
+  @Override
+  public void removeTrackingPlayer(ServerPlayerEntity player) {
+    super.removeTrackingPlayer(player);
+    this.bossInfo.removePlayer(player);
+  }
+  
+  @Override
   public boolean isInvulnerableTo(final DamageSource source) {
     return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER || super.isInvulnerableTo(source);
   }
@@ -256,9 +269,13 @@ public class GeryonEntity extends MonsterEntity {
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+    final ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     this.setHeldItem(Hand.MAIN_HAND, new ItemStack(GFRegistry.IRON_CLUB));
-    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    this.setSpawning(true);
+    return data;
   }
+  
+  // Sounds //
   
   @Override
   protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_VILLAGER_AMBIENT; }
@@ -275,6 +292,8 @@ public class GeryonEntity extends MonsterEntity {
   @Override
   protected float getSoundPitch() { return 0.089F; }
   
+  // NBT //
+  
   @Override
   public void writeAdditional(CompoundNBT compound) {
      super.writeAdditional(compound);
@@ -286,6 +305,8 @@ public class GeryonEntity extends MonsterEntity {
      super.readAdditional(compound);
      this.setGeryonState(compound.getByte(KEY_STATE));
   }
+  
+  // States //
   
   public byte getGeryonState() { return this.getDataManager().get(STATE).byteValue(); }
   
@@ -305,24 +326,22 @@ public class GeryonEntity extends MonsterEntity {
   
   public void setSpawning(final boolean spawning) {
     spawnTime = spawning ? MAX_SPAWN_TIME : 0;
-    setGeryonState(spawning ? SPAWNING : NONE); 
+    setGeryonState(spawning ? SPAWNING : NONE);
+    if(spawning && !this.world.isRemote()) {
+      this.world.setEntityState(this, SPAWN_CLIENT);
+    }
   }
   
   public void setAttackCooldown() { attackCooldown = ATTACK_COOLDOWN; }
   
   public boolean hasNoCooldown() { return attackCooldown <= 0; }
   
-  @Override
-  public void notifyDataManagerChange(final DataParameter<?> key) {
-    super.notifyDataManagerChange(key);
-    if(key == STATE) {
-      this.spawnTime = isSpawning() ? MAX_SPAWN_TIME : 0;
-    }
-  }
-  
   @OnlyIn(Dist.CLIENT)
   public void handleStatusUpdate(byte id) {
     switch(id) {
+    case SPAWN_CLIENT:
+      setSpawning(true);
+      break;
     case SMASH_CLIENT:
       // spawn particles for all nearby entities
       final List<Entity> targets = this.getEntityWorld().getEntitiesWithinAABBExcludingEntity(GeryonEntity.this, GeryonEntity.this.getBoundingBox().grow(SMASH_RANGE, SMASH_RANGE / 2, SMASH_RANGE));
@@ -346,6 +365,8 @@ public class GeryonEntity extends MonsterEntity {
       break;
     }
   }
+  
+  // Particles //
   
   /**
    * Adds particles using the data of the block below this entity
@@ -407,6 +428,8 @@ public class GeryonEntity extends MonsterEntity {
   @OnlyIn(Dist.CLIENT)
   public float getSummonPercent(final float partialTick) { return summonTime > 0 ? getSummonTime(partialTick) / (float)MAX_SUMMON_TIME : 0; }
   
+  // Attacks //
+  
   /**
    * @param entity the entity to check
    * @return whether the given entity should not be affected by smash attack
@@ -462,20 +485,6 @@ public class GeryonEntity extends MonsterEntity {
         }
       }
     }
-  }
-  
-  // Boss Logic
-
-  @Override
-  public void addTrackingPlayer(ServerPlayerEntity player) {
-    super.addTrackingPlayer(player);
-    this.bossInfo.addPlayer(player);
-  }
-
-  @Override
-  public void removeTrackingPlayer(ServerPlayerEntity player) {
-    super.removeTrackingPlayer(player);
-    this.bossInfo.removePlayer(player);
   }
   
   // Custom goals

@@ -20,7 +20,8 @@ public class CharybdisRenderer extends MobRenderer<CharybdisEntity, CharybdisMod
   
   @Override
   protected void preRenderCallback(final CharybdisEntity entity, MatrixStack matrix, float f) {
-    matrix.scale(SCALE, SCALE, SCALE);
+    final float s = SCALE * entity.getSpawnPercent();
+    matrix.scale(s, s, s);
   }
 
   @Override

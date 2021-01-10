@@ -2,6 +2,8 @@ package greekfantasy.entity;
 
 import java.util.EnumSet;
 
+import javax.annotation.Nullable;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.entity.ai.ShootFireGoal;
 import greekfantasy.entity.ai.SummonMobGoal;
@@ -10,7 +12,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
@@ -34,10 +38,11 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.api.distmarker.Dist;
@@ -59,6 +64,7 @@ public class CerberusEntity extends CreatureEntity {
   private static final int MAX_SUMMON_TIME = 35;
 
   // bytes to use in World#setEntityState
+  private static final byte SPAWN_CLIENT = 9;
   private static final byte SUMMON_CLIENT = 10;
 
   private int spawnTime;
@@ -84,8 +90,8 @@ public class CerberusEntity extends CreatureEntity {
     CerberusEntity entity = GFRegistry.CERBERUS_ENTITY.create(world);
     entity.setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), 0.0F, 0.0F);
     entity.renderYawOffset = 0.0F;
-    entity.setSpawning(true);
     world.addEntity(entity);
+    entity.setSpawning(true);
     // trigger spawn for nearby players
     for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(25.0D))) {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
@@ -155,6 +161,14 @@ public class CerberusEntity extends CreatureEntity {
   }
   
   @Override
+  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+      @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+    final ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    setSpawning(true);
+    return data;
+  }
+  
+  @Override
   public boolean isInvulnerableTo(final DamageSource source) {
     return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER || super.isInvulnerableTo(source);
   }
@@ -212,15 +226,6 @@ public class CerberusEntity extends CreatureEntity {
      this.setCerberusState(compound.getByte(KEY_STATE));
   }
   
-  @Override
-  public void notifyDataManagerChange(final DataParameter<?> key) {
-    super.notifyDataManagerChange(key);
-    if(key == STATE) {
-      this.spawnTime = isSpawning() ? MAX_SPAWN_TIME : 0;
-      this.summonTime = isSummoning() ? 1 : 0;
-    }
-  }
-  
   // State logic
   
   public byte getCerberusState() { return this.getDataManager().get(STATE).byteValue(); }
@@ -235,13 +240,22 @@ public class CerberusEntity extends CreatureEntity {
  
   public boolean isSummoning() { return getCerberusState() == SUMMONING; }
   
-  public void setSummoning(final boolean summoning) { setCerberusState(summoning ? SUMMONING : NONE); }
+  public void setSummoning(final boolean summoning) { 
+    setCerberusState(summoning ? SUMMONING : NONE);
+    this.summonTime = summoning ? 1 : 0;
+    if(summoning && !world.isRemote()) {
+      world.setEntityState(this, SUMMON_CLIENT);
+    }
+  }
   
   public boolean isSpawning() { return spawnTime > 0 || getCerberusState() == SPAWNING; }
   
   public void setSpawning(final boolean spawning) {
     spawnTime = spawning ? MAX_SPAWN_TIME : 0;
-    setCerberusState(spawning ? SPAWNING : NONE); 
+    setCerberusState(spawning ? SPAWNING : NONE);
+    if(spawning && !world.isRemote()) {
+      world.setEntityState(this, SPAWN_CLIENT);
+    }
   }
   
   // Animation methods
@@ -302,7 +316,9 @@ public class CerberusEntity extends CreatureEntity {
   
   @OnlyIn(Dist.CLIENT)
   public void handleStatusUpdate(byte id) {
-    if(id == SUMMON_CLIENT) {
+    if(id == SPAWN_CLIENT) {
+      setSpawning(true);
+    } else if(id == SUMMON_CLIENT) {
       this.getEntityWorld().playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_WOLF_HOWL, this.getSoundCategory(), 1.1F, 0.9F + this.getRNG().nextFloat() * 0.2F, false);
     } else {
       super.handleStatusUpdate(id);

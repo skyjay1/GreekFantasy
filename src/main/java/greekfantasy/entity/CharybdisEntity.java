@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.entity.misc.ISwimmingMob;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -23,6 +25,7 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -36,9 +39,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
@@ -46,23 +53,28 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   private static final String KEY_STATE = "CharybdisState";
   // bytes to use in STATE
   private static final byte NONE = (byte)0;
-//  private static final byte SPAWNING = (byte)1;
+  private static final byte SPAWNING = (byte)1;
   private static final byte SWIRLING = (byte)2;
   private static final byte THROWING = (byte)4;
-  
+  //bytes to use in World#setEntityState
+  private static final byte NONE_CLIENT = 8;
+  private static final byte SPAWN_CLIENT = 9;
+  private static final byte SWIRL_CLIENT = 10;
+  private static final byte THROW_CLIENT = 11;
+ 
   // other constants for attack, spawn, etc.
   private static final double RANGE = 10.0D;
+  private static final int SPAWN_TIME = 50;
   private static final int SWIRL_TIME = 240;
   private static final int THROW_TIME = 34;
  
   private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.BLUE, BossInfo.Overlay.PROGRESS));
   
-//  private int spawnTime;
+  private int spawnTime;
   private int swirlTime;
   private int throwTime;
   
   private boolean swimmingUp;
-
   
   public CharybdisEntity(final EntityType<? extends CharybdisEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -82,7 +94,8 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     entity.renderYawOffset = whirl.renderYawOffset;
     entity.func_242279_ag(); // setPortalCooldown
     world.addEntity(entity);
-    // remove the old hoglin
+    entity.setState(SPAWNING);
+    // remove the old whirl
     whirl.remove();
     // trigger spawn for nearby players
     for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(16.0D))) {
@@ -128,9 +141,9 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
       // spawn particles at targeted entities
       getEntitiesInRange(RANGE).forEach(e -> bubbles(e.getPosX(), e.getPosY(), e.getPosZ(), e.getWidth(), 5));
       // spawn particles in spiral
-      float maxY = this.getHeight() * 1.65F;
+      float maxY = this.getHeight() * this.getSpawnPercent() * 1.65F;
       float y = 0;
-      float nY = 120;
+      float nY = 120 * this.getSpawnPercent();
       float dY = maxY / nY;
       double posX = this.getPosX();
       double posY = this.getPosY();
@@ -143,6 +156,14 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
         //bubbles(posX + cosA, posY + y, posZ + sinA, 0.125D, 1);
         world.addParticle(ParticleTypes.BUBBLE, posX + cosA, posY + y - (maxY * 0.4), posZ + sinA, 0.0D, 0.085D, 0.0D);
         y += dY;
+      }
+    }
+    
+    // update spawn time
+    if(isSpawning()) {
+      // update timer
+      if(--spawnTime <= 0) {
+        setState(NONE);
       }
     }
     
@@ -165,9 +186,14 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   // Misc //
   
   @Override
-  protected boolean isDespawnPeaceful() {
-    return true;
+  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+     ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+     this.setState(SPAWNING);
+     return data;
   }
+  
+  @Override
+  protected boolean isDespawnPeaceful() { return true; }
   
   @Override
   public boolean isNonBoss() { return false; }
@@ -180,7 +206,8 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
-    return source == DamageSource.IN_WALL || source == DamageSource.WITHER || super.isInvulnerableTo(source);
+    return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER 
+        || source.getImmediateSource() instanceof AbstractArrowEntity || super.isInvulnerableTo(source);
   }
   
   @Override
@@ -231,6 +258,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   public void writeAdditional(CompoundNBT compound) {
      super.writeAdditional(compound);
      compound.putByte(KEY_STATE, this.getState());
+     compound.putInt("SpawnTime", spawnTime);
      compound.putInt("SwirlTime", swirlTime);
      compound.putInt("ThrowTime", throwTime);
   }
@@ -239,6 +267,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   public void readAdditional(CompoundNBT compound) {
      super.readAdditional(compound);
      this.setState(compound.getByte(KEY_STATE));
+     spawnTime = compound.getInt("SpawnTime");
      swirlTime = compound.getInt("SwirlTime");
      throwTime = compound.getInt("ThrowTime");
   }
@@ -276,19 +305,73 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
   // States //
   
-  public byte getState() { return this.getDataManager().get(STATE).byteValue(); }
+  public void setState(final byte state) { 
+    this.getDataManager().set(STATE, Byte.valueOf(state));
+    byte clientFlag = NONE_CLIENT;
+    switch(state) {
+    case NONE:
+      spawnTime = swirlTime = throwTime = 0;
+      break;
+    case SPAWNING:
+      spawnTime = SPAWN_TIME;
+      swirlTime = 0;
+      throwTime = 0;
+      clientFlag = SPAWN_CLIENT;
+      break;
+    case SWIRLING:
+      spawnTime = 0;
+      swirlTime = 1;
+      throwTime = 0;
+      clientFlag = SWIRL_CLIENT;
+      break;
+    case THROWING:
+      spawnTime = 0;
+      swirlTime = 0;
+      throwTime = 1;
+      clientFlag = THROW_CLIENT;
+      break;
+    }
+    if(!world.isRemote()) {
+      world.setEntityState(this, clientFlag);
+    }
+  }
   
-  public void setState(final byte state) { this.getDataManager().set(STATE, Byte.valueOf(state)); }
+  public byte getState() { return this.getDataManager().get(STATE).byteValue(); }
   
   public boolean isNoneState() { return getState() == NONE; }
   
-  public boolean isSwirling() { return getState() == SWIRLING; }
+  public boolean isSpawning() { return spawnTime > 0 || getState() == SPAWNING; }
   
-  public boolean isThrowing() { return getState() == THROWING; }
+  public boolean isSwirling() { return swirlTime > 0 || getState() == SWIRLING; }
+  
+  public boolean isThrowing() { return throwTime > 0 || getState() == THROWING; }
+  
+  public float getSpawnPercent() { return 1.0F - ((float)spawnTime / (float)SPAWN_TIME); }
   
   public float getSwirlPercent() { return (float)swirlTime / (float)SWIRL_TIME; }
   
   public float getThrowPercent() { return (float)throwTime / (float)THROW_TIME; }
+  
+  @OnlyIn(Dist.CLIENT)
+  public void handleStatusUpdate(byte id) {
+    switch(id) {
+    case NONE:
+      setState(NONE);
+      break;
+    case SPAWN_CLIENT:
+      setState(SPAWNING);
+      break;
+    case SWIRL_CLIENT:
+      setState(SWIRLING);
+      break;
+    case THROW_CLIENT:
+      setState(THROWING);
+      break;
+    default:
+      super.handleStatusUpdate(id);
+      break;
+    }
+  }
   
   // Misc //
 

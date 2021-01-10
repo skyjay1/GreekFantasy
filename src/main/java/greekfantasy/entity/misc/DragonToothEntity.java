@@ -66,10 +66,10 @@ public class DragonToothEntity extends ProjectileItemEntity {
           sparti.rotationPitch = MathHelper.wrapDegrees(thrower.rotationYaw + 180.0F);
           sparti.setOwner((PlayerEntity) thrower);
         }
-        sparti.setSpawning(true);
+        world.addEntity(sparti);
         sparti.setLimitedLife(life);
         sparti.setEquipmentOnSpawn();
-        world.addEntity(sparti);
+        sparti.setSpawning(true);
       }
       remove();
     }

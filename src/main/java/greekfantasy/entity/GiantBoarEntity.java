@@ -31,12 +31,16 @@ import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class GiantBoarEntity extends HoglinEntity {
   
   private static final DataParameter<Boolean> SPAWNING = EntityDataManager.createKey(GiantBoarEntity.class, DataSerializers.BOOLEAN);
   private static final String KEY_SPAWNING = "Spawning";
   private static final String KEY_SPAWN_TIME = "SpawnTime";
+  // bytes to use in World#setEntityState
+  private static final byte SPAWN_CLIENT = 9;
   
   private static final int MAX_SPAWN_TIME = 90;
 
@@ -72,6 +76,7 @@ public class GiantBoarEntity extends HoglinEntity {
     entity.renderYawOffset = hoglin.renderYawOffset;
     entity.func_242279_ag(); // setPortalCooldown
     world.addEntity(entity);
+    entity.setSpawning(true);
     // remove the old hoglin
     hoglin.remove();
     // trigger spawn for nearby players
@@ -175,7 +180,6 @@ public class GiantBoarEntity extends HoglinEntity {
     super.writeAdditional(compound);
     compound.putBoolean(KEY_SPAWNING, isSpawning());
     compound.putInt(KEY_SPAWN_TIME, spawnTime);
-    
   }
 
   @Override
@@ -218,11 +222,12 @@ public class GiantBoarEntity extends HoglinEntity {
   
   // Spawning //
   
-  @Override
-  public void notifyDataManagerChange(final DataParameter<?> key) {
-    super.notifyDataManagerChange(key);
-    if(key == SPAWNING) {
-      spawnTime = isSpawning() ? 1 : 0;
+  @OnlyIn(Dist.CLIENT)
+  public void handleStatusUpdate(byte id) {
+    if(id == SPAWN_CLIENT) {
+      setSpawning(true);
+    } else {
+      super.handleStatusUpdate(id);
     }
   }
   
@@ -231,6 +236,9 @@ public class GiantBoarEntity extends HoglinEntity {
   public void setSpawning(final boolean spawning) {
     spawnTime = spawning ? 1 : 0;
     this.getDataManager().set(SPAWNING, spawning);
+    if(spawning && !world.isRemote()) {
+      world.setEntityState(this, SPAWN_CLIENT);
+    }
   }
   
   public float getSpawnPercent(final float partialTick) { 

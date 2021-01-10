@@ -24,7 +24,9 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.monster.WitchEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -48,10 +50,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.BossInfo;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -108,6 +112,18 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
     if(this.ticksExisted == 1) {
       this.bossInfo.setName(this.hasCustomName() ? this.getCustomName() : this.getDisplayName());
+    }
+  }
+  
+  @Override
+  public void func_241841_a(ServerWorld world, LightningBoltEntity bolt) { // onEntityStruckByLightning
+    if (world.getDifficulty() != Difficulty.PEACEFUL && rand.nextInt(100) < GreekFantasy.CONFIG.getLightningMedusaChance()) {
+      this.setMedusa(true);
+      this.setHealth(this.getMaxHealth());
+      this.enablePersistence();
+      this.setFire(2);
+    } else {
+      super.func_241841_a(world, bolt);
     }
   }
   

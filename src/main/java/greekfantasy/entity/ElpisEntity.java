@@ -70,6 +70,8 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   protected static final byte STATE_NONE = 5;
   protected static final byte STATE_TRADING = 6;
   protected static final byte STATE_DESPAWNING = 7;
+  // bytes to use in World#setEntityState
+  private static final byte DESPAWN_CLIENT = 10;
   
   private int despawnTime;
   private int age;
@@ -221,17 +223,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   
   @Override
   public boolean canDespawn(final double disToPlayer) {
-    return this.age > maxAge && disToPlayer > 12.0D;
-  }
-  
-  @Override
-  public void notifyDataManagerChange(final DataParameter<?> key) {
-    super.notifyDataManagerChange(key);
-    if(key == STATE && world.isRemote()) {
-      if(isDespawning()) {
-        despawnTime = 1;
-      }
-    }
+    return this.isNoneState() && this.age > maxAge && disToPlayer > 12.0D;
   }
   
   @Override
@@ -239,6 +231,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
     spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     this.setLeftHanded(false);
+    this.setState(STATE_NONE);
     return spawnDataIn;
   }
  
@@ -264,7 +257,13 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   // state methods
   
   public void setState(final byte state) { 
-    this.getDataManager().set(STATE, state); 
+    this.getDataManager().set(STATE, state);
+    if(state == STATE_DESPAWNING) {
+      despawnTime = 1;
+      if(!world.isRemote()) {
+        world.setEntityState(this, DESPAWN_CLIENT);
+      }
+    }
   }
   
   public byte getState() { return this.getDataManager().get(STATE).byteValue(); }
@@ -276,6 +275,15 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   public boolean isDespawning() { return getState() == STATE_DESPAWNING; }
   
   // Client methods
+  
+  @OnlyIn(Dist.CLIENT)
+  public void handleStatusUpdate(byte id) {
+    if(id == DESPAWN_CLIENT) {
+      setState(STATE_DESPAWNING);
+    } else {
+      super.handleStatusUpdate(id);
+    }
+  }
   
   @OnlyIn(Dist.CLIENT)
   public float getAlpha(final float partialTick) {

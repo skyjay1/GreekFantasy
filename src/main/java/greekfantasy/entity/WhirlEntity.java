@@ -83,7 +83,7 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
     super.livingTick();
     // remove if colliding with another whirl or a charybdis
     final List<WaterMobEntity> waterMobList = this.world.getEntitiesWithinAABB(WaterMobEntity.class, this.getBoundingBox().grow(1.0D), 
-        e -> e.isAlive() && e.getType() == GFRegistry.CHARYBDIS_ENTITY || e.getType() == GFRegistry.WHIRL_ENTITY);
+        e -> e != this && e.isAlive() && (e.getType() == GFRegistry.CHARYBDIS_ENTITY || e.getType() == GFRegistry.WHIRL_ENTITY));
     if(!waterMobList.isEmpty()) {
       this.attackEntityFrom(DamageSource.causeMobDamage(this), this.getMaxHealth() * 2.0F);
       return;

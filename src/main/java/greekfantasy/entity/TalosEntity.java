@@ -2,15 +2,19 @@ package greekfantasy.entity;
 
 import java.util.EnumSet;
 
+import javax.annotation.Nullable;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.item.ClubItem;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
@@ -39,6 +43,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.api.distmarker.Dist;
@@ -56,6 +62,7 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
   private static final byte SPAWNING = (byte)1;
   private static final byte SHOOT = (byte)2;
   // bytes to use in World#setEntityState
+  private static final byte SPAWN_CLIENT = 8;
   private static final byte SHOOT_CLIENT = 9;
   
   private static final int MAX_SPAWN_TIME = 94;
@@ -89,8 +96,8 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
     TalosEntity entity = GFRegistry.TALOS_ENTITY.create(world);
     entity.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
     entity.renderYawOffset = yaw;
-    entity.setSpawning(true);
     world.addEntity(entity);
+    entity.setSpawning(true);
     // trigger spawn for nearby players
     for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(25.0D))) {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
@@ -186,10 +193,17 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
       final double dZ = Math.signum(ePos.z - myPos.z) * knockbackFactor;
       entityIn.addVelocity(dX, knockbackFactor / 2.0D, dZ);
       entityIn.velocityChanged = true;
-      this.playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1.0F, 1.0F);
+      this.playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1.0F, 0.6F + rand.nextFloat() * 0.2F);
       return true;
     }
     return false;
+  }
+  
+  @Override
+  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+     ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+     this.setSpawning(true);
+     return data;
   }
 
   @Override
@@ -214,7 +228,8 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
-    return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER || super.isInvulnerableTo(source);
+    return isSpawning() || source.isMagicDamage() || source == DamageSource.IN_WALL || source == DamageSource.WITHER 
+        || source.getImmediateSource() instanceof AbstractArrowEntity || super.isInvulnerableTo(source);
   }
   
   @Override
@@ -264,27 +279,25 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
   public void setShooting(final boolean shoot) { setState(shoot ? SHOOT : NONE); }
   
   public boolean isShooting() { return getState() == SHOOT; }
-  
+
   public void setSpawning(final boolean spawning) {
     spawnTime = spawning ? MAX_SPAWN_TIME : 0;
-    setState(spawning ? SPAWNING : NONE); 
+    setState(spawning ? SPAWNING : NONE);
+    if(spawning && !this.world.isRemote()) {
+      this.world.setEntityState(this, SPAWN_CLIENT);
+    }
   }
   
   public void setAttackCooldown(final int cooldown) { attackCooldown = cooldown; }
   
   public boolean hasNoCooldown() { return attackCooldown <= 0; }
   
-  @Override
-  public void notifyDataManagerChange(final DataParameter<?> key) {
-    super.notifyDataManagerChange(key);
-    if(key == STATE) {
-      this.spawnTime = isSpawning() ? MAX_SPAWN_TIME : 0;
-    }
-  }
-  
   @OnlyIn(Dist.CLIENT)
   public void handleStatusUpdate(byte id) {
     switch(id) {
+    case SPAWN_CLIENT:
+      setSpawning(true);
+      break;
     case SHOOT_CLIENT:
       shootTime = 1;
       this.playSound(SoundEvents.BLOCK_STONE_PRESSURE_PLATE_CLICK_ON, 1.1F, 1.0F);

@@ -6,11 +6,11 @@ __Key:__
 
 ## Bugs and future updates
 
-- _ Summoning animations not playing on dedicated server
+- Summoning animations not playing on dedicated server
+  X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
 - _ Structure gen is jenky
 - _ Config option for winged sandals to enable flight?
 - _ Deity doesn't set items from JSON correctly
-- X Swine effect not syncing
 
 ## Entity basics
 
