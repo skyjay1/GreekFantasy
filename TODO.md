@@ -48,7 +48,7 @@ __Key:__
 - X X X _ X Fury
 - X X _ X X Drakaina
 - X X X X X Arion (very fast horse, use gold)
-- _ _ _ _ _ Whirl (give it Heart of Sea to convert into Charybdis)
+- X X X X X Whirl (give it Heart of Sea to convert into Charybdis)
 - _ _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
 
 ## Entity AI
