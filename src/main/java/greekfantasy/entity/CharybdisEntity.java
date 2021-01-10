@@ -3,13 +3,15 @@ package greekfantasy.entity;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Random;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.entity.misc.ISwimmingMob;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.MoverType;
@@ -26,22 +28,17 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.server.ServerBossInfo;
-import net.minecraftforge.common.BiomeDictionary;
+import net.minecraft.world.server.ServerWorld;
 
 public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
@@ -73,17 +70,28 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     this.experienceValue = 50;
   }
 
-  //copied from DolphinEntity
-  public static boolean canCharybdisSpawnOn(final EntityType<? extends WaterMobEntity> entity, final IWorld world,
-      final SpawnReason reason, final BlockPos pos, final Random rand) {
-    if (pos.getY() <= 25 || pos.getY() >= world.getSeaLevel()) {
-      return false;
+  public static CharybdisEntity spawnCharybdis(final ServerWorld world, final WhirlEntity whirl) {
+    CharybdisEntity entity = GFRegistry.CHARYBDIS_ENTITY.create(world);
+    entity.copyLocationAndAnglesFrom(whirl);
+    entity.onInitialSpawn(world, world.getDifficultyForLocation(whirl.getPosition()), SpawnReason.CONVERSION, (ILivingEntityData)null, (CompoundNBT)null);
+    if(whirl.hasCustomName()) {
+      entity.setCustomName(whirl.getCustomName());
+      entity.setCustomNameVisible(whirl.isCustomNameVisible());
     }
-
-    RegistryKey<Biome> biome = world.func_242406_i(pos).orElse(Biomes.PLAINS);
-    return (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN)) && world.getFluidState(pos).isTagged(FluidTags.WATER);
+    entity.enablePersistence();
+    entity.renderYawOffset = whirl.renderYawOffset;
+    entity.func_242279_ag(); // setPortalCooldown
+    world.addEntity(entity);
+    // remove the old hoglin
+    whirl.remove();
+    // trigger spawn for nearby players
+    for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(16.0D))) {
+      CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+    }
+    // play sound
+    world.playSound(entity.getPosX(), entity.getPosY(), entity.getPosZ(), SoundEvents.ENTITY_WITHER_SPAWN, entity.getSoundCategory(), 1.2F, 1.0F, false);
+    return entity;
   }
-
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 160.0D)
@@ -165,7 +173,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   public boolean isNonBoss() { return false; }
   
   @Override
-  public boolean canDespawn(final double disToPlayer) { return this.ticksExisted > 9600 && disToPlayer > 32.0D; }
+  public boolean canDespawn(final double disToPlayer) { return false; }
   
   @Override
   protected boolean canBeRidden(Entity entityIn) { return false; }

@@ -232,7 +232,6 @@ public final class GFWorldGen {
     addSpawns(event, GFRegistry.ARA_ENTITY, 2, 5);
     addSpawns(event, GFRegistry.CENTAUR_ENTITY, 2, 4);
     addSpawns(event, GFRegistry.CERASTES_ENTITY, 1, 2);
-    addSpawns(event, GFRegistry.CHARYBDIS_ENTITY, 1, 1);
     addSpawns(event, GFRegistry.CYCLOPES_ENTITY, 1, 3);
     addSpawns(event, GFRegistry.CYPRIAN_ENTITY, 1, 3);
     addSpawns(event, GFRegistry.DRAKAINA_ENTITY, 1, 2);
@@ -248,6 +247,7 @@ public final class GFWorldGen {
     addSpawns(event, GFRegistry.SHADE_ENTITY, 1, 1);
     addSpawns(event, GFRegistry.SIREN_ENTITY, 2, 4);
     addSpawns(event, GFRegistry.UNICORN_ENTITY, 2, 5);
+    addSpawns(event, GFRegistry.WHIRL_ENTITY, 1, 1);
   }
   
   private static void addSpawns(final BiomeLoadingEvent event, final EntityType<?> entity, final int min, final int max) {

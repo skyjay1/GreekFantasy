@@ -95,11 +95,13 @@ public class GFConfig {
   public final ForgeConfigSpec.BooleanValue GERYON_RESISTANCE;
   public final ForgeConfigSpec.BooleanValue SATYR_LIGHTS_CAMPFIRES;
   public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
+  private final ForgeConfigSpec.BooleanValue WHIRL_INVULNERABLE;
   private final ForgeConfigSpec.BooleanValue DRYAD_ANGRY_ON_HARVEST;
   private final ForgeConfigSpec.IntValue DRYAD_ANGRY_RANGE;
   private final ForgeConfigSpec.IntValue SPARTI_LIFESPAN;
   private final ForgeConfigSpec.BooleanValue NERF_STUNNING;
   private final ForgeConfigSpec.BooleanValue NERF_PARALYSIS;
+  private boolean whirlInvulnerable;
   private boolean dryadAngryOnHarvest;
   private int dryadAngryRange;
   private int spartiLifespan;
@@ -235,6 +237,8 @@ public class GFConfig {
         .define("shade_attack", true);
     SIREN_ATTACK = builder.comment("Whether the Siren can charm players")
         .define("siren_attack", true);
+    WHIRL_INVULNERABLE = builder.comment("Whether the Whirl is invulnerable to damage")
+        .define("whirl_invulnerable", false);
     DRYAD_ANGRY_ON_HARVEST = builder.comment("Whether harvesting log blocks angers nearby dryads")
         .define("dryad_angry_on_harvest", true);
     DRYAD_ANGRY_RANGE = builder.comment("The distance at which dryads become angry when players harvest logs")
@@ -303,7 +307,6 @@ public class GFConfig {
     MOB_SPAWNS.put("ara", new BiomeWhitelistConfig(builder, "ara_spawn", 10, false, nonNetherHostileBlacklist));
     MOB_SPAWNS.put("centaur", new BiomeWhitelistConfig(builder, "centaur_spawn", 15, true, plains));
     MOB_SPAWNS.put("cerastes", new BiomeWhitelistConfig(builder, "cerastes_spawn", 30, true, sandy));
-    MOB_SPAWNS.put("charybdis", new BiomeWhitelistConfig(builder, "charybdis_spawn", 2, true, ocean));
     MOB_SPAWNS.put("cyclopes", new BiomeWhitelistConfig(builder, "cyclopes_spawn", 20, true, mountains));
     MOB_SPAWNS.put("cyprian", new BiomeWhitelistConfig(builder, "cyprian_spawn", 15, true, concat(plains, taiga)));
     MOB_SPAWNS.put("drakaina", new BiomeWhitelistConfig(builder, "drakaina_spawn", 60, false, hostileBlacklist));
@@ -321,6 +324,7 @@ public class GFConfig {
     MOB_SPAWNS.put("shade", new BiomeWhitelistConfig(builder, "shade_spawn", 10, false, new ArrayList<>()));
     MOB_SPAWNS.put("siren", new BiomeWhitelistConfig(builder, "siren_spawn", 10, true, ocean));
     MOB_SPAWNS.put("unicorn", new BiomeWhitelistConfig(builder, "unicorn_spawn", 11, true, plains));
+    MOB_SPAWNS.put("whirl", new BiomeWhitelistConfig(builder, "whirl_spawn", 6, true, ocean));
     builder.pop();
     // feature configs
     builder.push("features");
@@ -382,6 +386,7 @@ public class GFConfig {
     giantBoarNonNether = GIANT_BOAR_NON_NETHER.get();
     dryadAngryOnHarvest = DRYAD_ANGRY_ON_HARVEST.get();
     dryadAngryRange = DRYAD_ANGRY_RANGE.get();
+    whirlInvulnerable = WHIRL_INVULNERABLE.get();
     spartiLifespan = SPARTI_LIFESPAN.get();
     nerfStunning = NERF_STUNNING.get();
     nerfParalysis = NERF_PARALYSIS.get();
@@ -426,6 +431,7 @@ public class GFConfig {
   public int getElpisSpawnChance() { return elpisSpawnChance; }
   public int getNumSpartiSpawned() { return numSpartiSpawned; }
   public boolean getGiantBoarNonNether() { return giantBoarNonNether; }
+  public boolean isWhirlInvulnerable() { return whirlInvulnerable; }
   public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }
   public int getDryadAngryRange() { return dryadAngryRange; }
   public int getSpartiLifespan() { return spartiLifespan; }

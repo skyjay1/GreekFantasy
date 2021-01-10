@@ -1,6 +1,5 @@
 package greekfantasy.entity;
 
-import java.util.Random;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -40,7 +39,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
@@ -68,12 +66,6 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 5.5D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.65D);
-  }
-  
-  public static boolean canGiganteSpawnOn(final EntityType<? extends MobEntity> entity, final IWorld world, final SpawnReason reason, 
-      final BlockPos pos, final Random rand) {
-    // TODO refine
-    return world.canBlockSeeSky(pos.up()) && MobEntity.canSpawnOn(entity, world, reason, pos, rand);
   }
 
   @Override

@@ -132,6 +132,7 @@ public final class GFRegistry {
   public static EntityType<SwineSpellEntity> SWINE_SPELL_ENTITY = buildEntityType(SwineSpellEntity::new, "swine_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
   public static EntityType<TalosEntity> TALOS_ENTITY = buildEntityType(TalosEntity::new, "talos", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<UnicornEntity> UNICORN_ENTITY = buildEntityType(UnicornEntity::new, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<WhirlEntity> WHIRL_ENTITY = buildEntityType(WhirlEntity::new, "whirl", 2.9F, 5.0F, EntityClassification.WATER_CREATURE, b -> {});
 
   // OBJECT HOLDERS //
 
@@ -351,7 +352,7 @@ public final class GFRegistry {
     registerEntityType(event, CENTAUR_ENTITY, "centaur", CentaurEntity::getAttributes, CentaurEntity::canSpawnOn);
     registerEntityType(event, CERASTES_ENTITY, "cerastes", CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn);
     registerEntityType(event, CERBERUS_ENTITY, "cerberus", CerberusEntity::getAttributes, null);
-    registerEntityType(event, CHARYBDIS_ENTITY, "charybdis", CharybdisEntity::getAttributes, CharybdisEntity::canCharybdisSpawnOn);
+    registerEntityType(event, CHARYBDIS_ENTITY, "charybdis", CharybdisEntity::getAttributes, null);
     registerEntityType(event, CYPRIAN_ENTITY, "cyprian", CyprianEntity::getAttributes, CyprianEntity::canSpawnOn);
     registerEntityType(event, CYCLOPES_ENTITY, "cyclopes", CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn);
     registerEntityType(event, DRAKAINA_ENTITY, "drakaina", DrakainaEntity::getAttributes, DrakainaEntity::canMonsterSpawnInLight);
@@ -361,7 +362,7 @@ public final class GFRegistry {
     registerEntityType(event, FURY_ENTITY, "fury", FuryEntity::getAttributes, FuryEntity::canSpawnOn);
     registerEntityType(event, GERYON_ENTITY, "geryon", GeryonEntity::getAttributes, null);
     registerEntityType(event, GIANT_BOAR_ENTITY, "giant_boar", GiantBoarEntity::getAttributes, null);
-    registerEntityType(event, GIGANTE_ENTITY, "gigante", GiganteEntity::getAttributes, GiganteEntity::canGiganteSpawnOn);
+    registerEntityType(event, GIGANTE_ENTITY, "gigante", GiganteEntity::getAttributes, GiganteEntity::canSpawnOn);
     registerEntityType(event, GORGON_ENTITY, "gorgon", GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn);
     registerEntityType(event, HARPY_ENTITY, "harpy", HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn);
 //    registerEntityType(event, HYDRA_ENTITY, HydraEntity::getAttributes, null);
@@ -376,6 +377,7 @@ public final class GFRegistry {
     registerEntityType(event, SPARTI_ENTITY, "sparti", SpartiEntity::getAttributes, null);
     registerEntityType(event, TALOS_ENTITY, "talos", TalosEntity::getAttributes, null);
     registerEntityType(event, UNICORN_ENTITY, "unicorn", UnicornEntity::getAttributes, UnicornEntity::canSpawnOn);
+    registerEntityType(event, WHIRL_ENTITY, "whirl", WhirlEntity::getAttributes, WhirlEntity::canWhirlSpawnOn);
     event.getRegistry().register(CURSE_ENTITY.setRegistryName(MODID, "curse"));
     event.getRegistry().register(DRAGON_TOOTH_ENTITY.setRegistryName(MODID, "dragon_tooth"));
     event.getRegistry().register(HEALING_SPELL_ENTITY.setRegistryName(MODID, "healing_spell"));
@@ -645,6 +647,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, SHADE_ENTITY, "shade", 0x222222, 0x000000);
     registerSpawnEgg(event, SIREN_ENTITY, "siren", 0x729f92, 0x398046);
     registerSpawnEgg(event, UNICORN_ENTITY, "unicorn", 0xeeeeee, 0xe8e8e8);
+    registerSpawnEgg(event, WHIRL_ENTITY, "whirl", 0x1EF6FF, 0xededed);
     
 //    registerSpawnEgg(event, HYDRA_ENTITY, 0xeeeeee, 0xe8e8e8);
   }

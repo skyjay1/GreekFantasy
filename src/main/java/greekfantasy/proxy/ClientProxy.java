@@ -72,6 +72,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SPARTI_ENTITY, SpartiRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SWINE_SPELL_ENTITY, SwineSpellRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.UNICORN_ENTITY, UnicornRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.WHIRL_ENTITY, WhirlRenderer::new);
   }
   
   @Override
