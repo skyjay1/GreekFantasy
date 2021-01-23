@@ -35,6 +35,10 @@ public class Deity implements IDeity {
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).optionalFieldOf("item_favor_map", Maps.newHashMap()).forGetter(Deity::getItemFavorModifiers)
     ).apply(instance, Deity::new));
   
+  public static final ResourceLocation ZEUS = new ResourceLocation(GreekFantasy.MODID, "zeus");
+  public static final ResourceLocation HADES = new ResourceLocation(GreekFantasy.MODID, "hades");
+  public static final ResourceLocation POSEIDON = new ResourceLocation(GreekFantasy.MODID, "poseidon");
+  
   private final ResourceLocation name;
   private final ResourceLocation texture;
   private final boolean isFemale;

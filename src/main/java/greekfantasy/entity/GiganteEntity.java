@@ -1,12 +1,18 @@
 package greekfantasy.entity;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.FavorableResetTargetGoal;
+import greekfantasy.entity.misc.IFavorable;
+import greekfantasy.favor.Deity;
 import greekfantasy.item.ClubItem;
+import greekfantasy.util.FavorRange;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
@@ -42,7 +48,11 @@ import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
-public class GiganteEntity extends CreatureEntity implements IAngerable {
+public class GiganteEntity extends CreatureEntity implements IAngerable, IFavorable {
+  private static final Map<String, FavorRange> FAVOR_RANGE_MAP = new HashMap<>();
+  static {
+    FAVOR_RANGE_MAP.put(CAN_ATTACK, new FavorRange(Deity.ZEUS, -10, -4));
+  }
   
   private static final int ATTACK_COOLDOWN = 32;
 
@@ -78,6 +88,7 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
     this.targetSelector.addGoal(3, new ResetAngerGoal<>(this, true));
+    this.targetSelector.addGoal(3, new FavorableResetTargetGoal<>(this));
   }
   
   @Override
@@ -187,6 +198,11 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   public void setAngerTarget(@Nullable UUID target) { this.angerTarget = target; }
   @Override
   public UUID getAngerTarget() { return this.angerTarget; }
+  
+  //IFavorable methods
+  
+  @Override
+  public Map<String, FavorRange> getFavorRangeMap() { return FAVOR_RANGE_MAP; }
   
   // Cooldown methods
   

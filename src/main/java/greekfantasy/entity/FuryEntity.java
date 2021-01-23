@@ -1,9 +1,16 @@
 package greekfantasy.entity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.FavorableResetTargetGoal;
 import greekfantasy.entity.ai.FollowGoal;
 import greekfantasy.entity.ai.IntervalRangedAttackGoal;
 import greekfantasy.entity.misc.CurseEntity;
+import greekfantasy.entity.misc.IFavorable;
+import greekfantasy.favor.Deity;
+import greekfantasy.util.FavorRange;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IRangedAttackMob;
@@ -22,7 +29,6 @@ import net.minecraft.entity.ai.goal.WaterAvoidingRandomFlyingGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.IFlyingAnimal;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.util.DamageSource;
@@ -33,7 +39,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
-public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedAttackMob {  
+public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedAttackMob, IFavorable {
+  private static final Map<String, FavorRange> FAVOR_RANGE_MAP = new HashMap<>();
+  static {
+    FAVOR_RANGE_MAP.put(CAN_ATTACK, new FavorRange(Deity.HADES, -10, 5));
+  }
+  
   public static final int MAX_AGGRO_TIME = 45;
   public float flyingTime;
   public int aggroTime;
@@ -72,7 +83,8 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedA
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp());
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::targetFavorAttackable));
+    this.targetSelector.addGoal(3, new FavorableResetTargetGoal<>(this));
     if(GreekFantasy.CONFIG.FURY_ATTACK.get()) {
       this.goalSelector.addGoal(1, new IntervalRangedAttackGoal(this, 210, 2, 200));
     }
@@ -110,6 +122,13 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedA
     }
   }
   
+  //IFavorable methods
+  
+  @Override
+  public Map<String, FavorRange> getFavorRangeMap() { return FAVOR_RANGE_MAP; }
+  
+  // Sounds
+  
   @Override
   protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_SPIDER_AMBIENT; }
 
@@ -125,16 +144,7 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedA
   @Override
   protected float getSoundPitch() { return 1.0F + rand.nextFloat() * 0.2F; }
   
-  @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
-    
-  }
-
-  @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
-  }
+  // Flying
 
   @Override
   public boolean onLivingFall(float distance, float damageMultiplier) { return false; }
@@ -154,6 +164,8 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedA
   public boolean isFlying() {
     return !this.onGround || this.getMotion().lengthSquared() > 0.06D;
   }
+  
+  // Aggro
   
   public float getAggroPercent(final float partialTick) {
     if(aggroTime <= 0) {

@@ -1,6 +1,8 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -11,8 +13,12 @@ import javax.annotation.Nullable;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.EffectGoal;
+import greekfantasy.entity.ai.FavorableResetTargetGoal;
 import greekfantasy.entity.ai.FindBlockGoal;
+import greekfantasy.entity.misc.IFavorable;
+import greekfantasy.favor.Deity;
 import greekfantasy.util.BiomeHelper;
+import greekfantasy.util.FavorRange;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -61,12 +67,17 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.IPlantable;
 
-public class DryadEntity extends CreatureEntity implements IAngerable {
+public class DryadEntity extends CreatureEntity implements IAngerable, IFavorable {
   
   private static final DataParameter<String> DATA_VARIANT = EntityDataManager.createKey(DryadEntity.class, DataSerializers.STRING);
   private static final String KEY_VARIANT = "Variant";
   private static final String KEY_TREE_POS = "Tree";
   private static final String KEY_HIDING = "HidingTime";
+  
+  private static final Map<String, FavorRange> FAVOR_RANGE_MAP = new HashMap<>();
+  static {
+    FAVOR_RANGE_MAP.put(CAN_ATTACK, new FavorRange(Deity.ZEUS, -10, -2));
+  }
   
   private Optional<BlockPos> treePos = Optional.empty();
   
@@ -104,8 +115,10 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
-    this.targetSelector.addGoal(4, new ResetAngerGoal<>(this, true));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::targetFavorAttackable));
+    this.targetSelector.addGoal(3, new ResetAngerGoal<>(this, true));
+    this.targetSelector.addGoal(3, new FavorableResetTargetGoal<>(this));
   }
 
   @Override
@@ -236,7 +249,9 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   public UUID getAngerTarget() { return this.angerTarget; }
  
-  // End IAngerable methods
+  // IFavorable methods
+  @Override
+  public Map<String, FavorRange> getFavorRangeMap() { return FAVOR_RANGE_MAP; }
   
   @Override
   public float getBrightness() { return 1.0F; }
@@ -252,6 +267,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   public void setHiding(final boolean hiding) { hidingTime = hiding ? 1 : 0; }
   
   public DryadEntity.Variant getVariant() { return DryadEntity.Variant.getByName(this.getDataManager().get(DATA_VARIANT)); }
+  
+  // Tree methods
   
   public Optional<BlockPos> getTreePos() { return treePos; }
   
@@ -500,5 +517,4 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       return name;
     }
   }
-
 }

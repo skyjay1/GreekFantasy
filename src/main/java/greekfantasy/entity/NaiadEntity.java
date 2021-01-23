@@ -1,5 +1,7 @@
 package greekfantasy.entity;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
@@ -9,10 +11,14 @@ import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.FavorableResetTargetGoal;
 import greekfantasy.entity.ai.GoToWaterGoal;
 import greekfantasy.entity.ai.SwimUpGoal;
 import greekfantasy.entity.ai.SwimmingMovementController;
+import greekfantasy.entity.misc.IFavorable;
 import greekfantasy.entity.misc.ISwimmingMob;
+import greekfantasy.favor.Deity;
+import greekfantasy.util.FavorRange;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.EntityType;
@@ -69,7 +75,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngerable, IRangedAttackMob {
+public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngerable, IRangedAttackMob, IFavorable {
   
   private static final DataParameter<String> DATA_VARIANT = EntityDataManager.createKey(NaiadEntity.class, DataSerializers.STRING);
   private static final String KEY_VARIANT = "Variant";
@@ -78,6 +84,11 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   private static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(10, 26);
   private int angerTime;
   private UUID angerTarget;
+  
+  private static final Map<String, FavorRange> FAVOR_RANGE_MAP = new HashMap<>();
+  static {
+    FAVOR_RANGE_MAP.put(CAN_ATTACK, new FavorRange(Deity.POSEIDON, -10, -2));
+  }
 
   protected int age;
   protected boolean swimmingUp;
@@ -130,7 +141,9 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, DrownedEntity.class, false));
     this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::targetFavorAttackable));
     this.targetSelector.addGoal(4, new ResetAngerGoal<>(this, true));
+    this.targetSelector.addGoal(4, new FavorableResetTargetGoal<>(this));
   }
 
   @Override
@@ -212,8 +225,11 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
   public void setAngerTarget(@Nullable UUID target) { this.angerTarget = target; }
   @Override
   public UUID getAngerTarget() { return this.angerTarget; }
- 
-  // End IAngerable methods
+
+  //IFavorable methods
+  
+  @Override
+  public Map<String, FavorRange> getFavorRangeMap() { return FAVOR_RANGE_MAP; }
   
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,

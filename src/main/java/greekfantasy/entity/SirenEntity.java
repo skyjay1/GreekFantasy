@@ -1,14 +1,20 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.FavorableResetTargetGoal;
 import greekfantasy.entity.ai.SwimUpGoal;
 import greekfantasy.entity.ai.SwimmingMovementController;
+import greekfantasy.entity.misc.IFavorable;
 import greekfantasy.entity.misc.ISwimmingMob;
+import greekfantasy.favor.Deity;
+import greekfantasy.util.FavorRange;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -49,12 +55,17 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
 
-public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
+public class SirenEntity extends WaterMobEntity implements ISwimmingMob, IFavorable {
   
   private static final DataParameter<Boolean> CHARMING = EntityDataManager.createKey(SirenEntity.class, DataSerializers.BOOLEAN); 
   private final AttributeModifier attackModifier = new AttributeModifier("Charm attack bonus", 2.0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
   private static final int STUN_DURATION = 80;
+
+  private static final Map<String, FavorRange> FAVOR_RANGE_MAP = new HashMap<>();
+  static {
+    FAVOR_RANGE_MAP.put(CAN_ATTACK, new FavorRange(Deity.POSEIDON, -10, 6));
+  }
   
   private boolean swimmingUp;
   private float swimmingPercent;
@@ -102,7 +113,8 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
       this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
     }
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::targetFavorAttackable));
+    this.targetSelector.addGoal(3, new FavorableResetTargetGoal<>(this));
   }
 
   @Override
@@ -134,6 +146,11 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
       }
     }
   }
+
+  // IFavorable methods
+  
+  @Override
+  public Map<String, FavorRange> getFavorRangeMap() { return FAVOR_RANGE_MAP; }
   
   // Swimming methods
 

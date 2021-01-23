@@ -1,9 +1,15 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.FavorableResetTargetGoal;
+import greekfantasy.entity.misc.IFavorable;
+import greekfantasy.favor.Deity;
+import greekfantasy.util.FavorRange;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -37,7 +43,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
-public class MinotaurEntity extends MonsterEntity {
+public class MinotaurEntity extends MonsterEntity implements IFavorable {
   private static final DataParameter<Byte> STATE = EntityDataManager.createKey(MinotaurEntity.class, DataSerializers.BYTE);
   private static final String KEY_STATE = "MinotaurState";
   //bytes to use in STATE
@@ -46,6 +52,11 @@ public class MinotaurEntity extends MonsterEntity {
   private static final byte STUNNED = (byte) 2;
   
   private static final int STUN_DURATION = 80;
+  
+  private static final Map<String, FavorRange> FAVOR_RANGE_MAP = new HashMap<>();
+  static {
+    FAVOR_RANGE_MAP.put(CAN_ATTACK, new FavorRange(Deity.ZEUS, -10, 6));
+  }
   
   private final AttributeModifier knockbackModifier = new AttributeModifier("Charge knockback bonus", 2.25F, AttributeModifier.Operation.MULTIPLY_TOTAL);
   private final AttributeModifier attackModifier = new AttributeModifier("Charge attack bonus", 2.5F, AttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -78,7 +89,8 @@ public class MinotaurEntity extends MonsterEntity {
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::targetFavorAttackable));
+    this.targetSelector.addGoal(3, new FavorableResetTargetGoal<>(this));
     if(GreekFantasy.CONFIG.MINOTAUR_ATTACK.get()) {
       this.goalSelector.addGoal(2, new ChargeAttackGoal(1.68D));
     }
@@ -93,6 +105,13 @@ public class MinotaurEntity extends MonsterEntity {
       spawnStunnedParticles();
     }
   }
+  
+  // IFavorable methods
+  
+  @Override
+  public Map<String, FavorRange> getFavorRangeMap() { return FAVOR_RANGE_MAP; }
+  
+  // Sound methods
   
   @Override
   protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_COW_AMBIENT; }
@@ -132,6 +151,8 @@ public class MinotaurEntity extends MonsterEntity {
      this.setMinotaurState(compound.getByte(KEY_STATE));
   }
   
+  // States
+  
   public byte getMinotaurState() { return this.getDataManager().get(STATE).byteValue(); }
   
   public void setMinotaurState(final byte state) { this.getDataManager().set(STATE, Byte.valueOf(state)); }
@@ -146,9 +167,7 @@ public class MinotaurEntity extends MonsterEntity {
   
   public void setStunned(final boolean stunned) { setMinotaurState(stunned ? STUNNED : NONE); }
 
-  public float getStompingSpeed() {
-    return 0.58F;
-  }
+  public float getStompingSpeed() { return 0.58F; }
   
   public void spawnStunnedParticles() {
     final double motion = 0.09D;

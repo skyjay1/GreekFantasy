@@ -55,6 +55,6 @@ public class CerberusHeadModel extends Model implements IHasHead, IWallModel {
   
   @Override
   public float getScale() {
-    return CerberusRenderer.SCALE;
+    return CerberusRenderer.SCALE + 0.1125F;
   }
 }

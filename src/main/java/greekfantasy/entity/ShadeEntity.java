@@ -1,11 +1,17 @@
 package greekfantasy.entity;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.FavorableResetTargetGoal;
+import greekfantasy.entity.misc.IFavorable;
+import greekfantasy.favor.Deity;
+import greekfantasy.util.FavorRange;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
@@ -38,7 +44,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 
-public class ShadeEntity extends MonsterEntity {
+public class ShadeEntity extends MonsterEntity implements IFavorable {
   
   protected static final DataParameter<Integer> DATA_XP = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.VARINT);
   protected static final DataParameter<Optional<UUID>> OWNER_UNIQUE_ID = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
@@ -46,6 +52,11 @@ public class ShadeEntity extends MonsterEntity {
   protected static final String KEY_XP = "StoredXP";
   protected static final String KEY_OWNER = "Owner";
   protected static final String KEY_DESPAWN = "NoDespawn";
+
+  private static final Map<String, FavorRange> FAVOR_RANGE_MAP = new HashMap<>();
+  static {
+    FAVOR_RANGE_MAP.put(CAN_ATTACK, new FavorRange(Deity.HADES, -10, 7));
+  }
   
   public ShadeEntity(final EntityType<? extends ShadeEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -68,7 +79,8 @@ public class ShadeEntity extends MonsterEntity {
     this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 12.0F));
     this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::targetFavorAttackable));
+    this.targetSelector.addGoal(3, new FavorableResetTargetGoal<>(this));
   }
   
   @Override
@@ -193,4 +205,7 @@ public class ShadeEntity extends MonsterEntity {
     }
     return false;
   }
+    
+  @Override
+  public Map<String, FavorRange> getFavorRangeMap() { return FAVOR_RANGE_MAP; }
 }

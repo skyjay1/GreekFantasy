@@ -1,6 +1,7 @@
 # TO DO (Planned Features)
 
 List of features that could be added to the mod at some point.
+
 __Key:__
 `X Complete` `~ In Progress` `_ Incomplete`
 
@@ -53,6 +54,7 @@ __Key:__
 
 ## Entity AI
 
+- ~ Some entities target based on favor (TODO: configurable, static approach)
 - X Fury shoots curses (random bad potion effects)
 - X Python spits poison
 - X Talos shoots arrows
@@ -100,14 +102,7 @@ __Key:__
 __Key:__
 `[Design] [Worldgen] [Loot]`
 
-- X X X Harpy Nests
-- X X X Satyr Camps
-- X X X Ara Camps
-- X X X Small Marble Shrine
-- X X X Small Nether Shrine
-- X X X Marble veins
-- X X X Limestone veins
-- X X X Python Pit
+- Complete: Hary Nests, Satyr Camps, Ara Camps, Small Marble/Limestone Shrine, Small Nether Shrine, Marble veins, Limestone veins, Python Pit
 - _ _ _ Centaur Camps
 - _ _ _ Cyclopes Cave+Pastures
 - _ _ _ Ruined Temple
@@ -117,24 +112,9 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- X X X Harpy Nest
-- X X X Limestone (raw, smooth, slab, pillar)
-- X X X Marble (raw, smooth, slab, pillar)
-- X X X Statues
-- X X X Vase
-- X X X Colored vases
-- X X X Reeds (use for sticks or panflute)
-- X X X Gigante Head
-- X X X Orthus Head
-- X X X Cerberus Head
+- Complete: Harpy Nest, Limestone (raw, smooth, slab, pillar), Marble (raw, smooth, slab, pillar), Statues, Vase, Colored vases, Reeds (use for sticks or panflute), Gigante Head, Orthus Head, Cerberus Head, Mysterious box, Olive basics (log, wood, planks, slab, stair), Olive leaves, Olive sapling, Ichor Infused Block, Palladium (wooden statue that provides safety)
 - _ _ _ Other heads: Minotaur, Python, Medusa
-- X X X Mysterious box
-- X X X Olive basics (log, wood, planks, slab, stair)
-- _ _ _ Olive blocks: button, fence, boat, door, trapdoor, stripped log, stripped wood, pressure plate, sign
-- X X X Olive leaves
-- X X X Olive sapling
-- X X X Ichor Infused Block
-- X X X Palladium (wooden statue that provides safety)
+- _ _ _ Olive blocks: button, fence, boat, door, trapdoor, pressure plate, sign
 - _ _ _ Urn?
 - _ _ _ Grapes / grapevines?
 
@@ -144,74 +124,25 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- X X X Panflute
-- X X X Clubs (wood, stone/flint, iron)
-- X X X Golden bridle (for Unicorn)
-- X X X Winged sandals
-- X X X Horn (from Minotaur / Cyprians)
-- X X X Unicorn Horn (while holding, cures certain potion effects)
-- X X X Ambrosia (like ench. golden apple)
-- X X X Magic feather
-- X X X Dragon's Tooth (to summon Sparti)
-- X X X Healing rod (cannot be used on self) (healing projectiles)
-- X X X Helm of Darkness (hides player _and_ armor) (from Cyclopes somehow)
-- X X X Flint Knife
-- X X X Thunderbolt
-- X X X Snake skin and Purified snake skin (from Gorgons)
-- X X X Ichor - crafting component from Elpis
-- X X X Dog Claw - crafting component from Orthus
-- X X X Fiery hide - crafting component from Cerberus (helm of darkness)
-- X X X Styxian shard - crafting component from Cyclopes (helm of darkness)
-- X X X Wild Rose - crafting component from Satyr (sword of the hunt)
-- X X X Conch Shell - place and remove water 
-- X X X Talos Heart - crafting component from Talos
-- X X X Tough Snakeskin - crafting component from Python and Medusa
-- X X X Bag of Wind - gives 30sec speed boost
-- X X X Boar ear, boar tusk - crafting component from Giant Boar
-- X X X Ivory sword - extra knockback
-- X X X Swine Wand - inflicts Swine effect
-- X X X Snake fang
+- Complete: Panflute, Clubs (wood, stone/flint, iron), Golden bridle (for Unicorn), Winged sandals, Horn (from Minotaur / Cyprians), Unicorn Horn (while holding, cures certain potion effects), Ambrosia (like ench. golden apple), Magic feather, Dragon's Tooth (to summon Sparti), Healing rod (cannot be used on self) (healing projectiles), Helm of Darkness (hides player _and_ armor) (from Cyclopes somehow), Flint Knife, Thunderbolt, Snake skin and Purified snake skin (from Gorgons), Ichor - crafting component from Elpis, Dog Claw - crafting component from Orthus, Fiery hide - crafting component from Cerberus (helm of darkness), Styxian shard - crafting component from Cyclopes (helm of darkness), Wild Rose - crafting component from Satyr (sword of the hunt), Conch Shell - place and remove water , Talos Heart - crafting component from Talos, Tough Snakeskin - crafting component from Python and Medusa, Bag of Wind - gives 30sec speed boost, Boar ear, boar tusk - crafting component from Giant Boar, Ivory sword - extra knockback, Swine Wand - inflicts Swine effect, Snake fang, Gorgon blood - 50% chance to heal, 50% chance to poison, Spawn eggs
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
-- X X X Gorgon blood - 50% chance to heal, 50% chance to poison
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)
 - _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 
 ## Achievements
 
-- X Become petrified
-- X Become cursed with Swine
-- X Encounter Cerastes
-- X Kill Shade
+- Complete: Become petrified, Become cursed with Swine, Encounter Cerastes, Kill Shade, Tame a Unicorn, Obtain a Mysterious Box, Obtain Ambrosia, Obtain Winged Sandals (Much Fast, So Speed!), Summon / Kill a Cerberus, Summon / Kill a Geryon, Summon / Kill a Talos, Kill a Charybdis
 - _ Anger Dryads by chopping logs
-- X Tame a Unicorn
-- _ Use a unicorn horn
-- X Obtain a Mysterious Box
-- X Obtain Ambrosia
-- X Obtain Winged Sandals (Much Fast, So Speed!)
-- X Summon / Kill a Cerberus
-- X Summon / Kill a Geryon
 - _ Kill all minibosses: Python, Giant Boar
-- X Summon / Kill a Talos
-- X Kill a Charybdis
+- _ Use a unicorn horn
 
 ## Other
 
-- X Statue GUI
-- X Statue skins
-- X "Stunned" effect (prevent movement or item use)
-- X "Petrified" effect
-- X "Overstep" enchantment
-- X "Smashing" enchantment
-- X "Hunting" enchantment
-- X "Mirror" enchantment
-- X "Mirror" effect
-- X "Swine" effect
-- X Panflute songs
-- X Panflute song selection GUI
-- X Lots of mysterious box functions!
+- Complete: Statue GUI, Statue skins, Panflute songs, Panflute song GUI, mysterious box functions
+- Complete: "Stunned" effect (prevent movement or item use), "Petrified" effect, "Mirror" effect, "Swine" effect
+- Complete: "Overstep" enchantment, "Smashing" enchantment, "Hunting" enchantment, "Mirror" enchantment
+- Complete: Olive forest biome
 - ~ Block and Item tags (wooden_doors, etc.)
-- X Olive forest biome
-- X Spawn eggs
 
 ## Misc Ideas and Inspirations
 
