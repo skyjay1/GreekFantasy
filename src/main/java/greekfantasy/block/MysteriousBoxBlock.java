@@ -21,8 +21,10 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -33,10 +35,27 @@ public class MysteriousBoxBlock extends HorizontalBlock implements IWaterLoggabl
   
   public static final BooleanProperty OPEN = BooleanProperty.create("open");
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-  
-  protected static final VoxelShape AABB_BOX_X = Block.makeCuboidShape(1.0D, 0.0D, 3.0D, 15.0D, 8.0D, 13.0D);
-  protected static final VoxelShape AABB_BOX_Z = Block.makeCuboidShape(3.0D, 0.0D, 1.0D, 13.0D, 8.0D, 15.0D);
 
+  protected static final VoxelShape SHAPE_CLOSED_Z = VoxelShapes.combine(
+      VoxelShapes.combine(
+          Block.makeCuboidShape(1.0D, 0.0D, 3.0D, 15.0D, 8.0D, 13.0D), 
+          Block.makeCuboidShape(3.0D, 0.0D, 3.0D, 13.0D, 2.0D, 13.0D), 
+          IBooleanFunction.ONLY_FIRST),
+      Block.makeCuboidShape(1.0D, 0.0D, 5.0D, 15.0D, 2.0D, 11.0D), 
+      IBooleanFunction.ONLY_FIRST
+  );
+  protected static final VoxelShape SHAPE_OPEN_Z = VoxelShapes.combine(SHAPE_CLOSED_Z, Block.makeCuboidShape(2.0D, 3.0D, 4.0D, 14.0D, 8.0D, 12.0D), IBooleanFunction.ONLY_FIRST);
+  
+  protected static final VoxelShape SHAPE_CLOSED_X = VoxelShapes.combine(
+      VoxelShapes.combine(
+          Block.makeCuboidShape(3.0D, 0.0D, 1.0D, 13.0D, 8.0D, 15.0D), 
+          Block.makeCuboidShape(5.0D, 0.0D, 1.0D, 11.0D, 2.0D, 15.0D), 
+          IBooleanFunction.ONLY_FIRST),
+      Block.makeCuboidShape(1.0D, 0.0D, 3.0D, 15.0D, 2.0D, 13.0D), 
+      IBooleanFunction.ONLY_FIRST
+  );
+  protected static final VoxelShape SHAPE_OPEN_X = VoxelShapes.combine(SHAPE_CLOSED_X, Block.makeCuboidShape(4.0D, 3.0D, 2.0D, 12.0D, 8.0D, 14.0D), IBooleanFunction.ONLY_FIRST);
+  
   public MysteriousBoxBlock(final Block.Properties properties) {
     super(properties);
     this.setDefaultState(this.getStateContainer().getBaseState()
@@ -90,8 +109,12 @@ public class MysteriousBoxBlock extends HorizontalBlock implements IWaterLoggabl
   
   @Override
   public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {
-    final Direction.Axis axis = state.get(HORIZONTAL_FACING).getAxis();
-    return axis == Direction.Axis.X ? AABB_BOX_X : AABB_BOX_Z;
+    final boolean axisX = state.get(HORIZONTAL_FACING).getAxis() == Direction.Axis.X;
+    final boolean open = state.get(OPEN).booleanValue();
+    if(axisX && open) return SHAPE_OPEN_X;
+    else if(axisX && !open) return SHAPE_CLOSED_X;
+    else if(!axisX && open) return SHAPE_OPEN_Z;
+    else return SHAPE_CLOSED_Z;
   }
   
 
