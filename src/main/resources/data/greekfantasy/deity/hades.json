@@ -6,15 +6,315 @@
   	"Count": 1
   },
   "effects": [
-  	
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:emerald",
+  	  	"Count": 1
+  	  },
+  	  "minlevel": 7,
+  	  "maxlevel": 10,
+  	  "mincooldown": 8000
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:gold_ingot",
+  	  	"Count": 2
+  	  },
+  	  "minlevel": 5,
+  	  "maxlevel": 10,
+  	  "mincooldown": 7100
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:iron_ingot",
+  	  	"Count": 3
+  	  },
+  	  "minlevel": 5,
+  	  "maxlevel": 8,
+  	  "mincooldown": 8000
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:dragon_tooth",
+  	  	"Count": 1
+  	  },
+  	  "minlevel": 4,
+  	  "maxlevel": 9,
+  	  "mincooldown": 8500
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:styxian_shard",
+  	  	"Count": 1
+  	  },
+  	  "minlevel": 1,
+  	  "maxlevel": 5,
+  	  "mincooldown": 7000
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:ambrosia",
+  	  	"Count": 1
+  	  },
+  	  "minlevel": 9,
+  	  "maxlevel": 10,
+  	  "mincooldown": 12000
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "greekfantasy:ichor",
+  	  	"Count": 1
+  	  },
+  	  "minlevel": 8,
+  	  "maxlevel": 10,
+  	  "mincooldown": 11500
+  	},
+  	{
+  	  "summon": { 
+  	  	"id": "minecraft:wither_skeleton" 
+  	  },
+  	  "minlevel": -4,
+  	  "maxlevel": -10,
+  	  "mincooldown": 9000
+  	},
+  	{
+  	  "summon": { 
+  	  	"id": "greekfantasy:fury" 
+  	  },
+  	  "minlevel": -2,
+  	  "maxlevel": -7,
+  	  "mincooldown": 9000
+  	},
+  	{
+  	  "summon": { 
+  	  	"id": "minecraft:zombie" 
+  	  },
+  	  "minlevel": -1,
+  	  "maxlevel": -6,
+  	  "mincooldown": 7000
+  	},
+  	{
+  	  "summon": { 
+  	  	"id": "greekfantasy:shade",
+  	  	"StoredXP": 40
+  	  },
+  	  "minlevel": -8,
+  	  "maxlevel": -10,
+  	  "mincooldown": 10000
+  	},
+    {
+      "summon": {
+        "id": "greekfantasy:orthus",
+        "LifeTicks": 300
+      },
+      "minlevel": -4,
+      "maxlevel": -8,
+      "mincooldown": 4600
+    },
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:invisibility",
+  	  	"Amplifier": 0,
+  	  	"Duration": 600
+  	  },
+  	  "minlevel": 6,
+  	  "maxlevel": 10,
+  	  "mincooldown": 6880
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:haste",
+  	  	"Amplifier": 2,
+  	  	"Duration": 1200
+  	  },
+  	  "minlevel": 4,
+  	  "maxlevel": 10,
+  	  "mincooldown": 3800
+  	},
+    {
+      "potion": {
+        "Potion": "minecraft:blindness",
+        "Amplifier": 0,
+        "Duration": 120
+      },
+      "minlevel": -2,
+      "maxlevel": -10,
+      "mincooldown": 4100
+    },
+    {
+      "potion": {
+        "Potion": "minecraft:wither",
+        "Amplifier": 0,
+        "Duration": 40
+      },
+      "minlevel": -5,
+      "maxlevel": -10,
+      "mincooldown": 6100
+    },
+    {
+      "potion": {
+        "Potion": "minecraft:bad_omen",
+        "Amplifier": 0,
+        "Duration": 1200
+      },
+      "minlevel": -3,
+      "maxlevel": -5,
+      "mincooldown": 4800
+    }
   ],
   "triggered_effects": [
-  	
+  	{
+  	  "trigger": {
+  	    "type": "break_block",
+  	    "data": "minecraft:iron_ore"
+  	  },
+  	  "chance": 0.036,
+  	  "level_multiplier": 0.014,
+  	  "effect": {
+  	    "item": { 
+  	  	  "id": "minecraft:iron_ingot",
+  	  	  "Count": 1
+  	    },
+  	    "minlevel": 3,
+  	    "maxlevel": 10,
+  	    "mincooldown": 100
+  	  }
+  	},
+  	{
+  	  "trigger": {
+  	    "type": "break_block",
+  	    "data": "minecraft:netherrack"
+  	  },
+  	  "chance": 0.034,
+  	  "level_multiplier": 0.015,
+  	  "effect": {
+  	    "item": { 
+  	  	  "id": "minecraft:gold_nugget",
+  	  	  "Count": 1
+  	    },
+  	    "minlevel": 2,
+  	    "maxlevel": 10,
+  	    "mincooldown": 120
+  	  }
+  	},
+  	{
+  	  "trigger": {
+  	    "type": "break_block",
+  	    "data": "minecraft:coal_ore"
+  	  },
+  	  "chance": 0.022,
+  	  "level_multiplier": 0.01,
+  	  "effect": {
+  	    "item": { 
+  	  	  "id": "minecraft:lapis_lazuli",
+  	  	  "Count": 1
+  	    },
+  	    "minlevel": 3,
+  	    "maxlevel": 10,
+  	    "mincooldown": 120
+  	  }
+  	},
+  	{
+      "trigger": {
+        "type": "player_killed_entity",
+        "data": "minecraft:wither_skeleton"
+      },
+      "chance": 0.65,
+      "level_multiplier": 0.04,
+      "effect": {
+        "potion": {
+          "Potion": "minecraft:regeneration",
+          "Amplifier": 0,
+          "Duration": 900
+        },
+        "minlevel": 1,
+        "maxlevel": 10,
+        "mincooldown": 60
+      }
+    },
+    {
+      "trigger": {
+        "type": "effects_changed",
+        "data": "minecraft:wither"
+      },
+      "chance": 0.25,
+      "level_multiplier": 0.05,
+      "effect": {
+        "potion": {
+          "Potion": "minecraft:regeneration",
+          "Amplifier": 0,
+          "Duration": 120
+        },
+        "minlevel": 4,
+        "maxlevel": 10,
+        "mincooldown": 100
+      }
+    }
   ],
   "kill_favor_map": {
-    
+    "greekfantasy:cerberus": -35,
+    "greekfantasy:fury": 6,
+    "greekfantasy:orthus": 6,
+    "greekfantasy:sparti": 4,
+    "greekfantasy:empusa": 9,
+    "greekfantasy:shade": 11,
+    "greekfantasy:cerastes": 4,
+    "minecraft:blaze": 7,
+    "minecraft:ghast": 9,
+    "minecraft:strider": -3,
+    "minecraft:magma_cube": 3,
+    "minecraft:zombified_piglin": 4,
+    "minecraft:zoglin": 6,
+  	"minecraft:villager": -11,
+  	"minecraft:iron_golem": -2,
+  	"minecraft:zombie": 4,
+  	"minecraft:husk": 5,
+  	"minecraft:skeleton": 5,
+  	"minecraft:stray": 6,
+  	"minecraft:wither_skeleton": 9,
+  	"minecraft:wither": 65,
+  	"minecraft:evoker": 10,
+  	"minecraft:illusioner": 10,
+  	"minecraft:vindicator": 8,
+  	"minecraft:pillager": 5,
+  	"minecraft:ravager": 18
   },
   "item_favor_map": {
-  	
+  	"greekfantasy:ambrosia": 68,
+  	"greekfantasy:ichor": 26,
+  	"greekfantasy:styxian_shard": 10,
+  	"greekfantasy:helm_of_darkness": 24,
+  	"greekfantasy:purified_snakeskin": 8,
+  	"greekfantasy:tough_snakeskin": 9,
+  	"greekfantasy:ichor_infused_block": -4,
+  	"greekfantasy:dog_claw": 4,
+  	"greekfantasy:cerberus_head": -95,
+  	"minecraft:skeleton_skull": 10,
+  	"minecraft:zombie_head": 9,
+  	"minecraft:bone": 2,
+  	"minecraft:blaze_rod": 6,
+  	"minecraft:black_wool": 3,
+  	"minecraft:soul_sand": 2,
+  	"minecraft:cake": 10,
+  	"minecraft:glowstone": -2,
+  	"minecraft:torch": -1,
+  	"minecraft:soul_torch": -1,
+  	"minecraft:nether_star": 120,
+  	"minecraft:netherite_ingot": 20,
+  	"minecraft:coal": 2,
+  	"minecraft:iron_ingot": 4,
+  	"minecraft:lapis_lazuli": 10,
+  	"minecraft:quartz": 5,
+  	"minecraft:emerald": 8,
+  	"minecraft:diamond": 19,
+  	"minecraft:flint": 2,
+  	"minecraft:crying_obsidian": 12,
+  	"minecraft:cooked_mutton": 4,
+  	"minecraft:apple": 1,
+  	"minecraft:gold_ingot": 5,
+  	"minecraft:golden_apple": 48,
+  	"minecraft:potion": 6,
+  	"minecraft:splash_potion": 7,
+  	"minecraft:lingering_potion": 8
   }
 }

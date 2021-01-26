@@ -62,24 +62,6 @@
   	},
   	{
   	  "item": { 
-  	  	"id": "minecraft:emerald",
-  	  	"Count": 2
-  	  },
-  	  "minlevel": 7,
-  	  "maxlevel": 10,
-  	  "mincooldown": 8000
-  	},
-  	{
-  	  "item": { 
-  	  	"id": "minecraft:iron_nugget",
-  	  	"Count": 3
-  	  },
-  	  "minlevel": 5,
-  	  "maxlevel": 8,
-  	  "mincooldown": 8000
-  	},
-  	{
-  	  "item": { 
   	  	"id": "minecraft:ambrosia",
   	  	"Count": 1
   	  },
@@ -158,23 +140,6 @@
   "triggered_effects": [
   	{
   	  "trigger": {
-  	    "type": "break_block",
-  	    "data": "minecraft:iron_ore"
-  	  },
-  	  "chance": 0.25,
-  	  "level_multiplier": 0.05,
-  	  "effect": {
-  	    "item": { 
-  	  	  "id": "minecraft:iron_ingot",
-  	  	  "Count": 1
-  	    },
-  	    "minlevel": 5,
-  	    "maxlevel": 10,
-  	    "mincooldown": 7400
-  	  }
-  	},
-  	{
-  	  "trigger": {
   	    "type": "player_killed_entity",
   	    "data": "minecraft:zombie_villager"
   	  },
@@ -188,7 +153,7 @@
   	    },
   	    "minlevel": 1,
   	    "maxlevel": 10,
-  	    "mincooldown": 6100
+  	    "mincooldown": 60
   	  }
   	},
   	{
@@ -206,7 +171,7 @@
   	    },
   	    "minlevel": -1,
   	    "maxlevel": -10,
-  	    "mincooldown": 5100
+  	    "mincooldown": 50
   	  }
   	},
   	{
@@ -224,58 +189,47 @@
   	    },
   	    "minlevel": 3,
   	    "maxlevel": 10,
-  	    "mincooldown": 7000
+  	    "mincooldown": 70
   	  }
   	}
   ],
   "kill_favor_map": {
-    "greekfantasy:cerastes": -5,
   	"greekfantasy:talos": -15,
   	"greekfantasy:giant_boar": 15,
-  	"greekfantasy:cyprian": 6,
-  	"greekfantasy:gorgon": 8,
-  	"greekfantasy:drakaina": 6,
-  	"greekfantasy:unicorn": -10,
+  	"greekfantasy:drakaina": 5,
   	"greekfantasy:minotaur": 5,
   	"greekfantasy:elpis": -20,
   	"greekfantasy:dryad": -8,
-  	"greekfantasy:centaur": -8,
+  	"greekfantasy:python": 14,
+  	"greekfantasy:satyr": -2,
+  	"greekfantasy:ara": 4,
   	"minecraft:villager": -10,
-  	"minecraft:zombie": 4,
-  	"minecraft:husk": 5,
-  	"minecraft:skeleton": 5,
-  	"minecraft:stray": 6
+  	"minecraft:zombie": 1,
+  	"minecraft:husk": 1,
+  	"minecraft:skeleton": 2,
+  	"minecraft:stray": 2
   },
   "item_favor_map": {
   	"greekfantasy:ambrosia": 76,
   	"greekfantasy:ichor": 21,
-  	"greekfantasy:purified_snakeskin": 8,
-  	"greekfantasy:tough_snakeskin": 8,
   	"greekfantasy:olive_sapling": 1,
   	"greekfantasy:thunderbolt": 20,
   	"greekfantasy:magic_feather": 5,
   	"greekfantasy:boar_tusk": 11,
   	"greekfantasy:boar_ear": 8,
   	"greekfantasy:styxian_shard": -10,
-  	"greekfantasy:cerberus_head": -95,
-  	"minecraft:golden_apple": 48,
-  	"minecraft:gold_ingot": 5,
+  	"greekfantasy:cerberus_head": -65,
   	"minecraft:emerald": 5,
-  	"minecraft:diamond": 19,
+  	"minecraft:diamond": 17,
   	"minecraft:cooked_beef": 4,
-  	"minecraft:cooked_mutton": 4,
   	"minecraft:cooked_porkchop": 3,
-  	"minecraft:cake": 14,
+  	"minecraft:cake": 12,
   	"minecraft:leather": 2,
   	"minecraft:oak_sapling": 1,
-  	"minecraft:honey_bottle": 2,
-  	"minecraft:milk_bucket": 7,
-  	"minecraft:poisonous_potato": -2,
-  	"minecraft:nether_star": 120,
   	"minecraft:smithing_table": 6,
   	"minecraft:lodestone": 13,
-  	"minecraft:skeleton_skull": 10,
-  	"minecraft:zombie_head": 9,
+  	"minecraft:skeleton_skull": 8,
+  	"minecraft:zombie_head": 7,
   	"minecraft:arrow": 2,
   	"minecraft:bone": -2,
   	"minecraft:spider_eye": -5

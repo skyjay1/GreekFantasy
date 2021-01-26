@@ -10,15 +10,339 @@
   	"Count": 1
   },
   "effects": [
-  	
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:dried_kelp",
+  	  	"Count": 4
+  	  },
+  	  "minlevel": 1,
+  	  "maxlevel": 5,
+  	  "mincooldown": 5200
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:cod",
+  	  	"Count": 2
+  	  },
+  	  "minlevel": 3,
+  	  "maxlevel": 8,
+  	  "mincooldown": 5600
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:salmon",
+  	  	"Count": 2
+  	  },
+  	  "minlevel": 3,
+  	  "maxlevel": 8,
+  	  "mincooldown": 5600
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:ambrosia",
+  	  	"Count": 1
+  	  },
+  	  "minlevel": 9,
+  	  "maxlevel": 10,
+  	  "mincooldown": 12000
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "greekfantasy:ichor",
+  	  	"Count": 1
+  	  },
+  	  "minlevel": 8,
+  	  "maxlevel": 10,
+  	  "mincooldown": 11500
+  	},
+  	{
+  	  "summon": { 
+  	  	"id": "minecraft:drowned" 
+  	  },
+  	  "minlevel": -2,
+  	  "maxlevel": -10,
+  	  "mincooldown": 7000
+  	},
+  	{
+  	  "function": "greekfantasy:summon_pufferfish",
+  	  "minlevel": -1,
+  	  "maxlevel": -6,
+  	  "mincooldown": 7400
+  	},
+  	{
+  	  "function": "greekfantasy:summon_siren",
+  	  "minlevel": -3,
+  	  "maxlevel": -8,
+  	  "mincooldown": 8800
+  	},
+  	{
+  	  "function": "greekfantasy:summon_guardian",
+  	  "minlevel": -4,
+  	  "maxlevel": -10,
+  	  "mincooldown": 9000
+  	},
+  	{
+  	  "function": "greekfantasy:summon_charybdis",
+  	  "minlevel": -8,
+  	  "maxlevel": -10,
+  	  "mincooldown": 13000
+  	},
+  	{
+  	  "function": "greekfantasy:set_storming",
+  	  "minlevel": -3,
+  	  "maxlevel": -6,
+  	  "mincooldown": 8000
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:water_breathing",
+  	  	"Amplifier": 0,
+  	  	"Duration": 6080
+  	  },
+  	  "minlevel": 4,
+  	  "maxlevel": 10,
+  	  "mincooldown": 6880
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:water_breathing",
+  	  	"Amplifier": 0,
+  	  	"Duration": 9200
+  	  },
+  	  "minlevel": 7,
+  	  "maxlevel": 10,
+  	  "mincooldown": 6880
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:night_vision",
+  	  	"Amplifier": 0,
+  	  	"Duration": 4100
+  	  },
+  	  "minlevel": 2,
+  	  "maxlevel": 8,
+  	  "mincooldown": 6600
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:dolphins_grace",
+  	  	"Amplifier": 0,
+  	  	"Duration": 900
+  	  },
+  	  "minlevel": 7,
+  	  "maxlevel": 10,
+  	  "mincooldown": 6100
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:speed",
+  	  	"Amplifier": 0,
+  	  	"Duration": 1200
+  	  },
+  	  "minlevel": 6,
+  	  "maxlevel": 9,
+  	  "mincooldown": 6800
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:conduit_power",
+  	  	"Amplifier": 0,
+  	  	"Duration": 600
+  	  },
+  	  "minlevel": 8,
+  	  "maxlevel": 10,
+  	  "mincooldown": 7100
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:nausea",
+  	  	"Amplifier": 2,
+  	  	"Duration": 850
+  	  },
+  	  "minlevel": -2,
+  	  "maxlevel": -10,
+  	  "mincooldown": 5500
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:poison",
+  	  	"Amplifier": 2,
+  	  	"Duration": 550
+  	  },
+  	  "minlevel": -5,
+  	  "maxlevel": -10,
+  	  "mincooldown": 6500
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "greekfantasy:swine",
+  	  	"Amplifier": 0,
+  	  	"Duration": 1100
+  	  },
+  	  "minlevel": -5,
+  	  "maxlevel": -10,
+  	  "mincooldown": 7100
+  	}
   ],
   "triggered_effects": [
-  	
+  	{
+  	  "trigger": {
+  	    "type": "break_block",
+  	    "data": "minecraft:wheat"
+  	  },
+  	  "chance": 0.05,
+  	  "level_multiplier": 0.015,
+  	  "effect": {
+  	    "item": { 
+  	  	  "id": "minecraft:wheat",
+  	  	  "Count": 1
+  	    },
+  	    "minlevel": 2,
+  	    "maxlevel": 10,
+  	    "mincooldown": 100
+  	  }
+  	},
+  	{
+  	  "trigger": {
+  	    "type": "break_block",
+  	    "data": "minecraft:potato"
+  	  },
+  	  "chance": 0.05,
+  	  "level_multiplier": 0.015,
+  	  "effect": {
+  	    "item": { 
+  	  	  "id": "minecraft:potato",
+  	  	  "Count": 1
+  	    },
+  	    "minlevel": 2,
+  	    "maxlevel": 10,
+  	    "mincooldown": 100
+  	  }
+  	},
+  	{
+  	  "trigger": {
+  	    "type": "break_block",
+  	    "data": "minecraft:carrot"
+  	  },
+  	  "chance": 0.05,
+  	  "level_multiplier": 0.015,
+  	  "effect": {
+  	    "item": { 
+  	  	  "id": "minecraft:carrot",
+  	  	  "Count": 1
+  	    },
+  	    "minlevel": 2,
+  	    "maxlevel": 10,
+  	    "mincooldown": 100
+  	  }
+  	},
+  	{
+  	  "trigger": {
+  	    "type": "break_block",
+  	    "data": "minecraft:beetroot"
+  	  },
+  	  "chance": 0.05,
+  	  "level_multiplier": 0.015,
+  	  "effect": {
+  	    "item": { 
+  	  	  "id": "minecraft:beetroot",
+  	  	  "Count": 1
+  	    },
+  	    "minlevel": 2,
+  	    "maxlevel": 10,
+  	    "mincooldown": 100
+  	  }
+  	},
+  	{
+  	  "trigger": {
+  	    "type": "entity_hurt_player",
+  	    "data": "greekfantasy:siren"
+  	  },
+  	  "chance": 0.25,
+  	  "level_multiplier": 0.05,
+  	  "effect": {
+  	    "potion": {
+  	      "Potion": "minecraft:instant_health",
+  	      "Amplifier": 2,
+  	  	  "Duration": 1
+  	    },
+  	    "minlevel": 3,
+  	    "maxlevel": 10,
+  	    "mincooldown": 70
+  	  }
+  	},
+  	{
+  	  "trigger": {
+  	    "type": "entity_hurt_player",
+  	    "data": "minecraft:drowned"
+  	  },
+  	  "chance": 0.25,
+  	  "level_multiplier": 0.05,
+  	  "effect": {
+  	    "potion": {
+  	      "Potion": "minecraft:regeneration",
+  	      "Amplifier": 0,
+  	  	  "Duration": 220
+  	    },
+  	    "minlevel": 4,
+  	    "maxlevel": 10,
+  	    "mincooldown": 70
+  	  }
+  	}
   ],
   "kill_favor_map": {
-    
+    "greekfantasy:cyclopes": -10,
+    "greekfantasy:charybdis": 30,
+    "greekfantasy:arion": -12,
+    "greekfantasy:unicorn": -10,
+    "greekfantasy:siren": 10,
+    "greekfantasy:naiad": -8,
+  	"greekfantasy:gorgon": 9,
+  	"greekfantasy:drakaina": 8,
+  	"greekfantasy:centaur": -9,
+  	"greekfantasy:cyprian": 7,
+  	"greekfantasy:python": 13,
+  	"greekfantasy:talos": 15,
+  	"greekfantasy:whirl": -4,
+    "minecraft:horse": -6,
+    "minecraft:donkey": -3,
+    "minecraft:llama": -3,
+    "minecraft:dolphin": -9,
+    "minecraft:tropical_fish": -1,
+    "minecraft:drowned": 6
   },
   "item_favor_map": {
-  	
+  	"greekfantasy:ambrosia": 84,
+  	"greekfantasy:ichor": 17,
+  	"greekfantasy:conch": 12,
+  	"greekfantasy:bag_of_wind": 15,
+  	"greekfantasy:golden_bridle": 4,
+  	"greekfantasy:unicorn_horn": -8,
+  	"minecraft:trident": 18,
+  	"minecraft:nautilus_shell": 9,
+  	"minecraft:heart_of_the_sea": 14,
+  	"minecraft:prismarine_crystals": 6,
+  	"minecraft:prismarine_shard": 5,
+  	"minecraft:saddle": 7,
+  	"minecraft:leather_horse_armor": 8,
+  	"minecraft:iron_horse_armor": 10,
+  	"minecraft:golden_horse_armor": 13,
+  	"minecraft:diamond_horse_armor": 19,
+  	"minecraft:zombie_head": 6,
+  	"minecraft:ink_sac": 1,
+  	"minecraft:scute": 3,
+  	"minecraft:turtle_helmet": 15,
+  	"minecraft:cyan_wool": 2,
+  	"minecraft:bread": 3,
+  	"minecraft:honey_bottle": 2,
+  	"minecraft:milk_bucket": 7,
+  	"minecraft:cake": 14,
+  	"minecraft:poisonous_potato": -1,
+  	"minecraft:cooked_cod": 4,
+  	"minecraft:cooked_salmon": 4,
+  	"minecraft:cooked_porkchop": 3,
+  	"minecraft:pufferfish": -2,
+  	"minecraft:emerald": 7,
+  	"minecraft:diamond": 16
   }
 }

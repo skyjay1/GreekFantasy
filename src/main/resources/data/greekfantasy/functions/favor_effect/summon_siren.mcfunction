@@ -1,0 +1,2 @@
+# checks if there is water nearby and summons a siren
+execute if block ~4 ~-1 ~2 minecraft:water run execute if block ~-4 ~-2 ~-2 minecraft:water run execute if block ~4 ~-3 ~2 minecraft:water run execute if block ~-4 ~-4 ~-2 minecraft:water run summon greekfantasy:siren ~3 ~-4 ~-3

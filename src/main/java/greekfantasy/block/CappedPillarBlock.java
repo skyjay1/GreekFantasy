@@ -40,7 +40,7 @@ public class CappedPillarBlock extends Block implements IWaterLoggable {
    protected static final EnumMap<Direction, VoxelShape> SLAB_SHAPES = Maps.newEnumMap(Direction.class);
    static {
      SLAB_SHAPES.put(Direction.UP, VoxelShapes.combine(PILLAR_Y, Block.makeCuboidShape(0, 8, 0, 16, 16, 16), IBooleanFunction.OR));
-     SLAB_SHAPES.put(Direction.DOWN, VoxelShapes.combine(PILLAR_Y, Block.makeCuboidShape(0, 0, 0, 0, 8, 0), IBooleanFunction.OR));
+     SLAB_SHAPES.put(Direction.DOWN, VoxelShapes.combine(PILLAR_Y, Block.makeCuboidShape(0, 0, 0, 16, 8, 16), IBooleanFunction.OR));
      SLAB_SHAPES.put(Direction.NORTH, VoxelShapes.combine(PILLAR_Z, Block.makeCuboidShape(0, 0, 0, 16, 16, 8), IBooleanFunction.OR));
      SLAB_SHAPES.put(Direction.SOUTH, VoxelShapes.combine(PILLAR_Z, Block.makeCuboidShape(0, 0, 8, 16, 16, 16), IBooleanFunction.OR));
      SLAB_SHAPES.put(Direction.EAST, VoxelShapes.combine(PILLAR_X, Block.makeCuboidShape(8, 0, 0, 16, 16, 16), IBooleanFunction.OR));

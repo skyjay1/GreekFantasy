@@ -34,6 +34,7 @@ public class CerberusHeadModel extends Model implements IHasHead, IWallModel {
   @Override
   public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha) {
+    //matrixStackIn.translate(0.04125D, 0, 0);
     cerberusHead.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
   }
  
@@ -55,6 +56,6 @@ public class CerberusHeadModel extends Model implements IHasHead, IWallModel {
   
   @Override
   public float getScale() {
-    return CerberusRenderer.SCALE + 0.1125F;
+    return CerberusRenderer.SCALE;// + 0.1125F;
   }
 }

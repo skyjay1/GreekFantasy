@@ -81,7 +81,7 @@ public class FavorLevel {
    * @param deity the deity associated with this favor level
    */
   public void sendStatusMessage(final PlayerEntity playerIn, final IDeity deity) {
-    long favorToNext = getFavorToNextLevel();
+    long favorToNext = Math.min(MAX_FAVOR, getFavorToNextLevel());
     playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", deity.getText(), getFavor(), (favorToNext > 0 ? favorToNext : "--"), getLevel()).mergeStyle(TextFormatting.LIGHT_PURPLE), false);
   }
   
@@ -95,12 +95,12 @@ public class FavorLevel {
     // calculate the current level based on favor
     final long f = Math.abs(favorIn);
     final int sig = (int)Math.signum(favorIn + 1);
-    return (int) clamp(sig * Math.floorDiv(-100 + (int)Math.sqrt(10000 + 40 * f), 20), -MAX_LEVEL, MAX_LEVEL);
+    return sig * Math.floorDiv(-100 + (int)Math.sqrt(10000 + 40 * f), 20);
   }
   
   /** @return the maximum amount of favor for a given level **/
   public static long calculateFavor(final int lv) {
-    final int l = Math.min(Math.abs(lv), MAX_LEVEL);
+    final int l = Math.abs(lv);
     final int sig = (int)Math.signum(lv);
     return  sig * (10 * l * (l + 10));
   }
@@ -113,8 +113,8 @@ public class FavorLevel {
    * @return the number, or the min or max if num is out of range
    */
   public static long clamp(final long num, final long min, final long max) {
-    if(num < min) return min; 
-    else if(num > max) return max;
+    if(num <= min) return min; 
+    else if(num >= max) return max;
     else return num;
   }
 }

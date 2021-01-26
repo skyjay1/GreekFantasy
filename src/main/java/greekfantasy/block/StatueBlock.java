@@ -33,6 +33,7 @@ import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
@@ -197,19 +198,18 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
       final IDeity teDeity = teStatue.getDeity();
       if(teDeity != Deity.EMPTY && teDeity.getName().equals(deity)) {
         playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
-          FavorLevel i = f.getFavor(teDeity);
-          if(FavorManager.onGiveItem(teStatue, teDeity, playerIn, i, stack)) {
+          FavorLevel level = f.getFavor(teDeity);
+          if(FavorManager.onGiveItem(teStatue, teDeity, playerIn, level, stack)) {
             //f.setFavor(teDeity, i);
             // spawn particles
 //            for(int j = 0; j < 6 + playerIn.getRNG().nextInt(4); j++) {
-//              playerIn.world.addOptionalParticle(ParticleTypes.HAPPY_VILLAGER, teStatue.getPos().getX() + playerIn.getRNG().nextDouble(), teStatue.getPos().up().getY() + playerIn.getRNG().nextDouble(), teStatue.getPos().getZ() + playerIn.getRNG().nextDouble(), 0, 0, 0);
+//              playerIn.world.addParticle(ParticleTypes.HAPPY_VILLAGER, teStatue.getPos().getX() + playerIn.getRNG().nextDouble(), teStatue.getPos().up().getY() + playerIn.getRNG().nextDouble(), teStatue.getPos().getZ() + playerIn.getRNG().nextDouble(), 0, 0, 0);
 //            }
           }
           // print current favor level
-          i.sendStatusMessage(playerIn, teDeity);
+          level.sendStatusMessage(playerIn, teDeity);
           // DEBUG
-//          GreekFantasy.LOGGER.debug(teDeity.toString());
-//          GreekFantasy.LOGGER.debug("TriggeredTimestamp: " + f.getTriggeredTimestamp() + " TriggeredCooldown: " + f.getTriggeredCooldown());
+//          GreekFantasy.LOGGER.debug("max level = " + FavorLevel.MAX_LEVEL + ", max favor = " + FavorLevel.MAX_FAVOR + " (" + FavorLevel.calculateLevel(FavorLevel.MAX_FAVOR) + ")");
         });
         return ActionResultType.SUCCESS;
       } 
