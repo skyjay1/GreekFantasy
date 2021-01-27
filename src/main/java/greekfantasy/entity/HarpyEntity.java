@@ -1,16 +1,10 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.entity.ai.FavorableResetTargetGoal;
 import greekfantasy.entity.ai.FindBlockGoal;
-import greekfantasy.entity.misc.IFavorable;
-import greekfantasy.favor.Deity;
-import greekfantasy.util.FavorRange;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
@@ -43,15 +37,10 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
-public class HarpyEntity extends MonsterEntity implements IFlyingAnimal, IFavorable {
+public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
   
   private static final DataParameter<Optional<BlockPos>> DATA_NEST = EntityDataManager.createKey(HarpyEntity.class, DataSerializers.OPTIONAL_BLOCK_POS);
   private static final String KEY_NEST = "Nest";
-
-  private static final Map<String, FavorRange> FAVOR_RANGE_MAP = new HashMap<>();
-  static {
-    FAVOR_RANGE_MAP.put(CAN_ATTACK, new FavorRange(Deity.ZEUS, -10, 5));
-  }
   
   public float flyingTime;
   private boolean isGoingToNest;
@@ -91,8 +80,7 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal, IFavora
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::targetFavorAttackable));
-    this.targetSelector.addGoal(3, new FavorableResetTargetGoal<>(this));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
   }
 
   @Override
@@ -172,12 +160,7 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal, IFavora
       this.setNestPos(Optional.of(new BlockPos(x, y, z)));
     }
   }
-  
-  // IFavorable methods
-  
-  @Override
-  public Map<String, FavorRange> getFavorRangeMap() { return FAVOR_RANGE_MAP; }
-  
+
   // Flying methods
 
   @Override

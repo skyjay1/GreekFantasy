@@ -82,7 +82,7 @@ public class FavorLevel {
    */
   public void sendStatusMessage(final PlayerEntity playerIn, final IDeity deity) {
     long favorToNext = Math.min(MAX_FAVOR, getFavorToNextLevel());
-    playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", deity.getText(), getFavor(), (favorToNext > 0 ? favorToNext : "--"), getLevel()).mergeStyle(TextFormatting.LIGHT_PURPLE), false);
+    playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", deity.getText(), getFavor(), (favorToNext == 0 ? "--" : favorToNext), getLevel()).mergeStyle(TextFormatting.LIGHT_PURPLE), false);
   }
   
   @Override

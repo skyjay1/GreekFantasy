@@ -1,17 +1,11 @@
 package greekfantasy.entity;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.entity.ai.FavorableResetTargetGoal;
-import greekfantasy.entity.misc.IFavorable;
-import greekfantasy.favor.Deity;
 import greekfantasy.item.ClubItem;
-import greekfantasy.util.FavorRange;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.MobEntity;
@@ -36,11 +30,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 
-public class CyclopesEntity extends MonsterEntity implements IFavorable {
-  private static final Map<String, FavorRange> FAVOR_RANGE_MAP = new HashMap<>();
-  static {
-    FAVOR_RANGE_MAP.put(CAN_ATTACK, new FavorRange(Deity.POSEIDON, -10, 4));
-  }
+public class CyclopesEntity extends MonsterEntity {
   
   public CyclopesEntity(final EntityType<? extends CyclopesEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -73,9 +63,8 @@ public class CyclopesEntity extends MonsterEntity implements IFavorable {
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::targetFavorAttackable));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, IronGolemEntity.class, true));
-    this.targetSelector.addGoal(3, new FavorableResetTargetGoal<>(this));
   }
   
   @Nullable
@@ -92,8 +81,4 @@ public class CyclopesEntity extends MonsterEntity implements IFavorable {
   protected float getJumpUpwardsMotion() {
     return 0.52F * this.getJumpFactor();
   }
-  
-  // IFavorable methods
-  @Override
-  public Map<String, FavorRange> getFavorRangeMap() { return FAVOR_RANGE_MAP; }
 }

@@ -1,15 +1,21 @@
-package greekfantasy.util;
+package greekfantasy.favor;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.favor.Deity;
-import greekfantasy.favor.IDeity;
-import greekfantasy.favor.IFavor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class FavorRange {
-  
+
   public static final FavorRange EMPTY = new FavorRange(new ResourceLocation(GreekFantasy.MODID, "null"), 0, 0);
+  
+  public static final Codec<FavorRange> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+      ResourceLocation.CODEC.fieldOf("deity").forGetter(FavorRange::getDeityName),
+      Codec.INT.fieldOf("minlevel").forGetter(FavorRange::getMinLevel),
+      Codec.INT.fieldOf("maxlevel").forGetter(FavorRange::getMaxLevel)
+    ).apply(instance, FavorRange::new));
   
   private final ResourceLocation deity;
   private final int minLevel;
@@ -23,7 +29,9 @@ public class FavorRange {
   }
 
   /** @return the IDeity for this favor range **/
-  public IDeity getDeity() { return GreekFantasy.PROXY.DEITY.get(deity).orElse(Deity.EMPTY); }
+  public IDeity getDeity() { return GreekFantasy.PROXY.DEITY.get(getDeityName()).orElse(Deity.EMPTY); }
+  /** @return the IDeity for this favor range **/
+  public ResourceLocation getDeityName() { return deity; }
   /** @return the minimum favor level **/
   public int getMinLevel() { return minLevel; }
   /** @return the maximum favor level **/
@@ -55,5 +63,10 @@ public class FavorRange {
     } else {
       return playerLevel <= minLevel && playerLevel >= maxLevel;
     }
-  }  
+  }
+  
+  @Override
+  public String toString() {
+    return "Favor Range: " + deity.toString() + " [" + minLevel + "," + maxLevel + "]";
+  }
 }

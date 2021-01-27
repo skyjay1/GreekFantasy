@@ -1,16 +1,9 @@
 package greekfantasy.entity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.ai.FavorableResetTargetGoal;
 import greekfantasy.entity.ai.FollowGoal;
 import greekfantasy.entity.ai.IntervalRangedAttackGoal;
 import greekfantasy.entity.misc.CurseEntity;
-import greekfantasy.entity.misc.IFavorable;
-import greekfantasy.favor.Deity;
-import greekfantasy.util.FavorRange;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IRangedAttackMob;
@@ -39,12 +32,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
-public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedAttackMob, IFavorable {
-  private static final Map<String, FavorRange> FAVOR_RANGE_MAP = new HashMap<>();
-  static {
-    FAVOR_RANGE_MAP.put(CAN_ATTACK, new FavorRange(Deity.HADES, -10, 5));
-  }
-  
+public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedAttackMob {  
   public static final int MAX_AGGRO_TIME = 45;
   public float flyingTime;
   public int aggroTime;
@@ -83,8 +71,7 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedA
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp());
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::targetFavorAttackable));
-    this.targetSelector.addGoal(3, new FavorableResetTargetGoal<>(this));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     if(GreekFantasy.CONFIG.FURY_ATTACK.get()) {
       this.goalSelector.addGoal(1, new IntervalRangedAttackGoal(this, 210, 2, 200));
     }
@@ -121,12 +108,7 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedA
       aggroTime = Math.max(aggroTime - 1, 0);
     }
   }
-  
-  //IFavorable methods
-  
-  @Override
-  public Map<String, FavorRange> getFavorRangeMap() { return FAVOR_RANGE_MAP; }
-  
+
   // Sounds
   
   @Override

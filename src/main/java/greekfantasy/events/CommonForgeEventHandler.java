@@ -14,10 +14,14 @@ import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.GiantBoarEntity;
 import greekfantasy.entity.ShadeEntity;
+import greekfantasy.entity.ai.NearestAttackableFavorablePlayerGoal;
+import greekfantasy.entity.ai.NearestAttackableFavorablePlayerResetGoal;
 import greekfantasy.favor.Favor;
 import greekfantasy.favor.FavorManager;
+import greekfantasy.favor.FavorRangeTarget;
 import greekfantasy.favor.IFavor;
 import greekfantasy.network.SDeityPacket;
+import greekfantasy.network.SFavorRangeTargetPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
 import greekfantasy.util.PalladiumSavedData;
@@ -346,6 +350,18 @@ public class CommonForgeEventHandler {
         rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, e -> !((CerastesEntity)e).isHiding(), 6.0F, 2.2D, 2.2D, EntityPredicates.CAN_AI_TARGET::test));        
       }
     }
+    if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity
+        && GreekFantasy.PROXY.getFavorRangeTarget().has(event.getEntityLiving().getType())) {
+      final MobEntity mob = (MobEntity)event.getEntityLiving();
+      // remove non-favor-checking goals
+//      final List<Goal> remove = mob.targetSelector.getRunningGoals()
+//        .filter(p -> p.getGoal().getClass() == NearestAttackableTargetGoal.class)
+//        .map(p -> p.getGoal()).collect(Collectors.toList());
+//      remove.forEach(g -> mob.targetSelector.removeGoal(g));
+      // add favor-checking goals
+      mob.targetSelector.addGoal(0, new NearestAttackableFavorablePlayerGoal(mob));
+      mob.targetSelector.addGoal(1, new NearestAttackableFavorablePlayerResetGoal(mob));
+    }
   }
   
   /**
@@ -392,12 +408,20 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent
   public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
-    if(event.getEntityLiving() instanceof MobEntity && event.getTarget() instanceof PlayerEntity 
+    if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity 
+        && event.getTarget() instanceof PlayerEntity 
         && GreekFantasy.CONFIG.isSwineEnabled() && GreekFantasy.CONFIG.doesSwinePreventTarget() 
         && isSwine(event.getTarget()) && event.getTarget() != event.getEntityLiving().getAttackingEntity()
         && (event.getEntityLiving() instanceof HoglinEntity 
             || event.getEntityLiving() instanceof GiantBoarEntity
             || event.getEntityLiving() instanceof AbstractPiglinEntity)) {
+      ((MobEntity)event.getEntityLiving()).setAttackTarget(null);
+    }
+    if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity 
+        && event.getTarget() instanceof PlayerEntity
+        && GreekFantasy.PROXY.getFavorRangeTarget().has(event.getEntityLiving().getType())
+        && !GreekFantasy.PROXY.getFavorRangeTarget().get(event.getEntityLiving().getType()).isInFavorRange((PlayerEntity)event.getTarget())
+        && event.getTarget() != event.getEntityLiving().getRevengeTarget()) {
       ((MobEntity)event.getEntityLiving()).setAttackTarget(null);
     }
   }
@@ -424,6 +448,8 @@ public class CommonForgeEventHandler {
       GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SPanfluteSongPacket(e.getKey(), e.getValue().get())));
       // sync deity
       GreekFantasy.PROXY.DEITY.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SDeityPacket(e.getKey(), e.getValue().get())));
+      // sync favor range target
+      GreekFantasy.PROXY.FAVOR_RANGE_TARGET.get(FavorRangeTarget.NAME).ifPresent(f -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SFavorRangeTargetPacket(f)));
     }
   }
   
@@ -436,6 +462,7 @@ public class CommonForgeEventHandler {
     GreekFantasy.LOGGER.debug("onAddReloadListeners");
     event.addListener(GreekFantasy.PROXY.PANFLUTE_SONGS);
     event.addListener(GreekFantasy.PROXY.DEITY);
+    event.addListener(GreekFantasy.PROXY.FAVOR_RANGE_TARGET);
   }
   
   /** @return whether the entity should have the Stunned or Petrified effect applied **/

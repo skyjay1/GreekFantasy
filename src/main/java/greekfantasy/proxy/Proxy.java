@@ -3,7 +3,9 @@ package greekfantasy.proxy;
 import greekfantasy.GreekFantasy;
 import greekfantasy.events.CommonForgeEventHandler;
 import greekfantasy.favor.Deity;
+import greekfantasy.favor.FavorRangeTarget;
 import greekfantasy.network.SDeityPacket;
+import greekfantasy.network.SFavorRangeTargetPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.util.GenericJsonReloadListener;
 import greekfantasy.util.PanfluteSong;
@@ -16,6 +18,8 @@ public class Proxy {
       l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SPanfluteSongPacket(e.getKey(), e.getValue().get()))));
   public final GenericJsonReloadListener<Deity> DEITY = new GenericJsonReloadListener<>("deity", Deity.class, Deity.CODEC, 
       l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SDeityPacket(e.getKey(), e.getValue().get()))));
+  public final GenericJsonReloadListener<FavorRangeTarget> FAVOR_RANGE_TARGET = new GenericJsonReloadListener<>("deity_other", FavorRangeTarget.class, FavorRangeTarget.CODEC, 
+      l -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SFavorRangeTargetPacket(l.get(FavorRangeTarget.NAME).get())));
   
   public void registerReloadListeners() { }
 
@@ -32,4 +36,7 @@ public class Proxy {
     MinecraftForge.EVENT_BUS.register(CommonForgeEventHandler.class);
   }
 
+  public FavorRangeTarget getFavorRangeTarget() {
+    return FAVOR_RANGE_TARGET.get(FavorRangeTarget.NAME).orElse(FavorRangeTarget.EMPTY);
+  }
 }
