@@ -18,7 +18,7 @@ public class Proxy {
       l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SPanfluteSongPacket(e.getKey(), e.getValue().get()))));
   public final GenericJsonReloadListener<Deity> DEITY = new GenericJsonReloadListener<>("deity", Deity.class, Deity.CODEC, 
       l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SDeityPacket(e.getKey(), e.getValue().get()))));
-  public final GenericJsonReloadListener<FavorRangeTarget> FAVOR_RANGE_TARGET = new GenericJsonReloadListener<>("deity_other", FavorRangeTarget.class, FavorRangeTarget.CODEC, 
+  public final GenericJsonReloadListener<FavorRangeTarget> FAVOR_RANGE_TARGET = new GenericJsonReloadListener<>("deity_favor_target_map", FavorRangeTarget.class, FavorRangeTarget.CODEC, 
       l -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SFavorRangeTargetPacket(l.get(FavorRangeTarget.NAME).get())));
   
   public void registerReloadListeners() { }

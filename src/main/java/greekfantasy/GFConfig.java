@@ -280,7 +280,7 @@ public class GFConfig {
     PALLADIUM_REFRESH_INTERVAL = builder.comment("The number of server ticks between Palladium updates (increase to reduce lag)")
         .defineInRange("palladium_refresh_interval", 110, 2, 1000);
     PALLADIUM_CHUNK_RANGE = builder.comment("The radius (in chunks) of the area protected by Palladium blocks (0=same chunk only)")
-        .defineInRange("palladium_chunk_range", 1, 0, 3);
+        .defineInRange("palladium_chunk_range", 2, 0, 3);
     PALLADIUM_Y_RANGE = builder.comment("The vertical area (in blocks) protected by Palladium blocks")
         .defineInRange("palladium_y_range", 128, 0, 255);
     builder.pop();

@@ -41,6 +41,17 @@ public class FavorEffectManager {
     });
   }
   
+  /**
+   * Chooses a triggered favor effect based on the type, deity, and level 
+   * @param type the type of triggered favor effect to perform
+   * @param data the data to interpret for the given effect type
+   * @param worldIn the world
+   * @param playerIn the player
+   * @param deity the deity associated with this effect
+   * @param favor the player's favor
+   * @param level the player's favor level with the given deity
+   * @return the favor effect cooldown, or -1 if no effect was performed. Always returns -1 on client
+   */
   public static long onTriggeredFavorEffect(final FavorEffectTrigger.Type type, final ResourceLocation data, final World worldIn, 
       final PlayerEntity playerIn, final IDeity deity, final IFavor favor, final FavorLevel level) {
     final MinecraftServer server = worldIn.getServer();
@@ -51,6 +62,15 @@ public class FavorEffectManager {
     return -1;
   }
 
+  /**
+   * Chooses a favor effect to perform and attempts to perform it
+   * @param worldIn the world
+   * @param playerIn the player
+   * @param deity the deity that will choose an effect
+   * @param favor the player's favor
+   * @param info the player's favor level with the given deity
+   * @return the favor effect cooldown, or -1 if no effect was performed. Always returns -1 on client
+   */
   public static long onFavorEffect(final World worldIn, final PlayerEntity playerIn, final IDeity deity, final IFavor favor, final FavorLevel info) {
     final MinecraftServer server = worldIn.getServer();
     if(server != null) {
@@ -60,6 +80,15 @@ public class FavorEffectManager {
     return -1;
   }
   
+  /**
+   * Performs the given favor effect at the player's location
+   * @param server the minecraft server
+   * @param worldIn the current world
+   * @param playerIn the player to affect
+   * @param deity the deity associated with the effect
+   * @param effect the favor effect
+   * @return the favor effect cooldown, or -1 if no effect was performed
+   */
   private static long performFavorEffect(final MinecraftServer server, final World worldIn, final PlayerEntity playerIn, final IDeity deity, final FavorEffect effect) {
     boolean flag = false;
     // attempt to run the function, summon, item, or potion effect (exclusively, in that order)
@@ -80,7 +109,7 @@ public class FavorEffectManager {
       final SoundEvent sound = positive ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER;
       playerIn.sendStatusMessage(new TranslationTextComponent("favor.effect." + message, deity.getText()).mergeStyle(color), false);
       playerIn.playSound(sound, 0.4F, 0.9F + playerIn.getRNG().nextFloat() * 0.2F);
-      return effect.getMinCooldown() + playerIn.getRNG().nextInt((int)Math.max(1, effect.getMinCooldown()));
+      return Math.abs(effect.getMinCooldown()) + playerIn.getRNG().nextInt((int)Math.max(1, Math.abs(effect.getMinCooldown())));
     }
     return -1;
   }

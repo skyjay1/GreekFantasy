@@ -353,11 +353,6 @@ public class CommonForgeEventHandler {
     if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity
         && GreekFantasy.PROXY.getFavorRangeTarget().has(event.getEntityLiving().getType())) {
       final MobEntity mob = (MobEntity)event.getEntityLiving();
-      // remove non-favor-checking goals
-//      final List<Goal> remove = mob.targetSelector.getRunningGoals()
-//        .filter(p -> p.getGoal().getClass() == NearestAttackableTargetGoal.class)
-//        .map(p -> p.getGoal()).collect(Collectors.toList());
-//      remove.forEach(g -> mob.targetSelector.removeGoal(g));
       // add favor-checking goals
       mob.targetSelector.addGoal(0, new NearestAttackableFavorablePlayerGoal(mob));
       mob.targetSelector.addGoal(1, new NearestAttackableFavorablePlayerResetGoal(mob));

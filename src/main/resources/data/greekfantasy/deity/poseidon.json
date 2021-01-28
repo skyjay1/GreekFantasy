@@ -56,6 +56,40 @@
   	  "mincooldown": 11500
   	},
   	{
+  	  "item": { 
+  	  	"id": "minecraft:fishing_rod",
+  	  	"Count": 1,
+		"tag": {
+		  "Enchantments": [
+		    {
+			  "id": "minecraft:lure",
+		  	  "lvl": 3
+		    }
+		  ]
+		}
+  	  },
+  	  "minlevel": 7,
+  	  "maxlevel": 10,
+  	  "mincooldown": 10600
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:fishing_rod",
+  	  	"Count": 1,
+		"tag": {
+		  "Enchantments": [
+		    {
+			  "id": "minecraft:luck_of_the_sea",
+		  	  "lvl": 3
+		    }
+		  ]
+		}
+  	  },
+  	  "minlevel": 7,
+  	  "maxlevel": 10,
+  	  "mincooldown": 10800
+  	},
+  	{
   	  "summon": { 
   	  	"id": "minecraft:drowned" 
   	  },
@@ -342,6 +376,7 @@
   	"minecraft:cooked_salmon": 4,
   	"minecraft:cooked_porkchop": 3,
   	"minecraft:pufferfish": -2,
+  	"minecraft:rotten_flesh": -3,
   	"minecraft:emerald": 7,
   	"minecraft:diamond": 16
   }

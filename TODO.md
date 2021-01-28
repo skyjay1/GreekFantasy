@@ -124,7 +124,7 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- Complete: Panflute, Clubs (wood, stone/flint, iron), Golden bridle (for Unicorn), Winged sandals, Horn (from Minotaur / Cyprians), Unicorn Horn (while holding, cures certain potion effects), Ambrosia (like ench. golden apple), Magic feather, Dragon's Tooth (to summon Sparti), Healing rod (cannot be used on self) (healing projectiles), Helm of Darkness (hides player _and_ armor) (from Cyclopes somehow), Flint Knife, Thunderbolt, Snake skin and Purified snake skin (from Gorgons), Ichor - crafting component from Elpis, Dog Claw - crafting component from Orthus, Fiery hide - crafting component from Cerberus (helm of darkness), Styxian shard - crafting component from Cyclopes (helm of darkness), Wild Rose - crafting component from Satyr (sword of the hunt), Conch Shell - place and remove water , Talos Heart - crafting component from Talos, Tough Snakeskin - crafting component from Python and Medusa, Bag of Wind - gives 30sec speed boost, Boar ear, boar tusk - crafting component from Giant Boar, Ivory sword - extra knockback, Swine Wand - inflicts Swine effect, Snake fang, Gorgon blood - 50% chance to heal, 50% chance to poison, Spawn eggs
+- Complete: Panflute, Clubs (wood, stone/flint, iron), Golden bridle (for Unicorn), Winged sandals, Horn (from Minotaur / Cyprians), Unicorn Horn (while holding, cures certain potion effects), Ambrosia (like ench. golden apple), Magic feather, Dragon's Tooth (to summon Sparti), Healing rod (cannot be used on self) (healing projectiles), Helm of Darkness (hides player _and_ armor) (from Cyclopes somehow), Flint Knife, Thunderbolt, Snake skin and Purified snake skin (from Gorgons), Ichor - crafting component from Elpis, Dog Claw - crafting component from Orthus, Fiery hide - crafting component from Cerberus (helm of darkness), Styxian shard - crafting component from Cyclopes (helm of darkness), Wild Rose - crafting component from Satyr (sword of the hunt), Conch Shell - place and remove water , Talos Heart - crafting component from Talos, Tough Snakeskin - crafting component from Python and Medusa, Bag of Wind - gives 30sec speed boost, Boar ear, boar tusk - crafting component from Giant Boar, Ivory sword - extra knockback, Swine Wand - inflicts Swine effect, Snake fang, Gorgon blood - 50% chance to heal and 50% chance to poison, Spawn eggs
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)
 - _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
@@ -184,5 +184,4 @@ _Can I do something with these?_
 - River Styx
 - Story of King Midas (gold touch)
 - Story of Labyrinth (Minotaur, Golden String, etc)
-- Demeter (goddess of growth/fertility/crops; seasons)
 

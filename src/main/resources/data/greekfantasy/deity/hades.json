@@ -262,7 +262,6 @@
     "minecraft:blaze": 7,
     "minecraft:ghast": 9,
     "minecraft:strider": -3,
-    "minecraft:magma_cube": 3,
     "minecraft:zombified_piglin": 4,
     "minecraft:zoglin": 6,
   	"minecraft:villager": -11,
@@ -300,6 +299,7 @@
   	"minecraft:torch": -1,
   	"minecraft:soul_torch": -1,
   	"minecraft:nether_star": 120,
+  	"minecraft:totem_of_undying": 42,
   	"minecraft:netherite_ingot": 20,
   	"minecraft:coal": 2,
   	"minecraft:iron_ingot": 4,
@@ -312,7 +312,6 @@
   	"minecraft:cooked_mutton": 4,
   	"minecraft:apple": 1,
   	"minecraft:gold_ingot": 5,
-  	"minecraft:golden_apple": 48,
   	"minecraft:potion": 6,
   	"minecraft:splash_potion": 7,
   	"minecraft:lingering_potion": 8

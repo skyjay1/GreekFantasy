@@ -2,7 +2,6 @@ package greekfantasy.favor;
 
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -102,27 +101,45 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
 
   /** @param cooldown the amount of time until the next favor effect **/
   void setTriggeredCooldown(long cooldown);
-
+  
   /**
-   * @param info the favor level
-   * @param time the current time
-   * @param rand a random instance
-   * @return true if a FavorEffect should be chosen and executed
+   * Sets the effect timestamp and cooldown
+   * @param time the timestamp
+   * @param cooldown the cooldown time
+   * @see #setEffectTimestamp(long)
+   * @see #setEffectCooldown(long)
    */
-  default boolean canUseEffect(final FavorLevel info, final long time, final Random rand) { 
-    return Math.abs(info.getFavor()) >= MIN_FAVOR 
-        && time >= (getEffectTimestamp() + getEffectCooldown())
-        && rand.nextDouble() * 0.7D < info.getPercentFavor(); 
+  default void setEffectTime(final long time, final long cooldown) {
+    setEffectTimestamp(time);
+    setEffectCooldown(cooldown);
   }
   
   /**
-   * @param info the favor level
-   * @param time the current time
-   * @return true if a TriggeredFavorEffect should be chosen and executed
+   * Sets the triggered effect timestamp and cooldown
+   * @param time the timestamp
+   * @param cooldown the cooldown time
+   * @see #setTriggeredTimestamp(long)
+   * @see #setTriggeredCooldown(long)
    */
-  default boolean canUseTriggeredEffect(final FavorLevel info, final long time) { 
-    return Math.abs(info.getFavor()) >= MIN_FAVOR 
-        && time >= (getTriggeredTimestamp() + getTriggeredCooldown()); 
+  default void setTriggeredTime(final long time, final long cooldown) {
+    setTriggeredTimestamp(time);
+    setTriggeredCooldown(cooldown);
+  }
+  
+  /**
+   * @param time the current time
+   * @return true if the time is greater than the timestamp+cooldown
+   */
+  default boolean hasNoEffectCooldown(final long time) {
+    return time >= (getEffectTimestamp() + getEffectCooldown());
+  }
+  
+  /**
+   * @param time the current time
+   * @return true if the time is greater than the timestamp+cooldown
+   */
+  default boolean hasNoTriggeredCooldown(final long time) {
+    return time >= (getTriggeredTimestamp() + getTriggeredCooldown());
   }
   
   @Override

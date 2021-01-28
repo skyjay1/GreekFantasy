@@ -1,0 +1,114 @@
+{
+  "favor_target_map": {
+    "greekfantasy:centaur": {
+	  "deity": "greekfantasy:poseidon",
+	  "minlevel": -10,
+	  "maxlevel": -3
+	},
+    "greekfantasy:cyclopes": {
+	  "deity": "greekfantasy:poseidon",
+	  "minlevel": -10,
+	  "maxlevel": 4
+	},
+    "greekfantasy:cyprian": {
+	  "deity": "greekfantasy:poseidon",
+	  "minlevel": -3,
+	  "maxlevel": 10
+	},
+    "greekfantasy:drakaina": {
+	  "deity": "greekfantasy:zeus",
+	  "minlevel": -5,
+	  "maxlevel": 10
+	},
+	"greekfantasy:dryad": {
+	  "deity": "greekfantasy:zeus",
+	  "minlevel": -10,
+	  "maxlevel": -2
+	},
+	"greekfantasy:fury": {
+	  "deity": "greekfantasy:hades",
+	  "minlevel": -10,
+	  "maxlevel": 5
+	},
+	"greekfantasy:gigante": {
+	  "deity": "greekfantasy:zeus",
+	  "minlevel": -10,
+	  "maxlevel": -4
+	},
+    "greekfantasy:gorgon": {
+	  "deity": "greekfantasy:zeus",
+	  "minlevel": -6,
+	  "maxlevel": 10
+	},
+    "greekfantasy:harpy": {
+	  "deity": "greekfantasy:zeus",
+	  "minlevel": -10,
+	  "maxlevel": 5
+	},
+    "greekfantasy:minotaur": {
+	  "deity": "greekfantasy:zeus",
+	  "minlevel": -10,
+	  "maxlevel": 8
+	},
+    "greekfantasy:naiad": {
+	  "deity": "greekfantasy:poseidon",
+	  "minlevel": -10,
+	  "maxlevel": -2
+	},
+    "greekfantasy:shade": {
+	  "deity": "greekfantasy:hades",
+	  "minlevel": -10,
+	  "maxlevel": 7
+	},
+    "greekfantasy:siren": {
+	  "deity": "greekfantasy:poseidon",
+	  "minlevel": -5,
+	  "maxlevel": 10
+	},
+    "minecraft:drowned": {
+	  "deity": "greekfantasy:poseidon",
+	  "minlevel": -10,
+	  "maxlevel": 8
+	},
+    "minecraft:guardian": {
+	  "deity": "greekfantasy:poseidon",
+	  "minlevel": -10,
+	  "maxlevel": 8
+	},
+    "minecraft:husk": {
+	  "deity": "greekfantasy:hades",
+	  "minlevel": -10,
+	  "maxlevel": 8
+	},
+    "minecraft:iron_golem": {
+	  "deity": "greekfantasy:zeus",
+	  "minlevel": -10,
+	  "maxlevel": -4
+	},
+    "minecraft:llama": {
+	  "deity": "greekfantasy:poseidon",
+	  "minlevel": -10,
+	  "maxlevel": -2
+	},
+    "minecraft:silverfish": {
+	  "deity": "greekfantasy:hades",
+	  "minlevel": -10,
+	  "maxlevel": 6
+	},
+    "minecraft:trader_llama": {
+	  "deity": "greekfantasy:poseidon",
+	  "minlevel": -10,
+	  "maxlevel": -2
+	},
+    "minecraft:zombie": {
+	  "deity": "greekfantasy:hades",
+	  "minlevel": -10,
+	  "maxlevel": 9
+	},
+    "minecraft:zombie_villager": {
+	  "deity": "greekfantasy:hades",
+	  "minlevel": -10,
+	  "maxlevel": 9
+	}
+  }
+}

@@ -12,11 +12,11 @@ import net.minecraft.util.ResourceLocation;
 
 public class FavorRangeTarget {
 
-  public static final ResourceLocation NAME = new ResourceLocation(GreekFantasy.MODID, "favor_range_target_criteria");
+  public static final ResourceLocation NAME = new ResourceLocation(GreekFantasy.MODID, "favor_target_map");
   public static final FavorRangeTarget EMPTY = new FavorRangeTarget(Maps.newHashMap());
   
   public static final Codec<FavorRangeTarget> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-      Codec.unboundedMap(ResourceLocation.CODEC, FavorRange.CODEC).optionalFieldOf("entity_target_map", Maps.newHashMap()).forGetter(FavorRangeTarget::getEntityTargetMap)
+      Codec.unboundedMap(ResourceLocation.CODEC, FavorRange.CODEC).optionalFieldOf("favor_target_map", Maps.newHashMap()).forGetter(FavorRangeTarget::getEntityTargetMap)
     ).apply(instance, FavorRangeTarget::new));
 
   private final Map<ResourceLocation, FavorRange> entityTargetMap;
