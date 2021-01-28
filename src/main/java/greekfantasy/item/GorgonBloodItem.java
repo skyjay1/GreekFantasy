@@ -8,6 +8,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Food;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.UseAction;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.text.ITextComponent;
@@ -19,10 +20,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class GorgonBloodItem extends Item {
   
-  public static final Food GORGON_BLOOD_GOOD = (new Food.Builder().hunger(2).saturation(0.1F).setAlwaysEdible()
+  public static final Food GORGON_BLOOD_GOOD = (new Food.Builder().hunger(1).saturation(0.1F).setAlwaysEdible()
       .effect(() -> new EffectInstance(Effects.REGENERATION, 180), 1.0F)).build();
   
-  public static final Food GORGON_BLOOD_BAD = (new Food.Builder().hunger(2).saturation(0.1F).setAlwaysEdible()
+  public static final Food GORGON_BLOOD_BAD = (new Food.Builder().hunger(1).saturation(0.1F).setAlwaysEdible()
       .effect(() -> new EffectInstance(Effects.POISON, 180), 1.0F)).build();
 
   public GorgonBloodItem(final Item.Properties properties) {
@@ -37,6 +38,11 @@ public class GorgonBloodItem extends Item {
   @Override
   public Food getFood() {
     return Math.random() < 0.5D ? GORGON_BLOOD_BAD : GORGON_BLOOD_GOOD;
+  }
+
+  @Override
+  public UseAction getUseAction(ItemStack stack) {
+     return UseAction.DRINK;
   }
   
   @OnlyIn(Dist.CLIENT)

@@ -41,12 +41,8 @@ public class SFavorRangeTargetPacket {
 
   public static void handlePacket(final SFavorRangeTargetPacket message, final Supplier<NetworkEvent.Context> contextSupplier) {
     NetworkEvent.Context context = contextSupplier.get();
-    // DEBUG
-    GreekFantasy.LOGGER.debug("received packet for " + message.favorRange.toString());
     if (context.getDirection().getReceptionSide() == LogicalSide.CLIENT) {
       context.enqueueWork(() -> {
-        // DEBUG
-        GreekFantasy.LOGGER.debug("handled");
         GreekFantasy.PROXY.FAVOR_RANGE_TARGET.put(FavorRangeTarget.NAME, message.favorRange);
       });
     }

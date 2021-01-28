@@ -40,6 +40,7 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   protected ModelRenderer bipedLeftLegwear;
   protected ModelRenderer bipedRightLegwear;
   protected ModelRenderer bipedBodyWear;
+  protected ModelRenderer bipedBodyChestWear;
   
   private static final EnumMap<ModelPart, Collection<ModelRenderer>> ROTATION_MAP = new EnumMap<>(ModelPart.class);
   
@@ -117,9 +118,13 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     this.bipedBodyWear = new ModelRenderer(this, 16, 32);
     this.bipedBodyWear.addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSizeIn + 0.25F);
     this.bipedBodyWear.setRotationPoint(0.0F, 0.0F + yOffsetIn, 0.0F);
+    this.bipedBodyChest = new ModelRenderer(this);
+    this.bipedBodyChest.setRotationPoint(0.0F, 1.0F, -2.0F);
+    this.bipedBodyChest.rotateAngleX = -0.2182F;
+    this.bipedBodyChest.setTextureOffset(19, 20).addBox(-4.01F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, modelSizeIn + 0.25F);
     
     ROTATION_MAP.put(ModelPart.HEAD, ImmutableList.of(this.bipedHead, this.bipedHeadwear));
-    ROTATION_MAP.put(ModelPart.BODY, ImmutableList.of(this.bipedBody, this.bipedBodyChest, this.bipedBodyWear));
+    ROTATION_MAP.put(ModelPart.BODY, ImmutableList.of(this.bipedBody, this.bipedBodyChest, this.bipedBodyWear, this.bipedBodyChestWear));
     ROTATION_MAP.put(ModelPart.LEFT_ARM, ImmutableList.of(this.bipedLeftArm, this.bipedLeftArmSlim, this.bipedLeftArmwear, this.bipedLeftArmwearSlim));
     ROTATION_MAP.put(ModelPart.RIGHT_ARM, ImmutableList.of(this.bipedRightArm, this.bipedRightArmSlim, this.bipedRightArmwear, this.bipedRightArmwearSlim));
     ROTATION_MAP.put(ModelPart.LEFT_LEG, ImmutableList.of(this.bipedLeftLeg, this.bipedLeftLegwear));
@@ -127,7 +132,7 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   }
   
   protected Iterable<ModelRenderer> getUpperParts() { 
-    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedBodyChest, this.bipedHeadwear, this.bipedBodyWear); 
+    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedBodyChest, this.bipedHeadwear, this.bipedBodyWear, this.bipedBodyChestWear); 
   }
   
   protected Iterable<ModelRenderer> getLowerParts() { 
@@ -144,12 +149,9 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
 
   public void setRotationAngles(final T entity, final float partialTicks) {
     final StatuePose pose = entity.getStatuePose();
-//    if(entity.getWorld().getGameTime() % 40 == 0) GreekFantasy.LOGGER.debug("ModelPose: " + pose.toString());
     for(final Entry<ModelPart, Collection<ModelRenderer>> e : ROTATION_MAP.entrySet()) {
       // set the rotations for each part in the list
       final Vector3f rotations = pose.getAngles(e.getKey());
-      // DEBUG
-//      GreekFantasy.LOGGER.debug("Setting rotations for " + e.getKey().getString() + " to " + rotations);
       for(final ModelRenderer m : e.getValue()) {
         m.rotateAngleX = rotations.getX();
         m.rotateAngleY = rotations.getY();

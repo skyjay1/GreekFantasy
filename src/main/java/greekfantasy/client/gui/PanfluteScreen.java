@@ -55,8 +55,6 @@ public class PanfluteScreen extends Screen {
   private int guiLeft;
   /** Number of pixels between top of screen and top of gui **/
   private int guiTop;
-  /** True if the scrollbar is being dragged **/
-  private boolean isScrolling;
   /** True if there are at least [BTN_VISIBLE] number of songs in the list **/
   private boolean scrollEnabled;
 
@@ -76,8 +74,7 @@ public class PanfluteScreen extends Screen {
     } else {
       selectedSong = PanfluteItem.DEFAULT_SONG;
     }
-    // determine default scroll
-    isScrolling = false;
+    // determine scroll
     scrollEnabled = songs.size() > BTN_VISIBLE;
   }
   
@@ -90,10 +87,7 @@ public class PanfluteScreen extends Screen {
     addButton(new Button(guiLeft, guiTop + SCREEN_HEIGHT + 4, SCREEN_WIDTH, 20, new TranslationTextComponent("gui.done"), c -> this.minecraft.displayGuiScreen(null)));
     // add scroll button
     scrollButton = addButton(new ScrollButton<>(this, guiLeft + SCROLL_LEFT, guiTop + SCROLL_TOP, SCROLL_WIDTH, SCROLL_HEIGHT, 
-        0, SCREEN_HEIGHT + 2 * BTN_HEIGHT, SCREEN_TEXTURE, s -> s.scrollEnabled, b -> isScrolling = true, b -> {
-          updateScroll(b.getScrollAmount());
-          isScrolling = false;
-        }));
+        0, SCREEN_HEIGHT + 2 * BTN_HEIGHT, SCREEN_TEXTURE, s -> s.scrollEnabled, 4, b -> updateScroll(b.getScrollAmount())));
     // add deity buttons
     int i = 0;
     for(final Entry<ResourceLocation, Optional<PanfluteSong>> e : songs) {
@@ -113,12 +107,19 @@ public class PanfluteScreen extends Screen {
     this.blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // draw title
     drawCenteredString(matrixStack, this.font, this.getTitle(), this.width / 2, this.guiTop + 8, 0xFFFFFF);
-    // update scroll bar
-    if (this.isScrolling && this.scrollEnabled) {
-      updateScroll(this.scrollButton.getScrollAmount());
-    }
     // draw buttons
     super.render(matrixStack, mouseX, mouseY, partialTicks);
+  }
+  
+  /**
+   * Called from the main game loop to update the screen.
+   */
+  @Override
+  public void tick() {
+    super.tick();
+    if(scrollButton != null) {
+      scrollButton.tick();
+    }
   }
   
   @Override

@@ -36,7 +36,7 @@
 	  "maxlevel": -4
 	},
     "greekfantasy:gorgon": {
-	  "deity": "greekfantasy:zeus",
+	  "deity": "greekfantasy:poseidon",
 	  "minlevel": -6,
 	  "maxlevel": 10
 	},
@@ -68,7 +68,7 @@
     "minecraft:drowned": {
 	  "deity": "greekfantasy:poseidon",
 	  "minlevel": -10,
-	  "maxlevel": 8
+	  "maxlevel": 9
 	},
     "minecraft:guardian": {
 	  "deity": "greekfantasy:poseidon",
@@ -81,9 +81,9 @@
 	  "maxlevel": 8
 	},
     "minecraft:iron_golem": {
-	  "deity": "greekfantasy:zeus",
-	  "minlevel": -10,
-	  "maxlevel": -4
+	  "deity": "greekfantasy:hades",
+	  "minlevel": 4,
+	  "maxlevel": 10
 	},
     "minecraft:llama": {
 	  "deity": "greekfantasy:poseidon",

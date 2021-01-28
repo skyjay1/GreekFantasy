@@ -13,12 +13,14 @@ import net.minecraft.util.text.StringTextComponent;
 
 public class ScrollButton<T extends Screen> extends Button {
   
-  /** A consumer to handle when the scroll starts **/
-  private final Consumer<ScrollButton<T>> scrollStartHandler;
   /** A consumer to handle when the scroll ends **/
   private final Consumer<ScrollButton<T>> scrollEndHandler;
   /** Amount scrolled (0.0 = top, 1.0 = bottom) **/
   private float scrollAmount;
+  /** Number of ticks that this scroll button has been scrolling **/
+  private int scrollTicks;
+  /** Number of ticks between updating the scroll amount while scrolling **/
+  private final int updateInterval;
   /** If the scroll bar is enabled **/
   private final Predicate<T> enabled;
   
@@ -32,19 +34,19 @@ public class ScrollButton<T extends Screen> extends Button {
   public ScrollButton(final T gui, final int x, final int y, 
       final int width, final int height, final int uX, final int vY, 
       final ResourceLocation textureIn, final Predicate<T> isEnabled, 
-      final Consumer<ScrollButton<T>> onScrollStart, final Consumer<ScrollButton<T>> onScrollEnd) {
+      final int updateIntervalIn, final Consumer<ScrollButton<T>> onScrollEnd) {
     super(x, y, width, height, StringTextComponent.EMPTY, b -> {});
     screen = gui;
     u = uX;
     v = vY;
     texture = textureIn;
     enabled = isEnabled;
-    scrollStartHandler = onScrollStart;
-    scrollEndHandler = onScrollEnd;
+    updateInterval = updateIntervalIn;
+    scrollEndHandler = onScrollEnd.andThen(t -> t.resetTick());
     scrollAmount = 0;
     scrollEndHandler.accept(this);
   }
-  
+
   @Override
   public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
     if(this.visible) {
@@ -60,7 +62,6 @@ public class ScrollButton<T extends Screen> extends Button {
   @Override
   public void onClick(final double mouseX, final double mouseY) {
     if(enabled.test(screen)) {
-      scrollStartHandler.accept(this);
       updateScrollAmount(mouseX, mouseY);
       scrollEndHandler.accept(this);
     }
@@ -69,7 +70,6 @@ public class ScrollButton<T extends Screen> extends Button {
   @Override
   public void onDrag(final double mouseX, final double mouseY, final double dragX, final double dragY) {
     if(enabled.test(screen)) {
-      scrollStartHandler.accept(this);
       updateScrollAmount(mouseX, mouseY);
     }
   }
@@ -85,7 +85,6 @@ public class ScrollButton<T extends Screen> extends Button {
   @Override
   public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
     if(enabled.test(screen)) {
-      scrollStartHandler.accept(this);
       scrollAmount = MathHelper.clamp((float)(scrollAmount - delta), 0.0F, 1.0F);
       scrollEndHandler.accept(this);
       return true;
@@ -105,4 +104,15 @@ public class ScrollButton<T extends Screen> extends Button {
     scrollAmount = 0.0F;
     scrollEndHandler.accept(this);
   }
+  
+  public void tick() {
+    if(++scrollTicks % updateInterval == 0) {
+      scrollEndHandler.accept(this);
+    }
+  }
+  
+  public void resetTick() {
+    scrollTicks = 0;
+  }
+  
 }

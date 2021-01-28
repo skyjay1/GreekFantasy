@@ -277,12 +277,30 @@ public final class GFRegistry {
   public static final Block BLACK_TERRACOTTA_VASE = null;
   
   // Altar //
-  @ObjectHolder("altar_zeus")
-  public static final Block ALTAR_ZEUS = null;
+  @ObjectHolder("altar_aphrodite")
+  public static final Block ALTAR_APHRODITE = null;
+  @ObjectHolder("altar_apollo")
+  public static final Block ALTAR_APOLLO = null;
+  @ObjectHolder("altar_ares")
+  public static final Block ALTAR_ARES = null;
+  @ObjectHolder("altar_artemis")
+  public static final Block ALTAR_ARTEMIS = null;
+  @ObjectHolder("altar_athena")
+  public static final Block ALTAR_ATHENA = null;
+  @ObjectHolder("altar_demeter")
+  public static final Block ALTAR_DEMETER = null;
+  @ObjectHolder("altar_dionysus")
+  public static final Block ALTAR_DIONYSUS = null;
   @ObjectHolder("altar_hades")
   public static final Block ALTAR_HADES = null;
+  @ObjectHolder("altar_hephaestus")
+  public static final Block ALTAR_HEPHAESTUS = null;
+  @ObjectHolder("altar_hermes")
+  public static final Block ALTAR_HERMES = null;
   @ObjectHolder("altar_poseidon")
   public static final Block ALTAR_POSEIDON = null;
+  @ObjectHolder("altar_zeus")
+  public static final Block ALTAR_ZEUS = null;
 
   // Tile Entity //  
   @ObjectHolder("statue_te")
@@ -393,7 +411,8 @@ public final class GFRegistry {
     event.getRegistry().register(
         TileEntityType.Builder.create(StatueTileEntity::new, 
             LIMESTONE_STATUE, MARBLE_STATUE, PALLADIUM, 
-            ALTAR_HADES, ALTAR_POSEIDON, ALTAR_ZEUS)
+            ALTAR_APHRODITE, ALTAR_APOLLO, ALTAR_ARES, ALTAR_ARTEMIS, ALTAR_ATHENA, ALTAR_DEMETER,
+            ALTAR_DIONYSUS, ALTAR_HADES, ALTAR_HEPHAESTUS, ALTAR_HERMES, ALTAR_POSEIDON, ALTAR_ZEUS)
         .build(null).setRegistryName(MODID, "statue_te")
     );
     event.getRegistry().register(
@@ -466,12 +485,6 @@ public final class GFRegistry {
           te.setStatueFemale(true);
           te.setItem(new ItemStack(Items.SOUL_TORCH), HandSide.RIGHT);
         }).setRegistryName(MODID, "palladium"),
-        makeDeityStatue("hades", StatueBlock.StatueMaterial.BLACKSTONE, StatuePoses.ZEUS_POSE)
-          .setRegistryName(MODID, "altar_hades"),
-        makeDeityStatue("poseidon", StatueBlock.StatueMaterial.PRISMARINE, StatuePoses.ZEUS_POSE)
-          .setRegistryName(MODID, "altar_poseidon"),
-        makeDeityStatue("zeus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
-          .setRegistryName(MODID, "altar_zeus"),
         new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
           .setRegistryName(MODID, "mysterious_box"),
         new MobHeadBlock(HeadType.GIGANTE, AbstractBlock.Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(1.0F).notSolid())
@@ -482,6 +495,34 @@ public final class GFRegistry {
           .setRegistryName(GreekFantasy.MODID, "cerberus_head"),
         new IchorInfusedBlock(AbstractBlock.Properties.from(Blocks.GOLD_BLOCK))
           .setRegistryName(MODID, "ichor_infused_block")
+    );
+    
+    // Altar blocks
+    event.getRegistry().registerAll(
+      makeDeityStatue("aphrodite", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_aphrodite"),
+      makeDeityStatue("apollo", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_apollo"),
+      makeDeityStatue("ares", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_ares"),
+      makeDeityStatue("artemis", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_artemis"),
+      makeDeityStatue("athena", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_athena"),
+      makeDeityStatue("demeter", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_demeter"),
+      makeDeityStatue("dionysus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_dionysus"),
+      makeDeityStatue("hades", StatueBlock.StatueMaterial.BLACKSTONE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_hades"),
+      makeDeityStatue("hephaestus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_hephaestus"),
+      makeDeityStatue("hermes", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_hermes"),
+      makeDeityStatue("poseidon", StatueBlock.StatueMaterial.PRISMARINE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_poseidon"),
+      makeDeityStatue("zeus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_zeus")
     );
     
     // Vase blocks
@@ -594,7 +635,8 @@ public final class GFRegistry {
         OLIVE_SLAB, OLIVE_STAIRS, OLIVE_LEAVES, 
         MARBLE, MARBLE_SLAB, MARBLE_STAIRS, POLISHED_MARBLE, POLISHED_MARBLE_SLAB, 
         POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, PALLADIUM, 
-        ALTAR_ZEUS, ALTAR_HADES, ALTAR_POSEIDON,
+        ALTAR_APHRODITE, ALTAR_APOLLO, ALTAR_ARES, ALTAR_ARTEMIS, ALTAR_ATHENA, ALTAR_DEMETER,
+        ALTAR_DIONYSUS, ALTAR_HADES, ALTAR_HEPHAESTUS, ALTAR_HERMES, ALTAR_POSEIDON, ALTAR_ZEUS,
         LIMESTONE, LIMESTONE_SLAB, LIMESTONE_STAIRS, POLISHED_LIMESTONE, POLISHED_LIMESTONE_SLAB, 
         POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, LIMESTONE_STATUE, ICHOR_INFUSED_BLOCK,
         TERRACOTTA_VASE, WHITE_TERRACOTTA_VASE, ORANGE_TERRACOTTA_VASE, MAGENTA_TERRACOTTA_VASE, 
@@ -796,6 +838,7 @@ public final class GFRegistry {
     return new StatueBlock(statueMaterial, te -> {
         te.setStatuePose(pose);
         te.setDeityName(deityId.toString());
+        te.setStatueFemale(te.getDeity().isFemale());
         te.setItem(te.getDeity().getRightHandItem(), HandSide.RIGHT);
         te.setItem(te.getDeity().getLeftHandItem(), HandSide.LEFT);
       }, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(15.0F, 6000.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> statueMaterial.getLightLevel()), deityId);

@@ -1,5 +1,6 @@
 {
   "name": "greekfantasy:zeus",
+  "hidden": false,
   "female": false,
   "left_hand": {
   	"id": "minecraft:air",

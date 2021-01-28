@@ -40,7 +40,10 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   
   private static final int TAB_WIDTH = 28;
   private static final int TAB_HEIGHT = 32;
-  private static final int TAB_COUNT = 6;
+  private static final int TAB_COUNT = 7;
+  
+  private static final int ARROW_WIDTH = 14;
+  private static final int ARROW_HEIGHT = 18;
   
   private static final int FAVOR_WIDTH = 69;
   private static final int FAVOR_HEIGHT = 86;
@@ -70,12 +73,13 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private static final int SCROLL_HEIGHT = 124;
   
   private final List<IDeity> deityList = new ArrayList<>();  
-  private final DeityScreen.TabButton[] tabButtons = new TabButton[TAB_COUNT];
+  private final DeityScreen.TabButton[] tabButtons = new DeityScreen.TabButton[TAB_COUNT];
   private final List<List<DeityScreen.ItemButton>> itemButtons = new ArrayList<>();
   private final List<List<DeityScreen.EntityButton>> entityButtons = new ArrayList<>();
   
   private ScrollButton<DeityScreen> scrollButton;
   
+  private int tabGroup;
   private int selected;
   
   private DeityScreen.Mode mode;
@@ -84,8 +88,6 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private int guiLeft;
   /** Number of pixels between top of screen and top of gui **/
   private int guiTop;
-  /** True if the scrollbar is being dragged **/
-  private boolean isScrolling;
   /** True if there are at least [ITEM_VISIBLE] number of items in the list **/
   private boolean scrollEnabled;
   
@@ -96,16 +98,16 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     favor = screenContainer.getFavor();
     // initialize lists (deity, item, entity, etc.)
     if(deityList.isEmpty()) {
-      // populate deity list (alphabetically)
-//      deityList.addAll(screenContainer.getFavor().getDeitySet());
-      GreekFantasy.PROXY.DEITY.getValues().forEach(o -> deityList.add(o.orElse(Deity.EMPTY)));
-      deityList.sort((d1, d2) -> d1.getText().getString().compareTo(d2.getText().getString()));
+      // populate deity list and sort by favor level
+      GreekFantasy.PROXY.DEITY.getValues().forEach(o -> {
+        if(o.isPresent() && !o.get().isHidden()) deityList.add(o.get());
+      });
+      deityList.sort((d1, d2) -> favor.getFavor(d2).compareToAbs(favor.getFavor(d1)));
       
       // populate favor modifier lists for each deity
       for(int deityNum = 0, deityL = deityList.size(); deityNum < deityL; deityNum++) {
         // determine which deity to populate
         final IDeity d = deityList.get(deityNum);
-        
         // add item modifier list for each deity
         List<DeityScreen.ItemButton> itemButtonList = new ArrayList<>();
         // create a button for each item and add it to this list
@@ -130,7 +132,6 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       }
     }
     // default scroll settings
-    isScrolling = false;
     scrollEnabled = itemButtons.get(selected).size() > (ITEM_COUNT_X * ITEM_COUNT_Y);
   }
   
@@ -146,21 +147,36 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     for(int i = 0, l = Math.min(TAB_COUNT, deityList.size()); i < l; i++) {
       tabButtons[i] = addButton(new TabButton(this, i, deityList.get(i).getText(), guiLeft + (i * TAB_WIDTH), guiTop - TAB_HEIGHT + 4));
     }
+    // add deity tab arrow buttons
+    addButton(new DeityScreen.TabArrowButton(this, true, guiLeft - ARROW_WIDTH - 4, guiTop - (ARROW_HEIGHT + 4)));
+    addButton(new DeityScreen.TabArrowButton(this, false, guiLeft + SCREEN_WIDTH + 4, guiTop - (ARROW_HEIGHT + 4)));
     // add item buttons
     itemButtons.forEach(l -> l.forEach(b -> addButton(b)));
     // add entity type text components
     entityButtons.forEach(l -> l.forEach(b -> addButton(b)));
     // add scroll button
     scrollButton = addButton(new ScrollButton<>(this, guiLeft + SCROLL_LEFT, guiTop + SCROLL_TOP, SCROLL_WIDTH, SCROLL_HEIGHT, 
-        0, SCREEN_HEIGHT + 2 * BTN_HEIGHT, SCREEN_TEXTURE, s -> s.scrollEnabled, b -> isScrolling = true, b -> {
+        0, SCREEN_HEIGHT + 2 * BTN_HEIGHT, SCREEN_TEXTURE, s -> s.scrollEnabled, 4, b -> {
           updateScroll(b.getScrollAmount());
-          isScrolling = false;
         }));
     // add mode buttons
     addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP, new TranslationTextComponent("entity.minecraft.item"), DeityScreen.Mode.ITEM));
     addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + BTN_HEIGHT + 4, new TranslationTextComponent("gui.mirror.entity"), DeityScreen.Mode.ENTITY));
     // set selected deity now that things are nonnull
-    setSelectedDeity(2);
+    setSelectedTab(0);
+    setSelectedDeity(0);
+    updateMode(DeityScreen.Mode.ITEM);
+  }
+  
+  /**
+   * Called from the main game loop to update the screen.
+   */
+  @Override
+  public void tick() {
+    super.tick();
+    if(scrollButton != null) {
+      scrollButton.tick();
+    }
   }
 
   @Override
@@ -220,9 +236,18 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 7, 0xFFFFFF);
   }
   
+  private void setSelectedTab(int index) {
+    tabGroup = index;
+    for(int i = 0; i < TAB_COUNT; i++) {
+      if(tabButtons[i] != null) {
+        tabButtons[i].updateDeity(i + tabGroup * TAB_COUNT);
+      }
+    }
+  }
+  
   private void setSelectedDeity(int index) {
     selected = index;
-    updateMode(Mode.ITEM);
+    updateMode(mode);
   }
   
   protected void updateMode(final DeityScreen.Mode modeIn) {
@@ -377,7 +402,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     private ItemStack item = ItemStack.EMPTY;
 
     public TabButton(final DeityScreen gui, final int index, final ITextComponent title, final int x, final int y) {
-      super(x, y, TAB_WIDTH, TAB_HEIGHT, title, b -> gui.setSelectedDeity(index), (b, m, bx, by) -> gui.renderTooltip(m, b.getMessage(), bx, by));
+      super(x, y, TAB_WIDTH, TAB_HEIGHT, title, b -> gui.setSelectedDeity(((TabButton)b).id), (b, m, bx, by) -> gui.renderTooltip(m, b.getMessage(), bx, by));
       updateDeity(index);
     }
     
@@ -398,13 +423,41 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     
     public void updateDeity(final int deityId) {
       id = deityId;
-      final ResourceLocation rl = DeityScreen.this.deityList.get(deityId).getName();
-      final ResourceLocation altar = new ResourceLocation(rl.getNamespace(), "altar_" + rl.getPath());
-      item = new ItemStack(ForgeRegistries.ITEMS.containsKey(altar) ? ForgeRegistries.ITEMS.getValue(altar) : GFRegistry.PANFLUTE);
+      if(id < DeityScreen.this.deityList.size()) {
+        this.visible = true;
+        this.setMessage(deityList.get(id).getText());
+        final ResourceLocation rl = DeityScreen.this.deityList.get(deityId).getName();
+        final ResourceLocation altar = new ResourceLocation(rl.getNamespace(), "altar_" + rl.getPath());
+        item = new ItemStack(ForgeRegistries.ITEMS.containsKey(altar) ? ForgeRegistries.ITEMS.getValue(altar) : GFRegistry.PANFLUTE);
+      } else {
+        this.visible = false;
+      }
     }
     
     public boolean isSelected() {
       return DeityScreen.this.selected == id;
+    }
+  }
+  
+  protected class TabArrowButton extends Button {
+    
+    private final boolean isLeft;
+
+    public TabArrowButton(final DeityScreen gui, final boolean left, final int x, final int y) {
+      super(x, y, ARROW_WIDTH, ARROW_HEIGHT, StringTextComponent.EMPTY, b -> gui.setSelectedTab(left ? Math.max(0, gui.tabGroup - 1) : Math.min(gui.deityList.size() / TAB_COUNT, gui.tabGroup + 1)));
+      isLeft = left;
+    }
+    
+    @Override
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+      if(this.visible && DeityScreen.this.deityList.size() > TAB_COUNT) {
+        final int xOffset = isLeft ? ARROW_WIDTH : 0;
+        final int yOffset = 128 + (isHovered ? ARROW_HEIGHT : 0);
+        // draw button background
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        DeityScreen.this.getMinecraft().getTextureManager().bindTexture(TABS_TEXTURE);
+        this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
+      }
     }
   }
   

@@ -196,7 +196,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
       final StatueTileEntity teStatue = (StatueTileEntity)te;
       // handle deity statue interaction
       final IDeity teDeity = teStatue.getDeity();
-      if(teDeity != Deity.EMPTY && teDeity.getName().equals(deity)) {
+      if(teDeity != Deity.EMPTY && teDeity.getName().equals(deity) && !teDeity.isHidden()) {
         playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
           FavorLevel level = f.getFavor(teDeity);
           if(FavorManager.onGiveItem(teStatue, teDeity, playerIn, level, stack)) {
