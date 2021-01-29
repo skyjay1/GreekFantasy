@@ -72,7 +72,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private static final int HOSTILE_LEFT = ENTITY_LEFT;
   private static final int HOSTILE_TOP = ENTITY_TOP;
   private static final int HOSTILE_COUNT_Y = 6;
-  private static final int HOSTILE_WIDTH = ENTITY_WIDTH;
+  private static final int HOSTILE_WIDTH = ENTITY_WIDTH - 9;
   
   private static final int SCROLL_LEFT = 174;
   private static final int SCROLL_TOP = 22;
@@ -444,7 +444,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     private final ITextComponent entityValue;
     
     public HostileButton(final DeityScreen gui, final EntityType<?> entityIn, final IDeity deityIn, final int minLevel, final int maxLevel, final int x, final int y) {
-      super(x, y, ENTITY_WIDTH, 18, StringTextComponent.EMPTY, b -> {});
+      super(x, y, HOSTILE_WIDTH, 18, StringTextComponent.EMPTY, b -> {});
       deity = deityIn;
       minValue = minLevel;
       maxValue = maxLevel;
@@ -478,9 +478,9 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       } else {
         this.visible = true;
         this.y = DeityScreen.this.guiTop + DeityScreen.HOSTILE_TOP + 2 * DeityScreen.this.font.FONT_HEIGHT * (index - startIndex);
-        if(rightAlign < 0) {
-          rightAlign = HOSTILE_WIDTH - DeityScreen.this.font.getStringWidth(entityValue.getString());
-        }
+//        if(rightAlign < 0) {
+//          rightAlign = HOSTILE_WIDTH - DeityScreen.this.font.getStringWidth(entityValue.getString());
+//        }
         this.x = DeityScreen.this.guiLeft + DeityScreen.HOSTILE_LEFT;
       }
     }
