@@ -69,7 +69,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private static final int ENTITY_COUNT_Y = 13;
   private static final int ENTITY_WIDTH = 90;
   
-  private static final int HOSTILE_LEFT = ENTITY_LEFT;
+  private static final int HOSTILE_LEFT = ENTITY_LEFT + 9;
   private static final int HOSTILE_TOP = ENTITY_TOP;
   private static final int HOSTILE_COUNT_Y = 6;
   private static final int HOSTILE_WIDTH = ENTITY_WIDTH - 9;
@@ -185,9 +185,9 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
           updateScroll(b.getScrollAmount());
         }));
     // add mode buttons
-    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP, new TranslationTextComponent("gui.mirror.item"), DeityScreen.Mode.ITEM));
-    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + BTN_HEIGHT, new TranslationTextComponent("gui.mirror.entity"), DeityScreen.Mode.ENTITY));
-    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + (BTN_HEIGHT) * 2, new TranslationTextComponent("gui.mirror.hostile"), DeityScreen.Mode.HOSTILE));
+    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP, "gui.mirror.item", DeityScreen.Mode.ITEM));
+    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + BTN_HEIGHT, "gui.mirror.entity", DeityScreen.Mode.ENTITY));
+    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + (BTN_HEIGHT) * 2, "gui.mirror.hostile", DeityScreen.Mode.HOSTILE));
     // set selected deity now that things are nonnull
     setSelectedTab(0);
     setSelectedDeity(0);
@@ -219,7 +219,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     // draw "favor modifiers" text
     String subtitle = "favor.favor_modifiers";
     if(mode == DeityScreen.Mode.HOSTILE) {
-      subtitle = "gui.mirror.hostile.tooltip";
+      subtitle = "gui.mirror.hostility_levels";
     } 
     this.font.func_243248_b(matrixStack, new TranslationTextComponent(subtitle).mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
         guiLeft + (ITEM_LEFT + ITEM_WIDTH * 2) / 2, guiTop + 14, 0xFFFFFF);
@@ -456,8 +456,8 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     @Override
     public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
-        DeityScreen.this.font.func_243248_b(matrixStack, entityName, this.x + 9, this.y, 0xFFFFFF);
-        DeityScreen.this.font.func_243248_b(matrixStack, entityValue, this.x + 18, this.y + DeityScreen.this.font.FONT_HEIGHT, 0xFFFFFF);
+        DeityScreen.this.font.func_243248_b(matrixStack, entityName, this.x, this.y, 0xFFFFFF);
+        DeityScreen.this.font.func_243248_b(matrixStack, entityValue, this.x + 9, this.y + DeityScreen.this.font.FONT_HEIGHT, 0xFFFFFF);
       }
     }
     
@@ -559,10 +559,12 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   protected class ModeButton extends Button {
     
     private final DeityScreen.Mode screenMode;
+    private final ITextComponent tooltip;
    
-    public ModeButton(final DeityScreen screenIn, final int x, final int y, final ITextComponent title, final DeityScreen.Mode modeIn) {
-      super(x, y, BTN_WIDTH, BTN_HEIGHT, title, b -> screenIn.updateMode(modeIn));
+    public ModeButton(final DeityScreen screenIn, final int x, final int y, final String translationKey, final DeityScreen.Mode modeIn) {
+      super(x, y, BTN_WIDTH, BTN_HEIGHT, new TranslationTextComponent(translationKey), b -> screenIn.updateMode(modeIn), (b, m, bx, by) -> screenIn.renderTooltip(m, ((ModeButton)b).tooltip, bx, by));
       screenMode = modeIn;
+      tooltip = new TranslationTextComponent(translationKey.concat(".tooltip"));
     }
 
     public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {

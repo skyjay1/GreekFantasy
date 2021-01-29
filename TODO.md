@@ -12,7 +12,6 @@ __Key:__
 - _ Structure gen is jenky
 - _ Config option for winged sandals to enable flight?
 - _ Deity doesn't set items from JSON correctly
-- X Altar block loot tables
 - _ Altar block textures
 - _ Altar block slabs
 - _ Add `enabled` attribute to wiki
