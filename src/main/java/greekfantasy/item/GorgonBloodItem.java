@@ -65,7 +65,7 @@ public class GorgonBloodItem extends Item {
     }
     
     if (item.isEmpty())
-      return new ItemStack(Items.GLASS_BOTTLE); 
+      return this.getContainerItem(item); 
     if (entity instanceof PlayerEntity && !((PlayerEntity)entity).abilities.isCreativeMode) {
       ItemStack containerStack = this.getContainerItem(item);
       PlayerEntity player = (PlayerEntity)entity;

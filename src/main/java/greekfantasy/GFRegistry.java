@@ -609,12 +609,8 @@ public final class GFRegistry {
           .setRegistryName(MODID, "boar_tusk"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "golden_bridle"),
-        new Item(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
+        new AmbrosiaItem(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
             .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC)) {
-          @Override
-          public ItemStack getContainerItem(ItemStack itemStack) { return new ItemStack(GFRegistry.HORN); }
-          @Override
-          public boolean hasContainerItem(ItemStack stack) { return true; }
         }.setRegistryName(MODID, "ambrosia"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "magic_feather"),
