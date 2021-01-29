@@ -1,5 +1,5 @@
 {
   "name": "greekfantasy:artemis",
-  "hidden": true,
+  "enabled": false,
   "female": true
 }

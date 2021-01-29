@@ -1,6 +1,6 @@
 {
   "name": "greekfantasy:hades",
-  "hidden": false,
+  "enabled": true,
   "female": false,
   "left_hand": {
   	"id": "minecraft:skeleton_skull",

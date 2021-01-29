@@ -21,12 +21,12 @@ import net.minecraft.util.ResourceLocation;
 public class Deity implements IDeity {
   
   public static final Deity EMPTY = new Deity(
-      new ResourceLocation(GreekFantasy.MODID, "null"), true, false, ItemStack.EMPTY, ItemStack.EMPTY, 
+      new ResourceLocation(GreekFantasy.MODID, "null"), false, false, ItemStack.EMPTY, ItemStack.EMPTY, 
       Arrays.asList(), Arrays.asList(), Maps.newHashMap(), Maps.newHashMap());
   
   public static final Codec<Deity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       ResourceLocation.CODEC.fieldOf("name").forGetter(Deity::getName),
-      Codec.BOOL.optionalFieldOf("hidden", false).forGetter(Deity::isHidden),
+      Codec.BOOL.optionalFieldOf("enabled", false).forGetter(Deity::isEnabled),
       Codec.BOOL.optionalFieldOf("female", false).forGetter(Deity::isFemale),
       ItemStack.CODEC.optionalFieldOf("left_hand", ItemStack.EMPTY).forGetter(Deity::getLeftHandItem),
       ItemStack.CODEC.optionalFieldOf("right_hand", ItemStack.EMPTY).forGetter(Deity::getRightHandItem),
@@ -44,14 +44,16 @@ public class Deity implements IDeity {
   public static final ResourceLocation DEMETER = new ResourceLocation(GreekFantasy.MODID, "demeter");
   public static final ResourceLocation DIONYSUS = new ResourceLocation(GreekFantasy.MODID, "dionysus");
   public static final ResourceLocation HADES = new ResourceLocation(GreekFantasy.MODID, "hades");
-  public static final ResourceLocation HEPHAESTUS = new ResourceLocation(GreekFantasy.MODID, "hephaestus");
+  public static final ResourceLocation HERA = new ResourceLocation(GreekFantasy.MODID, "hera");
   public static final ResourceLocation HERMES = new ResourceLocation(GreekFantasy.MODID, "hermes");
+  public static final ResourceLocation HESTIA = new ResourceLocation(GreekFantasy.MODID, "hestia");
+  public static final ResourceLocation HEPHAESTUS = new ResourceLocation(GreekFantasy.MODID, "hephaestus");
   public static final ResourceLocation POSEIDON = new ResourceLocation(GreekFantasy.MODID, "poseidon");
   public static final ResourceLocation ZEUS = new ResourceLocation(GreekFantasy.MODID, "zeus");
   
   private final ResourceLocation name;
   private final ResourceLocation texture;
-  private final boolean isHidden;
+  private final boolean isEnabled;
   private final boolean isFemale;
   private final ItemStack leftHandItem;
   private final ItemStack rightHandItem;
@@ -60,7 +62,7 @@ public class Deity implements IDeity {
   private final List<FavorEffect> favorEffects;
   private final List<TriggeredFavorEffect> triggeredFavorEffects;
 
-  private Deity(final ResourceLocation lName, final boolean lIsHidden, final boolean lIsFemale, 
+  private Deity(final ResourceLocation lName, final boolean lIsEnabled, final boolean lIsFemale, 
       final ItemStack lLeftHandItem, final ItemStack lRightHandItem, 
       final List<FavorEffect> lFavorEffects, final List<TriggeredFavorEffect> lTriggeredFavorEffects, 
       final Map<ResourceLocation, Integer> lKillFavorMap, final Map<ResourceLocation, Integer> lItemFavorMap) {
@@ -71,7 +73,7 @@ public class Deity implements IDeity {
     favorEffects = ImmutableList.copyOf(lFavorEffects);
     triggeredFavorEffects = ImmutableList.copyOf(lTriggeredFavorEffects);
     isFemale = lIsFemale;
-    isHidden = lIsHidden;
+    isEnabled = lIsEnabled;
     leftHandItem = lLeftHandItem;
     rightHandItem = lRightHandItem;
   }
@@ -83,7 +85,7 @@ public class Deity implements IDeity {
   public ResourceLocation getTexture() { return texture; }
 
   @Override
-  public boolean isHidden() { return isHidden; }
+  public boolean isEnabled() { return isEnabled; }
   
   @Override
   public boolean isFemale() { return isFemale; }
@@ -112,7 +114,7 @@ public class Deity implements IDeity {
     b.append(" name[").append(name.toString()).append("]");
     b.append(" leftHand[").append(leftHandItem.toString()).append("]");
     b.append(" rightHand[").append(rightHandItem.toString()).append("]");
-    b.append(" hidden[").append(isHidden).append("]");
+    b.append(" enabled[").append(isEnabled).append("]");
     b.append(" female[").append(isFemale).append("]");
 //    b.append("\nfavorEffects[").append(favorEffects.toString()).append("]");
 //    b.append("\ntriggeredFavorEffects[").append(triggeredFavorEffects.toString()).append("]");

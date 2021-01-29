@@ -106,9 +106,9 @@ public class ScrollButton<T extends Screen> extends Button {
   }
   
   public void tick() {
-    if(++scrollTicks % updateInterval == 0) {
-      scrollEndHandler.accept(this);
-    }
+//    if(++scrollTicks % updateInterval == 0) {
+//      scrollEndHandler.accept(this);
+//    }
   }
   
   public void resetTick() {

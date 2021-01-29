@@ -44,16 +44,6 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
   FavorLevel getFavor(final ResourceLocation deity);
   
   /**
-   * Helper method to update favor info for the given IDeity
-   * @param deity the IDeity
-   * @param favorLevel the new FavorLevel
-   * @see #setFavor(ResourceLocation, FavorLevel)
-   */
-  default void setFavor(final IDeity deity, final FavorLevel favorLevel) {
-    setFavor(deity.getName(), favorLevel);
-  }
-  
-  /**
    * Updates the favor info for the given diety
    * @param deity the IDeity
    * @param favorLevel the new FavorLevel
@@ -67,9 +57,13 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
    * Performs an action for each IDeity/FavorLevel pair that is registered
    * @param action the action to perform
    */
-  default void forEach(final BiConsumer<Deity, FavorLevel> action) {
+  default void forEach(final BiConsumer<Deity, FavorLevel> action, final boolean enabledOnly) {
     for(final Entry<ResourceLocation, FavorLevel> e : getAllFavor().entrySet()) {
-      GreekFantasy.PROXY.DEITY.get(e.getKey()).ifPresent(d -> action.accept(d, e.getValue()));
+      GreekFantasy.PROXY.DEITY.get(e.getKey()).ifPresent(d -> {
+        if(d.isEnabled() || !enabledOnly) {
+          action.accept(d, e.getValue());
+        }
+      });
     }
   }
   

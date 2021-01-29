@@ -110,8 +110,8 @@ public interface IDeity {
     return TriggeredFavorEffect.EMPTY;
   }
   
-  /** @return true if the deity should not be shown in-game **/
-  public boolean isHidden();
+  /** @return true if the deity should be shown in-game **/
+  public boolean isEnabled();
   
   /** @return true if the statue model is female **/
   public boolean isFemale();

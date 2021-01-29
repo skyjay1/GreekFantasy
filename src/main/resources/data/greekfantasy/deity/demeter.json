@@ -1,5 +1,5 @@
 {
   "name": "greekfantasy:demeter",
-  "hidden": true,
+  "enabled": false,
   "female": true
 }

@@ -40,7 +40,7 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   protected ModelRenderer bipedLeftLegwear;
   protected ModelRenderer bipedRightLegwear;
   protected ModelRenderer bipedBodyWear;
-  protected ModelRenderer bipedBodyChestWear;
+//  protected ModelRenderer bipedBodyChestWear;
   
   private static final EnumMap<ModelPart, Collection<ModelRenderer>> ROTATION_MAP = new EnumMap<>(ModelPart.class);
   
@@ -118,13 +118,13 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
     this.bipedBodyWear = new ModelRenderer(this, 16, 32);
     this.bipedBodyWear.addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSizeIn + 0.25F);
     this.bipedBodyWear.setRotationPoint(0.0F, 0.0F + yOffsetIn, 0.0F);
-    this.bipedBodyChest = new ModelRenderer(this);
-    this.bipedBodyChest.setRotationPoint(0.0F, 1.0F, -2.0F);
-    this.bipedBodyChest.rotateAngleX = -0.2182F;
-    this.bipedBodyChest.setTextureOffset(19, 20).addBox(-4.01F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, modelSizeIn + 0.25F);
+//    this.bipedBodyChestWear = new ModelRenderer(this);
+//    this.bipedBodyChestWear.setRotationPoint(0.0F, 1.0F, -2.0F);
+//    this.bipedBodyChestWear.rotateAngleX = -0.2182F;
+//    this.bipedBodyChestWear.setTextureOffset(19, 36).addBox(-4.01F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, modelSizeIn + 0.25F);
     
     ROTATION_MAP.put(ModelPart.HEAD, ImmutableList.of(this.bipedHead, this.bipedHeadwear));
-    ROTATION_MAP.put(ModelPart.BODY, ImmutableList.of(this.bipedBody, this.bipedBodyChest, this.bipedBodyWear, this.bipedBodyChestWear));
+    ROTATION_MAP.put(ModelPart.BODY, ImmutableList.of(this.bipedBody, this.bipedBodyChest, this.bipedBodyWear/*, this.bipedBodyChestWear*/));
     ROTATION_MAP.put(ModelPart.LEFT_ARM, ImmutableList.of(this.bipedLeftArm, this.bipedLeftArmSlim, this.bipedLeftArmwear, this.bipedLeftArmwearSlim));
     ROTATION_MAP.put(ModelPart.RIGHT_ARM, ImmutableList.of(this.bipedRightArm, this.bipedRightArmSlim, this.bipedRightArmwear, this.bipedRightArmwearSlim));
     ROTATION_MAP.put(ModelPart.LEFT_LEG, ImmutableList.of(this.bipedLeftLeg, this.bipedLeftLegwear));
@@ -132,7 +132,7 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   }
   
   protected Iterable<ModelRenderer> getUpperParts() { 
-    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedBodyChest, this.bipedHeadwear, this.bipedBodyWear, this.bipedBodyChestWear); 
+    return ImmutableList.of(this.bipedHead, this.bipedBody, this.bipedBodyChest, this.bipedHeadwear, this.bipedBodyWear/*, this.bipedBodyChestWear*/); 
   }
   
   protected Iterable<ModelRenderer> getLowerParts() { 

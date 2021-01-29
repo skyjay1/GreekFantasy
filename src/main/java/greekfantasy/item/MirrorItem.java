@@ -25,10 +25,8 @@ public class MirrorItem extends Item {
     if(!world.isRemote() && playerIn instanceof ServerPlayerEntity) {
       if(playerIn.isSneaking()) {
         // print capability values on sneak-click
-        playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> GreekFantasy.PROXY.DEITY.getValues()
-            .forEach(oDeity -> oDeity.ifPresent(d -> {
-              if(!d.isHidden()) f.getFavor(d).sendStatusMessage(playerIn, d);
-            })));
+        playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> GreekFantasy.PROXY.getDeityCollection(true)
+            .forEach(d -> f.getFavor(d).sendStatusMessage(playerIn, d)));
         playerIn.getCooldownTracker().setCooldown(item.getItem(), 20);
       } else {
         // open capability gui on regular click

@@ -295,8 +295,12 @@ public final class GFRegistry {
   public static final Block ALTAR_HADES = null;
   @ObjectHolder("altar_hephaestus")
   public static final Block ALTAR_HEPHAESTUS = null;
+  @ObjectHolder("altar_hera")
+  public static final Block ALTAR_HERA = null;
   @ObjectHolder("altar_hermes")
   public static final Block ALTAR_HERMES = null;
+  @ObjectHolder("altar_hestia")
+  public static final Block ALTAR_HESTIA = null;
   @ObjectHolder("altar_poseidon")
   public static final Block ALTAR_POSEIDON = null;
   @ObjectHolder("altar_zeus")
@@ -412,7 +416,8 @@ public final class GFRegistry {
         TileEntityType.Builder.create(StatueTileEntity::new, 
             LIMESTONE_STATUE, MARBLE_STATUE, PALLADIUM, 
             ALTAR_APHRODITE, ALTAR_APOLLO, ALTAR_ARES, ALTAR_ARTEMIS, ALTAR_ATHENA, ALTAR_DEMETER,
-            ALTAR_DIONYSUS, ALTAR_HADES, ALTAR_HEPHAESTUS, ALTAR_HERMES, ALTAR_POSEIDON, ALTAR_ZEUS)
+            ALTAR_DIONYSUS, ALTAR_HADES, ALTAR_HEPHAESTUS, ALTAR_HERA, ALTAR_HERMES, ALTAR_HESTIA,
+            ALTAR_POSEIDON, ALTAR_ZEUS)
         .build(null).setRegistryName(MODID, "statue_te")
     );
     event.getRegistry().register(
@@ -517,8 +522,12 @@ public final class GFRegistry {
         .setRegistryName(MODID, "altar_hades"),
       makeDeityStatue("hephaestus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
         .setRegistryName(MODID, "altar_hephaestus"),
+      makeDeityStatue("hera", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_hera"),
       makeDeityStatue("hermes", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
         .setRegistryName(MODID, "altar_hermes"),
+      makeDeityStatue("hestia", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+        .setRegistryName(MODID, "altar_hestia"),
       makeDeityStatue("poseidon", StatueBlock.StatueMaterial.PRISMARINE, StatuePoses.ZEUS_POSE)
         .setRegistryName(MODID, "altar_poseidon"),
       makeDeityStatue("zeus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
@@ -636,7 +645,8 @@ public final class GFRegistry {
         MARBLE, MARBLE_SLAB, MARBLE_STAIRS, POLISHED_MARBLE, POLISHED_MARBLE_SLAB, 
         POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, PALLADIUM, 
         ALTAR_APHRODITE, ALTAR_APOLLO, ALTAR_ARES, ALTAR_ARTEMIS, ALTAR_ATHENA, ALTAR_DEMETER,
-        ALTAR_DIONYSUS, ALTAR_HADES, ALTAR_HEPHAESTUS, ALTAR_HERMES, ALTAR_POSEIDON, ALTAR_ZEUS,
+        ALTAR_DIONYSUS, ALTAR_HADES, ALTAR_HEPHAESTUS, ALTAR_HERA, ALTAR_HERMES, ALTAR_HESTIA,
+        ALTAR_POSEIDON, ALTAR_ZEUS,
         LIMESTONE, LIMESTONE_SLAB, LIMESTONE_STAIRS, POLISHED_LIMESTONE, POLISHED_LIMESTONE_SLAB, 
         POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, LIMESTONE_STATUE, ICHOR_INFUSED_BLOCK,
         TERRACOTTA_VASE, WHITE_TERRACOTTA_VASE, ORANGE_TERRACOTTA_VASE, MAGENTA_TERRACOTTA_VASE, 

@@ -1,5 +1,5 @@
 {
   "name": "greekfantasy:aphrodite",
-  "hidden": true,
+  "enabled": false,
   "female": true
 }

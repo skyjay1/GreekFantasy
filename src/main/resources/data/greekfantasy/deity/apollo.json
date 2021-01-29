@@ -1,5 +1,5 @@
 {
   "name": "greekfantasy:apollo",
-  "hidden": true,
+  "enabled": false,
   "female": false
 }

@@ -74,7 +74,7 @@ public class FavorManager {
     final long time = player.getEntityWorld().getGameTime() + player.getEntityId() * 3;
     // decrease all favor 
     if(player.ticksExisted > 10 && GreekFantasy.CONFIG.doesFavorDecrease() && time % GreekFantasy.CONFIG.getFavorDecreaseInterval() == 0) {
-      favor.forEach((d, f) -> f.depleteFavor(player, d, 1, Source.PASSIVE));
+      favor.forEach((d, f) -> f.depleteFavor(player, d, 1, Source.PASSIVE), true);
     }
     // every few seconds, attempt to perform a favor effect
     if(!player.isCreative() && !player.isSpectator() && player.ticksExisted > 10 && time % 50 == 0 && favor.hasNoEffectCooldown(time)) {
@@ -89,7 +89,7 @@ public class FavorManager {
       for(final Entry<ResourceLocation, FavorLevel> entry : entryList) {
         deity = GreekFantasy.PROXY.DEITY.get(entry.getKey());
         info = entry.getValue();
-        if(deity.isPresent() && player.getRNG().nextDouble() * 0.7D < info.getPercentFavor()) {
+        if(deity.isPresent() && deity.get().isEnabled() && player.getRNG().nextDouble() * 0.7D < info.getPercentFavor()) {
           // perform an effect, set the timestamp and cooldown, and exit the loop
           long cooldown = FavorEffectManager.onFavorEffect(player.getEntityWorld(), player, deity.get(), favor, info);
           if(cooldown > 0) {
@@ -98,9 +98,9 @@ public class FavorManager {
           }
         }
       }
+      // if no effect was performed, set a cooldown
+      favor.setEffectTime(time, 200);
     }
-    // 
-    favor.setEffectTime(time, 200);
     return;
   }
   
@@ -116,28 +116,25 @@ public class FavorManager {
       final PlayerEntity playerIn, final IFavor favor) {
     final long time = playerIn.getEntityWorld().getGameTime() + playerIn.getEntityId() * 3;
     if(favor.hasNoTriggeredCooldown(time)) {
-      final List<Optional<Deity>> deityList = Lists.newArrayList(GreekFantasy.PROXY.DEITY.getValues());
+      final List<IDeity> deityList = Lists.newArrayList(GreekFantasy.PROXY.getDeityCollection(true));
       // order by which deity has the most favor
       //// deityList.sort((o1, o2) -> favor.getFavor(o1.orElse(Deity.EMPTY)).compareToAbs(favor.getFavor(o2.orElse(Deity.EMPTY))));
       // order randomly
       Collections.shuffle(deityList, playerIn.getRNG());
-      IDeity deity;
       FavorLevel level;
       // loop through each deity until one of them can perform an effect
-      for(final Optional<Deity> oDeity : deityList) {
-        if(oDeity.isPresent()) {
-          deity = oDeity.get();
-          level = favor.getFavor(deity);
-          // perform an effect, set the timestamp and cooldown, and exit the loop
-          long cooldown = FavorEffectManager.onTriggeredFavorEffect(type, data, playerIn.getEntityWorld(), playerIn, deity, favor, level);
-          if(cooldown > 0) {
-            favor.setTriggeredTime(time, cooldown);
-            return true;
-          }
+      for(final IDeity deity : deityList) {
+        level = favor.getFavor(deity);
+        // perform an effect, set the timestamp and cooldown, and exit the loop
+        long cooldown = FavorEffectManager.onTriggeredFavorEffect(type, data, playerIn.getEntityWorld(), playerIn, deity, favor, level);
+        if(cooldown > 0) {
+          favor.setTriggeredTime(time, cooldown);
+          return true;
         }
       }
+      // if no effect was performed, set a cooldown
+      favor.setTriggeredTime(time, 100);
     }
-    favor.setTriggeredTime(time, 100);
     return false;
   }
   
@@ -148,19 +145,13 @@ public class FavorManager {
    * @param favor the player's favor (from capability)
    */
   public static void onAttackEntity(final LivingEntity entity, final PlayerEntity playerIn, final IFavor favor) {
-    IDeity deity;
-    final List<Optional<Deity>> deityList = Lists.newArrayList(GreekFantasy.PROXY.DEITY.getValues());
-    // order by which deity has the most favor
-    deityList.sort((o1, o2) -> favor.getFavor(o1.orElse(Deity.EMPTY)).compareToAbs(favor.getFavor(o2.orElse(Deity.EMPTY))));
+    final List<IDeity> deityList = Lists.newArrayList(GreekFantasy.PROXY.getDeityCollection(true));
     // change favor amounts for each deity
-    for(final Optional<Deity> oDeity : deityList) {
-      if(oDeity.isPresent()) {
-        deity = oDeity.get();
-        // attempt to modify the player's favor with this deity
-        final long favorModifier = deity.getKillFavorModifier(entity.getType()) / 8;
-        if(favorModifier != 0) {
-          favor.getFavor(deity).addFavor(playerIn, deity, favorModifier, Source.ATTACK_ENTITY);
-        }
+    for(final IDeity deity : deityList) {
+      // attempt to modify the player's favor with this deity
+      final long favorModifier = deity.getKillFavorModifier(entity.getType()) / 8;
+      if(favorModifier != 0) {
+        favor.getFavor(deity).addFavor(playerIn, deity, favorModifier, Source.ATTACK_ENTITY);
       }
     }
     // attempt to trigger PLAYER_HURT_ENTITY favor effect
@@ -174,14 +165,10 @@ public class FavorManager {
    * @param favor the player's favor (from capability)
    */
   public static void onKillEntity(final LivingEntity entity, final PlayerEntity playerIn, final IFavor favor) {
-    IDeity deity;
-    for(final Optional<Deity> oDeity : GreekFantasy.PROXY.DEITY.getValues()) {
-      if(oDeity.isPresent()) {
-        deity = oDeity.get();
-        final long favorModifier = deity.getKillFavorModifier(entity.getType());
-        if(favorModifier != 0) {
-          favor.getFavor(deity).addFavor(playerIn, deity, favorModifier, Source.KILL_ENTITY);
-        }
+    for(final IDeity deity : GreekFantasy.PROXY.getDeityCollection(true)) {
+      final long favorModifier = deity.getKillFavorModifier(entity.getType());
+      if(favorModifier != 0) {
+        favor.getFavor(deity).addFavor(playerIn, deity, favorModifier, Source.KILL_ENTITY);
       }
     }
     // attempt to trigger PLAYER_KILLED_ENTITY favor effect
@@ -209,4 +196,6 @@ public class FavorManager {
     }
     return false;
   }
+  
+  
 }

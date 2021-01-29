@@ -1,9 +1,13 @@
 package greekfantasy.proxy;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import greekfantasy.GreekFantasy;
 import greekfantasy.events.CommonForgeEventHandler;
 import greekfantasy.favor.Deity;
 import greekfantasy.favor.FavorRangeTarget;
+import greekfantasy.favor.IDeity;
 import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SFavorRangeTargetPacket;
 import greekfantasy.network.SPanfluteSongPacket;
@@ -35,7 +39,22 @@ public class Proxy {
     GreekFantasy.LOGGER.debug("registerEventHandlers");
     MinecraftForge.EVENT_BUS.register(CommonForgeEventHandler.class);
   }
+  
+  /**
+   * @param enabledOnly whether to only return enabled Deity
+   * @return the collection of IDeity objects (may be empty)
+   */
+  public Collection<IDeity> getDeityCollection(final boolean enabledOnly) {
+    final Collection<IDeity> collection = new ArrayList<>();
+    GreekFantasy.PROXY.DEITY.getValues().forEach(d -> {
+      if(d.isPresent() && (d.get().isEnabled() || !enabledOnly)) {
+        collection.add(d.get());
+      }
+    });
+    return collection;
+  }
 
+  /** @return the favor range target map **/
   public FavorRangeTarget getFavorRangeTarget() {
     return FAVOR_RANGE_TARGET.get(FavorRangeTarget.NAME).orElse(FavorRangeTarget.EMPTY);
   }
