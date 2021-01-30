@@ -39,23 +39,6 @@ public class Deity implements IDeity {
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).optionalFieldOf("kill_favor_map", Maps.newHashMap()).forGetter(Deity::getKillFavorModifiers),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).optionalFieldOf("item_favor_map", Maps.newHashMap()).forGetter(Deity::getItemFavorModifiers)
     ).apply(instance, Deity::new));
-
-  public static final ResourceLocation APHRODITE = new ResourceLocation(GreekFantasy.MODID, "aphrodite");
-  public static final ResourceLocation APOLLO = new ResourceLocation(GreekFantasy.MODID, "apollo");
-  public static final ResourceLocation ARES = new ResourceLocation(GreekFantasy.MODID, "ares");
-  public static final ResourceLocation ARTEMIS = new ResourceLocation(GreekFantasy.MODID, "artemis");
-  public static final ResourceLocation ATHENA = new ResourceLocation(GreekFantasy.MODID, "athena");
-  public static final ResourceLocation DEMETER = new ResourceLocation(GreekFantasy.MODID, "demeter");
-  public static final ResourceLocation DIONYSUS = new ResourceLocation(GreekFantasy.MODID, "dionysus");
-  public static final ResourceLocation HADES = new ResourceLocation(GreekFantasy.MODID, "hades");
-  public static final ResourceLocation HECATE = new ResourceLocation(GreekFantasy.MODID, "hecate");
-  public static final ResourceLocation HERA = new ResourceLocation(GreekFantasy.MODID, "hera");
-  public static final ResourceLocation HERMES = new ResourceLocation(GreekFantasy.MODID, "hermes");
-  public static final ResourceLocation HESTIA = new ResourceLocation(GreekFantasy.MODID, "hestia");
-  public static final ResourceLocation HEPHAESTUS = new ResourceLocation(GreekFantasy.MODID, "hephaestus");
-  public static final ResourceLocation PERSEPHONE = new ResourceLocation(GreekFantasy.MODID, "persephone");
-  public static final ResourceLocation POSEIDON = new ResourceLocation(GreekFantasy.MODID, "poseidon");
-  public static final ResourceLocation ZEUS = new ResourceLocation(GreekFantasy.MODID, "zeus");
   
   private final ResourceLocation name;
   private final ResourceLocation texture;
@@ -88,7 +71,7 @@ public class Deity implements IDeity {
     rightHandItem = lRightHandItem;
     base = lBase;
     overlayString = lOverlay;
-    overlay = makeOverlay();
+    overlay = makeOverlay(lOverlay);
   }
   
   @Override

@@ -143,8 +143,7 @@ public interface IDeity {
   
   /** @return the overlay texture location, or null if none should be used **/
   @Nullable
-  public default ResourceLocation makeOverlay() {
-    final String overlay = getOverlayString();
+  public default ResourceLocation makeOverlay(final String overlay) {
     if("none".equals(overlay)) {
       return null;
     }
