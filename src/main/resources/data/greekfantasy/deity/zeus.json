@@ -13,26 +13,6 @@
   "effects": [
   	{
   	  "potion": {
-  	  	"Potion": "minecraft:haste",
-  	  	"Amplifier": 0,
-  	  	"Duration": 1100
-  	  },
-  	  "minlevel": 1,
-  	  "maxlevel": 4,
-  	  "mincooldown": 6500
-  	},
-  	{
-  	  "potion": {
-  	  	"Potion": "minecraft:regeneration",
-  	  	"Amplifier": 0,
-  	  	"Duration": 600
-  	  },
-  	  "minlevel": 3,
-  	  "maxlevel": 6,
-  	  "mincooldown": 6600
-  	},
-  	{
-  	  "potion": {
   	  	"Potion": "minecraft:strength",
   	  	"Amplifier": 1,
   	  	"Duration": 900

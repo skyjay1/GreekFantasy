@@ -167,6 +167,7 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
         b.renderToolTip(matrixStack, mouseX, mouseY);
       }
     }
+    this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
   }
   
   @Override

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import greekfantasy.util.BiomeWhitelistConfig;
 import net.minecraft.entity.EntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.Dimension;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -94,6 +95,7 @@ public class GFConfig {
   public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
   public final ForgeConfigSpec.BooleanValue GERYON_RESISTANCE;
   public final ForgeConfigSpec.BooleanValue SATYR_LIGHTS_CAMPFIRES;
+  private final ForgeConfigSpec.ConfigValue<? extends String> SATYR_SONG;
   public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
   private final ForgeConfigSpec.BooleanValue WHIRL_INVULNERABLE;
   private final ForgeConfigSpec.BooleanValue DRYAD_ANGRY_ON_HARVEST;
@@ -105,6 +107,7 @@ public class GFConfig {
   private boolean dryadAngryOnHarvest;
   private int dryadAngryRange;
   private int spartiLifespan;
+  private ResourceLocation satyrSong;
   private boolean nerfStunning;
   private boolean nerfParalysis;
   
@@ -251,6 +254,8 @@ public class GFConfig {
         .define("geryon_resistance", true);
     SATYR_LIGHTS_CAMPFIRES = builder.comment("Whether the Satyr can light unlit campfires")
         .define("satyr_lights_campfires", true);
+    SATYR_SONG = builder.comment("The song played by the Satyr while dancing")
+        .define("satyr_song", GreekFantasy.MODID + ":greensleeves");
     SHADE_PLAYER_ONLY = builder.comment("Whether shades that spawn when a player dies can only be killed by that player")
         .define("shade_player_only", true);
     SPARTI_LIFESPAN = builder.comment("Number of seconds until the Sparti begins taking damage")
@@ -393,6 +398,7 @@ public class GFConfig {
     dryadAngryRange = DRYAD_ANGRY_RANGE.get();
     whirlInvulnerable = WHIRL_INVULNERABLE.get();
     spartiLifespan = SPARTI_LIFESPAN.get();
+    satyrSong = new ResourceLocation(SATYR_SONG.get());
     nerfStunning = NERF_STUNNING.get();
     nerfParalysis = NERF_PARALYSIS.get();
     // palladium
@@ -432,6 +438,7 @@ public class GFConfig {
   public boolean isSwinePotionEnabled() { return swinePotion; }
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
   public int getSatyrShamanChance() { return satyrShamanChance; }
+  public ResourceLocation getSatyrSong() { return satyrSong; }
   public double getGorgonMedusaChance() { return gorgonMedusaChance; }
   public int getLightningMedusaChance() { return lightningMedusaChance; }
   public int getElpisSpawnChance() { return elpisSpawnChance; }

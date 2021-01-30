@@ -66,7 +66,6 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   
   private static final Direction[] HORIZONTALS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
 
-  private static final ResourceLocation DANCING_SONG = new ResourceLocation(GreekFantasy.MODID, "greensleeves");
   private static final ResourceLocation SUMMONING_SONG = new ResourceLocation(GreekFantasy.MODID, "sarias_song");
 
   // NONE, DANCING, and SUMMONING are values for DATA_STATE
@@ -145,7 +144,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       if(isSummoning()) {
         PanfluteMusicManager.playMusic(this, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
       } else if(isDancing()) {
-        PanfluteMusicManager.playMusic(this, DANCING_SONG, world.getGameTime(), 0.84F, 0.28F);
+        PanfluteMusicManager.playMusic(this, GreekFantasy.CONFIG.getSatyrSong(), world.getGameTime(), 0.84F, 0.28F);
       }
     } else {
       // anger timer
@@ -467,7 +466,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       super.tick();
       if(this.dancingTime++ < maxDancingTime && this.travelTime++ < maxTravelTime) {         
         // if we're close to the targetPos, update targetPos and path
-        if(isNearTarget(1.2D)) {
+        if(isNearTarget(1.26D)) {
           this.updateTarget();
           SatyrEntity.this.jump();
           SatyrEntity.this.getNavigator().tryMoveToXYZ(targetPos.get().x, targetPos.get().y, targetPos.get().z, moveSpeed);
