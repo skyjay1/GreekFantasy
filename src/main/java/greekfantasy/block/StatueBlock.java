@@ -316,6 +316,16 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     public byte getId() { return (byte) this.ordinal(); }
     
     public static StatueMaterial getById(final byte id) { return values()[id]; }
+    
+    public static StatueMaterial getByName(final String id) {
+      for(final StatueMaterial s : values()) {
+        if(s.getString().equals(id)) {
+          return s;
+        }
+      }
+      // defaults to limestone texture
+      return LIMESTONE;
+    }
 
     @Override
     public String getString() { return name; }

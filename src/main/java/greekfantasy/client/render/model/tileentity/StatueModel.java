@@ -191,7 +191,6 @@ public class StatueModel<T extends StatueTileEntity> extends Model implements IH
   
   public void render(final T entity, MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha, final boolean isUpper, final boolean isFemaleModel) {
-    this.setRotationAngles(entity, 0.0F);
     // update which parts can be shown for male/female
     this.bipedBodyChest.showModel = isFemaleModel;
     // determine which parts this block will be rendering

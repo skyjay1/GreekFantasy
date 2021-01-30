@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import greekfantasy.GFRegistry;
+import greekfantasy.block.StatueBlock;
 import greekfantasy.deity.favor_effects.FavorEffect;
 import greekfantasy.deity.favor_effects.FavorEffectTrigger;
 import greekfantasy.deity.favor_effects.TriggeredFavorEffect;
@@ -131,9 +134,23 @@ public interface IDeity {
   
   /** @return the id of the slab block **/
   public ResourceLocation getBase();
-  
 
+  /** @return the id of the overlay texture **/
+  public String getOverlayString();
   
+  /** @return the id of the overlay texture **/
+  public ResourceLocation getOverlay();
+  
+  /** @return the overlay texture location, or null if none should be used **/
+  @Nullable
+  public default ResourceLocation makeOverlay() {
+    final String overlay = getOverlayString();
+    if("none".equals(overlay)) {
+      return null;
+    }
+    return StatueBlock.StatueMaterial.getByName(overlay).getStoneTexture();
+  }
+
   /** @return the blockstate of the slab block **/
   public default BlockState getBaseBlock() {
     Block b = GFRegistry.POLISHED_MARBLE_SLAB;

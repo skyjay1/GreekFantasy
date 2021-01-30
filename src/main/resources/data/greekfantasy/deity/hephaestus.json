@@ -2,5 +2,6 @@
   "name": "greekfantasy:hephaestus",
   "enabled": false,
   "female": false,
-  "base": "minecraft:smooth_stone_slab"
+  "base": "minecraft:smooth_stone_slab",
+  "overlay": "none"
 }

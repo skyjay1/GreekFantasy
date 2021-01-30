@@ -24,7 +24,7 @@ public class Deity implements IDeity {
   
   public static final Deity EMPTY = new Deity(
       new ResourceLocation(GreekFantasy.MODID, "null"), false, false, ItemStack.EMPTY, ItemStack.EMPTY, 
-      new ResourceLocation(GreekFantasy.MODID, "null"), Arrays.asList(), Arrays.asList(), Maps.newHashMap(), Maps.newHashMap());
+      new ResourceLocation(GreekFantasy.MODID, "null"), "none", Arrays.asList(), Arrays.asList(), Maps.newHashMap(), Maps.newHashMap());
   
   public static final Codec<Deity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       ResourceLocation.CODEC.fieldOf("name").forGetter(Deity::getName),
@@ -33,6 +33,7 @@ public class Deity implements IDeity {
       ItemStack.CODEC.optionalFieldOf("left_hand", ItemStack.EMPTY).forGetter(Deity::getLeftHandItem),
       ItemStack.CODEC.optionalFieldOf("right_hand", ItemStack.EMPTY).forGetter(Deity::getRightHandItem),
       ResourceLocation.CODEC.optionalFieldOf("base", new ResourceLocation(GreekFantasy.MODID, "polished_marble_slab")).forGetter(Deity::getBase),
+      Codec.STRING.optionalFieldOf("overlayString", "limestone").forGetter(Deity::getOverlayString),
       FavorEffect.CODEC.listOf().optionalFieldOf("effects", Arrays.asList()).forGetter(Deity::getFavorEffects),
       TriggeredFavorEffect.CODEC.listOf().optionalFieldOf("triggered_effects", Arrays.asList()).forGetter(Deity::getTriggeredFavorEffects),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).optionalFieldOf("kill_favor_map", Maps.newHashMap()).forGetter(Deity::getKillFavorModifiers),
@@ -63,13 +64,16 @@ public class Deity implements IDeity {
   private final ItemStack leftHandItem;
   private final ItemStack rightHandItem;
   private final ResourceLocation base;
+  private final ResourceLocation overlay;
+  private final String overlayString;
   private final Map<ResourceLocation, Integer> killFavorMap;
   private final Map<ResourceLocation, Integer> itemFavorMap;
   private final List<FavorEffect> favorEffects;
   private final List<TriggeredFavorEffect> triggeredFavorEffects;
 
   private Deity(final ResourceLocation lName, final boolean lIsEnabled, final boolean lIsFemale, 
-      final ItemStack lLeftHandItem, final ItemStack lRightHandItem, final ResourceLocation lBase,
+      final ItemStack lLeftHandItem, final ItemStack lRightHandItem, 
+      final ResourceLocation lBase, final String lOverlay,
       final List<FavorEffect> lFavorEffects, final List<TriggeredFavorEffect> lTriggeredFavorEffects, 
       final Map<ResourceLocation, Integer> lKillFavorMap, final Map<ResourceLocation, Integer> lItemFavorMap) {
     name = lName;
@@ -83,6 +87,8 @@ public class Deity implements IDeity {
     leftHandItem = lLeftHandItem;
     rightHandItem = lRightHandItem;
     base = lBase;
+    overlayString = lOverlay;
+    overlay = makeOverlay();
   }
   
   @Override
@@ -105,6 +111,12 @@ public class Deity implements IDeity {
   
   @Override
   public ResourceLocation getBase() { return base; }
+
+  @Override
+  public String getOverlayString() { return overlayString; }
+  
+  @Override
+  public ResourceLocation getOverlay() { return overlay; }
 
   @Override
   public Map<ResourceLocation, Integer> getKillFavorModifiers() { return killFavorMap; }

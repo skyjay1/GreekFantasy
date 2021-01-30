@@ -63,7 +63,7 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     final boolean isFemaleModel = te.isStatueFemale();
     final float translateY = upper ? 0.95F : 1.95F;
     final StatueMaterial material = te.getStatueMaterial();
-    final ResourceLocation textureStone = material.getStoneTexture();
+    final ResourceLocation textureStone = te.hasDeity() ? te.getDeity().getOverlay() : material.getStoneTexture();
     final ResourceLocation textureOverlay = getOverlayTexture(te);
     matrixStackIn.push();
     // render base
@@ -78,8 +78,8 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     if(!gui) {
       matrixStackIn.rotate(Vector3f.YP.rotationDegrees(rotation));
     }
-    // DEBUG
-//    this.model.setRotationAngles(te, partialTicks);
+    // set rotation angles
+    model.setRotationAngles(te, partialTicks);
     this.model.rotateAroundBody(te.getRotations(ModelPart.BODY), matrixStackIn, partialTicks);
     IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureOverlay));  
     if(material.hasSkin()) {
@@ -87,22 +87,24 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
       this.model.render(te, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F, upper, isFemaleModel);
     }
     // prepare to render stone texture
-    vertexBuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(textureStone));
-    float alpha = 1.0F;
-    if(material.hasSkin()) {
-      alpha = 0.3F;
-      RenderSystem.enableBlend();
-      RenderSystem.blendEquation(32774);
-      RenderSystem.blendFunc(770, 1);
-      RenderSystem.alphaFunc(516, 0.0F);
-    }
-    // render stone texture
-    this.model.render(te, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 0.8F, 0.8F, 0.8F, alpha, upper, isFemaleModel);
-    // reset RenderSystem values
-    if(material.hasSkin()) {
-      RenderSystem.defaultBlendFunc();
-      RenderSystem.defaultAlphaFunc();
-      RenderSystem.disableBlend();
+    if(textureStone != null) {
+      vertexBuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(textureStone));
+      float alpha = 1.0F;
+      if(material.hasSkin()) {
+        alpha = 0.3F;
+        RenderSystem.enableBlend();
+        RenderSystem.blendEquation(32774);
+        RenderSystem.blendFunc(770, 1);
+        RenderSystem.alphaFunc(516, 0.0F);
+      }
+      // render stone texture
+      this.model.render(te, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 0.8F, 0.8F, 0.8F, alpha, upper, isFemaleModel);
+      // reset RenderSystem values
+      if(material.hasSkin()) {
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.defaultAlphaFunc();
+        RenderSystem.disableBlend();
+      }
     }
     // render held items
     renderHeldItems(te, partialTicks, matrixStackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, upper);
