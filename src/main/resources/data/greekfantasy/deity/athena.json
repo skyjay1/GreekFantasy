@@ -1,5 +1,6 @@
 {
   "name": "greekfantasy:athena",
   "enabled": false,
-  "female": true
+  "female": true,
+  "base": "minecraft:quartz_slab"
 }

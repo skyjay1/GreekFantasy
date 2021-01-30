@@ -1,5 +1,6 @@
 {
   "name": "greekfantasy:ares",
   "enabled": false,
-  "female": false
+  "female": false,
+  "base": "minecraft:polished_andesite_slab"
 }

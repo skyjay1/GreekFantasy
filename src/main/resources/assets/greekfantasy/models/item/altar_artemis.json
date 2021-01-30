@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "greekfantasy:item/altar_hades"
+    "layer0": "greekfantasy:item/altar_artemis"
   }
 }

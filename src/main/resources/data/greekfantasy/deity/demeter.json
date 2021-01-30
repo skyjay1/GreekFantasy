@@ -1,5 +1,6 @@
 {
   "name": "greekfantasy:demeter",
   "enabled": false,
-  "female": true
+  "female": true,
+  "base": "minecraft:cut_sandstone_slab"
 }

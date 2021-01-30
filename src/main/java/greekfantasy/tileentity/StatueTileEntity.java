@@ -149,6 +149,8 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   // Deity //
   
   public IDeity getDeity() { return deity; }
+  
+  public boolean hasDeity() { return deity != null && deity != Deity.EMPTY; }
 
   public void updateDeity() {
     this.deity = deityName.isEmpty() ? Deity.EMPTY : GreekFantasy.PROXY.DEITY.get(new ResourceLocation(deityName)).orElse(Deity.EMPTY);

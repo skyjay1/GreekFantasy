@@ -1,0 +1,6 @@
+{
+  "name": "greekfantasy:hecate",
+  "enabled": false,
+  "female": true,
+  "base": "minecraft:purpur_slab"
+}

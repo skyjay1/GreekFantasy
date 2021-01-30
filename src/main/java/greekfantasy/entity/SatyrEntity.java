@@ -468,7 +468,9 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
         // if we're close to the targetPos, update targetPos and path
         if(isNearTarget(1.26D)) {
           this.updateTarget();
-          SatyrEntity.this.jump();
+          if(SatyrEntity.this.isOnGround()) {
+            SatyrEntity.this.jump();
+          }
           SatyrEntity.this.getNavigator().tryMoveToXYZ(targetPos.get().x, targetPos.get().y, targetPos.get().z, moveSpeed);
           this.travelTime = 0;
         }

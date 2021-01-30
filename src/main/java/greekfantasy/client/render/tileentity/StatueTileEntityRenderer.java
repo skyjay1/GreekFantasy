@@ -16,6 +16,7 @@ import greekfantasy.client.render.model.tileentity.StatueModel;
 import greekfantasy.deity.Deity;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.ModelPart;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -67,7 +68,8 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     matrixStackIn.push();
     // render base
     if(!upper && !gui) {
-      Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(material.getBase(), 
+      final BlockState base = te.hasDeity() ? te.getDeity().getBaseBlock() : material.getBase();
+      Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(base, 
           matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, EmptyModelData.INSTANCE);
     }
     // prepare to render player texture

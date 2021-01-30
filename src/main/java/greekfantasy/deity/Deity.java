@@ -24,14 +24,15 @@ public class Deity implements IDeity {
   
   public static final Deity EMPTY = new Deity(
       new ResourceLocation(GreekFantasy.MODID, "null"), false, false, ItemStack.EMPTY, ItemStack.EMPTY, 
-      Arrays.asList(), Arrays.asList(), Maps.newHashMap(), Maps.newHashMap());
+      new ResourceLocation(GreekFantasy.MODID, "null"), Arrays.asList(), Arrays.asList(), Maps.newHashMap(), Maps.newHashMap());
   
   public static final Codec<Deity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       ResourceLocation.CODEC.fieldOf("name").forGetter(Deity::getName),
-      Codec.BOOL.optionalFieldOf("enabled", false).forGetter(Deity::isEnabled),
+      Codec.BOOL.fieldOf("enabled").forGetter(Deity::isEnabled),
       Codec.BOOL.optionalFieldOf("female", false).forGetter(Deity::isFemale),
       ItemStack.CODEC.optionalFieldOf("left_hand", ItemStack.EMPTY).forGetter(Deity::getLeftHandItem),
       ItemStack.CODEC.optionalFieldOf("right_hand", ItemStack.EMPTY).forGetter(Deity::getRightHandItem),
+      ResourceLocation.CODEC.optionalFieldOf("base", new ResourceLocation(GreekFantasy.MODID, "polished_marble_slab")).forGetter(Deity::getBase),
       FavorEffect.CODEC.listOf().optionalFieldOf("effects", Arrays.asList()).forGetter(Deity::getFavorEffects),
       TriggeredFavorEffect.CODEC.listOf().optionalFieldOf("triggered_effects", Arrays.asList()).forGetter(Deity::getTriggeredFavorEffects),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).optionalFieldOf("kill_favor_map", Maps.newHashMap()).forGetter(Deity::getKillFavorModifiers),
@@ -46,10 +47,12 @@ public class Deity implements IDeity {
   public static final ResourceLocation DEMETER = new ResourceLocation(GreekFantasy.MODID, "demeter");
   public static final ResourceLocation DIONYSUS = new ResourceLocation(GreekFantasy.MODID, "dionysus");
   public static final ResourceLocation HADES = new ResourceLocation(GreekFantasy.MODID, "hades");
+  public static final ResourceLocation HECATE = new ResourceLocation(GreekFantasy.MODID, "hecate");
   public static final ResourceLocation HERA = new ResourceLocation(GreekFantasy.MODID, "hera");
   public static final ResourceLocation HERMES = new ResourceLocation(GreekFantasy.MODID, "hermes");
   public static final ResourceLocation HESTIA = new ResourceLocation(GreekFantasy.MODID, "hestia");
   public static final ResourceLocation HEPHAESTUS = new ResourceLocation(GreekFantasy.MODID, "hephaestus");
+  public static final ResourceLocation PERSEPHONE = new ResourceLocation(GreekFantasy.MODID, "persephone");
   public static final ResourceLocation POSEIDON = new ResourceLocation(GreekFantasy.MODID, "poseidon");
   public static final ResourceLocation ZEUS = new ResourceLocation(GreekFantasy.MODID, "zeus");
   
@@ -59,13 +62,14 @@ public class Deity implements IDeity {
   private final boolean isFemale;
   private final ItemStack leftHandItem;
   private final ItemStack rightHandItem;
+  private final ResourceLocation base;
   private final Map<ResourceLocation, Integer> killFavorMap;
   private final Map<ResourceLocation, Integer> itemFavorMap;
   private final List<FavorEffect> favorEffects;
   private final List<TriggeredFavorEffect> triggeredFavorEffects;
 
   private Deity(final ResourceLocation lName, final boolean lIsEnabled, final boolean lIsFemale, 
-      final ItemStack lLeftHandItem, final ItemStack lRightHandItem, 
+      final ItemStack lLeftHandItem, final ItemStack lRightHandItem, final ResourceLocation lBase,
       final List<FavorEffect> lFavorEffects, final List<TriggeredFavorEffect> lTriggeredFavorEffects, 
       final Map<ResourceLocation, Integer> lKillFavorMap, final Map<ResourceLocation, Integer> lItemFavorMap) {
     name = lName;
@@ -78,6 +82,7 @@ public class Deity implements IDeity {
     isEnabled = lIsEnabled;
     leftHandItem = lLeftHandItem;
     rightHandItem = lRightHandItem;
+    base = lBase;
   }
   
   @Override
@@ -97,6 +102,9 @@ public class Deity implements IDeity {
 
   @Override
   public ItemStack getLeftHandItem() { return leftHandItem; }
+  
+  @Override
+  public ResourceLocation getBase() { return base; }
 
   @Override
   public Map<ResourceLocation, Integer> getKillFavorModifiers() { return killFavorMap; }

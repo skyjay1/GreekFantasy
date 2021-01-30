@@ -1,5 +1,6 @@
 {
   "name": "greekfantasy:dionysus",
   "enabled": false,
-  "female": false
+  "female": false,
+  "base": "minecraft:polished_diorite_slab"
 }

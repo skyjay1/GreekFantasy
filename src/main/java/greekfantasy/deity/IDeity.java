@@ -4,16 +4,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.deity.favor_effects.FavorEffect;
 import greekfantasy.deity.favor_effects.FavorEffectTrigger;
 import greekfantasy.deity.favor_effects.TriggeredFavorEffect;
-import greekfantasy.deity.favor_effects.FavorEffectTrigger.Type;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public interface IDeity {
 
@@ -125,4 +128,18 @@ public interface IDeity {
   
   /** @return the item in the statue's left hand **/
   public ItemStack getLeftHandItem();
+  
+  /** @return the id of the slab block **/
+  public ResourceLocation getBase();
+  
+
+  
+  /** @return the blockstate of the slab block **/
+  public default BlockState getBaseBlock() {
+    Block b = GFRegistry.POLISHED_MARBLE_SLAB;
+    if(ForgeRegistries.BLOCKS.containsKey(getBase())) {
+      b = ForgeRegistries.BLOCKS.getValue(getBase());
+    }
+    return b.getDefaultState();
+  }
 }

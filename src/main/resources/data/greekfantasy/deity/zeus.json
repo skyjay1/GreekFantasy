@@ -10,6 +10,7 @@
   	"id": "greekfantasy:thunderbolt",
   	"Count": 1
   },
+  "base": "greekfantasy:polished_marble_slab",
   "effects": [
   	{
   	  "potion": {

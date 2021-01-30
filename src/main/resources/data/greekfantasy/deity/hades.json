@@ -6,6 +6,7 @@
   	"id": "minecraft:skeleton_skull",
   	"Count": 1
   },
+  "base": "minecraft:polished_blackstone_slab",
   "effects": [
   	{
   	  "item": { 

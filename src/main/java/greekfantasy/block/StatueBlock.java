@@ -33,7 +33,6 @@ import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
@@ -184,7 +183,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
     // do not open gui for wooden statues
-    if(this.statueMaterial == StatueBlock.StatueMaterial.WOOD) {
+    if(!this.statueMaterial.hasGui()) {
       return ActionResultType.PASS;
     }
     // prepare to interact with this block
@@ -195,22 +194,16 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     if (playerIn instanceof ServerPlayerEntity && te instanceof StatueTileEntity) {
       final StatueTileEntity teStatue = (StatueTileEntity)te;
       // handle deity statue interaction
-      final IDeity teDeity = teStatue.getDeity();
-      if(teDeity != Deity.EMPTY && teDeity.getName().equals(deity) && teDeity.isEnabled()) {
-        playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
-          FavorLevel level = f.getFavor(teDeity);
-          if(FavorManager.onGiveItem(teStatue, teDeity, playerIn, level, stack)) {
-            //f.setFavor(teDeity, i);
-            // spawn particles
-//            for(int j = 0; j < 6 + playerIn.getRNG().nextInt(4); j++) {
-//              playerIn.world.addParticle(ParticleTypes.HAPPY_VILLAGER, teStatue.getPos().getX() + playerIn.getRNG().nextDouble(), teStatue.getPos().up().getY() + playerIn.getRNG().nextDouble(), teStatue.getPos().getZ() + playerIn.getRNG().nextDouble(), 0, 0, 0);
-//            }
-          }
-          // print current favor level
-          level.sendStatusMessage(playerIn, teDeity);
-          // DEBUG
-//          GreekFantasy.LOGGER.debug("max level = " + FavorLevel.MAX_LEVEL + ", max favor = " + FavorLevel.MAX_FAVOR + " (" + FavorLevel.calculateLevel(FavorLevel.MAX_FAVOR) + ")");
-        });
+      if(teStatue.hasDeity() && teStatue.getDeityName().equals(deity.toString())) {
+        final IDeity teDeity = teStatue.getDeity();
+        if(teDeity.isEnabled()) {
+          playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
+            FavorLevel level = f.getFavor(teDeity);
+            FavorManager.onGiveItem(teStatue, teDeity, playerIn, level, stack);
+            // print current favor level
+            level.sendStatusMessage(playerIn, teDeity);
+          });
+        }
         return ActionResultType.SUCCESS;
       } 
       // handle nametag interaction
@@ -286,9 +279,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   public static enum StatueMaterial implements IStringSerializable {
     LIMESTONE("limestone", true, 0, () -> GFRegistry.POLISHED_LIMESTONE_SLAB.getDefaultState()),
     MARBLE("marble", true, 0, () -> GFRegistry.POLISHED_MARBLE_SLAB.getDefaultState()),
-    WOOD("wood", false, 11, () -> Blocks.SPRUCE_SLAB.getDefaultState()),
-    BLACKSTONE("blackstone", "limestone", false, false, 0, () -> Blocks.POLISHED_BLACKSTONE_SLAB.getDefaultState()),
-    PRISMARINE("prismarine", "limestone", false, false, 0, () -> Blocks.PRISMARINE_BRICK_SLAB.getDefaultState());
+    WOOD("wood", false, 11, () -> Blocks.SPRUCE_SLAB.getDefaultState());
     
     private final ResourceLocation stoneTexture;
     private final String name;

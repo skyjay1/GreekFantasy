@@ -1,5 +1,6 @@
 {
   "name": "greekfantasy:apollo",
   "enabled": false,
-  "female": false
+  "female": false,
+  "base": "minecraft:end_stone_brick_slab"
 }

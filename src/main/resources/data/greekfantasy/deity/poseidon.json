@@ -10,6 +10,7 @@
   	"id": "minecraft:trident",
   	"Count": 1
   },
+  "base": "minecraft:prismarine_brick_slab",
   "effects": [
   	{
   	  "item": { 
