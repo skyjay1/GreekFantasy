@@ -1,0 +1,193 @@
+{
+  "entity_favor_configuration": {
+    "greekfantasy:centaur": {
+      "hostile": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -10,
+	    "maxlevel": -3
+	  }
+	},
+    "greekfantasy:cyclopes": {
+      "hostile": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -10,
+	    "maxlevel": 4
+	  }
+	},
+    "greekfantasy:cyprian": {
+      "hostile": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -3,
+	    "maxlevel": 10
+	  }
+	},
+    "greekfantasy:drakaina": {
+      "hostile": { 
+	    "deity": "greekfantasy:zeus",
+	    "minlevel": -5,
+	    "maxlevel": 10
+	  }
+	},
+	"greekfantasy:dryad": {
+      "hostile": { 
+	    "deity": "greekfantasy:zeus",
+	    "minlevel": -9,
+	    "maxlevel": -2
+	  },
+      "flee": { 
+	    "deity": "greekfantasy:zeus",
+	    "minlevel": -10,
+	    "maxlevel": -10
+	  }
+	},
+	"greekfantasy:fury": {
+      "hostile": { 
+	    "deity": "greekfantasy:hades",
+	    "minlevel": -10,
+	    "maxlevel": 5
+	  },
+      "flee": { 
+	    "deity": "greekfantasy:hades",
+	    "minlevel": 8,
+	    "maxlevel": 10
+	  }
+	},
+	"greekfantasy:gigante": {
+      "hostile": { 
+	    "deity": "greekfantasy:zeus",
+	    "minlevel": -10,
+	    "maxlevel": -4
+	  }
+	},
+    "greekfantasy:gorgon": {
+      "hostile": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -6,
+	    "maxlevel": 8
+	  },
+      "flee": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": 9,
+	    "maxlevel": 10
+	  }
+	},
+    "greekfantasy:harpy": {
+      "hostile": { 
+	    "deity": "greekfantasy:zeus",
+	    "minlevel": -10,
+	    "maxlevel": 5
+	  }
+	},
+    "greekfantasy:minotaur": {
+      "hostile": { 
+	    "deity": "greekfantasy:zeus",
+	    "minlevel": -10,
+	    "maxlevel": 8
+	  }
+	},
+    "greekfantasy:naiad": {
+      "hostile": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -8,
+	    "maxlevel": -2
+	  },
+      "flee": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -9,
+	    "maxlevel": -10
+	  }
+	},
+    "greekfantasy:shade": {
+      "hostile": { 
+	    "deity": "greekfantasy:hades",
+	    "minlevel": -10,
+	    "maxlevel": 7
+	  }
+	},
+    "greekfantasy:siren": {
+      "hostile": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -5,
+	    "maxlevel": 10
+	  }
+	},
+    "minecraft:drowned": {
+      "hostile": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -10,
+	    "maxlevel": 9
+	  }
+	},
+    "minecraft:guardian": {
+      "hostile": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -10,
+	    "maxlevel": 8
+	  },
+      "flee": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": 9,
+	    "maxlevel": 10
+	  }
+	},
+    "minecraft:husk": {
+      "hostile": { 
+	    "deity": "greekfantasy:hades",
+	    "minlevel": -10,
+	    "maxlevel": 8
+	  }
+	},
+    "minecraft:iron_golem": {
+      "hostile": { 
+	    "deity": "greekfantasy:hades",
+	    "minlevel": 4,
+	    "maxlevel": 9
+	  },
+      "flee": { 
+	    "deity": "greekfantasy:hades",
+	    "minlevel": -3,
+	    "maxlevel": -10
+	  }
+	},
+    "minecraft:llama": {
+      "hostile": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -10,
+	    "maxlevel": -2
+	  }
+	},
+    "minecraft:silverfish": {
+      "hostile": { 
+	    "deity": "greekfantasy:hades",
+	    "minlevel": -10,
+	    "maxlevel": 6
+	  },
+      "flee": { 
+	    "deity": "greekfantasy:hades",
+	    "minlevel": 7,
+	    "maxlevel": 10
+	  }
+	},
+    "minecraft:trader_llama": {
+      "hostile": { 
+	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -10,
+	    "maxlevel": -2
+	  }
+	},
+    "minecraft:zombie": {
+      "hostile": { 
+	    "deity": "greekfantasy:hades",
+	    "minlevel": -10,
+	    "maxlevel": 9
+	  }
+	},
+    "minecraft:zombie_villager": {
+      "hostile": { 
+	    "deity": "greekfantasy:hades",
+	    "minlevel": -10,
+	    "maxlevel": 9
+	  }
+	}
+  }
+}

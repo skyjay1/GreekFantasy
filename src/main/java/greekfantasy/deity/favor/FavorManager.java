@@ -1,4 +1,4 @@
-package greekfantasy.favor;
+package greekfantasy.deity.favor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,10 @@ import java.util.Optional;
 import com.google.common.collect.Lists;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.Deity;
+import greekfantasy.deity.IDeity;
+import greekfantasy.deity.favor_effects.FavorEffectManager;
+import greekfantasy.deity.favor_effects.FavorEffectTrigger;
 import greekfantasy.events.FavorChangedEvent.Source;
 import greekfantasy.tileentity.StatueTileEntity;
 import net.minecraft.block.Block;

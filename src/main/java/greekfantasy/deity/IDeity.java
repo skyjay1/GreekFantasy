@@ -1,9 +1,13 @@
-package greekfantasy.favor;
+package greekfantasy.deity;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import greekfantasy.deity.favor_effects.FavorEffect;
+import greekfantasy.deity.favor_effects.FavorEffectTrigger;
+import greekfantasy.deity.favor_effects.TriggeredFavorEffect;
+import greekfantasy.deity.favor_effects.FavorEffectTrigger.Type;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

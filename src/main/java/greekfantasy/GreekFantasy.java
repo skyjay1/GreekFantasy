@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import greekfantasy.favor.Favor;
-import greekfantasy.favor.IFavor;
+import greekfantasy.deity.favor.Favor;
+import greekfantasy.deity.favor.IFavor;
 import greekfantasy.network.CUpdatePanflutePacket;
 import greekfantasy.network.CUpdateStatuePosePacket;
 import greekfantasy.network.SDeityPacket;

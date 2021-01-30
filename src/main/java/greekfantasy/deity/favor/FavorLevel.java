@@ -1,5 +1,6 @@
-package greekfantasy.favor;
+package greekfantasy.deity.favor;
 
+import greekfantasy.deity.IDeity;
 import greekfantasy.events.FavorChangedEvent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;

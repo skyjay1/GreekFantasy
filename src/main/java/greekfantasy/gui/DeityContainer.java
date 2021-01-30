@@ -2,7 +2,7 @@ package greekfantasy.gui;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.favor.IFavor;
+import greekfantasy.deity.favor.IFavor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;

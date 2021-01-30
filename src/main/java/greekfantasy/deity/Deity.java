@@ -1,4 +1,4 @@
-package greekfantasy.favor;
+package greekfantasy.deity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +11,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.favor_effects.FavorEffect;
+import greekfantasy.deity.favor_effects.TriggeredFavorEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 

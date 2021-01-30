@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.Deity;
+import greekfantasy.deity.IDeity;
+import greekfantasy.deity.favor_effects.FavorConfiguration;
 import greekfantasy.events.CommonForgeEventHandler;
-import greekfantasy.favor.Deity;
-import greekfantasy.favor.FavorRangeTarget;
-import greekfantasy.favor.IDeity;
 import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SFavorRangeTargetPacket;
 import greekfantasy.network.SPanfluteSongPacket;
@@ -22,8 +22,8 @@ public class Proxy {
       l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SPanfluteSongPacket(e.getKey(), e.getValue().get()))));
   public final GenericJsonReloadListener<Deity> DEITY = new GenericJsonReloadListener<>("deity", Deity.class, Deity.CODEC, 
       l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SDeityPacket(e.getKey(), e.getValue().get()))));
-  public final GenericJsonReloadListener<FavorRangeTarget> FAVOR_RANGE_TARGET = new GenericJsonReloadListener<>("deity_favor_target_map", FavorRangeTarget.class, FavorRangeTarget.CODEC, 
-      l -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SFavorRangeTargetPacket(l.get(FavorRangeTarget.NAME).get())));
+  public final GenericJsonReloadListener<FavorConfiguration> FAVOR_RANGE_TARGET = new GenericJsonReloadListener<>("favor_configuration", FavorConfiguration.class, FavorConfiguration.CODEC, 
+      l -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SFavorRangeTargetPacket(l.get(FavorConfiguration.NAME).get())));
   
   public void registerReloadListeners() { }
 
@@ -55,7 +55,7 @@ public class Proxy {
   }
 
   /** @return the favor range target map **/
-  public FavorRangeTarget getFavorRangeTarget() {
-    return FAVOR_RANGE_TARGET.get(FavorRangeTarget.NAME).orElse(FavorRangeTarget.EMPTY);
+  public FavorConfiguration getFavorRangeConfiguration() {
+    return FAVOR_RANGE_TARGET.get(FavorConfiguration.NAME).orElse(FavorConfiguration.EMPTY);
   }
 }

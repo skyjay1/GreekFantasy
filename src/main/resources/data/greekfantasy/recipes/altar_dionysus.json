@@ -1,0 +1,10 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+	{ "item": "greekfantasy:marble_statue" },
+	{ "item": "minecraft:glass_bottle" }
+  ],
+  "result": {
+	"item": "greekfantasy:altar_dionysus"
+  }
+}

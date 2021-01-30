@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.favor.Deity;
-import greekfantasy.favor.FavorLevel;
-import greekfantasy.favor.FavorRange;
-import greekfantasy.favor.IDeity;
-import greekfantasy.favor.IFavor;
+import greekfantasy.deity.IDeity;
+import greekfantasy.deity.favor.FavorLevel;
+import greekfantasy.deity.favor.IFavor;
+import greekfantasy.deity.favor_effects.ConfiguredFavorRange;
+import greekfantasy.deity.favor_effects.FavorRange;
 import greekfantasy.gui.DeityContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -47,8 +46,8 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private static final int ARROW_WIDTH = 14;
   private static final int ARROW_HEIGHT = 18;
   
-  private static final int FAVOR_WIDTH = 69;
-  private static final int FAVOR_HEIGHT = 86;
+  // private static final int FAVOR_WIDTH = 69;
+  // private static final int FAVOR_HEIGHT = 86;
   private static final int FAVOR_LEFT = 9;
   private static final int FAVOR_TOP = 30;
   
@@ -142,10 +141,13 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     }
     // create hostile button list for all deities in one list
     final List<DeityScreen.HostileButton> hostileButtonList = new ArrayList<>();
-    for(final Entry<ResourceLocation, FavorRange> e : GreekFantasy.PROXY.getFavorRangeTarget().getEntityTargetMap().entrySet()) {
-      final EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(e.getKey());
-      DeityScreen.HostileButton button = new DeityScreen.HostileButton(this, entityType, e.getValue().getDeity(), e.getValue().getMinLevel(), e.getValue().getMaxLevel(), 0, 0);
-      hostileButtonList.add(button);
+    for(final Entry<ResourceLocation, ConfiguredFavorRange> e : GreekFantasy.PROXY.getFavorRangeConfiguration().getEntityTargetMap().entrySet()) {
+      if(e.getValue().hasHostileRange()) {
+        final EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(e.getKey());
+        final FavorRange hostile = e.getValue().getHostileRange();
+        DeityScreen.HostileButton button = new DeityScreen.HostileButton(this, entityType, hostile.getDeity(), hostile.getMinLevel(), hostile.getMaxLevel(), 0, 0);
+        hostileButtonList.add(button);
+      }
     }
     // place the buttons in different lists based on which deity they belong to
     for(final DeityScreen.HostileButton btn : hostileButtonList) {
@@ -439,7 +441,6 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     private final int minValue;
     private final int maxValue;
     private int index;
-    private int rightAlign = -1;
     private final ITextComponent entityName;
     private final ITextComponent entityValue;
     
@@ -478,9 +479,6 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       } else {
         this.visible = true;
         this.y = DeityScreen.this.guiTop + DeityScreen.HOSTILE_TOP + 2 * DeityScreen.this.font.FONT_HEIGHT * (index - startIndex);
-//        if(rightAlign < 0) {
-//          rightAlign = HOSTILE_WIDTH - DeityScreen.this.font.getStringWidth(entityValue.getString());
-//        }
         this.x = DeityScreen.this.guiLeft + DeityScreen.HOSTILE_LEFT;
       }
     }

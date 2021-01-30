@@ -8,11 +8,11 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import greekfantasy.block.*;
+import greekfantasy.deity.favor.IFavor;
 import greekfantasy.effect.*;
 import greekfantasy.enchantment.*;
 import greekfantasy.entity.*;
 import greekfantasy.entity.misc.*;
-import greekfantasy.favor.IFavor;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.gui.DeityContainer;
 import greekfantasy.item.*;

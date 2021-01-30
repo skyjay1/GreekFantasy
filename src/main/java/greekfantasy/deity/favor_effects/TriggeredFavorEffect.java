@@ -1,4 +1,4 @@
-package greekfantasy.favor;
+package greekfantasy.deity.favor_effects;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

@@ -8,23 +8,25 @@ import com.google.common.collect.ImmutableList;
 import greekfantasy.GFRegistry;
 import greekfantasy.GFWorldGen;
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.favor.Favor;
+import greekfantasy.deity.favor.FavorManager;
+import greekfantasy.deity.favor.IFavor;
+import greekfantasy.deity.favor_effects.FavorConfiguration;
 import greekfantasy.entity.ArionEntity;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.GiantBoarEntity;
 import greekfantasy.entity.ShadeEntity;
+import greekfantasy.entity.ai.FleeFromFavorablePlayerGoal;
 import greekfantasy.entity.ai.NearestAttackableFavorablePlayerGoal;
 import greekfantasy.entity.ai.NearestAttackableFavorablePlayerResetGoal;
-import greekfantasy.favor.Favor;
-import greekfantasy.favor.FavorManager;
-import greekfantasy.favor.FavorRangeTarget;
-import greekfantasy.favor.IFavor;
 import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SFavorRangeTargetPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
 import greekfantasy.util.PalladiumSavedData;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -60,6 +62,7 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -343,19 +346,30 @@ public class CommonForgeEventHandler {
    * @param event the spawn event
    **/
   @SubscribeEvent
-  public static void onLivingSpecialSpawn(final LivingSpawnEvent.SpecialSpawn event) {
-    if(event.getEntityLiving().getType() == EntityType.RABBIT && !event.getEntityLiving().getEntityWorld().isRemote()) {
-      final RabbitEntity rabbit = (RabbitEntity) event.getEntityLiving();
+  public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
+    // attempt to add rabbit-flees-cerastes goal
+    if(event.getEntity().getType() == EntityType.RABBIT && !event.getEntity().getEntityWorld().isRemote()) {
+      final RabbitEntity rabbit = (RabbitEntity) event.getEntity();
       if(rabbit.getRabbitType() != 99) {
         rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, e -> !((CerastesEntity)e).isHiding(), 6.0F, 2.2D, 2.2D, EntityPredicates.CAN_AI_TARGET::test));        
       }
     }
-    if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity
-        && GreekFantasy.PROXY.getFavorRangeTarget().has(event.getEntityLiving().getType())) {
-      final MobEntity mob = (MobEntity)event.getEntityLiving();
+    // attempt to add player target goals
+    if(!event.getEntity().getEntityWorld().isRemote() && event.getEntity() instanceof MobEntity
+        && GreekFantasy.PROXY.getFavorRangeConfiguration().has(event.getEntity().getType())
+        && GreekFantasy.PROXY.getFavorRangeConfiguration().get(event.getEntity().getType()).hasHostileRange()) {
+      final MobEntity mob = (MobEntity)event.getEntity();
       // add favor-checking goals
       mob.targetSelector.addGoal(0, new NearestAttackableFavorablePlayerGoal(mob));
       mob.targetSelector.addGoal(1, new NearestAttackableFavorablePlayerResetGoal(mob));
+    }
+    // attempt to add flee goals
+    if(!event.getEntity().getEntityWorld().isRemote() && event.getEntity() instanceof CreatureEntity
+        && GreekFantasy.PROXY.getFavorRangeConfiguration().has(event.getEntity().getType())
+        && GreekFantasy.PROXY.getFavorRangeConfiguration().get(event.getEntity().getType()).hasFleeRange()) {
+      final CreatureEntity creature = (CreatureEntity)event.getEntity();
+      // add favor-checking goals
+      creature.goalSelector.addGoal(1, new FleeFromFavorablePlayerGoal(creature));
     }
   }
   
@@ -414,8 +428,8 @@ public class CommonForgeEventHandler {
     }
     if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity 
         && event.getTarget() instanceof PlayerEntity
-        && GreekFantasy.PROXY.getFavorRangeTarget().has(event.getEntityLiving().getType())
-        && !GreekFantasy.PROXY.getFavorRangeTarget().get(event.getEntityLiving().getType()).isInFavorRange((PlayerEntity)event.getTarget())
+        && GreekFantasy.PROXY.getFavorRangeConfiguration().has(event.getEntityLiving().getType())
+        && !GreekFantasy.PROXY.getFavorRangeConfiguration().get(event.getEntityLiving().getType()).getHostileRange().isInFavorRange((PlayerEntity)event.getTarget())
         && event.getTarget() != event.getEntityLiving().getRevengeTarget()) {
       ((MobEntity)event.getEntityLiving()).setAttackTarget(null);
     }
@@ -444,7 +458,7 @@ public class CommonForgeEventHandler {
       // sync deity
       GreekFantasy.PROXY.DEITY.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SDeityPacket(e.getKey(), e.getValue().get())));
       // sync favor range target
-      GreekFantasy.PROXY.FAVOR_RANGE_TARGET.get(FavorRangeTarget.NAME).ifPresent(f -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SFavorRangeTargetPacket(f)));
+      GreekFantasy.PROXY.FAVOR_RANGE_TARGET.get(FavorConfiguration.NAME).ifPresent(f -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SFavorRangeTargetPacket(f)));
     }
   }
   

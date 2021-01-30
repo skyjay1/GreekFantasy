@@ -5,10 +5,10 @@ import java.util.function.Supplier;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.favor.Deity;
-import greekfantasy.favor.FavorLevel;
-import greekfantasy.favor.FavorManager;
-import greekfantasy.favor.IDeity;
+import greekfantasy.deity.Deity;
+import greekfantasy.deity.IDeity;
+import greekfantasy.deity.favor.FavorLevel;
+import greekfantasy.deity.favor.FavorManager;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.PalladiumSavedData;

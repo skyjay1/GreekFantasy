@@ -13,7 +13,7 @@ import greekfantasy.block.StatueBlock;
 import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.client.gui.StatueScreen;
 import greekfantasy.client.render.model.tileentity.StatueModel;
-import greekfantasy.favor.Deity;
+import greekfantasy.deity.Deity;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.ModelPart;
 import net.minecraft.client.Minecraft;

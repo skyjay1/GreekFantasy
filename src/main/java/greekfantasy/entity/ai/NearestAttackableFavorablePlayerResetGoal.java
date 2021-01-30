@@ -3,7 +3,8 @@ package greekfantasy.entity.ai;
 import java.util.EnumSet;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.favor.FavorRange;
+import greekfantasy.deity.favor_effects.ConfiguredFavorRange;
+import greekfantasy.deity.favor_effects.FavorRange;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,8 +26,8 @@ public class NearestAttackableFavorablePlayerResetGoal extends Goal {
   public boolean shouldExecute() {
     if(entity.ticksExisted % interval == 0 && entity.isAlive() && entity.getAttackTarget() instanceof PlayerEntity
         && entity.getAttackTarget() != entity.getRevengeTarget()) {
-      FavorRange range = GreekFantasy.PROXY.getFavorRangeTarget().get(entity.getType());
-      return range != FavorRange.EMPTY && !range.isInFavorRange((PlayerEntity)entity.getAttackTarget());
+      ConfiguredFavorRange range = GreekFantasy.PROXY.getFavorRangeConfiguration().get(entity.getType());
+      return range.hasHostileRange() && !range.getHostileRange().isInFavorRange((PlayerEntity)entity.getAttackTarget());
     }
     return false;
   }

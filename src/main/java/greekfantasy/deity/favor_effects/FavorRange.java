@@ -1,9 +1,12 @@
-package greekfantasy.favor;
+package greekfantasy.deity.favor_effects;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.Deity;
+import greekfantasy.deity.IDeity;
+import greekfantasy.deity.favor.IFavor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 
@@ -42,7 +45,7 @@ public class FavorRange {
    * @return true if this is a server world and the player matches this favor range
    */
   public boolean isInFavorRange(final PlayerEntity player) {
-    if(player.isServerWorld() && player.getCapability(GreekFantasy.FAVOR).isPresent()) {
+    if(player.isServerWorld() && player.getCapability(GreekFantasy.FAVOR).isPresent() && this != FavorRange.EMPTY) {
       return isInFavorRange(player, player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()));
     }
     return false;

@@ -1,4 +1,4 @@
-package greekfantasy.favor;
+package greekfantasy.deity.favor;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -7,6 +7,8 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.Deity;
+import greekfantasy.deity.IDeity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;

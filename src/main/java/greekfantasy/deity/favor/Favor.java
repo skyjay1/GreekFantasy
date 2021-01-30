@@ -1,4 +1,4 @@
-package greekfantasy.favor;
+package greekfantasy.deity.favor;
 
 import java.util.HashMap;
 import java.util.Map;

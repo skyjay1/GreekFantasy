@@ -1,4 +1,4 @@
-package greekfantasy.favor;
+package greekfantasy.deity.favor_effects;
 
 import java.util.Optional;
 

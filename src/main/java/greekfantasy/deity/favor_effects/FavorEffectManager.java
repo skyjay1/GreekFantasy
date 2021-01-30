@@ -1,4 +1,4 @@
-package greekfantasy.favor;
+package greekfantasy.deity.favor_effects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.Optional;
 import java.util.Random;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.IDeity;
+import greekfantasy.deity.favor.FavorLevel;
+import greekfantasy.deity.favor.IFavor;
 import net.minecraft.advancements.FunctionManager;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.FunctionObject;

@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 import com.mojang.serialization.DataResult;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.favor.Deity;
+import greekfantasy.deity.Deity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.network.PacketBuffer;

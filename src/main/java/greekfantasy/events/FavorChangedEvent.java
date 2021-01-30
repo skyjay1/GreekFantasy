@@ -1,7 +1,7 @@
 package greekfantasy.events;
 
-import greekfantasy.favor.FavorLevel;
-import greekfantasy.favor.IDeity;
+import greekfantasy.deity.IDeity;
+import greekfantasy.deity.favor.FavorLevel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.MinecraftForge;
