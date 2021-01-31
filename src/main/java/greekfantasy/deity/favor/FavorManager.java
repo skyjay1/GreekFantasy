@@ -11,9 +11,10 @@ import com.google.common.collect.Lists;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
-import greekfantasy.deity.favor_effects.FavorEffectManager;
-import greekfantasy.deity.favor_effects.FavorEffectTrigger;
-import greekfantasy.events.FavorChangedEvent.Source;
+import greekfantasy.deity.favor_effect.FavorEffectManager;
+import greekfantasy.deity.favor_effect.FavorEffectTrigger;
+import greekfantasy.deity.favor_effect.SpecialFavorEffect;
+import greekfantasy.event.FavorChangedEvent.Source;
 import greekfantasy.tileentity.StatueTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -122,22 +123,20 @@ public class FavorManager {
     if(favor.hasNoTriggeredCooldown(time)) {
       final List<IDeity> deityList = Lists.newArrayList(GreekFantasy.PROXY.getDeityCollection(true));
       // order by which deity has the most favor
-      //// deityList.sort((o1, o2) -> favor.getFavor(o1.orElse(Deity.EMPTY)).compareToAbs(favor.getFavor(o2.orElse(Deity.EMPTY))));
-      // order randomly
-      Collections.shuffle(deityList, playerIn.getRNG());
+      deityList.sort((o1, o2) -> favor.getFavor(o1).compareToAbs(favor.getFavor(o2)));
       FavorLevel level;
-      // loop through each deity until one of them can perform an effect
+      // loop through each deity so each one can perform an effect
+      long cooldown = 10;
       for(final IDeity deity : deityList) {
         level = favor.getFavor(deity);
         // perform an effect, set the timestamp and cooldown, and exit the loop
-        long cooldown = FavorEffectManager.onTriggeredFavorEffect(type, data, playerIn.getEntityWorld(), playerIn, deity, favor, level);
-        if(cooldown > 0) {
-          favor.setTriggeredTime(time, cooldown);
-          return true;
+        long lCooldown = FavorEffectManager.onTriggeredFavorEffect(type, data, playerIn.getEntityWorld(), playerIn, deity, favor, level);
+        if(lCooldown > 0) {
+          cooldown = Math.max(cooldown, lCooldown);
         }
       }
-      // if no effect was performed, set a cooldown
-      favor.setTriggeredTime(time, 100);
+      // set timestamp and cooldown
+      favor.setTriggeredTime(time, cooldown);
     }
     return false;
   }

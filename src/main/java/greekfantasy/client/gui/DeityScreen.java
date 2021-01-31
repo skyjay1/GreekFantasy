@@ -12,8 +12,8 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.FavorLevel;
 import greekfantasy.deity.favor.IFavor;
-import greekfantasy.deity.favor_effects.ConfiguredFavorRange;
-import greekfantasy.deity.favor_effects.FavorRange;
+import greekfantasy.deity.favor_effect.ConfiguredFavorRange;
+import greekfantasy.deity.favor_effect.FavorRange;
 import greekfantasy.gui.DeityContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -141,7 +141,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     }
     // create hostile button list for all deities in one list
     final List<DeityScreen.HostileButton> hostileButtonList = new ArrayList<>();
-    for(final Entry<ResourceLocation, ConfiguredFavorRange> e : GreekFantasy.PROXY.getFavorRangeConfiguration().getEntityTargetMap().entrySet()) {
+    for(final Entry<ResourceLocation, ConfiguredFavorRange> e : GreekFantasy.PROXY.getFavorConfiguration().getEntityTargetMap().entrySet()) {
       if(e.getValue().hasHostileRange()) {
         final EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(e.getKey());
         final FavorRange hostile = e.getValue().getHostileRange();

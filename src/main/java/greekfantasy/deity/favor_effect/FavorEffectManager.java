@@ -1,4 +1,4 @@
-package greekfantasy.deity.favor_effects;
+package greekfantasy.deity.favor_effect;
 
 import java.util.ArrayList;
 import java.util.List;

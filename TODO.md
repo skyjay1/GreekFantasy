@@ -91,11 +91,23 @@ __Key:__
 
 - X Favor (capability)
 - X Altars (statues)
-- X Gods
 - X Rewards and punishments
 - X Deity datapack support
 - X Favor GUI
-- _ Datapack support: Dynamically register blocks / itemblocks for altars
+- _ Special abilities ideas:
+  - _ Grow crops near player (Demeter/Persephone)
+  - _ Allow winged sandals to grant flight (Hermes)
+  - _ Breeding animals produces 0-3 offspring instead of 1 (Hera)
+  - _ Harvesting crops drops additional (or removes drops) (Demeter/Persephone)
+  - _ Drinking potion grants Naseau _or_ additional time (Dionysus)
+  - _ Chance to autosmelt when mining (Hephaestus)
+  - _ Neutral mobs targetting player become neutral after a few seconds (Aphrodite) 
+  - _ XP multiplier or random XP drops (Athena)
+  - _ Strength effect when starting to attack (Ares)
+  - _ Heal effect when attacked (Apollo)
+  - _ Extra damage to bows (Artemis)
+  - _ Prevent trading with villagers (?)
+  - _ Allow trading with dryads (?)
 
 ## Structures
 

@@ -1,7 +1,7 @@
 package greekfantasy.entity.ai;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.deity.favor_effects.ConfiguredFavorRange;
+import greekfantasy.deity.favor_effect.ConfiguredFavorRange;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,7 +11,7 @@ public class NearestAttackableFavorablePlayerGoal extends NearestAttackableTarge
   public NearestAttackableFavorablePlayerGoal(final MobEntity host) {
     super(host, PlayerEntity.class, 10, true, false, l -> {
       if(l instanceof PlayerEntity) {
-        ConfiguredFavorRange range = GreekFantasy.PROXY.getFavorRangeConfiguration().get(host.getType());
+        ConfiguredFavorRange range = GreekFantasy.PROXY.getFavorConfiguration().get(host.getType());
         return range.hasHostileRange() && range.getHostileRange().isInFavorRange((PlayerEntity)l);
       }
       return false;

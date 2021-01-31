@@ -17,9 +17,9 @@ public class Favor implements IFavor {
   
   protected final Map<ResourceLocation, FavorLevel> favorMap = new HashMap<>();
   private long effectTimestamp;
-  private long effectCooldown = 10000;  
+  private long effectCooldown = 1000;  
   private long triggeredTimestamp;
-  private long triggeredCooldown = 0;//10000;
+  private long triggeredCooldown = 100;
   
   public Favor() { }
 

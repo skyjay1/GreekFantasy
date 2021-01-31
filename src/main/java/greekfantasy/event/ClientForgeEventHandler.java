@@ -1,4 +1,4 @@
-package greekfantasy.events;
+package greekfantasy.event;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;

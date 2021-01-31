@@ -189,5 +189,16 @@
 	    "maxlevel": 9
 	  }
 	}
+  },
+  "special_favor_effects": {
+  	"mining_autosmelt": {
+  	  "favor_range": {
+  	    "deity": "greekfantasy:hades",
+	    "minlevel": -10,
+	    "maxlevel": 10
+  	  },
+  	  "chance": 0.99,
+  	  "mincooldown": 20
+  	}
   }
 }

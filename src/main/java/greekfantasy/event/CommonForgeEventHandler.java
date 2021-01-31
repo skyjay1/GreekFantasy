@@ -1,4 +1,4 @@
-package greekfantasy.events;
+package greekfantasy.event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,26 +8,18 @@ import com.google.common.collect.ImmutableList;
 import greekfantasy.GFRegistry;
 import greekfantasy.GFWorldGen;
 import greekfantasy.GreekFantasy;
-import greekfantasy.deity.favor.Favor;
-import greekfantasy.deity.favor.FavorManager;
-import greekfantasy.deity.favor.IFavor;
-import greekfantasy.deity.favor_effects.FavorConfiguration;
+import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.entity.ArionEntity;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.GiantBoarEntity;
 import greekfantasy.entity.ShadeEntity;
-import greekfantasy.entity.ai.FleeFromFavorablePlayerGoal;
-import greekfantasy.entity.ai.NearestAttackableFavorablePlayerGoal;
-import greekfantasy.entity.ai.NearestAttackableFavorablePlayerResetGoal;
 import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SFavorRangeTargetPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
 import greekfantasy.util.PalladiumSavedData;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -57,9 +49,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -91,11 +81,6 @@ public class CommonForgeEventHandler {
   public static void onPlayerDeath(final LivingDeathEvent event) {
     if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getEntityLiving() instanceof PlayerEntity) {
       final PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-      final Entity source = event.getSource().getTrueSource();
-      // trigger FavorManager
-      if(source != null && !player.isSpectator() && !player.isCreative()) {
-        player.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerKilled(player, (LivingEntity)source, f));
-      }
       // attempt to spawn a shade
       if(GreekFantasy.CONFIG.doesShadeSpawnOnDeath() && !player.getEntityWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY) && !player.isSpectator() && player.experienceLevel > 3) {
         // save XP value
@@ -114,15 +99,12 @@ public class CommonForgeEventHandler {
   }
 
   /**
-   * Used to change a player's favor when they kill an entity.
-   * Also used to summon a Geryon when a cow is killed and other spawn conditions are met
+   * Used to summon a Geryon when a cow is killed and other spawn conditions are met
    * @param event the living death event
    */
   @SubscribeEvent
   public static void onLivingDeath(final LivingDeathEvent event) {
     if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getSource().getTrueSource() instanceof PlayerEntity) {
-      // update favor manager
-      event.getSource().getTrueSource().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onKillEntity(event.getEntityLiving(), (PlayerEntity)event.getSource().getTrueSource(), f));
       // check if the cow was killed by a player and if geryon can spawn here
       final BlockPos deathPos = event.getEntityLiving().getPosition();
       if(event.getEntityLiving() instanceof CowEntity && GeryonEntity.canGeryonSpawnOn(event.getEntityLiving().getEntityWorld(), deathPos)) {
@@ -154,16 +136,11 @@ public class CommonForgeEventHandler {
   
   /**
    * Used to set the player pose when the Swine effect is enabled.
-   * Also ticks the FavorManager
    * @param event the PlayerTickEvent
    **/
   @SubscribeEvent
   public static void onLivingTick(final PlayerTickEvent event) {
-    final boolean tick = (event.phase == TickEvent.Phase.START) && event.player.isAlive();
-    if(tick && !event.player.getEntityWorld().isRemote() && event.player.isServerWorld()) {
-      event.player.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerTick(event.player, f));
-    }
-    if(tick && GreekFantasy.CONFIG.isSwineEnabled()) {
+    if((event.phase == TickEvent.Phase.START) && event.player.isAlive() && GreekFantasy.CONFIG.isSwineEnabled()) {
       final boolean isSwine = isSwine(event.player);
       final Pose forcedPose = event.player.getForcedPose();
       // drop armor
@@ -198,45 +175,12 @@ public class CommonForgeEventHandler {
    */
   @SubscribeEvent
   public static void onAddPotion(final PotionEvent.PotionAddedEvent event) {
-    if(!event.getEntityLiving().getEntityWorld().isRemote()) {
-      // notify favor manager
-      if(event.getEntityLiving() instanceof PlayerEntity) {
-        event.getEntityLiving().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAddPotion((PlayerEntity)event.getEntityLiving(), event.getPotionEffect().getPotion(), f));
-      }
-      // send swine effect packet
-      if (GreekFantasy.CONFIG.isSwineEnabled() 
-          && event.getPotionEffect().getPotion() == GFRegistry.SWINE_EFFECT
-          && GreekFantasy.CONFIG.canSwineApply(event.getEntityLiving().getType().getRegistryName().toString())) {
-        final int id = event.getEntityLiving().getEntityId();
-        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSwineEffectPacket(id, event.getPotionEffect().getDuration()));
-      }
-    }
-    
-  }
-  
-  /**
-   * Used to attach Favor to players
-   * @param event the capability attach event (Entity)
-   */
-  @SubscribeEvent
-  public static void onAttachCapabilities(final AttachCapabilitiesEvent<Entity> event) {
-    if(event.getObject() instanceof PlayerEntity) {
-      event.addCapability(IFavor.REGISTRY_NAME, new Favor.Provider());
-    }
-  }
-  
-  /**
-   * Used to ensure that favor persists across deaths
-   * @param event the player clone event
-   */
-  @SubscribeEvent
-  public static void onPlayerClone(final PlayerEvent.Clone event) {
-    if(event.isWasDeath()) {
-      LazyOptional<IFavor> original = event.getOriginal().getCapability(GreekFantasy.FAVOR);
-      LazyOptional<IFavor> copy = event.getPlayer().getCapability(GreekFantasy.FAVOR);
-      if(original.isPresent() && copy.isPresent()) {
-        copy.ifPresent(f -> f.deserializeNBT(original.orElseGet(() -> GreekFantasy.FAVOR.getDefaultInstance()).serializeNBT()));
-      }
+    // send swine effect packet
+    if (!event.getEntityLiving().getEntityWorld().isRemote() && GreekFantasy.CONFIG.isSwineEnabled() 
+        && event.getPotionEffect().getPotion() == GFRegistry.SWINE_EFFECT
+        && GreekFantasy.CONFIG.canSwineApply(event.getEntityLiving().getType().getRegistryName().toString())) {
+      final int id = event.getEntityLiving().getEntityId();
+      GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSwineEffectPacket(id, event.getPotionEffect().getDuration()));
     }
   }
   
@@ -283,22 +227,17 @@ public class CommonForgeEventHandler {
           event.getItemStack().shrink(1);
         }
       }
-      
     }
   }
   
   /**
    * Used to prevent players from using items while stunned.
-   * Also used to change a player's favor when they attack an entity.
    * @param event the living attack event
    **/
   @SubscribeEvent
   public static void onPlayerAttack(final AttackEntityEvent event) {
     if(GreekFantasy.CONFIG.doesStunPreventUse() && event.getPlayer().isAlive() && isStunned(event.getPlayer())) {
       event.setCanceled(true);
-    }
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getPlayer().isAlive()) {
-      event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAttackEntity(event.getEntityLiving(), event.getPlayer(), f));
     }
   }  
   
@@ -322,9 +261,6 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent
   public static void onBreakBlock(final BlockEvent.BreakEvent event) {
-    if(event.getPlayer() != null && event.getPlayer().isServerWorld() && !event.getPlayer().isCreative()) {
-      event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onBreakBlock(event.getPlayer(), event.getState().getBlock(), f));
-    }
     if(GreekFantasy.CONFIG.isDryadAngryOnHarvest() && event.getPlayer() != null && !event.getPlayer().isCreative() && event.getState().isIn(BlockTags.LOGS)) {
       // make a list of nearby dryads
       final AxisAlignedBB aabb = new AxisAlignedBB(event.getPos()).grow(GreekFantasy.CONFIG.getDryadAngryRange());
@@ -353,23 +289,6 @@ public class CommonForgeEventHandler {
       if(rabbit.getRabbitType() != 99) {
         rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, e -> !((CerastesEntity)e).isHiding(), 6.0F, 2.2D, 2.2D, EntityPredicates.CAN_AI_TARGET::test));        
       }
-    }
-    // attempt to add player target goals
-    if(!event.getEntity().getEntityWorld().isRemote() && event.getEntity() instanceof MobEntity
-        && GreekFantasy.PROXY.getFavorRangeConfiguration().has(event.getEntity().getType())
-        && GreekFantasy.PROXY.getFavorRangeConfiguration().get(event.getEntity().getType()).hasHostileRange()) {
-      final MobEntity mob = (MobEntity)event.getEntity();
-      // add favor-checking goals
-      mob.targetSelector.addGoal(0, new NearestAttackableFavorablePlayerGoal(mob));
-      mob.targetSelector.addGoal(1, new NearestAttackableFavorablePlayerResetGoal(mob));
-    }
-    // attempt to add flee goals
-    if(!event.getEntity().getEntityWorld().isRemote() && event.getEntity() instanceof CreatureEntity
-        && GreekFantasy.PROXY.getFavorRangeConfiguration().has(event.getEntity().getType())
-        && GreekFantasy.PROXY.getFavorRangeConfiguration().get(event.getEntity().getType()).hasFleeRange()) {
-      final CreatureEntity creature = (CreatureEntity)event.getEntity();
-      // add favor-checking goals
-      creature.goalSelector.addGoal(1, new FleeFromFavorablePlayerGoal(creature));
     }
   }
   
@@ -426,13 +345,6 @@ public class CommonForgeEventHandler {
             || event.getEntityLiving() instanceof AbstractPiglinEntity)) {
       ((MobEntity)event.getEntityLiving()).setAttackTarget(null);
     }
-    if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity 
-        && event.getTarget() instanceof PlayerEntity
-        && GreekFantasy.PROXY.getFavorRangeConfiguration().has(event.getEntityLiving().getType())
-        && !GreekFantasy.PROXY.getFavorRangeConfiguration().get(event.getEntityLiving().getType()).getHostileRange().isInFavorRange((PlayerEntity)event.getTarget())
-        && event.getTarget() != event.getEntityLiving().getRevengeTarget()) {
-      ((MobEntity)event.getEntityLiving()).setAttackTarget(null);
-    }
   }
   
   /**
@@ -458,7 +370,7 @@ public class CommonForgeEventHandler {
       // sync deity
       GreekFantasy.PROXY.DEITY.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SDeityPacket(e.getKey(), e.getValue().get())));
       // sync favor range target
-      GreekFantasy.PROXY.FAVOR_RANGE_TARGET.get(FavorConfiguration.NAME).ifPresent(f -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SFavorRangeTargetPacket(f)));
+      GreekFantasy.PROXY.FAVOR_CONFIGURATION.get(FavorConfiguration.NAME).ifPresent(f -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SFavorRangeTargetPacket(f)));
     }
   }
   
@@ -471,7 +383,7 @@ public class CommonForgeEventHandler {
     GreekFantasy.LOGGER.debug("onAddReloadListeners");
     event.addListener(GreekFantasy.PROXY.PANFLUTE_SONGS);
     event.addListener(GreekFantasy.PROXY.DEITY);
-    event.addListener(GreekFantasy.PROXY.FAVOR_RANGE_TARGET);
+    event.addListener(GreekFantasy.PROXY.FAVOR_CONFIGURATION);
   }
   
   /** @return whether the entity should have the Stunned or Petrified effect applied **/

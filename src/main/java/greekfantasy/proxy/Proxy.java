@@ -6,8 +6,9 @@ import java.util.Collection;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
-import greekfantasy.deity.favor_effects.FavorConfiguration;
-import greekfantasy.events.CommonForgeEventHandler;
+import greekfantasy.deity.favor_effect.FavorConfiguration;
+import greekfantasy.event.CommonForgeEventHandler;
+import greekfantasy.event.FavorEventHandler;
 import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SFavorRangeTargetPacket;
 import greekfantasy.network.SPanfluteSongPacket;
@@ -22,7 +23,7 @@ public class Proxy {
       l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SPanfluteSongPacket(e.getKey(), e.getValue().get()))));
   public final GenericJsonReloadListener<Deity> DEITY = new GenericJsonReloadListener<>("deity", Deity.class, Deity.CODEC, 
       l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SDeityPacket(e.getKey(), e.getValue().get()))));
-  public final GenericJsonReloadListener<FavorConfiguration> FAVOR_RANGE_TARGET = new GenericJsonReloadListener<>("favor_configuration", FavorConfiguration.class, FavorConfiguration.CODEC, 
+  public final GenericJsonReloadListener<FavorConfiguration> FAVOR_CONFIGURATION = new GenericJsonReloadListener<>("favor_configuration", FavorConfiguration.class, FavorConfiguration.CODEC, 
       l -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SFavorRangeTargetPacket(l.get(FavorConfiguration.NAME).get())));
   
   public void registerReloadListeners() { }
@@ -37,7 +38,8 @@ public class Proxy {
     
   public void registerEventHandlers() {
     GreekFantasy.LOGGER.debug("registerEventHandlers");
-    MinecraftForge.EVENT_BUS.register(CommonForgeEventHandler.class);
+    MinecraftForge.EVENT_BUS.register(CommonForgeEventHandler.class);;
+    MinecraftForge.EVENT_BUS.register(FavorEventHandler.class);
   }
   
   /**
@@ -54,8 +56,8 @@ public class Proxy {
     return collection;
   }
 
-  /** @return the favor range target map **/
-  public FavorConfiguration getFavorRangeConfiguration() {
-    return FAVOR_RANGE_TARGET.get(FavorConfiguration.NAME).orElse(FavorConfiguration.EMPTY);
+  /** @return the favor configuration map **/
+  public FavorConfiguration getFavorConfiguration() {
+    return FAVOR_CONFIGURATION.get(FavorConfiguration.NAME).orElse(FavorConfiguration.EMPTY);
   }
 }

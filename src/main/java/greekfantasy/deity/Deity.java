@@ -11,8 +11,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.deity.favor_effects.FavorEffect;
-import greekfantasy.deity.favor_effects.TriggeredFavorEffect;
+import greekfantasy.deity.favor_effect.FavorEffect;
+import greekfantasy.deity.favor_effect.TriggeredFavorEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 

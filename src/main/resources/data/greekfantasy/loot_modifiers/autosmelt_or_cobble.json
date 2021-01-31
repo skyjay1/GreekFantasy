@@ -1,0 +1,20 @@
+{
+  "conditions": [
+    {
+      "condition": "minecraft:entity_properties",
+      "entity": "this",
+      "predicate": {
+        "type": "minecraft:player"
+      }
+    },
+    {
+      "condition": "minecraft:location_check",
+      "predicate": {
+        "block": {
+          "tag": "forge:ores"
+        }
+      }
+    }
+  ],
+  "stone": "minecraft:cobblestone"
+}

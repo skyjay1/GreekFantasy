@@ -8,9 +8,9 @@ import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.block.StatueBlock;
-import greekfantasy.deity.favor_effects.FavorEffect;
-import greekfantasy.deity.favor_effects.FavorEffectTrigger;
-import greekfantasy.deity.favor_effects.TriggeredFavorEffect;
+import greekfantasy.deity.favor_effect.FavorEffect;
+import greekfantasy.deity.favor_effect.FavorEffectTrigger;
+import greekfantasy.deity.favor_effect.TriggeredFavorEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;

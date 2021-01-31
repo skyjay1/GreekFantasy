@@ -16,6 +16,7 @@ import greekfantasy.entity.misc.*;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.gui.DeityContainer;
 import greekfantasy.item.*;
+import greekfantasy.loot.AutosmeltOrCobbleModifier;
 import greekfantasy.tileentity.*;
 import greekfantasy.tileentity.MobHeadTileEntity.HeadType;
 import greekfantasy.util.StatuePose;
@@ -84,8 +85,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(GreekFantasy.MODID)
@@ -749,6 +752,13 @@ public final class GFRegistry {
   public static void registerParticleTypes(final RegistryEvent.Register<ParticleType<?>> event) {
     GreekFantasy.LOGGER.debug("registerParticleTypes");
     event.getRegistry().register(new BasicParticleType(true).setRegistryName(MODID, "gorgon_face"));
+  }
+  
+  @SubscribeEvent
+  public static void registerLootModifiers(final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
+    event.getRegistry().registerAll(
+        new AutosmeltOrCobbleModifier.Serializer().setRegistryName(MODID, "autosmelt_or_cobble")
+    );
   }
   
   public static void finishBrewingRecipes() {

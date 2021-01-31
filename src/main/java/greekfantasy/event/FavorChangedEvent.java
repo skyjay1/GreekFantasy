@@ -1,4 +1,4 @@
-package greekfantasy.events;
+package greekfantasy.event;
 
 import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.FavorLevel;

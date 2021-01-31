@@ -1,7 +1,7 @@
 package greekfantasy.deity.favor;
 
 import greekfantasy.deity.IDeity;
-import greekfantasy.events.FavorChangedEvent;
+import greekfantasy.event.FavorChangedEvent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -59,7 +59,7 @@ public class FavorLevel {
    * @param toRemove the amount of favor to deplete (must be positive)
    * @param source the cause for the favor depletion (usually PASSIVE)
    * @return the updated favor value
-   * @see #addFavor(PlayerEntity, IDeity, long, greekfantasy.events.FavorChangedEvent.Source)
+   * @see #addFavor(PlayerEntity, IDeity, long, greekfantasy.event.FavorChangedEvent.Source)
    */
   public long depleteFavor(final PlayerEntity playerIn, final IDeity deityIn, final long toRemove, final FavorChangedEvent.Source source) {
     return addFavor(playerIn, deityIn, Math.min(Math.abs(favor), Math.abs(toRemove)) * -1 * (long)Math.signum(favor), source);
