@@ -168,23 +168,6 @@
   	{
   	  "trigger": {
   	    "type": "break_block",
-  	    "data": "minecraft:iron_ore"
-  	  },
-  	  "chance": 0.036,
-  	  "level_multiplier": 0.014,
-  	  "effect": {
-  	    "item": { 
-  	  	  "id": "minecraft:iron_ingot",
-  	  	  "Count": 1
-  	    },
-  	    "minlevel": 3,
-  	    "maxlevel": 10,
-  	    "mincooldown": 100
-  	  }
-  	},
-  	{
-  	  "trigger": {
-  	    "type": "break_block",
   	    "data": "minecraft:netherrack"
   	  },
   	  "chance": 0.034,

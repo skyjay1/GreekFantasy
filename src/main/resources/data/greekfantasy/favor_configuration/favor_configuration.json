@@ -191,14 +191,51 @@
 	}
   },
   "special_favor_effects": {
-  	"mining_autosmelt": {
+  	{
+  	  "type": "mining_autosmelt",
+  	  "favor_range": {
+  	    "deity": "greekfantasy:hades",
+	    "minlevel": 6,
+	    "maxlevel": 10
+  	  },
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 60
+  	},
+  	{
+  	  "type": "mining_cancel_ores",
   	  "favor_range": {
   	    "deity": "greekfantasy:hades",
 	    "minlevel": -10,
+	    "maxlevel": -6
+  	  },
+  	  "chance": 0.15,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 120
+  	},
+  	{
+  	  "type": "crop_harvest_multiplier",
+  	  "multiplier": 2.0,
+  	  "favor_range": {
+  	    "deity": "greekfantasy:poseidon",
+	    "minlevel": 4,
 	    "maxlevel": 10
   	  },
-  	  "chance": 0.99,
-  	  "mincooldown": 20
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 80
+  	},
+  	{
+  	  "type": "crop_harvest_multiplier",
+  	  "multiplier": -2.0,
+  	  "favor_range": {
+  	    "deity": "greekfantasy:poseidon",
+	    "minlevel": -10,
+	    "maxlevel": -4
+  	  },
+  	  "chance": 0.09,
+  	  "level_multiplier": 0.06,
+  	  "mincooldown": 90
   	}
   }
 }

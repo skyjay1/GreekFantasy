@@ -26,7 +26,7 @@ public class NearestAttackableFavorablePlayerResetGoal extends Goal {
   public boolean shouldExecute() {
     if(entity.ticksExisted % interval == 0 && entity.isAlive() && entity.getAttackTarget() instanceof PlayerEntity
         && entity.getAttackTarget() != entity.getRevengeTarget()) {
-      ConfiguredFavorRange range = GreekFantasy.PROXY.getFavorConfiguration().get(entity.getType());
+      ConfiguredFavorRange range = GreekFantasy.PROXY.getFavorConfiguration().getEntity(entity.getType());
       return range.hasHostileRange() && !range.getHostileRange().isInFavorRange((PlayerEntity)entity.getAttackTarget());
     }
     return false;

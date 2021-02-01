@@ -126,17 +126,18 @@ public class FavorManager {
       deityList.sort((o1, o2) -> favor.getFavor(o1).compareToAbs(favor.getFavor(o2)));
       FavorLevel level;
       // loop through each deity so each one can perform an effect
-      long cooldown = 10;
+      // this is different from regular effects, where only one effect is performed
+      long cooldown = -1;
       for(final IDeity deity : deityList) {
         level = favor.getFavor(deity);
         // perform an effect, set the timestamp and cooldown, and exit the loop
         long lCooldown = FavorEffectManager.onTriggeredFavorEffect(type, data, playerIn.getEntityWorld(), playerIn, deity, favor, level);
-        if(lCooldown > 0) {
-          cooldown = Math.max(cooldown, lCooldown);
-        }
+        cooldown = Math.max(cooldown, lCooldown);
       }
-      // set timestamp and cooldown
-      favor.setTriggeredTime(time, cooldown);
+      // set timestamp and cooldown if any of the triggers succeeded
+      if(cooldown > 0) {
+        favor.setTriggeredTime(time, cooldown);
+      }
     }
     return false;
   }

@@ -757,7 +757,8 @@ public final class GFRegistry {
   @SubscribeEvent
   public static void registerLootModifiers(final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
     event.getRegistry().registerAll(
-        new AutosmeltOrCobbleModifier.Serializer().setRegistryName(MODID, "autosmelt_or_cobble")
+        new AutosmeltOrCobbleModifier.Serializer().setRegistryName(MODID, "autosmelt_or_cobble"),
+        new AutosmeltOrCobbleModifier.Serializer().setRegistryName(MODID, "crop_multiplier")
     );
   }
   

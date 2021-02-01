@@ -11,7 +11,7 @@ public class NearestAttackableFavorablePlayerGoal extends NearestAttackableTarge
   public NearestAttackableFavorablePlayerGoal(final MobEntity host) {
     super(host, PlayerEntity.class, 10, true, false, l -> {
       if(l instanceof PlayerEntity) {
-        ConfiguredFavorRange range = GreekFantasy.PROXY.getFavorConfiguration().get(host.getType());
+        ConfiguredFavorRange range = GreekFantasy.PROXY.getFavorConfiguration().getEntity(host.getType());
         return range.hasHostileRange() && range.getHostileRange().isInFavorRange((PlayerEntity)l);
       }
       return false;

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "entries": [
-    "greekfantasy:autosmelt_or_cobble"
+    "greekfantasy:autosmelt_or_cobble",
+    "greekfantasy:crop_multiplier"
   ]
 }

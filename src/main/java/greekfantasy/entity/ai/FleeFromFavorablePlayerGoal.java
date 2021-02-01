@@ -12,7 +12,7 @@ public class FleeFromFavorablePlayerGoal extends AvoidEntityGoal<PlayerEntity> {
   public FleeFromFavorablePlayerGoal(final CreatureEntity entityIn, float distanceIn) {
     super(entityIn, PlayerEntity.class, distanceIn, 1.2D, 1.0D, 
         e -> entityIn.isAlive() && e instanceof PlayerEntity && e != entityIn.getRevengeTarget()
-        && GreekFantasy.PROXY.getFavorConfiguration().get(entityIn.getType()).getFleeRange().isInFavorRange((PlayerEntity)e));
+        && GreekFantasy.PROXY.getFavorConfiguration().getEntity(entityIn.getType()).getFleeRange().isInFavorRange((PlayerEntity)e));
   }
 }
 

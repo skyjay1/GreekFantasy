@@ -137,8 +137,8 @@ public class FavorEventHandler {
   public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
     // attempt to add player target goals
     if(!event.getEntity().getEntityWorld().isRemote() && event.getEntity() instanceof MobEntity
-        && GreekFantasy.PROXY.getFavorConfiguration().has(event.getEntity().getType())
-        && GreekFantasy.PROXY.getFavorConfiguration().get(event.getEntity().getType()).hasHostileRange()) {
+        && GreekFantasy.PROXY.getFavorConfiguration().hasEntity(event.getEntity().getType())
+        && GreekFantasy.PROXY.getFavorConfiguration().getEntity(event.getEntity().getType()).hasHostileRange()) {
       final MobEntity mob = (MobEntity)event.getEntity();
       // add favor-checking goals
       mob.targetSelector.addGoal(0, new NearestAttackableFavorablePlayerGoal(mob));
@@ -146,8 +146,8 @@ public class FavorEventHandler {
     }
     // attempt to add flee goals
     if(!event.getEntity().getEntityWorld().isRemote() && event.getEntity() instanceof CreatureEntity
-        && GreekFantasy.PROXY.getFavorConfiguration().has(event.getEntity().getType())
-        && GreekFantasy.PROXY.getFavorConfiguration().get(event.getEntity().getType()).hasFleeRange()) {
+        && GreekFantasy.PROXY.getFavorConfiguration().hasEntity(event.getEntity().getType())
+        && GreekFantasy.PROXY.getFavorConfiguration().getEntity(event.getEntity().getType()).hasFleeRange()) {
       final CreatureEntity creature = (CreatureEntity)event.getEntity();
       // add favor-checking goals
       creature.goalSelector.addGoal(1, new FleeFromFavorablePlayerGoal(creature));
@@ -162,8 +162,8 @@ public class FavorEventHandler {
   public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
     if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity 
         && event.getTarget() instanceof PlayerEntity
-        && GreekFantasy.PROXY.getFavorConfiguration().has(event.getEntityLiving().getType())
-        && !GreekFantasy.PROXY.getFavorConfiguration().get(event.getEntityLiving().getType()).getHostileRange().isInFavorRange((PlayerEntity)event.getTarget())
+        && GreekFantasy.PROXY.getFavorConfiguration().hasEntity(event.getEntityLiving().getType())
+        && !GreekFantasy.PROXY.getFavorConfiguration().getEntity(event.getEntityLiving().getType()).getHostileRange().isInFavorRange((PlayerEntity)event.getTarget())
         && event.getTarget() != event.getEntityLiving().getRevengeTarget()) {
       ((MobEntity)event.getEntityLiving()).setAttackTarget(null);
     }

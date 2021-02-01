@@ -1,6 +1,7 @@
 package greekfantasy.deity.favor_effect;
 
 import java.util.Optional;
+import java.util.Random;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -63,6 +64,12 @@ public class FavorEffect {
   
   /** @return the minimum cooldown after executing **/
   public long getMinCooldown() { return minCooldown; }
+  
+  /**
+   * @param rand a random instance
+   * @return a number in the range [minCooldown, 2*minCooldown)
+   */
+  public long getRandomCooldown(final Random rand) { return minCooldown + (long)rand.nextInt((int)minCooldown); }
   
   /** @return whether the level required is positive **/
   public boolean isPositive() { return minLevel >= 0 || maxLevel >= 0; }

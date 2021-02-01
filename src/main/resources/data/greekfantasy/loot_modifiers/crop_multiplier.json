@@ -8,6 +8,5 @@
       }
     }
   ],
-  "stone": "minecraft:cobblestone",
-  "ores": "forge:ores"
+  "crops": "forge:crops"
 }

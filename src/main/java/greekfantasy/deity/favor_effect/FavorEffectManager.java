@@ -23,6 +23,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -83,6 +84,14 @@ public class FavorEffectManager {
     return -1;
   }
   
+  public static void sendStatusMessage(final PlayerEntity playerIn, final IDeity deity, final boolean positive) {
+    final String message = positive ? "positive" : "negative";
+    final TextFormatting color = positive ? TextFormatting.GREEN : TextFormatting.RED;
+    final SoundEvent sound = positive ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_ITEM_BREAK;
+    playerIn.sendStatusMessage(new TranslationTextComponent("favor.effect." + message, deity.getText()).mergeStyle(color), false);
+    playerIn.getEntityWorld().playSound(playerIn.getPosX(), playerIn.getPosY(), playerIn.getPosZ(), sound, SoundCategory.PLAYERS, 0.4F, 0.9F + playerIn.getRNG().nextFloat() * 0.2F, false);
+  }
+  
   /**
    * Performs the given favor effect at the player's location
    * @param server the minecraft server
@@ -106,12 +115,7 @@ public class FavorEffectManager {
     } else GreekFantasy.LOGGER.debug("Failed to run any part of a favor effect :(");
     if(flag) {
       // if any of the effects ran successfully, send a message to the player, play a sound, and return cooldown
-      final boolean positive = effect.isPositive();
-      final String message = positive ? "positive" : "negative";
-      final TextFormatting color = positive ? TextFormatting.GREEN : TextFormatting.RED;
-      final SoundEvent sound = positive ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER;
-      playerIn.sendStatusMessage(new TranslationTextComponent("favor.effect." + message, deity.getText()).mergeStyle(color), false);
-      playerIn.playSound(sound, 0.4F, 0.9F + playerIn.getRNG().nextFloat() * 0.2F);
+      sendStatusMessage(playerIn, deity, effect.isPositive());
       return Math.abs(effect.getMinCooldown()) + playerIn.getRNG().nextInt((int)Math.max(1, Math.abs(effect.getMinCooldown())));
     }
     return -1;
