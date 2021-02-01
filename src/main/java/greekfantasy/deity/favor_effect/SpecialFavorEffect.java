@@ -88,8 +88,13 @@ public class SpecialFavorEffect {
    */
   public long getRandomCooldown(final Random rand) { return minCooldown + (long)rand.nextInt((int)minCooldown); }
   
+  /**
+   * @param player the player
+   * @param favor the player's favor
+   * @return true if this special effect can apply to the given player
+   */
   public boolean canApply(final PlayerEntity player, final IFavor favor) {
-    return this != EMPTY && favorRange.isInFavorRange(player, favor) 
+    return this != EMPTY && type != SpecialFavorEffect.Type.NONE && favorRange.getDeity().isEnabled() && favorRange.isInFavorRange(player, favor) 
         && player.getRNG().nextFloat() < getAdjustedChance(favor.getFavor(favorRange.getDeity()).getLevel());
   }
 
@@ -107,17 +112,16 @@ public class SpecialFavorEffect {
   
   public static enum Type implements IStringSerializable {
     NONE("none"),
-    NEARBY_CROPS_GROW("nearby_crops_grow"),
-    NEARBY_CROPS_UNGROW("nearby_crops_ungrow"),
     BREEDING_OFFSPRING_MULTIPLIER("breeding_offspring_multiplier"),
+    COMBAT_START_EFFECT("combat_start_effect"),
+    CROP_GROWTH_MULTIPLIER("crop_growth_multiplier"),
     CROP_HARVEST_MULTIPLIER("crop_harvest_multiplier"),
-    POTION_LENGTH_BONUS("potion_bonus_length"),
-    POTION_NAUSEA_CHANCE("potion_nausea_chance"),
+    POTION_BONUS_LENGTH("potion_bonus_length"),
+    POTION_BONUS_EFFECT("potion_bonus_effect"),
     MINING_AUTOSMELT("mining_autosmelt"),
     MINING_CANCEL_ORES("mining_cancel_ores"),
-    XP_MULTIPLIER("xp_multiplier"),
-    COMBAT_START_EFFECT("combat_start_effect"),
-    TRADING_CANCEL("trading_cancel");
+    TRADING_CANCEL("trading_cancel"),
+    XP_MULTIPLIER("xp_multiplier");
     
     private static final Map<String, SpecialFavorEffect.Type> valueMap = new HashMap<>();
     static {

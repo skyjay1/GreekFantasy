@@ -194,7 +194,7 @@
   	{
   	  "type": "mining_autosmelt",
   	  "favor_range": {
-  	    "deity": "greekfantasy:hades",
+  	    "deity": "greekfantasy:hephaestus",
 	    "minlevel": 6,
 	    "maxlevel": 10
   	  },
@@ -205,7 +205,7 @@
   	{
   	  "type": "mining_cancel_ores",
   	  "favor_range": {
-  	    "deity": "greekfantasy:hades",
+  	    "deity": "greekfantasy:hephaestus",
 	    "minlevel": -10,
 	    "maxlevel": -6
   	  },
@@ -217,7 +217,7 @@
   	  "type": "crop_harvest_multiplier",
   	  "multiplier": 0.75,
   	  "favor_range": {
-  	    "deity": "greekfantasy:poseidon",
+  	    "deity": "greekfantasy:persephone",
 	    "minlevel": 4,
 	    "maxlevel": 10
   	  },
@@ -229,7 +229,7 @@
   	  "type": "crop_harvest_multiplier",
   	  "multiplier": -0.9,
   	  "favor_range": {
-  	    "deity": "greekfantasy:poseidon",
+  	    "deity": "greekfantasy:persephone",
 	    "minlevel": -10,
 	    "maxlevel": -4
   	  },
@@ -245,12 +245,12 @@
   	  	"Duration": 450
   	  },
   	  "favor_range": {
-  	    "deity": "greekfantasy:zeus",
+  	    "deity": "greekfantasy:ares",
 	    "minlevel": 7,
 	    "maxlevel": 10
   	  },
-  	  "chance": 0.15,
-  	  "level_multiplier": 0.05,
+  	  "chance": 0.11,
+  	  "level_multiplier": 0.03,
   	  "mincooldown": 160
   	},
   	{
@@ -261,13 +261,144 @@
   	  	"Duration": 450
   	  },
   	  "favor_range": {
-  	    "deity": "greekfantasy:zeus",
+  	    "deity": "greekfantasy:ares",
 	    "minlevel": -6,
 	    "maxlevel": -10
   	  },
-  	  "chance": 0.15,
-  	  "level_multiplier": 0.05,
+  	  "chance": 0.12,
+  	  "level_multiplier": 0.03,
   	  "mincooldown": 160
+  	},
+  	{
+  	  "type": "crop_growth_multiplier",
+  	  "multiplier": 1.0,
+  	  "favor_range": {
+  	    "deity": "greekfantasy:demeter",
+	    "minlevel": 2,
+	    "maxlevel": 10
+  	  },
+  	  "chance": 0.08,
+  	  "level_multiplier": 0.02,
+  	  "mincooldown": 110
+  	},
+  	{
+  	  "type": "crop_growth_multiplier",
+  	  "multiplier": -1.0,
+  	  "favor_range": {
+  	    "deity": "greekfantasy:demeter",
+	    "minlevel": -2,
+	    "maxlevel": -10
+  	  },
+  	  "chance": 0.06,
+  	  "level_multiplier": 0.02,
+  	  "mincooldown": 120
+  	},
+  	{
+  	  "type": "xp_multiplier",
+  	  "multiplier": 0.25,
+  	  "favor_range": {
+  	    "deity": "greekfantasy:athena",
+	    "minlevel": 4,
+	    "maxlevel": 10
+  	  },
+  	  "chance": 0.15,
+  	  "level_multiplier": 0.04,
+  	  "mincooldown": 40
+  	},
+  	{
+  	  "type": "xp_multiplier",
+  	  "multiplier": -0.35,
+  	  "favor_range": {
+  	    "deity": "greekfantasy:athena",
+	    "minlevel": -3,
+	    "maxlevel": -10
+  	  },
+  	  "chance": 0.12,
+  	  "level_multiplier": 0.04,
+  	  "mincooldown": 40
+  	},
+  	{
+  	  "type": "combat_start_effect",
+  	  "potion": {
+  	  	"Potion": "minecraft:regeneration",
+  	  	"Amplifier": 0,
+  	  	"Duration": 65
+  	  },
+  	  "favor_range": {
+  	    "deity": "greekfantasy:apollo",
+	    "minlevel": 5,
+	    "maxlevel": 10
+  	  },
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 200
+  	},
+  	{
+  	  "type": "combat_start_effect",
+  	  "potion": {
+  	  	"Potion": "minecraft:slowness",
+  	  	"Amplifier": 1,
+  	  	"Duration": 65
+  	  },
+  	  "favor_range": {
+  	    "deity": "greekfantasy:apollo",
+	    "minlevel": -2,
+	    "maxlevel": -10
+  	  },
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 200
+  	},
+  	{
+  	  "type": "potion_bonus_effect",
+  	  "potion": {
+  	  	"Potion": "minecraft:nausea",
+  	  	"Amplifier": 0,
+  	  	"Duration": 230
+  	  },
+  	  "favor_range": {
+  	    "deity": "greekfantasy:dionysus",
+	    "minlevel": -2,
+	    "maxlevel": -10
+  	  },
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.04,
+  	  "mincooldown": 200
+  	},
+  	{
+  	  "type": "potion_bonus_length",
+  	  "multiplier": 0.34,
+  	  "favor_range": {
+  	    "deity": "greekfantasy:dionysus",
+	    "minlevel": 4,
+	    "maxlevel": 10
+  	  },
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.04,
+  	  "mincooldown": 200
+  	},
+  	{
+  	  "type": "breeding_offspring_multiplier",
+  	  "multiplier": 1.0,
+  	  "favor_range": {
+  	    "deity": "greekfantasy:hera",
+	    "minlevel": 6,
+	    "maxlevel": 10
+  	  },
+  	  "chance": 0.20,
+  	  "level_multiplier": 0.02,
+  	  "mincooldown": 190
+  	},
+  	{
+  	  "type": "trading_cancel",
+  	  "favor_range": {
+  	    "deity": "greekfantasy:hestia",
+	    "minlevel": -1,
+	    "maxlevel": -10
+  	  },
+  	  "chance": 1.0,
+  	  "level_multiplier": 0.0,
+  	  "mincooldown": 1
   	}
   ]
 }

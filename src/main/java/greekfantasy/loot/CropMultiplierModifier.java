@@ -45,7 +45,7 @@ public class CropMultiplierModifier extends LootModifier {
         && entity instanceof PlayerEntity && !entity.isSpectator() && !((PlayerEntity)entity).isCreative()) {
       // check favor levels and effects
       final PlayerEntity player = (PlayerEntity)entity;
-      final long time = player.getEntityWorld().getGameTime() + player.getEntityId() * 3;
+      final long time = IFavor.calculateTime(player);
       LazyOptional<IFavor> lFavor = entity.getCapability(GreekFantasy.FAVOR);
       IFavor favor = lFavor.orElse(GreekFantasy.FAVOR.getDefaultInstance());
       // if the player's favor has no cooldown, activate the effect

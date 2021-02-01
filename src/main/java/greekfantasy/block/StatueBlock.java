@@ -10,6 +10,7 @@ import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.FavorLevel;
 import greekfantasy.deity.favor.FavorManager;
 import greekfantasy.gui.StatueContainer;
+import greekfantasy.network.SSimpleParticlesPacket;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.util.PalladiumSavedData;
 import greekfantasy.util.StatuePose;
@@ -58,6 +59,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class StatueBlock extends HorizontalBlock implements IWaterLoggable {  
   
@@ -199,7 +201,10 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
         if(teDeity.isEnabled()) {
           playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
             FavorLevel level = f.getFavor(teDeity);
-            FavorManager.onGiveItem(teStatue, teDeity, playerIn, level, stack);
+            if(FavorManager.onGiveItem(teStatue, teDeity, playerIn, level, stack)) {
+              final boolean happy = teDeity.getItemFavorModifier(stack.getItem()) > 0;
+              GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(happy, pos, 10));
+            }
             // print current favor level
             level.sendStatusMessage(playerIn, teDeity);
           });

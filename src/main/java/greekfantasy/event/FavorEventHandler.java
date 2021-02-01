@@ -4,28 +4,40 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.deity.favor.Favor;
 import greekfantasy.deity.favor.FavorManager;
 import greekfantasy.deity.favor.IFavor;
+import greekfantasy.deity.favor_effect.SpecialFavorEffect;
 import greekfantasy.entity.ai.FleeFromFavorablePlayerGoal;
 import greekfantasy.entity.ai.NearestAttackableFavorablePlayerGoal;
 import greekfantasy.entity.ai.NearestAttackableFavorablePlayerResetGoal;
+import greekfantasy.network.SSimpleParticlesPacket;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.MerchantContainer;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class FavorEventHandler {
   
@@ -71,6 +83,18 @@ public class FavorEventHandler {
   }
   
   /**
+   * Used to change xp amount based on Favor
+   * @param event the PickupXP event
+   */
+  @SubscribeEvent
+  public static void onPlayerXP(final PlayerXpEvent.PickupXp event) {
+    if(!event.getPlayer().getEntityWorld().isRemote() && event.getPlayer().isServerWorld()
+        && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.XP_MULTIPLIER)) {
+      event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> event.getOrb().xpValue = FavorManager.onPlayerXP(event.getPlayer(), f, event.getOrb().xpValue));
+    }
+  }
+  
+  /**
    * Used to trigger the FavorManager
    * @param event the potion added event
    */
@@ -78,7 +102,7 @@ public class FavorEventHandler {
   public static void onAddPotion(final PotionEvent.PotionAddedEvent event) {
     if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof PlayerEntity) {
       // notify favor manager
-      event.getEntityLiving().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAddPotion((PlayerEntity)event.getEntityLiving(), event.getPotionEffect().getPotion(), f));
+      event.getEntityLiving().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAddPotion((PlayerEntity)event.getEntityLiving(), event.getPotionEffect(), f));
     }
   }
   
@@ -144,6 +168,27 @@ public class FavorEventHandler {
     }
   }
   
+  @SubscribeEvent
+  public static void onOpenContainer(final PlayerContainerEvent.Open event) {
+    if(event.getPlayer() instanceof ServerPlayerEntity && !event.getPlayer().isSpectator() && !event.getPlayer().isCreative()
+        && event.getContainer() instanceof MerchantContainer
+        && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.TRADING_CANCEL)) {
+      event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
+        // note: this special favor effect does not check or change cooldown time
+        // determine which special favor effect and cooldown to use
+        for(final SpecialFavorEffect effect : GreekFantasy.PROXY.getFavorConfiguration().getSpecials(SpecialFavorEffect.Type.TRADING_CANCEL)) {
+          if(effect.canApply(event.getPlayer(), f)) {
+            // close the container
+            ((ServerPlayerEntity)event.getPlayer()).closeContainer();
+            // spawn particles
+            GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(false, event.getPlayer().getPosition().up(1), 10));
+            return;
+          }
+        }        
+      });
+    }
+  }
+  
   /**
    * Used to add Favor-based AI to mobs when they are spawned.
    * @param event the spawn event
@@ -166,6 +211,32 @@ public class FavorEventHandler {
       final CreatureEntity creature = (CreatureEntity)event.getEntity();
       // add favor-checking goals
       creature.goalSelector.addGoal(1, new FleeFromFavorablePlayerGoal(creature));
+    }
+  }
+  
+  @SubscribeEvent
+  public static void onBabySpawn(final BabyEntitySpawnEvent event) {
+    final World world = event.getParentA().getEntityWorld();
+    if(!event.isCanceled() && world instanceof ServerWorld && event.getCausedByPlayer() != null 
+        && !event.getCausedByPlayer().isCreative() && !event.getCausedByPlayer().isSpectator()
+        && event.getParentA() instanceof AnimalEntity && event.getParentB() instanceof AnimalEntity
+        && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.BREEDING_OFFSPRING_MULTIPLIER)) {
+      event.getCausedByPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
+        int numBabies = FavorManager.onBabySpawn(event.getCausedByPlayer(), f);
+        if(numBabies < 1) {
+          // number of babies is zero, so cancel the event
+          event.setCanceled(true);
+        } else if(numBabies > 1) {
+          // number of babies is more than one, so spawn additional mobs
+          for(int i = 1; i < numBabies; i++) {
+            AgeableEntity bonusChild = ((AnimalEntity)event.getParentA()).func_241840_a((ServerWorld)world, (AnimalEntity)event.getParentB());
+            if(bonusChild != null) {
+              bonusChild.copyLocationAndAnglesFrom(event.getChild());
+              world.addEntity(bonusChild);
+            }
+          }
+        }
+      });
     }
   }
   

@@ -55,7 +55,7 @@ public class AutosmeltOrCobbleModifier extends LootModifier {
         && entity instanceof PlayerEntity && !entity.isSpectator() && !((PlayerEntity)entity).isCreative()
         && (canAutosmelt || canCancel)) {
       final PlayerEntity player = (PlayerEntity)entity;
-      final long time = player.getEntityWorld().getGameTime() + player.getEntityId() * 3;
+      final long time = IFavor.calculateTime(player);
       ArrayList<ItemStack> replacement = new ArrayList<ItemStack>();
       LazyOptional<IFavor> lFavor = entity.getCapability(GreekFantasy.FAVOR);
       IFavor favor = lFavor.orElse(GreekFantasy.FAVOR.getDefaultInstance());

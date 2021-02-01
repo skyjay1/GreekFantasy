@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
@@ -136,6 +137,10 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
    */
   default boolean hasNoTriggeredCooldown(final long time) {
     return time >= (getTriggeredTimestamp() + getTriggeredCooldown());
+  }
+  
+  public static long calculateTime(final PlayerEntity player) {
+    return player.getEntityWorld().getGameTime() + player.getEntityId() * 3;
   }
   
   @Override

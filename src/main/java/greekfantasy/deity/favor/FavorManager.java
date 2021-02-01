@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Random;
 
 import com.google.common.collect.Lists;
 
@@ -16,14 +17,21 @@ import greekfantasy.deity.favor_effect.FavorEffectManager;
 import greekfantasy.deity.favor_effect.FavorEffectTrigger;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;
 import greekfantasy.event.FavorChangedEvent.Source;
+import greekfantasy.network.SSimpleParticlesPacket;
 import greekfantasy.tileentity.StatueTileEntity;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.IGrowable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class FavorManager {
   
@@ -70,9 +78,46 @@ public class FavorManager {
    * @param effect the potion effect that was added
    * @param favor the player's favor capability
    */
-  public static void onAddPotion(final PlayerEntity player, final Effect effect, final IFavor favor) {
+  public static void onAddPotion(final PlayerEntity player, final EffectInstance effect, final IFavor favor) {
     // attempt to trigger EFFECTS_CHANGED favor effect
-    triggerFavorEffect(FavorEffectTrigger.Type.EFFECTS_CHANGED, effect.getRegistryName(), player, favor);
+    triggerFavorEffect(FavorEffectTrigger.Type.EFFECTS_CHANGED, effect.getPotion().getRegistryName(), player, favor);
+    // attempt to increase the duration
+    final long time = IFavor.calculateTime(player);
+    final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
+    if(player.ticksExisted > 10 && favor.hasNoTriggeredCooldown(time) && favorConfig.hasSpecials(SpecialFavorEffect.Type.POTION_BONUS_LENGTH)) {
+      float lengthMultiplier = 0.0F;
+      long cooldown = -1;
+      // determine the length multiplier and max cooldown
+      for(final SpecialFavorEffect favorEffect : favorConfig.getSpecials(SpecialFavorEffect.Type.POTION_BONUS_LENGTH)) {
+        if(favorEffect.canApply(player, favor)) {
+          lengthMultiplier += favorEffect.getMultiplier().get();
+          cooldown = Math.max(cooldown, favorEffect.getRandomCooldown(player.getRNG()));
+        }
+      }
+      if(cooldown > 0) {
+        // use the length multiplier amount to change the effect to one with a different duration
+        // note: this does not work for negative modifiers
+        final int length = effect.getDuration() + (int)Math.round(effect.getDuration() * lengthMultiplier);
+        effect.combine(new EffectInstance(effect.getPotion(), length, effect.getAmplifier()));
+        // set effect time and cooldown
+        favor.setTriggeredTime(time, cooldown);
+      }
+    }
+    // attempt to add a bonus potion effect
+    if(player.ticksExisted > 10 && favor.hasNoTriggeredCooldown(time) && favorConfig.hasSpecials(SpecialFavorEffect.Type.POTION_BONUS_EFFECT)) {
+      long cooldown = -1;
+      // determine the length multiplier and max cooldown
+      for(final SpecialFavorEffect favorEffect : favorConfig.getSpecials(SpecialFavorEffect.Type.POTION_BONUS_EFFECT)) {
+        if(favorEffect.canApply(player, favor)) {
+          cooldown = Math.max(cooldown, favorEffect.getRandomCooldown(player.getRNG()));
+          favorEffect.getPotionEffect().ifPresent(e -> player.addPotionEffect(e));
+        }
+      }
+      if(cooldown > 0) {
+        // set effect time and cooldown
+        favor.setTriggeredTime(time, cooldown);
+      }
+    }
   }
   
   /**
@@ -81,7 +126,7 @@ public class FavorManager {
    * @param favor the player's favor capability
    */
   public static void onPlayerTick(final PlayerEntity player, final IFavor favor) {
-    final long time = player.getEntityWorld().getGameTime() + player.getEntityId() * 3;
+    final long time = IFavor.calculateTime(player);
     // decrease all favor 
     if(player.ticksExisted > 10 && GreekFantasy.CONFIG.doesFavorDecrease() && time % GreekFantasy.CONFIG.getFavorDecreaseInterval() == 0) {
       favor.forEach((d, f) -> f.depleteFavor(player, d, 1, Source.PASSIVE), true);
@@ -111,7 +156,13 @@ public class FavorManager {
       // if no effect was performed, set a cooldown
       favor.setEffectTime(time, 200);
     }
-    return;
+    // every few seconds, attempt to perform passive special effects
+    if(!player.isCreative() && !player.isSpectator() && player.ticksExisted > 10 && time % 50 == 0 && favor.hasNoTriggeredCooldown(time)) {
+      long cooldown = onNearCrops(player, favor);
+      if(cooldown > 0) {
+        favor.setTriggeredTime(time, cooldown);
+      }
+    }
   }
   
   /**
@@ -122,7 +173,7 @@ public class FavorManager {
    * @param favor the player's favor
    */
   public static void onCombatStart(final PlayerEntity player, final Entity other, final IFavor favor) {
-    final long time = player.getEntityWorld().getGameTime() + player.getEntityId() * 3;
+    final long time = IFavor.calculateTime(player);
     FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     if(favor.hasNoTriggeredCooldown(time) && favorConfig.hasSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
       long cooldown = -1;
@@ -147,7 +198,7 @@ public class FavorManager {
    */
   public static boolean triggerFavorEffect(final FavorEffectTrigger.Type type, final ResourceLocation data, 
       final PlayerEntity playerIn, final IFavor favor) {
-    final long time = playerIn.getEntityWorld().getGameTime() + playerIn.getEntityId() * 3;
+    final long time = IFavor.calculateTime(playerIn);
     if(favor.hasNoTriggeredCooldown(time)) {
       final List<IDeity> deityList = Lists.newArrayList(GreekFantasy.PROXY.getDeityCollection(true));
       // order by which deity has the most favor
@@ -232,6 +283,115 @@ public class FavorManager {
     }
     return false;
   }
+
+  /**
+   * Called when the player picks up an XP orb and there are favor effects that change xp
+   * @param player the player
+   * @param favor the player's favor
+   * @param xpValue the initial xp value
+   * @return the new xp value
+   */
+  public static int onPlayerXP(final PlayerEntity player, final IFavor favor, final int xpValue) {
+    final long time = IFavor.calculateTime(player);
+    final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
+    float xpMultiplier = 0.0F;
+    long cooldown = -1;
+    // determine the xp multiplier and max cooldown
+    for(final SpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.XP_MULTIPLIER)) {
+      if(effect.canApply(player, favor)) {
+        xpMultiplier += effect.getMultiplier().get();
+        cooldown = Math.max(cooldown, effect.getRandomCooldown(player.getRNG()));
+      }
+    }
+    if(cooldown > 0 && xpMultiplier != 0.0F) {
+      favor.setEffectTime(time, cooldown);
+      // use the xp multiplier amount to determine new xp
+      return Math.round(xpValue + xpValue * xpMultiplier);
+    }
+    return xpValue;
+  }
   
+  public static int onBabySpawn(final PlayerEntity player, final IFavor favor) {
+    final long time = IFavor.calculateTime(player);
+    final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
+    float breedingMultiplier = 0.0F;
+    long cooldown = -1;
+    // determine the xp multiplier and max cooldown
+    for(final SpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.BREEDING_OFFSPRING_MULTIPLIER)) {
+      if(effect.canApply(player, favor)) {
+        breedingMultiplier += effect.getMultiplier().get();
+        cooldown = Math.max(cooldown, effect.getRandomCooldown(player.getRNG()));
+      }
+    }
+    if(cooldown > 0 && breedingMultiplier != 0.0F) {
+      favor.setEffectTime(time, cooldown);
+      // use the xp multiplier amount to determine new xp
+      return Math.round(1 + breedingMultiplier);
+    }
+    return 1;
+  }
   
+  /**
+   * Checks random blocks in a radius until either a growable crop has been found
+   * and changed, or no crops were found in a limited number of attempts.
+   * @param player the player
+   * @param favor the player's favor
+   * @return whether a crop was found and its age was changed
+   **/
+  private static long onNearCrops(final PlayerEntity player, final IFavor favor) {
+    final IntegerProperty[] AGES = new IntegerProperty[] {
+        BlockStateProperties.AGE_0_1, BlockStateProperties.AGE_0_15, BlockStateProperties.AGE_0_2,
+        BlockStateProperties.AGE_0_3, BlockStateProperties.AGE_0_5, BlockStateProperties.AGE_0_7
+    };
+    final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
+    if(favorConfig.hasSpecials(SpecialFavorEffect.Type.CROP_GROWTH_MULTIPLIER)) {
+      final Random rand = player.getEntityWorld().getRandom();
+      final int maxAttempts = 10;
+      final int variationY = 2;
+      int radius = 6;
+      int attempts = 0;
+      int growthToAdd = 0;
+      long cooldown = -1;
+      // determine the growth amount to add and max cooldown
+      for(final SpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.CROP_GROWTH_MULTIPLIER)) {
+        if(effect.canApply(player, favor)) {
+          growthToAdd += Math.round(effect.getMultiplier().get());
+          cooldown = Math.max(cooldown, effect.getRandomCooldown(rand));
+        }
+      }
+      // if no changes should be made, exit immediately
+      if(growthToAdd == 0 || cooldown < 0) {
+        return -1;
+      }
+      // if there are effects that should change growth states, find a crop to affect
+      while (attempts++ <= maxAttempts) {
+        // get random block in radius
+        final int x1 = rand.nextInt(radius * 2) - radius;
+        final int y1 = rand.nextInt(variationY * 2) - variationY + 1;
+        final int z1 = rand.nextInt(radius * 2) - radius;
+        final BlockPos blockpos = player.getPosition().add(x1, y1, z1);
+        final BlockState state = player.getEntityWorld().getBlockState(blockpos);
+        // if the block can be grown, grow it and return
+        if (state.getBlock() instanceof IGrowable) {
+          // determine which age property applies to this state
+          for(final IntegerProperty AGE : AGES) {
+            if(state.hasProperty(AGE)) {
+              // attempt to update the age (add or subtract)
+              int oldAge = state.get(AGE);
+              int newAge = Math.max(0, oldAge + growthToAdd);
+              if(AGE.getAllowedValues().contains(Integer.valueOf(newAge))) {
+                // update the blockstate's age
+                player.getEntityWorld().setBlockState(blockpos, state.with(AGE, newAge));
+                // spawn particles
+                GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(growthToAdd > 0, blockpos, 10));
+                // return cooldown value
+                return cooldown;
+              }
+            }
+          }
+        }
+      }
+    }
+    return -1;
+  }
 }
