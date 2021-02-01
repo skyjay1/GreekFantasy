@@ -17,6 +17,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
@@ -109,12 +110,26 @@ public class FavorEventHandler {
   
   /**
    * Used to change a player's favor when they attack an entity.
-   * @param event the living attack event
+   * @param event the player attack event
    **/
   @SubscribeEvent
   public static void onPlayerAttack(final AttackEntityEvent event) {
     if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getPlayer().isAlive()) {
       event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAttackEntity(event.getEntityLiving(), event.getPlayer(), f));
+    }
+  }
+  
+  
+  /**
+   * Used to trigger Favor Manager when the player is attacked by an entity.
+   * @param event the living attack event
+   **/
+  @SubscribeEvent
+  public static void onPlayerAttack(final LivingAttackEvent event) {
+    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() 
+        && event.getEntityLiving() instanceof PlayerEntity
+        && event.getSource().getImmediateSource() != null) {
+      ((PlayerEntity)event.getEntityLiving()).getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerHurt((PlayerEntity)event.getEntityLiving(), event.getSource().getImmediateSource(), f));
     }
   }  
   

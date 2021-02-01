@@ -51,8 +51,8 @@ public class AutosmeltOrCobbleModifier extends LootModifier {
     final boolean canAutosmelt = favorConfig.hasSpecials(SpecialFavorEffect.Type.MINING_AUTOSMELT);
     final boolean canCancel = favorConfig.hasSpecials(SpecialFavorEffect.Type.MINING_CANCEL_ORES);
     // make sure this is an ore mined by a non-creative player
-    if(context.get(LootParameters.BLOCK_STATE).getBlock().isIn(ores) 
-        && !entity.isSpectator() && entity instanceof PlayerEntity && !((PlayerEntity)entity).isCreative()
+    if(context.has(LootParameters.BLOCK_STATE) && context.get(LootParameters.BLOCK_STATE).getBlock().isIn(ores) 
+        && entity instanceof PlayerEntity && !entity.isSpectator() && !((PlayerEntity)entity).isCreative()
         && (canAutosmelt || canCancel)) {
       final PlayerEntity player = (PlayerEntity)entity;
       final long time = player.getEntityWorld().getGameTime() + player.getEntityId() * 3;

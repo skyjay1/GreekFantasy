@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
+import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.deity.favor_effect.FavorEffectManager;
 import greekfantasy.deity.favor_effect.FavorEffectTrigger;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;
@@ -46,6 +47,10 @@ public class FavorManager {
   public static void onPlayerHurt(final PlayerEntity player, final Entity source, final IFavor favor) {
     // attempt to trigger ENTITY_HURT_PLAYER favor effect
     triggerFavorEffect(FavorEffectTrigger.Type.ENTITY_HURT_PLAYER, source.getType().getRegistryName(), player, favor);
+    // attempt to trigger effects on combat start
+    if(player.getCombatTracker().getCombatDuration() < 2) {
+      onCombatStart(player, source, favor);
+    }
   }
   
   /**
@@ -110,6 +115,29 @@ public class FavorManager {
   }
   
   /**
+   * Called when the player is attacked (or attacks) and their combat tracker
+   * shows a duration of less than 2
+   * @param player the player who is in combat
+   * @param other the other entity that is involved in the combat
+   * @param favor the player's favor
+   */
+  public static void onCombatStart(final PlayerEntity player, final Entity other, final IFavor favor) {
+    final long time = player.getEntityWorld().getGameTime() + player.getEntityId() * 3;
+    FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
+    if(favor.hasNoTriggeredCooldown(time) && favorConfig.hasSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
+      long cooldown = -1;
+      for(final SpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
+        effect.getPotionEffect().ifPresent(e -> player.addPotionEffect(e));
+        cooldown = Math.max(cooldown, effect.getRandomCooldown(player.getRNG()));
+      }
+      // set effect cooldown
+      if(cooldown > 0) {
+        favor.setTriggeredTime(time, cooldown);
+      }
+    }
+  }
+  
+  /**
    * Triggers a favor effect and sets the triggered timestamp and cooldown
    * @param type the favor effect trigger type
    * @param data the data to interpret based on the type
@@ -160,6 +188,10 @@ public class FavorManager {
     }
     // attempt to trigger PLAYER_HURT_ENTITY favor effect
     triggerFavorEffect(FavorEffectTrigger.Type.PLAYER_HURT_ENTITY, entity.getType().getRegistryName(), playerIn, favor);
+    // attempt to trigger effects on combat start
+    if(playerIn.getCombatTracker().getCombatDuration() < 2) {
+      onCombatStart(playerIn, entity, favor);
+    }
   }
   
   /**

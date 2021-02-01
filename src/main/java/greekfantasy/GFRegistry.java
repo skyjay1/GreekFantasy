@@ -17,6 +17,7 @@ import greekfantasy.gui.StatueContainer;
 import greekfantasy.gui.DeityContainer;
 import greekfantasy.item.*;
 import greekfantasy.loot.AutosmeltOrCobbleModifier;
+import greekfantasy.loot.CropMultiplierModifier;
 import greekfantasy.tileentity.*;
 import greekfantasy.tileentity.MobHeadTileEntity.HeadType;
 import greekfantasy.util.StatuePose;
@@ -758,7 +759,7 @@ public final class GFRegistry {
   public static void registerLootModifiers(final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
     event.getRegistry().registerAll(
         new AutosmeltOrCobbleModifier.Serializer().setRegistryName(MODID, "autosmelt_or_cobble"),
-        new AutosmeltOrCobbleModifier.Serializer().setRegistryName(MODID, "crop_multiplier")
+        new CropMultiplierModifier.Serializer().setRegistryName(MODID, "crop_multiplier")
     );
   }
   

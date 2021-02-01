@@ -190,7 +190,7 @@
 	  }
 	}
   },
-  "special_favor_effects": {
+  "special_favor_effects": [
   	{
   	  "type": "mining_autosmelt",
   	  "favor_range": {
@@ -215,7 +215,7 @@
   	},
   	{
   	  "type": "crop_harvest_multiplier",
-  	  "multiplier": 2.0,
+  	  "multiplier": 0.75,
   	  "favor_range": {
   	    "deity": "greekfantasy:poseidon",
 	    "minlevel": 4,
@@ -227,7 +227,7 @@
   	},
   	{
   	  "type": "crop_harvest_multiplier",
-  	  "multiplier": -2.0,
+  	  "multiplier": -0.9,
   	  "favor_range": {
   	    "deity": "greekfantasy:poseidon",
 	    "minlevel": -10,
@@ -236,6 +236,38 @@
   	  "chance": 0.09,
   	  "level_multiplier": 0.06,
   	  "mincooldown": 90
+  	},
+  	{
+  	  "type": "combat_start_effect",
+  	  "potion": {
+  	  	"Potion": "minecraft:strength",
+  	  	"Amplifier": 0,
+  	  	"Duration": 450
+  	  },
+  	  "favor_range": {
+  	    "deity": "greekfantasy:zeus",
+	    "minlevel": 7,
+	    "maxlevel": 10
+  	  },
+  	  "chance": 0.15,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 160
+  	},
+  	{
+  	  "type": "combat_start_effect",
+  	  "potion": {
+  	  	"Potion": "minecraft:weakness",
+  	  	"Amplifier": 0,
+  	  	"Duration": 450
+  	  },
+  	  "favor_range": {
+  	    "deity": "greekfantasy:zeus",
+	    "minlevel": -6,
+	    "maxlevel": -10
+  	  },
+  	  "chance": 0.15,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 160
   	}
-  }
+  ]
 }
