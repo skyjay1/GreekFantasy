@@ -10,7 +10,6 @@ __Key:__
 - Summoning animations not playing on dedicated server
   X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
 - _ Structure gen is jenky
-- _ Config option for winged sandals to enable flight?
 - _ Deity doesn't set items from JSON correctly
 
 ## Entity basics
@@ -24,13 +23,12 @@ __Key:__
 - X X _ X X Centaur
 - X X X X X Cyprian Centaur (bull-head, hostile)
 - X X X X X Minotaur
-- X X X X X Gorgon
-- X X X _ X Medusa
+- X X ~ X X Gorgon
 - X X X X X Harpy
 - X X _ _ X Empusa
 - X X X X X Shade
-- X X X X X Siren (hostile)
-- X X X X X Cerastes (ram-horned serpent)
+- X X ~ X X Siren (hostile)
+- X X ~ X X Cerastes (ram-horned serpent)
 - X X _ X X Ara (Propoetide)
 - X X _ X X Cyclopes
 - X X X X X Gigante
@@ -43,11 +41,11 @@ __Key:__
 - X X X X X Boss: Geryon (3-headed Gigante)
 - X X X X X Boss: Charybdis
 - X X X X X Boss: Talos
-- X X X X X Miniboss: Python
+- X X ~ X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
-- X X X X X Miniboss: Medusa
+- X X ~ X X Miniboss: Medusa
 - X X X _ X Fury
-- X X _ X X Drakaina
+- X X ~ X X Drakaina
 - X X X X X Arion (very fast horse, use gold)
 - X X X X X Whirl (give it Heart of Sea to convert into Charybdis)
 - _ _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
@@ -95,10 +93,10 @@ __Key:__
 - X Deity datapack support
 - X Favor GUI
 - ~ Special abilities ideas:
-  - X Grow or ungrow crops near player (Demeter/Persephone)
+  - X Grow or ungrow crops near player (Demeter)
   - _ Allow winged sandals to grant flight (Hermes)
   - X Breeding animals produces 0-3 offspring instead of 1 (Hera)
-  - X Harvesting crops drops additional (or removes drops) (Demeter/Persephone)
+  - X Harvesting crops drops additional (or removes drops) (Persephone)
   - X Drinking potion grants Naseau _or_ additional time (Dionysus)
   - X Chance to autosmelt or unsmelt when mining (Hephaestus)
   - _ Neutral mobs targetting player become neutral after a few seconds (Aphrodite) 

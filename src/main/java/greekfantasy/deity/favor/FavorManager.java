@@ -178,8 +178,10 @@ public class FavorManager {
     if(favor.hasNoTriggeredCooldown(time) && favorConfig.hasSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
       long cooldown = -1;
       for(final SpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
-        effect.getPotionEffect().ifPresent(e -> player.addPotionEffect(e));
-        cooldown = Math.max(cooldown, effect.getRandomCooldown(player.getRNG()));
+        if(effect.canApply(player, favor)) {
+          effect.getPotionEffect().ifPresent(e -> player.addPotionEffect(e));
+          cooldown = Math.max(cooldown, effect.getRandomCooldown(player.getRNG()));
+        }
       }
       // set effect cooldown
       if(cooldown > 0) {

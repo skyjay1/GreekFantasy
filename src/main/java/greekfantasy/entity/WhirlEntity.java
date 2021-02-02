@@ -1,5 +1,7 @@
 package greekfantasy.entity;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
@@ -16,10 +18,17 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.item.Item;
+import net.minecraft.loot.LootTables;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
@@ -42,10 +51,18 @@ import net.minecraftforge.common.Tags.IOptionalNamedTag;
 public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
 
   protected static final IOptionalNamedTag<Item> TRIGGER = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "charybdis_trigger"));
+  
+  protected static final DataParameter<Boolean> ATTRACT_MOBS = EntityDataManager.createKey(WhirlEntity.class, DataSerializers.BOOLEAN);
+  protected static final String KEY_AFFECTS_MOBS = "AttractMobs";
+  protected static final String KEY_LIFE_TICKS = "LifeTicks";
 
   private static final double RANGE = 9.0D;
   
   private boolean swimmingUp;
+  
+  /** The number of ticks until the entity starts taking damage **/
+  protected boolean limitedLifespan;
+  protected int limitedLifeTicks;
   
   public WhirlEntity(final EntityType<? extends WhirlEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -73,14 +90,22 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
   }
   
   @Override
+  public void registerData() {
+    super.registerData();
+    this.getDataManager().register(ATTRACT_MOBS, Boolean.valueOf(false));
+  }
+  
+  @Override
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(1, new WhirlEntity.SwimToSurfaceGoal());
+    this.goalSelector.addGoal(2, new WhirlEntity.SwirlGoal(this, 1000, 0, RANGE));
   }
   
   @Override
   public void livingTick() {
     super.livingTick();
+    
     // remove if colliding with another whirl or a charybdis
     final List<WaterMobEntity> waterMobList = this.world.getEntitiesWithinAABB(WaterMobEntity.class, this.getBoundingBox().grow(1.0D), 
         e -> e != this && e.isAlive() && (e.getType() == GFRegistry.CHARYBDIS_ENTITY || e.getType() == GFRegistry.WHIRL_ENTITY));
@@ -88,28 +113,31 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
       this.attackEntityFrom(DamageSource.causeMobDamage(this), this.getMaxHealth() * 2.0F);
       return;
     }
-    // check for trigger items
-    final List<ItemEntity> triggerList = this.world.getEntitiesWithinAABB(EntityType.ITEM, this.getBoundingBox(), e -> e.isInWaterOrBubbleColumn() && !e.getItem().isEmpty() && e.getItem().getItem().isIn(TRIGGER));
-    if(this.getEntityWorld() instanceof ServerWorld && !triggerList.isEmpty()) {
-      CharybdisEntity.spawnCharybdis((ServerWorld) this.getEntityWorld(), this);
-      return;
+ 
+    // lifespan
+    if (this.limitedLifespan && --this.limitedLifeTicks <= 0) {
+      this.limitedLifeTicks = 20;
+      this.setHealth(this.getHealth() - 1.0F);
     }
+    
     // attract nearby items
-    final List<ItemEntity> itemEntityList = this.world.getEntitiesWithinAABB(EntityType.ITEM, this.getBoundingBox().grow(RANGE), e -> e.isInWaterOrBubbleColumn() && (this.getPosY() + this.getHeight()) > e.getPosY());
+    final List<ItemEntity> itemEntityList = this.world.getEntitiesWithinAABB(EntityType.ITEM, this.getBoundingBox().grow(1.0), e -> e.isInWaterOrBubbleColumn() && (this.getPosY() + this.getHeight()) > e.getPosY());
     for(final ItemEntity e : itemEntityList) {
-      final double motion = 0.07D;
-      final Vector3d vec = this.getPositionVec().subtract(e.getPositionVec())
-          .normalize().scale(motion);
-      e.setMotion(e.getMotion().add(vec).mul(0.5D, 1.0D, 0.5D));
-      e.addVelocity(0, 0.001D, 0);
-      e.velocityChanged = true;
-      if(e.getBoundingBox().intersects(this.getBoundingBox())) {
-        e.attackEntityFrom(DamageSource.causeMobDamage(this), 0.25F);
-        if(!e.isAlive()) {
-          this.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 0.6F, 0.8F + this.getRNG().nextFloat() * 0.4F);
-        }
+      // check for trigger items
+      if(this.getEntityWorld() instanceof ServerWorld && !e.getItem().isEmpty() && e.getItem().getItem().isIn(TRIGGER)) {
+        CharybdisEntity.spawnCharybdis((ServerWorld) this.getEntityWorld(), this);
+        e.attackEntityFrom(DamageSource.causeMobDamage(this), 1.0F);
       }
-    }    
+      // start to remove items
+      if(!e.cannotPickup()) {
+        e.attackEntityFrom(DamageSource.causeMobDamage(this), 1.0F);
+      }
+      // play sound when item is removed
+      if(!e.isAlive()) {
+        this.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 0.6F, 0.8F + this.getRNG().nextFloat() * 0.4F);
+      }
+    }
+    
     // spawn particles
     if(this.world.isRemote() && ticksExisted % 3 == 0 && this.isInWaterOrBubbleColumn()) {
       // spawn particles in spiral
@@ -152,6 +180,15 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
     return GreekFantasy.CONFIG.isWhirlInvulnerable() || super.isInvulnerableTo(source);
   }
   
+  @Override
+  protected void damageEntity(final DamageSource source, final float amountIn) {
+    float amount = amountIn;
+    if (!source.isDamageAbsolute() && getAttractMobs()) {
+      amount *= 0.25F;
+    }
+    super.damageEntity(source, amount);
+  }
+  
   // Prevent entity collisions //
   
   @Override
@@ -159,6 +196,42 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
   
   @Override
   protected void collideWithNearbyEntities() { }
+  
+  // Lifespan and Attract Mobs //
+  
+  public void setAttractMobs(final boolean attractsMobs) {
+    this.getDataManager().set(ATTRACT_MOBS, attractsMobs);
+  }
+  
+  public boolean getAttractMobs() { return this.getDataManager().get(ATTRACT_MOBS); }
+
+  public void setLimitedLife(int life) {
+    this.limitedLifespan = true;
+    this.limitedLifeTicks = life;
+  }
+  
+  @Override
+  public ResourceLocation getLootTable() {
+    return limitedLifespan ? LootTables.EMPTY : super.getLootTable();
+  }
+  
+  @Override
+  public void writeAdditional(CompoundNBT compound) {
+    super.writeAdditional(compound);
+    compound.putBoolean(KEY_AFFECTS_MOBS, getAttractMobs());
+    if (this.limitedLifespan) {
+      compound.putInt(KEY_LIFE_TICKS, this.limitedLifeTicks);
+    }
+  }
+
+  @Override
+  public void readAdditional(CompoundNBT compound) {
+    super.readAdditional(compound);
+    setAttractMobs(compound.getBoolean(KEY_AFFECTS_MOBS));
+    if (compound.contains(KEY_LIFE_TICKS)) {
+      setLimitedLife(compound.getInt(KEY_LIFE_TICKS));
+    }
+  }
   
   // Sounds //
   
@@ -215,6 +288,26 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
       BlockPos pos = WhirlEntity.this.getPosition().up((int) Math.ceil(WhirlEntity.this.getHeight()));
       BlockState state = WhirlEntity.this.world.getBlockState(pos);
       return state.getBlock() == Blocks.WATER && super.shouldExecute();
+    }
+  }
+  
+  private static class SwirlGoal extends greekfantasy.entity.ai.SwirlGoal<WhirlEntity> {
+  
+    public SwirlGoal(final WhirlEntity entity, final int lDuration, final int lCooldown, final double lRange) {
+      super(entity, lDuration, lCooldown, lRange, false);
+    }
+
+    @Override
+    protected void onCollideWith(Entity e) {
+      // attack living entities, if enabled
+      if(entity.getAttractMobs() && e instanceof LivingEntity) {
+        e.attackEntityFrom(DamageSource.causeMobDamage(entity), 1.0F);
+      }
+    }
+
+    @Override
+    protected boolean canSwirl(Entity e) {
+      return target.test(e) && ((e instanceof LivingEntity && entity.getAttractMobs()) || e instanceof ItemEntity);
     }
   }
 }

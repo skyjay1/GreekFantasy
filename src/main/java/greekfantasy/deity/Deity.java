@@ -33,7 +33,7 @@ public class Deity implements IDeity {
       ItemStack.CODEC.optionalFieldOf("left_hand", ItemStack.EMPTY).forGetter(Deity::getLeftHandItem),
       ItemStack.CODEC.optionalFieldOf("right_hand", ItemStack.EMPTY).forGetter(Deity::getRightHandItem),
       ResourceLocation.CODEC.optionalFieldOf("base", new ResourceLocation(GreekFantasy.MODID, "polished_marble_slab")).forGetter(Deity::getBase),
-      Codec.STRING.optionalFieldOf("overlayString", "limestone").forGetter(Deity::getOverlayString),
+      Codec.STRING.optionalFieldOf("overlayString", "none").forGetter(Deity::getOverlayString),
       FavorEffect.CODEC.listOf().optionalFieldOf("effects", Arrays.asList()).forGetter(Deity::getFavorEffects),
       TriggeredFavorEffect.CODEC.listOf().optionalFieldOf("triggered_effects", Arrays.asList()).forGetter(Deity::getTriggeredFavorEffects),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).optionalFieldOf("kill_favor_map", Maps.newHashMap()).forGetter(Deity::getKillFavorModifiers),
@@ -60,7 +60,7 @@ public class Deity implements IDeity {
       final List<FavorEffect> lFavorEffects, final List<TriggeredFavorEffect> lTriggeredFavorEffects, 
       final Map<ResourceLocation, Integer> lKillFavorMap, final Map<ResourceLocation, Integer> lItemFavorMap) {
     name = lName;
-    texture = new ResourceLocation(lName.getNamespace(), "textures/entity/deity/" + lName.getPath() + ".png");
+    texture = new ResourceLocation(lName.getNamespace(), "textures/deity/" + lName.getPath() + ".png");
     killFavorMap = ImmutableMap.copyOf(lKillFavorMap);
     itemFavorMap = ImmutableMap.copyOf(lItemFavorMap);
     favorEffects = ImmutableList.copyOf(lFavorEffects);

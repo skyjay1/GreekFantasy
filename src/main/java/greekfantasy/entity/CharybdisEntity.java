@@ -3,6 +3,7 @@ package greekfantasy.entity;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
@@ -124,7 +125,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(1, new CharybdisEntity.SwimToSurfaceGoal());
-    this.goalSelector.addGoal(2, new CharybdisEntity.SwirlGoal(SWIRL_TIME, 114, RANGE));
+    this.goalSelector.addGoal(2, new CharybdisEntity.SwirlGoal(this, SWIRL_TIME, 114, RANGE));
     this.goalSelector.addGoal(3, new CharybdisEntity.ThrowGoal(THROW_TIME, 82, RANGE * 0.75D));
   }
   
@@ -413,110 +414,48 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
    
   }
   
-  class SwirlGoal extends Goal {
-    
-    protected final CharybdisEntity entity;
-    protected final int duration;
-    protected final int cooldown;
-    protected final double range;
-    
-    protected List<Entity> trackedEntities = new ArrayList<>();
-    protected int progressTime;
-    protected int cooldownTime;
-    
-    /**
-     * @param lDuration the maximum amount of time this goal will run
-     * @param lCooldown the minimum amount of time before this goal runs again
-     * @param lRange the distance at which entities should be swirled
-     **/
-    public SwirlGoal(final int lDuration, final int lCooldown, final double lRange) {
-      this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
-      entity = CharybdisEntity.this;
-      duration = lDuration;
-      cooldown = lCooldown;
-      range = lRange;
-      cooldownTime = 60;
+  private static class SwirlGoal extends greekfantasy.entity.ai.SwirlGoal<CharybdisEntity> {
+
+    public SwirlGoal(final CharybdisEntity entityIn, final int lDuration, final int lCooldown, final double lRange) {
+      super(entityIn, lDuration, lCooldown, lRange, true);
     }
     
     @Override
     public boolean shouldExecute() {
-      if(cooldownTime > 0) {
-        cooldownTime--;
-      } else if((entity.isNoneState() || entity.isSwirling()) && entity.ticksExisted % 10 == 0) {
-        trackedEntities = entity.getEntitiesInRange(range);
-        return trackedEntities.size() > 0;
-      }
-      return false;
+      return super.shouldExecute() && (entity.isNoneState() || entity.isSwirling());
     }
     
     @Override
     public void startExecuting() {
+      super.startExecuting();
       entity.setState(SWIRLING);
       entity.swirlTime = 1;
-      progressTime = 1;
     }
     
     @Override
     public boolean shouldContinueExecuting() {
-      // only check every 10 ticks
-      if(entity.ticksExisted % 10 == 1) {
-        trackedEntities = entity.getEntitiesInRange(range);
-      }
-      return progressTime > 0 && entity.isSwirling() && trackedEntities.size() > 0;
-    }
-    
-    @Override
-    public void tick() {
-      // goal timer
-      if(progressTime++ >= duration) {
-        resetTask();
-        return;
-      }
-      // move tracked entities
-      for(final Entity e : trackedEntities) {
-        // try to break boats
-        if(e instanceof BoatEntity) {
-          if(entity.getRNG().nextInt(8) == 0) {
-            e.attackEntityFrom(DamageSource.causeMobDamage(entity), 3.0F);
-          }
-          continue;
-        }
-        // distance math
-        double dx = entity.getPosX() - e.getPositionVec().x;
-        //double dy = entity.getPosY() - e.getPositionVec().y;
-        double dz = entity.getPosZ() - e.getPositionVec().z;
-        final double horizDisSq = dx * dx + dz * dz;
-        if(entity.getBoundingBox().intersects(e.getBoundingBox())) {
-          // damage the entity and steal some health
-          final float attack = (float)entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
-          if(e.attackEntityFrom(DamageSource.causeMobDamage(entity), attack)) {
-            entity.heal(attack * 0.25F);
-          }
-        } else {
-          // move the target toward this entity
-          swirlEntity(e, horizDisSq);
-        }
-      }
+      return super.shouldContinueExecuting() && entity.isSwirling();
     }
     
     @Override
     public void resetTask() {
+      super.resetTask();
       entity.setState(NONE);
       entity.swirlTime = 0;
-      progressTime = 0;
-      cooldownTime = cooldown;
-      trackedEntities.clear();
     }
-    
-    private void swirlEntity(final Entity target, final double disSq) {
-      // calculate the amount of motion to apply based on distance
-      final double motion = 0.062D + 0.11D * (1.0D - (disSq / (range * range)));
-      final Vector3d normalVec = CharybdisEntity.this.getPositionVec().mul(1.0D, 0, 1.0D).subtract(target.getPositionVec().mul(1.0D, 0, 1.0D)).normalize();
-      final Vector3d rotatedVec = normalVec.rotateYaw(1.5707963267F).scale(motion);
-      final Vector3d motionVec = target.getMotion().add(normalVec.scale(0.028D)).add(rotatedVec).mul(0.65D, 1.0D, 0.65D);
-      target.setMotion(motionVec);
-      target.addVelocity(0, 0.0068D, 0);
-      target.velocityChanged = true;
+
+    @Override
+    protected void onCollideWith(Entity e) {
+      // attack the entity and steal some health
+      final float attack = (float)entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
+      if(e.attackEntityFrom(DamageSource.causeMobDamage(entity), attack)) {
+        entity.heal(Math.abs(attack * 0.25F));
+      }
+    }
+
+    @Override
+    protected boolean canSwirl(Entity e) {
+      return target.test(e);
     }
   }
   

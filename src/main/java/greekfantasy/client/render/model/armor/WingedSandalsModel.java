@@ -20,11 +20,13 @@ public class WingedSandalsModel extends BipedModel<LivingEntity> {
     leftWing2 = makeWing(this, modelSize, false);
     this.bipedLeftLeg.addChild(leftWing1);
     this.bipedLeftLeg.addChild(leftWing2);
+    this.bipedLeftLeg.mirror = false;
 
     rightWing1 = makeWing(this, modelSize, true);
     rightWing2 = makeWing(this, modelSize, false);
     this.bipedRightLeg.addChild(rightWing1);
     this.bipedRightLeg.addChild(rightWing2);
+    this.bipedRightLeg.mirror = false;
     
     // hide unused parts
     this.bipedHead.showModel = false;
@@ -42,7 +44,7 @@ public class WingedSandalsModel extends BipedModel<LivingEntity> {
     final float wingSpan = 0.7854F;
     final float wingAngle = wingSpan + MathHelper.cos((ageInTicks + entity.getEntityId()) * wingSpeed) * wingSpan * 0.5F;
     this.leftWing1.rotateAngleY = this.rightWing1.rotateAngleY = -wingAngle;
-    this.leftWing2.rotateAngleY = this.rightWing2.rotateAngleY = wingAngle;    
+    this.leftWing2.rotateAngleY = this.rightWing2.rotateAngleY = wingAngle;
   }
 
   public static ModelRenderer makeWing(final EntityModel<?> model, final float modelSize, final boolean isLeft) {

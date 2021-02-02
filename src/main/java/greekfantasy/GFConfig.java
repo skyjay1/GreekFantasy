@@ -350,7 +350,7 @@ public class GFConfig {
     FEATURES.put("python_pit", new BiomeWhitelistConfig(builder, "python_pit", 6, true, biomesAsList(BiomeDictionary.Type.JUNGLE)));
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, nonNetherHostileBlacklist));
     FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 900, true, biomesAsList(BiomeDictionary.Type.SWAMP)));
-    FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 22, true, biomesAsList(BiomeDictionary.Type.FOREST)));
+    FEATURES.put("olive_tree", new BiomeWhitelistConfig(builder, "olive_tree", 22, true, biomesAsList(BiomeDictionary.Type.FOREST)));
     builder.pop();
   }
   
