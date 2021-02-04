@@ -112,6 +112,7 @@ public class SpecialFavorEffect {
   
   public static enum Type implements IStringSerializable {
     NONE("none"),
+    ARROW_DAMAGE_MULTIPLIER("arrow_damage_multiplier"),
     BREEDING_OFFSPRING_MULTIPLIER("breeding_offspring_multiplier"),
     COMBAT_START_EFFECT("combat_start_effect"),
     CROP_GROWTH_MULTIPLIER("crop_growth_multiplier"),

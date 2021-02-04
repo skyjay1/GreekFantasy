@@ -115,7 +115,7 @@ public class ClientForgeEventHandler {
     final Minecraft mc = Minecraft.getInstance();
     if(mc != null) {
       final PlayerEntity player = mc.player;
-      if(player.isAlive() && isStunned(player)) {
+      if(player.isAlive() && (isStunned(player) || player.getItemStackFromSlot(EquipmentSlotType.FEET).getItem() == GFRegistry.WINGED_SANDALS)) {
         event.setFOV(mc.gameSettings.fov);
       }
     }

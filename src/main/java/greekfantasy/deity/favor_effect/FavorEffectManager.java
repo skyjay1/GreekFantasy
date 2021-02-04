@@ -84,6 +84,12 @@ public class FavorEffectManager {
     return -1;
   }
   
+  /**
+   * Sends a status message to the player (in chat) to inform them which deity caused the recent effect
+   * @param playerIn the player
+   * @param deity the deity
+   * @param positive true if the effect was positive
+   */
   public static void sendStatusMessage(final PlayerEntity playerIn, final IDeity deity, final boolean positive) {
     final String message = positive ? "positive" : "negative";
     final TextFormatting color = positive ? TextFormatting.GREEN : TextFormatting.RED;

@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GFWorldGen;
+import greekfantasy.GFWorldSavedData;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.entity.ArionEntity;
@@ -19,7 +20,6 @@ import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SFavorRangeTargetPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
-import greekfantasy.util.PalladiumSavedData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -306,7 +306,7 @@ public class CommonForgeEventHandler {
       final ServerWorld world = (ServerWorld)event.getWorld();
       final BlockPos blockPos = new BlockPos(event.getX(), event.getY(), event.getZ());
       final ChunkPos chunkPos = new ChunkPos(blockPos);
-      final PalladiumSavedData data = PalladiumSavedData.getOrCreate(world);
+      final GFWorldSavedData data = GFWorldSavedData.getOrCreate(world);
       ChunkPos cPos;
       // search each chunk in a square radius centered on this chunk
       for(int cX = -cRadius; cX <= cRadius; cX++) {
@@ -315,7 +315,7 @@ public class CommonForgeEventHandler {
           if(event.getWorld().chunkExists(cPos.x, cPos.z)) {
             // check each position to see if it's valid and within range
             for(final BlockPos p : data.getPalladium(world, cPos)) {
-              if(!PalladiumSavedData.validate(world, p)) {
+              if(!GFWorldSavedData.validatePalladium(world, p)) {
                 data.removePalladium(cPos, p);
               } else if(Math.abs(p.getY() - blockPos.getY()) < cVertical) {
                 // the position is preventing spawn, set result to DENY

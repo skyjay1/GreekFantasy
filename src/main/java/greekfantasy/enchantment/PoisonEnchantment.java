@@ -13,6 +13,9 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 public class PoisonEnchantment extends Enchantment {
   
@@ -26,6 +29,11 @@ public class PoisonEnchantment extends Enchantment {
       return true;
     }
     return super.canApply(item);
+  }
+  
+  @Override
+  public ITextComponent getDisplayName(int level) {
+    return ((IFormattableTextComponent)super.getDisplayName(level)).mergeStyle(TextFormatting.GREEN);
   }
 
   @Override

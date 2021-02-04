@@ -60,6 +60,7 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue HUNTING_ENABLED;
   private final ForgeConfigSpec.BooleanValue POISON_ENABLED;
   private final ForgeConfigSpec.BooleanValue MIRROR_ENABLED;
+  private final ForgeConfigSpec.BooleanValue FLYING_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_DROPS_ARMOR;
   private final ForgeConfigSpec.BooleanValue SWINE_PREVENTS_TARGET;
@@ -72,6 +73,7 @@ public class GFConfig {
   private boolean huntingEnabled;
   private boolean poisonEnabled;
   private boolean mirrorEnabled;
+  private boolean flyingEnabled;
   private boolean swineEnabled;
   private boolean swineDropsArmor;
   private boolean swinePreventsTarget;
@@ -198,6 +200,7 @@ public class GFConfig {
     HUNTING_ENABLED = builder.define("enable_hunting_enchantment", true);
     POISON_ENABLED = builder.define("enable_poison_enchantment", true);
     MIRROR_ENABLED = builder.define("enable_mirror_enchantment", true);
+    FLYING_ENABLED = builder.define("enable_flying_enchantment", true);
     SWINE_ENABLED = builder.define("enable_swine_effect", true);
     SWINE_DROPS_ARMOR = builder.comment("Whether players under the swine effect drop their armor")
         .define("swine_drops_armor", true);
@@ -350,7 +353,7 @@ public class GFConfig {
     FEATURES.put("python_pit", new BiomeWhitelistConfig(builder, "python_pit", 6, true, biomesAsList(BiomeDictionary.Type.JUNGLE)));
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, nonNetherHostileBlacklist));
     FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 900, true, biomesAsList(BiomeDictionary.Type.SWAMP)));
-    FEATURES.put("olive_tree", new BiomeWhitelistConfig(builder, "olive_tree", 22, true, biomesAsList(BiomeDictionary.Type.FOREST)));
+    FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 22, true, biomesAsList(BiomeDictionary.Type.FOREST)));
     builder.pop();
   }
   
@@ -381,6 +384,7 @@ public class GFConfig {
     huntingEnabled = HUNTING_ENABLED.get();
     poisonEnabled = POISON_ENABLED.get();
     mirrorEnabled = MIRROR_ENABLED.get();
+    flyingEnabled = FLYING_ENABLED.get();
     swineEnabled = SWINE_ENABLED.get();
     swineDropsArmor = SWINE_DROPS_ARMOR.get();
     swinePreventsTarget = SWINE_PREVENTS_TARGET.get();
@@ -436,6 +440,7 @@ public class GFConfig {
   public boolean doesSwinePreventTarget() { return swinePreventsTarget; }
   public boolean isMirrorPotionEnabled() { return mirrorPotion; }
   public boolean isSwinePotionEnabled() { return swinePotion; }
+  public boolean isFlyingEnabled() { return flyingEnabled; }
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
   public int getSatyrShamanChance() { return satyrShamanChance; }
   public ResourceLocation getSatyrSong() { return satyrSong; }

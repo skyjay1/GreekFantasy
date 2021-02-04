@@ -1,20 +1,29 @@
-package greekfantasy.util;
+package greekfantasy;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
-import greekfantasy.GreekFantasy;
 import greekfantasy.block.StatueBlock.StatueMaterial;
+import greekfantasy.deity.favor.IFavor;
 import greekfantasy.tileentity.StatueTileEntity;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -22,9 +31,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
 
-public class PalladiumSavedData extends WorldSavedData {
+public class GFWorldSavedData extends WorldSavedData {
   
-  private static Map<ChunkPos, Set<BlockPos>> palladiumMap = new HashMap<>();
+  private Map<ChunkPos, Set<BlockPos>> palladiumMap = new HashMap<>();
   private static final String KEY_MAP = "PalladiumMap";
   private static final String KEY_SET = "Positions";
   private static final String KEY_CHUNK_X = "ChunkX";
@@ -32,13 +41,17 @@ public class PalladiumSavedData extends WorldSavedData {
   private static final String KEY_X = "X";
   private static final String KEY_Y = "Y";
   private static final String KEY_Z = "Z";
+  
+  private List<UUID> flyingPlayers = new ArrayList<>();
+  private static final String KEY_PLAYERS = "FlyingPlayers";
+  private static final String KEY_UUID = "UUID";
 
-  public PalladiumSavedData(String name) {
+  public GFWorldSavedData(String name) {
     super(name);
   }
   
-  public static PalladiumSavedData getOrCreate(final ServerWorld server) {
-    return server.getSavedData().getOrCreate(() -> new PalladiumSavedData(GreekFantasy.MODID), GreekFantasy.MODID);
+  public static GFWorldSavedData getOrCreate(final ServerWorld server) {
+    return server.getSavedData().getOrCreate(() -> new GFWorldSavedData(GreekFantasy.MODID), GreekFantasy.MODID);
   }
   
   /**
@@ -107,40 +120,40 @@ public class PalladiumSavedData extends WorldSavedData {
     this.markDirty();
   }
   
-  /** @return if the given position contains a palladium tile entity **/
-  public static boolean validate(final World world, final BlockPos pos) {
-    return validate(world.getTileEntity(pos));
+  // Flying Player methods //
+  
+  public void addFlyingPlayer(final PlayerEntity player) {
+    flyingPlayers.add(PlayerEntity.getOfflineUUID(player.getName().getUnformattedComponentText()));
+    player.abilities.allowFlying = true;
+    player.sendPlayerAbilities();
   }
   
-  /** @return if the given tile entity is a palladium **/
-  public static boolean validate(final @Nullable TileEntity te) {
-    return (te instanceof StatueTileEntity && ((StatueTileEntity)te).getStatueMaterial() == StatueMaterial.WOOD);
+  public void removeFlyingPlayer(final PlayerEntity player) {
+    flyingPlayers.remove(PlayerEntity.getOfflineUUID(player.getName().getUnformattedComponentText()));
+    player.abilities.allowFlying = false;
+    player.sendPlayerAbilities();
   }
   
-  /**
-   * Scans all tile entities in the chunk to get a list of palladium locations
-   * @param world the world
-   * @param chunkPos the chunk
-   * @return the set of positions containing palladium blocks
-   */
-  private static Set<BlockPos> fillPalladiumList(final World world, final ChunkPos chunkPos) {
-    // iterate through all tile entities in this chunk and fill a list with Palladium entries
-    Set<BlockPos> palladiumSet = new HashSet<>();
-    try {
-      Map<BlockPos, TileEntity> chunkTEMap = world.getChunk(chunkPos.x, chunkPos.z).getTileEntityMap();
-      for(final Entry<BlockPos, TileEntity> e : chunkTEMap.entrySet()) {
-        if(validate(e.getValue())) {
-          palladiumSet.add(e.getKey());
-        }
+  public boolean hasFlyingPlayer(final PlayerEntity player) {
+    return flyingPlayers.contains(PlayerEntity.getOfflineUUID(player.getName().getUnformattedComponentText()));
+  }
+  
+  public List<UUID> getFlyingPlayers() { return flyingPlayers; }
+  
+  public void forEachFlyingPlayer(final World worldIn, final Consumer<PlayerEntity> action) {
+    flyingPlayers.forEach(uuid -> {
+      PlayerEntity p = worldIn.getPlayerByUuid(uuid);
+      if(p != null) {
+        action.accept(p);
       }
-    } catch(final Exception e) {
-      GreekFantasy.LOGGER.error("Encountered an error trying to fill palladium list (PalladiumSavedData)");
-    }
-    return palladiumSet;
+    });
   }
+  
+  // NBT methods //
 
   @Override
   public void read(CompoundNBT nbt) {
+    // read palladium map
     if(nbt.contains(KEY_MAP)) {
       final ListNBT chunkMap = nbt.getList(KEY_MAP, 10);
       for(int i = 0, il = chunkMap.size(); i < il; i++) {
@@ -159,10 +172,18 @@ public class PalladiumSavedData extends WorldSavedData {
         palladiumMap.put(new ChunkPos(chunkX, chunkZ), blockPosSet);
       }
     }
+    // read flying players
+    if(nbt.contains(KEY_PLAYERS)) {
+      final ListNBT playerList = nbt.getList(KEY_PLAYERS, 8);
+      for(int i = 0, il = playerList.size(); i < il; i++) {
+        flyingPlayers.add(UUID.fromString(playerList.getString(i)));
+      }
+    }
   }
 
   @Override
   public CompoundNBT write(CompoundNBT compound) {
+    // write palladium map
     final ListNBT chunkMap = new ListNBT();
     for(final Entry<ChunkPos, Set<BlockPos>> entry : palladiumMap.entrySet()) {
       // chunk contains chunkX, chunkY, and posList
@@ -182,7 +203,61 @@ public class PalladiumSavedData extends WorldSavedData {
       chunkMap.add(chunk);
     }
     compound.put(KEY_MAP, chunkMap);
+    // write player list
+    final ListNBT flyingPlayerList = new ListNBT();
+    for(final UUID uuid : flyingPlayers) {
+      flyingPlayerList.add(StringNBT.valueOf(uuid.toString()));
+    }
+    compound.put(KEY_PLAYERS, flyingPlayerList);
     return compound;
   }
+  
+  // Static methods //
+  
+  /**
+   * @param player the player
+   * @return true if the player is wearing enchanted sandals and has high favor
+   */
+  public static boolean validatePlayer(final PlayerEntity player, final IFavor favor) {
+    final ItemStack feet = player.getItemStackFromSlot(EquipmentSlotType.FEET);
+    return (feet.getItem() == GFRegistry.WINGED_SANDALS
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, feet) > 0
+        && GreekFantasy.PROXY.getFavorConfiguration().getFlyingDeityRange().isInFavorRange(player, favor));
+  }
 
+  /**
+   * @param world the world
+   * @param pos the block position of a tile entity
+   * @return if the given position contains a palladium tile entity 
+   */
+  public static boolean validatePalladium(final World world, final BlockPos pos) {
+    return validatePalladium(world.getTileEntity(pos));
+  }
+  
+  /** @return if the given tile entity is a palladium **/
+  public static boolean validatePalladium(final @Nullable TileEntity te) {
+    return (te instanceof StatueTileEntity && ((StatueTileEntity)te).getStatueMaterial() == StatueMaterial.WOOD);
+  }
+  
+  /**
+   * Scans all tile entities in the chunk to get a list of palladium locations
+   * @param world the world
+   * @param chunkPos the chunk
+   * @return the set of positions containing palladium blocks
+   */
+  private static Set<BlockPos> fillPalladiumList(final World world, final ChunkPos chunkPos) {
+    // iterate through all tile entities in this chunk and fill a list with Palladium entries
+    Set<BlockPos> palladiumSet = new HashSet<>();
+    try {
+      Map<BlockPos, TileEntity> chunkTEMap = world.getChunk(chunkPos.x, chunkPos.z).getTileEntityMap();
+      for(final Entry<BlockPos, TileEntity> e : chunkTEMap.entrySet()) {
+        if(validatePalladium(e.getValue())) {
+          palladiumSet.add(e.getKey());
+        }
+      }
+    } catch(final Exception e) {
+      GreekFantasy.LOGGER.error("Encountered an error trying to fill palladium list (GFWorldSavedData)");
+    }
+    return palladiumSet;
+  }
 }

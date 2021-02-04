@@ -45,6 +45,7 @@ public class WingedSandalsItem extends ArmorItem {
   @OnlyIn(Dist.CLIENT)
   private greekfantasy.client.render.model.armor.WingedSandalsModel MODEL;
   
+  protected final Multimap<Attribute, AttributeModifier> flyingAttributeModifiers;
   protected final Multimap<Attribute, AttributeModifier> attributeModifiers;
   
   public WingedSandalsItem(Properties builderIn) {
@@ -52,6 +53,7 @@ public class WingedSandalsItem extends ArmorItem {
     final double speedBonus = GreekFantasy.CONFIG.SANDALS_SPEED_BONUS.get();
     ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
     builder.putAll(super.getAttributeModifiers(EquipmentSlotType.FEET));
+    flyingAttributeModifiers = builder.build();
     builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(SPEED_MODIFIER, "Armor speed modifier", speedBonus, AttributeModifier.Operation.MULTIPLY_TOTAL));
     this.attributeModifiers = builder.build();
   }
@@ -93,7 +95,7 @@ public class WingedSandalsItem extends ArmorItem {
       stack.addEnchantment(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
     }
     // add Jump Boost effect
-    if(itemSlot == EquipmentSlotType.FEET.getIndex() && stack.getMaxDamage() - stack.getDamage() > 10 && entityIn instanceof LivingEntity) {
+    if(itemSlot == EquipmentSlotType.FEET.getIndex() && stack.getMaxDamage() - stack.getDamage() > 10  && entityIn instanceof LivingEntity) {
       final LivingEntity entity = (LivingEntity)entityIn;
       entity.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 20, 4, false, false, false));
       entity.fallDistance = 0;
@@ -109,14 +111,21 @@ public class WingedSandalsItem extends ArmorItem {
    */
   @Override
   public Multimap<Attribute, AttributeModifier> getAttributeModifiers(final EquipmentSlotType equipmentSlot, final ItemStack stack) {
-    return equipmentSlot == EquipmentSlotType.FEET && (stack.getMaxDamage() - stack.getDamage() > 10) ? this.attributeModifiers : super.getAttributeModifiers(equipmentSlot, stack);
+    if(equipmentSlot == EquipmentSlotType.FEET && (stack.getMaxDamage() - stack.getDamage() > 10)) {
+      //return EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, stack) < 1
+      //    ? this.attributeModifiers : this.flyingAttributeModifiers;
+      return attributeModifiers;
+    }
+    return super.getAttributeModifiers(equipmentSlot, stack);
   }
 
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    // add broken tooltip
     if(stack.getMaxDamage() - stack.getDamage() <= 10) {
       tooltip.add(new TranslationTextComponent("item.tooltip.broken").mergeStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
     } else {
+      // add jump boost tooltip
       tooltip.add(new TranslationTextComponent("effect.minecraft.jump_boost").mergeStyle(TextFormatting.AQUA)
         .appendString(" ").append(new TranslationTextComponent("enchantment.level.5").mergeStyle(TextFormatting.AQUA)));
     }

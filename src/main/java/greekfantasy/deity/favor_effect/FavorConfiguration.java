@@ -16,27 +16,31 @@ import net.minecraft.util.ResourceLocation;
 public class FavorConfiguration {
 
   public static final ResourceLocation NAME = new ResourceLocation(GreekFantasy.MODID, "favor_configuration");
-  public static final FavorConfiguration EMPTY = new FavorConfiguration(Maps.newHashMap(), Lists.newArrayList());
+  public static final FavorConfiguration EMPTY = new FavorConfiguration(Maps.newHashMap(), Lists.newArrayList(), FavorRange.EMPTY);
   
   public static final Codec<FavorConfiguration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       Codec.unboundedMap(ResourceLocation.CODEC, ConfiguredFavorRange.CODEC)
         .optionalFieldOf("entity_favor_configuration", Maps.newHashMap())
         .forGetter(FavorConfiguration::getEntityTargetMap),
       SpecialFavorEffect.CODEC.listOf().optionalFieldOf("special_favor_effects", Lists.newArrayList())
-        .forGetter(FavorConfiguration::getSpecialFavorEffects)
+        .forGetter(FavorConfiguration::getSpecialFavorEffects),
+      FavorRange.CODEC.optionalFieldOf("flying_enchantment", FavorRange.EMPTY)
+        .forGetter(FavorConfiguration::getFlyingDeityRange)
     ).apply(instance, FavorConfiguration::new));
 
   private final Map<ResourceLocation, ConfiguredFavorRange> entityTargetMap;
   private final List<SpecialFavorEffect> specialFavorEffectList;
   private final EnumMap<SpecialFavorEffect.Type, List<SpecialFavorEffect>> specialFavorEffectMap;
+  private final FavorRange flyingDeityRange;
   
   public FavorConfiguration(Map<ResourceLocation, ConfiguredFavorRange> entityTargetMapIn,
-      List<SpecialFavorEffect> specialFavorEffectMapIn) {
+      List<SpecialFavorEffect> specialFavorEffectMapIn, final FavorRange flyingDeityRangeIn) {
     super();
     entityTargetMap = entityTargetMapIn;
     specialFavorEffectList = specialFavorEffectMapIn;
-    specialFavorEffectMap = Maps.newEnumMap(SpecialFavorEffect.Type.class);
+    flyingDeityRange = flyingDeityRangeIn;
     // map the special favor effects based on type
+    specialFavorEffectMap = Maps.newEnumMap(SpecialFavorEffect.Type.class);
     for(final SpecialFavorEffect effect : specialFavorEffectList) {
       if(!specialFavorEffectMap.containsKey(effect.getType())) {
         specialFavorEffectMap.put(effect.getType(), Lists.newArrayList());
@@ -48,6 +52,8 @@ public class FavorConfiguration {
   public Map<ResourceLocation, ConfiguredFavorRange> getEntityTargetMap() { return entityTargetMap; }
   
   public List<SpecialFavorEffect> getSpecialFavorEffects() { return specialFavorEffectList; }
+  
+  public FavorRange getFlyingDeityRange() { return flyingDeityRange; }
 
   public ConfiguredFavorRange getEntity(final EntityType<?> type) {
     return getEntityTargetMap().getOrDefault(type.getRegistryName(), ConfiguredFavorRange.EMPTY);

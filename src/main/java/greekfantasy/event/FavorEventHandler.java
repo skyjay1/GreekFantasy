@@ -1,5 +1,7 @@
 package greekfantasy.event;
 
+import greekfantasy.GFRegistry;
+import greekfantasy.GFWorldSavedData;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.favor.Favor;
 import greekfantasy.deity.favor.FavorManager;
@@ -9,15 +11,20 @@ import greekfantasy.entity.ai.FleeFromFavorablePlayerGoal;
 import greekfantasy.entity.ai.NearestAttackableFavorablePlayerGoal;
 import greekfantasy.entity.ai.NearestAttackableFavorablePlayerResetGoal;
 import greekfantasy.network.SSimpleParticlesPacket;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.container.MerchantContainer;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
@@ -28,15 +35,18 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class FavorEventHandler {
@@ -75,7 +85,7 @@ public class FavorEventHandler {
    * @param event the PlayerTickEvent
    **/
   @SubscribeEvent
-  public static void onLivingTick(final PlayerTickEvent event) {
+  public static void onPlayerTick(final PlayerTickEvent event) {
     final boolean tick = (event.phase == TickEvent.Phase.START) && event.player.isAlive();
     if(tick && !event.player.getEntityWorld().isRemote() && event.player.isServerWorld()) {
       event.player.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerTick(event.player, f));
@@ -155,7 +165,26 @@ public class FavorEventHandler {
         && event.getSource().getImmediateSource() != null) {
       ((PlayerEntity)event.getEntityLiving()).getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerHurt((PlayerEntity)event.getEntityLiving(), event.getSource().getImmediateSource(), f));
     }
-  }  
+  }
+  
+  /**
+   * Used to enable flying players when they equip enchanted winged sandals.
+   * @param event the equipment change event
+   */
+  @SubscribeEvent
+  public static void onChangeEquipment(final LivingEquipmentChangeEvent event) {
+    // Check which equipment was changed and if it is a player
+    if(GreekFantasy.CONFIG.isFlyingEnabled() && event.getEntityLiving() instanceof PlayerEntity && event.getEntityLiving().getEntityWorld() instanceof ServerWorld 
+        && event.getSlot() == EquipmentSlotType.FEET && event.getTo().getItem() == GFRegistry.WINGED_SANDALS 
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, event.getTo()) > 0) {
+      final PlayerEntity player = (PlayerEntity)event.getEntityLiving();
+      GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)event.getEntityLiving().getEntityWorld());
+      // Check the player's favor level before enabling flight
+      if(GreekFantasy.PROXY.getFavorConfiguration().getFlyingDeityRange().isInFavorRange(player)) {
+        data.addFlyingPlayer(player);
+      }
+    }
+  }
   
   /**
    * Used to update FavorManager when a block is broken by the player.
@@ -168,20 +197,26 @@ public class FavorEventHandler {
     }
   }
   
+  /**
+   * Used to prevent players from trading with villagers when at low favor
+   * @param event the entity interact event
+   */
   @SubscribeEvent
-  public static void onOpenContainer(final PlayerContainerEvent.Open event) {
-    if(event.getPlayer() instanceof ServerPlayerEntity && !event.getPlayer().isSpectator() && !event.getPlayer().isCreative()
-        && event.getContainer() instanceof MerchantContainer
+  public static void onEntityInteract(final PlayerInteractEvent.EntityInteract event) {
+    if(!event.getPlayer().getEntityWorld().isRemote() && event.getTarget() instanceof AbstractVillagerEntity
         && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.TRADING_CANCEL)) {
+      AbstractVillagerEntity villager = (AbstractVillagerEntity)event.getTarget();
       event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
         // note: this special favor effect does not check or change cooldown time
-        // determine which special favor effect and cooldown to use
+        // determine which special favor effect to use
         for(final SpecialFavorEffect effect : GreekFantasy.PROXY.getFavorConfiguration().getSpecials(SpecialFavorEffect.Type.TRADING_CANCEL)) {
           if(effect.canApply(event.getPlayer(), f)) {
             // close the container
-            ((ServerPlayerEntity)event.getPlayer()).closeContainer();
-            // spawn particles
-            GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(false, event.getPlayer().getPosition().up(1), 10));
+            event.setCanceled(true);
+            // cause the villager to shake its head and spawn particles
+            villager.setShakeHeadTicks(40);
+            villager.playSound(SoundEvents.ENTITY_VILLAGER_NO, 0.5F, 1.0F);
+            GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(false, event.getTarget().getPosition().up(1), 4));
             return;
           }
         }        
@@ -214,6 +249,27 @@ public class FavorEventHandler {
     }
   }
   
+  /**
+   * Used to modify arrows after they are fired by a player, based on favor
+   * @param event the entity join world event
+   */
+  @SubscribeEvent
+  public static void onArrowJoinWorld(final EntityJoinWorldEvent event) {
+    // attempt to add player target goals
+    if(!event.getEntity().getEntityWorld().isRemote() && event.getEntity() instanceof AbstractArrowEntity
+        && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.ARROW_DAMAGE_MULTIPLIER)) {
+      final AbstractArrowEntity arrow = (AbstractArrowEntity) event.getEntity();
+      final Entity thrower = arrow.func_234616_v_();
+      if(thrower instanceof PlayerEntity) {
+        thrower.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onShootArrow((PlayerEntity)thrower, f, arrow));
+      }
+    }
+  }
+  
+  /**
+   * Used to change the number of baby entities that spawn based on favor
+   * @param event the baby entity spawn event
+   */
   @SubscribeEvent
   public static void onBabySpawn(final BabyEntitySpawnEvent event) {
     final World world = event.getParentA().getEntityWorld();

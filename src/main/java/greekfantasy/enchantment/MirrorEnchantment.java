@@ -6,6 +6,9 @@ import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShieldItem;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 public class MirrorEnchantment extends Enchantment {
 
@@ -15,6 +18,11 @@ public class MirrorEnchantment extends Enchantment {
   
   private boolean isApplicableItem(final ItemStack item) {
     return item.getItem() instanceof ShieldItem;
+  }
+  
+  @Override
+  public ITextComponent getDisplayName(int level) {
+    return ((IFormattableTextComponent)super.getDisplayName(level)).mergeStyle(TextFormatting.WHITE);
   }
   
   @Override 
@@ -29,6 +37,8 @@ public class MirrorEnchantment extends Enchantment {
   public boolean canGenerateInLoot() { return GreekFantasy.CONFIG.isMirrorEnabled(); }
   @Override
   public int getMaxLevel() { return 1; }
+  @Override
+  public boolean isAllowedOnBooks() { return false; }
   @Override
   public boolean canApplyAtEnchantingTable(ItemStack stack) { 
     return GreekFantasy.CONFIG.isMirrorEnabled() && isApplicableItem(stack) && super.canApplyAtEnchantingTable(stack); 

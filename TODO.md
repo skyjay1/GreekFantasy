@@ -94,7 +94,7 @@ __Key:__
 - X Favor GUI
 - ~ Special abilities ideas:
   - X Grow or ungrow crops near player (Demeter)
-  - _ Allow winged sandals to grant flight (Hermes)
+  - X Allow winged sandals to grant flight (Hermes)
   - X Breeding animals produces 0-3 offspring instead of 1 (Hera)
   - X Harvesting crops drops additional (or removes drops) (Persephone)
   - X Drinking potion grants Naseau _or_ additional time (Dionysus)
@@ -103,7 +103,7 @@ __Key:__
   - X XP multiplier or random XP drops (Athena)
   - X Strength effect when starting to attack (Ares)
   - X Heal effect when attacked (Apollo)
-  - _ Extra damage to bows (Artemis)
+  - X Increased/decreased damage when using arrows (Artemis)
   - X Prevent trading with villagers (Hestia)
   - _ Allow trading with dryads (?)
 
@@ -150,15 +150,15 @@ __Key:__
 
 - Complete: Statue GUI, Statue skins, Panflute songs, Panflute song GUI, mysterious box functions
 - Complete: "Stunned" effect (prevent movement or item use), "Petrified" effect, "Mirror" effect, "Swine" effect
-- Complete: "Overstep" enchantment, "Smashing" enchantment, "Hunting" enchantment, "Mirror" enchantment
+- Complete: "Overstep" enchantment, "Smashing" enchantment, "Hunting" enchantment, "Mirror" enchantment, "Flying" enchantment
 - Complete: Olive forest biome
+_ "Lord of the Sea" enchantment (use to summon Whirl that has limited life and affects mobs) (obtain by using a Trident on altar of Poseidon with Favor=10)
 - ~ Block and Item tags (wooden_doors, etc.)
 
 ## Misc Ideas and Inspirations
 
 _Can I do something with these?_
 
-- Pantheon: options include Zeus, Poseidon, Hades, Ares, Apollo, Hermes, Hephaestus, Helios and Dionysus, Hera, Demeter, Aphrodite, Athena, Artemis, Hecate, Pan
 - Muses: Calliope, Clio, Erato, Euterpe, Melpomene, Polyhymnia, Terpsichore, Thalia, Urania
 - Ophiotaur (kill to obtain heart; use heart to kill a god)
 - Makhai (6 arms)

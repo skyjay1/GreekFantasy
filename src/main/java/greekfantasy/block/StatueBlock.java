@@ -4,15 +4,17 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GFWorldSavedData;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.FavorLevel;
 import greekfantasy.deity.favor.FavorManager;
+import greekfantasy.deity.favor.IFavor;
+import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.network.SSimpleParticlesPacket;
 import greekfantasy.tileentity.StatueTileEntity;
-import greekfantasy.util.PalladiumSavedData;
 import greekfantasy.util.StatuePose;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -24,6 +26,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.block.material.PushReaction;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -114,7 +117,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     super.onBlockAdded(state, worldIn, pos, oldState, isMoving);
     // update palladium data
     if(statueMaterial == StatueBlock.StatueMaterial.WOOD && worldIn instanceof net.minecraft.world.server.ServerWorld) {
-      PalladiumSavedData data = PalladiumSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)worldIn);
+      GFWorldSavedData data = GFWorldSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)worldIn);
       data.addPalladium(new ChunkPos(pos), pos);
     }
   }
@@ -160,7 +163,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
       worldIn.destroyBlock(otherHalf, true);
       // update palladium data
       if(statueMaterial == StatueBlock.StatueMaterial.WOOD && worldIn instanceof net.minecraft.world.server.ServerWorld) {
-        PalladiumSavedData data = PalladiumSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)worldIn);
+        GFWorldSavedData data = GFWorldSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)worldIn);
         data.removePalladium(new ChunkPos(pos), pos);
       }
       super.onReplaced(state, worldIn, pos, newState, isMoving);
@@ -204,6 +207,8 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
             if(FavorManager.onGiveItem(teStatue, teDeity, playerIn, level, stack)) {
               final boolean happy = teDeity.getItemFavorModifier(stack.getItem()) > 0;
               GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(happy, pos, 10));
+            } else {
+              handleItemInteraction(playerIn, teDeity, f, stack);
             }
             // print current favor level
             level.sendStatusMessage(playerIn, teDeity);
@@ -267,6 +272,18 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     te.setUpper(state.get(HALF) == DoubleBlockHalf.UPPER);
     tileEntityInit.accept(te);
     return te;
+  }
+  
+  protected void handleItemInteraction(final PlayerEntity player, final IDeity deity, final IFavor favor, final ItemStack item) {
+    final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
+    // attempt to give the item the Flying enchantment
+    if(GreekFantasy.CONFIG.isFlyingEnabled() && item.getItem() == GFRegistry.WINGED_SANDALS 
+        && deity != Deity.EMPTY && deity == favorConfig.getFlyingDeityRange().getDeity()
+        && favorConfig.getFlyingDeityRange().isInFavorRange(player, favor)
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, item) < 1) {
+      item.addEnchantment(GFRegistry.FLYING_ENCHANTMENT, 1);
+      item.setDamage(0);
+    }
   }
   
   public StatueMaterial getStatueMaterial() {

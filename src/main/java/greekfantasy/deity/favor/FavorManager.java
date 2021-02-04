@@ -9,6 +9,7 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 
+import greekfantasy.GFWorldSavedData;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
@@ -25,12 +26,14 @@ import net.minecraft.block.IGrowable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class FavorManager {
@@ -132,7 +135,7 @@ public class FavorManager {
       favor.forEach((d, f) -> f.depleteFavor(player, d, 1, Source.PASSIVE), true);
     }
     // every few seconds, attempt to perform a favor effect
-    if(!player.isCreative() && !player.isSpectator() && player.ticksExisted > 10 && time % 50 == 0 && favor.hasNoEffectCooldown(time)) {
+    if(!player.isCreative() && !player.isSpectator() && player.ticksExisted > 10 && time % 45 == 0 && favor.hasNoEffectCooldown(time)) {
       Optional<Deity> deity;
       FavorLevel info;
       ArrayList<Entry<ResourceLocation, FavorLevel>> entryList = Lists.newArrayList(favor.getAllFavor().entrySet());
@@ -149,12 +152,10 @@ public class FavorManager {
           long cooldown = FavorEffectManager.onFavorEffect(player.getEntityWorld(), player, deity.get(), favor, info);
           if(cooldown > 0) {
             favor.setEffectTime(time, cooldown);
-            return;
+            break;
           }
         }
       }
-      // if no effect was performed, set a cooldown
-      favor.setEffectTime(time, 200);
     }
     // every few seconds, attempt to perform passive special effects
     if(!player.isCreative() && !player.isSpectator() && player.ticksExisted > 10 && time % 50 == 0 && favor.hasNoTriggeredCooldown(time)) {
@@ -163,29 +164,13 @@ public class FavorManager {
         favor.setTriggeredTime(time, cooldown);
       }
     }
-  }
-  
-  /**
-   * Called when the player is attacked (or attacks) and their combat tracker
-   * shows a duration of less than 2
-   * @param player the player who is in combat
-   * @param other the other entity that is involved in the combat
-   * @param favor the player's favor
-   */
-  public static void onCombatStart(final PlayerEntity player, final Entity other, final IFavor favor) {
-    final long time = IFavor.calculateTime(player);
-    FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
-    if(favor.hasNoTriggeredCooldown(time) && favorConfig.hasSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
-      long cooldown = -1;
-      for(final SpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
-        if(effect.canApply(player, favor)) {
-          effect.getPotionEffect().ifPresent(e -> player.addPotionEffect(e));
-          cooldown = Math.max(cooldown, effect.getRandomCooldown(player.getRNG()));
-        }
-      }
-      // set effect cooldown
-      if(cooldown > 0) {
-        favor.setTriggeredTime(time, cooldown);
+    // every few ticks, ensure that flying players can still fly
+    if(GreekFantasy.CONFIG.isFlyingEnabled() && player.getEntityWorld() instanceof ServerWorld && 
+        !player.isCreative() && !player.isSpectator()  && player.ticksExisted > 10 && time % 11 == 0) {
+      final GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)player.getEntityWorld());
+      if(data.hasFlyingPlayer(player) && !GFWorldSavedData.validatePlayer(player, favor)) {
+        // remove the player as a flying player
+        data.removeFlyingPlayer(player);
       }
     }
   }
@@ -221,6 +206,31 @@ public class FavorManager {
       }
     }
     return false;
+  }
+  
+  /**
+   * Called when the player is attacked (or attacks) and their combat tracker
+   * shows a duration of less than 2
+   * @param player the player who is in combat
+   * @param other the other entity that is involved in the combat
+   * @param favor the player's favor
+   */
+  public static void onCombatStart(final PlayerEntity player, final Entity other, final IFavor favor) {
+    final long time = IFavor.calculateTime(player);
+    FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
+    if(favor.hasNoTriggeredCooldown(time) && favorConfig.hasSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
+      long cooldown = -1;
+      for(final SpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
+        if(effect.canApply(player, favor)) {
+          effect.getPotionEffect().ifPresent(e -> player.addPotionEffect(e));
+          cooldown = Math.max(cooldown, effect.getRandomCooldown(player.getRNG()));
+        }
+      }
+      // set effect cooldown
+      if(cooldown > 0) {
+        favor.setTriggeredTime(time, cooldown);
+      }
+    }
   }
   
   /**
@@ -285,6 +295,33 @@ public class FavorManager {
     }
     return false;
   }
+  
+  /**
+   * Called when the player fires an arrow and there are favor effects that
+   * should change its attack damage
+   * @param player the player
+   * @param favor the player's favor
+   * @param arrow the arrow
+   */
+  public static void onShootArrow(final PlayerEntity player, final IFavor favor, final AbstractArrowEntity arrow) {
+    final long time = IFavor.calculateTime(player);
+    if(favor.hasNoTriggeredCooldown(time)) {
+      double damage = arrow.getDamage();
+      float multiplier = 0.0F;
+      long cooldown = -1;
+      for(final SpecialFavorEffect effect : GreekFantasy.PROXY.getFavorConfiguration().getSpecials(SpecialFavorEffect.Type.ARROW_DAMAGE_MULTIPLIER)) {
+        if(effect.canApply(player, favor)) {
+          multiplier += effect.getMultiplier().orElse(0.0F);
+          cooldown = Math.max(cooldown, effect.getRandomCooldown(player.getRNG()));
+        }
+      }
+      if(cooldown > 0 && multiplier != 0.0F) {
+        favor.setTriggeredTime(time, cooldown);
+        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(true, arrow.getPosition(), 8));
+        arrow.setDamage(damage + (damage * multiplier));
+      }
+    }
+  }
 
   /**
    * Called when the player picks up an XP orb and there are favor effects that change xp
@@ -295,20 +332,22 @@ public class FavorManager {
    */
   public static int onPlayerXP(final PlayerEntity player, final IFavor favor, final int xpValue) {
     final long time = IFavor.calculateTime(player);
-    final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
-    float xpMultiplier = 0.0F;
-    long cooldown = -1;
-    // determine the xp multiplier and max cooldown
-    for(final SpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.XP_MULTIPLIER)) {
-      if(effect.canApply(player, favor)) {
-        xpMultiplier += effect.getMultiplier().get();
-        cooldown = Math.max(cooldown, effect.getRandomCooldown(player.getRNG()));
+    if(favor.hasNoTriggeredCooldown(time)) {
+      final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
+      float xpMultiplier = 0.0F;
+      long cooldown = -1;
+      // determine the xp multiplier and max cooldown
+      for(final SpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.XP_MULTIPLIER)) {
+        if(effect.canApply(player, favor)) {
+          xpMultiplier += effect.getMultiplier().orElse(0.0F);
+          cooldown = Math.max(cooldown, effect.getRandomCooldown(player.getRNG()));
+        }
       }
-    }
-    if(cooldown > 0 && xpMultiplier != 0.0F) {
-      favor.setEffectTime(time, cooldown);
-      // use the xp multiplier amount to determine new xp
-      return Math.round(xpValue + xpValue * xpMultiplier);
+      if(cooldown > 0 && xpMultiplier != 0.0F) {
+        favor.setTriggeredTime(time, cooldown);
+        // use the xp multiplier amount to determine new xp
+        return Math.round(xpValue + xpValue * xpMultiplier);
+      }
     }
     return xpValue;
   }
@@ -326,7 +365,7 @@ public class FavorManager {
       }
     }
     if(cooldown > 0 && breedingMultiplier != 0.0F) {
-      favor.setEffectTime(time, cooldown);
+      favor.setTriggeredTime(time, cooldown);
       // use the xp multiplier amount to determine new xp
       return Math.round(1 + breedingMultiplier);
     }

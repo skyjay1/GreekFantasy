@@ -159,6 +159,8 @@ public final class GFRegistry {
   public static final Item HORN = null;
   @ObjectHolder("helm_of_darkness")
   public static final Item HELM_OF_DARKNESS = null;
+  @ObjectHolder("winged_sandals")
+  public static final Item WINGED_SANDALS = null;
   @ObjectHolder("magic_feather")
   public static final Item MAGIC_FEATHER = null;
   @ObjectHolder("golden_bridle")
@@ -347,6 +349,8 @@ public final class GFRegistry {
   public static final Enchantment MIRROR_ENCHANTMENT = null;
   @ObjectHolder("poison")
   public static final Enchantment POISON_ENCHANTMENT = null;
+  @ObjectHolder("flying")
+  public static final Enchantment FLYING_ENCHANTMENT = null;
   
   // Potion //
   @ObjectHolder("mirror")
@@ -747,6 +751,8 @@ public final class GFRegistry {
         .setRegistryName(MODID, "poison"));
     event.getRegistry().register(new MirrorEnchantment(Enchantment.Rarity.VERY_RARE)
         .setRegistryName(MODID, "mirror"));
+    event.getRegistry().register(new FlyingEnchantment(Enchantment.Rarity.VERY_RARE)
+        .setRegistryName(MODID, "flying"));
   }
 
   @SubscribeEvent

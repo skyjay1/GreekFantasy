@@ -1,4 +1,9 @@
 {
+  "flying_enchantment": { 
+    "deity": "greekfantasy:zeus",
+    "minlevel": 10,
+    "maxlevel": 10
+  },
   "entity_favor_configuration": {
     "greekfantasy:centaur": {
       "hostile": { 
@@ -388,6 +393,42 @@
   	  "chance": 0.20,
   	  "level_multiplier": 0.02,
   	  "mincooldown": 190
+  	},
+  	{
+  	  "type": "arrow_damage_multiplier",
+  	  "multiplier": 0.88,
+  	  "favor_range": {
+  	    "deity": "greekfantasy:artemis",
+	    "minlevel": 9,
+	    "maxlevel": 10
+  	  },
+  	  "chance": 0.25,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 110
+  	},
+  	{
+  	  "type": "arrow_damage_multiplier",
+  	  "multiplier": 0.45,
+  	  "favor_range": {
+  	    "deity": "greekfantasy:artemis",
+	    "minlevel": 4,
+	    "maxlevel": 8
+  	  },
+  	  "chance": 0.15,
+  	  "level_multiplier": 0.02,
+  	  "mincooldown": 100
+  	},
+  	{
+  	  "type": "arrow_damage_multiplier",
+  	  "multiplier": -0.5,
+  	  "favor_range": {
+  	    "deity": "greekfantasy:artemis",
+	    "minlevel": -3,
+	    "maxlevel": -10
+  	  },
+  	  "chance": 0.15,
+  	  "level_multiplier": 0.02,
+  	  "mincooldown": 90
   	},
   	{
   	  "type": "trading_cancel",
