@@ -278,10 +278,18 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     // attempt to give the item the Flying enchantment
     if(GreekFantasy.CONFIG.isFlyingEnabled() && item.getItem() == GFRegistry.WINGED_SANDALS 
-        && deity != Deity.EMPTY && deity == favorConfig.getFlyingDeityRange().getDeity()
+        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getFlyingDeityRange().getDeity().getName())
         && favorConfig.getFlyingDeityRange().isInFavorRange(player, favor)
         && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, item) < 1) {
       item.addEnchantment(GFRegistry.FLYING_ENCHANTMENT, 1);
+      item.setDamage(0);
+    }
+    // attempt to give the item the Lord of the Sea enchantment
+    if(GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == Items.TRIDENT
+        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getLordOfTheSeaDeityRange().getDeity().getName())
+        && favorConfig.getLordOfTheSeaDeityRange().isInFavorRange(player, favor)
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) < 1) {
+      item.addEnchantment(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, 1);
       item.setDamage(0);
     }
   }

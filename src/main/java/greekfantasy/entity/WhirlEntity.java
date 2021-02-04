@@ -1,7 +1,5 @@
 package greekfantasy.entity;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
@@ -18,11 +16,10 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.CompoundNBT;
@@ -109,8 +106,8 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
     // remove if colliding with another whirl or a charybdis
     final List<WaterMobEntity> waterMobList = this.world.getEntitiesWithinAABB(WaterMobEntity.class, this.getBoundingBox().grow(1.0D), 
         e -> e != this && e.isAlive() && (e.getType() == GFRegistry.CHARYBDIS_ENTITY || e.getType() == GFRegistry.WHIRL_ENTITY));
-    if(!waterMobList.isEmpty()) {
-      this.attackEntityFrom(DamageSource.causeMobDamage(this), this.getMaxHealth() * 2.0F);
+    if(!waterMobList.isEmpty() && this.isAlive()) {
+      this.attackEntityFrom(DamageSource.STARVE, this.getMaxHealth() * 2.0F);
       return;
     }
  
@@ -177,7 +174,9 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
-    return GreekFantasy.CONFIG.isWhirlInvulnerable() || super.isInvulnerableTo(source);
+    return GreekFantasy.CONFIG.isWhirlInvulnerable()
+        || (!source.isCreativePlayer() && !source.isDamageAbsolute() && this.limitedLifespan) 
+        || super.isInvulnerableTo(source);
   }
   
   @Override
@@ -307,7 +306,8 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
 
     @Override
     protected boolean canSwirl(Entity e) {
-      return target.test(e) && ((e instanceof LivingEntity && entity.getAttractMobs()) || e instanceof ItemEntity);
+      return target.test(e) && ((e instanceof LivingEntity && entity.getAttractMobs()) || e instanceof ItemEntity)
+          && (!(e instanceof PlayerEntity) || !GreekFantasy.PROXY.getFavorConfiguration().getLordOfTheSeaDeityRange().isInFavorRange((PlayerEntity)e));
     }
   }
 }

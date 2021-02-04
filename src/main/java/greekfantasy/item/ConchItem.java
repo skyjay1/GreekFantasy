@@ -34,7 +34,7 @@ public class ConchItem extends Item {
     final ItemStack item = player.getHeldItem(handIn);
     if(!world.isRemote() && GreekFantasy.CONFIG.isConchEnabled()) {
       // raytrace
-      final RayTraceResult raytrace = ThunderboltItem.raytraceFromPlayer(world, player, 32.0F);
+      final RayTraceResult raytrace = ThunderboltItem.raytraceFromEntity(world, player, 32.0F);
       final BlockPos hitPos = new BlockPos(raytrace.getHitVec());
       // attempt to place water at the hit position
       if(raytrace.getType() == RayTraceResult.Type.BLOCK && world.isBlockModifiable(player, hitPos) && player.canPlayerEdit(hitPos, null, item)) {

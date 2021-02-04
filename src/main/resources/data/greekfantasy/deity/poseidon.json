@@ -41,6 +41,15 @@
   	},
   	{
   	  "item": { 
+  	  	"id": "minecraft:trident",
+  	  	"Count": 1
+  	  },
+  	  "minlevel": 6,
+  	  "maxlevel": 10,
+  	  "mincooldown": 7600
+  	},
+  	{
+  	  "item": { 
   	  	"id": "minecraft:ambrosia",
   	  	"Count": 1
   	  },

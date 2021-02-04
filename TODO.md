@@ -150,9 +150,8 @@ __Key:__
 
 - Complete: Statue GUI, Statue skins, Panflute songs, Panflute song GUI, mysterious box functions
 - Complete: "Stunned" effect (prevent movement or item use), "Petrified" effect, "Mirror" effect, "Swine" effect
-- Complete: "Overstep" enchantment, "Smashing" enchantment, "Hunting" enchantment, "Mirror" enchantment, "Flying" enchantment
+- Complete: "Overstep" enchantment, "Smashing" enchantment, "Hunting" enchantment, "Mirror" enchantment, "Flying" enchantment, "Lord of the Sea" enchantment (use to summon Whirl that has limited life and affects mobs)
 - Complete: Olive forest biome
-_ "Lord of the Sea" enchantment (use to summon Whirl that has limited life and affects mobs) (obtain by using a Trident on altar of Poseidon with Favor=10)
 - ~ Block and Item tags (wooden_doors, etc.)
 
 ## Misc Ideas and Inspirations

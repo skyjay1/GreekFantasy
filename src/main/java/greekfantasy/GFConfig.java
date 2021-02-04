@@ -61,6 +61,7 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue POISON_ENABLED;
   private final ForgeConfigSpec.BooleanValue MIRROR_ENABLED;
   private final ForgeConfigSpec.BooleanValue FLYING_ENABLED;
+  private final ForgeConfigSpec.BooleanValue LORD_OF_THE_SEA_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_DROPS_ARMOR;
   private final ForgeConfigSpec.BooleanValue SWINE_PREVENTS_TARGET;
@@ -74,6 +75,7 @@ public class GFConfig {
   private boolean poisonEnabled;
   private boolean mirrorEnabled;
   private boolean flyingEnabled;
+  private boolean lordOfTheSeaEnabled;
   private boolean swineEnabled;
   private boolean swineDropsArmor;
   private boolean swinePreventsTarget;
@@ -103,12 +105,14 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue DRYAD_ANGRY_ON_HARVEST;
   private final ForgeConfigSpec.IntValue DRYAD_ANGRY_RANGE;
   private final ForgeConfigSpec.IntValue SPARTI_LIFESPAN;
+  private final ForgeConfigSpec.IntValue WHIRL_LIFESPAN;
   private final ForgeConfigSpec.BooleanValue NERF_STUNNING;
   private final ForgeConfigSpec.BooleanValue NERF_PARALYSIS;
   private boolean whirlInvulnerable;
   private boolean dryadAngryOnHarvest;
   private int dryadAngryRange;
   private int spartiLifespan;
+  private int whirlLifespan;
   private ResourceLocation satyrSong;
   private boolean nerfStunning;
   private boolean nerfParalysis;
@@ -201,6 +205,7 @@ public class GFConfig {
     POISON_ENABLED = builder.define("enable_poison_enchantment", true);
     MIRROR_ENABLED = builder.define("enable_mirror_enchantment", true);
     FLYING_ENABLED = builder.define("enable_flying_enchantment", true);
+    LORD_OF_THE_SEA_ENABLED = builder.define("enable_lord_of_the_sea_enchantment", true);
     SWINE_ENABLED = builder.define("enable_swine_effect", true);
     SWINE_DROPS_ARMOR = builder.comment("Whether players under the swine effect drop their armor")
         .define("swine_drops_armor", true);
@@ -263,6 +268,8 @@ public class GFConfig {
         .define("shade_player_only", true);
     SPARTI_LIFESPAN = builder.comment("Number of seconds until the Sparti begins taking damage")
         .defineInRange("sparti_lifespan", 300, 1, 8000);
+    WHIRL_LIFESPAN = builder.comment("Number of seconds until a summoned Whirl begins taking damage")
+        .defineInRange("whirl_lifespan", 60, 1, 8000);
     builder.pop();
     // mob spawn specials
     builder.push("mob_spawn_specials"); 
@@ -385,6 +392,7 @@ public class GFConfig {
     poisonEnabled = POISON_ENABLED.get();
     mirrorEnabled = MIRROR_ENABLED.get();
     flyingEnabled = FLYING_ENABLED.get();
+    lordOfTheSeaEnabled = LORD_OF_THE_SEA_ENABLED.get();
     swineEnabled = SWINE_ENABLED.get();
     swineDropsArmor = SWINE_DROPS_ARMOR.get();
     swinePreventsTarget = SWINE_PREVENTS_TARGET.get();
@@ -402,6 +410,7 @@ public class GFConfig {
     dryadAngryRange = DRYAD_ANGRY_RANGE.get();
     whirlInvulnerable = WHIRL_INVULNERABLE.get();
     spartiLifespan = SPARTI_LIFESPAN.get();
+    whirlLifespan = WHIRL_LIFESPAN.get();
     satyrSong = new ResourceLocation(SATYR_SONG.get());
     nerfStunning = NERF_STUNNING.get();
     nerfParalysis = NERF_PARALYSIS.get();
@@ -430,6 +439,7 @@ public class GFConfig {
   public int getSwineWandCooldown() { return swineWandCooldown; }
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
+  
   public boolean isOverstepEnabled() { return overstepEnabled; }
   public boolean isSmashingEnabled() { return smashingEnabled; }
   public boolean isHuntingEnabled() { return huntingEnabled; }
@@ -438,9 +448,12 @@ public class GFConfig {
   public boolean isSwineEnabled() { return swineEnabled; }
   public boolean doesSwineDropArmor() { return swineDropsArmor; }
   public boolean doesSwinePreventTarget() { return swinePreventsTarget; }
+  public boolean isFlyingEnabled() { return flyingEnabled; }
+  public boolean isLordOfTheSeaEnabled() { return lordOfTheSeaEnabled; }
+  
   public boolean isMirrorPotionEnabled() { return mirrorPotion; }
   public boolean isSwinePotionEnabled() { return swinePotion; }
-  public boolean isFlyingEnabled() { return flyingEnabled; }
+  
   public boolean doesShadeSpawnOnDeath() { return shadeSpawnOnDeath; }
   public int getSatyrShamanChance() { return satyrShamanChance; }
   public ResourceLocation getSatyrSong() { return satyrSong; }
@@ -453,12 +466,15 @@ public class GFConfig {
   public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }
   public int getDryadAngryRange() { return dryadAngryRange; }
   public int getSpartiLifespan() { return spartiLifespan; }
+  public int getWhirlLifespan() { return whirlLifespan; }
   public boolean isStunningNerf() { return nerfStunning; }
   public boolean isParalysisNerf() { return nerfParalysis; }
+  
   public boolean isPalladiumEnabled() { return palladiumEnabled; }
   public int getPalladiumRefreshInterval() { return palladiumRefreshInterval; }
   public int getPalladiumChunkRange() { return palladiumChunkRange; }
   public int getPalladiumYRange() { return palladiumYRange; }
+  
   public boolean doesFavorDecrease() { return favorDecreases; }
   public long getFavorDecreaseInterval() { return favorDecreaseInterval; }
   public boolean canSwineApply(final String entityName) {

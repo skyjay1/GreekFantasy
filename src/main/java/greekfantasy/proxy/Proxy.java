@@ -10,7 +10,7 @@ import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.event.CommonForgeEventHandler;
 import greekfantasy.event.FavorEventHandler;
 import greekfantasy.network.SDeityPacket;
-import greekfantasy.network.SFavorRangeTargetPacket;
+import greekfantasy.network.SFavorConfigurationPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.util.GenericJsonReloadListener;
 import greekfantasy.util.PanfluteSong;
@@ -24,7 +24,7 @@ public class Proxy {
   public final GenericJsonReloadListener<Deity> DEITY = new GenericJsonReloadListener<>("deity", Deity.class, Deity.CODEC, 
       l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SDeityPacket(e.getKey(), e.getValue().get()))));
   public final GenericJsonReloadListener<FavorConfiguration> FAVOR_CONFIGURATION = new GenericJsonReloadListener<>("favor_configuration", FavorConfiguration.class, FavorConfiguration.CODEC, 
-      l -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SFavorRangeTargetPacket(l.get(FavorConfiguration.NAME).get())));
+      l -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SFavorConfigurationPacket(l.get(FavorConfiguration.NAME).get())));
   
   public void registerReloadListeners() { }
 

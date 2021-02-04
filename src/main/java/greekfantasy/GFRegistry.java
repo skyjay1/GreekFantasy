@@ -351,6 +351,8 @@ public final class GFRegistry {
   public static final Enchantment POISON_ENCHANTMENT = null;
   @ObjectHolder("flying")
   public static final Enchantment FLYING_ENCHANTMENT = null;
+  @ObjectHolder("lord_of_the_sea")
+  public static final Enchantment LORD_OF_THE_SEA_ENCHANTMENT = null;
   
   // Potion //
   @ObjectHolder("mirror")
@@ -753,6 +755,8 @@ public final class GFRegistry {
         .setRegistryName(MODID, "mirror"));
     event.getRegistry().register(new FlyingEnchantment(Enchantment.Rarity.VERY_RARE)
         .setRegistryName(MODID, "flying"));
+    event.getRegistry().register(new LordOfTheSeaEnchantment(Enchantment.Rarity.VERY_RARE)
+        .setRegistryName(MODID, "lord_of_the_sea"));
   }
 
   @SubscribeEvent

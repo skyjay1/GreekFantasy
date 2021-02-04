@@ -17,7 +17,7 @@ import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.GiantBoarEntity;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.network.SDeityPacket;
-import greekfantasy.network.SFavorRangeTargetPacket;
+import greekfantasy.network.SFavorConfigurationPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
 import net.minecraft.entity.EntityType;
@@ -370,7 +370,7 @@ public class CommonForgeEventHandler {
       // sync deity
       GreekFantasy.PROXY.DEITY.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SDeityPacket(e.getKey(), e.getValue().get())));
       // sync favor range target
-      GreekFantasy.PROXY.FAVOR_CONFIGURATION.get(FavorConfiguration.NAME).ifPresent(f -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SFavorRangeTargetPacket(f)));
+      GreekFantasy.PROXY.FAVOR_CONFIGURATION.get(FavorConfiguration.NAME).ifPresent(f -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SFavorConfigurationPacket(f)));
     }
   }
   

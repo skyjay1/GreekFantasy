@@ -1,9 +1,4 @@
 {
-  "flying_enchantment": { 
-    "deity": "greekfantasy:zeus",
-    "minlevel": 10,
-    "maxlevel": 10
-  },
   "entity_favor_configuration": {
     "greekfantasy:centaur": {
       "hostile": { 
@@ -194,6 +189,18 @@
 	    "maxlevel": 9
 	  }
 	}
+  },
+  "enchantment_favor_configuration": {
+    "flying_enchantment": { 
+      "deity": "greekfantasy:zeus",
+      "minlevel": 10,
+      "maxlevel": 10
+    },
+    "lord_of_the_sea_enchantment": { 
+      "deity": "greekfantasy:poseidon",
+      "minlevel": 10,
+      "maxlevel": 10
+    }
   },
   "special_favor_effects": [
   	{

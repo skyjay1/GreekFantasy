@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import greekfantasy.GFRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.item.BoatEntity;
@@ -21,7 +22,8 @@ public abstract class SwirlGoal<T extends WaterMobEntity> extends Goal {
   protected final double range;
   protected final boolean breakBoats;
   
-  protected static final Predicate<Entity> target = (EntityPredicates.CAN_AI_TARGET.or(e -> e instanceof BoatEntity || e instanceof ItemEntity)).and(e -> e.isInWaterOrBubbleColumn());
+  protected static final Predicate<Entity> target = (EntityPredicates.CAN_AI_TARGET.or(e -> e instanceof BoatEntity || e instanceof ItemEntity))
+      .and(e -> e.getType() != GFRegistry.WHIRL_ENTITY && e.isNonBoss() && e.isInWaterOrBubbleColumn());
   
   protected List<Entity> trackedEntities = new ArrayList<>();
   protected int progressTime;
@@ -89,7 +91,7 @@ public abstract class SwirlGoal<T extends WaterMobEntity> extends Goal {
       //double dy = entity.getPosY() - e.getPositionVec().y;
       double dz = entity.getPosZ() - e.getPositionVec().z;
       final double horizDisSq = dx * dx + dz * dz;
-      if(entity.getBoundingBox().intersects(e.getBoundingBox())) {
+      if(entity.getBoundingBox().grow(1.0D).intersects(e.getBoundingBox())) {
         // collide with the entity
         onCollideWith(e);
       } else {
@@ -121,7 +123,7 @@ public abstract class SwirlGoal<T extends WaterMobEntity> extends Goal {
     final Vector3d rotatedVec = normalVec.rotateYaw(1.5707963267F).scale(motion);
     final Vector3d motionVec = target.getMotion().add(normalVec.scale(0.028D)).add(rotatedVec).mul(0.65D, 1.0D, 0.65D);
     target.setMotion(motionVec);
-    target.addVelocity(0, 0.0028D, 0);
+    target.addVelocity(0, 0.0068D, 0);
     target.velocityChanged = true;
   }
 }

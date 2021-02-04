@@ -7,16 +7,20 @@ import greekfantasy.deity.favor.Favor;
 import greekfantasy.deity.favor.FavorManager;
 import greekfantasy.deity.favor.IFavor;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;
+import greekfantasy.entity.WhirlEntity;
 import greekfantasy.entity.ai.FleeFromFavorablePlayerGoal;
 import greekfantasy.entity.ai.NearestAttackableFavorablePlayerGoal;
 import greekfantasy.entity.ai.NearestAttackableFavorablePlayerResetGoal;
+import greekfantasy.item.ThunderboltItem;
 import greekfantasy.network.SSimpleParticlesPacket;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,7 +28,12 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.container.MerchantContainer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
@@ -35,6 +44,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
@@ -194,6 +204,45 @@ public class FavorEventHandler {
   public static void onBreakBlock(final BlockEvent.BreakEvent event) {
     if(event.getPlayer() != null && event.getPlayer().isServerWorld() && !event.getPlayer().isCreative()) {
       event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onBreakBlock(event.getPlayer(), event.getState().getBlock(), f));
+    }
+  }
+  
+  /**
+   * Used to summon a Whirl when an enchanted trident is stopped being used before it is thrown
+   * @param event the item use event (stop)
+   */
+  @SubscribeEvent
+  public static void onStopUseItem(final LivingEntityUseItemEvent.Stop event) {
+    final ItemStack item = event.getEntityLiving().getHeldItemMainhand();
+    // Determine if the event can run (server-side player using enchanted trident with no cooldown and in favor range)
+    if(!event.isCanceled() && event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().getEntityWorld().isRemote()
+        && GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == Items.TRIDENT
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) > 0
+        && !((PlayerEntity)event.getEntityLiving()).getCooldownTracker().hasCooldown(Items.TRIDENT)
+        && GreekFantasy.PROXY.getFavorConfiguration().getLordOfTheSeaDeityRange().isInFavorRange((PlayerEntity)event.getEntityLiving())) {
+      // The player has used an enchanted item and has the correct favor range, so the effect should be applied
+      final PlayerEntity player = (PlayerEntity)event.getEntityLiving();
+      final RayTraceResult raytrace = ThunderboltItem.raytraceFromEntity(event.getEntityLiving().getEntityWorld(), player, 48.0F);
+      // add a lightning bolt at the resulting position
+      if(raytrace.getType() != RayTraceResult.Type.MISS) {
+        final WhirlEntity whirl = GFRegistry.WHIRL_ENTITY.create(player.getEntityWorld());
+        final BlockPos pos = new BlockPos(raytrace.getHitVec());
+        // make sure there is enough water here
+        if(player.getEntityWorld().getFluidState(pos).isTagged(FluidTags.WATER)
+            && player.getEntityWorld().getFluidState(pos.down((int)Math.ceil(whirl.getHeight()))).isTagged(FluidTags.WATER)) {
+          // summon a powerful whirl with limited life and mob attracting turned on
+          whirl.setLocationAndAngles(raytrace.getHitVec().getX(), raytrace.getHitVec().getY() - whirl.getHeight(), raytrace.getHitVec().getZ(), 0, 0);
+          event.getEntityLiving().getEntityWorld().addEntity(whirl);
+          whirl.setLimitedLife(GreekFantasy.CONFIG.getWhirlLifespan() * 20);
+          whirl.setAttractMobs(true);
+          whirl.playSound(SoundEvents.ITEM_TRIDENT_THUNDER, 1.5F, 0.6F + whirl.getRNG().nextFloat() * 0.32F);
+          // cooldown and item damage
+          player.getCooldownTracker().setCooldown(item.getItem(), GreekFantasy.CONFIG.getWhirlLifespan() * 10);
+          if(!player.isCreative()) {
+            item.damageItem(25, player, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+          }        
+        }
+      }
     }
   }
   

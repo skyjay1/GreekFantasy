@@ -3,6 +3,7 @@ package greekfantasy.item;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -38,7 +39,7 @@ public class ThunderboltItem extends Item {
     
     if(!world.isRemote()) {
       // raytrace
-      final RayTraceResult raytrace = raytraceFromPlayer(world, player, 64.0F);
+      final RayTraceResult raytrace = raytraceFromEntity(world, player, 64.0F);
       // add a lightning bolt at the resulting position
       if(raytrace.getType() != RayTraceResult.Type.MISS) {
         LightningBoltEntity bolt = EntityType.LIGHTNING_BOLT.create(world);
@@ -64,8 +65,8 @@ public class ThunderboltItem extends Item {
     return repair.getItem() == GFRegistry.ICHOR;
   }
   
-  public static RayTraceResult raytraceFromPlayer(final World world, final PlayerEntity player, final float range) {
-    // raytrace
+  public static RayTraceResult raytraceFromEntity(final World world, final LivingEntity player, final float range) {
+    // raytrace to determine which block the player is looking at within the given range
     final Vector3d startVec = player.getEyePosition(1.0F);
     final float pitch = (float) Math.toRadians(-player.rotationPitch);
     final float yaw = (float) Math.toRadians(-player.rotationYaw);
@@ -74,6 +75,6 @@ public class ThunderboltItem extends Item {
     float cosPitch = -MathHelper.cos(pitch);
     float sinPitch = MathHelper.sin(pitch);
     final Vector3d endVec = startVec.add(sinYaw * cosPitch * range, sinPitch * range, cosYaw * cosPitch * range);
-    return player.world.rayTraceBlocks(new RayTraceContext(startVec, endVec, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.ANY, player));
+    return player.world.rayTraceBlocks(new RayTraceContext(startVec, endVec, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY, player));
   }
 }
