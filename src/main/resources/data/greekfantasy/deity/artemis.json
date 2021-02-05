@@ -1,6 +1,75 @@
 {
   "name": "greekfantasy:artemis",
-  "enabled": false,
+  "enabled": true,
   "female": true,
-  "base": "minecraft:polished_diorite_slab"
+  "base": "minecraft:polished_diorite_slab",
+  "left_hand": {
+  	"id": "minecraft:bow",
+  	"Count": 1,
+  	"tag": {}
+  },
+  "right_hand": { 
+  	"id": "minecraft:tipped_arrow",
+  	"Count": 4,
+	"tag": {
+	  "Potion": "minecraft:poison"
+	}
+  },
+  "effects": [
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:arrow",
+  	  	"Count": 16
+  	  },
+  	  "minlevel": 2,
+  	  "maxlevel": 10,
+  	  "mincooldown": 6500
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "greekfantasy:swine",
+  	  	"Amplifier": 0,
+  	  	"Duration": 600
+  	  },
+  	  "minlevel": -1,
+  	  "maxlevel": -10,
+  	  "mincooldown": 8200
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:tipped_arrow",
+  	  	"Count": 4,
+		"tag": {
+		  "Potion": "minecraft:poison"
+		}
+  	  },
+  	  "minlevel": 7,
+  	  "maxlevel": 10,
+  	  "mincooldown": 10600
+  	}
+  ],
+  "kill_favor_map": {
+  	"greekfantasy:dryad": -5,
+  	"greekfantasy:naiad": -5,
+  	"greekfantasy:giant_boar": 25,
+  	"minecraft:wolf": 4,
+  	"minecraft:cow": 1,
+  	"minecraft:sheep": 1,
+  	"minecraft:pig": 1,
+  	"minecraft:mooshroom": 3,
+  	"minecraft:silverfish": 1,
+  	"minecraft:ocelot": 4,
+  	"minecraft:bat": 6,
+  	"minecraft:spider": 5,
+  	"minecraft:cave_spider": 7,
+  	"minecraft:fox": 3
+  },
+  "item_favor_map": {
+  	"greekfantasy:ambrosia": 62,
+  	"minecraft:arrow": 3,
+  	"minecraft:porkchop": 5,
+  	"minecraft:beef": 5,
+  	"minecraft:cooked_porkchop": 6,
+  	"minecraft:cooked_beef": 6
+  }
 }

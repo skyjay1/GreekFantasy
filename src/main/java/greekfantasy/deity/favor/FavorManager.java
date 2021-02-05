@@ -352,12 +352,18 @@ public class FavorManager {
     return xpValue;
   }
   
+  /**
+   * Called when the player breeds animals
+   * @param player the player
+   * @param favor the player's favor
+   * @return the number of baby animals to spawn
+   */
   public static int onBabySpawn(final PlayerEntity player, final IFavor favor) {
     final long time = IFavor.calculateTime(player);
     final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     float breedingMultiplier = 0.0F;
     long cooldown = -1;
-    // determine the xp multiplier and max cooldown
+    // determine the breeding multiplier and max cooldown
     for(final SpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.BREEDING_OFFSPRING_MULTIPLIER)) {
       if(effect.canApply(player, favor)) {
         breedingMultiplier += effect.getMultiplier().get();
@@ -366,7 +372,7 @@ public class FavorManager {
     }
     if(cooldown > 0 && breedingMultiplier != 0.0F) {
       favor.setTriggeredTime(time, cooldown);
-      // use the xp multiplier amount to determine new xp
+      // use the breeding multiplier amount to determine new breeding amount
       return Math.round(1 + breedingMultiplier);
     }
     return 1;

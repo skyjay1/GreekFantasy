@@ -8,7 +8,8 @@
   },
   "right_hand": {
   	"id": "greekfantasy:thunderbolt",
-  	"Count": 1
+  	"Count": 1,
+  	"tag": {}
   },
   "base": "greekfantasy:polished_marble_slab",
   "effects": [

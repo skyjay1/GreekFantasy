@@ -1,6 +1,60 @@
 {
   "name": "greekfantasy:apollo",
-  "enabled": false,
+  "enabled": true,
   "female": false,
-  "base": "minecraft:end_stone_brick_slab"
+  "base": "minecraft:end_stone_brick_slab",
+  "effects": [
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:blindness",
+  	  	"Amplifier": 0,
+  	  	"Duration": 300
+  	  },
+  	  "minlevel": -1,
+  	  "maxlevel": -10,
+  	  "mincooldown": 8200
+  	},
+  	{
+  	  "potion": {
+  	  	"Potion": "minecraft:night_vision",
+  	  	"Amplifier": 0,
+  	  	"Duration": 1200
+  	  },
+  	  "minlevel": 4,
+  	  "maxlevel": 10,
+  	  "mincooldown": 8500
+  	},
+  	{
+  	  "item": { 
+  	  	"id": "minecraft:arrow",
+  	  	"Count": 8
+  	  },
+  	  "minlevel": 2,
+  	  "maxlevel": 10,
+  	  "mincooldown": 6500
+  	}
+  ],
+  "kill_favor_map": {
+  	"greekfantasy:shade": 15,
+  	"greekfantasy:dryad": -5,
+  	"greekfantasy:gigante": 18
+  },
+  "item_favor_map": {
+  	"greekfantasy:ambrosia": 48,
+  	"greekfantasy:dragon_tooth": 10,
+  	"greekfantasy:gorgon_blood": 14,
+  	"minecraft:redstone_torch": 2,
+  	"minecraft:torch": 2,
+  	"minecraft:soul_torch": 2,
+  	"minecraft:blaze_rod": 5,
+  	"minecraft:lantern": 4,
+  	"minecraft:glowstone_dust": 2,
+  	"minecraft:redstone": 1,
+  	"minecraft:lava_bucket": 10,
+  	"minecraft:end_rod": 22,
+  	"minecraft:cooked_mutton": 5,
+  	"minecraft:gold_ingot": 6,
+  	"minecraft:obsidian": -4,
+  	"minecraft:arrow": 3
+  }
 }

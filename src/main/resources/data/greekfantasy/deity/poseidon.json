@@ -4,11 +4,13 @@
   "female": false,
   "left_hand": {
   	"id": "greekfantasy:conch",
-  	"Count": 1
+  	"Count": 1,
+  	"tag": {}
   },
   "right_hand": {
   	"id": "minecraft:trident",
-  	"Count": 1
+  	"Count": 1,
+  	"tag": {}
   },
   "base": "minecraft:prismarine_brick_slab",
   "effects": [

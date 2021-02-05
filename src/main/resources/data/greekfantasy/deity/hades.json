@@ -4,7 +4,8 @@
   "female": false,
   "left_hand": {
   	"id": "minecraft:skeleton_skull",
-  	"Count": 1
+  	"Count": 1,
+  	"tag": {}
   },
   "base": "minecraft:polished_blackstone_slab",
   "overlay": "limestone",
@@ -257,12 +258,7 @@
   	"minecraft:skeleton": 5,
   	"minecraft:stray": 6,
   	"minecraft:wither_skeleton": 9,
-  	"minecraft:wither": 65,
-  	"minecraft:evoker": 10,
-  	"minecraft:illusioner": 10,
-  	"minecraft:vindicator": 8,
-  	"minecraft:pillager": 5,
-  	"minecraft:ravager": 18
+  	"minecraft:wither": 65
   },
   "item_favor_map": {
   	"greekfantasy:ambrosia": 68,
