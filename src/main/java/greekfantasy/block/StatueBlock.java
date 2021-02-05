@@ -28,6 +28,7 @@ import net.minecraft.block.material.MaterialColor;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.FluidState;
@@ -291,6 +292,27 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
         && EnchantmentHelper.getEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) < 1) {
       item.addEnchantment(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, 1);
       item.setDamage(0);
+    }
+    // attempt to give the item the Fireflash enchantment
+    if(GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == GFRegistry.THUNDERBOLT
+        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getFireflashDeityRange().getDeity().getName())
+        && favorConfig.getFireflashDeityRange().isInFavorRange(player, favor)
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FIREFLASH_ENCHANTMENT, item) < 1) {
+      item.addEnchantment(GFRegistry.FIREFLASH_ENCHANTMENT, 1);
+      item.setDamage(0);
+    }
+    // attempt to give the item the Fireflash enchantment
+    if(GreekFantasy.CONFIG.isDaybreakEnabled() && item.getItem() == Items.CLOCK
+        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getDaybreakDeityRange().getDeity().getName())
+        && favorConfig.getDaybreakDeityRange().isInFavorRange(player, favor)
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.DAYBREAK_ENCHANTMENT, item) < 1) {
+      final ItemStack enchantedClock = new ItemStack(Items.CLOCK);
+      enchantedClock.addEnchantment(GFRegistry.DAYBREAK_ENCHANTMENT, 1);
+      item.shrink(1);
+      ItemEntity drop = player.dropItem(enchantedClock, false);
+      if(drop != null) {
+        drop.setNoPickupDelay();
+      }
     }
   }
   

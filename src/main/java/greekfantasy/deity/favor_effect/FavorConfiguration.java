@@ -60,6 +60,10 @@ public class FavorConfiguration {
   public FavorRange getFlyingDeityRange() { return getEnchantmentMap().getOrDefault("flying_enchantment", FavorRange.EMPTY); }
   
   public FavorRange getLordOfTheSeaDeityRange() { return getEnchantmentMap().getOrDefault("lord_of_the_sea_enchantment", FavorRange.EMPTY); }
+  
+  public FavorRange getFireflashDeityRange() { return getEnchantmentMap().getOrDefault("fireflash_enchantment", FavorRange.EMPTY); }
+
+  public FavorRange getDaybreakDeityRange() { return getEnchantmentMap().getOrDefault("daybreak_enchantment", FavorRange.EMPTY); }
 
   public ConfiguredFavorRange getEntity(final EntityType<?> type) {
     return getEntityTargetMap().getOrDefault(type.getRegistryName(), ConfiguredFavorRange.EMPTY);

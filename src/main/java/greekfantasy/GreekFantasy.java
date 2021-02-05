@@ -9,6 +9,7 @@ import greekfantasy.deity.favor.Favor;
 import greekfantasy.deity.favor.IFavor;
 import greekfantasy.network.CUpdatePanflutePacket;
 import greekfantasy.network.CUpdateStatuePosePacket;
+import greekfantasy.network.CUseEnchantmentPacket;
 import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SFavorConfigurationPacket;
 import greekfantasy.network.SPanfluteSongPacket;
@@ -75,6 +76,7 @@ public class GreekFantasy {
     CHANNEL.registerMessage(messageId++, SSwineEffectPacket.class, SSwineEffectPacket::toBytes, SSwineEffectPacket::fromBytes, SSwineEffectPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     CHANNEL.registerMessage(messageId++, SFavorConfigurationPacket.class, SFavorConfigurationPacket::toBytes, SFavorConfigurationPacket::fromBytes, SFavorConfigurationPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     CHANNEL.registerMessage(messageId++, SSimpleParticlesPacket.class, SSimpleParticlesPacket::toBytes, SSimpleParticlesPacket::fromBytes, SSimpleParticlesPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+    CHANNEL.registerMessage(messageId++, CUseEnchantmentPacket.class, CUseEnchantmentPacket::toBytes, CUseEnchantmentPacket::fromBytes, CUseEnchantmentPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
   }
 
   public static void setup(final FMLCommonSetupEvent event) {

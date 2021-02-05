@@ -192,12 +192,22 @@
   },
   "enchantment_favor_configuration": {
     "flying_enchantment": { 
-      "deity": "greekfantasy:zeus",
+      "deity": "greekfantasy:hermes",
       "minlevel": 10,
       "maxlevel": 10
     },
     "lord_of_the_sea_enchantment": { 
       "deity": "greekfantasy:poseidon",
+      "minlevel": 10,
+      "maxlevel": 10
+    },
+    "fireflash_enchantment": { 
+      "deity": "greekfantasy:zeus",
+      "minlevel": 10,
+      "maxlevel": 10
+    },
+    "daybreak_enchantment": { 
+      "deity": "greekfantasy:apollo",
       "minlevel": 10,
       "maxlevel": 10
     }

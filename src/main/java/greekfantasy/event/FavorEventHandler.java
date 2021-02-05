@@ -7,33 +7,27 @@ import greekfantasy.deity.favor.Favor;
 import greekfantasy.deity.favor.FavorManager;
 import greekfantasy.deity.favor.IFavor;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;
-import greekfantasy.entity.WhirlEntity;
 import greekfantasy.entity.ai.FleeFromFavorablePlayerGoal;
 import greekfantasy.entity.ai.NearestAttackableFavorablePlayerGoal;
 import greekfantasy.entity.ai.NearestAttackableFavorablePlayerResetGoal;
-import greekfantasy.item.ThunderboltItem;
+import greekfantasy.network.CUseEnchantmentPacket;
 import greekfantasy.network.SSimpleParticlesPacket;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.container.MerchantContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
@@ -49,14 +43,12 @@ import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class FavorEventHandler {
@@ -163,7 +155,6 @@ public class FavorEventHandler {
     }
   }
   
-  
   /**
    * Used to trigger Favor Manager when the player is attacked by an entity.
    * @param event the living attack event
@@ -209,40 +200,35 @@ public class FavorEventHandler {
   
   /**
    * Used to summon a Whirl when an enchanted trident is stopped being used before it is thrown
-   * @param event the item use event (stop)
+   * @param event the left click empty event
    */
   @SubscribeEvent
-  public static void onStopUseItem(final LivingEntityUseItemEvent.Stop event) {
-    final ItemStack item = event.getEntityLiving().getHeldItemMainhand();
-    // Determine if the event can run (server-side player using enchanted trident with no cooldown and in favor range)
-    if(!event.isCanceled() && event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().getEntityWorld().isRemote()
+  public static void onLeftClickTrident(final PlayerInteractEvent.LeftClickEmpty event) {
+    final ItemStack item = event.getPlayer().getHeldItemMainhand();
+    // Determine if the event can run (player using enchanted trident with no cooldown)
+    if(!event.isCanceled() && event.getPlayer() instanceof PlayerEntity
         && GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == Items.TRIDENT
         && EnchantmentHelper.getEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) > 0
-        && !((PlayerEntity)event.getEntityLiving()).getCooldownTracker().hasCooldown(Items.TRIDENT)
-        && GreekFantasy.PROXY.getFavorConfiguration().getLordOfTheSeaDeityRange().isInFavorRange((PlayerEntity)event.getEntityLiving())) {
-      // The player has used an enchanted item and has the correct favor range, so the effect should be applied
-      final PlayerEntity player = (PlayerEntity)event.getEntityLiving();
-      final RayTraceResult raytrace = ThunderboltItem.raytraceFromEntity(event.getEntityLiving().getEntityWorld(), player, 48.0F);
-      // add a lightning bolt at the resulting position
-      if(raytrace.getType() != RayTraceResult.Type.MISS) {
-        final WhirlEntity whirl = GFRegistry.WHIRL_ENTITY.create(player.getEntityWorld());
-        final BlockPos pos = new BlockPos(raytrace.getHitVec());
-        // make sure there is enough water here
-        if(player.getEntityWorld().getFluidState(pos).isTagged(FluidTags.WATER)
-            && player.getEntityWorld().getFluidState(pos.down((int)Math.ceil(whirl.getHeight()))).isTagged(FluidTags.WATER)) {
-          // summon a powerful whirl with limited life and mob attracting turned on
-          whirl.setLocationAndAngles(raytrace.getHitVec().getX(), raytrace.getHitVec().getY() - whirl.getHeight(), raytrace.getHitVec().getZ(), 0, 0);
-          event.getEntityLiving().getEntityWorld().addEntity(whirl);
-          whirl.setLimitedLife(GreekFantasy.CONFIG.getWhirlLifespan() * 20);
-          whirl.setAttractMobs(true);
-          whirl.playSound(SoundEvents.ITEM_TRIDENT_THUNDER, 1.5F, 0.6F + whirl.getRNG().nextFloat() * 0.32F);
-          // cooldown and item damage
-          player.getCooldownTracker().setCooldown(item.getItem(), GreekFantasy.CONFIG.getWhirlLifespan() * 10);
-          if(!player.isCreative()) {
-            item.damageItem(25, player, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
-          }        
-        }
-      }
+        && !event.getPlayer().getCooldownTracker().hasCooldown(Items.TRIDENT)) {
+      // The player has used an enchanted item, send a packet to the server that will also check favor
+      GreekFantasy.CHANNEL.sendToServer(new CUseEnchantmentPacket(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT.getRegistryName()));            
+    }
+  }
+  
+  /**
+   * Used to change night to day 
+   * @param event the right click empty event
+   */
+  @SubscribeEvent
+  public static void onUseClock(final PlayerInteractEvent.RightClickEmpty event) {
+    final ItemStack item = event.getPlayer().getHeldItemMainhand();
+    // Determine if the event can run (player using enchanted trident with no cooldown)
+    if(!event.isCanceled() && GreekFantasy.CONFIG.isDaybreakEnabled() && item.getItem() == Items.CLOCK
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.DAYBREAK_ENCHANTMENT, item) > 0
+        && event.getPlayer().getEntityWorld().getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)
+        && event.getPlayer().getEntityWorld().getDayTime() % 24000L > 13000L) {
+      // The player has used an enchanted clock, tell the server to change to daytime
+      GreekFantasy.CHANNEL.sendToServer(new CUseEnchantmentPacket(GFRegistry.DAYBREAK_ENCHANTMENT.getRegistryName()));
     }
   }
   
@@ -256,7 +242,7 @@ public class FavorEventHandler {
         && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.TRADING_CANCEL)) {
       AbstractVillagerEntity villager = (AbstractVillagerEntity)event.getTarget();
       event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
-        // note: this special favor effect does not check or change cooldown time
+        // note: this special favor effect does not check or change cooldown time.
         // determine which special favor effect to use
         for(final SpecialFavorEffect effect : GreekFantasy.PROXY.getFavorConfiguration().getSpecials(SpecialFavorEffect.Type.TRADING_CANCEL)) {
           if(effect.canApply(event.getPlayer(), f)) {

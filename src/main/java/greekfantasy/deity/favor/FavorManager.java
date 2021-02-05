@@ -132,7 +132,7 @@ public class FavorManager {
     final long time = IFavor.calculateTime(player);
     // decrease all favor 
     if(player.ticksExisted > 10 && GreekFantasy.CONFIG.doesFavorDecrease() && time % GreekFantasy.CONFIG.getFavorDecreaseInterval() == 0) {
-      favor.forEach((d, f) -> f.depleteFavor(player, d, 1, Source.PASSIVE), true);
+      favor.forEach((d, f) -> f.depleteFavor(player, d, 1 + Math.abs(f.getLevel()), Source.PASSIVE), true);
     }
     // every few seconds, attempt to perform a favor effect
     if(!player.isCreative() && !player.isSpectator() && player.ticksExisted > 10 && time % 45 == 0 && favor.hasNoEffectCooldown(time)) {

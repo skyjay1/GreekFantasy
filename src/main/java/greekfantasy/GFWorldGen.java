@@ -160,11 +160,12 @@ public final class GFWorldGen {
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     OLIVE_TREE_SINGLE = registerFeature("olive_tree_single", 
         OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).func_242731_b(40));
-    OLIVE_TREE_FOREST = registerFeature("olive_tree",
-        OliveTree.getConfiguredTree()
-        .withPlacement(Placements.VEGETATION_PLACEMENT)
-        .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
-        .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(10, 0.1F, 1))));
+    OLIVE_TREE_FOREST = 
+        Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, "olive_tree"), 
+          OliveTree.getConfiguredTree()
+            .withPlacement(Placements.VEGETATION_PLACEMENT)
+            .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
+            .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(10, 0.1F, 1))));
     REEDS = registerFeature("reeds",
         REEDS_FEATURE.withConfiguration((new BlockClusterFeatureConfig.Builder(
             new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 

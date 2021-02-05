@@ -150,7 +150,7 @@ __Key:__
 
 - Complete: Statue GUI, Statue skins, Panflute songs, Panflute song GUI, mysterious box functions
 - Complete: "Stunned" effect (prevent movement or item use), "Petrified" effect, "Mirror" effect, "Swine" effect
-- Complete: "Overstep" enchantment, "Smashing" enchantment, "Hunting" enchantment, "Mirror" enchantment, "Flying" enchantment, "Lord of the Sea" enchantment (use to summon Whirl that has limited life and affects mobs)
+- Complete: "Overstep" enchantment, "Smashing" enchantment, "Hunting" enchantment, "Mirror" enchantment, "Flying" enchantment, "Fireflash" enchantment, "Daybreak" enchantment, "Lord of the Sea" enchantment
 - Complete: Olive forest biome
 - ~ Block and Item tags (wooden_doors, etc.)
 

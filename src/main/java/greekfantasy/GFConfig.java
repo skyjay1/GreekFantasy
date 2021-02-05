@@ -62,6 +62,9 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue MIRROR_ENABLED;
   private final ForgeConfigSpec.BooleanValue FLYING_ENABLED;
   private final ForgeConfigSpec.BooleanValue LORD_OF_THE_SEA_ENABLED;
+  private final ForgeConfigSpec.BooleanValue FIREFLASH_ENABLED;
+  private final ForgeConfigSpec.BooleanValue FIREFLASH_DESTROYS_BLOCKS;
+  private final ForgeConfigSpec.BooleanValue DAYBREAK_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_DROPS_ARMOR;
   private final ForgeConfigSpec.BooleanValue SWINE_PREVENTS_TARGET;
@@ -75,7 +78,10 @@ public class GFConfig {
   private boolean poisonEnabled;
   private boolean mirrorEnabled;
   private boolean flyingEnabled;
+  private boolean daybreakEnabled;
   private boolean lordOfTheSeaEnabled;
+  private boolean fireflashEnabled;
+  private boolean fireflashDestroysBlocks;
   private boolean swineEnabled;
   private boolean swineDropsArmor;
   private boolean swinePreventsTarget;
@@ -184,8 +190,8 @@ public class GFConfig {
     HEALING_ROD_DURABILITY = builder.defineInRange("healing_rod_durability", 384, 1, 4000);
     THUNDERBOLT_STORMS_ONLY = builder.comment("Whether the Thunderbolt can only be used during storms")
         .define("thunderbolt_storms_only", false);
-    THUNDERBOLT_COOLDOWN = builder.defineInRange("thunderbolt_cooldown", 50, 0, 100);
-    THUNDERBOLT_DURABILITY = builder.defineInRange("thunderbolt_durability", 168, 1, 4000);
+    THUNDERBOLT_COOLDOWN = builder.defineInRange("thunderbolt_cooldown", 100, 0, 100);
+    THUNDERBOLT_DURABILITY = builder.defineInRange("thunderbolt_durability", 170, 1, 4000);
     BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
     BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 100);
     BAG_OF_WIND_DURABILITY = builder.defineInRange("bag_of_wind_durability", 24, 1, 4000);
@@ -206,6 +212,9 @@ public class GFConfig {
     MIRROR_ENABLED = builder.define("enable_mirror_enchantment", true);
     FLYING_ENABLED = builder.define("enable_flying_enchantment", true);
     LORD_OF_THE_SEA_ENABLED = builder.define("enable_lord_of_the_sea_enchantment", true);
+    FIREFLASH_ENABLED = builder.define("enable_fireflash_enchantment", true);
+    FIREFLASH_DESTROYS_BLOCKS = builder.define("fireflash_destroys_blocks", true);
+    DAYBREAK_ENABLED = builder.define("enable_daybreak_enchantment", true);
     SWINE_ENABLED = builder.define("enable_swine_effect", true);
     SWINE_DROPS_ARMOR = builder.comment("Whether players under the swine effect drop their armor")
         .define("swine_drops_armor", true);
@@ -384,6 +393,7 @@ public class GFConfig {
     swineWandDuration = SWINE_WAND_DURATION.get();
     swineWandCooldown = SWINE_WAND_COOLDOWN.get();
     wingedSandalsDeplete = WINGED_SANDALS_DEPLETE.get();
+    // effect configurations
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
@@ -393,9 +403,13 @@ public class GFConfig {
     mirrorEnabled = MIRROR_ENABLED.get();
     flyingEnabled = FLYING_ENABLED.get();
     lordOfTheSeaEnabled = LORD_OF_THE_SEA_ENABLED.get();
+    fireflashEnabled = FIREFLASH_ENABLED.get();
+    fireflashDestroysBlocks = FIREFLASH_DESTROYS_BLOCKS.get();
+    daybreakEnabled = DAYBREAK_ENABLED.get();
     swineEnabled = SWINE_ENABLED.get();
     swineDropsArmor = SWINE_DROPS_ARMOR.get();
     swinePreventsTarget = SWINE_PREVENTS_TARGET.get();
+    // potions
     mirrorPotion = MIRROR_POTION.get();
     swinePotion = SWINE_POTION.get();
     // other mob spawn specials
@@ -450,6 +464,9 @@ public class GFConfig {
   public boolean doesSwinePreventTarget() { return swinePreventsTarget; }
   public boolean isFlyingEnabled() { return flyingEnabled; }
   public boolean isLordOfTheSeaEnabled() { return lordOfTheSeaEnabled; }
+  public boolean isFireflashEnabled() { return fireflashEnabled; }
+  public boolean doesFireflashDestroyBlocks() { return fireflashDestroysBlocks; }
+  public boolean isDaybreakEnabled() { return daybreakEnabled; }
   
   public boolean isMirrorPotionEnabled() { return mirrorPotion; }
   public boolean isSwinePotionEnabled() { return swinePotion; }

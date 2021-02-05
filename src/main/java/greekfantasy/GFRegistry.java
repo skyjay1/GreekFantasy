@@ -157,6 +157,8 @@ public final class GFRegistry {
   public static final Item ICHOR = null;
   @ObjectHolder("horn")
   public static final Item HORN = null;
+  @ObjectHolder("thunderbolt")
+  public static final Item THUNDERBOLT = null;
   @ObjectHolder("helm_of_darkness")
   public static final Item HELM_OF_DARKNESS = null;
   @ObjectHolder("winged_sandals")
@@ -353,6 +355,10 @@ public final class GFRegistry {
   public static final Enchantment FLYING_ENCHANTMENT = null;
   @ObjectHolder("lord_of_the_sea")
   public static final Enchantment LORD_OF_THE_SEA_ENCHANTMENT = null;
+  @ObjectHolder("fireflash")
+  public static final Enchantment FIREFLASH_ENCHANTMENT = null;
+  @ObjectHolder("daybreak")
+  public static final Enchantment DAYBREAK_ENCHANTMENT = null;
   
   // Potion //
   @ObjectHolder("mirror")
@@ -743,20 +749,26 @@ public final class GFRegistry {
   @SubscribeEvent
   public static void registerEnchantments(final RegistryEvent.Register<Enchantment> event) {
     GreekFantasy.LOGGER.debug("registerEnchantments");
-    event.getRegistry().register(new OverstepEnchantment(Enchantment.Rarity.UNCOMMON)
-        .setRegistryName(MODID, "overstep"));
-    event.getRegistry().register(new SmashingEnchantment(Enchantment.Rarity.RARE)
-        .setRegistryName(MODID, "smashing"));
-    event.getRegistry().register(new HuntingEnchantment(Enchantment.Rarity.COMMON)
-        .setRegistryName(MODID, "hunting"));
-    event.getRegistry().register(new PoisonEnchantment(Enchantment.Rarity.RARE)
-        .setRegistryName(MODID, "poison"));
-    event.getRegistry().register(new MirrorEnchantment(Enchantment.Rarity.VERY_RARE)
-        .setRegistryName(MODID, "mirror"));
-    event.getRegistry().register(new FlyingEnchantment(Enchantment.Rarity.VERY_RARE)
-        .setRegistryName(MODID, "flying"));
-    event.getRegistry().register(new LordOfTheSeaEnchantment(Enchantment.Rarity.VERY_RARE)
-        .setRegistryName(MODID, "lord_of_the_sea"));
+    event.getRegistry().registerAll(
+        new OverstepEnchantment(Enchantment.Rarity.UNCOMMON)
+          .setRegistryName(MODID, "overstep"),
+        new SmashingEnchantment(Enchantment.Rarity.RARE)
+          .setRegistryName(MODID, "smashing"),
+        new HuntingEnchantment(Enchantment.Rarity.COMMON)
+          .setRegistryName(MODID, "hunting"),
+        new PoisonEnchantment(Enchantment.Rarity.RARE)
+          .setRegistryName(MODID, "poison"),
+        new MirrorEnchantment(Enchantment.Rarity.VERY_RARE)
+          .setRegistryName(MODID, "mirror"),
+        new FlyingEnchantment(Enchantment.Rarity.VERY_RARE)
+          .setRegistryName(MODID, "flying"),
+        new LordOfTheSeaEnchantment(Enchantment.Rarity.VERY_RARE)
+          .setRegistryName(MODID, "lord_of_the_sea"),
+        new FireflashEnchantment(Enchantment.Rarity.VERY_RARE)
+          .setRegistryName(MODID, "fireflash"),
+        new DaybreakEnchantment(Enchantment.Rarity.RARE)
+          .setRegistryName(MODID, "daybreak")
+    );
   }
 
   @SubscribeEvent

@@ -2,6 +2,7 @@ package greekfantasy.item;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
@@ -16,6 +17,7 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 public class ThunderboltItem extends Item {
@@ -40,15 +42,26 @@ public class ThunderboltItem extends Item {
     if(!world.isRemote()) {
       // raytrace
       final RayTraceResult raytrace = raytraceFromEntity(world, player, 64.0F);
-      // add a lightning bolt at the resulting position
       if(raytrace.getType() != RayTraceResult.Type.MISS) {
+        // add a lightning bolt at the resulting position
         LightningBoltEntity bolt = EntityType.LIGHTNING_BOLT.create(world);
         bolt.setPosition(raytrace.getHitVec().getX(), raytrace.getHitVec().getY(), raytrace.getHitVec().getZ());
         world.addEntity(bolt);
+        // check for fireflash enchantment
+        int damageAmount = 15;
+        final int fireflashLevel = EnchantmentHelper.getEnchantmentLevel(GFRegistry.FIREFLASH_ENCHANTMENT, stack);
+        final boolean fireflash = GreekFantasy.CONFIG.isFireflashEnabled() && fireflashLevel > 0
+            && GreekFantasy.PROXY.getFavorConfiguration().getFireflashDeityRange().isInFavorRange(player);
+        // if enchanted with fireflash, cause an explosion
+        if(fireflash) {
+          damageAmount = 25;
+          final Explosion.Mode mode = GreekFantasy.CONFIG.doesFireflashDestroyBlocks() ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
+          world.createExplosion(player, raytrace.getHitVec().getX(), raytrace.getHitVec().getY(), raytrace.getHitVec().getZ(), fireflashLevel * 1.64F, true, mode);
+        }
         // cooldown and item damage
-        player.getCooldownTracker().setCooldown(this, GreekFantasy.CONFIG.getThunderboltCooldown());
+        player.getCooldownTracker().setCooldown(this, GreekFantasy.CONFIG.getThunderboltCooldown() / (fireflash ? 2 : 1));
         if(!player.isCreative()) {
-          stack.damageItem(1, player, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+          stack.damageItem(damageAmount, player, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
         }
       }
     }
