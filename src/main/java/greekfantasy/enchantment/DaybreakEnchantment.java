@@ -1,6 +1,5 @@
 package greekfantasy.enchantment;
 
-import greekfantasy.GFRegistry;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;

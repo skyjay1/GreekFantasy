@@ -4,7 +4,6 @@ import java.util.EnumSet;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.favor_effect.ConfiguredFavorRange;
-import greekfantasy.deity.favor_effect.FavorRange;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;

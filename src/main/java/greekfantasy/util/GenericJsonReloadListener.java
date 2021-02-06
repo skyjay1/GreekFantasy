@@ -56,16 +56,17 @@ public class GenericJsonReloadListener<T> extends JsonReloadListener {
    * @return an Optional containing the object if found, otherwise empty
    **/
   public Optional<T> get(final ResourceLocation id) {
-    if(!OBJECTS.containsKey(id)) {
-      GreekFantasy.LOGGER.debug("Could not find object for " + id + " in " + OBJECTS.getClass().toString());
-      put(id, null);
-    }
-    return OBJECTS.get(id);
+    return OBJECTS.getOrDefault(id, Optional.empty());
   }
  
   /** @return a collection of all objects **/
   public Collection<Optional<T>> getValues() {
     return OBJECTS.values();
+  }
+  
+  /** @return a set of all keys that are present in the object map **/
+  public Set<ResourceLocation> getKeys() {
+    return OBJECTS.keySet();
   }
   
   /** @return a collection of all object entries **/

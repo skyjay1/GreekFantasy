@@ -54,7 +54,8 @@ public class FavorChangedEvent extends PlayerEvent {
    * @see FavorChangedEvent
    */
   public static enum Source implements IStringSerializable {
-    PASSIVE("passive"), GIVE_ITEM("item"), KILL_ENTITY("kill"), ATTACK_ENTITY("attack"), OTHER("other");
+    PASSIVE("passive"), GIVE_ITEM("item"), KILL_ENTITY("kill"), 
+    ATTACK_ENTITY("attack"), COMMAND("command"), OTHER("other");
     
     private final String name;
     private Source(final String sourceName) { name = sourceName; }

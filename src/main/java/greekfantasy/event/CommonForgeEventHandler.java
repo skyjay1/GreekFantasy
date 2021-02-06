@@ -9,6 +9,7 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GFWorldGen;
 import greekfantasy.GFWorldSavedData;
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.favor.FavorCommand;
 import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.entity.ArionEntity;
 import greekfantasy.entity.CerastesEntity;
@@ -50,6 +51,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -375,8 +377,8 @@ public class CommonForgeEventHandler {
   }
   
   /**
-   * Used to sync panflute songs when resources are reloaded
-   * @param event
+   * Used to sync datapack info when resources are reloaded
+   * @param event the reload listener event
    **/
   @SubscribeEvent
   public static void onAddReloadListeners(final AddReloadListenerEvent event) {
@@ -384,6 +386,15 @@ public class CommonForgeEventHandler {
     event.addListener(GreekFantasy.PROXY.PANFLUTE_SONGS);
     event.addListener(GreekFantasy.PROXY.DEITY);
     event.addListener(GreekFantasy.PROXY.FAVOR_CONFIGURATION);
+  }
+  
+  /**
+   * Used to add custom commands
+   * @param event the command registry event
+   */
+  @SubscribeEvent
+  public static void onAddCommands(final RegisterCommandsEvent event) {
+    FavorCommand.register(event.getDispatcher());
   }
   
   /** @return whether the entity should have the Stunned or Petrified effect applied **/

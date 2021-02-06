@@ -22,6 +22,10 @@ public class FavorLevel {
   }
     
   /**
+   * Directly modifies the favor, with some bounds-checking
+   * to keep it within the min and max range. If possible,
+   * use the context-aware method 
+   * {@link #setFavor(PlayerEntity, IDeity, long, FavorChangedEvent.Source)}
    * @param favorIn the new favor value
    */
   public void setFavor(long favorIn) {
@@ -44,12 +48,26 @@ public class FavorLevel {
    * @param source the cause for the change in favor
    * @return the updated favor value
    */
-  public long addFavor(final PlayerEntity playerIn, final IDeity deityIn, final long toAdd, final FavorChangedEvent.Source source) {
+  public long setFavor(final PlayerEntity playerIn, final IDeity deityIn, final long newFavor, final FavorChangedEvent.Source source) {
     // Post a context-aware event to allow other modifiers
-    final FavorChangedEvent event = new FavorChangedEvent(playerIn, deityIn, favor, favor + toAdd, source);
+    final FavorChangedEvent event = new FavorChangedEvent(playerIn, deityIn, favor, newFavor, source);
     MinecraftForge.EVENT_BUS.post(event);
     setFavor(event.getNewFavor());
     return favor;
+  }
+  
+  /**
+   * Context-aware method to add favor that also posts an event for any listeners.
+   * If you don't want this, call {@link #setFavor(long)} directly.
+   * @param playerIn the player whose favor is being modified
+   * @param deityIn the deity for which the favor is being modified
+   * @param toAdd the amount of favor to add or subtract
+   * @param source the cause for the change in favor
+   * @return the updated favor value
+   */
+  public long addFavor(final PlayerEntity playerIn, final IDeity deityIn, final long toAdd, final FavorChangedEvent.Source source) {
+    // Post a context-aware event to allow other modifiers
+    return setFavor(playerIn, deityIn, favor + toAdd, source);
   }
   
   /**
