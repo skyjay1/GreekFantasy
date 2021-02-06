@@ -186,7 +186,7 @@ public final class GFWorldGen {
     final BiomeWhitelistConfig config = GreekFantasy.CONFIG.FEATURES.get(name);
     if(null == config) {
       GreekFantasy.LOGGER.error("Error registering features: config for '" + name + "' not found!");
-    } else {
+    } else if(config.chance() > 0) {
       feature = feature.chance(1000 / config.chance());
     }
     return Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, name), feature);
