@@ -9,6 +9,7 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.FavorLevel;
 import greekfantasy.deity.favor.IFavor;
+import greekfantasy.event.FavorChangedEvent;
 import net.minecraft.advancements.FunctionManager;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.FunctionObject;
@@ -118,10 +119,12 @@ public class FavorEffectManager {
       flag = true;
     } else if(potionFavorEffect(playerIn, effect.getPotion())) {
       flag = true;
+    } else if(addFavorEffect(playerIn, deity, effect.getFavor())) {
+      flag = true;
     } else GreekFantasy.LOGGER.debug("Failed to run any part of a favor effect :(");
     if(flag) {
       // if any of the effects ran successfully, send a message to the player, play a sound, and return cooldown
-      sendStatusMessage(playerIn, deity, effect.isPositive());
+      if(!effect.getFavor().isPresent()) sendStatusMessage(playerIn, deity, effect.isPositive());
       return Math.abs(effect.getMinCooldown()) + playerIn.getRNG().nextInt((int)Math.max(1, Math.abs(effect.getMinCooldown())));
     }
     return -1;
@@ -221,6 +224,21 @@ public class FavorEffectManager {
         manager.execute(mcfunction.get(), commandSource);
         return true;
       }
+    }
+    return false;
+  }
+  
+  /**
+   * Gives the player the amount of favor specified
+   * @param playerIn the player
+   * @param deity the deity whose favor to change
+   * @param favorAmount the amount of favor
+   * @return true if favor was successfully added
+   */
+  private static boolean addFavorEffect(final PlayerEntity playerIn, final IDeity deity, final Optional<Long> favorAmount) {
+    if(favorAmount.isPresent()) {
+      playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(favor -> favor.getFavor(deity).addFavor(playerIn, deity, favorAmount.get(), FavorChangedEvent.Source.OTHER));
+      return true;
     }
     return false;
   }

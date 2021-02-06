@@ -304,6 +304,7 @@ public class FavorManager {
    * @param arrow the arrow
    */
   public static void onShootArrow(final PlayerEntity player, final IFavor favor, final AbstractArrowEntity arrow) {
+    // attempt to change the damage amount of the arrow
     final long time = IFavor.calculateTime(player);
     if(favor.hasNoTriggeredCooldown(time)) {
       double damage = arrow.getDamage();

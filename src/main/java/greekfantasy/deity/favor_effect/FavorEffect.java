@@ -12,13 +12,14 @@ import net.minecraft.util.ResourceLocation;
 
 public class FavorEffect {
   
-  public static final FavorEffect EMPTY = new FavorEffect(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), 0, 0, 1000);
+  public static final FavorEffect EMPTY = new FavorEffect(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), 0, 0, 1000);
   
   public static final Codec<FavorEffect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       ResourceLocation.CODEC.optionalFieldOf("function").forGetter(FavorEffect::getFunction),
       CompoundNBT.CODEC.optionalFieldOf("potion").forGetter(FavorEffect::getPotion),
       CompoundNBT.CODEC.optionalFieldOf("summon").forGetter(FavorEffect::getSummon),
       ItemStack.CODEC.optionalFieldOf("item").forGetter(FavorEffect::getItem),
+      Codec.LONG.optionalFieldOf("favor").forGetter(FavorEffect::getFavor),
       Codec.INT.fieldOf("minlevel").forGetter(FavorEffect::getMinLevel),
       Codec.INT.fieldOf("maxlevel").forGetter(FavorEffect::getMaxLevel),
       Codec.LONG.fieldOf("mincooldown").forGetter(FavorEffect::getMinCooldown)
@@ -28,17 +29,19 @@ public class FavorEffect {
   private final Optional<CompoundNBT> potion;
   private final Optional<CompoundNBT> summon;
   private final Optional<ItemStack> item;
+  private final Optional<Long> favor;
   private final int minLevel;
   private final int maxLevel;
   private final long minCooldown;
   
   protected FavorEffect(final Optional<ResourceLocation> functionIn, final Optional<CompoundNBT> potionIn, 
-      final Optional<CompoundNBT> summonIn, final Optional<ItemStack> itemIn, 
+      final Optional<CompoundNBT> summonIn, final Optional<ItemStack> itemIn, final Optional<Long> favorIn,
       final int minLevelIn, final int maxLevelIn, final long minCooldownIn) {
     function = functionIn;
     potion = potionIn;
     summon = summonIn;
     item = itemIn;
+    favor = favorIn;
     minLevel = minLevelIn;
     maxLevel = maxLevelIn;
     minCooldown = minCooldownIn;
@@ -55,6 +58,9 @@ public class FavorEffect {
   
   /** @return an ItemStack to give the player **/
   public Optional<ItemStack> getItem() { return item; }
+  
+  /** @return an amount of favor to give the player **/
+  public Optional<Long> getFavor() { return favor; }
   
   /** @return the minimum level required **/
   public int getMinLevel() { return minLevel; }
@@ -90,6 +96,7 @@ public class FavorEffect {
     potion.ifPresent(r -> b.append(" potion[").append(r.toString()).append("]"));
     summon.ifPresent(r -> b.append(" summon[").append(r.toString()).append("]"));
     item.ifPresent(r -> b.append(" item[").append(r.toString()).append("]"));
+    favor.ifPresent(r -> b.append(" favor[").append(r.toString()).append("]"));
     b.append(" level[").append(minLevel).append(",").append(maxLevel).append("]");
     b.append(" cooldown[").append(minCooldown).append("]");
     return b.toString();
