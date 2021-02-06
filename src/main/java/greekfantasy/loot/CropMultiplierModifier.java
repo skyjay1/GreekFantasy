@@ -37,12 +37,12 @@ public class CropMultiplierModifier extends LootModifier {
   @Override
   public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
     // get the entity and favor configuration ready
-    Entity entity = context.get(LootParameters.THIS_ENTITY);
+    Entity entity = context.has(LootParameters.THIS_ENTITY) ? context.get(LootParameters.THIS_ENTITY) : null;
     FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     // make sure this crop is harvested by a non-creative player
-    if(context.has(LootParameters.BLOCK_STATE) && context.get(LootParameters.BLOCK_STATE).getBlock().isIn(crops)
+    if(entity instanceof PlayerEntity && context.has(LootParameters.BLOCK_STATE) && context.get(LootParameters.BLOCK_STATE).getBlock().isIn(crops)
         && favorConfig.hasSpecials(SpecialFavorEffect.Type.CROP_HARVEST_MULTIPLIER)
-        && entity instanceof PlayerEntity && !entity.isSpectator() && !((PlayerEntity)entity).isCreative()) {
+        && !entity.isSpectator() && !((PlayerEntity)entity).isCreative()) {
       // check favor levels and effects
       final PlayerEntity player = (PlayerEntity)entity;
       final long time = IFavor.calculateTime(player);

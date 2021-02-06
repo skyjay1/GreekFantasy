@@ -45,14 +45,15 @@ public class AutosmeltOrCobbleModifier extends LootModifier {
   @Override
   public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
     // get the entity and favor configuration ready
-    Entity entity = context.get(LootParameters.THIS_ENTITY);
+    Entity entity = context.has(LootParameters.THIS_ENTITY) ? context.get(LootParameters.THIS_ENTITY) : null;
     FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     // determine if either of the mining effects can activate
     final boolean canAutosmelt = favorConfig.hasSpecials(SpecialFavorEffect.Type.MINING_AUTOSMELT);
     final boolean canCancel = favorConfig.hasSpecials(SpecialFavorEffect.Type.MINING_CANCEL_ORES);
     // make sure this is an ore mined by a non-creative player
-    if(context.has(LootParameters.BLOCK_STATE) && context.get(LootParameters.BLOCK_STATE).getBlock().isIn(ores) 
-        && entity instanceof PlayerEntity && !entity.isSpectator() && !((PlayerEntity)entity).isCreative()
+    if(entity instanceof PlayerEntity && context.has(LootParameters.BLOCK_STATE) 
+        && context.get(LootParameters.BLOCK_STATE).getBlock().isIn(ores) 
+        && !entity.isSpectator() && !((PlayerEntity)entity).isCreative()
         && (canAutosmelt || canCancel)) {
       final PlayerEntity player = (PlayerEntity)entity;
       final long time = IFavor.calculateTime(player);

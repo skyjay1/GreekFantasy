@@ -44,7 +44,7 @@ public class FavorLevel {
    * If you don't want this, call {@link #setFavor(long)} directly.
    * @param playerIn the player whose favor is being modified
    * @param deityIn the deity for which the favor is being modified
-   * @param toAdd the amount of favor to add or subtract
+   * @param newFavor the new favor amount
    * @param source the cause for the change in favor
    * @return the updated favor value
    */
