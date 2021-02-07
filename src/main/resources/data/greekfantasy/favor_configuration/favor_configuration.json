@@ -216,7 +216,7 @@
   	{
   	  "type": "mining_autosmelt",
   	  "favor_range": {
-  	    "deity": "greekfantasy:hephaestus",
+  	    "deity": "greekfantasy:hades",
 	    "minlevel": 6,
 	    "maxlevel": 10
   	  },
@@ -227,7 +227,7 @@
   	{
   	  "type": "mining_cancel_ores",
   	  "favor_range": {
-  	    "deity": "greekfantasy:hephaestus",
+  	    "deity": "greekfantasy:hades",
 	    "minlevel": -10,
 	    "maxlevel": -6
   	  },
@@ -295,8 +295,8 @@
   	  "type": "crop_growth_multiplier",
   	  "multiplier": 1.0,
   	  "favor_range": {
-  	    "deity": "greekfantasy:demeter",
-	    "minlevel": 2,
+  	    "deity": "greekfantasy:hera",
+	    "minlevel": 5,
 	    "maxlevel": 10
   	  },
   	  "chance": 0.08,
@@ -307,7 +307,7 @@
   	  "type": "crop_growth_multiplier",
   	  "multiplier": -1.0,
   	  "favor_range": {
-  	    "deity": "greekfantasy:demeter",
+  	    "deity": "greekfantasy:hera",
 	    "minlevel": -2,
 	    "maxlevel": -10
   	  },
@@ -319,7 +319,7 @@
   	  "type": "xp_multiplier",
   	  "multiplier": 0.25,
   	  "favor_range": {
-  	    "deity": "greekfantasy:athena",
+  	    "deity": "greekfantasy:apollo",
 	    "minlevel": 4,
 	    "maxlevel": 10
   	  },
@@ -331,7 +331,7 @@
   	  "type": "xp_multiplier",
   	  "multiplier": -0.35,
   	  "favor_range": {
-  	    "deity": "greekfantasy:athena",
+  	    "deity": "greekfantasy:apollo",
 	    "minlevel": -3,
 	    "maxlevel": -10
   	  },
@@ -347,7 +347,7 @@
   	  	"Duration": 65
   	  },
   	  "favor_range": {
-  	    "deity": "greekfantasy:apollo",
+  	    "deity": "greekfantasy:zeus",
 	    "minlevel": 5,
 	    "maxlevel": 10
   	  },
@@ -363,7 +363,7 @@
   	  	"Duration": 65
   	  },
   	  "favor_range": {
-  	    "deity": "greekfantasy:apollo",
+  	    "deity": "greekfantasy:zeus",
 	    "minlevel": -2,
 	    "maxlevel": -10
   	  },
@@ -474,7 +474,7 @@
   	{
   	  "type": "trading_cancel",
   	  "favor_range": {
-  	    "deity": "greekfantasy:hestia",
+  	    "deity": "greekfantasy:hermes",
 	    "minlevel": -1,
 	    "maxlevel": -10
   	  },

@@ -44,7 +44,6 @@ public class GFWorldSavedData extends WorldSavedData {
   
   private List<UUID> flyingPlayers = new ArrayList<>();
   private static final String KEY_PLAYERS = "FlyingPlayers";
-  private static final String KEY_UUID = "UUID";
 
   public GFWorldSavedData(String name) {
     super(name);

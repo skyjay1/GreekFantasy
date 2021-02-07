@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.FurnaceRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.loot.LootContext;
@@ -57,44 +58,40 @@ public class AutosmeltOrCobbleModifier extends LootModifier {
         && (canAutosmelt || canCancel)) {
       final PlayerEntity player = (PlayerEntity)entity;
       final long time = IFavor.calculateTime(player);
-      ArrayList<ItemStack> replacement = new ArrayList<ItemStack>();
       LazyOptional<IFavor> lFavor = entity.getCapability(GreekFantasy.FAVOR);
       IFavor favor = lFavor.orElse(GreekFantasy.FAVOR.getDefaultInstance());
       // if the player's favor has no cooldown, activate the effect
       if(lFavor.isPresent() && favor.hasNoTriggeredCooldown(time)) {
-        List<SpecialFavorEffect> autosmelts = favorConfig.getSpecials(SpecialFavorEffect.Type.MINING_AUTOSMELT);
-        List<SpecialFavorEffect> unsmelts = favorConfig.getSpecials(SpecialFavorEffect.Type.MINING_CANCEL_ORES);
-        long cooldown = 0;
-        // autosmelt special favor effects
+        ArrayList<ItemStack> replacement = new ArrayList<ItemStack>();
         if(canAutosmelt) {
-          for(final SpecialFavorEffect autosmelt : autosmelts) {
+          // autosmelt special favor effects
+          for(final SpecialFavorEffect autosmelt : favorConfig.getSpecials(SpecialFavorEffect.Type.MINING_AUTOSMELT)) {
             // if the item should autosmelt, get the items to add to the list
             if(autosmelt.canApply(player, favor)) {
               generatedLoot.forEach((stack) -> replacement.add(smelt(stack, context)));
-              cooldown = autosmelt.getRandomCooldown(player.getRNG());
+              favor.setTriggeredTime(time, autosmelt.getRandomCooldown(player.getRNG()));
+              return replacement;
             }
           }
         }
-        // unsmelt special favor effects
         if(canCancel) {
-          for(final SpecialFavorEffect unsmelt : unsmelts) {
+          // unsmelt special favor effects
+          for(final SpecialFavorEffect unsmelt : favorConfig.getSpecials(SpecialFavorEffect.Type.MINING_CANCEL_ORES)) {
             // if the item should unsmelt, get the item to add to the list
             if(unsmelt.canApply(player, favor)) {
               replacement.add(new ItemStack(stone));
-              cooldown = unsmelt.getRandomCooldown(player.getRNG());
+              favor.setTriggeredTime(time, unsmelt.getRandomCooldown(player.getRNG()));
+              return replacement;
             }
           }
         }
-        // set the triggered cooldown
-        if(cooldown > 0) {
-          favor.setTriggeredTime(time, cooldown);
-        }
-        return replacement;
       }
     }
     return generatedLoot;
-    
   }
+  
+  
+  
 
   /**
    * @param stack the item to smelt

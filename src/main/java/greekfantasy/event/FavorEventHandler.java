@@ -320,9 +320,10 @@ public class FavorEventHandler {
         } else if(numBabies > 1) {
           // number of babies is more than one, so spawn additional mobs
           for(int i = 1; i < numBabies; i++) {
-            AgeableEntity bonusChild = ((AnimalEntity)event.getParentA()).func_241840_a((ServerWorld)world, (AnimalEntity)event.getParentB());
+            AgeableEntity bonusChild = (AgeableEntity)event.getParentA().getType().create(event.getParentA().getEntityWorld());
             if(bonusChild != null) {
-              bonusChild.copyLocationAndAnglesFrom(event.getChild());
+              bonusChild.copyLocationAndAnglesFrom(event.getParentA());
+              bonusChild.setChild(true);
               world.addEntity(bonusChild);
             }
           }

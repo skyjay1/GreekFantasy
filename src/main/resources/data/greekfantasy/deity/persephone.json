@@ -3,5 +3,28 @@
   "enabled": false,
   "female": true,
   "base": "greekfantasy:polished_limestone_slab",
-  "overlay": "none"
+  "overlay": "none",
+  "item_favor_map": {
+  	"greekfantasy:ambrosia": 45,
+  	"greekfantasy:wild_rose": 3,
+  	"minecraft:egg": 1,
+  	"minecraft:milk_bucket": 11,
+  	"minecraft:lily_of_the_valley": 3,
+  	"minecraft:cornflower": 3,
+  	"minecraft:rose_bush": 5,
+  	"minecraft:lilac": 4,
+  	"minecraft:peony": 3,
+  	"minecraft:red_tulip": 2,
+  	"minecraft:orange_tulip": 2,
+  	"minecraft:white_tulip": 2,
+  	"minecraft:pink_tulip": 2,
+  	"minecraft:oxeye_daisy": 3,
+  	"minecraft:sunflower": 3,
+  	"minecraft:azure_bluet": 3,
+  	"minecraft:allium": 2,
+  	"minecraft:blue_orchid": 3,
+  	"minecraft:poppy": 4,
+  	"minecraft:dandelion": 2,
+  	"minecraft:wither_rose": 60
+  }
 }

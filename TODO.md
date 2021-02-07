@@ -92,6 +92,7 @@ __Key:__
 - X Rewards and punishments
 - X Deity datapack support
 - X Favor GUI
+- X Favor command (set/add/query)
 - ~ Special abilities ideas:
   - X Grow or ungrow crops near player (Demeter)
   - X Allow winged sandals to grant flight (Hermes)
