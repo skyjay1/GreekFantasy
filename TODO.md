@@ -181,6 +181,8 @@ _Can I do something with these?_
 - Blemmyes (headless biped)
 - Pandos (biped, giant ears)
 - Horse of Diomedes (man-eating horse)
+- Underworld biomes: underworld biome, tartarus, styx river, etc.
+- Tree that very rarely grows golden apples
 - Underworld pomegranate tree
 - Belt of Aphrodite (maybe allows disguise as other player?)
 - Armor of Achilles (Hephaestus; said to be impenetrable)
@@ -193,5 +195,5 @@ _Can I do something with these?_
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
 - River Styx
 - Story of King Midas (gold touch)
-- Story of Labyrinth (Minotaur, Golden String, etc)
+- Story of Labyrinth (Minotaur miniboss, Golden String, etc)
 
