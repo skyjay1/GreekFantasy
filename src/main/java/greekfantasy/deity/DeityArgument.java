@@ -1,5 +1,6 @@
 package greekfantasy.deity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
@@ -22,6 +23,15 @@ public class DeityArgument implements ArgumentType<ResourceLocation> {
   private static final Collection<String> EXAMPLES = Arrays.asList(new String[] { "greekfantasy:zeus", "hades" });
   public static final DynamicCommandExceptionType DEITY_UNKNOWN = new DynamicCommandExceptionType(o -> new TranslationTextComponent("commands.deity.not_found", o));
 
+  private static final Collection<ResourceLocation> SUGGESTIONS = new ArrayList<>();
+  static {
+    final String[] names = new String[] {"aphrodite", "apollo", "ares", "artemis", "athena", "demeter", "dionysus", 
+        "hades", "hecate", "hephaestus", "hera", "hermes", "hestia", "persephone", "poseidon", "zeus"};
+    for(final String s : names) {
+      SUGGESTIONS.add(new ResourceLocation(GreekFantasy.MODID, s));
+    }
+  }
+  
   public static DeityArgument deity() { return new DeityArgument(); }
 
   public static ResourceLocation getDeityId(CommandContext<CommandSource> source, String string)
@@ -44,7 +54,12 @@ public class DeityArgument implements ArgumentType<ResourceLocation> {
   }
   
   @Override
-  public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_listSuggestions_1_, SuggestionsBuilder p_listSuggestions_2_) { 
-    return ISuggestionProvider.suggestIterable(GreekFantasy.PROXY.DEITY.getKeys(), p_listSuggestions_2_); 
+  public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_listSuggestions_1_, SuggestionsBuilder p_listSuggestions_2_) {
+    GreekFantasy.PROXY.DEITY.getKeys().forEach(r -> {
+      if(!SUGGESTIONS.contains(r)) {
+        SUGGESTIONS.add(r);
+      }
+    });
+    return ISuggestionProvider.suggestIterable(SUGGESTIONS, p_listSuggestions_2_); 
   }
 }

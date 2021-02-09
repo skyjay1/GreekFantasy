@@ -3,6 +3,11 @@
   "enabled": true,
   "female": false,
   "base": "minecraft:end_stone_brick_slab",
+  "right_hand": {
+  	"id": "minecraft:bow",
+  	"Count": 1,
+  	"tag": {}
+  },
   "effects": [
   	{
   	  "potion": {

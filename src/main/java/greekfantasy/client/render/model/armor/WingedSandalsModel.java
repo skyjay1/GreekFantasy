@@ -8,25 +8,21 @@ import net.minecraft.util.math.MathHelper;
 
 public class WingedSandalsModel extends BipedModel<LivingEntity> {
   
-  private final ModelRenderer leftWing1;
-  private final ModelRenderer leftWing2;
-  private final ModelRenderer rightWing1;
-  private final ModelRenderer rightWing2;
+  private final ModelRenderer leftWing;
+  private final ModelRenderer rightWing;
 
   public WingedSandalsModel(final float modelSize) {
     super(modelSize);
 
-    leftWing1 = makeWing(this, modelSize, true);
-    leftWing2 = makeWing(this, modelSize, false);
-    this.bipedLeftLeg.addChild(leftWing1);
-    this.bipedLeftLeg.addChild(leftWing2);
-    this.bipedLeftLeg.mirror = false;
+    leftWing = new ModelRenderer(this);
+    leftWing.setRotationPoint(0.0F, 12.0F, 2.0F + modelSize);
+    leftWing.setTextureOffset(16, 18).addBox(0.0F, -6.0F, -1.0F, 5.0F, 6.0F, 1.0F, 0.0F, true);
+    this.bipedLeftLeg.addChild(leftWing);
 
-    rightWing1 = makeWing(this, modelSize, true);
-    rightWing2 = makeWing(this, modelSize, false);
-    this.bipedRightLeg.addChild(rightWing1);
-    this.bipedRightLeg.addChild(rightWing2);
-    this.bipedRightLeg.mirror = false;
+    rightWing = new ModelRenderer(this);
+    rightWing.setRotationPoint(0.0F, 12.0F, 2.0F + modelSize);
+    rightWing.setTextureOffset(16, 18).addBox(-5.0F, -6.0F, -1.0F, 5.0F, 6.0F, 1.0F, 0.0F, false);
+    this.bipedRightLeg.addChild(rightWing);
     
     // hide unused parts
     this.bipedHead.showModel = false;
@@ -40,22 +36,22 @@ public class WingedSandalsModel extends BipedModel<LivingEntity> {
   public void setRotationAngles(LivingEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     // animate wings
-    final float wingSpeed = entity.isOnGround() ? 0.64F : 1.14F;
-    final float wingSpan = 0.7854F;
-    final float wingAngle = wingSpan + MathHelper.cos((ageInTicks + entity.getEntityId()) * wingSpeed) * wingSpan * 0.5F;
-    this.leftWing1.rotateAngleY = this.rightWing1.rotateAngleY = -wingAngle;
-    this.leftWing2.rotateAngleY = this.rightWing2.rotateAngleY = wingAngle;
+    final float wingSpeed = entity.isOnGround() ? 0.62F : 1.14F;
+    final float wingSpan = 0.75854F;
+    final float wingAngle = wingSpan - MathHelper.cos((ageInTicks + entity.getEntityId()) * wingSpeed) * wingSpan * 0.65F;
+    this.rightWing.rotateAngleY = wingAngle;
+    this.leftWing.rotateAngleY = -wingAngle;
   }
 
   public static ModelRenderer makeWing(final EntityModel<?> model, final float modelSize, final boolean isLeft) {
-    final ModelRenderer wing = new ModelRenderer(model, 16, 25);
+    final ModelRenderer wing = new ModelRenderer(model);
     if(isLeft) {
       wing.setRotationPoint(0.5F, 11.0F, 2.0F);
-      wing.addBox(0.0F, -6.0F, -1.0F, 5.0F, 6.0F, 1.0F, modelSize);
-      wing.mirror = true;
+      wing.setTextureOffset(16, 25).addBox(0.0F, -6.0F, -1.0F, 5.0F, 6.0F, 1.0F, modelSize);
     } else {
       wing.setRotationPoint(-0.5F, 11.0F, 2.0F);
-      wing.addBox(-5.0F, -6.0F, -1.0F, 5.0F, 6.0F, 1.0F, modelSize);
+      wing.setTextureOffset(16, 25).addBox(-5.0F, -6.0F, -1.0F, 5.0F, 6.0F, 1.0F, modelSize);
+      wing.mirror = true;
     }
     return wing;
   }

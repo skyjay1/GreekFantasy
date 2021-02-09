@@ -523,35 +523,35 @@ public final class GFRegistry {
     
     // Altar blocks
     event.getRegistry().registerAll(
-      makeDeityStatue("aphrodite", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("aphrodite", StatueBlock.StatueMaterial.MARBLE, StatuePoses.APHRODITE_POSE)
         .setRegistryName(MODID, "altar_aphrodite"),
-      makeDeityStatue("apollo", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("apollo", StatueBlock.StatueMaterial.MARBLE, StatuePoses.APOLLO_POSE)
         .setRegistryName(MODID, "altar_apollo"),
-      makeDeityStatue("ares", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("ares", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ARES_POSE)
         .setRegistryName(MODID, "altar_ares"),
-      makeDeityStatue("artemis", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("artemis", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ARTEMIS_POSE)
         .setRegistryName(MODID, "altar_artemis"),
-      makeDeityStatue("athena", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("athena", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ATHENA_POSE)
         .setRegistryName(MODID, "altar_athena"),
-      makeDeityStatue("demeter", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("demeter", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ARES_POSE)
         .setRegistryName(MODID, "altar_demeter"),
-      makeDeityStatue("dionysus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("dionysus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ATHENA_POSE)
         .setRegistryName(MODID, "altar_dionysus"),
-      makeDeityStatue("hades", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("hades", StatueBlock.StatueMaterial.MARBLE, StatuePoses.HADES_POSE)
         .setRegistryName(MODID, "altar_hades"),
-      makeDeityStatue("hecate", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("hecate", StatueBlock.StatueMaterial.MARBLE, StatuePoses.HECATE_POSE)
         .setRegistryName(MODID, "altar_hecate"),
-      makeDeityStatue("hephaestus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("hephaestus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.HEPHAESTUS_POSE)
         .setRegistryName(MODID, "altar_hephaestus"),
-      makeDeityStatue("hera", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("hera", StatueBlock.StatueMaterial.MARBLE, StatuePoses.HERA_POSE)
         .setRegistryName(MODID, "altar_hera"),
-      makeDeityStatue("hermes", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("hermes", StatueBlock.StatueMaterial.MARBLE, StatuePoses.HERMES_POSE)
         .setRegistryName(MODID, "altar_hermes"),
-      makeDeityStatue("hestia", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("hestia", StatueBlock.StatueMaterial.MARBLE, StatuePoses.HERA_POSE)
         .setRegistryName(MODID, "altar_hestia"),
-      makeDeityStatue("persephone", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("persephone", StatueBlock.StatueMaterial.MARBLE, StatuePoses.PERSEPHONE_POSE)
         .setRegistryName(MODID, "altar_persephone"),
-      makeDeityStatue("poseidon", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
+      makeDeityStatue("poseidon", StatueBlock.StatueMaterial.MARBLE, StatuePoses.POSEIDON_POSE)
         .setRegistryName(MODID, "altar_poseidon"),
       makeDeityStatue("zeus", StatueBlock.StatueMaterial.MARBLE, StatuePoses.ZEUS_POSE)
         .setRegistryName(MODID, "altar_zeus")
@@ -885,9 +885,9 @@ public final class GFRegistry {
     return new StatueBlock(statueMaterial, te -> {
         te.setStatuePose(pose);
         te.setDeityName(deityId.toString());
-        te.setStatueFemale(te.getDeity().isFemale());
         te.setItem(te.getDeity().getRightHandItem(), HandSide.RIGHT);
         te.setItem(te.getDeity().getLeftHandItem(), HandSide.LEFT);
+        te.setStatueFemale(te.getDeity().isFemale());
       }, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(15.0F, 6000.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> statueMaterial.getLightLevel()), deityId);
   }
   

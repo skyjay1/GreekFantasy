@@ -230,7 +230,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   
   public void setItem(final ItemStack stack, final HandSide hand) {
     int i = hand.ordinal();
-    this.inventory.set(i, stack.split(1));
+    this.inventory.set(i, stack);
     this.inventoryChanged();
   }
   
@@ -245,7 +245,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   private void inventoryChanged() {
     this.markDirty();
     if(this.world != null) {
-      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 3);
+      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
     }
   }
 

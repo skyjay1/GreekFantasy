@@ -57,7 +57,7 @@ public class FavorRange {
    * @return true if the player's favor matches this favor range
    */
   public boolean isInFavorRange(final PlayerEntity player, final IFavor f) {
-    if(this == EMPTY) {
+    if(this == EMPTY || !f.isEnabled()) {
       return false;
     }
     final int playerLevel = f.getFavor(getDeity()).getLevel();

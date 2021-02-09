@@ -2,5 +2,15 @@
   "name": "greekfantasy:athena",
   "enabled": false,
   "female": true,
-  "base": "minecraft:quartz_slab"
+  "base": "minecraft:quartz_slab",
+  "left_hand": { 
+  	"id": "minecraft:shield",
+  	"Count": 1,
+	"tag": { }
+  },
+  "right_hand": { 
+  	"id": "minecraft:book",
+  	"Count": 1,
+	"tag": { }
+  }
 }

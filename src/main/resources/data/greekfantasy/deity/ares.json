@@ -2,5 +2,15 @@
   "name": "greekfantasy:ares",
   "enabled": false,
   "female": false,
-  "base": "minecraft:polished_andesite_slab"
+  "base": "minecraft:polished_andesite_slab",
+  "left_hand": {
+  	"id": "minecraft:iron_sword",
+  	"Count": 1,
+  	"tag": {}
+  },
+  "right_hand": {
+  	"id": "minecraft:iron_sword",
+  	"Count": 1,
+  	"tag": {}
+  }
 }

@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.LazyOptional;
 public class Favor implements IFavor {
   
   protected final Map<ResourceLocation, FavorLevel> favorMap = new HashMap<>();
+  private boolean enabled = true;
   private long effectTimestamp;
   private long effectCooldown = 1000;  
   private long triggeredTimestamp;
@@ -35,40 +36,34 @@ public class Favor implements IFavor {
   }
 
   @Override
-  public void setFavor(ResourceLocation deity, FavorLevel favorLevel) {
-    favorMap.put(deity, favorLevel);
-  }
-
+  public void setFavor(ResourceLocation deity, FavorLevel favorLevel) { favorMap.put(deity, favorLevel); }
   @Override
   public Map<ResourceLocation, FavorLevel> getAllFavor() { return favorMap; }
-  
+  @Override
+  public boolean isEnabled() { return enabled; }
+  @Override
+  public void setEnabled(boolean enabledIn) { enabled = enabledIn; }
   @Override
   public long getEffectTimestamp() { return effectTimestamp; }
-  
   @Override
   public void setEffectTimestamp(long timestamp) { this.effectTimestamp = timestamp; }
-  
   @Override
   public long getEffectCooldown() { return effectCooldown; }
-  
   @Override
   public void setEffectCooldown(long cooldown) { this.effectCooldown = cooldown; }
-  
   @Override
   public long getTriggeredTimestamp() { return triggeredTimestamp; }
-  
   @Override
   public void setTriggeredTimestamp(long timestamp) { this.triggeredTimestamp = timestamp; }
-  
   @Override
   public long getTriggeredCooldown() { return triggeredCooldown; }
-  
   @Override
   public void setTriggeredCooldown(long cooldown) { this.triggeredCooldown = cooldown; }
   
   @Override
   public String toString() {
     final StringBuilder b = new StringBuilder("Favor:");
+    b.append(" enabled[").append(enabled).append("]");
     b.append(" effectTimestamp[").append(effectTimestamp).append("]");
     b.append(" effectCooldown[").append(effectCooldown).append("]");
     b.append(" triggeredTimestamp[").append(triggeredTimestamp).append("]");

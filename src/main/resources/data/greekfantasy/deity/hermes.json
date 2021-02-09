@@ -2,8 +2,8 @@
   "name": "greekfantasy:hermes",
   "enabled": true,
   "female": false,
-  "left_hand": {
-  	"id": "greekfantasy:healing_rod",
+  "right_hand": {
+  	"id": "greekfantasy:swine_wand",
   	"Count": 1,
   	"tag": {}
   },

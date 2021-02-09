@@ -204,15 +204,17 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
         final IDeity teDeity = teStatue.getDeity();
         if(teDeity.isEnabled()) {
           playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
-            FavorLevel level = f.getFavor(teDeity);
-            if(FavorManager.onGiveItem(teStatue, teDeity, playerIn, level, stack)) {
-              final boolean happy = teDeity.getItemFavorModifier(stack.getItem()) > 0;
-              GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(happy, pos, 10));
-            } else {
-              handleItemInteraction(playerIn, teDeity, f, stack);
+            if(f.isEnabled()) {
+              FavorLevel level = f.getFavor(teDeity);
+              if(FavorManager.onGiveItem(teStatue, teDeity, playerIn, level, stack)) {
+                final boolean happy = teDeity.getItemFavorModifier(stack.getItem()) > 0;
+                GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(happy, pos, 10));
+              } else {
+                handleItemInteraction(playerIn, teDeity, f, stack);
+              }
+              // print current favor level
+              level.sendStatusMessage(playerIn, teDeity);
             }
-            // print current favor level
-            level.sendStatusMessage(playerIn, teDeity);
           });
         }
         return ActionResultType.SUCCESS;
@@ -278,7 +280,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   protected void handleItemInteraction(final PlayerEntity player, final IDeity deity, final IFavor favor, final ItemStack item) {
     final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     // attempt to give the item the Flying enchantment
-    if(GreekFantasy.CONFIG.isFlyingEnabled() && item.getItem() == GFRegistry.WINGED_SANDALS 
+    if(favor.isEnabled() && GreekFantasy.CONFIG.isFlyingEnabled() && item.getItem() == GFRegistry.WINGED_SANDALS 
         && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getFlyingDeityRange().getDeity().getName())
         && favorConfig.getFlyingDeityRange().isInFavorRange(player, favor)
         && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, item) < 1) {

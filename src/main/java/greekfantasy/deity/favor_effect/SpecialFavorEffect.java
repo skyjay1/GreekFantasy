@@ -94,7 +94,8 @@ public class SpecialFavorEffect {
    * @return true if this special effect can apply to the given player
    */
   public boolean canApply(final PlayerEntity player, final IFavor favor) {
-    return this != EMPTY && type != SpecialFavorEffect.Type.NONE && favorRange.getDeity().isEnabled() && favorRange.isInFavorRange(player, favor) 
+    return favor.isEnabled() && this != EMPTY && type != SpecialFavorEffect.Type.NONE 
+        && favorRange.getDeity().isEnabled() && favorRange.isInFavorRange(player, favor) 
         && player.getRNG().nextFloat() < getAdjustedChance(favor.getFavor(favorRange.getDeity()).getLevel());
   }
 

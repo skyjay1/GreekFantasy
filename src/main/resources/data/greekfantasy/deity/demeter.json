@@ -2,5 +2,15 @@
   "name": "greekfantasy:demeter",
   "enabled": false,
   "female": true,
-  "base": "minecraft:cut_sandstone_slab"
+  "base": "minecraft:cut_sandstone_slab",
+  "left_hand": {
+  	"id": "minecraft:wheat",
+  	"Count": 1,
+  	"tag": {}
+  },
+  "right_hand": {
+  	"id": "minecraft:wheat",
+  	"Count": 1,
+  	"tag": {}
+  }
 }

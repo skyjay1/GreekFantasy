@@ -9,11 +9,9 @@
   	"tag": {}
   },
   "right_hand": { 
-  	"id": "minecraft:tipped_arrow",
-  	"Count": 4,
-	"tag": {
-	  "Potion": "minecraft:poison"
-	}
+  	"id": "minecraft:iron_sword",
+  	"Count": 1,
+	"tag": { }
   },
   "effects": [
   	{

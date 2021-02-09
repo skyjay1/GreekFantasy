@@ -19,6 +19,7 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
   
   public static final ResourceLocation REGISTRY_NAME = new ResourceLocation(GreekFantasy.MODID, "favor");
   
+  static final String ENABLED = "Enabled";
   static final String FAVOR_LEVELS = "FavorLevels";
   static final String NAME = "Name";
   static final String FAVOR = "Favor";
@@ -74,6 +75,12 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
   default Set<IDeity> getDeitySet() {
     return getAllFavor().keySet().stream().map(i -> GreekFantasy.PROXY.DEITY.get(i).orElse(Deity.EMPTY)).collect(Collectors.toSet()); 
   }
+  
+  /** @return true if favor is enabled for this player **/
+  boolean isEnabled();
+  
+  /** @param enabledIn true if favor should be enabled **/
+  void setEnabled(boolean enabledIn);
   
   /** @return the time of the last favor effect **/
   long getEffectTimestamp();
@@ -154,6 +161,7 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
       deities.add(deityTag);
     }
     nbt.put(FAVOR_LEVELS, deities);
+    nbt.putBoolean(ENABLED, isEnabled());
     nbt.putLong(TIMESTAMP, getEffectTimestamp());
     nbt.putLong(COOLDOWN, getEffectCooldown());
     nbt.putLong(TRIGGERED_TIMESTAMP, getTriggeredTimestamp());
@@ -170,6 +178,7 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
       final long favor = deity.getLong(FAVOR);
       setFavor(new ResourceLocation(name), new FavorLevel(favor));
     }
+    setEnabled((!nbt.contains(ENABLED)) || nbt.getBoolean(ENABLED));
     setEffectTimestamp(nbt.getLong(TIMESTAMP));
     setEffectCooldown(nbt.getLong(COOLDOWN));
     setTriggeredTimestamp(nbt.getLong(TRIGGERED_TIMESTAMP));

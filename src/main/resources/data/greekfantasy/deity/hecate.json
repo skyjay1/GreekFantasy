@@ -2,5 +2,10 @@
   "name": "greekfantasy:hecate",
   "enabled": false,
   "female": true,
-  "base": "minecraft:purpur_slab"
+  "base": "minecraft:purpur_slab",
+  "right_hand": { 
+  	"id": "minecraft:torch",
+  	"Count": 1,
+	"tag": { }
+  }
 }

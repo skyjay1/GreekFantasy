@@ -79,7 +79,7 @@ public class GorgonBloodItem extends Item {
   
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    tooltip.add(new TranslationTextComponent("item.greekfantasy.gorgon_blood.tooltip_heal").mergeStyle(TextFormatting.AQUA));
-    tooltip.add(new TranslationTextComponent("item.greekfantasy.gorgon_blood.tooltip_poison").mergeStyle(TextFormatting.AQUA));
+    tooltip.add(new TranslationTextComponent("item.greekfantasy.gorgon_blood.tooltip_heal").mergeStyle(TextFormatting.GREEN));
+    tooltip.add(new TranslationTextComponent("item.greekfantasy.gorgon_blood.tooltip_poison").mergeStyle(TextFormatting.GREEN));
   }
 }

@@ -3,11 +3,19 @@
   "enabled": false,
   "female": true,
   "base": "greekfantasy:polished_limestone_slab",
-  "overlay": "none",
+  "right_hand": {
+  	"id": "minecraft:poppy",
+  	"Count": 1,
+  	"tag": {}
+  },
+  "left_hand": {
+  	"id": "minecraft:dandelion",
+  	"Count": 1,
+  	"tag": {}
+  },
   "item_favor_map": {
   	"greekfantasy:ambrosia": 45,
   	"greekfantasy:wild_rose": 3,
-  	"minecraft:egg": 1,
   	"minecraft:milk_bucket": 11,
   	"minecraft:lily_of_the_valley": 3,
   	"minecraft:cornflower": 3,

@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import greekfantasy.GreekFantasy;
@@ -19,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public class FavorCommand {
+  private static final DynamicCommandExceptionType FAVOR_DISABLED_EXCEPTION = new DynamicCommandExceptionType(o -> new TranslationTextComponent("commands.favor.enabled.disabled", o));
   
   public static void register(CommandDispatcher<CommandSource> commandSource) {
     LiteralCommandNode<CommandSource> commandNode = commandSource.register(
@@ -41,15 +44,21 @@ public class FavorCommand {
                         .then(Commands.literal("points")
                             .executes(command -> setFavor(command.getSource(), EntityArgument.getPlayers(command, "targets"), DeityArgument.getDeityId(command, "deity"), IntegerArgumentType.getInteger(command, "amount"), Type.POINTS)))
                         .then(Commands.literal("levels")
-                            .executes(command -> setFavor(command.getSource(), EntityArgument.getPlayers(command, "targets"), DeityArgument.getDeityId(command, "deity"), IntegerArgumentType.getInteger(command, "amount"), Type.LEVELS))))))))
-            .then(Commands.literal("query")
-                .then(Commands.argument("targets", EntityArgument.player())
-                    .then(Commands .argument("deity", DeityArgument.deity())
-                        .executes(command -> queryFavor(command.getSource(), EntityArgument.getPlayer(command, "targets"), DeityArgument.getDeityId(command, "deity"), Type.LEVELS))
-                        .then(Commands.literal("points")
-                            .executes(command -> queryFavor(command.getSource(), EntityArgument.getPlayer(command, "targets"), DeityArgument.getDeityId(command, "deity"), Type.POINTS)))
-                        .then(Commands.literal("levels")
-                            .executes(command -> queryFavor(command.getSource(), EntityArgument.getPlayer(command, "targets"), DeityArgument.getDeityId(command, "deity"), Type.LEVELS))))))  
+                            .executes(command -> setFavor(command.getSource(), EntityArgument.getPlayers(command, "targets"), DeityArgument.getDeityId(command, "deity"), IntegerArgumentType.getInteger(command, "amount"), Type.LEVELS))))))
+                .then(Commands.literal("enabled")
+                        .executes(command -> setEnabled(command.getSource(), EntityArgument.getPlayers(command, "targets"), true)))
+                .then(Commands.literal("disabled")
+                        .executes(command -> setEnabled(command.getSource(), EntityArgument.getPlayers(command, "targets"), false)))))
+        .then(Commands.literal("query")
+            .then(Commands.argument("target", EntityArgument.player())
+                .then(Commands.argument("deity", DeityArgument.deity())
+                    .executes(command -> queryFavor(command.getSource(), EntityArgument.getPlayer(command, "target"), DeityArgument.getDeityId(command, "deity"), Type.LEVELS))
+                    .then(Commands.literal("points")
+                        .executes(command -> queryFavor(command.getSource(), EntityArgument.getPlayer(command, "target"), DeityArgument.getDeityId(command, "deity"), Type.POINTS)))
+                    .then(Commands.literal("levels")
+                        .executes(command -> queryFavor(command.getSource(), EntityArgument.getPlayer(command, "target"), DeityArgument.getDeityId(command, "deity"), Type.LEVELS))))
+                .then(Commands.literal("enabled")
+                    .executes(command -> queryEnabled(command.getSource(), EntityArgument.getPlayer(command, "target"))))))
     );
     
     commandSource.register(Commands.literal("favor")
@@ -57,18 +66,27 @@ public class FavorCommand {
         .redirect(commandNode));
   }
   
-  private static int queryFavor(CommandSource source, ServerPlayerEntity player, ResourceLocation deity, Type type) {
-    IDeity ideity = GreekFantasy.PROXY.DEITY.get(deity).orElse(Deity.EMPTY);
-    int amount = type.favorGetter.accept(player, player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()), ideity, 0);
+  private static int queryFavor(CommandSource source, ServerPlayerEntity player, ResourceLocation deity, Type type) throws CommandSyntaxException {
+    final IDeity ideity = GreekFantasy.PROXY.DEITY.get(deity).orElse(Deity.EMPTY);
+    final IFavor favor = player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance());
+    if(!favor.isEnabled()) {
+      throw FAVOR_DISABLED_EXCEPTION.create(player.getDisplayName());
+    }
+    int amount = type.favorGetter.accept(player, favor, ideity, 0);
     source.sendFeedback(new TranslationTextComponent("commands.favor.query." + type.name, player.getDisplayName(), amount, ideity.getText()), false);
     return amount;
   }
   
-  private static int setFavor(CommandSource source, Collection<? extends ServerPlayerEntity> players, ResourceLocation deity, int amount, Type type) {
+  private static int setFavor(CommandSource source, Collection<? extends ServerPlayerEntity> players, ResourceLocation deity, int amount, Type type) throws CommandSyntaxException {
     // set favor for each player in the collection
     final IDeity ideity = GreekFantasy.PROXY.DEITY.get(deity).orElse(Deity.EMPTY);
+    IFavor favor;
     for(final ServerPlayerEntity player : players) {
-      type.favorSetter.accept(player, player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()), ideity, amount);
+      favor = player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance());
+      if(!favor.isEnabled()) {
+        throw FAVOR_DISABLED_EXCEPTION.create(player.getDisplayName());
+      }
+      type.favorSetter.accept(player, favor, ideity, amount);
     }
     // send command feedback
     if (players.size() == 1) {
@@ -80,11 +98,16 @@ public class FavorCommand {
     return players.size();
   }
   
-  private static int addFavor(CommandSource source, Collection<? extends ServerPlayerEntity> players, ResourceLocation deity, int amount, Type type) {
+  private static int addFavor(CommandSource source, Collection<? extends ServerPlayerEntity> players, ResourceLocation deity, int amount, Type type) throws CommandSyntaxException {
     // add favor to each player in the collection
     final IDeity ideity = GreekFantasy.PROXY.DEITY.get(deity).orElse(Deity.EMPTY);
+    IFavor favor;
     for(final ServerPlayerEntity player : players) {
-      type.favorAdder.accept(player, player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()), ideity, amount);
+      favor = player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance());
+      if(!favor.isEnabled()) {
+        throw FAVOR_DISABLED_EXCEPTION.create(player.getDisplayName());
+      }
+      type.favorAdder.accept(player, favor, ideity, amount);
     }
     // send command feedback
     if (players.size() == 1) {
@@ -94,6 +117,27 @@ public class FavorCommand {
     } 
     
     return players.size();
+  }
+  
+  private static int setEnabled(CommandSource source, Collection<? extends ServerPlayerEntity> players, boolean enabled) {
+    for(final ServerPlayerEntity player : players) {
+      player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()).setEnabled(enabled);
+    }
+    // send command feedback
+    final String sub = (enabled ? "enabled" : "disabled");
+    if (players.size() == 1) {
+      source.sendFeedback(new TranslationTextComponent("commands.favor." + sub + ".success.single", players.iterator().next().getDisplayName()), true);
+    } else {
+      source.sendFeedback(new TranslationTextComponent("commands.favor." + sub + ".success.multiple", players.size()), true);
+    } 
+    return 0;
+  }
+  
+  private static int queryEnabled(CommandSource source, ServerPlayerEntity player) {
+    final boolean enabled = player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()).isEnabled();
+    // send command feedback
+    source.sendFeedback(new TranslationTextComponent("commands.favor.enabled." + (enabled ? "enabled" : "disabled"), player.getDisplayName()), true);
+    return enabled ? 1 : 0;
   }
   
   static enum Type {

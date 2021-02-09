@@ -45,6 +45,7 @@ public class FavorManager {
    * @param favor the player's favor capability
    */
   public static void onPlayerKilled(final PlayerEntity player, final Entity source, final IFavor favor) {
+    if(!favor.isEnabled()) return;
     // attempt to trigger ENTITY_KILLED_PLAYER favor effect
     triggerFavorEffect(FavorEffectTrigger.Type.ENTITY_KILLED_PLAYER, source.getType().getRegistryName(), player, favor);
   }
@@ -56,6 +57,7 @@ public class FavorManager {
    * @param favor the player's favor capability
    */
   public static void onPlayerHurt(final PlayerEntity player, final Entity source, final IFavor favor) {
+    if(!favor.isEnabled()) return;
     // attempt to trigger ENTITY_HURT_PLAYER favor effect
     triggerFavorEffect(FavorEffectTrigger.Type.ENTITY_HURT_PLAYER, source.getType().getRegistryName(), player, favor);
     // attempt to trigger effects on combat start
@@ -71,6 +73,7 @@ public class FavorManager {
    * @param favor the player's favor capability
    */
   public static void onBreakBlock(final PlayerEntity player, final Block block, final IFavor favor) {
+    if(!favor.isEnabled()) return;
     // attempt to trigger PLAYER_BREAK_BLOCK favor effect
     triggerFavorEffect(FavorEffectTrigger.Type.PLAYER_BREAK_BLOCK, block.getRegistryName(), player, favor);
   }
@@ -82,6 +85,7 @@ public class FavorManager {
    * @param favor the player's favor capability
    */
   public static void onAddPotion(final PlayerEntity player, final EffectInstance effect, final IFavor favor) {
+    if(!favor.isEnabled()) return;
     // attempt to trigger EFFECTS_CHANGED favor effect
     triggerFavorEffect(FavorEffectTrigger.Type.EFFECTS_CHANGED, effect.getPotion().getRegistryName(), player, favor);
     // attempt to increase the duration
@@ -129,6 +133,7 @@ public class FavorManager {
    * @param favor the player's favor capability
    */
   public static void onPlayerTick(final PlayerEntity player, final IFavor favor) {
+    if(!favor.isEnabled()) return;
     final long time = IFavor.calculateTime(player);
     // decrease all favor 
     if(player.ticksExisted > 10 && GreekFantasy.CONFIG.doesFavorDecrease() && time % GreekFantasy.CONFIG.getFavorDecreaseInterval() == 0) {
@@ -183,7 +188,7 @@ public class FavorManager {
    * @param favor the player's favor data
    * @return true if a favor effect was triggered and ran successfully
    */
-  public static boolean triggerFavorEffect(final FavorEffectTrigger.Type type, final ResourceLocation data, 
+  private static boolean triggerFavorEffect(final FavorEffectTrigger.Type type, final ResourceLocation data, 
       final PlayerEntity playerIn, final IFavor favor) {
     final long time = IFavor.calculateTime(playerIn);
     if(favor.hasNoTriggeredCooldown(time)) {
@@ -215,7 +220,7 @@ public class FavorManager {
    * @param other the other entity that is involved in the combat
    * @param favor the player's favor
    */
-  public static void onCombatStart(final PlayerEntity player, final Entity other, final IFavor favor) {
+  private static void onCombatStart(final PlayerEntity player, final Entity other, final IFavor favor) {
     final long time = IFavor.calculateTime(player);
     FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     if(favor.hasNoTriggeredCooldown(time) && favorConfig.hasSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
@@ -240,6 +245,7 @@ public class FavorManager {
    * @param favor the player's favor (from capability)
    */
   public static void onAttackEntity(final LivingEntity entity, final PlayerEntity playerIn, final IFavor favor) {
+    if(!favor.isEnabled()) return;
     final List<IDeity> deityList = Lists.newArrayList(GreekFantasy.PROXY.getDeityCollection(true));
     // change favor amounts for each deity
     for(final IDeity deity : deityList) {
@@ -264,6 +270,7 @@ public class FavorManager {
    * @param favor the player's favor (from capability)
    */
   public static void onKillEntity(final LivingEntity entity, final PlayerEntity playerIn, final IFavor favor) {
+    if(!favor.isEnabled()) return;
     for(final IDeity deity : GreekFantasy.PROXY.getDeityCollection(true)) {
       final long favorModifier = deity.getKillFavorModifier(entity.getType());
       if(favorModifier != 0) {
@@ -304,6 +311,7 @@ public class FavorManager {
    * @param arrow the arrow
    */
   public static void onShootArrow(final PlayerEntity player, final IFavor favor, final AbstractArrowEntity arrow) {
+    if(!favor.isEnabled()) return;
     // attempt to change the damage amount of the arrow
     final long time = IFavor.calculateTime(player);
     if(favor.hasNoTriggeredCooldown(time)) {
@@ -333,7 +341,7 @@ public class FavorManager {
    */
   public static int onPlayerXP(final PlayerEntity player, final IFavor favor, final int xpValue) {
     final long time = IFavor.calculateTime(player);
-    if(favor.hasNoTriggeredCooldown(time)) {
+    if(favor.isEnabled() && favor.hasNoTriggeredCooldown(time)) {
       final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
       float xpMultiplier = 0.0F;
       long cooldown = -1;
@@ -360,6 +368,7 @@ public class FavorManager {
    * @return the number of baby animals to spawn
    */
   public static int onBabySpawn(final PlayerEntity player, final IFavor favor) {
+    if(!favor.isEnabled()) return 1;
     final long time = IFavor.calculateTime(player);
     final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     float breedingMultiplier = 0.0F;
