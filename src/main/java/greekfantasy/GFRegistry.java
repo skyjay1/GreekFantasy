@@ -104,6 +104,7 @@ public final class GFRegistry {
   public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerberusEntity> CERBERUS_ENTITY = buildEntityType(CerberusEntity::new, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<CharybdisEntity> CHARYBDIS_ENTITY = buildEntityType(CharybdisEntity::new, "charybdis", 5.9F, 7.9F, EntityClassification.WATER_CREATURE, b -> b.immuneToFire());
+  public static EntityType<CretanEntity> CRETAN_ENTITY = buildEntityType(CretanEntity::new, "cretan", 0.98F, 3.395F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<CurseEntity> CURSE_ENTITY = buildEntityType(CurseEntity::new, "curse", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
   public static EntityType<CyclopesEntity> CYCLOPES_ENTITY = buildEntityType(CyclopesEntity::new, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, b -> {});
   public static EntityType<CyprianEntity> CYPRIAN_ENTITY = buildEntityType(CyprianEntity::new, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
@@ -230,6 +231,10 @@ public final class GFRegistry {
   public static final Block POLISHED_MARBLE_STAIRS = null;
   @ObjectHolder("marble_pillar")
   public static final Block MARBLE_PILLAR = null;
+  @ObjectHolder("chiseled_cretan_stone")
+  public static final Block CHISELED_CRETAN_STONE = null;
+  @ObjectHolder("cretan_stone")
+  public static final Block CRETAN_STONE = null;
   @ObjectHolder("limestone_statue")
   public static final Block LIMESTONE_STATUE = null;
   @ObjectHolder("marble_statue")
@@ -394,6 +399,7 @@ public final class GFRegistry {
     registerEntityType(event, CERASTES_ENTITY, "cerastes", CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn);
     registerEntityType(event, CERBERUS_ENTITY, "cerberus", CerberusEntity::getAttributes, null);
     registerEntityType(event, CHARYBDIS_ENTITY, "charybdis", CharybdisEntity::getAttributes, null);
+    registerEntityType(event, CRETAN_ENTITY, "cretan", CretanEntity::getAttributes, null);
     registerEntityType(event, CYPRIAN_ENTITY, "cyprian", CyprianEntity::getAttributes, CyprianEntity::canSpawnOn);
     registerEntityType(event, CYCLOPES_ENTITY, "cyclopes", CyclopesEntity::getAttributes, CyclopesEntity::canCyclopesSpawnOn);
     registerEntityType(event, DRAKAINA_ENTITY, "drakaina", DrakainaEntity::getAttributes, DrakainaEntity::canMonsterSpawnInLight);
@@ -484,6 +490,10 @@ public final class GFRegistry {
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
     
     event.getRegistry().registerAll(
+        new Block(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.GRAY).setRequiresTool().hardnessAndResistance(52.0F, 1200.0F))
+          .setRegistryName(MODID, "cretan_stone"),
+        new Block(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.GRAY).setRequiresTool().hardnessAndResistance(52.0F, 1200.0F))
+          .setRegistryName(MODID, "chiseled_cretan_stone"),
         new ReedsBlock(AbstractBlock.Properties.create(Material.OCEAN_PLANT).doesNotBlockMovement().zeroHardnessAndResistance().tickRandomly().sound(SoundType.CROP))
           .setRegistryName(MODID, "reeds"),
         new SaplingBlock(new OliveTree(), AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly()
@@ -662,7 +672,7 @@ public final class GFRegistry {
         OLIVE_LOG, STRIPPED_OLIVE_LOG, OLIVE_WOOD, STRIPPED_OLIVE_WOOD, OLIVE_PLANKS, 
         OLIVE_SLAB, OLIVE_STAIRS, OLIVE_LEAVES, 
         MARBLE, MARBLE_SLAB, MARBLE_STAIRS, POLISHED_MARBLE, POLISHED_MARBLE_SLAB, 
-        POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, PALLADIUM, 
+        POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, CRETAN_STONE, CHISELED_CRETAN_STONE, MARBLE_STATUE, PALLADIUM, 
         ALTAR_APHRODITE, ALTAR_APOLLO, ALTAR_ARES, ALTAR_ARTEMIS, ALTAR_ATHENA, ALTAR_DEMETER,
         ALTAR_DIONYSUS, ALTAR_HADES, ALTAR_HECATE, ALTAR_HEPHAESTUS, ALTAR_HERA, ALTAR_HERMES, 
         ALTAR_HESTIA, ALTAR_PERSEPHONE, ALTAR_POSEIDON, ALTAR_ZEUS,
@@ -698,6 +708,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, CENTAUR_ENTITY, "centaur", 0x734933, 0x83251f);
     registerSpawnEgg(event, CERASTES_ENTITY, "cerastes", 0x847758, 0x997c4d);
     registerSpawnEgg(event, CHARYBDIS_ENTITY, "charybdis", 0x2e5651, 0x411e5e);
+    registerSpawnEgg(event, CRETAN_ENTITY, "cretan", 0x2a2a2a, 0x734933);
     registerSpawnEgg(event, CYCLOPES_ENTITY, "cyclopes", 0xda662c, 0x2c1e0e);
     registerSpawnEgg(event, CYPRIAN_ENTITY, "cyprian", 0x443626, 0x83251f);
     registerSpawnEgg(event, DRAKAINA_ENTITY, "drakaina", 0x724e36, 0x398046);

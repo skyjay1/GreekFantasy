@@ -38,17 +38,17 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 public class MinotaurEntity extends MonsterEntity {
-  private static final DataParameter<Byte> STATE = EntityDataManager.createKey(MinotaurEntity.class, DataSerializers.BYTE);
-  private static final String KEY_STATE = "MinotaurState";
+  protected static final DataParameter<Byte> STATE = EntityDataManager.createKey(MinotaurEntity.class, DataSerializers.BYTE);
+  protected static final String KEY_STATE = "MinotaurState";
   //bytes to use in STATE
-  private static final byte NONE = (byte) 0;
-  private static final byte CHARGING = (byte) 1;
-  private static final byte STUNNED = (byte) 2;
+  protected static final byte NONE = (byte) 0;
+  protected static final byte CHARGING = (byte) 1;
+  protected static final byte STUNNED = (byte) 2;
   
-  private static final int STUN_DURATION = 80;
+  protected static final int STUN_DURATION = 80;
   
-  private final AttributeModifier knockbackModifier = new AttributeModifier("Charge knockback bonus", 2.25F, AttributeModifier.Operation.MULTIPLY_TOTAL);
-  private final AttributeModifier attackModifier = new AttributeModifier("Charge attack bonus", 2.5F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+  protected final AttributeModifier knockbackModifier = new AttributeModifier("Charge knockback bonus", 2.25F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+  protected final AttributeModifier attackModifier = new AttributeModifier("Charge attack bonus", 2.5F, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
   public MinotaurEntity(final EntityType<? extends MinotaurEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -59,7 +59,9 @@ public class MinotaurEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.5D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.25D);
+        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.25D)
+        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.97D)
+        .createMutableAttribute(Attributes.ARMOR, 4.0D);
   }
   
   @Override
@@ -79,6 +81,10 @@ public class MinotaurEntity extends MonsterEntity {
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    registerChargeGoal();
+  }
+  
+  protected void registerChargeGoal() {
     if(GreekFantasy.CONFIG.MINOTAUR_ATTACK.get()) {
       this.goalSelector.addGoal(2, new ChargeAttackGoal(1.68D));
     }

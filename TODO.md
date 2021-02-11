@@ -10,7 +10,6 @@ __Key:__
 - Summoning animations not playing on dedicated server
   X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
 - _ Structure gen is jenky
-- _ Deity doesn't set items from JSON correctly
 
 ## Entity basics
 
@@ -52,7 +51,8 @@ __Key:__
 
 ## Entity AI
 
-- ~ Some entities target based on favor (TODO: configurable, static approach)
+- X Some entities target based on favor
+- X Some entities flee based on favor
 - X Fury shoots curses (random bad potion effects)
 - X Python spits poison
 - X Talos shoots arrows
@@ -181,19 +181,18 @@ _Can I do something with these?_
 - Blemmyes (headless biped)
 - Pandos (biped, giant ears)
 - Horse of Diomedes (man-eating horse)
-- Underworld biomes: underworld biome, tartarus, styx river, etc.
+- Underworld: underworld biome, tartarus, styx river, etc.
+- Underworld: Underworld pomegranate tree
 - Tree that very rarely grows golden apples
-- Underworld pomegranate tree
 - Belt of Aphrodite (maybe allows disguise as other player?)
 - Armor of Achilles (Hephaestus; said to be impenetrable)
 - Aegis (Zeus' shield)
 - Adamant Scythe (Kronus)
 - Special swords: Harpe (sword used to slay Medusa)
 - Special bows: Apollo, Artemis, Eurytus
-- Thyrsus: staff with pinecone and ivy leaves used by Dionysus
+- Thyrsus: staff with pinecone and ivy leaves used by Dionysus ("Wild Staff") - what would it do?
 - Amazonian Girdle (Hippolyta)
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
-- River Styx
 - Story of King Midas (gold touch)
 - Story of Labyrinth (Minotaur miniboss, Golden String, etc)
 
