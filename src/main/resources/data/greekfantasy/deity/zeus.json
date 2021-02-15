@@ -8,8 +8,7 @@
   },
   "right_hand": {
   	"id": "greekfantasy:thunderbolt",
-  	"Count": 1,
-  	"tag": {}
+  	"Count": 1
   },
   "base": "greekfantasy:polished_marble_slab",
   "effects": [
@@ -63,7 +62,8 @@
   	},
   	{
   	  "summon": { 
-  	  	"id": "greekfantasy:elpis" 
+  	  	"id": "greekfantasy:elpis",
+  	  	"ElpisState": 5
   	  },
   	  "minlevel": 6,
   	  "maxlevel": 10,

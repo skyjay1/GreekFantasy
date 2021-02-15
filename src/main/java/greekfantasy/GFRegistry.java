@@ -231,10 +231,20 @@ public final class GFRegistry {
   public static final Block POLISHED_MARBLE_STAIRS = null;
   @ObjectHolder("marble_pillar")
   public static final Block MARBLE_PILLAR = null;
-  @ObjectHolder("chiseled_cretan_stone")
-  public static final Block CHISELED_CRETAN_STONE = null;
   @ObjectHolder("cretan_stone")
   public static final Block CRETAN_STONE = null;
+  @ObjectHolder("chiseled_cretan_stone")
+  public static final Block CHISELED_CRETAN_STONE = null;
+  @ObjectHolder("cretan_stone_brick")
+  public static final Block CRETAN_STONE_BRICK = null;
+  @ObjectHolder("chiseled_cretan_stone_brick")
+  public static final Block CHISELED_CRETAN_STONE_BRICK = null;
+  @ObjectHolder("cracked_cretan_stone_brick")
+  public static final Block CRACKED_CRETAN_STONE_BRICK = null;
+  @ObjectHolder("polished_cretan_stone")
+  public static final Block POLISHED_CRETAN_STONE = null;
+  @ObjectHolder("cracked_polished_cretan_stone")
+  public static final Block CRACKED_POLISHED_CRETAN_STONE = null;
   @ObjectHolder("limestone_statue")
   public static final Block LIMESTONE_STATUE = null;
   @ObjectHolder("marble_statue")
@@ -489,11 +499,9 @@ public final class GFRegistry {
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "marble");
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
     
+    registerBlockPolishedChiseledAndBricks(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.GRAY).setRequiresTool().hardnessAndResistance(52.0F, 1200.0F), "cretan_stone");
+    
     event.getRegistry().registerAll(
-        new Block(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.GRAY).setRequiresTool().hardnessAndResistance(52.0F, 1200.0F))
-          .setRegistryName(MODID, "cretan_stone"),
-        new Block(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.GRAY).setRequiresTool().hardnessAndResistance(52.0F, 1200.0F))
-          .setRegistryName(MODID, "chiseled_cretan_stone"),
         new ReedsBlock(AbstractBlock.Properties.create(Material.OCEAN_PLANT).doesNotBlockMovement().zeroHardnessAndResistance().tickRandomly().sound(SoundType.CROP))
           .setRegistryName(MODID, "reeds"),
         new SaplingBlock(new OliveTree(), AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly()
@@ -672,7 +680,9 @@ public final class GFRegistry {
         OLIVE_LOG, STRIPPED_OLIVE_LOG, OLIVE_WOOD, STRIPPED_OLIVE_WOOD, OLIVE_PLANKS, 
         OLIVE_SLAB, OLIVE_STAIRS, OLIVE_LEAVES, 
         MARBLE, MARBLE_SLAB, MARBLE_STAIRS, POLISHED_MARBLE, POLISHED_MARBLE_SLAB, 
-        POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, CRETAN_STONE, CHISELED_CRETAN_STONE, MARBLE_STATUE, PALLADIUM, 
+        POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, PALLADIUM, 
+        CRETAN_STONE, CHISELED_CRETAN_STONE, CRETAN_STONE_BRICK, CHISELED_CRETAN_STONE_BRICK,
+        CRACKED_CRETAN_STONE_BRICK, POLISHED_CRETAN_STONE, CRACKED_POLISHED_CRETAN_STONE,
         ALTAR_APHRODITE, ALTAR_APOLLO, ALTAR_ARES, ALTAR_ARTEMIS, ALTAR_ATHENA, ALTAR_DEMETER,
         ALTAR_DIONYSUS, ALTAR_HADES, ALTAR_HECATE, ALTAR_HEPHAESTUS, ALTAR_HERA, ALTAR_HERMES, 
         ALTAR_HESTIA, ALTAR_PERSEPHONE, ALTAR_POSEIDON, ALTAR_ZEUS,
@@ -861,6 +871,7 @@ public final class GFRegistry {
    * @param <T> a class that inherits from MobEntity
    * @param event the registry event
    * @param entityType the entity type to register
+   * @param name the registry name suffix (not including mod id)
    * @param mapSupplier the attribute supplier, usually a reference to a static method.
    * If this value is null, no attributes will be registered.
    * @param placementPredicate the spawn placement predicate, usually a reference to a static method.
@@ -994,6 +1005,17 @@ public final class GFRegistry {
     event.getRegistry().register(polished);
     event.getRegistry().register(new SlabBlock(properties).setRegistryName(MODID, "polished_" + registryName + "_slab"));
     event.getRegistry().register(new StairsBlock(() -> polished.getDefaultState(), properties).setRegistryName(MODID, "polished_" + registryName + "_stairs"));
+  }
+  
+  private static void registerBlockPolishedChiseledAndBricks(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {
+    // raw, polished, chiseled, brick, and chiseled_brick
+    event.getRegistry().register(new Block(properties).setRegistryName(MODID, registryName));
+    event.getRegistry().register(new Block(properties).setRegistryName(MODID, "chiseled_" + registryName));
+    event.getRegistry().register(new Block(properties).setRegistryName(MODID, "polished_" + registryName));
+    event.getRegistry().register(new Block(properties).setRegistryName(MODID, "cracked_polished_" + registryName));
+    event.getRegistry().register(new Block(properties).setRegistryName(MODID, registryName + "_brick"));
+    event.getRegistry().register(new Block(properties).setRegistryName(MODID, "chiseled_" + registryName + "_brick"));
+    event.getRegistry().register(new Block(properties).setRegistryName(MODID, "cracked_" + registryName + "_brick"));
   }
     
   private static void registerItemBlock(final RegistryEvent.Register<Item> event, final Block block) {

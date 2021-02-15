@@ -1,2 +1,0 @@
-# checks if there is water nearby and summons a charybdis
-execute if block ~4 ~-1 ~2 minecraft:water run execute if block ~-4 ~-2 ~-2 minecraft:water run execute if block ~4 ~-3 ~2 minecraft:water run execute if block ~-4 ~-4 ~-2 minecraft:water run summon greekfantasy:charybdis ~3 ~-4 ~2 {CharybdisState:1b}

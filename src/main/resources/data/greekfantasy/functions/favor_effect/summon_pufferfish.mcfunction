@@ -1,2 +1,0 @@
-# checks if there is water nearby and summons a pufferfish
-execute if block ~4 ~-1 ~2 minecraft:water run execute if block ~-4 ~-2 ~-2 minecraft:water run execute if block ~4 ~-3 ~2 minecraft:water run execute if block ~-4 ~-4 ~-2 minecraft:water run summon minecraft:pufferfish ~2 ~-4 ~2

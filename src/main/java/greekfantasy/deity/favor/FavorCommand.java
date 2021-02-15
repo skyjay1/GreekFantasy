@@ -3,7 +3,9 @@ package greekfantasy.deity.favor;
 import java.util.Collection;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -46,9 +48,11 @@ public class FavorCommand {
                         .then(Commands.literal("levels")
                             .executes(command -> setFavor(command.getSource(), EntityArgument.getPlayers(command, "targets"), DeityArgument.getDeityId(command, "deity"), IntegerArgumentType.getInteger(command, "amount"), Type.LEVELS))))))
                 .then(Commands.literal("enabled")
-                        .executes(command -> setEnabled(command.getSource(), EntityArgument.getPlayers(command, "targets"), true)))
-                .then(Commands.literal("disabled")
-                        .executes(command -> setEnabled(command.getSource(), EntityArgument.getPlayers(command, "targets"), false)))))
+                    .then(Commands.argument("flag", BoolArgumentType.bool())
+                        .executes(command -> setEnabled(command.getSource(), EntityArgument.getPlayers(command, "targets"), BoolArgumentType.getBool(command, "flag")))))
+                .then(Commands.literal("cooldown")
+                    .then(Commands.argument("amount", LongArgumentType.longArg(0))
+                        .executes(command -> setCooldown(command.getSource(), EntityArgument.getPlayers(command, "targets"), LongArgumentType.getLong(command, "amount")))))))
         .then(Commands.literal("query")
             .then(Commands.argument("target", EntityArgument.player())
                 .then(Commands.argument("deity", DeityArgument.deity())
@@ -138,6 +142,29 @@ public class FavorCommand {
     // send command feedback
     source.sendFeedback(new TranslationTextComponent("commands.favor.enabled." + (enabled ? "enabled" : "disabled"), player.getDisplayName()), true);
     return enabled ? 1 : 0;
+  }
+  
+  private static int setCooldown(CommandSource source, Collection<? extends ServerPlayerEntity> players, long cooldown) throws CommandSyntaxException {
+    // add favor to each player in the collection
+    IFavor favor;
+    long time;
+    for(final ServerPlayerEntity player : players) {
+      time = IFavor.calculateTime(player);
+      favor = player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance());
+      if(!favor.isEnabled()) {
+        throw FAVOR_DISABLED_EXCEPTION.create(player.getDisplayName());
+      }
+      favor.setEffectTime(time, cooldown);
+      favor.setTriggeredTime(time, cooldown);
+    }
+    // send command feedback
+    if (players.size() == 1) {
+      source.sendFeedback(new TranslationTextComponent("commands.favor.cooldown.success.single", cooldown, players.iterator().next().getDisplayName()), true);
+    } else {
+      source.sendFeedback(new TranslationTextComponent("commands.favor.cooldown.success.multiple", cooldown, players.size()), true);
+    } 
+    
+    return players.size();
   }
   
   static enum Type {

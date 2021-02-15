@@ -8,17 +8,23 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 
 public class FavorEffect {
   
-  public static final FavorEffect EMPTY = new FavorEffect(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), 0, 0, 1000);
+  public static final FavorEffect EMPTY = new FavorEffect(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), 0, 0, 1000);
   
   public static final Codec<FavorEffect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       ResourceLocation.CODEC.optionalFieldOf("function").forGetter(FavorEffect::getFunction),
       CompoundNBT.CODEC.optionalFieldOf("potion").forGetter(FavorEffect::getPotion),
       CompoundNBT.CODEC.optionalFieldOf("summon").forGetter(FavorEffect::getSummon),
       ItemStack.CODEC.optionalFieldOf("item").forGetter(FavorEffect::getItem),
+      Codec.STRING.optionalFieldOf("biome").forGetter(FavorEffect::getBiome),
       Codec.LONG.optionalFieldOf("favor").forGetter(FavorEffect::getFavor),
       Codec.INT.fieldOf("minlevel").forGetter(FavorEffect::getMinLevel),
       Codec.INT.fieldOf("maxlevel").forGetter(FavorEffect::getMaxLevel),
@@ -29,18 +35,20 @@ public class FavorEffect {
   private final Optional<CompoundNBT> potion;
   private final Optional<CompoundNBT> summon;
   private final Optional<ItemStack> item;
+  private final Optional<String> biome;
   private final Optional<Long> favor;
   private final int minLevel;
   private final int maxLevel;
   private final long minCooldown;
   
   protected FavorEffect(final Optional<ResourceLocation> functionIn, final Optional<CompoundNBT> potionIn, 
-      final Optional<CompoundNBT> summonIn, final Optional<ItemStack> itemIn, final Optional<Long> favorIn,
-      final int minLevelIn, final int maxLevelIn, final long minCooldownIn) {
+      final Optional<CompoundNBT> summonIn, final Optional<ItemStack> itemIn, final Optional<String> dataIn,
+      final Optional<Long> favorIn, final int minLevelIn, final int maxLevelIn, final long minCooldownIn) {
     function = functionIn;
     potion = potionIn;
     summon = summonIn;
     item = itemIn;
+    biome = dataIn;
     favor = favorIn;
     minLevel = minLevelIn;
     maxLevel = maxLevelIn;
@@ -58,6 +66,9 @@ public class FavorEffect {
   
   /** @return an ItemStack to give the player **/
   public Optional<ItemStack> getItem() { return item; }
+
+  /** @return a String to represent a biome (or biome type) predicate **/
+  public Optional<String> getBiome() { return biome; }
   
   /** @return an amount of favor to give the player **/
   public Optional<Long> getFavor() { return favor; }
@@ -87,6 +98,30 @@ public class FavorEffect {
     } else {
       return playerLevel <= minLevel && playerLevel >= maxLevel;
     }
+  }
+  
+  public boolean isInBiome(final World world, final BlockPos pos) {
+    // if biome data is present for this effect, make sure the biome is correct
+    if(biome.isPresent()) {
+      final Optional<RegistryKey<Biome>> curBiome = world.func_242406_i(pos);
+      if(biome.get().contains(":")) {
+        // interpret as a ResourceLocation
+        final ResourceLocation name = new ResourceLocation(biome.get());
+        // if the biome name does not match, the effect cannot run
+        if(curBiome.isPresent() && !curBiome.get().getRegistryName().equals(name)) {
+          return false;
+        }
+      } else {
+        // interpret as a BiomeDictionary.TYPE
+        final BiomeDictionary.Type type = BiomeDictionary.Type.getType(biome.get());
+        // if the biome does not match the given type, the effect cannot run
+        if(!BiomeDictionary.hasType(curBiome.get(), type)) {
+          return false;
+        }
+      }
+    }
+    // if the biome tag was not present OR it passed the tests, the effect can run
+    return true;
   }
   
   @Override

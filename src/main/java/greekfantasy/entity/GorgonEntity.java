@@ -285,8 +285,10 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0D);
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.30D);
         this.setHealth((float)medusaHealth);
-        this.bossInfo.setVisible(true);
         updateCombatGoal(true);
+        if(GreekFantasy.CONFIG.showMedusaBossBar()) {
+          this.bossInfo.setVisible(true);
+        }
       } else {
         // non-medusa
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(2.0D);

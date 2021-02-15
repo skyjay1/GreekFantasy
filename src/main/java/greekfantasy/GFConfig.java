@@ -130,6 +130,8 @@ public class GFConfig {
   private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
   private final ForgeConfigSpec.DoubleValue GORGON_MEDUSA_CHANCE;
   private final ForgeConfigSpec.IntValue LIGHTNING_MEDUSA_CHANCE;
+  private final ForgeConfigSpec.BooleanValue MEDUSA_BOSS_BAR;
+  private final ForgeConfigSpec.BooleanValue CRETAN_BOSS_BAR;
   private final ForgeConfigSpec.IntValue ELPIS_SPAWN_CHANCE;
   public final ForgeConfigSpec.IntValue NUM_SPARTI_SPAWNED;
   private final ForgeConfigSpec.BooleanValue GIANT_BOAR_NON_NETHER;
@@ -137,6 +139,8 @@ public class GFConfig {
   private int satyrShamanChance;
   private double gorgonMedusaChance;
   private int lightningMedusaChance;
+  private boolean medusaBossBar;
+  private boolean cretanBossBar;
   private int elpisSpawnChance;
   private int numSpartiSpawned;
   private boolean giantBoarNonNether;
@@ -290,6 +294,10 @@ public class GFConfig {
         .defineInRange("gorgon_medusa_chance", 0.8D, 0.0D, 100.0D);
     LIGHTNING_MEDUSA_CHANCE = builder.comment("Percent chance that lightning striking a gorgon will turn it into a medusa")
         .defineInRange("lightning_medusa_chance", 95, 0, 100);
+    MEDUSA_BOSS_BAR = builder.comment("Whether to show the Medusa boss bar")
+        .define("medusa_boss_bar", true);
+    CRETAN_BOSS_BAR = builder.comment("Whether to show the Cretan boss bar")
+        .define("cretan_boss_bar", true);
     ELPIS_SPAWN_CHANCE = builder.comment("Percent chance that opening a mysterious box spawns an Elpis")
         .defineInRange("elpis_spawn_chance", 60, 0, 100);
     NUM_SPARTI_SPAWNED = builder.comment("Number of Sparti spawned by using a hydra tooth")
@@ -417,6 +425,8 @@ public class GFConfig {
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
     gorgonMedusaChance = GORGON_MEDUSA_CHANCE.get();
     lightningMedusaChance = LIGHTNING_MEDUSA_CHANCE.get();
+    medusaBossBar = MEDUSA_BOSS_BAR.get();
+    cretanBossBar = CRETAN_BOSS_BAR.get();
     elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
     numSpartiSpawned = NUM_SPARTI_SPAWNED.get();
     giantBoarNonNether = GIANT_BOAR_NON_NETHER.get();
@@ -476,6 +486,8 @@ public class GFConfig {
   public ResourceLocation getSatyrSong() { return satyrSong; }
   public double getGorgonMedusaChance() { return gorgonMedusaChance; }
   public int getLightningMedusaChance() { return lightningMedusaChance; }
+  public boolean showMedusaBossBar() { return medusaBossBar; }
+  public boolean showCretanBossBar() { return cretanBossBar; }
   public int getElpisSpawnChance() { return elpisSpawnChance; }
   public int getNumSpartiSpawned() { return numSpartiSpawned; }
   public boolean getGiantBoarNonNether() { return giantBoarNonNether; }

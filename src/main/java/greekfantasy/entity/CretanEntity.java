@@ -1,5 +1,6 @@
 package greekfantasy.entity;
 
+import greekfantasy.GreekFantasy;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -15,6 +16,7 @@ public class CretanEntity extends MinotaurEntity {
  
   public CretanEntity(final EntityType<? extends CretanEntity> type, final World worldIn) {
     super(type, worldIn);
+    bossInfo.setVisible(GreekFantasy.CONFIG.showCretanBossBar());
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -22,7 +24,8 @@ public class CretanEntity extends MinotaurEntity {
         .createMutableAttribute(Attributes.MAX_HEALTH, 114.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.27D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 7.5D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.5D);
+        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.5D)
+        .createMutableAttribute(Attributes.ARMOR, 4.0D);
   }
   
   @Override
@@ -45,9 +48,6 @@ public class CretanEntity extends MinotaurEntity {
     super.livingTick();
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
-    if(this.ticksExisted == 1) {
-      this.bossInfo.setName(this.hasCustomName() ? this.getCustomName() : this.getDisplayName());
-    }
   }
   
   // Boss //

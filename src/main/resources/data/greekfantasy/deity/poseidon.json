@@ -106,30 +106,45 @@
   	  "summon": { 
   	  	"id": "minecraft:drowned" 
   	  },
+  	  "biome": "WATER",
   	  "minlevel": -2,
   	  "maxlevel": -10,
   	  "mincooldown": 7000
   	},
   	{
-  	  "function": "greekfantasy:summon_pufferfish",
+  	  "summon": { 
+  	  	"id": "minecraft:pufferfish" 
+  	  },
+  	  "biome": "OCEAN",
   	  "minlevel": -1,
   	  "maxlevel": -6,
   	  "mincooldown": 7400
   	},
   	{
-  	  "function": "greekfantasy:summon_siren",
+  	  "summon": { 
+  	  	"id": "greekfantasy:siren" 
+  	  },
+  	  "biome": "OCEAN",
   	  "minlevel": -3,
   	  "maxlevel": -8,
   	  "mincooldown": 8800
   	},
   	{
-  	  "function": "greekfantasy:summon_guardian",
+  	  "summon": { 
+  	  	"id": "minecraft:guardian" 
+  	  },
+  	  "biome": "OCEAN",
   	  "minlevel": -4,
   	  "maxlevel": -10,
   	  "mincooldown": 9000
   	},
   	{
-  	  "function": "greekfantasy:summon_charybdis",
+  	  "summon": { 
+  	  	"id": "greekfantasy:whirl",
+  	  	"AttractMobs": true,
+  	  	"LifeTicks": 900
+  	  },
+  	  "biome": "OCEAN",
   	  "minlevel": -8,
   	  "maxlevel": -10,
   	  "mincooldown": 13000
@@ -146,6 +161,7 @@
   	  	"Amplifier": 0,
   	  	"Duration": 6080
   	  },
+  	  "biome": "WATER",
   	  "minlevel": 4,
   	  "maxlevel": 10,
   	  "mincooldown": 6880
@@ -156,6 +172,7 @@
   	  	"Amplifier": 0,
   	  	"Duration": 9200
   	  },
+  	  "biome": "WATER",
   	  "minlevel": 7,
   	  "maxlevel": 10,
   	  "mincooldown": 6880
@@ -176,6 +193,7 @@
   	  	"Amplifier": 0,
   	  	"Duration": 900
   	  },
+  	  "biome": "WATER",
   	  "minlevel": 7,
   	  "maxlevel": 10,
   	  "mincooldown": 6100
@@ -234,74 +252,6 @@
   "triggered_effects": [
   	{
   	  "trigger": {
-  	    "type": "break_block",
-  	    "data": "minecraft:wheat"
-  	  },
-  	  "chance": 0.05,
-  	  "level_multiplier": 0.015,
-  	  "effect": {
-  	    "item": { 
-  	  	  "id": "minecraft:wheat",
-  	  	  "Count": 1
-  	    },
-  	    "minlevel": 2,
-  	    "maxlevel": 10,
-  	    "mincooldown": 100
-  	  }
-  	},
-  	{
-  	  "trigger": {
-  	    "type": "break_block",
-  	    "data": "minecraft:potato"
-  	  },
-  	  "chance": 0.05,
-  	  "level_multiplier": 0.015,
-  	  "effect": {
-  	    "item": { 
-  	  	  "id": "minecraft:potato",
-  	  	  "Count": 1
-  	    },
-  	    "minlevel": 2,
-  	    "maxlevel": 10,
-  	    "mincooldown": 100
-  	  }
-  	},
-  	{
-  	  "trigger": {
-  	    "type": "break_block",
-  	    "data": "minecraft:carrot"
-  	  },
-  	  "chance": 0.05,
-  	  "level_multiplier": 0.015,
-  	  "effect": {
-  	    "item": { 
-  	  	  "id": "minecraft:carrot",
-  	  	  "Count": 1
-  	    },
-  	    "minlevel": 2,
-  	    "maxlevel": 10,
-  	    "mincooldown": 100
-  	  }
-  	},
-  	{
-  	  "trigger": {
-  	    "type": "break_block",
-  	    "data": "minecraft:beetroot"
-  	  },
-  	  "chance": 0.05,
-  	  "level_multiplier": 0.015,
-  	  "effect": {
-  	    "item": { 
-  	  	  "id": "minecraft:beetroot",
-  	  	  "Count": 1
-  	    },
-  	    "minlevel": 2,
-  	    "maxlevel": 10,
-  	    "mincooldown": 100
-  	  }
-  	},
-  	{
-  	  "trigger": {
   	    "type": "entity_hurt_player",
   	    "data": "greekfantasy:siren"
   	  },
@@ -356,6 +306,7 @@
     "minecraft:llama": -3,
     "minecraft:dolphin": -9,
     "minecraft:tropical_fish": -1,
+    "minecraft:turtle": -5,
     "minecraft:drowned": 6
   },
   "item_favor_map": {
