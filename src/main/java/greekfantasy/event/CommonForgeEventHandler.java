@@ -13,6 +13,7 @@ import greekfantasy.deity.favor.FavorCommand;
 import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.entity.ArionEntity;
 import greekfantasy.entity.CerastesEntity;
+import greekfantasy.entity.CirceEntity;
 import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.GiantBoarEntity;
@@ -294,6 +295,19 @@ public class CommonForgeEventHandler {
     }
   }
   
+
+  @SubscribeEvent
+  public static void onEntitySpawn(final LivingSpawnEvent.SpecialSpawn event) {
+    if(event.getEntity().getType() == EntityType.WITCH && (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.getCirceChance()
+        && event.getWorld() instanceof World) {
+      event.setCanceled(true);
+      // spawn Circe instead of witch
+      final CirceEntity circe = GFRegistry.CIRCE_ENTITY.create((World)event.getWorld());
+      circe.setLocationAndAngles(event.getX(), event.getY(), event.getZ(), 0, 0);
+      event.getWorld().addEntity(circe);
+    }
+  }
+  
   /**
    * Used to add prevent monsters from spawning near Palladium blocks
    * @param event the spawn event
@@ -325,7 +339,7 @@ public class CommonForgeEventHandler {
                 return;
               }
             }
-            return;
+            // return;
           }
         }
       }

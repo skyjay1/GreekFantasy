@@ -109,9 +109,6 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
     super.livingTick();
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
-    if(this.ticksExisted == 1) {
-      this.bossInfo.setName(this.hasCustomName() ? this.getCustomName() : this.getDisplayName());
-    }
   }
   
   @Override
@@ -332,7 +329,8 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
   public void addTrackingPlayer(ServerPlayerEntity player) {
     super.addTrackingPlayer(player);
     this.bossInfo.addPlayer(player);
-    this.bossInfo.setVisible(this.isMedusa()); // just in case de-sync occurs
+    this.bossInfo.setName(this.hasCustomName() ? this.getCustomName() : this.getDisplayName());
+    this.bossInfo.setVisible(this.isMedusa() && GreekFantasy.CONFIG.showMedusaBossBar());
   }
 
   @Override

@@ -5,7 +5,6 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.GreekFantasy;
 import greekfantasy.item.ClubItem;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureEntity;
@@ -64,7 +63,8 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.9D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 5.5D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.65D);
+        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.65D)
+        .createMutableAttribute(Attributes.ARMOR, 6.0D);
   }
 
   @Override
@@ -107,15 +107,6 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
   @Override
   protected float getJumpUpwardsMotion() {
     return 0.82F * this.getJumpFactor();
-  }
-  
-  @Override
-  protected void damageEntity(final DamageSource source, final float amountIn) {
-    float amount = amountIn;
-    if (!source.isDamageAbsolute() && GreekFantasy.CONFIG.GIGANTE_RESISTANCE.get()) {
-      amount *= 0.6F;
-    }
-    super.damageEntity(source, amount);
   }
   
   @Override

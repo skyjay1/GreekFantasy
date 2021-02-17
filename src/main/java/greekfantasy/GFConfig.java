@@ -102,8 +102,6 @@ public class GFConfig {
   public final ForgeConfigSpec.BooleanValue SHADE_ATTACK;
   public final ForgeConfigSpec.BooleanValue SATYR_ATTACK;
   public final ForgeConfigSpec.BooleanValue SIREN_ATTACK;
-  public final ForgeConfigSpec.BooleanValue GIGANTE_RESISTANCE;
-  public final ForgeConfigSpec.BooleanValue GERYON_RESISTANCE;
   public final ForgeConfigSpec.BooleanValue SATYR_LIGHTS_CAMPFIRES;
   private final ForgeConfigSpec.ConfigValue<? extends String> SATYR_SONG;
   public final ForgeConfigSpec.BooleanValue SHADE_PLAYER_ONLY;
@@ -130,7 +128,9 @@ public class GFConfig {
   private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
   private final ForgeConfigSpec.DoubleValue GORGON_MEDUSA_CHANCE;
   private final ForgeConfigSpec.IntValue LIGHTNING_MEDUSA_CHANCE;
+  private final ForgeConfigSpec.DoubleValue CIRCE_CHANCE;
   private final ForgeConfigSpec.BooleanValue MEDUSA_BOSS_BAR;
+  private final ForgeConfigSpec.BooleanValue CIRCE_BOSS_BAR;
   private final ForgeConfigSpec.BooleanValue CRETAN_BOSS_BAR;
   private final ForgeConfigSpec.IntValue ELPIS_SPAWN_CHANCE;
   public final ForgeConfigSpec.IntValue NUM_SPARTI_SPAWNED;
@@ -139,7 +139,9 @@ public class GFConfig {
   private int satyrShamanChance;
   private double gorgonMedusaChance;
   private int lightningMedusaChance;
+  private double circeChance;
   private boolean medusaBossBar;
+  private boolean circeBossBar;
   private boolean cretanBossBar;
   private int elpisSpawnChance;
   private int numSpartiSpawned;
@@ -199,7 +201,7 @@ public class GFConfig {
     BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
     BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 100);
     BAG_OF_WIND_DURABILITY = builder.defineInRange("bag_of_wind_durability", 24, 1, 4000);
-    SWINE_WAND_DURATION = builder.defineInRange("swine_wand_duration", 9600, 1, 24000);
+    SWINE_WAND_DURATION = builder.defineInRange("swine_wand_duration", 2450, 1, 24000);
     SWINE_WAND_COOLDOWN = builder.defineInRange("swine_wand_cooldown", 50, 0, 100);
     SWINE_WAND_DURABILITY = builder.defineInRange("swine_wand_durability", 104, 1, 4000);
     builder.pop();
@@ -269,10 +271,6 @@ public class GFConfig {
         .define("dryad_angry_on_harvest", true);
     DRYAD_ANGRY_RANGE = builder.comment("The distance at which dryads become angry when players harvest logs")
         .defineInRange("dryad_angry_range", 4, 0, 32);
-    GIGANTE_RESISTANCE = builder.comment("Whether the Gigante has damage resistance")
-        .define("gigante_resistance", true);
-    GERYON_RESISTANCE = builder.comment("Whether the Geryon has damage resistance")
-        .define("geryon_resistance", true);
     SATYR_LIGHTS_CAMPFIRES = builder.comment("Whether the Satyr can light unlit campfires")
         .define("satyr_lights_campfires", true);
     SATYR_SONG = builder.comment("The song played by the Satyr while dancing")
@@ -294,10 +292,14 @@ public class GFConfig {
         .defineInRange("gorgon_medusa_chance", 0.8D, 0.0D, 100.0D);
     LIGHTNING_MEDUSA_CHANCE = builder.comment("Percent chance that lightning striking a gorgon will turn it into a medusa")
         .defineInRange("lightning_medusa_chance", 95, 0, 100);
+    CIRCE_CHANCE = builder.comment("Percent chance that a witch will be a Circe")
+        .defineInRange("circe_chance", 2.0D, 0.0D, 100.0D);
     MEDUSA_BOSS_BAR = builder.comment("Whether to show the Medusa boss bar")
         .define("medusa_boss_bar", true);
+    CIRCE_BOSS_BAR = builder.comment("Whether to show the Circe boss bar")
+        .define("circe_boss_bar", true);
     CRETAN_BOSS_BAR = builder.comment("Whether to show the Cretan boss bar")
-        .define("cretan_boss_bar", true);
+        .define("cretan_boss_bar", false);
     ELPIS_SPAWN_CHANCE = builder.comment("Percent chance that opening a mysterious box spawns an Elpis")
         .defineInRange("elpis_spawn_chance", 60, 0, 100);
     NUM_SPARTI_SPAWNED = builder.comment("Number of Sparti spawned by using a hydra tooth")
@@ -425,7 +427,9 @@ public class GFConfig {
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
     gorgonMedusaChance = GORGON_MEDUSA_CHANCE.get();
     lightningMedusaChance = LIGHTNING_MEDUSA_CHANCE.get();
+    circeChance = CIRCE_CHANCE.get();
     medusaBossBar = MEDUSA_BOSS_BAR.get();
+    circeBossBar = CIRCE_BOSS_BAR.get();
     cretanBossBar = CRETAN_BOSS_BAR.get();
     elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
     numSpartiSpawned = NUM_SPARTI_SPAWNED.get();
@@ -486,7 +490,9 @@ public class GFConfig {
   public ResourceLocation getSatyrSong() { return satyrSong; }
   public double getGorgonMedusaChance() { return gorgonMedusaChance; }
   public int getLightningMedusaChance() { return lightningMedusaChance; }
+  public double getCirceChance() { return circeChance; }
   public boolean showMedusaBossBar() { return medusaBossBar; }
+  public boolean showCirceBossBar() { return circeBossBar; }
   public boolean showCretanBossBar() { return cretanBossBar; }
   public int getElpisSpawnChance() { return elpisSpawnChance; }
   public int getNumSpartiSpawned() { return numSpartiSpawned; }

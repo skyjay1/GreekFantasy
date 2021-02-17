@@ -99,7 +99,8 @@ public class GeryonEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.98D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 5.0D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT);
+        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT)
+        .createMutableAttribute(Attributes.ARMOR, 8.0D);
   }
   
   public static boolean canGeryonSpawnOn(final IWorld world, final BlockPos pos) {    
@@ -181,38 +182,29 @@ public class GeryonEntity extends MonsterEntity {
     }
     
     // update smash attack
-    if(this.isSmashAttack()) {
+    if (this.isSmashAttack()) {
       smashTime++;
-    } else if(smashTime > 0) {
+    } else if (smashTime > 0) {
       smashTime = 0;
     }
-        
+
     // update summoning
-    if(this.isSummoning()) {
+    if (this.isSummoning()) {
       summonTime++;
-      if(this.getHeldItem(Hand.OFF_HAND).isEmpty()) {
+      if (this.getHeldItem(Hand.OFF_HAND).isEmpty()) {
         this.setHeldItem(Hand.OFF_HAND, new ItemStack(GFRegistry.HORN));
       }
-    } else if(summonTime > 0) {
+    } else if (summonTime > 0) {
       summonTime = 0;
-      if(this.getHeldItem(Hand.OFF_HAND).getItem() == GFRegistry.HORN) {
+      if (this.getHeldItem(Hand.OFF_HAND).getItem() == GFRegistry.HORN) {
         this.setHeldItem(Hand.OFF_HAND, ItemStack.EMPTY);
       }
     }
 
     // spawn particles
-    if (horizontalMag(this.getMotion()) > (double)2.5000003E-7F && this.rand.nextInt(5) == 0) {
+    if (horizontalMag(this.getMotion()) > (double) 2.5000003E-7F && this.rand.nextInt(5) == 0) {
       addBlockParticles(2);
     }
- }
-  
-  @Override
-  protected void damageEntity(final DamageSource source, final float amountIn) {
-    float amount = amountIn;
-    if (!source.isDamageAbsolute() && GreekFantasy.CONFIG.GERYON_RESISTANCE.get()) {
-      amount *= 0.4F;
-    }
-    super.damageEntity(source, amount);
   }
   
   @Override

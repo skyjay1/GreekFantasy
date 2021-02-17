@@ -13,7 +13,7 @@ public class NearestAttackableFavorablePlayerResetGoal extends Goal {
   protected MobEntity entity;
   protected int interval;
   
- public NearestAttackableFavorablePlayerResetGoal(final MobEntity entityIn) { this(entityIn, 10); }
+  public NearestAttackableFavorablePlayerResetGoal(final MobEntity entityIn) { this(entityIn, 10); }
   
   public NearestAttackableFavorablePlayerResetGoal(final MobEntity entityIn, int intervalIn) {
     this.setMutexFlags(EnumSet.of(Goal.Flag.TARGET));

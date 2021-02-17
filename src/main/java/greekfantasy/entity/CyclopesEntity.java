@@ -44,7 +44,8 @@ public class CyclopesEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.5D);
+        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.5D)
+        .createMutableAttribute(Attributes.ARMOR, 4.0D);
   }
   
   public static boolean canCyclopesSpawnOn(final EntityType<? extends MonsterEntity> entity, final IServerWorld world, final SpawnReason reason, 

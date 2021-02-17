@@ -9,6 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
 public class SwineWandItem extends Item {
@@ -26,6 +27,7 @@ public class SwineWandItem extends Item {
       SwineSpellEntity healingSpell = SwineSpellEntity.create(world, player);
       world.addEntity(healingSpell);
     }
+    player.playSound(SoundEvents.ENTITY_ILLUSIONER_CAST_SPELL, 0.5F, 1.0F);
     
     // damage the item stack
     if(!player.isCreative()) {
