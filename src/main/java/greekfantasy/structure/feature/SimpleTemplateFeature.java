@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.mojang.serialization.Codec;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ResourceLocation;
@@ -55,5 +56,25 @@ public abstract class SimpleTemplateFeature extends Feature<NoFeatureConfig> {
     int y = world.getHeight(Heightmap.Type.WORLD_SURFACE, original).getY();
     final BlockPos pos = new BlockPos(original.getX(), y, original.getZ());
     return world.getBlockState(pos).isIn(Blocks.SNOW) ? pos.down(2) : pos.down();
+  }
+  
+  protected static void fillBelow(final ISeedReader world, final BlockPos origin, final BlockPos size, final Rotation rotation, final Block[] blocks) {
+    BlockPos tmp;
+    BlockPos pos;
+    Block block;
+    for(int dx = 0, lx = size.getX(); dx < lx; dx++) {
+      for(int dz = 0, lz = size.getZ(); dz < lz; dz++) {
+        tmp = new BlockPos(dx, 0, dz).rotate(rotation);
+        pos = origin.add(tmp);
+        // set blocks below this one to the provided block(s)
+        if(world.chunkExists(pos.getX() >> 4, pos.getZ() >> 4) && world.getBlockState(pos.up()).isSolid()) {
+          while(pos.getY() > 0 && isReplaceableAt(world, pos)) {
+            block = blocks[world.getRandom().nextInt(blocks.length)];
+            world.setBlockState(pos, block.getDefaultState(), 2);
+            pos = pos.down();
+          }
+        }
+      }
+    }
   }
 }

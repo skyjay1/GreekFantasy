@@ -5,6 +5,8 @@ import java.util.Random;
 import com.mojang.serialization.Codec;
 
 import greekfantasy.GreekFantasy;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -54,7 +56,11 @@ public class SmallShrineFeature extends SimpleTemplateFeature {
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
 
     // actually generate the structure
-    return template.func_237146_a_(reader, pos, pos, placement, rand, 2);
+    if(template.func_237146_a_(reader, pos, pos, placement, rand, 2)) {
+      fillBelow(reader, pos.up(1), size, rotation, new Block[] { Blocks.DIRT });
+      return true;
+    }
+    return false;
   }
   
   @Override

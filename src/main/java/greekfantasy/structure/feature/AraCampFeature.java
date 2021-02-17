@@ -7,6 +7,8 @@ import com.mojang.serialization.Codec;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.AraEntity;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -82,6 +84,7 @@ public class AraCampFeature extends SimpleTemplateFeature {
     
     // actually generate the structure
     template.func_237146_a_(reader, pos.down(), pos.down(), placement.setBoundingBox(mbb), rand, 2);
+    fillBelow(reader, pos.down(2), template.getSize(), placement.getRotation(), new Block[] { Blocks.STONE });
     
     // add entities
     addAra(reader, rand, pos.add(new BlockPos(3, 1, 2).rotate(placement.getRotation())), 1 + rand.nextInt(3));

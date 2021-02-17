@@ -2,6 +2,7 @@ package greekfantasy;
 
 import greekfantasy.block.OliveTree;
 import greekfantasy.structure.feature.AraCampFeature;
+import greekfantasy.structure.feature.CyclopesCaveFeature;
 import greekfantasy.structure.feature.HarpyNestFeature;
 import greekfantasy.structure.feature.OliveTreeFeature;
 import greekfantasy.structure.feature.PythonPitFeature;
@@ -58,6 +59,8 @@ public final class GFWorldGen {
   public static final Feature<NoFeatureConfig> SMALL_SHRINE_FEATURE = null;
   @ObjectHolder(MODID + ":small_nether_shrine")
   public static final Feature<NoFeatureConfig> SMALL_NETHER_SHRINE_FEATURE = null;
+  @ObjectHolder(MODID + ":cyclopes_cave")
+  public static final Feature<NoFeatureConfig> CYCLOPES_CAVE_FEATURE = null;
   @ObjectHolder(MODID + ":ara_camp")
   public static final Feature<NoFeatureConfig> ARA_CAMP_FEATURE = null;
   @ObjectHolder(MODID + ":satyr_camp")
@@ -79,6 +82,7 @@ public final class GFWorldGen {
   private static ConfiguredFeature<?, ?> HARPY_NEST;
   private static ConfiguredFeature<?, ?> SMALL_SHRINE;
   private static ConfiguredFeature<?, ?> SMALL_NETHER_SHRINE;
+  private static ConfiguredFeature<?, ?> CYCLOPES_CAVE;
   private static ConfiguredFeature<?, ?> ARA_CAMP;
   private static ConfiguredFeature<?, ?> SATYR_CAMP;
   private static ConfiguredFeature<?, ?> PYTHON_PIT;
@@ -108,6 +112,8 @@ public final class GFWorldGen {
           .setRegistryName(MODID, "small_shrine"),
         new SmallNetherShrineFeature(NoFeatureConfig.field_236558_a_)
           .setRegistryName(MODID, "small_nether_shrine"),
+        new CyclopesCaveFeature(NoFeatureConfig.field_236558_a_)
+          .setRegistryName(MODID, "cyclopes_cave"),
         new AraCampFeature(NoFeatureConfig.field_236558_a_)
           .setRegistryName(MODID, "ara_camp"),
         new SatyrCampFeature(NoFeatureConfig.field_236558_a_)
@@ -149,6 +155,9 @@ public final class GFWorldGen {
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     SMALL_NETHER_SHRINE = registerFeature("small_nether_shrine",
         SMALL_NETHER_SHRINE_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_));
+    CYCLOPES_CAVE = registerFeature("cyclopes_cave",
+        CYCLOPES_CAVE_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
+        .chance(3).withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     ARA_CAMP = registerFeature("ara_camp", 
         ARA_CAMP_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_).chance(2)
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
@@ -202,6 +211,7 @@ public final class GFWorldGen {
       // add custom features
       addFeature(event, "harpy_nest", GenerationStage.Decoration.VEGETAL_DECORATION, HARPY_NEST);
       addFeature(event, "small_shrine", GenerationStage.Decoration.SURFACE_STRUCTURES, SMALL_SHRINE);
+      addFeature(event, "cyclopes_cave", GenerationStage.Decoration.SURFACE_STRUCTURES, CYCLOPES_CAVE);
       addFeature(event, "ara_camp",GenerationStage.Decoration.SURFACE_STRUCTURES, ARA_CAMP);
       addFeature(event, "satyr_camp", GenerationStage.Decoration.SURFACE_STRUCTURES, SATYR_CAMP);
       addFeature(event, "python_pit", GenerationStage.Decoration.SURFACE_STRUCTURES, PYTHON_PIT);

@@ -43,7 +43,7 @@ __Key:__
 - X X ~ X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
 - X X ~ X X Miniboss: Medusa
-- _ _ _ _ _ Miniboss: Circe
+- X X _ _ X Miniboss: Circe
 - X X X _ X Fury
 - X X ~ X X Drakaina
 - X X X X X Arion (very fast horse, use gold)

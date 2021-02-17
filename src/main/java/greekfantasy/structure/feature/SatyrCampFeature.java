@@ -7,6 +7,8 @@ import com.mojang.serialization.Codec;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.SatyrEntity;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -98,6 +100,7 @@ public class SatyrCampFeature extends SimpleTemplateFeature {
     
     // actually generate the structure
     template.func_237146_a_(reader, pos, pos, placement.setBoundingBox(mbb), rand, 2);
+    fillBelow(reader, pos.down(), template.getSize(), placement.getRotation(), new Block[] { Blocks.DIRT });
     
     // add entities
     if(satyrs) {

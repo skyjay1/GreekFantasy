@@ -18,6 +18,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -33,6 +34,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.BossInfo;
@@ -63,13 +65,18 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(1, new IntervalRangedAttackGoal(this, 90, 1, GreekFantasy.CONFIG.getSwineWandCooldown() * 6));
-    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+    this.goalSelector.addGoal(1, new IntervalRangedAttackGoal(this, 90, 1, GreekFantasy.CONFIG.getSwineWandCooldown() * 4));
+    this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class, 6.0F, 1.4D, 1.2D, e -> NOT_SWINE.test(e) && e == CirceEntity.this.getAttackTarget()));
+    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D){
+      @Override
+      public boolean shouldExecute() {
+        return null == CirceEntity.this.getAttackTarget() && CirceEntity.this.rand.nextInt(90) == 0 && super.shouldExecute();
+      }
+    });
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this, WitchEntity.class, CirceEntity.class));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, NOT_SWINE));
-    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillagerEntity.class, 10, true, false, NOT_SWINE));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, NOT_SWINE.and(e -> GreekFantasy.CONFIG.canSwineApply(e.getType().getRegistryName().toString())).and(EntityPredicates.CAN_HOSTILE_AI_TARGET)));
     this.targetSelector.addGoal(4, new ResetTargetGoal());
   }
   
@@ -109,8 +116,6 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
     this.playSound(SoundEvents.ENTITY_ILLUSIONER_CAST_SPELL, 1.2F, 1.0F);
     // swing arm
     this.swingArm(Hand.MAIN_HAND);
-    // remove revenge target
-    this.setRevengeTarget(null);
   }
 
   //Boss //
@@ -149,7 +154,6 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
     public boolean shouldExecute() {
       return CirceEntity.this.ticksExisted % interval == 0 && CirceEntity.this.isAlive() 
           && CirceEntity.this.getAttackTarget() instanceof LivingEntity
-          && CirceEntity.this.getAttackTarget() != CirceEntity.this.getRevengeTarget()
           && ((LivingEntity)CirceEntity.this.getAttackTarget()).getActivePotionEffect(GFRegistry.SWINE_EFFECT) != null;
     }
     

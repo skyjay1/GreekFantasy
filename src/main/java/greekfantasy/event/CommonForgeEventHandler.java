@@ -30,7 +30,6 @@ import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.HoglinEntity;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.passive.horse.HorseEntity;
@@ -295,7 +294,10 @@ public class CommonForgeEventHandler {
     }
   }
   
-
+  /**
+   * Used to sometimes replace Witch with Circe when a witch is spawned
+   * @param event
+   */
   @SubscribeEvent
   public static void onEntitySpawn(final LivingSpawnEvent.SpecialSpawn event) {
     if(event.getEntity().getType() == EntityType.WITCH && (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.getCirceChance()
@@ -347,18 +349,16 @@ public class CommonForgeEventHandler {
   }
   
   /**
-   * Used to prevent certain mobs from attacking players who are under the Swine effect
-   * @param event
+   * Used to prevent certain mobs from attacking players when either the player
+   * or the mob are under the swine effect
+   * @param event the living target event
    **/
   @SubscribeEvent
   public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
-    if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity 
-        && event.getTarget() instanceof PlayerEntity 
+    if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity
+        && event.getTarget() instanceof LivingEntity
         && GreekFantasy.CONFIG.isSwineEnabled() && GreekFantasy.CONFIG.doesSwinePreventTarget() 
-        && isSwine(event.getTarget()) && event.getTarget() != event.getEntityLiving().getAttackingEntity()
-        && (event.getEntityLiving() instanceof HoglinEntity 
-            || event.getEntityLiving() instanceof GiantBoarEntity
-            || event.getEntityLiving() instanceof AbstractPiglinEntity)) {
+        && (isSwine(event.getEntityLiving()) || isSwine(event.getTarget()))) {
       ((MobEntity)event.getEntityLiving()).setAttackTarget(null);
     }
   }

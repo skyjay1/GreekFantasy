@@ -374,6 +374,7 @@ public class GFConfig {
     FEATURES.put("harpy_nest", new BiomeWhitelistConfig(builder, "harpy_nest", 12, false, nonNetherHostileBlacklist));
     FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 17, false, nonNetherHostileBlacklist));
     FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 16, true, nether));
+    FEATURES.put("cyclopes_cave", new BiomeWhitelistConfig(builder, "cyclopes_cave", 2, true, plains));
     FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 10, false, nonNetherHostileBlacklist));
     FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 15, false, concat(nonNetherHostileBlacklist, sandy)));
     FEATURES.put("python_pit", new BiomeWhitelistConfig(builder, "python_pit", 6, true, biomesAsList(BiomeDictionary.Type.JUNGLE)));
