@@ -33,7 +33,7 @@ public class UnicornEntity extends AbstractHorseEntity {
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return AbstractHorseEntity.func_234237_fg_();
+    return AbstractHorseEntity.func_234237_fg_().createMutableAttribute(Attributes.ARMOR, 1.0D);
   }
   
   @Override
@@ -98,7 +98,7 @@ public class UnicornEntity extends AbstractHorseEntity {
   }
   
   @Override
-  public double getMountedYOffset() { return super.getMountedYOffset() - 0.25D; }
+  public double getMountedYOffset() { return super.getMountedYOffset() - 0.385D; }
   
   @Override
   protected void playGallopSound(SoundType sound) {

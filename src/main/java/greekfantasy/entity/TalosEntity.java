@@ -89,7 +89,8 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 9.0D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.75D);
+        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.75D)
+        .createMutableAttribute(Attributes.ARMOR, 8.0D);
   }
   
   public static TalosEntity spawnTalos(final World world, final BlockPos pos, final float yaw) {
@@ -172,16 +173,7 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
       }
     }
  }
-  
-  @Override
-  protected void damageEntity(final DamageSource source, final float amountIn) {
-    float amount = amountIn;
-    if (!source.isDamageAbsolute()) {
-      amount *= 0.38F;
-    }
-    super.damageEntity(source, amount);
-  }
-  
+
   @Override
   public boolean attackEntityAsMob(final Entity entityIn) {
     if (super.attackEntityAsMob(entityIn)) {

@@ -61,7 +61,7 @@ public class MinotaurEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.5D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.25D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.97D)
-        .createMutableAttribute(Attributes.ARMOR, 4.0D);
+        .createMutableAttribute(Attributes.ARMOR, 2.0D);
   }
   
   @Override

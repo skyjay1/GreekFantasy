@@ -64,7 +64,8 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.31D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.5D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D);
+        .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
+        .createMutableAttribute(Attributes.ARMOR, 1.5D);
   }
   
   @Override

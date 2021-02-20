@@ -131,6 +131,9 @@ public class ArionEntity extends HorseEntity {
   public boolean isBreedingItem(ItemStack stack) {
     return stack.getItem().isIn(FOOD);
   }
+  
+  @Override
+  public double getMountedYOffset() { return super.getMountedYOffset() - 0.25D; }
 
   @Override
   public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {

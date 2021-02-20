@@ -9,7 +9,6 @@ __Key:__
 
 - Summoning animations not playing on dedicated server
   X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
-- _ Structure gen is jenky
 
 ## Entity basics
 
@@ -43,7 +42,8 @@ __Key:__
 - X X ~ X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
 - X X ~ X X Miniboss: Medusa
-- X X _ _ X Miniboss: Circe
+- X X X _ _ Miniboss: Cretan
+- X X X ~ X Miniboss: Circe
 - X X X _ X Fury
 - X X ~ X X Drakaina
 - X X X X X Arion (very fast horse, use gold)
@@ -115,8 +115,8 @@ __Key:__
 `[Design] [Worldgen] [Loot]`
 
 - Complete: Hary Nests, Satyr Camps, Ara Camps, Small Marble/Limestone Shrine, Small Nether Shrine, Marble veins, Limestone veins, Python Pit
+- X X _ Cyclopes Cave
 - _ _ _ Centaur Camps
-- _ _ _ Cyclopes Cave+Pastures
 - _ _ _ Ruined Temple
 
 ## Blocks

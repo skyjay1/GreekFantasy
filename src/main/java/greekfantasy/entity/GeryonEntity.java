@@ -100,7 +100,7 @@ public class GeryonEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 5.0D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT)
-        .createMutableAttribute(Attributes.ARMOR, 8.0D);
+        .createMutableAttribute(Attributes.ARMOR, 7.0D);
   }
   
   public static boolean canGeryonSpawnOn(final IWorld world, final BlockPos pos) {    

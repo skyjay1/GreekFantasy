@@ -1,17 +1,29 @@
 package greekfantasy.event;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.render.PlayerSkyjayRenderer;
 import greekfantasy.client.render.SwineRenderer;
+import greekfantasy.tileentity.StatueTileEntity;
+import greekfantasy.tileentity.VaseTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -113,12 +125,68 @@ public class ClientForgeEventHandler {
   @SubscribeEvent
   public static void modifyFOV(final FOVModifier event) {
     final Minecraft mc = Minecraft.getInstance();
-    if(mc != null) {
+    if(mc != null && GreekFantasy.CONFIG.isForceFOVReset()) {
       final PlayerEntity player = mc.player;
       if(player.isAlive() && (isStunned(player) || player.getItemStackFromSlot(EquipmentSlotType.FEET).getItem() == GFRegistry.WINGED_SANDALS)) {
         event.setFOV(mc.gameSettings.fov);
       }
     }
+  }
+  
+//  // The rendering code in renderName was not working, so this is commented out for now
+//  @SubscribeEvent
+//  public static void renderSelectedBlock(final DrawHighlightEvent.HighlightBlock event) {
+//    final Minecraft mc = Minecraft.getInstance();
+//    if(mc != null && mc.world != null) {
+//      final TileEntity te = mc.world.getTileEntity(event.getTarget().getPos());
+//      if(te instanceof VaseTileEntity) {
+//        // try to render vase nameplate
+//        renderVaseName((VaseTileEntity)te, event);
+//      } else if (te instanceof StatueTileEntity) {
+//        // try to render statue nameplate
+//        renderStatueName((StatueTileEntity)te, event);
+//      }
+//    }
+//  }
+  
+  private static void renderVaseName(final VaseTileEntity vase, final DrawHighlightEvent.HighlightBlock event) {
+    final ItemStack item = vase.getStackInSlot(0);
+    if(!item.isEmpty() && item.hasDisplayName()) {
+      renderName(vase, item.getDisplayName(), 0.75F, event.getMatrix(), event.getBuffers(), 15728640);
+    }
+  }
+  
+  private static void renderStatueName(final StatueTileEntity statue, final DrawHighlightEvent.HighlightBlock event) {
+    if(statue.isUpper()) {
+      ITextComponent name = null;
+      if(statue.hasDeity()) {
+        name = statue.getDeity().getText();
+      } else if(!statue.getTextureName().isEmpty()) {
+        name = new StringTextComponent(statue.getTextureName());
+      }
+      // the name exists, render here
+      if(name != null) {
+        renderName(statue, name, 2.25F, event.getMatrix(), event.getBuffers(), 15728640);
+      }
+    }
+  }
+  
+  private static void renderName(TileEntity entityIn, ITextComponent displayNameIn, float offsetY, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
+    final Minecraft mc = Minecraft.getInstance();
+    final EntityRendererManager renderManager = mc.getRenderManager();
+    matrixStackIn.push();
+    matrixStackIn.translate(0.0D, offsetY, 0.0D);
+    matrixStackIn.rotate(renderManager.getCameraOrientation());
+    matrixStackIn.scale(-0.025F, -0.025F, 0.025F);
+    Matrix4f matrix4f = matrixStackIn.getLast().getMatrix();
+    float f1 = mc.gameSettings.getTextBackgroundOpacity(0.25F);
+    int j = (int) (f1 * 255.0F) << 24;
+    FontRenderer fontrenderer = renderManager.getFontRenderer();
+    float f2 = (float) (-fontrenderer.getStringPropertyWidth(displayNameIn) / 2);
+    // actually render the nameplate
+    fontrenderer.func_243247_a(displayNameIn, f2, 0, 553648127, false, matrix4f, bufferIn, true, j, packedLightIn);
+    fontrenderer.func_243247_a(displayNameIn, f2, 0, -1, false, matrix4f, bufferIn, false, 0, packedLightIn);
+    matrixStackIn.pop();
   }
 
   /** @return whether the player is wearing the Helm of Darkness **/

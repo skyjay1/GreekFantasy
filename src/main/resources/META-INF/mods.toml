@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[35,)"
 # The license for your mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
 license="GNU GPLv3"
 # A URL to refer people to when problems occur with this mod
@@ -7,7 +7,7 @@ license="GNU GPLv3"
 
 [[mods]]
     modId="greekfantasy"
-    version="16.4.13"
+    version="16.4.14"
     displayName="Greek Fantasy"
     credits=""
     authors="skyjay1"
@@ -15,6 +15,6 @@ license="GNU GPLv3"
 [[dependencies.greekfantasy]]
     modId="forge"
     mandatory=true
-    versionRange="[34.1.22,)"
+    versionRange="[35.1.31,)"
     ordering="NONE"
     side="BOTH"

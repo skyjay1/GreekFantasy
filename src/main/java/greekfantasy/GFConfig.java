@@ -53,6 +53,7 @@ public class GFConfig {
   private boolean wingedSandalsDeplete;
 
   // effect configs
+  private final ForgeConfigSpec.BooleanValue FORCE_FOV_RESET;
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_USE;
   private final ForgeConfigSpec.BooleanValue OVERSTEP_ENABLED;
@@ -70,6 +71,7 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue SWINE_PREVENTS_TARGET;
   private final ForgeConfigSpec.BooleanValue IS_SWINE_ENTITY_WHITELIST;
   private final ForgeConfigSpec.ConfigValue<List<? extends String>> SWINE_ENTITY_WHITELIST;
+  private boolean forceFOVReset;
   private boolean stunPreventsJump;
   private boolean stunPreventsUse;
   private boolean overstepEnabled;
@@ -127,7 +129,7 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
   private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
   private final ForgeConfigSpec.DoubleValue GORGON_MEDUSA_CHANCE;
-  private final ForgeConfigSpec.IntValue LIGHTNING_MEDUSA_CHANCE;
+  private final ForgeConfigSpec.DoubleValue LIGHTNING_MEDUSA_CHANCE;
   private final ForgeConfigSpec.DoubleValue CIRCE_CHANCE;
   private final ForgeConfigSpec.BooleanValue MEDUSA_BOSS_BAR;
   private final ForgeConfigSpec.BooleanValue CIRCE_BOSS_BAR;
@@ -138,7 +140,7 @@ public class GFConfig {
   private boolean shadeSpawnOnDeath;
   private int satyrShamanChance;
   private double gorgonMedusaChance;
-  private int lightningMedusaChance;
+  private double lightningMedusaChance;
   private double circeChance;
   private boolean medusaBossBar;
   private boolean circeBossBar;
@@ -207,6 +209,8 @@ public class GFConfig {
     builder.pop();
     // mob attacks
     builder.push("effects");
+    FORCE_FOV_RESET = builder.comment("When true, prevents FOV modifiers when stunned or wearing winged sandals")
+        .define("force_fov_reset", true);
     STUN_PREVENTS_JUMP = builder.comment("When stunned, players are prevented from jumping")
         .define("stun_prevents_jump", true);
     STUN_PREVENTS_USE = builder.comment("When stunned, players are prevented from using items")
@@ -291,7 +295,7 @@ public class GFConfig {
     GORGON_MEDUSA_CHANCE = builder.comment("Percent chance that a gorgon will be a medusa")
         .defineInRange("gorgon_medusa_chance", 0.8D, 0.0D, 100.0D);
     LIGHTNING_MEDUSA_CHANCE = builder.comment("Percent chance that lightning striking a gorgon will turn it into a medusa")
-        .defineInRange("lightning_medusa_chance", 95, 0, 100);
+        .defineInRange("lightning_medusa_chance", 95.0D, 0.0D, 100.0D);
     CIRCE_CHANCE = builder.comment("Percent chance that a witch will be a Circe")
         .defineInRange("circe_chance", 2.0D, 0.0D, 100.0D);
     MEDUSA_BOSS_BAR = builder.comment("Whether to show the Medusa boss bar")
@@ -405,6 +409,7 @@ public class GFConfig {
     swineWandCooldown = SWINE_WAND_COOLDOWN.get();
     wingedSandalsDeplete = WINGED_SANDALS_DEPLETE.get();
     // effect configurations
+    forceFOVReset = FORCE_FOV_RESET.get();
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
@@ -469,6 +474,7 @@ public class GFConfig {
   public boolean doesStunPreventJump() { return stunPreventsJump; }
   public boolean doesStunPreventUse() { return stunPreventsUse; }
   
+  public boolean isForceFOVReset() { return forceFOVReset; }
   public boolean isOverstepEnabled() { return overstepEnabled; }
   public boolean isSmashingEnabled() { return smashingEnabled; }
   public boolean isHuntingEnabled() { return huntingEnabled; }
@@ -490,7 +496,7 @@ public class GFConfig {
   public int getSatyrShamanChance() { return satyrShamanChance; }
   public ResourceLocation getSatyrSong() { return satyrSong; }
   public double getGorgonMedusaChance() { return gorgonMedusaChance; }
-  public int getLightningMedusaChance() { return lightningMedusaChance; }
+  public double getLightningMedusaChance() { return lightningMedusaChance; }
   public double getCirceChance() { return circeChance; }
   public boolean showMedusaBossBar() { return medusaBossBar; }
   public boolean showCirceBossBar() { return circeBossBar; }

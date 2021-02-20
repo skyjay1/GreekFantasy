@@ -83,7 +83,8 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 54.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.28D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.0D)
+        .createMutableAttribute(Attributes.ARMOR, 2.0D);
   }
   
   @Override
