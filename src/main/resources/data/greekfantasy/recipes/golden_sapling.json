@@ -1,0 +1,12 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+	{ "item": "greekfantasy:fiery_bat_wing" },
+    { "tag": "minecraft:saplings" },
+	{ "item": "greekfantasy:fiery_bat_wing" }
+  ],
+  "result": {
+    "item": "greekfantasy:golden_apple_sapling",
+    "count": 1
+  }
+}

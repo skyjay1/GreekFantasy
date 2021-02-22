@@ -1,0 +1,45 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "greekfantasy:block/golden_string"
+      }
+    },
+    {
+      "when": {
+      	"north": "true"
+      },
+      "apply": {
+        "model": "greekfantasy:block/golden_string_n",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+      	"east": "true"
+      },
+      "apply": {
+        "model": "greekfantasy:block/golden_string_e",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+      	"south": "true"
+      },
+      "apply": {
+        "model": "greekfantasy:block/golden_string_s",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+      	"west": "true"
+      },
+      "apply": {
+        "model": "greekfantasy:block/golden_string_w",
+        "uvlock": true
+      }
+    }
+  ]
+}

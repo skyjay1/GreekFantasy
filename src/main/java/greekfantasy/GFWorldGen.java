@@ -1,15 +1,16 @@
 package greekfantasy;
 
-import greekfantasy.block.OliveTree;
-import greekfantasy.structure.feature.AraCampFeature;
-import greekfantasy.structure.feature.CyclopesCaveFeature;
-import greekfantasy.structure.feature.HarpyNestFeature;
-import greekfantasy.structure.feature.OliveTreeFeature;
-import greekfantasy.structure.feature.PythonPitFeature;
-import greekfantasy.structure.feature.ReedsFeature;
-import greekfantasy.structure.feature.SatyrCampFeature;
-import greekfantasy.structure.feature.SmallNetherShrineFeature;
-import greekfantasy.structure.feature.SmallShrineFeature;
+import greekfantasy.feature.AraCampFeature;
+import greekfantasy.feature.CyclopesCaveFeature;
+import greekfantasy.feature.GoldenAppleTree;
+import greekfantasy.feature.HarpyNestFeature;
+import greekfantasy.feature.OliveTree;
+import greekfantasy.feature.OliveTreeFeature;
+import greekfantasy.feature.PythonPitFeature;
+import greekfantasy.feature.ReedsFeature;
+import greekfantasy.feature.SatyrCampFeature;
+import greekfantasy.feature.SmallNetherShrineFeature;
+import greekfantasy.feature.SmallShrineFeature;
 import greekfantasy.util.BiomeWhitelistConfig;
 import net.minecraft.entity.EntityType;
 import net.minecraft.tags.BlockTags;
@@ -34,6 +35,7 @@ import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.Features.Placements;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
+import net.minecraft.world.gen.feature.TreeFeature;
 import net.minecraft.world.gen.feature.structure.StructureFeatures;
 import net.minecraft.world.gen.feature.template.RuleTest;
 import net.minecraft.world.gen.feature.template.TagMatchRuleTest;
@@ -69,6 +71,8 @@ public final class GFWorldGen {
   public static final Feature<NoFeatureConfig> PYTHON_PIT_FEATURE = null;
   @ObjectHolder(MODID + ":olive_tree")
   public static final Feature<BaseTreeFeatureConfig> OLIVE_TREE_FEATURE = null;
+  @ObjectHolder(MODID + ":golden_apple_tree")
+  public static final Feature<BaseTreeFeatureConfig> GOLDEN_APPLE_TREE_FEATURE = null;
   @ObjectHolder(MODID + ":reeds")
   public static final Feature<BlockClusterFeatureConfig> REEDS_FEATURE = null;
   
@@ -88,6 +92,7 @@ public final class GFWorldGen {
   private static ConfiguredFeature<?, ?> PYTHON_PIT;
   private static ConfiguredFeature<?, ?> OLIVE_TREE_SINGLE;
   private static ConfiguredFeature<?, ?> OLIVE_TREE_FOREST;
+  private static ConfiguredFeature<?, ?> GOLDEN_APPLE_TREE;
   private static ConfiguredFeature<?, ?> REEDS;
   private static ConfiguredFeature<?, ?> SWAMP_REEDS;
   
@@ -122,6 +127,8 @@ public final class GFWorldGen {
           .setRegistryName(MODID, "python_pit"),
         new OliveTreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(MODID, "olive_tree"),
+        new TreeFeature(BaseTreeFeatureConfig.CODEC)
+          .setRegistryName(MODID, "golden_apple_tree"),
         new ReedsFeature(BlockClusterFeatureConfig.field_236587_a_)
           .setRegistryName(MODID, "reeds"));
   }
@@ -189,6 +196,8 @@ public final class GFWorldGen {
               .tries(32).replaceable()
               .xSpread(3).ySpread(3).zSpread(3)
               .build()).func_242731_b(2));
+    GOLDEN_APPLE_TREE = Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, "golden_apple_tree"), 
+        GoldenAppleTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT));
   }
   
   private static ConfiguredFeature<?, ?> registerFeature(final String name, ConfiguredFeature<?, ?> feature) {

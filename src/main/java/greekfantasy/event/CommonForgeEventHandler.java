@@ -22,6 +22,8 @@ import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SFavorConfigurationPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -38,7 +40,9 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.ResourceLocation;
@@ -142,30 +146,45 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent
   public static void onLivingTick(final PlayerTickEvent event) {
-    if((event.phase == TickEvent.Phase.START) && event.player.isAlive() && GreekFantasy.CONFIG.isSwineEnabled()) {
-      final boolean isSwine = isSwine(event.player);
-      final Pose forcedPose = event.player.getForcedPose();
-      // drop armor
-      if(isSwine && GreekFantasy.CONFIG.doesSwineDropArmor() && event.player.getRNG().nextInt(20) == 0) {
-        final Iterable<ItemStack> armor = ImmutableList.copyOf(event.player.getArmorInventoryList());
-        event.player.setItemStackToSlot(EquipmentSlotType.HEAD, ItemStack.EMPTY);
-        event.player.setItemStackToSlot(EquipmentSlotType.CHEST, ItemStack.EMPTY);
-        event.player.setItemStackToSlot(EquipmentSlotType.LEGS, ItemStack.EMPTY);
-        event.player.setItemStackToSlot(EquipmentSlotType.FEET, ItemStack.EMPTY);
-        for(final ItemStack i : armor) {
-          final ItemEntity item = event.player.entityDropItem(i);
-          if(item != null) {
-            item.setNoPickupDelay();
+    if((event.phase == TickEvent.Phase.START) && event.player.isAlive()) {
+      // update Swine pose and armor
+      if(GreekFantasy.CONFIG.isSwineEnabled()) {
+        final boolean isSwine = isSwine(event.player);
+        final Pose forcedPose = event.player.getForcedPose();
+        // drop armor
+        if(isSwine && GreekFantasy.CONFIG.doesSwineDropArmor() && event.player.getRNG().nextInt(20) == 0) {
+          final Iterable<ItemStack> armor = ImmutableList.copyOf(event.player.getArmorInventoryList());
+          event.player.setItemStackToSlot(EquipmentSlotType.HEAD, ItemStack.EMPTY);
+          event.player.setItemStackToSlot(EquipmentSlotType.CHEST, ItemStack.EMPTY);
+          event.player.setItemStackToSlot(EquipmentSlotType.LEGS, ItemStack.EMPTY);
+          event.player.setItemStackToSlot(EquipmentSlotType.FEET, ItemStack.EMPTY);
+          for(final ItemStack i : armor) {
+            final ItemEntity item = event.player.entityDropItem(i);
+            if(item != null) {
+              item.setNoPickupDelay();
+            }
           }
         }
+        // update the forced pose
+        if(isSwine && forcedPose != Pose.FALL_FLYING) {
+          // apply the forced pose
+          event.player.setForcedPose(Pose.FALL_FLYING);
+        } else if(!isSwine && Pose.FALL_FLYING == forcedPose) {
+          // clear the forced pose
+          event.player.setForcedPose(null);
+        }
       }
-      // update the forced pose
-      if(isSwine && forcedPose != Pose.FALL_FLYING) {
-        // apply the forced pose
-        event.player.setForcedPose(Pose.FALL_FLYING);
-      } else if(!isSwine && Pose.FALL_FLYING == forcedPose) {
-        // clear the forced pose
-        event.player.setForcedPose(null);
+      // place golden string if player is holding golden string
+      // TODO also check if player is in a maze structure
+      if(event.player.ticksExisted % 4 == 0 && (event.player.getHeldItemMainhand().getItem() == GFRegistry.GOLDEN_STRING || event.player.getHeldItemOffhand().getItem() == GFRegistry.GOLDEN_STRING)) {
+        BlockPos pos = event.player.getPosition();
+        BlockState current = event.player.getEntityWorld().getBlockState(pos);
+        BlockState string = GFRegistry.GOLDEN_STRING_BLOCK.getDefaultState().with(BlockStateProperties.WATERLOGGED, current.getFluidState().getFluid().isIn(FluidTags.WATER));
+        boolean replaceable = current.getMaterial() == Material.AIR || current.getMaterial() == Material.WATER;
+        if(replaceable && current.getBlock() != GFRegistry.GOLDEN_STRING_BLOCK 
+            && string.isValidPosition(event.player.getEntityWorld(), pos)) {
+          event.player.getEntityWorld().setBlockState(pos, string, 3);
+        }
       }
     }
   }
@@ -286,7 +305,7 @@ public class CommonForgeEventHandler {
   @SubscribeEvent
   public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
     // attempt to add rabbit-flees-cerastes goal
-    if(event.getEntity().getType() == EntityType.RABBIT && !event.getEntity().getEntityWorld().isRemote()) {
+    if(event.getEntity() != null && event.getEntity().getType() == EntityType.RABBIT && !event.getEntity().getEntityWorld().isRemote()) {
       final RabbitEntity rabbit = (RabbitEntity) event.getEntity();
       if(rabbit.getRabbitType() != 99) {
         rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, e -> !((CerastesEntity)e).isHiding(), 6.0F, 2.2D, 2.2D, EntityPredicates.CAN_AI_TARGET::test));        
@@ -300,7 +319,7 @@ public class CommonForgeEventHandler {
    */
   @SubscribeEvent
   public static void onEntitySpawn(final LivingSpawnEvent.SpecialSpawn event) {
-    if(event.getEntity().getType() == EntityType.WITCH && (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.getCirceChance()
+    if(event.getEntity() != null && event.getEntity().getType() == EntityType.WITCH && (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.getCirceChance()
         && event.getWorld() instanceof World) {
       event.setCanceled(true);
       // spawn Circe instead of witch

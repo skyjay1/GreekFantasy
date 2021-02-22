@@ -1,0 +1,18 @@
+{
+	"ambientocclusion": false,
+	"textures": {
+		"string": "greekfantasy:block/golden_string",
+		"particle": "greekfantasy:block/golden_string"
+	},
+	"elements": [
+		{
+			"from": [0, 1, 7],
+			"to": [7, 1, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 15]},
+			"faces": {
+				"up": {"uv": [7, 7, 0, 9], "texture": "#string"},
+				"down": {"uv": [7, 9, 0, 7], "texture": "#string"}
+			}
+		}
+	]
+}

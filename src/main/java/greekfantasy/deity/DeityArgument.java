@@ -20,7 +20,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public class DeityArgument implements ArgumentType<ResourceLocation> {
-  private static final Collection<String> EXAMPLES = Arrays.asList(new String[] { "greekfantasy:zeus", "hades" });
+  private static final Collection<String> EXAMPLES = Arrays.asList("greekfantasy:zeus", "hades");
   public static final DynamicCommandExceptionType DEITY_UNKNOWN = new DynamicCommandExceptionType(o -> new TranslationTextComponent("commands.deity.not_found", o));
 
   private static final Collection<ResourceLocation> SUGGESTIONS = new ArrayList<>();

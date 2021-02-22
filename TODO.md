@@ -9,6 +9,7 @@ __Key:__
 
 - Summoning animations not playing on dedicated server
   X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
+- _ Tameable Orthus
 
 ## Entity basics
 
@@ -114,8 +115,8 @@ __Key:__
 __Key:__
 `[Design] [Worldgen] [Loot]`
 
-- Complete: Hary Nests, Satyr Camps, Ara Camps, Small Marble/Limestone Shrine, Small Nether Shrine, Marble veins, Limestone veins, Python Pit
-- X X _ Cyclopes Cave
+- Complete: Hary Nests, Satyr Camps, Ara Camps, Small Marble/Limestone Shrine, Small Nether Shrine, Marble veins, Limestone veins, Python Pit, Cyclopes Cave
+- _ _ _ Labyrinth
 - _ _ _ Centaur Camps
 - _ _ _ Ruined Temple
 
@@ -124,7 +125,6 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- Complete: Harpy Nest, Limestone (raw, smooth, slab, pillar), Marble (raw, smooth, slab, pillar), Statues, Vase, Colored vases, Reeds (use for sticks or panflute), Gigante Head, Orthus Head, Cerberus Head, Mysterious box, Olive basics (log, wood, planks, slab, stair), Olive leaves, Olive sapling, Ichor Infused Block, Palladium (wooden statue that provides safety)
 - _ _ _ Other heads: Minotaur, Python, Medusa
 - _ _ _ Olive blocks: button, fence, boat, door, trapdoor, pressure plate, sign
 - _ _ _ Urn?
@@ -136,7 +136,6 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- Complete: Panflute, Clubs (wood, stone/flint, iron), Golden bridle (for Unicorn), Winged sandals, Horn (from Minotaur / Cyprians), Unicorn Horn (while holding, cures certain potion effects), Ambrosia (like ench. golden apple), Magic feather, Dragon's Tooth (to summon Sparti), Healing rod (cannot be used on self) (healing projectiles), Helm of Darkness (hides player _and_ armor) (from Cyclopes somehow), Flint Knife, Thunderbolt, Snake skin and Purified snake skin (from Gorgons), Ichor - crafting component from Elpis, Dog Claw - crafting component from Orthus, Fiery hide - crafting component from Cerberus (helm of darkness), Styxian shard - crafting component from Cyclopes (helm of darkness), Wild Rose - crafting component from Satyr (sword of the hunt), Conch Shell - place and remove water , Talos Heart - crafting component from Talos, Tough Snakeskin - crafting component from Python and Medusa, Bag of Wind - gives 30sec speed boost, Boar ear, boar tusk - crafting component from Giant Boar, Ivory sword - extra knockback, Swine Wand - inflicts Swine effect, Snake fang, Gorgon blood - 50% chance to heal and 50% chance to poison, Spawn eggs
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)
 - _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
@@ -144,8 +143,9 @@ __Key:__
 ## Achievements
 
 - Complete: Become petrified, Become cursed with Swine, Encounter Cerastes, Kill Shade, Tame a Unicorn, Obtain a Mysterious Box, Obtain Ambrosia, Obtain Winged Sandals (Much Fast, So Speed!), Summon / Kill a Cerberus, Summon / Kill a Geryon, Summon / Kill a Talos, Kill a Charybdis
+- _ Kill a Cretan Minotaur
 - _ Anger Dryads by chopping logs
-- _ Kill all minibosses: Python, Giant Boar
+- _ Kill all minibosses: Python, Giant Boar, Circe
 - _ Use a unicorn horn
 
 ## Other
@@ -155,6 +155,7 @@ __Key:__
 - Complete: "Overstep" enchantment, "Smashing" enchantment, "Hunting" enchantment, "Mirror" enchantment, "Flying" enchantment, "Fireflash" enchantment, "Daybreak" enchantment, "Lord of the Sea" enchantment
 - Complete: Olive forest biome
 - ~ Block and Item tags (wooden_doors, etc.)
+- _ Golden Apple tree (leaves rarely drop golden apples) (saplings must be crafted)
 
 ## Misc Ideas and Inspirations
 
@@ -184,7 +185,6 @@ _Can I do something with these?_
 - Horse of Diomedes (man-eating horse)
 - Underworld: underworld biome, tartarus, styx river, etc.
 - Underworld: Underworld pomegranate tree
-- Tree that very rarely grows golden apples
 - Belt of Aphrodite (maybe allows disguise as other player?)
 - Armor of Achilles (Hephaestus; said to be impenetrable)
 - Aegis (Zeus' shield)

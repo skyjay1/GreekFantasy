@@ -1,4 +1,4 @@
-package greekfantasy.structure.feature;
+package greekfantasy.feature;
 
 import java.util.Optional;
 import java.util.Random;

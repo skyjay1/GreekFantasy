@@ -266,7 +266,7 @@ public class FavorEventHandler {
   @SubscribeEvent
   public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
     // attempt to add player target goals
-    if(!event.getEntity().getEntityWorld().isRemote() && event.getEntity() instanceof MobEntity
+    if(event.getEntity() instanceof MobEntity && !event.getEntity().getEntityWorld().isRemote()
         && GreekFantasy.PROXY.getFavorConfiguration().hasEntity(event.getEntity().getType())
         && GreekFantasy.PROXY.getFavorConfiguration().getEntity(event.getEntity().getType()).hasHostileRange()) {
       final MobEntity mob = (MobEntity)event.getEntity();
@@ -275,7 +275,7 @@ public class FavorEventHandler {
       mob.targetSelector.addGoal(1, new NearestAttackableFavorablePlayerResetGoal(mob));
     }
     // attempt to add flee goals
-    if(!event.getEntity().getEntityWorld().isRemote() && event.getEntity() instanceof CreatureEntity
+    if(event.getEntity() instanceof CreatureEntity && !event.getEntity().getEntityWorld().isRemote()
         && GreekFantasy.PROXY.getFavorConfiguration().hasEntity(event.getEntity().getType())
         && GreekFantasy.PROXY.getFavorConfiguration().getEntity(event.getEntity().getType()).hasFleeRange()) {
       final CreatureEntity creature = (CreatureEntity)event.getEntity();
@@ -291,7 +291,7 @@ public class FavorEventHandler {
   @SubscribeEvent
   public static void onArrowJoinWorld(final EntityJoinWorldEvent event) {
     // attempt to add player target goals
-    if(!event.getEntity().getEntityWorld().isRemote() && event.getEntity() instanceof AbstractArrowEntity
+    if(event.getEntity() instanceof AbstractArrowEntity && !event.getEntity().getEntityWorld().isRemote()
         && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.ARROW_DAMAGE_MULTIPLIER)) {
       final AbstractArrowEntity arrow = (AbstractArrowEntity) event.getEntity();
       final Entity thrower = arrow.func_234616_v_();

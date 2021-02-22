@@ -96,7 +96,9 @@ public class ClientProxy extends Proxy {
   public void registerRenderLayers() {
     GreekFantasy.LOGGER.debug("registerRenderLayers");
     RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_SAPLING, RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.GOLDEN_APPLE_SAPLING, RenderType.getCutout());    
     RenderTypeLookup.setRenderLayer(GFRegistry.REEDS, RenderType.getCutout());
     RenderTypeLookup.setRenderLayer(GFRegistry.WILD_ROSE, RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.GOLDEN_STRING_BLOCK, RenderType.getCutout());
   }
 }

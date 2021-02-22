@@ -5,6 +5,7 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.client.particle.GorgonParticle;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -42,15 +43,27 @@ public class ClientModEventHandler {
   
   /**
    * Used to register block color handlers.
-   * Currently used to color Olive Leaves.
+   * Currently used to color leaves.
    * @param event the ColorHandlerEvent (Block)
    **/
   @SubscribeEvent
   public static void onBlockColors(final ColorHandlerEvent.Block event) {
     GreekFantasy.LOGGER.debug("registerBlockColors");
     event.getBlockColors().register(
-        (BlockState stateIn, IBlockDisplayReader world, BlockPos pos, int color) -> 0xD8E3D0, 
-        GFRegistry.OLIVE_LEAVES);
+        (BlockState stateIn, IBlockDisplayReader world, BlockPos pos, int color) -> 0xD8E3D0, GFRegistry.OLIVE_LEAVES);
+    event.getBlockColors().register(
+        (BlockState stateIn, IBlockDisplayReader world, BlockPos pos, int color) -> 0x80f66b, GFRegistry.GOLDEN_APPLE_LEAVES);
   }
   
+  /**
+   * Used to register item color handlers.
+   * Currently used to color leaves.
+   * @param event the ColorHandlerEvent (Item)
+   **/
+  @SubscribeEvent
+  public static void onBlockColors(final ColorHandlerEvent.Item event) {
+    GreekFantasy.LOGGER.debug("registerItemColors");
+    event.getItemColors().register((ItemStack item, int i) -> 0xD8E3D0, GFRegistry.OLIVE_LEAVES);
+    event.getItemColors().register((ItemStack item, int i) -> 0x80f66b, GFRegistry.GOLDEN_APPLE_LEAVES);
+  }  
 }

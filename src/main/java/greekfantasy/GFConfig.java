@@ -302,8 +302,8 @@ public class GFConfig {
         .define("medusa_boss_bar", true);
     CIRCE_BOSS_BAR = builder.comment("Whether to show the Circe boss bar")
         .define("circe_boss_bar", true);
-    CRETAN_BOSS_BAR = builder.comment("Whether to show the Cretan boss bar")
-        .define("cretan_boss_bar", false);
+    CRETAN_BOSS_BAR = builder.comment("Whether to show the Cretan Minotaur boss bar")
+        .define("cretan_boss_bar", true);
     ELPIS_SPAWN_CHANCE = builder.comment("Percent chance that opening a mysterious box spawns an Elpis")
         .defineInRange("elpis_spawn_chance", 60, 0, 100);
     NUM_SPARTI_SPAWNED = builder.comment("Number of Sparti spawned by using a hydra tooth")
@@ -378,7 +378,7 @@ public class GFConfig {
     FEATURES.put("harpy_nest", new BiomeWhitelistConfig(builder, "harpy_nest", 12, false, nonNetherHostileBlacklist));
     FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 17, false, nonNetherHostileBlacklist));
     FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 16, true, nether));
-    FEATURES.put("cyclopes_cave", new BiomeWhitelistConfig(builder, "cyclopes_cave", 2, true, plains));
+    FEATURES.put("cyclopes_cave", new BiomeWhitelistConfig(builder, "cyclopes_cave", 8, true, plains));
     FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 10, false, nonNetherHostileBlacklist));
     FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 15, false, concat(nonNetherHostileBlacklist, sandy)));
     FEATURES.put("python_pit", new BiomeWhitelistConfig(builder, "python_pit", 6, true, biomesAsList(BiomeDictionary.Type.JUNGLE)));
