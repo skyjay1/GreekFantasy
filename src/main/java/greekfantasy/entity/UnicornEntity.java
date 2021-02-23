@@ -91,6 +91,7 @@ public class UnicornEntity extends AbstractHorseEntity {
   public boolean isPotionApplicable(EffectInstance potioneffectIn) {
     if (potioneffectIn.getPotion().getEffectType() == EffectType.HARMFUL) {
       PotionEvent.PotionApplicableEvent event = new PotionEvent.PotionApplicableEvent(this, potioneffectIn);
+      event.setResult(Event.Result.DENY);
       MinecraftForge.EVENT_BUS.post(event);
       return event.getResult() == Event.Result.ALLOW;
     }

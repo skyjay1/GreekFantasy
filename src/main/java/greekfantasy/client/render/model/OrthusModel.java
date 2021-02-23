@@ -72,10 +72,39 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
 
   @Override
   public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
-      this.tail.rotateAngleY = -0.8F + MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-
+    // tail
+    if (entity.func_233678_J__()) {
+      this.tail.rotateAngleY = 0.0F;
+    } else {
+      this.tail.rotateAngleY = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+    }
+    // sitting / walking
+    if (entity.isEntitySleeping() || entity.isSitting()) {
+      this.mane.setRotationPoint(-1.0F, 16.0F, -3.0F);
+      this.mane.rotateAngleX = 1.2566371F;
+      this.mane.rotateAngleY = 0.0F;
+      
+      this.body.setRotationPoint(0.0F, 18.0F, 0.0F);
+      this.body.rotateAngleX = 0.7853982F;
+      
+      this.tail.setRotationPoint(-1.0F, 21.0F, 6.0F);
+      
+      this.legBackRight.setRotationPoint(-2.5F, 22.7F, 2.0F);
+      this.legBackRight.rotateAngleX = 4.712389F;
+      this.legBackLeft.setRotationPoint(0.5F, 22.7F, 2.0F);
+      this.legBackLeft.rotateAngleX = 4.712389F;
+      
+      this.legFrontRight.rotateAngleX = 5.811947F;
+      this.legFrontRight.setRotationPoint(-2.49F, 17.0F, -4.0F);
+      this.legFrontLeft.rotateAngleX = 5.811947F;
+      this.legFrontLeft.setRotationPoint(0.51F, 17.0F, -4.0F);
+    } else {
+      this.body.setRotationPoint(0.0F, 14.0F, 2.0F);
       this.body.rotateAngleX = 1.5707964F;
+      this.mane.setRotationPoint(-1.0F, 14.0F, -3.0F);
       this.mane.rotateAngleX = this.body.rotateAngleX;
+      
+      this.tail.setRotationPoint(-1.0F, 12.0F, 8.0F);      
 
       this.legBackRight.setRotationPoint(-2.5F, 16.0F, 7.0F);
       this.legBackLeft.setRotationPoint(0.5F, 16.0F, 7.0F);
@@ -86,12 +115,14 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
       this.legBackLeft.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.1415927F) * 1.4F * limbSwingAmount;
       this.legFrontRight.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.1415927F) * 1.4F * limbSwingAmount;
       this.legFrontLeft.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+    }
   }
 
   @Override
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
     this.head.rotateAngleX = rotationPitch * 0.017453292F;
     this.head.rotateAngleY = rotationYaw * 0.017453292F;
+    this.tail.rotateAngleX = 0.4F + 0.8F * limbSwingAmount;
   }
   
   public static ModelRenderer getHeadModel(final Model model, final float rotX, final float rotY, final float rotZ,

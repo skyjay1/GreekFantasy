@@ -43,7 +43,7 @@ __Key:__
 - X X ~ X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
 - X X ~ X X Miniboss: Medusa
-- X X X _ _ Miniboss: Cretan
+- X X X _ _ Miniboss: Cretan Minotaur
 - X X X ~ X Miniboss: Circe
 - X X X _ X Fury
 - X X ~ X X Drakaina

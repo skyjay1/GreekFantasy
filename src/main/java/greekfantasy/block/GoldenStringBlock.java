@@ -6,6 +6,7 @@ import java.util.Map;
 import greekfantasy.GFRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.Blocks;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
@@ -28,7 +29,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class GoldenStringBlock extends Block {
+public class GoldenStringBlock extends Block implements IWaterLoggable {
   
   public static final BooleanProperty NORTH = BooleanProperty.create("north");
   public static final BooleanProperty SOUTH = BooleanProperty.create("south");

@@ -44,7 +44,7 @@ import net.minecraft.world.server.ServerBossInfo;
 
 public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
   
-  private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.PINK, BossInfo.Overlay.PROGRESS));
+  private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS));
   
   protected static final Predicate<LivingEntity> NOT_SWINE = e -> (e != null && null == e.getActivePotionEffect(GFRegistry.SWINE_EFFECT));
   
@@ -75,6 +75,7 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this, WitchEntity.class, CirceEntity.class));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
     this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, NOT_SWINE.and(e -> GreekFantasy.CONFIG.canSwineApply(e.getType().getRegistryName().toString())).and(EntityPredicates.CAN_HOSTILE_AI_TARGET)));
     this.targetSelector.addGoal(4, new ResetTargetGoal());
   }
