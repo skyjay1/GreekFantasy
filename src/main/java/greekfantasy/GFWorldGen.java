@@ -228,7 +228,7 @@ public final class GFWorldGen {
       addFeature(event, "olive_tree_single", GenerationStage.Decoration.VEGETAL_DECORATION, OLIVE_TREE_SINGLE);    
       addFeature(event, "reeds_swamp", GenerationStage.Decoration.VEGETAL_DECORATION, SWAMP_REEDS);
       // add olive forest features
-      if(new ResourceLocation(MODID, "olive_forest").equals(event.getName())) {
+      if(OLIVE_FOREST.getLocation().equals(event.getName())) {
         event.getGeneration().withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, OLIVE_TREE_FOREST);
       }
     }

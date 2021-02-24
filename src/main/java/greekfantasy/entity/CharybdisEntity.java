@@ -3,7 +3,6 @@ package greekfantasy.entity;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 

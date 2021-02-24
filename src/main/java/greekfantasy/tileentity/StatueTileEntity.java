@@ -10,16 +10,21 @@ import greekfantasy.block.StatueBlock;
 import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
+import greekfantasy.deity.favor.IFavor;
+import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.util.ModelPart;
 import greekfantasy.util.StatuePose;
 import greekfantasy.util.StatuePoses;
 import net.minecraft.block.BlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IClearable;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.nbt.StringNBT;
@@ -155,6 +160,68 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   public void updateDeity() {
     this.deity = deityName.isEmpty() ? Deity.EMPTY : GreekFantasy.PROXY.DEITY.get(new ResourceLocation(deityName)).orElse(Deity.EMPTY);
     this.markDirty();
+  }
+  
+  public ItemStack handleItemInteraction(final PlayerEntity player, final IDeity deity, final IFavor favor, final ItemStack item) {
+    final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
+    // attempt to give the Apollo Bow item
+    if(favor.isEnabled() && item.getItem() == GFRegistry.CURSED_BOW && deity != Deity.EMPTY 
+        && deity.getName().equals(favorConfig.getApolloBowRange().getDeity().getName())
+        && favorConfig.getApolloBowRange().isInFavorRange(player, favor)) {
+      ItemStack bow = new ItemStack(GFRegistry.APOLLO_BOW);
+      bow.getItem().onCreated(bow, player.getEntityWorld(), player);
+      return bow;
+    }
+    // attempt to give the Artemis Bow item
+    if(favor.isEnabled() && item.getItem() == GFRegistry.CURSED_BOW && deity != Deity.EMPTY 
+        && deity.getName().equals(favorConfig.getArtemisBowRange().getDeity().getName())
+        && favorConfig.getArtemisBowRange().isInFavorRange(player, favor)) {
+      ItemStack bow = new ItemStack(GFRegistry.ARTEMIS_BOW);
+      bow.getItem().onCreated(bow, player.getEntityWorld(), player);
+      return bow;
+    }
+    // attempt to give the item the Flying enchantment
+    if(favor.isEnabled() && GreekFantasy.CONFIG.isFlyingEnabled() && item.getItem() == GFRegistry.WINGED_SANDALS 
+        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getFlyingDeityRange().getDeity().getName())
+        && favorConfig.getFlyingDeityRange().isInFavorRange(player, favor)
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, item) < 1) {
+      item.addEnchantment(GFRegistry.FLYING_ENCHANTMENT, 1);
+      item.setDamage(0);
+      return item;
+    }
+    // attempt to give the item the Lord of the Sea enchantment
+    if(GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == Items.TRIDENT
+        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getLordOfTheSeaDeityRange().getDeity().getName())
+        && favorConfig.getLordOfTheSeaDeityRange().isInFavorRange(player, favor)
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) < 1) {
+      item.addEnchantment(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, 1);
+      item.setDamage(0);
+      return item;
+    }
+    // attempt to give the item the Fireflash enchantment
+    if(GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == GFRegistry.THUNDERBOLT
+        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getFireflashDeityRange().getDeity().getName())
+        && favorConfig.getFireflashDeityRange().isInFavorRange(player, favor)
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FIREFLASH_ENCHANTMENT, item) < 1) {
+      item.addEnchantment(GFRegistry.FIREFLASH_ENCHANTMENT, 1);
+      item.setDamage(0);
+      return item;
+    }
+    // attempt to give the item the Daybreak enchantment
+    if(GreekFantasy.CONFIG.isDaybreakEnabled() && item.getItem() == Items.CLOCK
+        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getDaybreakDeityRange().getDeity().getName())
+        && favorConfig.getDaybreakDeityRange().isInFavorRange(player, favor)
+        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.DAYBREAK_ENCHANTMENT, item) < 1) {
+      final ItemStack enchantedClock = new ItemStack(Items.CLOCK);
+      enchantedClock.addEnchantment(GFRegistry.DAYBREAK_ENCHANTMENT, 1);
+      item.shrink(1);
+      ItemEntity drop = player.dropItem(enchantedClock, false);
+      if(drop != null) {
+        drop.setNoPickupDelay();
+      }
+      return item;
+    }
+    return item;
   }
   
   // Player Profile //

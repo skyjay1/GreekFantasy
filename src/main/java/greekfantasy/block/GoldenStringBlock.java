@@ -6,8 +6,8 @@ import java.util.Map;
 import greekfantasy.GFRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
@@ -17,17 +17,14 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class GoldenStringBlock extends Block implements IWaterLoggable {
   
@@ -43,8 +40,6 @@ public class GoldenStringBlock extends Block implements IWaterLoggable {
   protected static final VoxelShape SHAPE_SOUTH = Block.makeCuboidShape(3, 0, 13, 13, 1, 16);
   protected static final VoxelShape SHAPE_WEST = Block.makeCuboidShape(0, 0, 3, 3, 1, 13);
   protected static final Map<BlockState, VoxelShape> SHAPE_MAP = new HashMap<>();
-  
-  private String itemTranslationKey;
 
   public GoldenStringBlock(Properties properties) {
     super(properties);
@@ -113,10 +108,7 @@ public class GoldenStringBlock extends Block implements IWaterLoggable {
    */
   @Override
   public String getTranslationKey() {
-    if (this.itemTranslationKey == null) {
-      this.itemTranslationKey = Util.makeTranslationKey("item", ForgeRegistries.BLOCKS.getKey(this));
-    }
-    return this.itemTranslationKey;
+    return GFRegistry.GOLDEN_STRING.getTranslationKey();
   }
   
   @Override

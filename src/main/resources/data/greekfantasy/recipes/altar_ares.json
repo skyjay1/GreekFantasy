@@ -2,7 +2,7 @@
   "type": "crafting_shapeless",
   "ingredients": [
 	{ "item": "greekfantasy:marble_statue" },
-	{ "item": "minecraft:shield" }
+	{ "item": "minecraft:iron_sword" }
   ],
   "result": {
 	"item": "greekfantasy:altar_ares"

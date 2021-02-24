@@ -35,6 +35,8 @@ public class Proxy {
   public void registerContainerRenders() { }
   
   public void registerRenderLayers() { }
+
+  public void registerModelProperties() { }
     
   public void registerEventHandlers() {
     GreekFantasy.LOGGER.debug("registerEventHandlers");

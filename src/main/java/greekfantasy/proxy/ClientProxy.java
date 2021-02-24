@@ -17,6 +17,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
+import net.minecraft.item.ItemModelsProperties;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -100,5 +102,39 @@ public class ClientProxy extends Proxy {
     RenderTypeLookup.setRenderLayer(GFRegistry.REEDS, RenderType.getCutout());
     RenderTypeLookup.setRenderLayer(GFRegistry.WILD_ROSE, RenderType.getCutout());
     RenderTypeLookup.setRenderLayer(GFRegistry.GOLDEN_STRING_BLOCK, RenderType.getCutout());
+  }
+  
+  @Override
+  public void registerModelProperties() { 
+    // Apollo Bow properties
+    ItemModelsProperties.registerProperty(GFRegistry.APOLLO_BOW, new ResourceLocation("pull"),
+        (item, world, entity) -> {
+          if (entity == null) return 0.0F;
+          if (entity.getActiveItemStack() != item) return 0.0F;
+          return (item.getUseDuration() - entity.getItemInUseCount()) / 20.0F;
+        });
+    ItemModelsProperties.registerProperty(GFRegistry.APOLLO_BOW, new ResourceLocation("pulling"),
+        (item, world, entity) -> (entity != null && entity.isHandActive() && entity.getActiveItemStack() == item) ? 1.0F : 0.0F);
+    
+    // Artemis Bow properties
+    ItemModelsProperties.registerProperty(GFRegistry.ARTEMIS_BOW, new ResourceLocation("pull"),
+        (item, world, entity) -> {
+          if (entity == null) return 0.0F;
+          if (entity.getActiveItemStack() != item) return 0.0F;
+          return (item.getUseDuration() - entity.getItemInUseCount()) / 20.0F;
+        });
+    ItemModelsProperties.registerProperty(GFRegistry.ARTEMIS_BOW, new ResourceLocation("pulling"),
+        (item, world, entity) -> (entity != null && entity.isHandActive() && entity.getActiveItemStack() == item) ? 1.0F : 0.0F);
+    
+    // Cursed Bow properties
+    ItemModelsProperties.registerProperty(GFRegistry.CURSED_BOW, new ResourceLocation("pull"),
+        (item, world, entity) -> {
+          if (entity == null) return 0.0F;
+          if (entity.getActiveItemStack() != item) return 0.0F;
+          return (item.getUseDuration() - entity.getItemInUseCount()) / 20.0F;
+        });
+    ItemModelsProperties.registerProperty(GFRegistry.CURSED_BOW, new ResourceLocation("pulling"),
+        (item, world, entity) -> (entity != null && entity.isHandActive() && entity.getActiveItemStack() == item) ? 1.0F : 0.0F);
+    
   }
 }

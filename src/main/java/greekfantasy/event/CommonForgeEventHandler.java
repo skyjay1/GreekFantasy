@@ -176,7 +176,7 @@ public class CommonForgeEventHandler {
       }
       // place golden string if player is holding golden string
       // TODO also check if player is in a maze structure
-      if(event.player.ticksExisted % 4 == 0 && (event.player.getHeldItemMainhand().getItem() == GFRegistry.GOLDEN_STRING || event.player.getHeldItemOffhand().getItem() == GFRegistry.GOLDEN_STRING)) {
+      if(event.player.ticksExisted % 4 == 0 && (event.player.getHeldItemMainhand().getItem() == GFRegistry.GOLDEN_BALL || event.player.getHeldItemOffhand().getItem() == GFRegistry.GOLDEN_BALL)) {
         BlockPos pos = event.player.getPosition();
         BlockState current = event.player.getEntityWorld().getBlockState(pos);
         BlockState string = GFRegistry.GOLDEN_STRING_BLOCK.getDefaultState().with(BlockStateProperties.WATERLOGGED, current.getFluidState().getFluid().isIn(FluidTags.WATER));

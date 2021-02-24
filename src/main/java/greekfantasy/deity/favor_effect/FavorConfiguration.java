@@ -64,6 +64,10 @@ public class FavorConfiguration {
   public FavorRange getFireflashDeityRange() { return getEnchantmentMap().getOrDefault("fireflash_enchantment", FavorRange.EMPTY); }
 
   public FavorRange getDaybreakDeityRange() { return getEnchantmentMap().getOrDefault("daybreak_enchantment", FavorRange.EMPTY); }
+  
+  public FavorRange getApolloBowRange() { return getEnchantmentMap().getOrDefault("apollo_bow", FavorRange.EMPTY); }
+  
+  public FavorRange getArtemisBowRange() { return getEnchantmentMap().getOrDefault("artemis_bow", FavorRange.EMPTY); }
 
   public ConfiguredFavorRange getEntity(final EntityType<?> type) {
     return getEntityTargetMap().getOrDefault(type.getRegistryName(), ConfiguredFavorRange.EMPTY);

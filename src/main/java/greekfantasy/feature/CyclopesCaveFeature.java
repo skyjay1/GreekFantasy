@@ -6,7 +6,6 @@ import com.mojang.serialization.Codec;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.AraEntity;
 import greekfantasy.entity.CyclopesEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;

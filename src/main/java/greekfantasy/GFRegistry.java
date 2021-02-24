@@ -182,8 +182,16 @@ public final class GFRegistry {
   public static final Item BOAR_EAR = null;
   @ObjectHolder("swine_wand")
   public static final Item SWINE_WAND = null;
+  @ObjectHolder("golden_ball")
+  public static final Item GOLDEN_BALL = null;
   @ObjectHolder("golden_string")
   public static final Item GOLDEN_STRING = null;
+  @ObjectHolder("cursed_bow")
+  public static final Item CURSED_BOW = null;
+  @ObjectHolder("artemis_bow")
+  public static final Item ARTEMIS_BOW = null;
+  @ObjectHolder("apollo_bow")
+  public static final Item APOLLO_BOW = null;
   
   // Block //
   @ObjectHolder("reeds")
@@ -643,6 +651,12 @@ public final class GFRegistry {
         new SwineWandItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
             .maxDamage(GreekFantasy.CONFIG.SWINE_WAND_DURABILITY.get()))
           .setRegistryName(MODID, "swine_wand"),
+        new EnchantedBowItem.CursedBowItem(new Item.Properties().maxDamage(384).group(GREEK_GROUP))
+          .setRegistryName(MODID, "cursed_bow"),
+        new EnchantedBowItem.ApolloBowItem(new Item.Properties().maxDamage(620).group(GREEK_GROUP))
+          .setRegistryName(MODID, "apollo_bow"),
+        new EnchantedBowItem.ArtemisBowItem(new Item.Properties().maxDamage(562).group(GREEK_GROUP))
+          .setRegistryName(MODID, "artemis_bow"),
         new MirrorItem(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "mirror"),
         new SnakeskinArmorItem(EquipmentSlotType.HEAD, new Item.Properties().group(GREEK_GROUP))
@@ -698,7 +712,9 @@ public final class GFRegistry {
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "fiery_bat_wing"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(MODID, "golden_string")
+          .setRegistryName(MODID, "golden_string"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "golden_ball")
     );
     
     // block items

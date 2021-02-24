@@ -6,8 +6,8 @@
     "###"
   ],
   "key": {
-    "#": { "item": "greekfantasy:cursed_hair" },
-    "O": { "item": "minecraft:gold_block" }
+    "O": { "item": "greekfantasy:cursed_hair" },
+    "#": { "item": "minecraft:gold_nugget" }
   },
   "result": {
     "item": "greekfantasy:golden_string"

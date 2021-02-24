@@ -1,0 +1,6 @@
+{
+    "parent": "greekfantasy:item/cursed_bow",
+    "textures": {
+        "layer0": "greekfantasy:item/cursed_bow_pulling_1"
+    }
+}

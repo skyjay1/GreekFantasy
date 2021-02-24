@@ -1,0 +1,6 @@
+{
+    "parent": "greekfantasy:item/apollo_bow",
+    "textures": {
+        "layer0": "greekfantasy:item/apollo_bow_pulling_1"
+    }
+}

@@ -136,6 +136,7 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
+- X X ~ Bow of Apollo, Bow of Artemis, Cursed Bow
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)
 - _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
@@ -162,6 +163,7 @@ __Key:__
 _Can I do something with these?_
 
 - Muses: Calliope, Clio, Erato, Euterpe, Melpomene, Polyhymnia, Terpsichore, Thalia, Urania
+- Amazons (fight like players w/ sword and shield, can be hired) (queen is Hippolyta)
 - Ophiotaur (kill to obtain heart; use heart to kill a god)
 - Makhai (6 arms)
 - Eurynomos (blue skin; vulture head?)
@@ -183,14 +185,14 @@ _Can I do something with these?_
 - Blemmyes (headless biped)
 - Pandos (biped, giant ears)
 - Horse of Diomedes (man-eating horse)
-- Underworld: underworld biome, tartarus, styx river, etc.
+- Underworld: underworld biome, tartarus, styx river, meadow of Asphodels, etc.
 - Underworld: Underworld pomegranate tree
 - Belt of Aphrodite (maybe allows disguise as other player?)
 - Armor of Achilles (Hephaestus; said to be impenetrable)
 - Aegis (Zeus' shield)
 - Adamant Scythe (Kronus)
 - Special swords: Harpe (sword used to slay Medusa)
-- Special bows: Apollo, Artemis, Eurytus
+- Special bows: Eurytus
 - Thyrsus: staff with pinecone and ivy leaves used by Dionysus ("Wild Staff") - what would it do?
 - Amazonian Girdle (Hippolyta)
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)

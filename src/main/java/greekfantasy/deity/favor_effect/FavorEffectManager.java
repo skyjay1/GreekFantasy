@@ -11,6 +11,8 @@ import greekfantasy.deity.favor.FavorLevel;
 import greekfantasy.deity.favor.IFavor;
 import greekfantasy.event.FavorChangedEvent;
 import net.minecraft.advancements.FunctionManager;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.FunctionObject;
 import net.minecraft.entity.Entity;
@@ -18,13 +20,13 @@ import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -35,8 +37,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class FavorEffectManager {
@@ -181,15 +181,20 @@ public class FavorEffectManager {
     if(entityTag.isPresent() && worldIn instanceof IServerWorld) {
       final Optional<EntityType<?>> entityType = EntityType.readEntityType(entityTag.get());
       if(entityType.isPresent()) {
+        Entity entity = entityType.get().create(worldIn);
         // find a place to spawn the entity
         Random rand = playerIn.getRNG();
         BlockPos spawnPos;        
         for(int attempts = 24, range = 9; attempts > 0; attempts--) {
           spawnPos = playerIn.getPosition().add(rand.nextInt(range) - rand.nextInt(range), rand.nextInt(2) - rand.nextInt(2), rand.nextInt(range) - rand.nextInt(range));
           // check if this is a valid position
-          if(EntitySpawnPlacementRegistry.canSpawnEntity(entityType.get(), (IServerWorld)worldIn, SpawnReason.MOB_SUMMONED, spawnPos, rand)) {
+          boolean isValidSpawn = EntitySpawnPlacementRegistry.canSpawnEntity(entityType.get(), (IServerWorld)worldIn, SpawnReason.MOB_SUMMONED, spawnPos, rand) 
+              || (entity instanceof WaterMobEntity && worldIn.getBlockState(spawnPos).isIn(Blocks.WATER))
+              || (!(entity instanceof WaterMobEntity) && worldIn.getBlockState(spawnPos.down()).isSolid()
+                  && worldIn.getBlockState(spawnPos).getMaterial() == Material.AIR
+                  && worldIn.getBlockState(spawnPos.up()).getMaterial() == Material.AIR);
+          if(isValidSpawn) {
             // spawn the entity at this position and finish
-            Entity entity = entityType.get().create(worldIn);
             entity.read(entityTag.get());
             entity.setPosition(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.01D, spawnPos.getZ() + 0.5D);
             return worldIn.addEntity(entity);
