@@ -130,6 +130,7 @@ public final class GFRegistry {
   public static EntityType<NaiadEntity> NAIAD_ENTITY = buildEntityType(NaiadEntity::new, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, b -> {});
   public static EntityType<OrthusEntity> ORTHUS_ENTITY = buildEntityType(OrthusEntity::new, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<OrthusHeadItemEntity> ORTHUS_HEAD_ITEM_ENTITY = buildEntityType(OrthusHeadItemEntity::new, "orthus_head_item", 0.25F, 0.25F, EntityClassification.MISC, b -> b.disableSummoning().trackingRange(6).func_233608_b_(20));
+  public static EntityType<PegasusEntity> PEGASUS_ENTITY = buildEntityType(PegasusEntity::new, "pegasus", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
   public static EntityType<PoisonSpitEntity> POISON_SPIT_ENTITY = buildEntityType(PoisonSpitEntity::new, "poison_spit", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
   public static EntityType<PythonEntity> PYTHON_ENTITY = buildEntityType(PythonEntity::new, "python", 1.4F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<SatyrEntity> SATYR_ENTITY = buildEntityType(SatyrEntity::new, "satyr", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
@@ -449,6 +450,7 @@ public final class GFRegistry {
     registerEntityType(event, MINOTAUR_ENTITY, "minotaur", MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight);
     registerEntityType(event, NAIAD_ENTITY, "naiad", NaiadEntity::getAttributes, NaiadEntity::canNaiadSpawnOn);
     registerEntityType(event, ORTHUS_ENTITY, "orthus", OrthusEntity::getAttributes, OrthusEntity::canSpawnOn);
+    registerEntityType(event, PEGASUS_ENTITY, "pegasus", PegasusEntity::getAttributes, null); // TODO spawning?
     registerEntityType(event, PYTHON_ENTITY, "python", PythonEntity::getAttributes, null);
     registerEntityType(event, SATYR_ENTITY, "satyr", SatyrEntity::getAttributes, SatyrEntity::canSpawnOn);
     registerEntityType(event, SHADE_ENTITY, "shade", ShadeEntity::getAttributes, ShadeEntity::canMonsterSpawnInLight);
@@ -779,6 +781,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, MINOTAUR_ENTITY, "minotaur", 0x443626, 0x734933);
     registerSpawnEgg(event, NAIAD_ENTITY, "naiad",  0x7caba1, 0xe67830);
     registerSpawnEgg(event, ORTHUS_ENTITY, "orthus", 0x493569, 0xe42e2e);
+    registerSpawnEgg(event, PEGASUS_ENTITY, "pegasus", 0xeeeeee, 0xe8e8e8);
     registerSpawnEgg(event, PYTHON_ENTITY, "python", 0x3a8228, 0x1e4c11);
     registerSpawnEgg(event, SATYR_ENTITY, "satyr", 0x54371d, 0xa16648);
     registerSpawnEgg(event, SHADE_ENTITY, "shade", 0x222222, 0x000000);

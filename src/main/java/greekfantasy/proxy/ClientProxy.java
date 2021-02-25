@@ -68,6 +68,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.NAIAD_ENTITY, NaiadRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ORTHUS_ENTITY, OrthusRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ORTHUS_HEAD_ITEM_ENTITY, m -> new ItemRenderer(m, Minecraft.getInstance().getItemRenderer()));
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.PEGASUS_ENTITY, PegasusRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.POISON_SPIT_ENTITY, PoisonSpitRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.PYTHON_ENTITY, PythonRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SATYR_ENTITY, SatyrRenderer::new);

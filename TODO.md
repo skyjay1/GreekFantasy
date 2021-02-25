@@ -49,7 +49,7 @@ __Key:__
 - X X ~ X X Drakaina
 - X X X X X Arion (very fast horse, use gold)
 - X X X X X Whirl (give it Heart of Sea to convert into Charybdis)
-- _ _ _ _ _ Stymphalian bird (iron wings/claws/beaks)
+- _ _ _ _ _ Pegasus
 
 ## Entity AI
 
@@ -60,7 +60,6 @@ __Key:__
 - X Talos shoots arrows
 - X Charybdis swirls entities
 - X Charybdis throws entities
-- _ Stymphalian birds throw feathers that do damage
 - X Dryads hide in trees
 - X Dryads are angry when player chops wood
 - X Dryads heal self over time
@@ -182,6 +181,7 @@ _Can I do something with these?_
 - Phoenix
 - Pegasus (and bull-like twin, Chrysaor)
 - Werewolf
+- Stymphalian bird
 - Kyno (dog-head biped; see also "Cynocephaly")
 - Blemmyes (headless biped)
 - Pandos (biped, giant ears)
