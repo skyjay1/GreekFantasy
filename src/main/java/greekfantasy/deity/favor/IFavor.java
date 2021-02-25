@@ -157,7 +157,7 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
     for(final Entry<ResourceLocation, FavorLevel> entry : getAllFavor().entrySet()) {
       final CompoundNBT deityTag = new CompoundNBT();
       deityTag.putString(NAME, entry.getKey().toString());
-      deityTag.putLong(FAVOR, entry.getValue().getFavor());
+      deityTag.put(FAVOR, entry.getValue().serializeNBT());
       deities.add(deityTag);
     }
     nbt.put(FAVOR_LEVELS, deities);
@@ -175,8 +175,10 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
     for(int i = 0, l = deities.size(); i < l; i++) {
       final CompoundNBT deity = deities.getCompound(i);
       final String name = deity.getString(NAME);
-      final long favor = deity.getLong(FAVOR);
-      setFavor(new ResourceLocation(name), new FavorLevel(favor));
+      final FavorLevel level = deity.contains(FAVOR, 10) 
+          ? new FavorLevel(deity.getCompound(FAVOR)) 
+          : new FavorLevel(deity.getLong(FAVOR));
+      setFavor(new ResourceLocation(name), level);
     }
     setEnabled((!nbt.contains(ENABLED)) || nbt.getBoolean(ENABLED));
     setEffectTimestamp(nbt.getLong(TIMESTAMP));

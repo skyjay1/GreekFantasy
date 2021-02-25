@@ -23,7 +23,6 @@ public abstract class EnchantedBowItem extends BowItem {
     super(builder);
   }
 
-
   /**
    * Called when the player stops using an Item (stops holding the right mouse button).
    */
@@ -58,7 +57,7 @@ public abstract class EnchantedBowItem extends BowItem {
               abstractarrowentity = customArrow(abstractarrowentity);
               // params: thrower, rotationPitch, rotationYaw, ???, speed, inaccuracy
               abstractarrowentity.func_234612_a_(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, f * 3.0F,
-                  1.0F + 10.0F * arrows);
+                  (arrows > 0 ? 8.0F : 1.0F));
               if (f == 1.0F) {
                 abstractarrowentity.setIsCritical(true);
               }
@@ -150,10 +149,13 @@ public abstract class EnchantedBowItem extends BowItem {
       if(EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) < 1) {
         stack.addEnchantment(Enchantments.FLAME, 1);
       }
+      if(EnchantmentHelper.getEnchantmentLevel(Enchantments.VANISHING_CURSE, stack) < 1) {
+        stack.addEnchantment(Enchantments.VANISHING_CURSE, 1);
+      }
     }
     
     @Override
-    protected int getNumBaseEnchantments() { return 1; }
+    protected int getNumBaseEnchantments() { return 2; }
 
     @Override
     protected float getArrowVelocityMultiplier() { return 1.0F; }
@@ -175,10 +177,16 @@ public abstract class EnchantedBowItem extends BowItem {
     protected int getNumBaseEnchantments() { return 1; }
 
     @Override
-    protected float getArrowVelocityMultiplier() { return 1.5F; }
+    protected float getArrowVelocityMultiplier() { return 1.25F; }
     
     @Override
     protected int getArrowCount(final ItemStack stack) { return 2; }
+    
+    @Override
+    public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
+      arrow.setDamage(arrow.getDamage() * 1.25D);
+      return arrow;
+    }
   }
   
   public static class ApolloBowItem extends EnchantedBowItem {
@@ -201,5 +209,11 @@ public abstract class EnchantedBowItem extends BowItem {
     
     @Override
     protected int getArrowCount(final ItemStack stack) { return 2; }
+    
+    @Override
+    public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
+      arrow.setDamage(arrow.getDamage() * 1.75D);
+      return arrow;
+    }
   }
 }

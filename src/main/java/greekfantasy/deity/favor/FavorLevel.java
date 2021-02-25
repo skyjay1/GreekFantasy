@@ -3,22 +3,34 @@ package greekfantasy.deity.favor;
 import greekfantasy.deity.IDeity;
 import greekfantasy.event.FavorChangedEvent;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.INBTSerializable;
 
-public class FavorLevel {
+public class FavorLevel implements INBTSerializable<CompoundNBT> {
   
-  public static final int MAX_LEVEL = 10;
-  public static final long MAX_FAVOR = calculateFavor(MAX_LEVEL + 1) - 1;
+  public static final int MAX_FAVOR_LEVEL = 10;
+  public static final long MAX_FAVOR_POINTS = calculateFavor(MAX_FAVOR_LEVEL + 1) - 1;
   
   public static final String FAVOR = "Favor";
+  public static final String MIN_LEVEL = "MinLevel";
+  public static final String MAX_LEVEL = "MaxLevel";
     
   private long favor;
   private int level;
+  private int minLevel = -MAX_FAVOR_LEVEL;
+  private int maxLevel = MAX_FAVOR_LEVEL;
   
-  public FavorLevel(final long f) {
+  public FavorLevel(final long f) { this(f, -MAX_FAVOR_LEVEL, MAX_FAVOR_LEVEL); }
+  
+  public FavorLevel(final long f, final int min, final int max) {
     setFavor(f); 
+  }
+  
+  public FavorLevel(final CompoundNBT nbt) {
+    this.deserializeNBT(nbt);
   }
     
   /**
@@ -29,15 +41,22 @@ public class FavorLevel {
    * @param favorIn the new favor value
    */
   public void setFavor(long favorIn) {
-    if(favor != favorIn) {
-      // update favor and level
-      this.favor = clamp(favorIn, -MAX_FAVOR, MAX_FAVOR);
-      this.level = calculateLevel(favor);
-    }
+    // update favor and level
+    this.favor = clamp(favorIn, calculateFavor(minLevel - 1) + 1, calculateFavor(maxLevel + 1) - 1);
+    this.level = calculateLevel(favor);
   }
   
   /** @return the current favor value **/
   public long getFavor() { return favor; }
+
+  /** @return the current favor level **/
+  public int getLevel() { return level; }
+  
+  /** @return the lower bound of this favor level **/
+  public int getMinLevel() { return minLevel; }
+  
+  /** @return the upper bound of this favor level **/
+  public int getMaxLevel() { return maxLevel; }
   
   /**
    * Context-aware method to add favor that also posts an event for any listeners.
@@ -82,15 +101,18 @@ public class FavorLevel {
   public long depleteFavor(final PlayerEntity playerIn, final IDeity deityIn, final long toRemove, final FavorChangedEvent.Source source) {
     return addFavor(playerIn, deityIn, Math.min(Math.abs(favor), Math.abs(toRemove)) * -1 * (long)Math.signum(favor), source);
   }
-
-  /** @return the current favor level **/
-  public int getLevel() { return level; }
+  
+  public void setLevelBounds(final int min, final int max) {
+    minLevel = min;
+    maxLevel = max;
+    setFavor(favor);
+  }
   
   /** @return the favor value required to advance to the next level **/
-  public long getFavorToNextLevel() { return calculateFavor(level + (int)Math.signum(favor)); }
+  public long getFavorToNextLevel() { return (level == minLevel || level == maxLevel) ? 0 : calculateFavor(level + (int)Math.signum(favor)); }
   
   /** @return the percent of favor that has been earned (always positive) **/
-  public double getPercentFavor() { return Math.abs((double)favor / (double)MAX_FAVOR); }
+  public double getPercentFavor() { return Math.abs((double)favor / (double)(0.1D + calculateFavor(maxLevel) - calculateFavor(minLevel))); }
   
   public int compareToAbs(FavorLevel other) { return (int) (Math.abs(this.getFavor()) - Math.abs(other.getFavor())); }
 
@@ -100,13 +122,29 @@ public class FavorLevel {
    * @param deity the deity associated with this favor level
    */
   public void sendStatusMessage(final PlayerEntity playerIn, final IDeity deity) {
-    long favorToNext = Math.min(MAX_FAVOR, getFavorToNextLevel());
+    long favorToNext = Math.min(calculateFavor(maxLevel), getFavorToNextLevel());
     playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", deity.getText(), getFavor(), (favorToNext == 0 ? "--" : favorToNext), getLevel()).mergeStyle(TextFormatting.LIGHT_PURPLE), false);
+  }
+
+  @Override
+  public CompoundNBT serializeNBT() {
+    final CompoundNBT nbt = new CompoundNBT();
+    nbt.putLong(FAVOR, favor);
+    nbt.putInt(MIN_LEVEL, minLevel);
+    nbt.putInt(MAX_LEVEL, maxLevel);
+    return nbt;
+  }
+
+  @Override
+  public void deserializeNBT(CompoundNBT nbt) {
+    minLevel = nbt.getInt(MIN_LEVEL);
+    maxLevel = nbt.getInt(MAX_LEVEL);
+    setFavor(nbt.getLong(FAVOR));
   }
   
   @Override
   public String toString() {
-    return Long.toString(favor) + " [" + Integer.toString(level) + "]";
+    return favor + " (" + level + ") range[" + minLevel + "," + maxLevel + "]";
   }
   
   /** @return the favor level based on amount of favor **/
@@ -131,7 +169,7 @@ public class FavorLevel {
    * @param max the maximum value
    * @return the number, or the min or max if num is out of range
    */
-  public static long clamp(final long num, final long min, final long max) {
+  private static long clamp(final long num, final long min, final long max) {
     if(num <= min) return min; 
     else if(num >= max) return max;
     else return num;

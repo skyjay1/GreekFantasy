@@ -262,11 +262,12 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 1, 0xFFFFFF);
     this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.level").mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 3, 0xFFFFFF);
-    this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(level.getLevel() + " / " + (int)(FavorLevel.MAX_LEVEL * Math.signum(curFavor + 1)))).mergeStyle(TextFormatting.DARK_PURPLE), 
+    this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(level.getLevel() + " / " + (curFavor < 0 ? level.getMinLevel() : level.getMaxLevel()))).mergeStyle(TextFormatting.DARK_PURPLE), 
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 4, 0xFFFFFF);
     this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.next_level").mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 6, 0xFFFFFF);
-    this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(nextFavor - curFavor)).mergeStyle(TextFormatting.DARK_PURPLE), 
+    final boolean capped = level.getLevel() == level.getMinLevel() || level.getLevel() == level.getMaxLevel();
+    this.font.func_243248_b(matrixStack, new StringTextComponent(capped ? "--" : String.valueOf(nextFavor - curFavor)).mergeStyle(TextFormatting.DARK_PURPLE), 
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 7, 0xFFFFFF);
   }
   

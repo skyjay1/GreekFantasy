@@ -136,7 +136,8 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- X X ~ Bow of Apollo, Bow of Artemis, Cursed Bow
+- X X X Bow of Apollo, Bow of Artemis, Cursed Bow
+- X X _ Horn of Plenty
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Javelin or Bident (wood, stone/flint, iron)
 - _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.

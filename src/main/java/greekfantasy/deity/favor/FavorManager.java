@@ -293,7 +293,7 @@ public class FavorManager {
   public static boolean onGiveItem(final StatueTileEntity altar, final IDeity deity,
       final PlayerEntity playerIn, final FavorLevel info, final ItemStack item) {
     final long favorModifier = deity.getItemFavorModifier(item.getItem());
-    if(favorModifier != 0 && (info.getFavor() + favorModifier) <= FavorLevel.MAX_FAVOR) {
+    if(favorModifier != 0 && (info.getFavor() + favorModifier) <= FavorLevel.MAX_FAVOR_POINTS) {
       info.addFavor(playerIn, deity, favorModifier, Source.GIVE_ITEM);
       if(!playerIn.isCreative()) {
         item.shrink(1);

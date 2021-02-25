@@ -213,12 +213,12 @@
     },
     "apollo_bow": { 
       "deity": "greekfantasy:apollo",
-      "minlevel": 10,
+      "minlevel": 5,
       "maxlevel": 10
     },
     "artemis_bow": { 
       "deity": "greekfantasy:artemis",
-      "minlevel": 10,
+      "minlevel": 5,
       "maxlevel": 10
     }
   },

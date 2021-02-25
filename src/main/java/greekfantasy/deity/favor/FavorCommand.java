@@ -63,6 +63,19 @@ public class FavorCommand {
                         .executes(command -> queryFavor(command.getSource(), EntityArgument.getPlayer(command, "target"), DeityArgument.getDeityId(command, "deity"), Type.LEVELS))))
                 .then(Commands.literal("enabled")
                     .executes(command -> queryEnabled(command.getSource(), EntityArgument.getPlayer(command, "target"))))))
+        .then(Commands.literal("cap")
+            .then(Commands.argument("target", EntityArgument.players())
+                .then(Commands.argument("deity", DeityArgument.deity())
+                    .then(Commands.argument("min", IntegerArgumentType.integer())
+                        .then(Commands.argument("max", IntegerArgumentType.integer())
+                            .executes(command -> setCap(command.getSource(), EntityArgument.getPlayers(command, "target"), DeityArgument.getDeityId(command, "deity"), 
+                                IntegerArgumentType.getInteger(command, "min"), IntegerArgumentType.getInteger(command, "max"), Type.LEVELS))
+                            .then(Commands.literal("points")
+                                .executes(command -> setCap(command.getSource(), EntityArgument.getPlayers(command, "target"), DeityArgument.getDeityId(command, "deity"), 
+                                IntegerArgumentType.getInteger(command, "min"), IntegerArgumentType.getInteger(command, "max"), Type.POINTS)))
+                            .then(Commands.literal("levels")
+                                .executes(command -> setCap(command.getSource(), EntityArgument.getPlayers(command, "target"), DeityArgument.getDeityId(command, "deity"), 
+                                IntegerArgumentType.getInteger(command, "min"), IntegerArgumentType.getInteger(command, "max"), Type.LEVELS)))))))) 
     );
     
     commandSource.register(Commands.literal("favor")
@@ -167,6 +180,30 @@ public class FavorCommand {
     return players.size();
   }
   
+  private static int setCap(CommandSource source, Collection<ServerPlayerEntity> players, ResourceLocation deity, int min, int max, Type type) throws CommandSyntaxException {
+    // cap favor for each player in the collection
+    final IDeity ideity = GreekFantasy.PROXY.DEITY.get(deity).orElse(Deity.EMPTY);
+    int actualMin = Math.min(min, max);
+    int actualMax = Math.max(min, max);
+    IFavor favor;
+    for(final ServerPlayerEntity player : players) {
+      favor = player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance());
+      if(!favor.isEnabled()) {
+        throw FAVOR_DISABLED_EXCEPTION.create(player.getDisplayName());
+      }
+      type.favorCapper.accept(player, favor, ideity, actualMin, actualMax);
+    }
+    // send command feedback
+    if (players.size() == 1) {
+      source.sendFeedback(new TranslationTextComponent("commands.favor.cap." + type.name + ".success.single", actualMin, actualMax, ideity.getText(), players.iterator().next().getDisplayName()), true);
+    } else {
+      source.sendFeedback(new TranslationTextComponent("commands.favor.cap." + type.name + ".success.multiple", actualMin, actualMax, ideity.getText(), players.size()), true);
+    } 
+    
+    return players.size();
+  }
+
+  
   static enum Type {
     POINTS("points", 
       (p, f, d, a) -> (int)f.getFavor(d).getFavor(), 
@@ -177,6 +214,10 @@ public class FavorCommand {
       (p, f, d, a) -> {
         f.getFavor(d).addFavor(p, d, a, FavorChangedEvent.Source.COMMAND);
         return a;
+      },
+      (p, f, d, a1, a2) -> {
+        f.getFavor(d).setLevelBounds(FavorLevel.calculateLevel(a1), FavorLevel.calculateLevel(a2));
+        return a2 - a1;
       }
     ),
     LEVELS("levels", 
@@ -188,6 +229,10 @@ public class FavorCommand {
       (p, f, d, a) -> {
         f.getFavor(d).addFavor(p, d, FavorLevel.calculateFavor(a) + (long)Math.signum(a), FavorChangedEvent.Source.COMMAND);
         return a;
+      },
+      (p, f, d, a1, a2) -> {
+        f.getFavor(d).setLevelBounds(a1, a2);
+        return a2 - a1;
       }
     );
     
@@ -195,17 +240,24 @@ public class FavorCommand {
     public final IFavorFunction favorGetter;
     public final IFavorFunction favorSetter;
     public final IFavorFunction favorAdder;
+    public final IXFavorFunction favorCapper;
 
-    Type(final String key, final IFavorFunction getter, final IFavorFunction setter, final IFavorFunction adder) {
+    Type(final String key, final IFavorFunction getter, final IFavorFunction setter, final IFavorFunction adder, final IXFavorFunction capper) {
       name = key;
       favorGetter = getter;
       favorSetter = setter;
       favorAdder = adder;
+      favorCapper = capper;
     }
   }
   
   @FunctionalInterface
   private interface IFavorFunction {
     public int accept(final ServerPlayerEntity player, final IFavor favor, final IDeity deity, final int amount);
+  }
+  
+  @FunctionalInterface
+  private interface IXFavorFunction {
+    public int accept(final ServerPlayerEntity player, final IFavor favor, final IDeity deity, final int amount1, final int amount2);
   }
 }

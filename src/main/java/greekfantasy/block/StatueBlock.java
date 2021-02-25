@@ -200,23 +200,22 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     if (playerIn instanceof ServerPlayerEntity && te instanceof StatueTileEntity) {
       final StatueTileEntity teStatue = (StatueTileEntity)te;
       // handle deity statue interaction
-      if(teStatue.hasDeity() && teStatue.getDeityName().equals(deity.toString())) {
-        final IDeity teDeity = teStatue.getDeity();
-        if(teDeity.isEnabled()) {
-          playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
-            if(f.isEnabled()) {
-              FavorLevel level = f.getFavor(teDeity);
-              if(FavorManager.onGiveItem(teStatue, teDeity, playerIn, level, stack)) {
-                final boolean happy = teDeity.getItemFavorModifier(stack.getItem()) > 0;
-                GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(happy, pos, 10));
-              } else {
-                playerIn.setHeldItem(handIn, teStatue.handleItemInteraction(playerIn, teDeity, f, stack));
-              }
-              // print current favor level
-              level.sendStatusMessage(playerIn, teDeity);
+      if(teStatue.hasDeity() && teStatue.getDeityName().equals(deity.toString()) && teStatue.getDeity().isEnabled()) {
+        final IDeity ideity = teStatue.getDeity();
+        playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
+          if(f.isEnabled()) {
+            FavorLevel level = f.getFavor(ideity);
+            ItemStack copy = stack.copy();
+            if(FavorManager.onGiveItem(teStatue, ideity, playerIn, level, stack)) {
+              final boolean happy = ideity.getItemFavorModifier(copy.getItem()) > 0;
+              GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(happy, pos, 10));
+            } else {
+              playerIn.setHeldItem(handIn, teStatue.handleItemInteraction(playerIn, ideity, f, stack));
             }
-          });
-        }
+            // print current favor level
+            level.sendStatusMessage(playerIn, ideity);
+          }
+        });
         return ActionResultType.SUCCESS;
       } 
       // handle nametag interaction

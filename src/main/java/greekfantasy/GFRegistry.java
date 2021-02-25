@@ -687,6 +687,8 @@ public final class GFRegistry {
         new AmbrosiaItem(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
             .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC)) {
         }.setRegistryName(MODID, "ambrosia"),
+        new HornOfPlentyItem(new Item.Properties().maxDamage(24).rarity(Rarity.RARE).group(GREEK_GROUP))
+          .setRegistryName(MODID, "horn_of_plenty"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "magic_feather"),
         new Item(new Item.Properties().group(GREEK_GROUP))
