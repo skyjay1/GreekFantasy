@@ -3,9 +3,12 @@ package greekfantasy.entity;
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
+import greekfantasy.network.CUpdatePegasusPacket;
 import net.minecraft.block.SoundType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -31,18 +34,26 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeMod;
 
 public class PegasusEntity extends AbstractHorseEntity {
   
   private static final DataParameter<Byte> DATA_COLOR = EntityDataManager.createKey(PegasusEntity.class, DataSerializers.BYTE);
   private static final String KEY_COLOR = "Color";
   
+  private static final int FLYING_INTERVAL = 4;
+  protected int flyingTime;
+    
   public PegasusEntity(EntityType<? extends PegasusEntity> type, World worldIn) {
     super(type, worldIn);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return AbstractHorseEntity.func_234237_fg_().createMutableAttribute(Attributes.ARMOR, 1.0D);
+    return AbstractHorseEntity.func_234237_fg_()
+        .createMutableAttribute(Attributes.ARMOR, 1.0D)
+        .createMutableAttribute(ForgeMod.ENTITY_GRAVITY.get(), 0.024D);
   }
   
   @Override
@@ -58,6 +69,21 @@ public class PegasusEntity extends AbstractHorseEntity {
       return !entity.isDiscrete() && EntityPredicates.CAN_AI_TARGET.test(entity) && !this.isBeingRidden() &&
           (!this.isTame() || this.getOwnerUniqueId() == null || !entity.getUniqueID().equals(this.getOwnerUniqueId()));
    }));
+  }
+
+  @Override
+  public void livingTick() {
+    super.livingTick();
+    
+    
+    if(flyingTime > 0) {
+      flyingTime--;
+    }
+    
+    // take damage when too high
+    if(this.getPositionVec().y > 300) {
+      this.attackEntityFrom(DamageSource.OUT_OF_WORLD, 2.0F);
+    }
   }
   
   // CALLED FROM ON INITIAL SPAWN //
@@ -90,6 +116,78 @@ public class PegasusEntity extends AbstractHorseEntity {
     final CoatColors color = Util.getRandomObject(CoatColors.values(), this.rand);
     this.setCoatColor(color);
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+  }
+  
+  // FLYING //
+  
+  public boolean canJump() {
+     return super.canJump() && flyingTime <= 0;
+  }
+
+  @OnlyIn(Dist.CLIENT)
+  public void setJumpPower(int jumpPowerIn) {
+    // Do nothing
+  }
+  
+  @OnlyIn(Dist.CLIENT)
+  public void sendPegasusPacket() {
+    if(flyingTime <= 0) {
+      // move upward
+      float jumpMotion = (float) this.getHorseJumpStrength() + 2.75F;
+      this.addVelocity(0, jumpMotion, 0);
+      this.markVelocityChanged();
+      // reset flying time
+      flyingTime = FLYING_INTERVAL;
+      GreekFantasy.CHANNEL.sendToServer(new CUpdatePegasusPacket(this.getEntityId(), (int)Math.ceil(jumpMotion * 100.0F)));
+    }
+  }
+
+  public void handlePegasusUpdate(final int data) {
+//    if(flyingTime <= 0) {
+//      // move upward
+//      float jumpMotion = ((float) data) / 100.0F;
+//      this.addVelocity(0, jumpMotion, 0);
+//      this.markVelocityChanged();
+//      // reset flying time
+//      flyingTime = FLYING_INTERVAL;
+//    }
+  }
+  
+  
+  @Override
+  public void handleStartJump(int jumpPower) {
+    //super.handleStartJump(jumpPower);
+    if(!this.onGround) {
+      this.setRearing(false);
+    }
+  }
+  
+  @Override
+  public boolean isHorseJumping() { return false; }
+  
+  @Override
+  protected int calculateFallDamage(float distance, float damageMultiplier) {
+    return 0; //MathHelper.ceil((distance * 0.5F - 3.0F) * damageMultiplier);
+  }
+  
+  @Override
+  public void travel(final Vector3d vec) {
+    boolean bOnGround = this.onGround;
+    boolean bAirBorne = this.isAirBorne;
+    if(this.isBeingRidden() && this.getControllingPassenger() instanceof LivingEntity) {
+      final LivingEntity entity = (LivingEntity)this.getControllingPassenger();
+      this.onGround = true;
+      this.isAirBorne = false;
+      //entity.setOnGround(false);
+      //entity.isAirBorne = false;
+      // fall slowly when being ridden
+      if(this.getMotion().y < -0.1D) {
+        this.setMotion(this.getMotion().mul(0, 0.86D, 0));
+      }
+    }
+    super.travel(vec);
+    this.onGround = bOnGround;
+    this.isAirBorne = bAirBorne;
   }
   
   // MISC //
@@ -181,32 +279,6 @@ public class PegasusEntity extends AbstractHorseEntity {
 //      this.mountTo(player);
 //      return ActionResultType.func_233537_a_(this.world.isRemote());
 //    }
-  }
-  
-  @Override
-  public void tick() {
-    super.tick();
-    //this.onGround = true;
-    //this.isAirBorne = false;
-    if(this.getMotion().y < 0.0D) {
-      this.setMotion(this.getMotion().mul(1.0D, 0.68D, 1.0D));
-    }
-  }
-  
-  @Override
-  public void travel(Vector3d travelVector) {
-    super.travel(travelVector);
-  }
-  
-  @Override
-  public void handleStartJump(int jumpPower) {
-    super.handleStartJump(jumpPower);
-    this.setRearing(false);
-  }
-  
-  @Override
-  protected int calculateFallDamage(float distance, float damageMultiplier) {
-    return 0; //MathHelper.ceil((distance * 0.5F - 3.0F) * damageMultiplier);
   }
 
   @Override

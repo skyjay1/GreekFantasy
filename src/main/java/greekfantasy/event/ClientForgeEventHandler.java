@@ -6,6 +6,7 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.render.PlayerSkyjayRenderer;
 import greekfantasy.client.render.SwineRenderer;
+import greekfantasy.entity.PegasusEntity;
 import greekfantasy.tileentity.StatueTileEntity;
 import greekfantasy.tileentity.VaseTileEntity;
 import net.minecraft.client.Minecraft;
@@ -29,6 +30,8 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,6 +41,8 @@ public class ClientForgeEventHandler {
   
   private static SwineRenderer<LivingEntity> pigRenderer;
   private static PlayerSkyjayRenderer<PlayerEntity> skyjayRenderer;
+  
+  private static boolean wasJumping;
   
   /**
    * Used to render players as pigs when under the Swine effect
@@ -113,6 +118,24 @@ public class ClientForgeEventHandler {
         // restore defaults
         player.stepHeight = 0.6F;
         player.autoJumpEnabled = mc.gameSettings.autoJump;
+      }
+    }
+  }
+  
+  @SubscribeEvent
+  public static void onClientTick(final ClientTickEvent event) {
+    if(event.phase == TickEvent.Phase.END) {
+      final Minecraft mc = Minecraft.getInstance();
+      if(mc.player != null && mc.player.isRidingHorse() && mc.player.getRidingEntity() instanceof PegasusEntity) {
+        mc.player.horseJumpPowerCounter = -10;
+        if(mc.player.movementInput.jump && !wasJumping) {
+          // if starting to jump, set flag
+          wasJumping = true;
+        } else if(!mc.player.movementInput.jump && wasJumping) {
+          // if not jumping but was previously, send jump packet
+          wasJumping = false;
+          ((PegasusEntity)mc.player.getRidingEntity()).sendPegasusPacket();
+        }
       }
     }
   }
