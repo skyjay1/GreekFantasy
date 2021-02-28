@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 import com.mojang.serialization.DataResult;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.util.PanfluteSong;
+import greekfantasy.util.Song;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.network.PacketBuffer;
@@ -17,11 +17,11 @@ import net.minecraftforge.fml.network.NetworkEvent;
 public class SPanfluteSongPacket {
 
   protected ResourceLocation songName;
-  protected PanfluteSong song;
+  protected Song song;
 
   public SPanfluteSongPacket() { }
 
-  public SPanfluteSongPacket(final ResourceLocation songNameIn, final PanfluteSong songIn) {
+  public SPanfluteSongPacket(final ResourceLocation songNameIn, final Song songIn) {
     this.songName = songNameIn;
     this.song = songIn;
   }
@@ -32,8 +32,8 @@ public class SPanfluteSongPacket {
   public static SPanfluteSongPacket fromBytes(final PacketBuffer buf) {
     final ResourceLocation sName = buf.readResourceLocation();
     final CompoundNBT sNBT = buf.readCompoundTag();
-    final Optional<PanfluteSong> sSong = GreekFantasy.PROXY.PANFLUTE_SONGS.readObject(sNBT).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read deity from NBT for packet\n" + error));
-    return new SPanfluteSongPacket(sName, sSong.orElse(PanfluteSong.EMPTY));
+    final Optional<Song> sSong = GreekFantasy.PROXY.PANFLUTE_SONGS.readObject(sNBT).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read deity from NBT for packet\n" + error));
+    return new SPanfluteSongPacket(sName, sSong.orElse(Song.EMPTY));
   }
 
   /**

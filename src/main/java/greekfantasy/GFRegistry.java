@@ -38,6 +38,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
@@ -148,6 +149,8 @@ public final class GFRegistry {
   // Item //
   @ObjectHolder("panflute")
   public static final Item PANFLUTE = null;
+  @ObjectHolder("lyre")
+  public static final Item LYRE = null;
   @ObjectHolder("iron_club")
   public static final Item IRON_CLUB = null;
   @ObjectHolder("stone_club")
@@ -404,6 +407,8 @@ public final class GFRegistry {
   public static final Enchantment FIREFLASH_ENCHANTMENT = null;
   @ObjectHolder("daybreak")
   public static final Enchantment DAYBREAK_ENCHANTMENT = null;
+  @ObjectHolder("raising")
+  public static final Enchantment RAISING_ENCHANTMENT = null;
   
   // Potion //
   @ObjectHolder("mirror")
@@ -632,6 +637,8 @@ public final class GFRegistry {
     event.getRegistry().registerAll(
         new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
           .setRegistryName(MODID, "panflute"),
+        new LyreItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
+          .setRegistryName(MODID, "lyre"),
         new FlintKnifeItem(ItemTier.WOOD, 3, -2.0F, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "flint_knife"),
         new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP))
@@ -669,7 +676,7 @@ public final class GFRegistry {
           .setRegistryName(MODID, "apollo_bow"),
         new EnchantedBowItem.ArtemisBowItem(new Item.Properties().maxDamage(562).group(GREEK_GROUP))
           .setRegistryName(MODID, "artemis_bow"),
-        new SpearItem(ItemTier.DIAMOND, new Item.Properties().group(GREEK_GROUP)
+        new BidentItem(ItemTier.DIAMOND, new Item.Properties().group(GREEK_GROUP)
             .setISTER(() -> () -> greekfantasy.client.render.tileentity.ClientISTERProvider.bakeSpearISTER("bident")))
           .setRegistryName(MODID, "bident"),
         new SpearItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP)
@@ -850,14 +857,21 @@ public final class GFRegistry {
           .setRegistryName(MODID, "poison"),
         new MirrorEnchantment(Enchantment.Rarity.VERY_RARE)
           .setRegistryName(MODID, "mirror"),
-        new FlyingEnchantment(Enchantment.Rarity.VERY_RARE)
+        new DeityEnchantment(Enchantment.Rarity.VERY_RARE, EnchantmentType.ARMOR_FEET, EquipmentSlotType.FEET, 
+              TextFormatting.GOLD, 1, e -> e.getItem() == GFRegistry.WINGED_SANDALS)
           .setRegistryName(MODID, "flying"),
-        new LordOfTheSeaEnchantment(Enchantment.Rarity.VERY_RARE)
+        new DeityEnchantment(Enchantment.Rarity.VERY_RARE, EnchantmentType.TRIDENT, EquipmentSlotType.MAINHAND, 
+              TextFormatting.DARK_AQUA, 1, e -> e.getItem() == Items.TRIDENT)
           .setRegistryName(MODID, "lord_of_the_sea"),
-        new FireflashEnchantment(Enchantment.Rarity.VERY_RARE)
+        new DeityEnchantment(Enchantment.Rarity.VERY_RARE, EnchantmentType.WEAPON, EquipmentSlotType.MAINHAND, 
+              TextFormatting.GOLD, 3, e -> e.getItem() == GFRegistry.THUNDERBOLT)
           .setRegistryName(MODID, "fireflash"),
-        new DaybreakEnchantment(Enchantment.Rarity.RARE)
-          .setRegistryName(MODID, "daybreak")
+        new DeityEnchantment(Enchantment.Rarity.UNCOMMON, EnchantmentType.BREAKABLE, EquipmentSlotType.MAINHAND, 
+              TextFormatting.YELLOW, 1, e -> e.getItem() == Items.CLOCK)
+          .setRegistryName(MODID, "daybreak"),
+        new DeityEnchantment(Enchantment.Rarity.VERY_RARE, EnchantmentType.WEAPON, EquipmentSlotType.MAINHAND, 
+              TextFormatting.RED, 1, e -> e.getItem() == GFRegistry.BIDENT)
+          .setRegistryName(MODID, "raising")
     );
   }
 

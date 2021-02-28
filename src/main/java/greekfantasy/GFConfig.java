@@ -66,6 +66,7 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue FIREFLASH_ENABLED;
   private final ForgeConfigSpec.BooleanValue FIREFLASH_DESTROYS_BLOCKS;
   private final ForgeConfigSpec.BooleanValue DAYBREAK_ENABLED;
+  private final ForgeConfigSpec.BooleanValue RAISING_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_ENABLED;
   private final ForgeConfigSpec.BooleanValue SWINE_DROPS_ARMOR;
   private final ForgeConfigSpec.BooleanValue SWINE_PREVENTS_TARGET;
@@ -81,6 +82,7 @@ public class GFConfig {
   private boolean mirrorEnabled;
   private boolean flyingEnabled;
   private boolean daybreakEnabled;
+  private boolean raisingEnabled;
   private boolean lordOfTheSeaEnabled;
   private boolean fireflashEnabled;
   private boolean fireflashDestroysBlocks;
@@ -225,6 +227,7 @@ public class GFConfig {
     FIREFLASH_ENABLED = builder.define("enable_fireflash_enchantment", true);
     FIREFLASH_DESTROYS_BLOCKS = builder.define("fireflash_destroys_blocks", true);
     DAYBREAK_ENABLED = builder.define("enable_daybreak_enchantment", true);
+    RAISING_ENABLED = builder.define("enable_raising_enchantment", true);
     SWINE_ENABLED = builder.define("enable_swine_effect", true);
     SWINE_DROPS_ARMOR = builder.comment("Whether players under the swine effect drop their armor")
         .define("swine_drops_armor", true);
@@ -423,6 +426,7 @@ public class GFConfig {
     fireflashEnabled = FIREFLASH_ENABLED.get();
     fireflashDestroysBlocks = FIREFLASH_DESTROYS_BLOCKS.get();
     daybreakEnabled = DAYBREAK_ENABLED.get();
+    raisingEnabled = RAISING_ENABLED.get();
     swineEnabled = SWINE_ENABLED.get();
     swineDropsArmor = SWINE_DROPS_ARMOR.get();
     swinePreventsTarget = SWINE_PREVENTS_TARGET.get();
@@ -487,6 +491,7 @@ public class GFConfig {
   public boolean isFlyingEnabled() { return flyingEnabled; }
   public boolean isLordOfTheSeaEnabled() { return lordOfTheSeaEnabled; }
   public boolean isFireflashEnabled() { return fireflashEnabled; }
+  public boolean isRaisingEnabled() { return raisingEnabled; }
   public boolean doesFireflashDestroyBlocks() { return fireflashDestroysBlocks; }
   public boolean isDaybreakEnabled() { return daybreakEnabled; }
   

@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.entity.WhirlEntity;
 import greekfantasy.item.ThunderboltItem;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -59,7 +60,7 @@ public class CUseEnchantmentPacket {
             && GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == Items.TRIDENT
             && EnchantmentHelper.getEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) > 0
             && !player.getCooldownTracker().hasCooldown(Items.TRIDENT)
-            && GreekFantasy.PROXY.getFavorConfiguration().getLordOfTheSeaDeityRange().isInFavorRange(player)) {
+            && GreekFantasy.PROXY.getFavorConfiguration().getSpecialRange(FavorConfiguration.LORD_OF_THE_SEA_RANGE).isInFavorRange(player)) {
           // The player has used an enchanted item and has the correct favor range, so the effect should be applied
           useLordOfTheSea(player, item);
         }
@@ -69,7 +70,7 @@ public class CUseEnchantmentPacket {
             && EnchantmentHelper.getEnchantmentLevel(GFRegistry.DAYBREAK_ENCHANTMENT, item) > 0
             && player.getEntityWorld().getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)
             && player.getEntityWorld().getDayTime() % 24000L > 13000L
-            && GreekFantasy.PROXY.getFavorConfiguration().getDaybreakDeityRange().isInFavorRange(player)) {
+            && GreekFantasy.PROXY.getFavorConfiguration().getSpecialRange(FavorConfiguration.DAYBREAK_RANGE).isInFavorRange(player)) {
           // The player has used an enchanted item and has the correct favor range, so the effect should be applied
           useDaybreak(player, item);
         }

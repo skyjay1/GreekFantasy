@@ -1,6 +1,6 @@
 package greekfantasy.item;
 
-import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -30,11 +30,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class SpearItem extends TieredItem implements IVanishable {
-  private final Multimap<Attribute, AttributeModifier> spearAttributes;
+  protected final Multimap<Attribute, AttributeModifier> spearAttributes;
+  public final Consumer<Entity> onHitEntity;
+  
+  public SpearItem(IItemTier tier, Item.Properties properties) { this(tier, properties, e -> {}); }
 
-  public SpearItem(IItemTier tier, Item.Properties properties) {
+  public SpearItem(IItemTier tier, Item.Properties properties, final Consumer<Entity> hitEntityConsumer) {
     super(tier, properties);
-
+    onHitEntity = hitEntityConsumer;
     ImmutableMultimap.Builder<Attribute, AttributeModifier> mapBuilder = ImmutableMultimap.builder();
     mapBuilder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", tier.getAttackDamage(), AttributeModifier.Operation.ADDITION));
     mapBuilder.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.9D, AttributeModifier.Operation.ADDITION));
@@ -66,30 +69,24 @@ public class SpearItem extends TieredItem implements IVanishable {
     }
 
     if (!world.isRemote()) {
-      Entity spear = createThrowableEntity(world, player, stack);
-      if (spear != null) {
-        world.addEntity(spear);
-        world.playMovingSound(null, spear, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F);
-
-        if (!player.abilities.isCreativeMode) {
-          player.inventory.deleteStack(stack);
-        }
-      }
+      throwSpear(world, player, stack);
     }
 
     player.addStat(Stats.ITEM_USED.get(this));
   }
   
-  @Nullable
-  protected Entity createThrowableEntity(final World world, final PlayerEntity thrower, final ItemStack stack) {
+  protected void throwSpear(final World world, final PlayerEntity thrower, final ItemStack stack) {
     stack.damageItem(1, thrower, e -> e.sendBreakAnimation(thrower.getActiveHand()));
-    SpearEntity spear = new SpearEntity(world, thrower, stack);
-    spear.func_234612_a_(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, 2.5F, 1.0F);
-
+    SpearEntity spear = new SpearEntity(world, thrower, stack, onHitEntity);
+    spear.func_234612_a_(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, 2.25F, 1.0F);
+    // set pickup status and remove the itemstack
     if (thrower.abilities.isCreativeMode) {
       spear.pickupStatus = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
+    } else {
+      thrower.inventory.deleteStack(stack);
     }
-    return spear;
+    world.playMovingSound(null, spear, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F);
+    world.addEntity(spear);
   }
 
   @Override

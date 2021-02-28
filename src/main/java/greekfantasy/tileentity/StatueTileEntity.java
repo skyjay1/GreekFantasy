@@ -12,10 +12,12 @@ import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.IFavor;
 import greekfantasy.deity.favor_effect.FavorConfiguration;
+import greekfantasy.deity.favor_effect.FavorRange;
 import greekfantasy.util.ModelPart;
 import greekfantasy.util.StatuePose;
 import greekfantasy.util.StatuePoses;
 import net.minecraft.block.BlockState;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -163,65 +165,79 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   }
   
   public ItemStack handleItemInteraction(final PlayerEntity player, final IDeity deity, final IFavor favor, final ItemStack item) {
+    if(!favor.isEnabled()) {
+      return item;
+    }
+    // attempt to enchant the item
     final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
+    if(GreekFantasy.CONFIG.isFlyingEnabled() && tryEnchant(player, deity, favor, item, FavorConfiguration.FLYING_RANGE, GFRegistry.FLYING_ENCHANTMENT)) {
+      return item;
+    }
+    if(GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && tryEnchant(player, deity, favor, item, FavorConfiguration.LORD_OF_THE_SEA_RANGE, GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT)) {
+      return item;
+    }
+    if(GreekFantasy.CONFIG.isFireflashEnabled() && tryEnchant(player, deity, favor, item, FavorConfiguration.FIREFLASH_RANGE, GFRegistry.FIREFLASH_ENCHANTMENT)) {
+      return item;
+    }
+    if(GreekFantasy.CONFIG.isRaisingEnabled() && tryEnchant(player, deity, favor, item, FavorConfiguration.RAISING_RANGE, GFRegistry.RAISING_ENCHANTMENT)) {
+      return item;
+    }
+    if(GreekFantasy.CONFIG.isDaybreakEnabled() && tryEnchant(player, deity, favor, item, FavorConfiguration.DAYBREAK_RANGE, GFRegistry.DAYBREAK_ENCHANTMENT)) {
+      return item;
+    }
     // attempt to give the Apollo Bow item
-    if(favor.isEnabled() && item.getItem() == GFRegistry.CURSED_BOW && deity != Deity.EMPTY 
-        && deity.getName().equals(favorConfig.getApolloBowRange().getDeity().getName())
-        && favorConfig.getApolloBowRange().isInFavorRange(player, favor)) {
+    FavorRange range = favorConfig.getSpecialRange(FavorConfiguration.APOLLO_BOW_RANGE);
+    if(item.getItem() == GFRegistry.CURSED_BOW && deity != Deity.EMPTY 
+        && deity.getName().equals(range.getDeity().getName())
+        && range.isInFavorRange(player, favor)) {
       ItemStack bow = new ItemStack(GFRegistry.APOLLO_BOW);
       bow.getItem().onCreated(bow, player.getEntityWorld(), player);
       return bow;
     }
     // attempt to give the Artemis Bow item
-    if(favor.isEnabled() && item.getItem() == GFRegistry.CURSED_BOW && deity != Deity.EMPTY 
-        && deity.getName().equals(favorConfig.getArtemisBowRange().getDeity().getName())
-        && favorConfig.getArtemisBowRange().isInFavorRange(player, favor)) {
+    range = favorConfig.getSpecialRange(FavorConfiguration.ARTEMIS_BOW_RANGE);
+    if(item.getItem() == GFRegistry.CURSED_BOW && deity != Deity.EMPTY 
+        && deity.getName().equals(range.getDeity().getName())
+        && range.isInFavorRange(player, favor)) {
       ItemStack bow = new ItemStack(GFRegistry.ARTEMIS_BOW);
       bow.getItem().onCreated(bow, player.getEntityWorld(), player);
       return bow;
     }
-    // attempt to give the item the Flying enchantment
-    if(favor.isEnabled() && GreekFantasy.CONFIG.isFlyingEnabled() && item.getItem() == GFRegistry.WINGED_SANDALS 
-        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getFlyingDeityRange().getDeity().getName())
-        && favorConfig.getFlyingDeityRange().isInFavorRange(player, favor)
-        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, item) < 1) {
-      item.addEnchantment(GFRegistry.FLYING_ENCHANTMENT, 1);
-      item.setDamage(0);
-      return item;
-    }
-    // attempt to give the item the Lord of the Sea enchantment
-    if(GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == Items.TRIDENT
-        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getLordOfTheSeaDeityRange().getDeity().getName())
-        && favorConfig.getLordOfTheSeaDeityRange().isInFavorRange(player, favor)
-        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) < 1) {
-      item.addEnchantment(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, 1);
-      item.setDamage(0);
-      return item;
-    }
-    // attempt to give the item the Fireflash enchantment
-    if(GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == GFRegistry.THUNDERBOLT
-        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getFireflashDeityRange().getDeity().getName())
-        && favorConfig.getFireflashDeityRange().isInFavorRange(player, favor)
-        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FIREFLASH_ENCHANTMENT, item) < 1) {
-      item.addEnchantment(GFRegistry.FIREFLASH_ENCHANTMENT, 1);
-      item.setDamage(0);
-      return item;
-    }
-    // attempt to give the item the Daybreak enchantment
-    if(GreekFantasy.CONFIG.isDaybreakEnabled() && item.getItem() == Items.CLOCK
-        && deity != Deity.EMPTY && deity.getName().equals(favorConfig.getDaybreakDeityRange().getDeity().getName())
-        && favorConfig.getDaybreakDeityRange().isInFavorRange(player, favor)
-        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.DAYBREAK_ENCHANTMENT, item) < 1) {
-      final ItemStack enchantedClock = new ItemStack(Items.CLOCK);
-      enchantedClock.addEnchantment(GFRegistry.DAYBREAK_ENCHANTMENT, 1);
-      item.shrink(1);
-      ItemEntity drop = player.dropItem(enchantedClock, false);
-      if(drop != null) {
-        drop.setNoPickupDelay();
-      }
-      return item;
-    }
     return item;
+  }
+  
+  /**
+   * Attempts to enchant the given item if the player
+   * has a favor range as specified by the key
+   * @param player the player
+   * @param deity the deity of this altar
+   * @param favor the player's favor
+   * @param stack the item to enchant
+   * @param rangeKey a key to look up the FavorRange for the given enchantment
+   * @param enchant the enchantment to apply
+   * @return true if the item was successfully enchanted
+   */
+  protected boolean tryEnchant(final PlayerEntity player, final IDeity deity, final IFavor favor, final ItemStack stack, 
+      final String rangeKey, final Enchantment enchant) {
+    final FavorRange range = GreekFantasy.PROXY.getFavorConfiguration().getSpecialRange(rangeKey);
+    if(enchant.canApply(stack) && deity != Deity.EMPTY && deity.getName().equals(range.getDeity().getName())
+        && range.isInFavorRange(player, favor) && EnchantmentHelper.getEnchantmentLevel(enchant, stack) < 1) {
+      // if the item has size 1, enchant directly
+      if(stack.getCount() == 1) {
+        stack.addEnchantment(enchant, 1);
+        stack.setDamage(0);
+      } else {
+        // drop one enchanted item from the itemstack
+        final ItemStack enchantedItem = stack.split(1);
+        enchantedItem.addEnchantment(enchant, 1);
+        ItemEntity drop = player.dropItem(enchantedItem, false);
+        if(drop != null) {
+          drop.setNoPickupDelay();
+        }
+      }
+      return true;
+    }
+    return false;
   }
   
   // Player Profile //

@@ -7,9 +7,11 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.SummonMobGoal;
-import greekfantasy.util.PanfluteMusicManager;
+import greekfantasy.item.IInstrument;
+import greekfantasy.util.SongManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.CreatureEntity;
@@ -142,9 +144,9 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     if (this.world.isRemote()) {
       // play music
       if(isSummoning()) {
-        PanfluteMusicManager.playMusic(this, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
+        SongManager.playMusic(this, (IInstrument)GFRegistry.PANFLUTE, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
       } else if(isDancing()) {
-        PanfluteMusicManager.playMusic(this, GreekFantasy.CONFIG.getSatyrSong(), world.getGameTime(), 0.84F, 0.28F);
+        SongManager.playMusic(this, (IInstrument)GFRegistry.PANFLUTE, GreekFantasy.CONFIG.getSatyrSong(), world.getGameTime(), 0.84F, 0.28F);
       }
     } else {
       // anger timer

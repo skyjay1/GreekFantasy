@@ -4,18 +4,21 @@ import java.util.List;
 import java.util.Optional;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.item.IInstrument;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 
-public final class PanfluteMusicManager {
+public final class SongManager {
     
-  private PanfluteMusicManager() { }  
+  private SongManager() { }  
  
   /**
    * Play part of the given song at the position of the given entity
    * @param entity the entity
+   * @param instrument the instrument being used
    * @param songName the resource location of the song
    * @param worldTime the amount of time the song has been playing,
    * or the world time for universally synchronized songs
@@ -23,29 +26,29 @@ public final class PanfluteMusicManager {
    * @param volumeBass the song volume for the bass
    * @return if the note was successfully played
    **/
-  public static boolean playMusic(final LivingEntity entity, final ResourceLocation songName, final long worldTime, final float volume, final float volumeBass) {
-    final Optional<PanfluteSong> song = GreekFantasy.PROXY.PANFLUTE_SONGS.get(songName);
+  public static boolean playMusic(final LivingEntity entity, final IInstrument instrument, final ResourceLocation songName, 
+      final long worldTime, final float volume, final float volumeBass) {
+    final Optional<Song> song = GreekFantasy.PROXY.PANFLUTE_SONGS.get(songName);
     if(song.isPresent() && song.get().shouldPlayNote(worldTime)) {
       final List<Integer> treble = song.get().getTrebleNotes(worldTime);
       final List<Integer> bass = song.get().getBassNotes(worldTime);
       for(final Integer note : treble) {
-        playNoteAt(entity, note.intValue(), volume);
+        playNoteAt(entity, instrument, note.intValue(), volume);
       }
       for(final Integer note : bass) {
-        playNoteAt(entity, note.intValue(), volumeBass);
+        playNoteAt(entity, instrument, note.intValue(), volumeBass);
       }
       return !treble.isEmpty() || !bass.isEmpty();
     }
     return false;
   }
   
-  private static void playNoteAt(final LivingEntity entity, final int note, final float volume) {
+  private static void playNoteAt(final LivingEntity entity, final IInstrument instrument, final int note, final float volume) {
     final double x = entity.getPosX() + (entity.getRNG().nextDouble() - 0.5D) * 0.15D;
     final double y = entity.getPosYEye() + 0.15D;
     final double z = entity.getPosZ() + (entity.getRNG().nextDouble() - 0.5D) * 0.15D;
-    final float pitch = (float)Math.pow(2.0D, (double)(note - 12) / 12.0D);
-    entity.getEntityWorld().playSound(x, y, z, SoundEvents.BLOCK_NOTE_BLOCK_FLUTE, 
-        entity.getSoundCategory(), volume, pitch, false);
+    final float pitch = instrument.getPitch(note);
+    entity.getEntityWorld().playSound(x, y, z, instrument.getSound(), entity.getSoundCategory(), volume, pitch, false);
     entity.getEntityWorld().addParticle(ParticleTypes.NOTE, x, y, z, pitch / 24.0D, 0.0D, 0.0D);
   }
 }

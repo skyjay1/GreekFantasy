@@ -6,6 +6,7 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.deity.favor.Favor;
 import greekfantasy.deity.favor.FavorManager;
 import greekfantasy.deity.favor.IFavor;
+import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;
 import greekfantasy.entity.ai.FleeFromFavorablePlayerGoal;
 import greekfantasy.entity.ai.NearestAttackableFavorablePlayerGoal;
@@ -40,6 +41,7 @@ import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -181,7 +183,7 @@ public class FavorEventHandler {
       final PlayerEntity player = (PlayerEntity)event.getEntityLiving();
       GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)event.getEntityLiving().getEntityWorld());
       // Check the player's favor level before enabling flight
-      if(GreekFantasy.PROXY.getFavorConfiguration().getFlyingDeityRange().isInFavorRange(player)) {
+      if(GreekFantasy.PROXY.getFavorConfiguration().getSpecialRange(FavorConfiguration.FLYING_RANGE).isInFavorRange(player)) {
         data.addFlyingPlayer(player);
       }
     }

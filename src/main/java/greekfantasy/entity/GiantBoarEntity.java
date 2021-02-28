@@ -61,7 +61,8 @@ public class GiantBoarEntity extends HoglinEntity {
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.31D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.82D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D)
+        .createMutableAttribute(Attributes.ARMOR, 6.0D);
   }
   
   public static GiantBoarEntity spawnGiantBoar(final ServerWorld world, final HoglinEntity hoglin) {

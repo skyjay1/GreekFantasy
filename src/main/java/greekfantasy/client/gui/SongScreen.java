@@ -10,9 +10,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.item.IInstrument;
 import greekfantasy.item.PanfluteItem;
-import greekfantasy.network.CUpdatePanflutePacket;
-import greekfantasy.util.PanfluteSong;
+import greekfantasy.network.CUpdateInstrumentPacket;
+import greekfantasy.util.Song;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -24,9 +25,9 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class PanfluteScreen extends Screen {
+public class SongScreen extends Screen {
   
-  private static final ResourceLocation SCREEN_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/gui/panflute.png");
+  private static final ResourceLocation SCREEN_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/gui/song_selection.png");
 
   private static final int SCREEN_WIDTH = 154;
   private static final int SCREEN_HEIGHT = 150;
@@ -43,13 +44,14 @@ public class PanfluteScreen extends Screen {
   private static final int SCROLL_WIDTH = 14;
   private static final int SCROLL_HEIGHT = BTN_HEIGHT * BTN_VISIBLE;
   
-  private final List<Map.Entry<ResourceLocation, Optional<PanfluteSong>>> songs = new ArrayList<>();
-  private final List<PanfluteScreen.SongButton> songButtons = new ArrayList<>();
+  private final List<Map.Entry<ResourceLocation, Optional<Song>>> songs = new ArrayList<>();
+  private final List<SongScreen.SongButton> songButtons = new ArrayList<>();
   private final int itemSlot;
-  private final ItemStack panfluteItem;
+  private final ItemStack instrumentStack;
+  private final IInstrument instrumentItem;
   
   private ResourceLocation selectedSong = PanfluteItem.DEFAULT_SONG; 
-  private ScrollButton<PanfluteScreen> scrollButton;
+  private ScrollButton<SongScreen> scrollButton;
   
   /** Number of pixels between left side of screen and left side of gui **/
   private int guiLeft;
@@ -58,22 +60,24 @@ public class PanfluteScreen extends Screen {
   /** True if there are at least [BTN_VISIBLE] number of songs in the list **/
   private boolean scrollEnabled;
 
-  public PanfluteScreen(final int itemSlotIn, final ItemStack panfluteItemIn) {
+  public SongScreen(final int itemSlotIn, final ItemStack panfluteItemIn) {
     super(new TranslationTextComponent("gui.panflute.title"));
     itemSlot = itemSlotIn;
-    panfluteItem = panfluteItemIn;
+    instrumentStack = panfluteItemIn;
+    if(instrumentStack.getItem() instanceof IInstrument) {
+      instrumentItem = (IInstrument)instrumentStack.getItem();
+    } else {
+      instrumentItem = null;
+      this.closeScreen();
+    }
     // populate songs list (alphabetically)
     if(songs.isEmpty()) {
       songs.addAll(GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries());
-      songs.sort((e1, e2) -> e1.getValue().orElse(PanfluteSong.EMPTY).getName().getString()
-          .compareTo(e2.getValue().orElse(PanfluteSong.EMPTY).getName().getString()));
+      songs.sort((e1, e2) -> e1.getValue().orElse(Song.EMPTY).getName().getString()
+          .compareTo(e2.getValue().orElse(Song.EMPTY).getName().getString()));
     }
-    // determine currently selected deity
-    if(panfluteItem.getOrCreateTag().contains(PanfluteItem.KEY_SONG)) {
-      selectedSong = new ResourceLocation(panfluteItem.getTag().getString(PanfluteItem.KEY_SONG));
-    } else {
-      selectedSong = PanfluteItem.DEFAULT_SONG;
-    }
+    // determine currently selected song
+    selectedSong = instrumentItem.readSong(instrumentStack);
     // determine scroll
     scrollEnabled = songs.size() > BTN_VISIBLE;
   }
@@ -90,8 +94,8 @@ public class PanfluteScreen extends Screen {
         0, SCREEN_HEIGHT + 2 * BTN_HEIGHT, SCREEN_TEXTURE, s -> s.scrollEnabled, 4, b -> updateScroll(b.getScrollAmount())));
     // add deity buttons
     int i = 0;
-    for(final Entry<ResourceLocation, Optional<PanfluteSong>> e : songs) {
-      final SongButton b = addButton(new SongButton(i, this, e.getValue().orElse(PanfluteSong.EMPTY), e.getKey(), guiLeft + BTN_LEFT, 0));
+    for(final Entry<ResourceLocation, Optional<Song>> e : songs) {
+      final SongButton b = addButton(new SongButton(i, this, e.getValue().orElse(Song.EMPTY), e.getKey(), guiLeft + BTN_LEFT, 0));
       b.updateLocation(0);
       songButtons.add(b);      
       i++;
@@ -125,7 +129,9 @@ public class PanfluteScreen extends Screen {
   @Override
   public void onClose() {
     // send update packet to server
-    GreekFantasy.CHANNEL.sendToServer(new CUpdatePanflutePacket(this.itemSlot, this.selectedSong));
+    if(instrumentItem instanceof IInstrument) {
+      GreekFantasy.CHANNEL.sendToServer(new CUpdateInstrumentPacket(this.itemSlot, this.selectedSong));
+    }
     super.onClose();
   }
   
@@ -143,10 +149,10 @@ public class PanfluteScreen extends Screen {
   protected class SongButton extends Button {
     
     private final int index;
-    private final PanfluteSong song;
+    private final Song song;
     private final ResourceLocation songID;
     
-    public SongButton(final int indexIn, final PanfluteScreen gui, final PanfluteSong songIn, 
+    public SongButton(final int indexIn, final SongScreen gui, final Song songIn, 
         final ResourceLocation songInID, final int x, final int y) {
       super(x, y, BTN_WIDTH, BTN_HEIGHT, StringTextComponent.EMPTY, (b) -> gui.selectedSong = songInID);
       index = indexIn;
@@ -162,7 +168,7 @@ public class PanfluteScreen extends Screen {
         final int yOffset = SCREEN_HEIGHT + (selected ? this.height : 0);
         // draw button background
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        PanfluteScreen.this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
+        SongScreen.this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
         this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
         // style the name and credits
         IFormattableTextComponent name = song.getName().deepCopy();
@@ -174,7 +180,7 @@ public class PanfluteScreen extends Screen {
         // draw deity name string
         drawStringToFit(matrixStack, name, this.x + 3, this.y + 4, this.width - 6);
         // draw credits string
-        drawStringToFit(matrixStack, credits, this.x + 3, this.y + PanfluteScreen.this.font.FONT_HEIGHT + 5, this.width - 6);
+        drawStringToFit(matrixStack, credits, this.x + 3, this.y + SongScreen.this.font.FONT_HEIGHT + 5, this.width - 6);
       }
     }
     
@@ -189,18 +195,18 @@ public class PanfluteScreen extends Screen {
      **/
     protected void drawStringToFit(MatrixStack matrixStack, ITextComponent text, int x, int y, int maxWidth) {
       float scale = 1.0F;
-      while(PanfluteScreen.this.font.getWordWrappedHeight(text.getString(), (int) (maxWidth / scale)) > PanfluteScreen.this.font.FONT_HEIGHT && scale > 0.25F) {
+      while(SongScreen.this.font.getWordWrappedHeight(text.getString(), (int) (maxWidth / scale)) > SongScreen.this.font.FONT_HEIGHT && scale > 0.25F) {
         scale -= 0.05F;
       }
       RenderSystem.pushMatrix();
       RenderSystem.scalef(scale, scale, scale);
-      PanfluteScreen.this.font.func_243248_b(matrixStack, text, x / scale, y / scale, 0);
+      SongScreen.this.font.func_243248_b(matrixStack, text, x / scale, y / scale, 0);
       RenderSystem.popMatrix();
     }
     
     /** @return whether this button should render as selected **/
     protected boolean isSelected() {
-      return this.isHovered() || (songID.equals(PanfluteScreen.this.selectedSong));
+      return this.isHovered() || (songID.equals(SongScreen.this.selectedSong));
     }
     
     /**
@@ -210,8 +216,8 @@ public class PanfluteScreen extends Screen {
      * based on the scroll value
      **/
     public void updateLocation(final int startIndex) {
-      this.y = PanfluteScreen.this.guiTop + PanfluteScreen.BTN_TOP + PanfluteScreen.BTN_HEIGHT * (index - startIndex);
-      if(index < startIndex || index >= (startIndex + PanfluteScreen.BTN_VISIBLE)) {
+      this.y = SongScreen.this.guiTop + SongScreen.BTN_TOP + SongScreen.BTN_HEIGHT * (index - startIndex);
+      if(index < startIndex || index >= (startIndex + SongScreen.BTN_VISIBLE)) {
         this.visible = false;
         this.isHovered = false;
       } else {

@@ -19,6 +19,14 @@ public class FavorConfiguration {
   public static final ResourceLocation NAME = new ResourceLocation(GreekFantasy.MODID, "favor_configuration");
   public static final FavorConfiguration EMPTY = new FavorConfiguration(Maps.newHashMap(), Maps.newHashMap(), Lists.newArrayList());
   
+  public static final String FLYING_RANGE = "flying_enchantment";
+  public static final String LORD_OF_THE_SEA_RANGE = "lord_of_the_sea_enchantment";
+  public static final String FIREFLASH_RANGE = "fireflash_enchantment";
+  public static final String DAYBREAK_RANGE = "daybreak_enchantment";
+  public static final String RAISING_RANGE = "raising_enchantment";
+  public static final String APOLLO_BOW_RANGE = "apollo_bow";
+  public static final String ARTEMIS_BOW_RANGE = "artemis_bow";
+  
   public static final Codec<FavorConfiguration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       Codec.unboundedMap(ResourceLocation.CODEC, ConfiguredFavorRange.CODEC)
         .optionalFieldOf("entity_favor_configuration", Maps.newHashMap())
@@ -57,17 +65,7 @@ public class FavorConfiguration {
   
   public List<SpecialFavorEffect> getSpecialFavorEffects() { return specialFavorEffectList; }
   
-  public FavorRange getFlyingDeityRange() { return getEnchantmentMap().getOrDefault("flying_enchantment", FavorRange.EMPTY); }
-  
-  public FavorRange getLordOfTheSeaDeityRange() { return getEnchantmentMap().getOrDefault("lord_of_the_sea_enchantment", FavorRange.EMPTY); }
-  
-  public FavorRange getFireflashDeityRange() { return getEnchantmentMap().getOrDefault("fireflash_enchantment", FavorRange.EMPTY); }
-
-  public FavorRange getDaybreakDeityRange() { return getEnchantmentMap().getOrDefault("daybreak_enchantment", FavorRange.EMPTY); }
-  
-  public FavorRange getApolloBowRange() { return getEnchantmentMap().getOrDefault("apollo_bow", FavorRange.EMPTY); }
-  
-  public FavorRange getArtemisBowRange() { return getEnchantmentMap().getOrDefault("artemis_bow", FavorRange.EMPTY); }
+  public FavorRange getSpecialRange(final String name) { return getEnchantmentMap().getOrDefault(name, FavorRange.EMPTY); }
 
   public ConfiguredFavorRange getEntity(final EntityType<?> type) {
     return getEntityTargetMap().getOrDefault(type.getRegistryName(), ConfiguredFavorRange.EMPTY);

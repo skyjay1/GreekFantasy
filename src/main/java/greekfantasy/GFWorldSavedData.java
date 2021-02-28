@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableSet;
 
 import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.deity.favor.IFavor;
+import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.tileentity.StatueTileEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
@@ -221,7 +222,7 @@ public class GFWorldSavedData extends WorldSavedData {
     final ItemStack feet = player.getItemStackFromSlot(EquipmentSlotType.FEET);
     return (feet.getItem() == GFRegistry.WINGED_SANDALS
         && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, feet) > 0
-        && GreekFantasy.PROXY.getFavorConfiguration().getFlyingDeityRange().isInFavorRange(player, favor));
+        && GreekFantasy.PROXY.getFavorConfiguration().getSpecialRange(FavorConfiguration.FLYING_RANGE).isInFavorRange(player, favor));
   }
 
   /**

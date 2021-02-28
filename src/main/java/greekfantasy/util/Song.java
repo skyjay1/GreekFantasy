@@ -12,18 +12,18 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class PanfluteSong {
+public class Song {
   
-  public static final PanfluteSong EMPTY = new PanfluteSong("Error", "Error", 0, 0, Arrays.asList(), Arrays.asList());
+  public static final Song EMPTY = new Song("Error", "Error", 0, 0, Arrays.asList(), Arrays.asList());
   
-  public static final Codec<PanfluteSong> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-      Codec.STRING.fieldOf("name").forGetter(PanfluteSong::getNameTranslationKey),
-      Codec.STRING.fieldOf("credits").forGetter(PanfluteSong::getCreditsTranslationKey),
-      Codec.INT.fieldOf("interval").forGetter(PanfluteSong::getInterval),
-      Codec.INT.fieldOf("length").forGetter(PanfluteSong::getLength),
-      Codec.INT.listOf().fieldOf("treble").forGetter(PanfluteSong::getTreble),
-      Codec.INT.listOf().fieldOf("bass").forGetter(PanfluteSong::getBass)
-    ).apply(instance, PanfluteSong::new));
+  public static final Codec<Song> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+      Codec.STRING.fieldOf("name").forGetter(Song::getNameTranslationKey),
+      Codec.STRING.fieldOf("credits").forGetter(Song::getCreditsTranslationKey),
+      Codec.INT.fieldOf("interval").forGetter(Song::getInterval),
+      Codec.INT.fieldOf("length").forGetter(Song::getLength),
+      Codec.INT.listOf().fieldOf("treble").forGetter(Song::getTreble),
+      Codec.INT.listOf().fieldOf("bass").forGetter(Song::getBass)
+    ).apply(instance, Song::new));
   
   private String name;
   private String credits;
@@ -32,7 +32,7 @@ public class PanfluteSong {
   private List<Integer> treble;
   private List<Integer> bass;
   
-  protected PanfluteSong(final String lName, final String lCredits, final int lInterval, final int lLength,
+  protected Song(final String lName, final String lCredits, final int lInterval, final int lLength,
       final List<Integer> lTreble, final List<Integer> lBass) {
     name = lName;
     credits = lCredits;

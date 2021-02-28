@@ -15,9 +15,9 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
-public class PanfluteItem extends Item implements IInstrument {
+public class LyreItem extends Item implements IInstrument {
 
-  public PanfluteItem(final Properties properties) {
+  public LyreItem(final Properties properties) {
     super(properties);
   }
   
@@ -74,7 +74,7 @@ public class PanfluteItem extends Item implements IInstrument {
   // Instrument //
   
   @Override
-  public SoundEvent getSound() { return SoundEvents.BLOCK_NOTE_BLOCK_FLUTE; }
+  public SoundEvent getSound() { return SoundEvents.BLOCK_NOTE_BLOCK_GUITAR; }
 
   @Override
   public Item getInstrument() { return this; }

@@ -5,6 +5,7 @@ import java.util.Random;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.entity.misc.ISwimmingMob;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -307,7 +308,7 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
     @Override
     protected boolean canSwirl(Entity e) {
       return target.test(e) && ((e instanceof LivingEntity && entity.getAttractMobs()) || e instanceof ItemEntity)
-          && (!(e instanceof PlayerEntity) || !GreekFantasy.PROXY.getFavorConfiguration().getLordOfTheSeaDeityRange().isInFavorRange((PlayerEntity)e));
+          && (!(e instanceof PlayerEntity) || !GreekFantasy.PROXY.getFavorConfiguration().getSpecialRange(FavorConfiguration.LORD_OF_THE_SEA_RANGE).isInFavorRange((PlayerEntity)e));
     }
   }
 }

@@ -211,6 +211,11 @@
       "minlevel": 10,
       "maxlevel": 10
     },
+    "raising_enchantment": { 
+      "deity": "greekfantasy:hades",
+      "minlevel": 10,
+      "maxlevel": 10
+    },
     "apollo_bow": { 
       "deity": "greekfantasy:apollo",
       "minlevel": 5,
