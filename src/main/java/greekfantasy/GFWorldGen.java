@@ -263,6 +263,7 @@ public final class GFWorldGen {
     addSpawns(event, GFRegistry.MAD_COW_ENTITY, 1, 1);
     addSpawns(event, GFRegistry.MINOTAUR_ENTITY, 3, 5);
     addSpawns(event, GFRegistry.NAIAD_ENTITY, 2, 5);
+    addSpawns(event, GFRegistry.PEGASUS_ENTITY, 2, 5);
     addSpawns(event, GFRegistry.SATYR_ENTITY, 2, 5);
     addSpawns(event, GFRegistry.SHADE_ENTITY, 1, 1);
     addSpawns(event, GFRegistry.SIREN_ENTITY, 2, 4);

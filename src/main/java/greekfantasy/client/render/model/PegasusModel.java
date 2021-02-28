@@ -32,8 +32,8 @@ public class PegasusModel<T extends AbstractHorseEntity> extends HorseModel<T> {
     super.setLivingAnimations(entityIn, limbSwing, limbSwingAmount, partialTick);
     // calculate wing rotations
     final float wingSpan = 0.6F;
-    final float wingSpeed = 0.05F + 0.26F;//(entityIn.isAirBorne ? 0.24F : 0);
-    final float wingAngle = 1.5708F + MathHelper.cos((entityIn.ticksExisted + entityIn.getEntityId() + partialTick) * wingSpeed) * wingSpan;
+    final float wingSpeed = 0.08F + (entityIn.isBeingRidden() ? 0.32F : 0);
+    final float wingAngle = 1.5708F + MathHelper.cos((entityIn.ticksExisted + entityIn.getEntityId() * 3 + partialTick) * wingSpeed) * wingSpan;
     // update rotations
     leftWing.rotateAngleX = body.rotateAngleX;
     rightWing.rotateAngleX = body.rotateAngleX;

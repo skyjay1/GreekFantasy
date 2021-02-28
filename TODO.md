@@ -9,7 +9,8 @@ __Key:__
 
 - Summoning animations not playing on dedicated server
   X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
-- _ Tameable Orthus
+- X Tameable Orthus
+- _ Winged sandals don't have wings?
 
 ## Entity basics
 
@@ -49,7 +50,7 @@ __Key:__
 - X X ~ X X Drakaina
 - X X X X X Arion (very fast horse, use gold)
 - X X X X X Whirl (give it Heart of Sea to convert into Charybdis)
-- _ _ _ _ _ Pegasus
+- X X X X X Pegasus
 
 ## Entity AI
 
@@ -164,6 +165,8 @@ _Can I do something with these?_
 
 - Muses: Calliope, Clio, Erato, Euterpe, Melpomene, Polyhymnia, Terpsichore, Thalia, Urania
 - Amazons (fight like players w/ sword and shield, can be hired) (queen is Hippolyta)
+- Amazonian Girdle (Hippolyta)
+- Hero statues (Hercules, Achilles, Helen of Troy, Jason, Perseus, Orpheus)
 - Ophiotaur (kill to obtain heart; use heart to kill a god)
 - Makhai (6 arms)
 - Eurynomos (blue skin; vulture head?)
@@ -195,7 +198,6 @@ _Can I do something with these?_
 - Special swords: Harpe (sword used to slay Medusa)
 - Special bows: Eurytus
 - Thyrsus: staff with pinecone and ivy leaves used by Dionysus ("Wild Staff") - what would it do?
-- Amazonian Girdle (Hippolyta)
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
 - Story of King Midas (gold touch)
 - Story of Labyrinth (Minotaur miniboss, Golden String, etc)

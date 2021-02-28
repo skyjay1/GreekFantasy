@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import greekfantasy.deity.favor.Favor;
 import greekfantasy.deity.favor.IFavor;
 import greekfantasy.network.CUpdatePanflutePacket;
-import greekfantasy.network.CUpdatePegasusPacket;
 import greekfantasy.network.CUpdateStatuePosePacket;
 import greekfantasy.network.CUseEnchantmentPacket;
 import greekfantasy.network.SDeityPacket;
@@ -78,7 +77,6 @@ public class GreekFantasy {
     CHANNEL.registerMessage(messageId++, SFavorConfigurationPacket.class, SFavorConfigurationPacket::toBytes, SFavorConfigurationPacket::fromBytes, SFavorConfigurationPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     CHANNEL.registerMessage(messageId++, SSimpleParticlesPacket.class, SSimpleParticlesPacket::toBytes, SSimpleParticlesPacket::fromBytes, SSimpleParticlesPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     CHANNEL.registerMessage(messageId++, CUseEnchantmentPacket.class, CUseEnchantmentPacket::toBytes, CUseEnchantmentPacket::fromBytes, CUseEnchantmentPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    CHANNEL.registerMessage(messageId++, CUpdatePegasusPacket.class, CUpdatePegasusPacket::toBytes, CUpdatePegasusPacket::fromBytes, CUpdatePegasusPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
   }
 
   public static void setup(final FMLCommonSetupEvent event) {

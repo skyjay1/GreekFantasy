@@ -23,6 +23,8 @@ public class SpartiClothingLayer<T extends SpartiEntity, M extends EntityModel<T
   
   @Override
   public void render(MatrixStack matrixStack, IRenderTypeBuffer bufferIn, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) { 
-    renderCopyCutoutModel(getEntityModel(), this.layerModel, SPARTI_CLOTHES_TEXTURE, matrixStack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, 1.0F, 1.0F, 1.0F); 
+    if(!entity.isInvisible()) {
+      renderCopyCutoutModel(getEntityModel(), this.layerModel, SPARTI_CLOTHES_TEXTURE, matrixStack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, 1.0F, 1.0F, 1.0F);
+    }
   }
 }

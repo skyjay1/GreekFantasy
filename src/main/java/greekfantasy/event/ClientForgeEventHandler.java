@@ -134,7 +134,7 @@ public class ClientForgeEventHandler {
         } else if(!mc.player.movementInput.jump && wasJumping) {
           // if not jumping but was previously, send jump packet
           wasJumping = false;
-          ((PegasusEntity)mc.player.getRidingEntity()).sendPegasusPacket();
+          ((PegasusEntity)mc.player.getRidingEntity()).flyingJump();
         }
       }
     }

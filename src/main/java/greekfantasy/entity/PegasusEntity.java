@@ -3,19 +3,20 @@ package greekfantasy.entity;
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.GreekFantasy;
-import greekfantasy.network.CUpdatePegasusPacket;
 import net.minecraft.block.SoundType;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.IFlyingAnimal;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.passive.horse.CoatColors;
+import net.minecraft.entity.passive.horse.CoatTypes;
+import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -34,50 +35,66 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 
-public class PegasusEntity extends AbstractHorseEntity {
+public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal {
   
-  private static final DataParameter<Byte> DATA_COLOR = EntityDataManager.createKey(PegasusEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Integer> DATA_COLOR = EntityDataManager.createKey(PegasusEntity.class, DataSerializers.VARINT);
   private static final String KEY_COLOR = "Color";
   
-  private static final int FLYING_INTERVAL = 4;
+  private static final int FLYING_INTERVAL = 8;
   protected int flyingTime;
+  protected int navigatorTimer;
+  
+  protected boolean isFlying;
+
+//  protected final GroundPathNavigator groundNavigator;
+//  protected final FlyingPathNavigator flyingNavigator;
     
   public PegasusEntity(EntityType<? extends PegasusEntity> type, World worldIn) {
     super(type, worldIn);
+//    groundNavigator = new GroundPathNavigator(this, worldIn);
+//    flyingNavigator = new FlyingPathNavigator(this, worldIn);
+//    flyingNavigator.setCanSwim(true);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return AbstractHorseEntity.func_234237_fg_()
         .createMutableAttribute(Attributes.ARMOR, 1.0D)
-        .createMutableAttribute(ForgeMod.ENTITY_GRAVITY.get(), 0.024D);
+        .createMutableAttribute(ForgeMod.ENTITY_GRAVITY.get(), 0.04D)
+        .createMutableAttribute(Attributes.FLYING_SPEED, 1.32F);
   }
   
   @Override
   protected void registerData() {
     super.registerData();
-    this.getDataManager().register(DATA_COLOR, Byte.valueOf((byte) 0));
+    this.getDataManager().register(DATA_COLOR, 0);
   }
   
   @Override
   public void registerGoals() {
     super.registerGoals();
-    this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, PlayerEntity.class, 16.0F, 1.1D, 0.95D, (entity) -> {
-      return !entity.isDiscrete() && EntityPredicates.CAN_AI_TARGET.test(entity) && !this.isBeingRidden() &&
-          (!this.isTame() || this.getOwnerUniqueId() == null || !entity.getUniqueID().equals(this.getOwnerUniqueId()));
-   }));
+    this.goalSelector.addGoal(4, new AvoidPlayersGoal(this));
   }
 
   @Override
   public void livingTick() {
     super.livingTick();
     
-    
+    // update flying
     if(flyingTime > 0) {
       flyingTime--;
+    }
+    if(!isBeingRidden()) {
+      isFlying = false;
+    }
+    this.onGround = true;
+    // fall slowly when being ridden
+    if(isBeingRidden() && this.getMotion().y < -0.1D) {
+      this.setMotion(this.getMotion().mul(1.0, 0.95D, 1.0));
     }
     
     // take damage when too high
@@ -93,6 +110,7 @@ public class PegasusEntity extends AbstractHorseEntity {
     this.getAttribute(Attributes.MAX_HEALTH).setBaseValue((double)this.getModifiedMaxHealth());
     this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.getModifiedMovementSpeed());
     this.getAttribute(Attributes.HORSE_JUMP_STRENGTH).setBaseValue(this.getModifiedJumpStrength());
+    this.getAttribute(Attributes.FLYING_SPEED).setBaseValue(this.getAttributeValue(Attributes.MOVEMENT_SPEED) + 1.25D);
   }
   
   @Override
@@ -113,13 +131,21 @@ public class PegasusEntity extends AbstractHorseEntity {
   @Nullable
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    final CoatColors color = Util.getRandomObject(CoatColors.values(), this.rand);
-    this.setCoatColor(color);
+    CoatColors color;
+    if (spawnDataIn instanceof HorseEntity.HorseData) {
+       color = ((HorseEntity.HorseData)spawnDataIn).variant;
+    } else {
+       color = Util.getRandomObject(CoatColors.values(), this.rand);
+       spawnDataIn = new HorseEntity.HorseData(color);
+    }
+    // set color and type
+    this.setCoatColor(color, Util.getRandomObject(CoatTypes.values(), this.rand));
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
   // FLYING //
   
+  @Override
   public boolean canJump() {
      return super.canJump() && flyingTime <= 0;
   }
@@ -130,29 +156,18 @@ public class PegasusEntity extends AbstractHorseEntity {
   }
   
   @OnlyIn(Dist.CLIENT)
-  public void sendPegasusPacket() {
-    if(flyingTime <= 0) {
+  public void flyingJump() {
+    if(flyingTime <= 0 && canJump()) {
       // move upward
-      float jumpMotion = (float) this.getHorseJumpStrength() + 2.75F;
+      float jumpMotion = (float) this.getHorseJumpStrength() + 0.82F;
       this.addVelocity(0, jumpMotion, 0);
       this.markVelocityChanged();
+      this.onGround = true;
       // reset flying time
       flyingTime = FLYING_INTERVAL;
-      GreekFantasy.CHANNEL.sendToServer(new CUpdatePegasusPacket(this.getEntityId(), (int)Math.ceil(jumpMotion * 100.0F)));
+      isFlying = true;
     }
   }
-
-  public void handlePegasusUpdate(final int data) {
-//    if(flyingTime <= 0) {
-//      // move upward
-//      float jumpMotion = ((float) data) / 100.0F;
-//      this.addVelocity(0, jumpMotion, 0);
-//      this.markVelocityChanged();
-//      // reset flying time
-//      flyingTime = FLYING_INTERVAL;
-//    }
-  }
-  
   
   @Override
   public void handleStartJump(int jumpPower) {
@@ -172,22 +187,7 @@ public class PegasusEntity extends AbstractHorseEntity {
   
   @Override
   public void travel(final Vector3d vec) {
-    boolean bOnGround = this.onGround;
-    boolean bAirBorne = this.isAirBorne;
-    if(this.isBeingRidden() && this.getControllingPassenger() instanceof LivingEntity) {
-      final LivingEntity entity = (LivingEntity)this.getControllingPassenger();
-      this.onGround = true;
-      this.isAirBorne = false;
-      //entity.setOnGround(false);
-      //entity.isAirBorne = false;
-      // fall slowly when being ridden
-      if(this.getMotion().y < -0.1D) {
-        this.setMotion(this.getMotion().mul(0, 0.86D, 0));
-      }
-    }
     super.travel(vec);
-    this.onGround = bOnGround;
-    this.isAirBorne = bAirBorne;
   }
   
   // MISC //
@@ -285,6 +285,8 @@ public class PegasusEntity extends AbstractHorseEntity {
   public int getMaxTemper() {
     return 160;
   }
+  
+  // Mate 
 
   @Override
   public boolean canMateWith(final AnimalEntity otherAnimal) {
@@ -295,24 +297,76 @@ public class PegasusEntity extends AbstractHorseEntity {
     }
   }
   
+  @Override
+  public AgeableEntity func_241840_a(ServerWorld world, AgeableEntity mate) {
+     PegasusEntity child;
+     PegasusEntity pegasusMate = (PegasusEntity) mate;
+     child = GFRegistry.PEGASUS_ENTITY.create(world);
+     int i = this.rand.nextInt(9);
+     CoatColors coatcolors;
+     if (i < 4) {
+       coatcolors = this.getCoatColor();
+     } else if (i < 8) {
+       coatcolors = pegasusMate.getCoatColor();
+     } else {
+       coatcolors = Util.getRandomObject(CoatColors.values(), this.rand);
+     }
+
+     int j = this.rand.nextInt(5);
+     CoatTypes coattypes;
+     if (j < 2) {
+       coattypes = this.getCoatType();
+     } else if (j < 4) {
+       coattypes = pegasusMate.getCoatType();
+     } else {
+       coattypes = Util.getRandomObject(CoatTypes.values(), this.rand);
+     }
+
+     child.setCoatColor(coatcolors, coattypes);
+
+     this.setOffspringAttributes(mate, child);
+     return child;
+  }
+  
   // Color
   
-  public void setCoatColor(final CoatColors color) { this.getDataManager().set(DATA_COLOR, (byte) color.getId()); }
- 
-  public CoatColors getCoatColor() { return CoatColors.func_234254_a_(this.getDataManager().get(DATA_COLOR).intValue()); }
+  public void setPackedCoatColor(int packedColorsTypes) { this.dataManager.set(DATA_COLOR, packedColorsTypes); }
+
+  public int getPackedCoatColor() { return this.dataManager.get(DATA_COLOR); }
+
+  public void setCoatColor(CoatColors color, CoatTypes type) { this.setPackedCoatColor(color.getId() & 255 | type.getId() << 8 & '\uff00'); }
+
+  public CoatColors getCoatColor() { return CoatColors.func_234254_a_(this.getPackedCoatColor() & 255); }
+
+  public CoatTypes getCoatType() { return CoatTypes.func_234248_a_((this.getPackedCoatColor() & '\uff00') >> 8); }
   
   // NBT
   
   @Override
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
-    compound.putByte(KEY_COLOR, (byte) this.getCoatColor().getId());
+    compound.putInt(KEY_COLOR, this.getPackedCoatColor());
   }
 
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
-    this.setCoatColor(CoatColors.func_234254_a_(compound.getByte(KEY_COLOR)));
+    this.setPackedCoatColor(compound.getInt(KEY_COLOR));
   }
 
+  class AvoidPlayersGoal extends AvoidEntityGoal<PlayerEntity> {
+
+    public AvoidPlayersGoal(final PegasusEntity pegasus) {
+      super(pegasus, PlayerEntity.class, 16.0F, 1.1D, 0.95D, (entity) -> {
+        return !entity.isDiscrete() && EntityPredicates.CAN_AI_TARGET.test(entity) && !pegasus.isBeingRidden()
+            && (!pegasus.isTame() || pegasus.getOwnerUniqueId() == null || !entity.getUniqueID().equals(pegasus.getOwnerUniqueId()));
+      });
+    }
+    
+    @Override
+    public boolean shouldExecute() {
+      this.navigation = this.entity.getNavigator();
+      return super.shouldExecute();
+    }    
+  }  
 }

@@ -44,6 +44,12 @@ public class PegasusWingLayer<T extends PegasusEntity> extends LayerRenderer<T, 
             
       // render wings
       matrixStackIn.push();
+      if(entity.isChild()) {
+        float scale = 1.0F / 2.0F;
+        float childBodyOffsetY = 20.0F;
+        matrixStackIn.scale(scale, scale, scale);
+        matrixStackIn.translate(0.0D, (childBodyOffsetY / 16.0F), 0.0D);
+      }
       this.getEntityModel().renderWings(entity, matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, limbSwing, limbSwingAmount, partialTick);
       matrixStackIn.pop();
     }

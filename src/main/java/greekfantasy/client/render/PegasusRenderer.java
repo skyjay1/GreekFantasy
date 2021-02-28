@@ -29,6 +29,7 @@ public class PegasusRenderer<T extends PegasusEntity> extends AbstractHorseRende
   
   public PegasusRenderer(final EntityRendererManager renderManagerIn, final PegasusModel<T> model) {
     super(renderManagerIn, model, 1.0F);
+    this.addLayer(new PegasusMarkingsLayer<T>(this));
     this.addLayer(new PegasusWingLayer<T>(this));
   }
 
