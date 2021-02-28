@@ -76,6 +76,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -149,8 +150,10 @@ public final class GFRegistry {
   // Item //
   @ObjectHolder("panflute")
   public static final Item PANFLUTE = null;
-  @ObjectHolder("lyre")
-  public static final Item LYRE = null;
+  @ObjectHolder("wooden_lyre")
+  public static final Item WOODEN_LYRE = null;
+  @ObjectHolder("gold_lyre")
+  public static final Item GOLD_LYRE = null;
   @ObjectHolder("iron_club")
   public static final Item IRON_CLUB = null;
   @ObjectHolder("stone_club")
@@ -637,8 +640,10 @@ public final class GFRegistry {
     event.getRegistry().registerAll(
         new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
           .setRegistryName(MODID, "panflute"),
-        new LyreItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
-          .setRegistryName(MODID, "lyre"),
+        new LyreItem(SoundEvents.BLOCK_NOTE_BLOCK_HARP, new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
+          .setRegistryName(MODID, "wooden_lyre"),
+        new LyreItem(SoundEvents.BLOCK_NOTE_BLOCK_GUITAR, new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
+          .setRegistryName(MODID, "gold_lyre"),
         new FlintKnifeItem(ItemTier.WOOD, 3, -2.0F, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "flint_knife"),
         new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP))

@@ -16,9 +16,12 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
 public class LyreItem extends Item implements IInstrument {
+  
+  protected SoundEvent sound;
 
-  public LyreItem(final Properties properties) {
+  public LyreItem(final SoundEvent soundIn, final Properties properties) {
     super(properties);
+    sound = soundIn;
   }
   
   @Override
@@ -74,7 +77,7 @@ public class LyreItem extends Item implements IInstrument {
   // Instrument //
   
   @Override
-  public SoundEvent getSound() { return SoundEvents.BLOCK_NOTE_BLOCK_GUITAR; }
+  public SoundEvent getSound() { return sound; }
 
   @Override
   public Item getInstrument() { return this; }

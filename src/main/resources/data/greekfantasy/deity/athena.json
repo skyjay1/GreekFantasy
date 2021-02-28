@@ -5,12 +5,10 @@
   "base": "minecraft:quartz_slab",
   "left_hand": { 
   	"id": "minecraft:shield",
-  	"Count": 1,
-	"tag": { }
+  	"Count": 1
   },
   "right_hand": { 
-  	"id": "minecraft:book",
-  	"Count": 1,
-	"tag": { }
+  	"id": "greekfantasy:iron_spear",
+  	"Count": 1
   }
 }

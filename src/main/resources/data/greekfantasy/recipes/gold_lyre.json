@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "/O/",
+    "/O/",
+    " / "
+  ],
+  "key": {
+    "/": { "tag": "forge:ingots/gold" },
+    "O": { "item": "greekfantasy:golden_string" }
+  },
+  "result": {
+    "item": "greekfantasy:gold_lyre"
+  }
+}

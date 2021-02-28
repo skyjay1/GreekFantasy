@@ -4,14 +4,12 @@
   "female": true,
   "base": "minecraft:polished_diorite_slab",
   "left_hand": {
-  	"id": "minecraft:bow",
-  	"Count": 1,
-  	"tag": {}
+  	"id": "greekfantasy:artemis_bow",
+  	"Count": 1
   },
   "right_hand": { 
   	"id": "minecraft:iron_sword",
-  	"Count": 1,
-	"tag": { }
+  	"Count": 1
   },
   "effects": [
   	{

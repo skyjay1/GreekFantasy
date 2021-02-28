@@ -4,9 +4,8 @@
   "female": false,
   "base": "minecraft:end_stone_brick_slab",
   "right_hand": {
-  	"id": "minecraft:bow",
-  	"Count": 1,
-  	"tag": {}
+  	"id": "greekfantasy:apollo_bow",
+  	"Count": 1
   },
   "effects": [
   	{

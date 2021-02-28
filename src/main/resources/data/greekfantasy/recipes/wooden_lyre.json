@@ -3,7 +3,7 @@
   "pattern": [
     "/O/",
     "/O/",
-    " #  "
+    " # "
   ],
   "key": {
     "/": { "tag": "forge:rods/wooden" },
@@ -11,6 +11,6 @@
     "O": { "item": "minecraft:string" }
   },
   "result": {
-    "item": "greekfantasy:lyre"
+    "item": "greekfantasy:wooden_lyre"
   }
 }

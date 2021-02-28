@@ -4,8 +4,11 @@
   "female": false,
   "left_hand": {
   	"id": "minecraft:skeleton_skull",
-  	"Count": 1,
-  	"tag": {}
+  	"Count": 1
+  },
+  "right_hand": {
+  	"id": "greekfantasy:bident",
+  	"Count": 1
   },
   "base": "minecraft:polished_blackstone_slab",
   "overlay": "limestone",
