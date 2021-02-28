@@ -22,6 +22,8 @@ import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.entity.projectile.SpectralArrowEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -289,7 +291,8 @@ public class FavorEventHandler {
   @SubscribeEvent
   public static void onArrowJoinWorld(final EntityJoinWorldEvent event) {
     // attempt to add player target goals
-    if(event.getEntity() instanceof AbstractArrowEntity && !event.getEntity().getEntityWorld().isRemote()
+    if((event.getEntity() instanceof ArrowEntity || event.getEntity() instanceof SpectralArrowEntity) 
+        && !event.getEntity().getEntityWorld().isRemote()
         && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.ARROW_DAMAGE_MULTIPLIER)) {
       final AbstractArrowEntity arrow = (AbstractArrowEntity) event.getEntity();
       final Entity thrower = arrow.func_234616_v_();

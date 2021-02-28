@@ -1,5 +1,6 @@
 package greekfantasy.entity;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -12,6 +13,7 @@ import greekfantasy.entity.ai.ShootFireGoal;
 import greekfantasy.entity.misc.IHasOwner;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IAngerable;
 import net.minecraft.entity.LivingEntity;
@@ -20,6 +22,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.BreedGoal;
 import net.minecraft.entity.ai.goal.FollowOwnerGoal;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LeapAtTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -115,11 +118,12 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
     super.registerGoals();
     this.goalSelector.addGoal(1, new SwimGoal(this));
     this.goalSelector.addGoal(2, new SitGoal(this));
-    this.goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
-    this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
-    this.goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.0D, 10.0F, 4.0F, false));
-    this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
-    this.goalSelector.addGoal(7, new BreedGoal(this, 1.0D));
+    this.goalSelector.addGoal(3, new OrthusEntity.BegGoal(this, 8.0D));
+    this.goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
+    this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+    this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 4.0F, false));
+    this.goalSelector.addGoal(7, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+    this.goalSelector.addGoal(8, new BreedGoal(this, 1.0D));
     this.goalSelector.addGoal(10, new LookAtGoal(this, PlayerEntity.class, 8.0F));
     this.goalSelector.addGoal(10, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
@@ -402,6 +406,52 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   public void setFireAttack(final boolean shooting) { this.dataManager.set(FIRE, shooting); }
   
   public boolean isFireAttack() { return this.getDataManager().get(FIRE).booleanValue(); }
+  
+  static class BegGoal extends Goal {
+    
+    protected static final Predicate<LivingEntity> CAUSE_BEG = e -> e.getHeldItemMainhand().getItem().isIn(FOOD) || e.getHeldItemOffhand().getItem().isIn(FOOD);
+
+    protected final CreatureEntity creature;
+    protected final double range;
+    protected final int interval;
+    @Nullable
+    protected LivingEntity player;
+    
+    protected BegGoal(final CreatureEntity entity, final double rangeIn) { this(entity, rangeIn, 10); }
+    
+    protected BegGoal(final CreatureEntity entity, final double rangeIn, int intervalIn) {
+      creature = entity;
+      range = rangeIn;
+      interval = intervalIn;
+    }
+    
+    
+    @Override
+    public boolean shouldExecute() {
+      if(creature.ticksExisted % interval == 0) {
+        // find a player within range to cause begging
+        final List<LivingEntity> list = creature.getEntityWorld().getEntitiesWithinAABB(PlayerEntity.class, creature.getBoundingBox().grow(range));
+        if(!list.isEmpty()) {
+          player = list.get(0);
+        } else {
+          player = null;
+        }
+      }
+      return player != null;
+    }
+    
+    @Override
+    public boolean shouldContinueExecuting() {
+      return shouldExecute();
+    }
+    
+    @Override
+    public void tick() {
+      creature.getLookController().setLookPositionWithEntity(player, creature.getHorizontalFaceSpeed(), creature.getVerticalFaceSpeed());
+      creature.getNavigator().clearPath();
+    }
+    
+  }
   
   class FireAttackGoal extends ShootFireGoal {
 

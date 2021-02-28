@@ -37,5 +37,8 @@ public class HornOfPlentyItem extends Item {
     player.getCooldownTracker().setCooldown(this, 8);
     return ActionResult.func_233538_a_(stack, world.isRemote());
   }
+  
+  @Override
+  public int getItemEnchantability() { return 10; }
 
 }

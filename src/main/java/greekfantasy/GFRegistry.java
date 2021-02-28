@@ -137,6 +137,7 @@ public final class GFRegistry {
   public static EntityType<ShadeEntity> SHADE_ENTITY = buildEntityType(ShadeEntity::new, "shade", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<SirenEntity> SIREN_ENTITY = buildEntityType(SirenEntity::new, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, b -> {});
   public static EntityType<SpartiEntity> SPARTI_ENTITY = buildEntityType(SpartiEntity::new, "sparti", 0.6F, 1.98F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<SpearEntity> SPEAR_ENTITY = buildEntityType(SpearEntity::new, "spear", 0.5F, 0.5F, EntityClassification.MISC, b -> b.disableSummoning().trackingRange(4).func_233608_b_(20));
   public static EntityType<SwineSpellEntity> SWINE_SPELL_ENTITY = buildEntityType(SwineSpellEntity::new, "swine_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
   public static EntityType<TalosEntity> TALOS_ENTITY = buildEntityType(TalosEntity::new, "talos", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<UnicornEntity> UNICORN_ENTITY = buildEntityType(UnicornEntity::new, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
@@ -193,6 +194,14 @@ public final class GFRegistry {
   public static final Item ARTEMIS_BOW = null;
   @ObjectHolder("apollo_bow")
   public static final Item APOLLO_BOW = null;
+  @ObjectHolder("bident")
+  public static final Item BIDENT = null;
+  @ObjectHolder("wooden_spear")
+  public static final Item WOODEN_SPEAR = null;
+  @ObjectHolder("stone_spear")
+  public static final Item STONE_SPEAR = null;
+  @ObjectHolder("iron_spear")
+  public static final Item IRON_SPEAR = null;
   
   // Block //
   @ObjectHolder("reeds")
@@ -450,7 +459,7 @@ public final class GFRegistry {
     registerEntityType(event, MINOTAUR_ENTITY, "minotaur", MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight);
     registerEntityType(event, NAIAD_ENTITY, "naiad", NaiadEntity::getAttributes, NaiadEntity::canNaiadSpawnOn);
     registerEntityType(event, ORTHUS_ENTITY, "orthus", OrthusEntity::getAttributes, OrthusEntity::canSpawnOn);
-    registerEntityType(event, PEGASUS_ENTITY, "pegasus", PegasusEntity::getAttributes, null); // TODO spawning?
+    registerEntityType(event, PEGASUS_ENTITY, "pegasus", PegasusEntity::getAttributes, PegasusEntity::canSpawnOn);
     registerEntityType(event, PYTHON_ENTITY, "python", PythonEntity::getAttributes, null);
     registerEntityType(event, SATYR_ENTITY, "satyr", SatyrEntity::getAttributes, SatyrEntity::canSpawnOn);
     registerEntityType(event, SHADE_ENTITY, "shade", ShadeEntity::getAttributes, ShadeEntity::canMonsterSpawnInLight);
@@ -459,6 +468,7 @@ public final class GFRegistry {
     registerEntityType(event, TALOS_ENTITY, "talos", TalosEntity::getAttributes, null);
     registerEntityType(event, UNICORN_ENTITY, "unicorn", UnicornEntity::getAttributes, UnicornEntity::canSpawnOn);
     registerEntityType(event, WHIRL_ENTITY, "whirl", WhirlEntity::getAttributes, WhirlEntity::canWhirlSpawnOn);
+    event.getRegistry().register(SPEAR_ENTITY.setRegistryName(MODID, "spear"));
     event.getRegistry().register(CURSE_ENTITY.setRegistryName(MODID, "curse"));
     event.getRegistry().register(DRAGON_TOOTH_ENTITY.setRegistryName(MODID, "dragon_tooth"));
     event.getRegistry().register(HEALING_SPELL_ENTITY.setRegistryName(MODID, "healing_spell"));
@@ -659,6 +669,18 @@ public final class GFRegistry {
           .setRegistryName(MODID, "apollo_bow"),
         new EnchantedBowItem.ArtemisBowItem(new Item.Properties().maxDamage(562).group(GREEK_GROUP))
           .setRegistryName(MODID, "artemis_bow"),
+        new SpearItem(ItemTier.DIAMOND, new Item.Properties().group(GREEK_GROUP)
+            .setISTER(() -> () -> greekfantasy.client.render.tileentity.ClientISTERProvider.bakeSpearISTER("bident")))
+          .setRegistryName(MODID, "bident"),
+        new SpearItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP)
+            .setISTER(() -> () -> greekfantasy.client.render.tileentity.ClientISTERProvider.bakeSpearISTER("wooden_spear")))
+          .setRegistryName(MODID, "wooden_spear"),
+        new SpearItem(ItemTier.STONE, new Item.Properties().group(GREEK_GROUP)
+            .setISTER(() -> () -> greekfantasy.client.render.tileentity.ClientISTERProvider.bakeSpearISTER("stone_spear")))
+          .setRegistryName(MODID, "stone_spear"),
+        new SpearItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP)
+            .setISTER(() -> () -> greekfantasy.client.render.tileentity.ClientISTERProvider.bakeSpearISTER("iron_spear")))
+          .setRegistryName(MODID, "iron_spear"),
         new MirrorItem(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "mirror"),
         new SnakeskinArmorItem(EquipmentSlotType.HEAD, new Item.Properties().group(GREEK_GROUP))
@@ -781,7 +803,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, MINOTAUR_ENTITY, "minotaur", 0x443626, 0x734933);
     registerSpawnEgg(event, NAIAD_ENTITY, "naiad",  0x7caba1, 0xe67830);
     registerSpawnEgg(event, ORTHUS_ENTITY, "orthus", 0x493569, 0xe42e2e);
-    registerSpawnEgg(event, PEGASUS_ENTITY, "pegasus", 0xeeeeee, 0xe8e8e8);
+    registerSpawnEgg(event, PEGASUS_ENTITY, "pegasus", 0x916535, 0xe8e8e8);
     registerSpawnEgg(event, PYTHON_ENTITY, "python", 0x3a8228, 0x1e4c11);
     registerSpawnEgg(event, SATYR_ENTITY, "satyr", 0x54371d, 0xa16648);
     registerSpawnEgg(event, SHADE_ENTITY, "shade", 0x222222, 0x000000);

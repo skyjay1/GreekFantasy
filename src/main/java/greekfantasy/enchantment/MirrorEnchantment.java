@@ -38,7 +38,7 @@ public class MirrorEnchantment extends Enchantment {
   @Override
   public int getMaxLevel() { return 1; }
   @Override
-  public boolean isAllowedOnBooks() { return false; }
+  public boolean isAllowedOnBooks() { return GreekFantasy.CONFIG.isMirrorEnabled(); }
   @Override
   public boolean canApplyAtEnchantingTable(ItemStack stack) { 
     return GreekFantasy.CONFIG.isMirrorEnabled() && isApplicableItem(stack) && super.canApplyAtEnchantingTable(stack); 

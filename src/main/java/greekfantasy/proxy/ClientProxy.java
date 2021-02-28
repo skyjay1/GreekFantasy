@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -75,6 +76,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SHADE_ENTITY, ShadeRenderer::new);  
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SIREN_ENTITY, SirenRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SPARTI_ENTITY, SpartiRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SPEAR_ENTITY, SpearRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SWINE_SPELL_ENTITY, SwineSpellRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.UNICORN_ENTITY, UnicornRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.WHIRL_ENTITY, WhirlRenderer::new);
@@ -106,36 +108,31 @@ public class ClientProxy extends Proxy {
   }
   
   @Override
-  public void registerModelProperties() { 
-    // Apollo Bow properties
-    ItemModelsProperties.registerProperty(GFRegistry.APOLLO_BOW, new ResourceLocation("pull"),
+  public void registerModelProperties() {
+    // Register bow properties
+    registerBowProperties(GFRegistry.APOLLO_BOW);
+    registerBowProperties(GFRegistry.ARTEMIS_BOW);
+    registerBowProperties(GFRegistry.CURSED_BOW);
+    // Register spear properties
+    registerSpearProperties(GFRegistry.BIDENT);
+    registerSpearProperties(GFRegistry.WOODEN_SPEAR);
+    registerSpearProperties(GFRegistry.STONE_SPEAR);
+    registerSpearProperties(GFRegistry.IRON_SPEAR);
+  }
+  
+  private static void registerBowProperties(final Item bow) {
+    ItemModelsProperties.registerProperty(bow, new ResourceLocation("pull"),
         (item, world, entity) -> {
           if (entity == null) return 0.0F;
           if (entity.getActiveItemStack() != item) return 0.0F;
           return (item.getUseDuration() - entity.getItemInUseCount()) / 20.0F;
         });
-    ItemModelsProperties.registerProperty(GFRegistry.APOLLO_BOW, new ResourceLocation("pulling"),
+    ItemModelsProperties.registerProperty(bow, new ResourceLocation("pulling"),
         (item, world, entity) -> (entity != null && entity.isHandActive() && entity.getActiveItemStack() == item) ? 1.0F : 0.0F);
-    
-    // Artemis Bow properties
-    ItemModelsProperties.registerProperty(GFRegistry.ARTEMIS_BOW, new ResourceLocation("pull"),
-        (item, world, entity) -> {
-          if (entity == null) return 0.0F;
-          if (entity.getActiveItemStack() != item) return 0.0F;
-          return (item.getUseDuration() - entity.getItemInUseCount()) / 20.0F;
-        });
-    ItemModelsProperties.registerProperty(GFRegistry.ARTEMIS_BOW, new ResourceLocation("pulling"),
-        (item, world, entity) -> (entity != null && entity.isHandActive() && entity.getActiveItemStack() == item) ? 1.0F : 0.0F);
-    
-    // Cursed Bow properties
-    ItemModelsProperties.registerProperty(GFRegistry.CURSED_BOW, new ResourceLocation("pull"),
-        (item, world, entity) -> {
-          if (entity == null) return 0.0F;
-          if (entity.getActiveItemStack() != item) return 0.0F;
-          return (item.getUseDuration() - entity.getItemInUseCount()) / 20.0F;
-        });
-    ItemModelsProperties.registerProperty(GFRegistry.CURSED_BOW, new ResourceLocation("pulling"),
-        (item, world, entity) -> (entity != null && entity.isHandActive() && entity.getActiveItemStack() == item) ? 1.0F : 0.0F);
-    
+  }
+  
+  private static void registerSpearProperties(final Item spear) {
+    ItemModelsProperties.registerProperty(spear, new ResourceLocation("throwing"), (item, world, entity) -> 
+      (entity != null && entity.isHandActive() && entity.getActiveItemStack() == item) ? 1.0F : 0.0F);
   }
 }

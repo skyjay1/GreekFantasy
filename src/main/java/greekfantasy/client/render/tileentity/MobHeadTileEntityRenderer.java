@@ -107,5 +107,5 @@ public class MobHeadTileEntityRenderer extends TileEntityRenderer<MobHeadTileEnt
       cerberusHeadModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
       matrixStack.pop();
     }
-  };
+  }
 }

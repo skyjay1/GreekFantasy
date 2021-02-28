@@ -61,6 +61,11 @@
             "max": 5
           }
         }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        }
       ]
     },
     {
@@ -78,10 +83,39 @@
             }
           ]
         }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        }
       ]
     },
     {
       "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "greekfantasy:horn_of_plenty",
+	      "functions": [
+	        {
+	          "function": "minecraft:set_count",
+	          "count": {
+	            "min": 1,
+	            "max": 3
+	          }
+	        }
+	      ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
@@ -94,6 +128,16 @@
               ]
             }
           ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "condition": "minecraft:random_chance_with_looting",
+          "chance": 0.65,
+          "looting_multiplier": 0.1
         }
       ]
     }

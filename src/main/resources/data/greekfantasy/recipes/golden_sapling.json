@@ -1,9 +1,9 @@
 {
   "type": "crafting_shapeless",
   "ingredients": [
-	{ "item": "greekfantasy:fiery_bat_wing" },
     { "tag": "minecraft:saplings" },
-	{ "item": "greekfantasy:fiery_bat_wing" }
+	{ "item": "minecraft:glistering_melon_slice" },
+	{ "item": "minecraft:gunpowder" }
   ],
   "result": {
     "item": "greekfantasy:golden_apple_sapling",
