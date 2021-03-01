@@ -76,11 +76,11 @@ public class MobHeadTileEntityRenderer extends TileEntityRenderer<MobHeadTileEnt
   public static class OrthusItemStackRenderer extends ItemStackTileEntityRenderer {
     final OrthusHeadModel orthusHeadModel = new OrthusHeadModel();
     @Override
-    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int i1, int i2) {
+    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
       matrixStack.push();
       matrixStack.scale(-1.0F, -1.0F, 1.0F);
       IVertexBuilder vertexBuilder = buffer.getBuffer(orthusHeadModel.getRenderType(MobHeadTileEntity.HeadType.ORTHUS.getTexture()));
-      orthusHeadModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+      orthusHeadModel.render(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
       matrixStack.pop();
     }
   }
@@ -88,11 +88,11 @@ public class MobHeadTileEntityRenderer extends TileEntityRenderer<MobHeadTileEnt
   public static class GiganteItemStackRenderer extends ItemStackTileEntityRenderer {
     final GiganteHeadModel giganteHeadModel = new GiganteHeadModel();
     @Override
-    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int i1, int i2) {
+    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
       matrixStack.push();
       matrixStack.scale(-1.0F, -1.0F, 1.0F);
       IVertexBuilder vertexBuilder = buffer.getBuffer(giganteHeadModel.getRenderType(MobHeadTileEntity.HeadType.GIGANTE.getTexture()));
-      giganteHeadModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+      giganteHeadModel.render(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
       matrixStack.pop();
     }
   }
@@ -100,11 +100,11 @@ public class MobHeadTileEntityRenderer extends TileEntityRenderer<MobHeadTileEnt
   public static class CerberusItemStackRenderer extends ItemStackTileEntityRenderer {
     final CerberusHeadModel cerberusHeadModel = new CerberusHeadModel();
     @Override
-    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int i1, int i2) {
+    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
       matrixStack.push();
       matrixStack.scale(-1.0F, -1.0F, 1.0F);
       IVertexBuilder vertexBuilder = buffer.getBuffer(cerberusHeadModel.getRenderType(MobHeadTileEntity.HeadType.CERBERUS.getTexture()));
-      cerberusHeadModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+      cerberusHeadModel.render(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
       matrixStack.pop();
     }
   }

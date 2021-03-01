@@ -3,8 +3,12 @@
   "enabled": true,
   "female": false,
   "base": "minecraft:end_stone_brick_slab",
-  "right_hand": {
+  "left_hand": {
   	"id": "greekfantasy:apollo_bow",
+  	"Count": 1
+  },
+  "right_hand": {
+  	"id": "greekfantasy:gold_lyre",
   	"Count": 1
   },
   "effects": [

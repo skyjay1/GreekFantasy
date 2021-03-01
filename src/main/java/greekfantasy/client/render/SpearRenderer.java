@@ -52,11 +52,11 @@ public class SpearRenderer<T extends SpearEntity> extends EntityRenderer<T> {
     }
     
     @Override
-    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int i1, int i2) {
+    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
       matrixStack.push();
       matrixStack.scale(-1.0F, -1.0F, 1.0F);
       IVertexBuilder vertexBuilder = ItemRenderer.getEntityGlintVertexBuilder(buffer, RenderType.getEntityCutoutNoCull(texture), false, item.hasEffect());
-      spearModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+      spearModel.render(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
       matrixStack.pop();
     }
   }

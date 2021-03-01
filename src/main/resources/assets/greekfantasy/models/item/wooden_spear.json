@@ -20,5 +20,16 @@
 		"layer0": "greekfantasy:item/wooden_spear"
 	  }
     }
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "minecraft:throwing": 1
+      },
+      "model": "greekfantasy:item/spear_throwing",
+      "textures": {
+        "spear": "greekfantasy:item/wooden_spear"
+      }
+    }
+  ]
 }

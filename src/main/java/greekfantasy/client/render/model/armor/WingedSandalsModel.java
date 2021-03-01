@@ -42,17 +42,4 @@ public class WingedSandalsModel extends BipedModel<LivingEntity> {
     this.rightWing.rotateAngleY = wingAngle;
     this.leftWing.rotateAngleY = -wingAngle;
   }
-
-  public static ModelRenderer makeWing(final EntityModel<?> model, final float modelSize, final boolean isLeft) {
-    final ModelRenderer wing = new ModelRenderer(model);
-    if(isLeft) {
-      wing.setRotationPoint(0.5F, 11.0F, 2.0F);
-      wing.setTextureOffset(16, 25).addBox(0.0F, -6.0F, -1.0F, 5.0F, 6.0F, 1.0F, modelSize);
-    } else {
-      wing.setRotationPoint(-0.5F, 11.0F, 2.0F);
-      wing.setTextureOffset(16, 25).addBox(-5.0F, -6.0F, -1.0F, 5.0F, 6.0F, 1.0F, modelSize);
-      wing.mirror = true;
-    }
-    return wing;
-  }
 }

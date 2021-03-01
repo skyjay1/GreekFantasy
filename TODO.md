@@ -10,7 +10,8 @@ __Key:__
 - Summoning animations not playing on dedicated server
   X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
 - X Tameable Orthus
-- _ Winged sandals don't have wings?
+- X Winged sandals don't have wings
+- X Spears and bidents facing wrong way when throwing
 
 ## Entity basics
 
@@ -25,7 +26,7 @@ __Key:__
 - X X X X X Minotaur
 - X X ~ X X Gorgon
 - X X X X X Harpy
-- X X _ _ X Empusa
+- X X _ X X Empusa
 - X X X X X Shade
 - X X ~ X X Siren (hostile)
 - X X ~ X X Cerastes (ram-horned serpent)
@@ -46,7 +47,7 @@ __Key:__
 - X X ~ X X Miniboss: Medusa
 - X X X _ _ Miniboss: Cretan Minotaur
 - X X X ~ X Miniboss: Circe
-- X X X _ X Fury
+- X X X X X Fury
 - X X ~ X X Drakaina
 - X X X X X Arion (very fast horse, use gold)
 - X X X X X Whirl (give it Heart of Sea to convert into Charybdis)
@@ -137,9 +138,9 @@ __Key:__
 `[In-game] [Use] [Obtainable]`
 
 - X X X Bow of Apollo, Bow of Artemis, Cursed Bow
-- X X _ Horn of Plenty
+- X X X Horn of Plenty
+- X X X Javelin and Bident
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
-- _ _ _ Javelin or Bident (wood, stone/flint, iron)
 - _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 
 ## Achievements
@@ -154,7 +155,7 @@ __Key:__
 
 - Complete: Statue GUI, Statue skins, Panflute songs, Panflute song GUI, mysterious box functions
 - Complete: "Stunned" effect (prevent movement or item use), "Petrified" effect, "Mirror" effect, "Swine" effect
-- Complete: "Overstep" enchantment, "Smashing" enchantment, "Hunting" enchantment, "Mirror" enchantment, "Flying" enchantment, "Fireflash" enchantment, "Daybreak" enchantment, "Lord of the Sea" enchantment
+- Complete: "Overstep" enchantment, "Smashing" enchantment, "Hunting" enchantment, "Mirror" enchantment, "Flying" enchantment, "Fireflash" enchantment, "Daybreak" enchantment, "Lord of the Sea" enchantment, "Raising" enchantment
 - Complete: Olive forest biome
 - ~ Block and Item tags (wooden_doors, etc.)
 - _ Golden Apple tree (leaves rarely drop golden apples) (saplings must be crafted)
