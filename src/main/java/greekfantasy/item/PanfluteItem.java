@@ -49,7 +49,7 @@ public class PanfluteItem extends Item implements IInstrument {
 
   @Override
   public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-    ItemStack itemstack = playerIn.getHeldItem(Hand.MAIN_HAND);
+    ItemStack itemstack = playerIn.getHeldItem(handIn);
     // check if player is sneaking and open GUI
     if(playerIn.isSneaking()) {
       if(worldIn.isRemote()) {

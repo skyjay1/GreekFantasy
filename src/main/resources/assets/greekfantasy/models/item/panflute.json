@@ -2,5 +2,13 @@
   "parent": "item/generated",
   "textures": {
 	"layer0": "greekfantasy:item/panflute"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "playing": 1
+      },
+      "model": "greekfantasy:item/panflute_playing"
+    }
+  ]
 }

@@ -85,8 +85,8 @@ public class SpearItem extends TieredItem implements IVanishable {
     } else {
       thrower.inventory.deleteStack(stack);
     }
-    world.playMovingSound(null, spear, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F);
     world.addEntity(spear);
+    world.playMovingSound(null, spear, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F);
   }
 
   @Override

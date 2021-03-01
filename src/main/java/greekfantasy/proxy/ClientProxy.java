@@ -109,6 +109,10 @@ public class ClientProxy extends Proxy {
   
   @Override
   public void registerModelProperties() {
+    // Register instrument properties
+    registerInstrumentProperties(GFRegistry.PANFLUTE);
+    registerInstrumentProperties(GFRegistry.WOODEN_LYRE);
+    registerInstrumentProperties(GFRegistry.GOLD_LYRE);
     // Register bow properties
     registerBowProperties(GFRegistry.APOLLO_BOW);
     registerBowProperties(GFRegistry.ARTEMIS_BOW);
@@ -118,6 +122,11 @@ public class ClientProxy extends Proxy {
     registerSpearProperties(GFRegistry.WOODEN_SPEAR);
     registerSpearProperties(GFRegistry.STONE_SPEAR);
     registerSpearProperties(GFRegistry.IRON_SPEAR);
+  }
+  
+  private static void registerInstrumentProperties(final Item instrument) {
+    ItemModelsProperties.registerProperty(instrument, new ResourceLocation("playing"),
+        (item, world, entity) -> (entity != null && entity.isHandActive() && entity.getActiveItemStack() == item) ? 1.0F : 0.0F);
   }
   
   private static void registerBowProperties(final Item bow) {
