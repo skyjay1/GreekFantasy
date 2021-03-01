@@ -39,7 +39,7 @@ public class SpearItem extends TieredItem implements IVanishable {
     super(tier, properties);
     onHitEntity = hitEntityConsumer;
     ImmutableMultimap.Builder<Attribute, AttributeModifier> mapBuilder = ImmutableMultimap.builder();
-    mapBuilder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", tier.getAttackDamage(), AttributeModifier.Operation.ADDITION));
+    mapBuilder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", 5.0D + tier.getAttackDamage(), AttributeModifier.Operation.ADDITION));
     mapBuilder.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.9D, AttributeModifier.Operation.ADDITION));
     this.spearAttributes = mapBuilder.build();
   }
