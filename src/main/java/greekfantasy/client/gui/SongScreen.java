@@ -10,7 +10,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.item.IInstrument;
+import greekfantasy.item.InstrumentItem;
 import greekfantasy.item.PanfluteItem;
 import greekfantasy.network.CUpdateInstrumentPacket;
 import greekfantasy.util.Song;
@@ -48,7 +48,7 @@ public class SongScreen extends Screen {
   private final List<SongScreen.SongButton> songButtons = new ArrayList<>();
   private final int itemSlot;
   private final ItemStack instrumentStack;
-  private final IInstrument instrumentItem;
+  private final InstrumentItem instrumentItem;
   
   private ResourceLocation selectedSong = PanfluteItem.DEFAULT_SONG; 
   private ScrollButton<SongScreen> scrollButton;
@@ -61,11 +61,11 @@ public class SongScreen extends Screen {
   private boolean scrollEnabled;
 
   public SongScreen(final int itemSlotIn, final ItemStack panfluteItemIn) {
-    super(new TranslationTextComponent("gui.panflute.title"));
+    super(new TranslationTextComponent("gui.songs.title"));
     itemSlot = itemSlotIn;
     instrumentStack = panfluteItemIn;
-    if(instrumentStack.getItem() instanceof IInstrument) {
-      instrumentItem = (IInstrument)instrumentStack.getItem();
+    if(instrumentStack.getItem() instanceof InstrumentItem) {
+      instrumentItem = (InstrumentItem)instrumentStack.getItem();
     } else {
       instrumentItem = null;
       this.closeScreen();
@@ -129,7 +129,7 @@ public class SongScreen extends Screen {
   @Override
   public void onClose() {
     // send update packet to server
-    if(instrumentItem instanceof IInstrument) {
+    if(instrumentItem instanceof InstrumentItem) {
       GreekFantasy.CHANNEL.sendToServer(new CUpdateInstrumentPacket(this.itemSlot, this.selectedSong));
     }
     super.onClose();

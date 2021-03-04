@@ -31,6 +31,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.pathfinding.SwimmerPathNavigator;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.SoundEvent;
@@ -80,6 +81,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     super(type, worldIn);
     this.stepHeight = 1.0F;
     this.experienceValue = 50;
+    this.navigator = new SwimmerPathNavigator(this, worldIn);
   }
 
   public static CharybdisEntity spawnCharybdis(final ServerWorld world, final WhirlEntity whirl) {

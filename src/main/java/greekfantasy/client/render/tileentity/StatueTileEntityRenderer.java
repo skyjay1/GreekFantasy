@@ -12,6 +12,7 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.block.StatueBlock;
 import greekfantasy.block.StatueBlock.StatueMaterial;
 import greekfantasy.client.gui.StatueScreen;
+import greekfantasy.client.render.model.tileentity.IHasName;
 import greekfantasy.client.render.model.tileentity.StatueModel;
 import greekfantasy.deity.Deity;
 import greekfantasy.tileentity.StatueTileEntity;
@@ -29,10 +30,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.model.data.EmptyModelData;
 
 
-public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntity> {
+public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntity> implements IHasName<StatueTileEntity> {
   
   protected static final ResourceLocation STEVE_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/steve.png");
   protected static final ResourceLocation ALEX_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/statue/alex.png");
@@ -66,6 +69,10 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     final ResourceLocation textureStone = te.hasDeity() ? te.getDeity().getOverlay() : material.getStoneTexture();
     final ResourceLocation textureOverlay = getOverlayTexture(te);
     matrixStackIn.push();
+    // render nameplate
+    if(!gui && canRenderName(tileEntityIn)) {
+      renderName(tileEntityIn, matrixStackIn, bufferIn, packedLightIn);
+    }
     // render base
     if(!upper && !gui) {
       final BlockState base = te.hasDeity() ? te.getDeity().getBaseBlock() : material.getBase();
@@ -109,6 +116,27 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     // render held items
     renderHeldItems(te, partialTicks, matrixStackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, upper);
     matrixStackIn.pop();
+  }
+  
+  @Override
+  public boolean canRenderName(final StatueTileEntity entityIn) {
+    return entityIn.isUpper() && IHasName.isWithinDistanceToRenderName(entityIn, 6.0D);
+  }
+
+  @Override
+  public void renderName(StatueTileEntity entityIn, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
+    ITextComponent name = null;
+    if(entityIn.hasDeity()) {
+      name = entityIn.getDeity().getText();
+    } else if(!entityIn.getTextureName().isEmpty()) {
+      name = new StringTextComponent(entityIn.getTextureName());
+    }
+    // the name exists, render here
+    if(name != null) {
+      matrixStackIn.push();
+      IHasName.renderNameplate(entityIn, name, 1.9F, matrixStackIn, bufferIn, packedLightIn);
+      matrixStackIn.pop();
+    }
   }
 
   protected ResourceLocation getOverlayTexture(final StatueTileEntity te) {

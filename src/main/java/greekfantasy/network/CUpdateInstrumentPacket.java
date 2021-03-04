@@ -2,7 +2,7 @@ package greekfantasy.network;
 
 import java.util.function.Supplier;
 
-import greekfantasy.item.IInstrument;
+import greekfantasy.item.InstrumentItem;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -51,9 +51,9 @@ public class CUpdateInstrumentPacket {
         // make sure they are holding an instrument in this slot
         if(message.getSlot() >= 0 && message.getSlot() < player.inventory.getSizeInventory()) {
           final ItemStack stack = player.inventory.getStackInSlot(message.getSlot());
-          if(stack.getItem() instanceof IInstrument) {
+          if(stack.getItem() instanceof InstrumentItem) {
             // update the deity stored in the instrument NBT
-            ((IInstrument)stack.getItem()).writeSong(stack, message.songName);
+            InstrumentItem.writeSong(stack, message.songName);
             player.inventory.setInventorySlotContents(message.getSlot(), stack);
           }
         }

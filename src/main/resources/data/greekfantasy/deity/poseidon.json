@@ -126,7 +126,7 @@
   	  },
   	  "biome": "OCEAN",
   	  "minlevel": -3,
-  	  "maxlevel": -8,
+  	  "maxlevel": -4,
   	  "mincooldown": 8800
   	},
   	{
@@ -134,7 +134,7 @@
   	  	"id": "minecraft:guardian" 
   	  },
   	  "biome": "OCEAN",
-  	  "minlevel": -4,
+  	  "minlevel": -5,
   	  "maxlevel": -10,
   	  "mincooldown": 9000
   	},
@@ -214,6 +214,7 @@
   	  	"Amplifier": 0,
   	  	"Duration": 600
   	  },
+  	  "biome": "WATER",
   	  "minlevel": 8,
   	  "maxlevel": 10,
   	  "mincooldown": 7100
@@ -224,6 +225,7 @@
   	  	"Amplifier": 2,
   	  	"Duration": 850
   	  },
+  	  "biome": "WATER",
   	  "minlevel": -2,
   	  "maxlevel": -10,
   	  "mincooldown": 5500
@@ -234,6 +236,7 @@
   	  	"Amplifier": 2,
   	  	"Duration": 550
   	  },
+  	  "biome": "WATER",
   	  "minlevel": -5,
   	  "maxlevel": -10,
   	  "mincooldown": 6500

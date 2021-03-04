@@ -50,7 +50,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -216,18 +215,10 @@ public class CerastesEntity extends CreatureEntity implements IHasOwner<Cerastes
   @Override
   protected void collideWithEntity(final Entity entityIn) {
     if (entityIn instanceof LivingEntity) {
-      final LivingEntity entity = (LivingEntity) entityIn;
       // un-hide and stand up
       if(!this.world.isRemote()) {
         this.setHiding(false);
         this.setStanding(true);
-        // sometimes set as attack target
-        if(this.getAttackTarget() == null && this.canAttack(entity.getType()) 
-            && EntityPredicates.CAN_AI_TARGET.test(entity)
-            && (!this.hasOwner() || this.shouldAttackEntity(entity, this.getOwner()))
-            && this.getRNG().nextBoolean()) {
-          this.setAttackTarget(entity);
-        }
       }
     }
     super.collideWithEntity(entityIn);

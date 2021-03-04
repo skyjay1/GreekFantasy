@@ -91,6 +91,7 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
     if(!isBeingRidden()) {
       isFlying = false;
     }
+    // setting this to true here allows smooth client-side motion
     this.onGround = true;
     // fall slowly when being ridden
     if(isBeingRidden() && this.getMotion().y < -0.1D) {
@@ -110,22 +111,22 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
     this.getAttribute(Attributes.MAX_HEALTH).setBaseValue((double)this.getModifiedMaxHealth());
     this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.getModifiedMovementSpeed());
     this.getAttribute(Attributes.HORSE_JUMP_STRENGTH).setBaseValue(this.getModifiedJumpStrength());
-    this.getAttribute(Attributes.FLYING_SPEED).setBaseValue(this.getAttributeValue(Attributes.MOVEMENT_SPEED) + 1.25D);
+    this.getAttribute(Attributes.FLYING_SPEED).setBaseValue(this.getAttributeValue(Attributes.MOVEMENT_SPEED) + 1.15D);
   }
   
   @Override
   protected float getModifiedMaxHealth() {
-    return super.getModifiedMaxHealth() + 28.0F;
+    return super.getModifiedMaxHealth() + 10.0F;
   }
 
   @Override
   protected double getModifiedJumpStrength() {
-    return super.getModifiedJumpStrength() + 0.22F;
+    return super.getModifiedJumpStrength() + 0.20F;
   }
 
   @Override
   protected double getModifiedMovementSpeed() {
-    return super.getModifiedMovementSpeed() + 0.16F;
+    return super.getModifiedMovementSpeed();
   }
   
   @Nullable

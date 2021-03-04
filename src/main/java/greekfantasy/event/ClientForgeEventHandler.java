@@ -31,7 +31,6 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -172,46 +171,6 @@ public class ClientForgeEventHandler {
 //    }
 //  }
   
-  private static void renderVaseName(final VaseTileEntity vase, final DrawHighlightEvent.HighlightBlock event) {
-    final ItemStack item = vase.getStackInSlot(0);
-    if(!item.isEmpty() && item.hasDisplayName()) {
-      renderName(vase, item.getDisplayName(), 0.75F, event.getMatrix(), event.getBuffers(), 15728640);
-    }
-  }
-  
-  private static void renderStatueName(final StatueTileEntity statue, final DrawHighlightEvent.HighlightBlock event) {
-    if(statue.isUpper()) {
-      ITextComponent name = null;
-      if(statue.hasDeity()) {
-        name = statue.getDeity().getText();
-      } else if(!statue.getTextureName().isEmpty()) {
-        name = new StringTextComponent(statue.getTextureName());
-      }
-      // the name exists, render here
-      if(name != null) {
-        renderName(statue, name, 2.25F, event.getMatrix(), event.getBuffers(), 15728640);
-      }
-    }
-  }
-  
-  private static void renderName(TileEntity entityIn, ITextComponent displayNameIn, float offsetY, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-    final Minecraft mc = Minecraft.getInstance();
-    final EntityRendererManager renderManager = mc.getRenderManager();
-    matrixStackIn.push();
-    matrixStackIn.translate(0.0D, offsetY, 0.0D);
-    matrixStackIn.rotate(renderManager.getCameraOrientation());
-    matrixStackIn.scale(-0.025F, -0.025F, 0.025F);
-    Matrix4f matrix4f = matrixStackIn.getLast().getMatrix();
-    float f1 = mc.gameSettings.getTextBackgroundOpacity(0.25F);
-    int j = (int) (f1 * 255.0F) << 24;
-    FontRenderer fontrenderer = renderManager.getFontRenderer();
-    float f2 = (float) (-fontrenderer.getStringPropertyWidth(displayNameIn) / 2);
-    // actually render the nameplate
-    fontrenderer.func_243247_a(displayNameIn, f2, 0, 553648127, false, matrix4f, bufferIn, true, j, packedLightIn);
-    fontrenderer.func_243247_a(displayNameIn, f2, 0, -1, false, matrix4f, bufferIn, false, 0, packedLightIn);
-    matrixStackIn.pop();
-  }
-
   /** @return whether the player is wearing the Helm of Darkness **/
   private static boolean hasHelmOfDarkness(final PlayerEntity player) {
     return player.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.HELM_OF_DARKNESS;

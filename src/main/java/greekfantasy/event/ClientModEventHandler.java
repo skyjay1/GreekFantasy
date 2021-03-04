@@ -62,7 +62,7 @@ public class ClientModEventHandler {
    * @param event the ColorHandlerEvent (Item)
    **/
   @SubscribeEvent
-  public static void onBlockColors(final ColorHandlerEvent.Item event) {
+  public static void onItemColors(final ColorHandlerEvent.Item event) {
     GreekFantasy.LOGGER.debug("registerItemColors");
     event.getItemColors().register((ItemStack item, int i) -> 0xD8E3D0, GFRegistry.OLIVE_LEAVES);
     event.getItemColors().register((ItemStack item, int i) -> 0x80f66b, GFRegistry.GOLDEN_APPLE_LEAVES);

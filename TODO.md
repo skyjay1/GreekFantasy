@@ -12,6 +12,7 @@ __Key:__
 - X Tameable Orthus
 - X Winged sandals don't have wings
 - X Spears and bidents facing wrong way when throwing
+- X Statues and Vases show names
 
 ## Entity basics
 
@@ -158,7 +159,7 @@ __Key:__
 - Complete: "Overstep" enchantment, "Smashing" enchantment, "Hunting" enchantment, "Mirror" enchantment, "Flying" enchantment, "Fireflash" enchantment, "Daybreak" enchantment, "Lord of the Sea" enchantment, "Raising" enchantment
 - Complete: Olive forest biome
 - ~ Block and Item tags (wooden_doors, etc.)
-- _ Golden Apple tree (leaves rarely drop golden apples) (saplings must be crafted)
+- X Golden Apple tree (leaves rarely drop golden apples) (saplings must be crafted)
 
 ## Misc Ideas and Inspirations
 

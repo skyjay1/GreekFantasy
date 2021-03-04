@@ -18,12 +18,16 @@ import net.minecraft.command.FunctionObject;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.DrownedEntity;
+import net.minecraft.entity.monster.GuardianEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.pathfinding.SwimmerPathNavigator;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.server.MinecraftServer;
@@ -117,15 +121,15 @@ public class FavorEffectManager {
     boolean flag = false;
     if(effect.isInBiome(worldIn, playerIn.getPosition())) {
       // attempt to run the function, summon, item, potion, or add-favor effect (exclusively, in that order)
-      if(functionFavorEffect(server, worldIn, playerIn, effect.getFunction(), effect.getBiome())) {
+      if(functionFavorEffect(server, worldIn, playerIn, effect.getFunction())) {
         flag = true;
-      } else if(summonFavorEffect(worldIn, playerIn, effect.getSummon(), effect.getBiome())) {
+      } else if(summonFavorEffect(worldIn, playerIn, effect.getSummon())) {
         flag = true;
-      } else if(itemFavorEffect(playerIn, effect.getItem(), effect.getBiome())) {
+      } else if(itemFavorEffect(playerIn, effect.getItem())) {
         flag = true;
-      } else if(potionFavorEffect(playerIn, effect.getPotion(), effect.getBiome())) {
+      } else if(potionFavorEffect(playerIn, effect.getPotion())) {
         flag = true;
-      } else if(addFavorEffect(playerIn, deity, effect.getFavor(), effect.getBiome())) {
+      } else if(addFavorEffect(playerIn, deity, effect.getFavor())) {
         flag = true;
       } else GreekFantasy.LOGGER.debug("Failed to run any part of a favor effect for " + deity.getName().toString() + "... " + effect.toString());
       // if any of the effects ran successfully, send a message to the player, play a sound, and return cooldown
@@ -143,7 +147,7 @@ public class FavorEffectManager {
    * @param potionTag an optional containing the potion effect's NBT (or empty)
    * @return true if the potion effect was successfully added
    */
-  private static boolean potionFavorEffect(final PlayerEntity playerIn, final Optional<CompoundNBT> potionTag, final Optional<String> data) {
+  private static boolean potionFavorEffect(final PlayerEntity playerIn, final Optional<CompoundNBT> potionTag) {
     if(potionTag.isPresent()) {
       final CompoundNBT nbt = potionTag.get().copy();
       nbt.putByte("Id", (byte) Effect.getId(ForgeRegistries.POTIONS.getValue(new ResourceLocation(potionTag.get().getString("Potion")))));
@@ -159,7 +163,7 @@ public class FavorEffectManager {
    * @param itemTag an optional containing the ItemStack (or empty)
    * @return true if the item was successfully added
    */
-  private static boolean itemFavorEffect(final PlayerEntity playerIn, final Optional<ItemStack> itemTag, final Optional<String> data) {
+  private static boolean itemFavorEffect(final PlayerEntity playerIn, final Optional<ItemStack> itemTag) {
     if(itemTag.isPresent()) {
       ItemEntity item = playerIn.entityDropItem(itemTag.get());
       if(item != null) {
@@ -177,11 +181,13 @@ public class FavorEffectManager {
    * @param entityTag an optional containing the NBTTagCompound of an entity (or empty)
    * @return true if the entity was successfully added
    */
-  private static boolean summonFavorEffect(final World worldIn, final PlayerEntity playerIn, final Optional<CompoundNBT> entityTag, final Optional<String> data) {
+  private static boolean summonFavorEffect(final World worldIn, final PlayerEntity playerIn, final Optional<CompoundNBT> entityTag) {
     if(entityTag.isPresent() && worldIn instanceof IServerWorld) {
       final Optional<EntityType<?>> entityType = EntityType.readEntityType(entityTag.get());
       if(entityType.isPresent()) {
         Entity entity = entityType.get().create(worldIn);
+        final boolean waterMob = entity instanceof WaterMobEntity || entity instanceof DrownedEntity || entity instanceof GuardianEntity
+            || (entity instanceof MobEntity && ((MobEntity)entity).getNavigator() instanceof SwimmerPathNavigator);
         // find a place to spawn the entity
         Random rand = playerIn.getRNG();
         BlockPos spawnPos;        
@@ -189,17 +195,19 @@ public class FavorEffectManager {
           spawnPos = playerIn.getPosition().add(rand.nextInt(range) - rand.nextInt(range), rand.nextInt(2) - rand.nextInt(2), rand.nextInt(range) - rand.nextInt(range));
           // check if this is a valid position
           boolean isValidSpawn = EntitySpawnPlacementRegistry.canSpawnEntity(entityType.get(), (IServerWorld)worldIn, SpawnReason.MOB_SUMMONED, spawnPos, rand) 
-              || (entity instanceof WaterMobEntity && worldIn.getBlockState(spawnPos).isIn(Blocks.WATER))
-              || (!(entity instanceof WaterMobEntity) && worldIn.getBlockState(spawnPos.down()).isSolid()
+              || (waterMob && worldIn.getBlockState(spawnPos).isIn(Blocks.WATER))
+              || (!waterMob && worldIn.getBlockState(spawnPos.down()).isSolid()
                   && worldIn.getBlockState(spawnPos).getMaterial() == Material.AIR
                   && worldIn.getBlockState(spawnPos.up()).getMaterial() == Material.AIR);
           if(isValidSpawn) {
             // spawn the entity at this position and finish
             entity.read(entityTag.get());
             entity.setPosition(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.01D, spawnPos.getZ() + 0.5D);
-            return worldIn.addEntity(entity);
+            worldIn.addEntity(entity);
+            return true;
           }
         }
+        entity.remove();
       }
     }
     return false;
@@ -214,7 +222,7 @@ public class FavorEffectManager {
    * @param data 
    * @return true if the function was successfully executed
    */
-  private static boolean functionFavorEffect(final MinecraftServer server, final World worldIn, final PlayerEntity playerIn, final Optional<ResourceLocation> function, final Optional<String> data) {
+  private static boolean functionFavorEffect(final MinecraftServer server, final World worldIn, final PlayerEntity playerIn, final Optional<ResourceLocation> function) {
     if(function.isPresent() && server != null) {
       // load the functions from the function manager
       final FunctionManager manager = server.getFunctionManager();
@@ -247,7 +255,7 @@ public class FavorEffectManager {
    * @param favorAmount the amount of favor
    * @return true if favor was successfully added
    */
-  private static boolean addFavorEffect(final PlayerEntity playerIn, final IDeity deity, final Optional<Long> favorAmount, final Optional<String> data) {
+  private static boolean addFavorEffect(final PlayerEntity playerIn, final IDeity deity, final Optional<Long> favorAmount) {
     if(favorAmount.isPresent()) {
       playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(favor -> favor.getFavor(deity).addFavor(playerIn, deity, favorAmount.get(), FavorChangedEvent.Source.OTHER));
       return true;

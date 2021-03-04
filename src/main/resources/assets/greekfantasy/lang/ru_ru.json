@@ -305,7 +305,7 @@
     "gui.mirror.hostile": "Враги",
     "gui.mirror.hostile.tooltip": "Существа, враждебные к игрокам с этими уровнями благосклонности",
     "gui.mirror.hostility_levels": "Враждебность",
-	"gui.panflute.title": "Песни флейты",
+	"gui.songs.title": "Песни",
 	"song.augustin.name": "Августин",
 	"song.augustin.credits": "Австралия",
 	"song.greensleeves.name": "Зеленые Рукава",

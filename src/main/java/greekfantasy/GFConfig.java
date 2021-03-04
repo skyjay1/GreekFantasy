@@ -170,8 +170,10 @@ public class GFConfig {
   private int palladiumYRange;
   
   // favor
+  private final ForgeConfigSpec.BooleanValue FAVOR_ENABLED;
   private final ForgeConfigSpec.BooleanValue FAVOR_DECREASES;
   private final ForgeConfigSpec.LongValue FAVOR_DECREASE_INTERVAL;
+  private boolean favorEnabled;
   private boolean favorDecreases;
   private long favorDecreaseInterval;
   
@@ -327,6 +329,8 @@ public class GFConfig {
     builder.pop();
     // favor
     builder.push("favor");
+    FAVOR_ENABLED = builder.comment("Set to false to disable all favor and gods")
+        .define("favor_enabled", true);
     FAVOR_DECREASES = builder.comment("Whether favor tends toward zero over time")
         .define("favor_decreases", true);
     FAVOR_DECREASE_INTERVAL = builder.comment("Number of ticks between decreasing favor, if enabled")
@@ -459,6 +463,7 @@ public class GFConfig {
     palladiumChunkRange = PALLADIUM_CHUNK_RANGE.get();
     palladiumYRange = PALLADIUM_Y_RANGE.get();
     // favor
+    favorEnabled = FAVOR_ENABLED.get();
     favorDecreases = FAVOR_DECREASES.get();
     favorDecreaseInterval = FAVOR_DECREASE_INTERVAL.get();
   }
@@ -523,6 +528,7 @@ public class GFConfig {
   public int getPalladiumChunkRange() { return palladiumChunkRange; }
   public int getPalladiumYRange() { return palladiumYRange; }
   
+  public boolean isFavorEnabled() { return favorEnabled; }
   public boolean doesFavorDecrease() { return favorDecreases; }
   public long getFavorDecreaseInterval() { return favorDecreaseInterval; }
   public boolean canSwineApply(final String entityName) {

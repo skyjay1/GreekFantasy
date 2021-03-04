@@ -1,7 +1,10 @@
 package greekfantasy.entity;
 
+import java.util.function.Predicate;
+
 import greekfantasy.entity.ai.IntervalRangedAttackGoal;
 import greekfantasy.entity.misc.PoisonSpitEntity;
+import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IRangedAttackMob;
@@ -24,6 +27,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.BossInfo;
@@ -42,6 +46,14 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   private static final byte SPIT = (byte)2;
   // bytes to use in World#setEntityState
   private static final byte SPIT_CLIENT = 9;
+  
+  private static final Predicate<LivingEntity> CAN_TARGET = e -> {
+    if(e != null && EntityPredicates.IS_LIVING_ALIVE.test(e) && EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e)) {
+      final CreatureAttribute attr = ((LivingEntity)e).getCreatureAttribute();
+      return !(attr == CreatureAttribute.ARTHROPOD || attr == CreatureAttribute.UNDEAD);
+    }
+    return false;
+  };
   
   // other constants for attack, spawn, etc.
   private static final int MAX_SPAWN_TIME = 110;
@@ -85,6 +97,7 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, CAN_TARGET));
   }
   
   @Override

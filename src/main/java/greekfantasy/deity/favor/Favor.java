@@ -40,7 +40,7 @@ public class Favor implements IFavor {
   @Override
   public Map<ResourceLocation, FavorLevel> getAllFavor() { return favorMap; }
   @Override
-  public boolean isEnabled() { return enabled; }
+  public boolean isEnabled() { return GreekFantasy.CONFIG.isFavorEnabled() && enabled; }
   @Override
   public void setEnabled(boolean enabledIn) { enabled = enabledIn; }
   @Override

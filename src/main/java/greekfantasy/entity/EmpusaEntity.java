@@ -62,9 +62,14 @@ public class EmpusaEntity extends MonsterEntity {
   @Override
   public void livingTick() {
     super.livingTick();
-    // hurt in daytime
-    if(this.isServerWorld() && this.world.isDaytime() && this.hurtTime == 0 && rand.nextInt(20) == 0) {
+    // hurt in daytime, then remove when at half health
+    if(this.isServerWorld() && this.getEntityWorld().getDayTime() % 24000L < 11000L && this.hurtTime == 0 && rand.nextInt(20) == 0) {
       this.attackEntityFrom(DamageSource.STARVE, 1.0F);
+      if(this.getHealth() < this.getMaxHealth() / 2.0F && this.getAttackTarget() == null) {
+        // remove the entity without dropping loot
+        this.remove();
+        return;
+      }
     }
     
     // spawn particles
@@ -167,7 +172,7 @@ public class EmpusaEntity extends MonsterEntity {
         // drain health from targetPos
         if(drainingTime > (MAX_DRAIN_TIME / 3) && this.entity.getAttackTarget().hurtTime == 0) {
           final DamageSource src = DamageSource.causeIndirectMagicDamage(this.entity, this.entity);
-          float amount = (float) this.entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
+          float amount = (float) this.entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue() * 0.5F;
           if(this.entity.getAttackTarget().attackEntityFrom(src, amount)) {
             this.entity.heal(amount * 1.5F);
           }

@@ -106,16 +106,17 @@ public class FavorEffect {
       final Optional<RegistryKey<Biome>> curBiome = world.func_242406_i(pos);
       if(biome.get().contains(":")) {
         // interpret as a ResourceLocation
-        final ResourceLocation name = new ResourceLocation(biome.get());
         // if the biome name does not match, the effect cannot run
-        if(curBiome.isPresent() && !curBiome.get().getRegistryName().equals(name)) {
+        if(curBiome.isPresent() && !curBiome.get().getRegistryName().toString().equals(biome.get())) {
+          // GreekFantasy.LOGGER.debug("denied effect in biome " + curBiome + " (needs to be " + biome.get() + ")");
           return false;
         }
       } else {
         // interpret as a BiomeDictionary.TYPE
         final BiomeDictionary.Type type = BiomeDictionary.Type.getType(biome.get());
         // if the biome does not match the given type, the effect cannot run
-        if(!BiomeDictionary.hasType(curBiome.get(), type)) {
+        if(curBiome.isPresent() && !BiomeDictionary.hasType(curBiome.get(), type)) {
+          // GreekFantasy.LOGGER.debug("denied effect in biome " + curBiome + " (needs to be type " + biome.get() + ")");
           return false;
         }
       }

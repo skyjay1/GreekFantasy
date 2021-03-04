@@ -4,12 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.item.IInstrument;
+import greekfantasy.item.InstrumentItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
 
 public final class SongManager {
     
@@ -26,7 +24,7 @@ public final class SongManager {
    * @param volumeBass the song volume for the bass
    * @return if the note was successfully played
    **/
-  public static boolean playMusic(final LivingEntity entity, final IInstrument instrument, final ResourceLocation songName, 
+  public static boolean playMusic(final LivingEntity entity, final InstrumentItem instrument, final ResourceLocation songName, 
       final long worldTime, final float volume, final float volumeBass) {
     final Optional<Song> song = GreekFantasy.PROXY.PANFLUTE_SONGS.get(songName);
     if(song.isPresent() && song.get().shouldPlayNote(worldTime)) {
@@ -43,7 +41,7 @@ public final class SongManager {
     return false;
   }
   
-  private static void playNoteAt(final LivingEntity entity, final IInstrument instrument, final int note, final float volume) {
+  private static void playNoteAt(final LivingEntity entity, final InstrumentItem instrument, final int note, final float volume) {
     final double x = entity.getPosX() + (entity.getRNG().nextDouble() - 0.5D) * 0.15D;
     final double y = entity.getPosYEye() + 0.15D;
     final double z = entity.getPosZ() + (entity.getRNG().nextDouble() - 0.5D) * 0.15D;
