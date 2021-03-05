@@ -87,7 +87,8 @@ public class AraEntity extends CreatureEntity implements IAngerable {
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp());
     this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
-    this.targetSelector.addGoal(4, new ResetAngerGoal<>(this, true));  }
+    this.targetSelector.addGoal(4, new ResetAngerGoal<>(this, true));  
+  }
   
   @Override
   public void livingTick() {

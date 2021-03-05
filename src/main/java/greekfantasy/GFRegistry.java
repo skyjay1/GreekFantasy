@@ -129,6 +129,7 @@ public final class GFRegistry {
 //  public static EntityType<HydraHeadEntity> HYDRA_HEAD_ENTITY = buildEntityType(HydraHeadEntity::new, "hydra_head", 0.5F, 0.9F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning());
   public static EntityType<MadCowEntity> MAD_COW_ENTITY = buildEntityType(MadCowEntity::new, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, b -> {});
   public static EntityType<MinotaurEntity> MINOTAUR_ENTITY = buildEntityType(MinotaurEntity::new, "minotaur", 0.7F, 1.94F, EntityClassification.MONSTER, b -> {});
+  public static EntityType<NemeanLionEntity> NEMEAN_LION_ENTITY = buildEntityType(NemeanLionEntity::new, "nemean_lion", 1.92F, 2.28F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<NaiadEntity> NAIAD_ENTITY = buildEntityType(NaiadEntity::new, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, b -> {});
   public static EntityType<OrthusEntity> ORTHUS_ENTITY = buildEntityType(OrthusEntity::new, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<OrthusHeadItemEntity> ORTHUS_HEAD_ITEM_ENTITY = buildEntityType(OrthusHeadItemEntity::new, "orthus_head_item", 0.25F, 0.25F, EntityClassification.MISC, b -> b.disableSummoning().trackingRange(6).func_233608_b_(20));
@@ -208,6 +209,8 @@ public final class GFRegistry {
   public static final Item STONE_SPEAR = null;
   @ObjectHolder("iron_spear")
   public static final Item IRON_SPEAR = null;
+  @ObjectHolder("nemean_lion_hide")
+  public static final Item NEMEAN_LION_HIDE = null;
   
   // Block //
   @ObjectHolder("reeds")
@@ -465,6 +468,7 @@ public final class GFRegistry {
 //    registerEntityType(event, HYDRA_ENTITY, HydraEntity::getAttributes, null);
     registerEntityType(event, MAD_COW_ENTITY, "mad_cow", MadCowEntity::getAttributes, MadCowEntity::canSpawnOn);
     registerEntityType(event, MINOTAUR_ENTITY, "minotaur", MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight);
+    registerEntityType(event, NEMEAN_LION_ENTITY, "nemean_lion", NemeanLionEntity::getAttributes, null);
     registerEntityType(event, NAIAD_ENTITY, "naiad", NaiadEntity::getAttributes, NaiadEntity::canNaiadSpawnOn);
     registerEntityType(event, ORTHUS_ENTITY, "orthus", OrthusEntity::getAttributes, OrthusEntity::canSpawnOn);
     registerEntityType(event, PEGASUS_ENTITY, "pegasus", PegasusEntity::getAttributes, PegasusEntity::canSpawnOn);
@@ -707,6 +711,8 @@ public final class GFRegistry {
           .setRegistryName(MODID, "winged_sandals"),
         new HelmOfDarknessItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
           .setRegistryName(MODID, "helm_of_darkness"),
+        new NemeanLionHideItem(new Item.Properties().rarity(Rarity.EPIC).group(GREEK_GROUP))
+          .setRegistryName(MODID, "nemean_lion_hide"),
         new GorgonBloodItem(new Item.Properties().maxStackSize(16).containerItem(Items.GLASS_BOTTLE).group(GREEK_GROUP))
           .setRegistryName(MODID, "gorgon_blood"),
         new Item(new Item.Properties().group(GREEK_GROUP))

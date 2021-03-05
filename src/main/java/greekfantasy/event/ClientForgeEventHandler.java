@@ -1,30 +1,18 @@
 package greekfantasy.event;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.render.PlayerSkyjayRenderer;
 import greekfantasy.client.render.SwineRenderer;
 import greekfantasy.entity.PegasusEntity;
-import greekfantasy.tileentity.StatueTileEntity;
-import greekfantasy.tileentity.VaseTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -49,6 +37,7 @@ public class ClientForgeEventHandler {
    **/
   @SubscribeEvent(priority = EventPriority.HIGH)
   public static void renderLiving(final RenderLivingEvent.Pre<LivingEntity, ?> event) {
+    // swine
     if(isSwine(event.getEntity())) {
       event.setCanceled(true);
       // render pig instead
@@ -121,6 +110,10 @@ public class ClientForgeEventHandler {
     }
   }
   
+  /**
+   * Used to handle jumping when the player is riding a pegasus
+   * @param event the client tick event
+   */
   @SubscribeEvent
   public static void onClientTick(final ClientTickEvent event) {
     if(event.phase == TickEvent.Phase.END) {
@@ -155,21 +148,10 @@ public class ClientForgeEventHandler {
     }
   }
   
-//  // The rendering code in renderName was not working, so this is commented out for now
-//  @SubscribeEvent
-//  public static void renderSelectedBlock(final DrawHighlightEvent.HighlightBlock event) {
-//    final Minecraft mc = Minecraft.getInstance();
-//    if(mc != null && mc.world != null) {
-//      final TileEntity te = mc.world.getTileEntity(event.getTarget().getPos());
-//      if(te instanceof VaseTileEntity) {
-//        // try to render vase nameplate
-//        renderVaseName((VaseTileEntity)te, event);
-//      } else if (te instanceof StatueTileEntity) {
-//        // try to render statue nameplate
-//        renderStatueName((StatueTileEntity)te, event);
-//      }
-//    }
-//  }
+  /** @return whether the living entity is wearing the Helm of Darkness **/
+  private static boolean hasNemeanHide(final LivingEntity livingEntity) {
+    return livingEntity.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.NEMEAN_LION_HIDE;
+  }
   
   /** @return whether the player is wearing the Helm of Darkness **/
   private static boolean hasHelmOfDarkness(final PlayerEntity player) {

@@ -1,5 +1,7 @@
 package greekfantasy.proxy;
 
+import java.util.Map;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.gui.DeityScreen;
@@ -16,7 +18,9 @@ import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.util.ResourceLocation;
@@ -66,6 +70,7 @@ public class ClientProxy extends Proxy {
 //    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.HYDRA_HEAD_ENTITY, HydraHeadRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.MAD_COW_ENTITY, MadCowRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.MINOTAUR_ENTITY, MinotaurRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.NEMEAN_LION_ENTITY, NemeanLionRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.NAIAD_ENTITY, NaiadRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ORTHUS_ENTITY, OrthusRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ORTHUS_HEAD_ITEM_ENTITY, m -> new ItemRenderer(m, Minecraft.getInstance().getItemRenderer()));
@@ -108,7 +113,19 @@ public class ClientProxy extends Proxy {
   }
   
   @Override
+  public void registerPlayerLayers() {
+    GreekFantasy.LOGGER.debug("registerPlayerLayers");
+    final Minecraft mc = Minecraft.getInstance();
+    final Map<String, PlayerRenderer> skinMap = mc.getRenderManager().getSkinMap();
+    final PlayerRenderer defaultRenderer = skinMap.get("default");
+    defaultRenderer.addLayer(new NemeanLionHideLayer<>(defaultRenderer, new BipedModel<>(0.5F), new BipedModel<>(1.0F)));
+    final PlayerRenderer slimRenderer = skinMap.get("slim");
+    slimRenderer.addLayer(new NemeanLionHideLayer<>(slimRenderer, new BipedModel<>(0.5F), new BipedModel<>(1.0F)));
+  }
+  
+  @Override
   public void registerModelProperties() {
+    GreekFantasy.LOGGER.debug("registerModelProperties");
     // Register instrument properties
     registerInstrumentProperties(GFRegistry.PANFLUTE);
     registerInstrumentProperties(GFRegistry.WOODEN_LYRE);
