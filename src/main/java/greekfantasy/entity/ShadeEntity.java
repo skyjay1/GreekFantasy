@@ -138,6 +138,8 @@ public class ShadeEntity extends MonsterEntity {
   @Override
   public boolean canBePushed() { return false; }
   @Override
+  protected void collideWithNearbyEntities() { }
+  @Override
   public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.UNDEAD; }
   @Override
   protected boolean isDespawnPeaceful() { return true; }

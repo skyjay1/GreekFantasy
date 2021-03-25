@@ -162,7 +162,7 @@ public class FavorEventHandler {
    * @param event the living attack event
    **/
   @SubscribeEvent
-  public static void onPlayerAttack(final LivingAttackEvent event) {
+  public static void onPlayerAttacked(final LivingAttackEvent event) {
     if(!event.isCanceled() && event.getEntityLiving().isServerWorld() 
         && event.getEntityLiving() instanceof PlayerEntity
         && event.getSource().getImmediateSource() != null) {

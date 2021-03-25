@@ -48,9 +48,9 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   private static final byte SPIT_CLIENT = 9;
   
   private static final Predicate<LivingEntity> CAN_TARGET = e -> {
-    if(e != null && EntityPredicates.IS_LIVING_ALIVE.test(e) && EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e)) {
+    if(e != null && e.isNonBoss() && EntityPredicates.IS_LIVING_ALIVE.test(e) && EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e)) {
       final CreatureAttribute attr = ((LivingEntity)e).getCreatureAttribute();
-      return !(attr == CreatureAttribute.ARTHROPOD || attr == CreatureAttribute.UNDEAD);
+      return !(attr == CreatureAttribute.ARTHROPOD || attr == CreatureAttribute.UNDEAD || attr == CreatureAttribute.WATER);
     }
     return false;
   };

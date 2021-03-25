@@ -113,6 +113,7 @@ public final class GFRegistry {
   public static EntityType<CurseEntity> CURSE_ENTITY = buildEntityType(CurseEntity::new, "curse", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
   public static EntityType<CyclopesEntity> CYCLOPES_ENTITY = buildEntityType(CyclopesEntity::new, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, b -> {});
   public static EntityType<CyprianEntity> CYPRIAN_ENTITY = buildEntityType(CyprianEntity::new, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<DiscusEntity> DISCUS_ENTITY = buildEntityType(DiscusEntity::new, "discus", 0.45F, 0.45F, EntityClassification.MISC, b -> b.disableSummoning().trackingRange(4).func_233608_b_(10));
   public static EntityType<DragonToothEntity> DRAGON_TOOTH_ENTITY = buildEntityType(DragonToothEntity::new, "dragon_tooth", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
   public static EntityType<DrakainaEntity> DRAKAINA_ENTITY = buildEntityType(DrakainaEntity::new, "drakaina", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
   public static EntityType<DryadEntity> DRYAD_ENTITY = buildEntityType(DryadEntity::new, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> {});
@@ -122,6 +123,7 @@ public final class GFRegistry {
   public static EntityType<GeryonEntity> GERYON_ENTITY = buildEntityType(GeryonEntity::new, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<GiantBoarEntity> GIANT_BOAR_ENTITY = buildEntityType(GiantBoarEntity::new, "giant_boar", 2.653F, 2.66F, EntityClassification.CREATURE, b -> b.immuneToFire());
   public static EntityType<GiganteEntity> GIGANTE_ENTITY = buildEntityType(GiganteEntity::new, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<GoldenRamEntity> GOLDEN_RAM_ENTITY = buildEntityType(GoldenRamEntity::new, "golden_ram", 0.96F, 1.56F, EntityClassification.CREATURE, b -> b.immuneToFire());
   public static EntityType<GorgonEntity> GORGON_ENTITY = buildEntityType(GorgonEntity::new, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
   public static EntityType<HarpyEntity> HARPY_ENTITY = buildEntityType(HarpyEntity::new, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, b -> {});
   public static EntityType<HealingSpellEntity> HEALING_SPELL_ENTITY = buildEntityType(HealingSpellEntity::new, "healing_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).func_233608_b_(10));
@@ -195,6 +197,8 @@ public final class GFRegistry {
   public static final Item GOLDEN_BALL = null;
   @ObjectHolder("golden_string")
   public static final Item GOLDEN_STRING = null;
+  @ObjectHolder("discus")
+  public static final Item DISCUS = null;
   @ObjectHolder("cursed_bow")
   public static final Item CURSED_BOW = null;
   @ObjectHolder("artemis_bow")
@@ -211,6 +215,10 @@ public final class GFRegistry {
   public static final Item IRON_SPEAR = null;
   @ObjectHolder("nemean_lion_hide")
   public static final Item NEMEAN_LION_HIDE = null;
+  @ObjectHolder("golden_fleece")
+  public static final Item GOLDEN_FLEECE = null;
+  @ObjectHolder("fiery_gear")
+  public static final Item FIERY_GEAR = null;
   
   // Block //
   @ObjectHolder("reeds")
@@ -463,6 +471,7 @@ public final class GFRegistry {
     registerEntityType(event, GERYON_ENTITY, "geryon", GeryonEntity::getAttributes, null);
     registerEntityType(event, GIANT_BOAR_ENTITY, "giant_boar", GiantBoarEntity::getAttributes, null);
     registerEntityType(event, GIGANTE_ENTITY, "gigante", GiganteEntity::getAttributes, GiganteEntity::canSpawnOn);
+    registerEntityType(event, GOLDEN_RAM_ENTITY, "golden_ram", GoldenRamEntity::getAttributes, null);
     registerEntityType(event, GORGON_ENTITY, "gorgon", GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn);
     registerEntityType(event, HARPY_ENTITY, "harpy", HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn);
 //    registerEntityType(event, HYDRA_ENTITY, HydraEntity::getAttributes, null);
@@ -482,6 +491,7 @@ public final class GFRegistry {
     registerEntityType(event, WHIRL_ENTITY, "whirl", WhirlEntity::getAttributes, WhirlEntity::canWhirlSpawnOn);
     event.getRegistry().register(SPEAR_ENTITY.setRegistryName(MODID, "spear"));
     event.getRegistry().register(CURSE_ENTITY.setRegistryName(MODID, "curse"));
+    event.getRegistry().register(DISCUS_ENTITY.setRegistryName(MODID, "discus"));
     event.getRegistry().register(DRAGON_TOOTH_ENTITY.setRegistryName(MODID, "dragon_tooth"));
     event.getRegistry().register(HEALING_SPELL_ENTITY.setRegistryName(MODID, "healing_spell"));
 //    event.getRegistry().register(HYDRA_HEAD_ENTITY);
@@ -707,11 +717,19 @@ public final class GFRegistry {
           .setRegistryName(MODID, "snakeskin_leggings"),
         new SnakeskinArmorItem(EquipmentSlotType.FEET, new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "snakeskin_boots"),
+        new AchillesArmorItem(EquipmentSlotType.HEAD, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "achilles_helmet"),
+        new AchillesArmorItem(EquipmentSlotType.CHEST, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "achilles_chestplate"),
+        new AchillesArmorItem(EquipmentSlotType.LEGS, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "achilles_leggings"),
+        new AchillesArmorItem(EquipmentSlotType.FEET, new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "achilles_boots"),
         new WingedSandalsItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
           .setRegistryName(MODID, "winged_sandals"),
         new HelmOfDarknessItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
           .setRegistryName(MODID, "helm_of_darkness"),
-        new NemeanLionHideItem(new Item.Properties().rarity(Rarity.EPIC).group(GREEK_GROUP))
+        new NemeanLionHideItem(new Item.Properties().rarity(Rarity.EPIC).isImmuneToFire().setNoRepair().group(GREEK_GROUP))
           .setRegistryName(MODID, "nemean_lion_hide"),
         new GorgonBloodItem(new Item.Properties().maxStackSize(16).containerItem(Items.GLASS_BOTTLE).group(GREEK_GROUP))
           .setRegistryName(MODID, "gorgon_blood"),
@@ -756,9 +774,17 @@ public final class GFRegistry {
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "fiery_bat_wing"),
         new Item(new Item.Properties().group(GREEK_GROUP))
+          .setRegistryName(MODID, "fiery_gear"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "golden_string"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-          .setRegistryName(MODID, "golden_ball")
+          .setRegistryName(MODID, "golden_ball"),
+        new Item(new Item.Properties().group(GREEK_GROUP)){
+          @Override
+          public boolean hasEffect(ItemStack stack) { return true; }
+        }.setRegistryName(MODID, "golden_fleece"),
+        new DiscusItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
+          .setRegistryName(MODID, "discus")
     );
     
     // block items
@@ -815,11 +841,13 @@ public final class GFRegistry {
     registerSpawnEgg(event, FURY_ENTITY, "fury", 0xbd4444, 0x6c2426);
     registerSpawnEgg(event, GIANT_BOAR_ENTITY, "giant_boar", 0x5b433a, 0xe8a074);
     registerSpawnEgg(event, GIGANTE_ENTITY, "gigante", 0xd3dba7, 0x6a602b);
+    registerSpawnEgg(event, GOLDEN_RAM_ENTITY, "golden_ram", 0xdfc014, 0xd08d26);
     registerSpawnEgg(event, GORGON_ENTITY, "gorgon", 0x3a8228, 0xbcbcbc);
     registerSpawnEgg(event, HARPY_ENTITY, "harpy", 0x724e36, 0x332411);
     registerSpawnEgg(event, MAD_COW_ENTITY, "mad_cow", 0x443626, 0xcf9797);
     registerSpawnEgg(event, MINOTAUR_ENTITY, "minotaur", 0x443626, 0x734933);
     registerSpawnEgg(event, NAIAD_ENTITY, "naiad",  0x7caba1, 0xe67830);
+    registerSpawnEgg(event, NEMEAN_LION_ENTITY, "nemean_lion",  0xd08d26, 0x7d3107);
     registerSpawnEgg(event, ORTHUS_ENTITY, "orthus", 0x493569, 0xe42e2e);
     registerSpawnEgg(event, PEGASUS_ENTITY, "pegasus", 0x916535, 0xe8e8e8);
     registerSpawnEgg(event, PYTHON_ENTITY, "python", 0x3a8228, 0x1e4c11);

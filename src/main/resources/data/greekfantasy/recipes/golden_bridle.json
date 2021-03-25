@@ -1,14 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-  	"...",
-  	".O.",
-    "..."
+  "type": "crafting_shapeless",
+  "ingredients": [
+	{ "item": "minecraft:blaze_powder" },
+    { "item": "minecraft:gold_ingot" },
+	{ "item": "minecraft:blaze_powder" },
+    { "item": "minecraft:gold_ingot" },
+	{ "item": "minecraft:lead" },
+    { "item": "minecraft:gold_ingot" },
+	{ "item": "minecraft:blaze_powder" },
+    { "item": "minecraft:gold_ingot" },
+	{ "item": "minecraft:blaze_powder" }
   ],
-  "key": {
-    ".": { "item": "minecraft:gold_nugget" },
-    "O": { "item": "minecraft:lead" }
-  },
   "result": {
     "item": "greekfantasy:golden_bridle",
     "count": 1

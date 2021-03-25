@@ -18,12 +18,14 @@ import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.GiantBoarEntity;
 import greekfantasy.entity.ShadeEntity;
+import greekfantasy.item.AchillesArmorItem;
 import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SFavorConfigurationPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -37,6 +39,8 @@ import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -49,7 +53,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -59,6 +65,8 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -251,6 +259,33 @@ public class CommonForgeEventHandler {
     }
   }
   
+  
+  /**
+   * Used to prevent projectile damage when wearing certain armors
+   * @param event the living attack event
+   **/
+  @SubscribeEvent
+  public static void onProjectileImpact(final ProjectileImpactEvent.Arrow event) {
+    AbstractArrowEntity arrow = event.getArrow();
+    if(!event.isCanceled() && !arrow.getEntityWorld().isRemote() && 
+        event.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY) {
+      Entity entity = ((EntityRayTraceResult)event.getRayTraceResult()).getEntity();
+      if(entity instanceof LivingEntity) {
+        // if the projectile hit the legs/feet while wearing any achilles armor, multiply the damage
+        int achillesArmor = countAchillesArmor((LivingEntity)entity);
+        if(achillesArmor > 0 && (Math.random() < 0.78D) && (arrow.getPosY() - arrow.getHeight() * 0.5D) < (entity.getPosY() + entity.getHeight() * 0.24D)) {
+          arrow.setDamage(arrow.getDamage() * (2.0D + 0.5D * achillesArmor));
+        } else if(isWearingNemeanHide((LivingEntity) entity) || (Math.random() < 0.25D * achillesArmor)) {
+          // otherwise, cancel the event
+          event.setCanceled(true);
+          // "bounce" the projectile
+          arrow.setDamage(0.0D);
+          arrow.setMotion(arrow.getMotion().mul(-0.45D, -0.65D, -0.45D));
+        }
+      }
+    }
+  }
+  
   /**
    * Used to prevent players from using items while stunned.
    * @param event the living attack event
@@ -260,7 +295,7 @@ public class CommonForgeEventHandler {
     if(GreekFantasy.CONFIG.doesStunPreventUse() && event.getPlayer().isAlive() && isStunned(event.getPlayer())) {
       event.setCanceled(true);
     }
-  }  
+  }
   
   /**
    * Used to prevent players (or potentially, other living entities)
@@ -428,6 +463,22 @@ public class CommonForgeEventHandler {
   @SubscribeEvent
   public static void onAddCommands(final RegisterCommandsEvent event) {
     FavorCommand.register(event.getDispatcher());
+  }
+  
+  /** @return whether the living entity is wearing the Nemean Hide **/
+  private static boolean isWearingNemeanHide(final LivingEntity livingEntity) {
+    return livingEntity.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.NEMEAN_LION_HIDE;
+  }
+  
+  /** @return whether the living entity is wearing Achilles Armor **/
+  private static int countAchillesArmor(final LivingEntity livingEntity) {
+    int count = 0;
+    for(final ItemStack stack : livingEntity.getArmorInventoryList()) {
+      if(stack.getItem() instanceof AchillesArmorItem) {
+        count++;
+      }
+    }
+    return count;
   }
   
   /** @return whether the entity should have the Stunned or Petrified effect applied **/

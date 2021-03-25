@@ -25,6 +25,6 @@ public class NemeanLionRenderer<T extends NemeanLionEntity> extends MobRenderer<
 
   @Override
   public ResourceLocation getEntityTexture(final T entity) {
-    return NemeanLionRenderer.TEXTURE;
+    return TEXTURE;
   }
 }

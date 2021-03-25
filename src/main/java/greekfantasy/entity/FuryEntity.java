@@ -47,7 +47,8 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedA
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.26D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.5D)
-        .createMutableAttribute(Attributes.FLYING_SPEED, 1.28D);
+        .createMutableAttribute(Attributes.FLYING_SPEED, 1.28D)
+        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.4D);
   }
   
   @Override
@@ -72,6 +73,7 @@ public class FuryEntity extends MonsterEntity implements IFlyingAnimal, IRangedA
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp());
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, ElpisEntity.class, true));
     if(GreekFantasy.CONFIG.FURY_ATTACK.get()) {
       this.goalSelector.addGoal(1, new IntervalRangedAttackGoal(this, 210, 2, 200));
     }

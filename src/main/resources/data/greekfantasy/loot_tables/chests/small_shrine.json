@@ -77,10 +77,6 @@
         },
         {
           "type": "minecraft:item",
-          "name": "greekfantasy:golden_bridle"
-        },
-        {
-          "type": "minecraft:item",
           "name": "minecraft:emerald"
         },
         {

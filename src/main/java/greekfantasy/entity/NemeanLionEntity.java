@@ -1,6 +1,5 @@
 package greekfantasy.entity;
 
-import greekfantasy.entity.ai.FollowGoal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
@@ -32,6 +31,10 @@ public class NemeanLionEntity extends MonsterEntity {
   private static final String KEY_STATE = "NemeanState";
   //bytes to use in STATE
   private static final byte NONE = (byte)0;
+  private static final byte SPAWNING = (byte)1;
+  private static final byte ROARING = (byte)2;
+  private static final byte ATTACKING = (byte)3;
+  private static final byte SITTING = (byte)4;
   
   private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.YELLOW, BossInfo.Overlay.PROGRESS));
   
@@ -45,7 +48,9 @@ public class NemeanLionEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.28D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.92D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.0D)
+        .createMutableAttribute(Attributes.ARMOR, 5.0D)
+        .createMutableAttribute(Attributes.ARMOR_TOUGHNESS, 2.0D);
   }
   
   @Override
@@ -58,7 +63,7 @@ public class NemeanLionEntity extends MonsterEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(2, new LeapAtTargetGoal(this, 0.67F));
+    this.goalSelector.addGoal(2, new LeapAtTargetGoal(this, 0.54F));
     this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.25D, true));
     this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.92D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 8.0F));
@@ -76,10 +81,20 @@ public class NemeanLionEntity extends MonsterEntity {
   }
   
   // Misc //
+  
+  @Override
+  protected void damageEntity(final DamageSource source, final float amountIn) {
+    float damageAmount = amountIn;
+    if (!source.isDamageAbsolute() && !source.isMagicDamage()) {
+      damageAmount = Math.min(2.0F, amountIn);
+    }
+    super.damageEntity(source, damageAmount);
+  }
 
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
-    return source == DamageSource.IN_WALL || source == DamageSource.WITHER || super.isInvulnerableTo(source);
+    return source == DamageSource.IN_WALL || source == DamageSource.WITHER 
+        || source.isProjectile() || super.isInvulnerableTo(source);
   }
 
   @Override
@@ -115,6 +130,8 @@ public class NemeanLionEntity extends MonsterEntity {
   public void setNemeanState(final byte state) { this.getDataManager().set(STATE, Byte.valueOf(state)); }
   
   public boolean isNoneState() { return getNemeanState() == NONE; }
+  
+  public boolean isSitting() { return getNemeanState() == SITTING; }
 
   @Override
   public void writeAdditional(CompoundNBT compound) {

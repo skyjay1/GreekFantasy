@@ -11,6 +11,7 @@ import greekfantasy.client.render.tileentity.MobHeadTileEntityRenderer;
 import greekfantasy.client.render.tileentity.StatueTileEntityRenderer;
 import greekfantasy.client.render.tileentity.VaseTileEntityRenderer;
 import greekfantasy.entity.misc.DragonToothEntity;
+import greekfantasy.entity.misc.DiscusEntity;
 import greekfantasy.event.ClientForgeEventHandler;
 import greekfantasy.event.ClientModEventHandler;
 import net.minecraft.client.Minecraft;
@@ -54,6 +55,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CURSE_ENTITY, CurseRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYCLOPES_ENTITY, CyclopesRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CYPRIAN_ENTITY, CyprianRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DISCUS_ENTITY, m -> new SpriteRenderer<DiscusEntity>(m, Minecraft.getInstance().getItemRenderer()));
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DRAGON_TOOTH_ENTITY, m -> new SpriteRenderer<DragonToothEntity>(m, Minecraft.getInstance().getItemRenderer()));
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DRAKAINA_ENTITY, DrakainaRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.DRYAD_ENTITY, DryadRenderer::new);
@@ -63,6 +65,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GERYON_ENTITY, GeryonRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GIANT_BOAR_ENTITY, GiantBoarRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GIGANTE_ENTITY, GiganteRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GOLDEN_RAM_ENTITY, GoldenRamRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GORGON_ENTITY, GorgonRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.HARPY_ENTITY, HarpyRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.HEALING_SPELL_ENTITY, HealingSpellRenderer::new);
@@ -117,10 +120,14 @@ public class ClientProxy extends Proxy {
     GreekFantasy.LOGGER.debug("registerPlayerLayers");
     final Minecraft mc = Minecraft.getInstance();
     final Map<String, PlayerRenderer> skinMap = mc.getRenderManager().getSkinMap();
+    // add default renderer layers
     final PlayerRenderer defaultRenderer = skinMap.get("default");
-    defaultRenderer.addLayer(new NemeanLionHideLayer<>(defaultRenderer, new BipedModel<>(0.5F), new BipedModel<>(1.0F)));
+    defaultRenderer.addLayer(new PlayerSkyjayLayer<>(defaultRenderer));
+    defaultRenderer.addLayer(new NemeanLionHideLayer<>(defaultRenderer, new BipedModel<>(0.501F), new BipedModel<>(1.001F)));
+    // add slim renderer layers
     final PlayerRenderer slimRenderer = skinMap.get("slim");
-    slimRenderer.addLayer(new NemeanLionHideLayer<>(slimRenderer, new BipedModel<>(0.5F), new BipedModel<>(1.0F)));
+    slimRenderer.addLayer(new PlayerSkyjayLayer<>(slimRenderer));
+    slimRenderer.addLayer(new NemeanLionHideLayer<>(slimRenderer, new BipedModel<>(0.501F), new BipedModel<>(1.001F)));
   }
   
   @Override

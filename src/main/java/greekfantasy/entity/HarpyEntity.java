@@ -57,7 +57,8 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
         .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.22D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.0D)
-        .createMutableAttribute(Attributes.FLYING_SPEED, 1.29D);
+        .createMutableAttribute(Attributes.FLYING_SPEED, 1.29D)
+        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.32D);
   }
   
   @Override
@@ -81,6 +82,7 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, DryadEntity.class, true));
   }
 
   @Override

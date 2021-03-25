@@ -10,7 +10,6 @@ import com.google.common.collect.Multimap;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -159,7 +158,7 @@ public class WingedSandalsItem extends ArmorItem {
    * @return A ModelBiped to render instead of the default
    */
   @OnlyIn(Dist.CLIENT)
-  public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default) {
+  public <A extends net.minecraft.client.renderer.entity.model.BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default) {
     if(MODEL == null) {
       MODEL = new greekfantasy.client.render.model.armor.WingedSandalsModel(1.0F);
     }

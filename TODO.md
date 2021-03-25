@@ -5,14 +5,10 @@ List of features that could be added to the mod at some point.
 __Key:__
 `X Complete` `~ In Progress` `_ Incomplete`
 
-## Bugs and future updates
+## Bugs and urgent updates
 
 - Summoning animations not playing on dedicated server
   X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
-- X Tameable Orthus
-- X Winged sandals don't have wings
-- X Spears and bidents facing wrong way when throwing
-- X Statues and Vases show names
 
 ## Entity basics
 
@@ -43,6 +39,8 @@ __Key:__
 - X X X X X Boss: Geryon (3-headed Gigante)
 - X X X X X Boss: Charybdis
 - X X X X X Boss: Talos
+- ~ ~ _ _ _ Boss: Nemean Lion (invulnerable to physical damage)
+- ~ _ _ _ _ Boss: Colchis Bull (giant bronze bull)
 - X X ~ X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
 - X X ~ X X Miniboss: Medusa
@@ -51,8 +49,10 @@ __Key:__
 - X X X X X Fury
 - X X ~ X X Drakaina
 - X X X X X Arion (very fast horse, use gold)
-- X X X X X Whirl (give it Heart of Sea to convert into Charybdis)
+- X X X X X Whirl (convert into Charybdis)
 - X X X X X Pegasus
+- X _ X _ _ Golden Ram (becomes regular sheep when sheared)
+- ~ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 
 ## Entity AI
 
@@ -141,6 +141,7 @@ __Key:__
 - X X X Bow of Apollo, Bow of Artemis, Cursed Bow
 - X X X Horn of Plenty
 - X X X Javelin and Bident
+- _ _ _ Armor of Achilles (Hephaestus; said to be impenetrable)
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 
@@ -148,6 +149,8 @@ __Key:__
 
 - Complete: Become petrified, Become cursed with Swine, Encounter Cerastes, Kill Shade, Tame a Unicorn, Obtain a Mysterious Box, Obtain Ambrosia, Obtain Winged Sandals (Much Fast, So Speed!), Summon / Kill a Cerberus, Summon / Kill a Geryon, Summon / Kill a Talos, Kill a Charybdis
 - _ Kill a Cretan Minotaur
+- _ Kill a Colchis Bull
+- _ Kill a Nemean Lion
 - _ Anger Dryads by chopping logs
 - _ Kill all minibosses: Python, Giant Boar, Circe
 - _ Use a unicorn horn
@@ -172,13 +175,9 @@ _Can I do something with these?_
 - Ophiotaur (kill to obtain heart; use heart to kill a god)
 - Makhai (6 arms)
 - Eurynomos (blue skin; vulture head?)
-- Sphinx
 - Hydra
-- Golden Ram (Golden Fleece)
-- Nemean Lion (invulnerable to physical damage)
 - Telchine (seal hands)
 - Yale (Latin "Centicore")
-- Colchis Bull (giant bronze bull)
 - Cretan Bull (giant bull)
 - Hippocampus
 - Lamia (demon)
@@ -194,7 +193,6 @@ _Can I do something with these?_
 - Underworld: underworld biome, tartarus, styx river, meadow of Asphodels, etc.
 - Underworld: Underworld pomegranate tree
 - Belt of Aphrodite (maybe allows disguise as other player?)
-- Armor of Achilles (Hephaestus; said to be impenetrable)
 - Aegis (Zeus' shield)
 - Adamant Scythe (Kronus)
 - Special swords: Harpe (sword used to slay Medusa)

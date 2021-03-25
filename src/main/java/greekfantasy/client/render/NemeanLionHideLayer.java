@@ -14,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class NemeanLionHideLayer<T extends LivingEntity, M extends BipedModel<T>, A extends BipedModel<T>> extends BipedArmorLayer<T, M, A> {
   
-  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/models/armor/nemean_lion_hide.png");
+//  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/models/armor/nemean_lion_hide.png");
   
   public NemeanLionHideLayer(IEntityRenderer<T, M> ientityrenderer, A model1, A model2) {
     super(ientityrenderer, model1, model2);
