@@ -2,6 +2,8 @@ package greekfantasy.client.render;
 
 import java.util.EnumMap;
 
+import greekfantasy.client.render.layer.PegasusMarkingsLayer;
+import greekfantasy.client.render.layer.PegasusWingLayer;
 import greekfantasy.client.render.model.PegasusModel;
 import greekfantasy.entity.PegasusEntity;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;

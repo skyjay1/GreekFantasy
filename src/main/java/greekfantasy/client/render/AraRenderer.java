@@ -1,6 +1,7 @@
 package greekfantasy.client.render;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.render.layer.AraFlintLayer;
 import greekfantasy.client.render.model.AraModel;
 import greekfantasy.entity.AraEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;

@@ -3,6 +3,7 @@ package greekfantasy.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.render.layer.OrthusEyesLayer;
 import greekfantasy.client.render.model.OrthusModel;
 import greekfantasy.entity.OrthusEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;

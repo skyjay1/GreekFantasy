@@ -1,4 +1,4 @@
-package greekfantasy.client.render;
+package greekfantasy.client.render.layer;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.render.model.CerberusModel;

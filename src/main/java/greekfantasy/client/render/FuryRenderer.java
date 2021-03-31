@@ -1,6 +1,7 @@
 package greekfantasy.client.render;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.render.layer.FuryHairLayer;
 import greekfantasy.client.render.model.FuryModel;
 import greekfantasy.entity.FuryEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;

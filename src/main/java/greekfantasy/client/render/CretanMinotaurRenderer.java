@@ -3,16 +3,16 @@ package greekfantasy.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.CretanEntity;
+import greekfantasy.entity.CretanMinotaurEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
-public class CretanRenderer<T extends CretanEntity> extends MinotaurRenderer<T> {
+public class CretanMinotaurRenderer<T extends CretanMinotaurEntity> extends MinotaurRenderer<T> {
   
-  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/cretan.png");
+  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/cretan_minotaur.png");
   public static final float SCALE = 1.75F;
   
-  public CretanRenderer(final EntityRendererManager renderManagerIn) {
+  public CretanMinotaurRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn);
   }
   
@@ -23,6 +23,6 @@ public class CretanRenderer<T extends CretanEntity> extends MinotaurRenderer<T> 
 
   @Override
   public ResourceLocation getEntityTexture(final T entity) {
-    return CretanRenderer.TEXTURE;
+    return CretanMinotaurRenderer.TEXTURE;
   }
 }

@@ -1,6 +1,7 @@
 package greekfantasy.client.render;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.render.layer.UnicornHornLayer;
 import greekfantasy.client.render.model.UnicornModel;
 import greekfantasy.entity.UnicornEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;

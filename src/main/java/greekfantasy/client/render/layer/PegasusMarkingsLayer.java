@@ -1,4 +1,4 @@
-package greekfantasy.client.render;
+package greekfantasy.client.render.layer;
 
 import java.util.EnumMap;
 

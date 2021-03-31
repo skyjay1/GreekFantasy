@@ -10,11 +10,11 @@ import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
 
-public class CretanEntity extends MinotaurEntity {
+public class CretanMinotaurEntity extends MinotaurEntity {
   
   private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.YELLOW, BossInfo.Overlay.PROGRESS));
  
-  public CretanEntity(final EntityType<? extends CretanEntity> type, final World worldIn) {
+  public CretanMinotaurEntity(final EntityType<? extends CretanMinotaurEntity> type, final World worldIn) {
     super(type, worldIn);
     bossInfo.setVisible(GreekFantasy.CONFIG.showCretanBossBar());
   }

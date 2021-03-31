@@ -3,6 +3,9 @@ package greekfantasy.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.render.layer.SatyrGroverLayer;
+import greekfantasy.client.render.layer.SatyrPanfluteLayer;
+import greekfantasy.client.render.layer.SatyrShamanLayer;
 import greekfantasy.client.render.model.SatyrModel;
 import greekfantasy.entity.SatyrEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;

@@ -3,6 +3,7 @@ package greekfantasy.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.render.layer.GorgonHairLayer;
 import greekfantasy.client.render.model.GorgonModel;
 import greekfantasy.entity.GorgonEntity;
 import net.minecraft.client.renderer.entity.BipedRenderer;

@@ -3,6 +3,7 @@ package greekfantasy.client.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.render.layer.CerberusEyesLayer;
 import greekfantasy.client.render.model.CerberusModel;
 import greekfantasy.entity.CerberusEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;

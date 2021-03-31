@@ -2,7 +2,7 @@
   "type": "crafting_shapeless",
   "ingredients": [
 	{ "item": "greekfantasy:marble_statue" },
-	{ "item": "minecraft:torch" }
+	{ "item": "minecraft:soul_torch" }
   ],
   "result": {
 	"item": "greekfantasy:altar_hecate"

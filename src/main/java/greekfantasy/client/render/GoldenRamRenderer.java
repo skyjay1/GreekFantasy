@@ -2,6 +2,8 @@ package greekfantasy.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import greekfantasy.client.render.layer.GoldenRamHornLayer;
+import greekfantasy.client.render.layer.GoldenRamWoolLayer;
 import greekfantasy.client.render.model.GoldenRamModel;
 import greekfantasy.entity.GoldenRamEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
