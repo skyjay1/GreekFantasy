@@ -17,6 +17,7 @@ import greekfantasy.entity.CirceEntity;
 import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.GiantBoarEntity;
+import greekfantasy.entity.GoldenRamEntity;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.item.AchillesArmorItem;
 import greekfantasy.network.SDeityPacket;
@@ -36,12 +37,14 @@ import net.minecraft.entity.monster.HoglinEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.RabbitEntity;
+import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -349,11 +352,13 @@ public class CommonForgeEventHandler {
   }
   
   /**
-   * Used to sometimes replace Witch with Circe when a witch is spawned
+   * Used to sometimes replace Witch with Circe when a witch is spawned.
+   * Used to sometimes replace Sheep with Golden Ram when a yellow sheep is spawned.
    * @param event
    */
   @SubscribeEvent
   public static void onEntitySpawn(final LivingSpawnEvent.SpecialSpawn event) {
+    // check if the entity is a witch
     if(event.getEntity() != null && event.getEntity().getType() == EntityType.WITCH && (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.getCirceChance()
         && event.getWorld() instanceof World) {
       event.setCanceled(true);
@@ -361,6 +366,18 @@ public class CommonForgeEventHandler {
       final CirceEntity circe = GFRegistry.CIRCE_ENTITY.create((World)event.getWorld());
       circe.setLocationAndAngles(event.getX(), event.getY(), event.getZ(), 0, 0);
       event.getWorld().addEntity(circe);
+    }
+    // check if the entity is a sheep
+    if(event.getEntity() != null && event.getEntity().getType() == EntityType.SHEEP && event.getWorld() instanceof World) {
+      // check if the sheep has yellow wool
+      SheepEntity sheep = (SheepEntity)event.getEntity();
+      if(sheep.getFleeceColor() == DyeColor.YELLOW && (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.getGoldenRamChance()) {
+        // spawn Golden Ram instead of sheep
+        event.setCanceled(true);
+        final GoldenRamEntity ram = GFRegistry.GOLDEN_RAM_ENTITY.create((World)event.getWorld());
+        ram.setLocationAndAngles(event.getX(), event.getY(), event.getZ(), 0, 0);
+        event.getWorld().addEntity(ram);
+      }
     }
   }
   

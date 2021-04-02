@@ -2,16 +2,6 @@
   "type": "minecraft:entity",
   "pools": [
     {
-	  "name": "main",
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "greekfantasy:nemean_lion_hide"
-        }
-      ]
-    },
-    {
       "rolls": 1,
       "entries": [
         {
@@ -19,6 +9,13 @@
           "functions": [
             {
               "function": "minecraft:set_count",
+              "count": {
+                "min": 0,
+                "max": 2
+              }
+            },
+            {
+              "function": "minecraft:looting_enchant",
               "count": {
                 "min": 0,
                 "max": 2
@@ -39,28 +36,30 @@
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 10,
+                "min": 16,
                 "max": 24
               }
             }
           ],
-          "name": "minecraft:gold_nugget"
+          "name": "minecraft:gold_ingot"
         }
       ]
     },
-    {
+	{
       "rolls": 1,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "greekfantasy:dog_claw",
-          "conditions": [
+          "functions": [
             {
-              "condition": "minecraft:random_chance_with_looting",
-              "chance": 0.2,
-              "looting_multiplier": 0.1
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 4,
+                "max": 8
+              }
             }
-          ]
+          ],
+          "name": "greekfantasy:fiery_gear"
         }
       ]
     }

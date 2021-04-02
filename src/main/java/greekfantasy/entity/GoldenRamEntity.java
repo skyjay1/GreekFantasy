@@ -115,6 +115,7 @@ public class GoldenRamEntity extends SheepEntity implements IAngerable {
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
     ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     this.setFleeceColor(DyeColor.YELLOW);
+    this.setChild(false);
     return data;
   }
   

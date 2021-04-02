@@ -40,7 +40,7 @@ __Key:__
 - X X X X X Boss: Charybdis
 - X X X X X Boss: Talos
 - ~ ~ _ _ _ Boss: Nemean Lion (invulnerable to physical damage)
-- ~ _ _ _ _ Boss: Colchis Bull (giant bronze bull)
+- X ~ _ X X Boss: Bronze Bull
 - X X ~ X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
 - X X ~ X X Miniboss: Medusa
@@ -51,7 +51,7 @@ __Key:__
 - X X X X X Arion (very fast horse, use gold)
 - X X X X X Whirl (convert into Charybdis)
 - X X X X X Pegasus
-- X _ X _ _ Golden Ram (becomes regular sheep when sheared)
+- X X X X X Golden Ram (becomes regular sheep when sheared)
 - ~ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 
 ## Entity AI
@@ -141,7 +141,9 @@ __Key:__
 - X X X Bow of Apollo, Bow of Artemis, Cursed Bow
 - X X X Horn of Plenty
 - X X X Javelin and Bident
-- _ _ _ Armor of Achilles (Hephaestus; said to be impenetrable)
+- X X X Armor of Achilles (Hephaestus; said to be impenetrable)
+- X X X Golden Fleece
+- ~ X X Fiery gear (TODO: texture)
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 

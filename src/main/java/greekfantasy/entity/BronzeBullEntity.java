@@ -4,8 +4,11 @@ import java.util.EnumSet;
 
 import javax.annotation.Nullable;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.entity.ai.ShootFireGoal;
 import greekfantasy.item.ClubItem;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -29,13 +32,17 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
@@ -77,12 +84,27 @@ public class BronzeBullEntity extends MonsterEntity {
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
         .createMutableAttribute(Attributes.MAX_HEALTH, 150.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.29D)
+        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.28D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
+        .createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 9.0D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.75D)
         .createMutableAttribute(Attributes.ARMOR, 8.0D);
+  }
+  
+  public static BronzeBullEntity spawnBronzeBull(final World world, final BlockPos pos, final float yaw) {
+    BronzeBullEntity entity = GFRegistry.BRONZE_BULL_ENTITY.create(world);
+    entity.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
+    entity.renderYawOffset = yaw;
+    world.addEntity(entity);
+    entity.setSpawning(true);
+    // trigger spawn for nearby players
+    for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(25.0D))) {
+      CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+    }
+    // play sound
+    world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_WITHER_SPAWN, entity.getSoundCategory(), 1.2F, 1.0F, false);
+    return entity;
   }
   
   @Override
@@ -96,7 +118,7 @@ public class BronzeBullEntity extends MonsterEntity {
     super.registerGoals();
     this.goalSelector.addGoal(0, new BronzeBullEntity.SpawningGoal());
     this.goalSelector.addGoal(1, new BronzeBullEntity.FireAttackGoal(MAX_FIRING_TIME, 120));
-    this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.5D, false));
+    this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.25D, false));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 10.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -135,8 +157,9 @@ public class BronzeBullEntity extends MonsterEntity {
     }    
     
     // update fire attack target
-    if(this.isServerWorld() && this.isFiring() && this.getAttackTarget() == null) {
+    if(this.isServerWorld() && (this.isFiring() || this.isGoring()) && this.getAttackTarget() == null) {
       this.setFiring(false);
+      this.setGoring(false);
     }
   
     // spawn particles
@@ -147,19 +170,10 @@ public class BronzeBullEntity extends MonsterEntity {
     // spawn particles
     if(this.world.isRemote()) {
       final double x = this.getPosX();
-      final double y = this.getPosY() + 0.1D;
+      final double y = this.getPosY() + 0.25D;
       final double z = this.getPosZ();
       final double motion = 0.06D;
-      final double radius = this.getWidth();
-//      for (int i = 0; i < 3; i++) {
-//        world.addParticle(ParticleTypes.FLAME, 
-//            x + (world.rand.nextDouble() - 0.5D) * radius, 
-//            y + (world.rand.nextDouble() - 0.5D) * radius, 
-//            z + (world.rand.nextDouble() - 0.5D) * radius,
-//            (world.rand.nextDouble() - 0.5D) * motion, 
-//            0.15D,
-//            (world.rand.nextDouble() - 0.5D) * motion);
-//      }
+      final double radius = this.getWidth() * 1.15D;
       world.addParticle(ParticleTypes.LAVA, 
           x + (world.rand.nextDouble() - 0.5D) * radius, 
           y + (world.rand.nextDouble() - 0.5D) * radius, 
@@ -175,6 +189,8 @@ public class BronzeBullEntity extends MonsterEntity {
     if (super.attackEntityAsMob(entityIn)) {
       // set goring
       setGoring(true);
+      // break intersecting blocks
+      destroyIntersectingBlocks(2.25F, 2.0D);
       // apply extra knockback velocity when attacking (ignores knockback resistance)
       final double knockbackFactor = 0.92D;
       final Vector3d myPos = this.getPositionVec();
@@ -218,7 +234,7 @@ public class BronzeBullEntity extends MonsterEntity {
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
-    return isSpawning() || source.isMagicDamage() || source == DamageSource.IN_WALL || source == DamageSource.WITHER 
+    return isSpawning() || source.isMagicDamage() || source == DamageSource.DROWN || source == DamageSource.IN_WALL || source == DamageSource.WITHER 
         || source.getImmediateSource() instanceof AbstractArrowEntity || super.isInvulnerableTo(source);
   }
   
@@ -355,6 +371,32 @@ public class BronzeBullEntity extends MonsterEntity {
   public void removeTrackingPlayer(ServerPlayerEntity player) {
     super.removeTrackingPlayer(player);
     this.bossInfo.removePlayer(player);
+  }
+  
+  
+  /**
+   * Breaks blocks within this entity's bounding box
+   * @param offset the forward distance to offset the bounding box
+   **/
+  private void destroyIntersectingBlocks(final float maxHardness, final double offset) {
+    if(!world.getGameRules().getBoolean(GameRules.MOB_GRIEFING)) {
+      return;
+    }
+    final Vector3d facing = Vector3d.fromPitchYaw(this.getPitchYaw());
+    final AxisAlignedBB box = this.getBoundingBox().offset(facing.normalize().scale(offset));
+    BlockPos p;
+    BlockState s;
+    for(double x = box.minX - 0.25D; x < box.maxX + 0.25D; x++) {
+      for(double y = box.minY + 1.1D; y < box.maxY + 0.5D; y++) {
+        for(double z = box.minZ - 0.25D; z < box.maxZ + 0.25D; z++) {
+          p = new BlockPos(x, y, z);
+          s = this.getEntityWorld().getBlockState(p);
+          if((s.isSolid() || s.getMaterial().blocksMovement()) && s.getBlockHardness(world, p) < maxHardness && !s.isIn(BlockTags.WITHER_IMMUNE)) {
+            this.getEntityWorld().destroyBlock(p, true);
+          }
+        }
+      }
+    }
   }
   
   // Custom goals

@@ -104,7 +104,7 @@ public final class GFRegistry {
 
   public static EntityType<AraEntity> ARA_ENTITY = buildEntityType(AraEntity::new, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<ArionEntity> ARION_ENTITY = buildEntityType(ArionEntity::new, "arion", 1.39F, 1.98F, EntityClassification.CREATURE, b -> b.immuneToFire());
-  public static EntityType<BronzeBullEntity> BRONZE_BULL_ENTITY = buildEntityType(BronzeBullEntity::new, "bronze_bull", 1.8F, 2.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<BronzeBullEntity> BRONZE_BULL_ENTITY = buildEntityType(BronzeBullEntity::new, "bronze_bull", 1.95F, 2.98F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<CentaurEntity> CENTAUR_ENTITY = buildEntityType(CentaurEntity::new, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerberusEntity> CERBERUS_ENTITY = buildEntityType(CerberusEntity::new, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());

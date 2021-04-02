@@ -3,7 +3,14 @@
   "enabled": true,
   "female": true,
   "effects": [
- 	
+ 	{
+  	  "summon": { 
+  	  	"id": "greekfantasy:golden_ram"
+  	  },
+  	  "minlevel": 8,
+  	  "maxlevel": 10,
+  	  "mincooldown": 11000
+  	}
   ],
   "kill_favor_map": {
   	"greekfantasy:dryad": -5,

@@ -46,7 +46,7 @@ public class GoldenRamModel<T extends GoldenRamEntity> extends SheepModel<T> {
     leftHorn5.setRotationPoint(0.0F, -4.0F, 0.0F);
     leftHorn5.rotateAngleX = -1.0472F;
     leftHorn5.rotateAngleY = 0.2618F;
-    leftHorn5.setTextureOffset(58, 6).addBox(-0.5F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, 0.0F, false);
+    leftHorn5.setTextureOffset(58, 6).addBox(-1.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, 0.0F, false);
     leftHorn4.addChild(leftHorn5);
 
     // right horn
@@ -79,10 +79,10 @@ public class GoldenRamModel<T extends GoldenRamEntity> extends SheepModel<T> {
     rightHorn3.addChild(rightHorn4);
 
     ModelRenderer rightHorn5 = new ModelRenderer(this);
-    rightHorn5.setRotationPoint(0.0F, -4.0F, 0.0F);
+    rightHorn5.setRotationPoint(1.0F, -4.0F, 0.0F);
     rightHorn5.rotateAngleX = -1.0472F;
     rightHorn5.rotateAngleY = -0.2618F;
-    rightHorn5.setTextureOffset(58, 6).addBox(-0.5F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, 0.0F, false);
+    rightHorn5.setTextureOffset(58, 6).addBox(-1.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, 0.0F, false);
     rightHorn4.addChild(rightHorn5);
 
     // combine horns

@@ -220,7 +220,7 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
-    return isSpawning() || source.isMagicDamage() || source == DamageSource.IN_WALL || source == DamageSource.WITHER 
+    return isSpawning() || source.isMagicDamage() || source == DamageSource.DROWN || source == DamageSource.IN_WALL || source == DamageSource.WITHER 
         || source.getImmediateSource() instanceof AbstractArrowEntity || super.isInvulnerableTo(source);
   }
   

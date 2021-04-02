@@ -133,6 +133,7 @@ public class GFConfig {
   private final ForgeConfigSpec.DoubleValue GORGON_MEDUSA_CHANCE;
   private final ForgeConfigSpec.DoubleValue LIGHTNING_MEDUSA_CHANCE;
   private final ForgeConfigSpec.DoubleValue CIRCE_CHANCE;
+  private final ForgeConfigSpec.DoubleValue GOLDEN_RAM_CHANCE;
   private final ForgeConfigSpec.BooleanValue MEDUSA_BOSS_BAR;
   private final ForgeConfigSpec.BooleanValue CIRCE_BOSS_BAR;
   private final ForgeConfigSpec.BooleanValue CRETAN_BOSS_BAR;
@@ -144,6 +145,7 @@ public class GFConfig {
   private double gorgonMedusaChance;
   private double lightningMedusaChance;
   private double circeChance;
+  private double goldenRamChance;
   private boolean medusaBossBar;
   private boolean circeBossBar;
   private boolean cretanBossBar;
@@ -303,6 +305,8 @@ public class GFConfig {
         .defineInRange("lightning_medusa_chance", 95.0D, 0.0D, 100.0D);
     CIRCE_CHANCE = builder.comment("Percent chance that a witch will be a Circe")
         .defineInRange("circe_chance", 2.0D, 0.0D, 100.0D);
+    GOLDEN_RAM_CHANCE = builder.comment("Percent chance that a yellow sheep will be a Golden Ram")
+        .defineInRange("golden_ram_chance", 5.0D, 0.0D, 100.0D);
     MEDUSA_BOSS_BAR = builder.comment("Whether to show the Medusa boss bar")
         .define("medusa_boss_bar", true);
     CIRCE_BOSS_BAR = builder.comment("Whether to show the Circe boss bar")
@@ -443,11 +447,14 @@ public class GFConfig {
     gorgonMedusaChance = GORGON_MEDUSA_CHANCE.get();
     lightningMedusaChance = LIGHTNING_MEDUSA_CHANCE.get();
     circeChance = CIRCE_CHANCE.get();
+    goldenRamChance = GOLDEN_RAM_CHANCE.get();
+    elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
+    numSpartiSpawned = NUM_SPARTI_SPAWNED.get();
+    // boss bars
     medusaBossBar = MEDUSA_BOSS_BAR.get();
     circeBossBar = CIRCE_BOSS_BAR.get();
     cretanBossBar = CRETAN_BOSS_BAR.get();
-    elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
-    numSpartiSpawned = NUM_SPARTI_SPAWNED.get();
+    // misc mob settings
     giantBoarNonNether = GIANT_BOAR_NON_NETHER.get();
     dryadAngryOnHarvest = DRYAD_ANGRY_ON_HARVEST.get();
     dryadAngryRange = DRYAD_ANGRY_RANGE.get();
@@ -509,9 +516,12 @@ public class GFConfig {
   public double getGorgonMedusaChance() { return gorgonMedusaChance; }
   public double getLightningMedusaChance() { return lightningMedusaChance; }
   public double getCirceChance() { return circeChance; }
+  public double getGoldenRamChance() { return goldenRamChance; }
+  
   public boolean showMedusaBossBar() { return medusaBossBar; }
   public boolean showCirceBossBar() { return circeBossBar; }
   public boolean showCretanBossBar() { return cretanBossBar; }
+  
   public int getElpisSpawnChance() { return elpisSpawnChance; }
   public int getNumSpartiSpawned() { return numSpartiSpawned; }
   public boolean getGiantBoarNonNether() { return giantBoarNonNether; }

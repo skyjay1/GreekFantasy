@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.entity.BronzeBullEntity;
 import greekfantasy.entity.TalosEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -24,8 +25,10 @@ public class IchorInfusedBlock extends Block {
   
   @Nullable
   private BlockPattern talosPattern;
+  @Nullable
+  private BlockPattern bronzeBullPattern;
   // TODO: change to copper for 1.17
-  private static final Predicate<BlockState> IS_TALOS_BLOCK = (state) -> state != null && (state.isIn(Blocks.GOLD_BLOCK));
+  private static final Predicate<BlockState> IS_BODY_BLOCK = (state) -> state != null && (state.isIn(Blocks.GOLD_BLOCK));
   
   public IchorInfusedBlock(final Properties properties) {
     super(properties);
@@ -40,24 +43,53 @@ public class IchorInfusedBlock extends Block {
       // remove the blocks that were used
       for (int i = 0; i < pattern.getPalmLength(); ++i) {
         for (int j = 0; j < pattern.getThumbLength(); ++j) {
-          CachedBlockInfo cachedblockinfo1 = helper.translateOffset(i, j, 0);
-          worldIn.destroyBlock(cachedblockinfo1.getPos(), false);
+          for (int k = 0; k < pattern.getFingerLength(); ++k) {
+            CachedBlockInfo cachedblockinfo1 = helper.translateOffset(i, j, k);
+            worldIn.destroyBlock(cachedblockinfo1.getPos(), false);
+          }
         }
       }
       // spawn the talos
       TalosEntity.spawnTalos(worldIn, helper.translateOffset(1, 2, 0).getPos(), 0);
+    }
+    // check if a bronze bull was built
+    pattern = this.getBronzeBullPattern();
+    helper = pattern.match(worldIn, pos);
+    if(helper != null) {
+      // remove the blocks that were used
+      for (int i = 0; i < pattern.getPalmLength(); ++i) {
+        for (int j = 0; j < pattern.getThumbLength(); ++j) {
+          for (int k = 0; k < pattern.getFingerLength(); ++k) {
+            CachedBlockInfo cachedblockinfo1 = helper.translateOffset(i, j, k);
+            worldIn.destroyBlock(cachedblockinfo1.getPos(), false);
+          }
+        }
+      }
+      // spawn the bronze bull
+      BronzeBullEntity.spawnBronzeBull(worldIn, helper.translateOffset(1, 1, 0).getPos(), 0);
     }
   }
 
   private BlockPattern getTalosPattern() {
     if (this.talosPattern == null) {
        this.talosPattern = BlockPatternBuilder.start()
-           //.aisle("~~^^~~", "######", "######", "~~##~~", "~~##~~")
            .aisle("~^~", "###", "###")
            .where('^', CachedBlockInfo.hasState(BlockStateMatcher.forBlock(GFRegistry.ICHOR_INFUSED_BLOCK)))
-           .where('#', CachedBlockInfo.hasState(IS_TALOS_BLOCK))
+           .where('#', CachedBlockInfo.hasState(IS_BODY_BLOCK))
            .where('~', CachedBlockInfo.hasState(BlockMaterialMatcher.forMaterial(Material.AIR))).build();
     }
     return this.talosPattern;
+  }
+  
+  private BlockPattern getBronzeBullPattern() {
+    if (this.bronzeBullPattern == null) {
+      this.bronzeBullPattern = BlockPatternBuilder.start()
+          .aisle("^##^", "~##~")
+          .aisle("~##~", "~##~")
+          .where('^', CachedBlockInfo.hasState(BlockStateMatcher.forBlock(GFRegistry.ICHOR_INFUSED_BLOCK)))
+          .where('#', CachedBlockInfo.hasState(IS_BODY_BLOCK))
+          .where('~', CachedBlockInfo.hasState(BlockMaterialMatcher.forMaterial(Material.AIR))).build();
+   }
+   return this.bronzeBullPattern;
   }
 }

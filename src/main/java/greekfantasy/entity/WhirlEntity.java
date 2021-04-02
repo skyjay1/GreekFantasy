@@ -166,9 +166,7 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
   // Misc //
   
   @Override
-  protected boolean isDespawnPeaceful() {
-    return true;
-  }
+  protected boolean isDespawnPeaceful() { return true; }
 
   @Override
   protected boolean canBeRidden(Entity entityIn) { return false; }
