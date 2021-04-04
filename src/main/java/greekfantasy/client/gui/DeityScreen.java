@@ -13,7 +13,9 @@ import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.FavorLevel;
 import greekfantasy.deity.favor.IFavor;
 import greekfantasy.deity.favor_effect.ConfiguredFavorRange;
+import greekfantasy.deity.favor_effect.FavorEffect;
 import greekfantasy.deity.favor_effect.FavorRange;
+import greekfantasy.deity.favor_effect.SpecialFavorEffect;
 import greekfantasy.gui.DeityContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -49,15 +51,15 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   // private static final int FAVOR_WIDTH = 69;
   // private static final int FAVOR_HEIGHT = 86;
   private static final int FAVOR_LEFT = 9;
-  private static final int FAVOR_TOP = 30;
+  private static final int FAVOR_TOP = 16; // 30
   
   private static final int BTN_LEFT = 7;
-  private static final int BTN_TOP = 105;
+  private static final int BTN_TOP = 89;
   private static final int BTN_WIDTH = 70;
   private static final int BTN_HEIGHT = 16;
 
   private static final int ITEM_LEFT = 80;
-  private static final int ITEM_TOP = 21;
+  private static final int ITEM_TOP = 25;
   private static final int ITEM_WIDTH = 48;
   private static final int ITEM_HEIGHT = 18;
   private static final int ITEM_COUNT_X = 2;
@@ -67,6 +69,11 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private static final int ENTITY_TOP = 32;
   private static final int ENTITY_COUNT_Y = 13;
   private static final int ENTITY_WIDTH = 90;
+  
+  private static final int ABILITY_LEFT = ENTITY_LEFT;
+  private static final int ABILITY_TOP = ENTITY_TOP;
+  private static final int ABILITY_COUNT_Y = 6;
+  private static final int ABILITY_WIDTH = ENTITY_WIDTH;
   
   private static final int HOSTILE_LEFT = ENTITY_LEFT + 9;
   private static final int HOSTILE_TOP = ENTITY_TOP;
@@ -82,6 +89,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private final DeityScreen.TabButton[] tabButtons = new DeityScreen.TabButton[TAB_COUNT];
   private final List<List<DeityScreen.ItemButton>> itemButtons = new ArrayList<>();
   private final List<List<DeityScreen.EntityButton>> entityButtons = new ArrayList<>();
+  private final List<List<DeityScreen.AbilityButton>> abilityButtons = new ArrayList<>();
   private final List<List<DeityScreen.HostileButton>> hostileButtons = new ArrayList<>();
   
   private ScrollButton<DeityScreen> scrollButton;
@@ -135,6 +143,20 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         for(int i = 0, l = entityButtonList.size(); i < l; i++) { entityButtonList.get(i).setIndex(i); }
         entityButtons.add(entityButtonList);
         
+        // add ability list for each deity
+        final List<DeityScreen.AbilityButton> abilityButtonList = new ArrayList<>();
+        for(final SpecialFavorEffect e : d.getSpecialFavorEffects()) {
+          DeityScreen.AbilityButton button = new DeityScreen.AbilityButton(this, e.getType(), e.getMinLevel(), e.getMaxLevel(), 0, 0);
+          abilityButtonList.add(button);
+        }
+        for(final FavorEffect e : d.getFavorEffects()) {
+          DeityScreen.AbilityButton button = new DeityScreen.AbilityButton(this, e, e.getMinLevel(), e.getMaxLevel(), 0, 0);
+          abilityButtonList.add(button);
+        }
+        abilityButtonList.sort(DeityScreen.AbilityButton::compareTo);
+        for(int i = 0, l = abilityButtonList.size(); i < l; i++) { abilityButtonList.get(i).setIndex(i); }
+        abilityButtons.add(abilityButtonList);
+
         // add hostile range list for each deity
         hostileButtons.add(new ArrayList<>());
       }
@@ -156,6 +178,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       hostileButtons.get(index).add(btn);
     }
     hostileButtons.forEach(l -> l.sort(DeityScreen.HostileButton::compareTo));
+   
     // default scroll settings
     scrollEnabled = itemButtons.get(selected).size() > (ITEM_COUNT_X * ITEM_COUNT_Y);
   }
@@ -179,6 +202,8 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     itemButtons.forEach(l -> l.forEach(b -> addButton(b)));
     // add entity type text components
     entityButtons.forEach(l -> l.forEach(b -> addButton(b)));
+    // add ability text components
+    abilityButtons.forEach(l -> l.forEach(b -> addButton(b)));
     // add hostile buttons
     hostileButtons.forEach(l -> l.forEach(b -> addButton(b)));
     // add scroll button
@@ -189,7 +214,8 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     // add mode buttons
     addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP, "gui.mirror.item", DeityScreen.Mode.ITEM));
     addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + BTN_HEIGHT, "gui.mirror.entity", DeityScreen.Mode.ENTITY));
-    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + (BTN_HEIGHT) * 2, "gui.mirror.hostile", DeityScreen.Mode.HOSTILE));
+    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + (BTN_HEIGHT) * 2, "gui.mirror.ability", DeityScreen.Mode.ABILITY));
+    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + (BTN_HEIGHT) * 3, "gui.mirror.hostile", DeityScreen.Mode.HOSTILE));
     // set selected deity now that things are nonnull
     setSelectedTab(0);
     setSelectedDeity(0);
@@ -217,14 +243,12 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
     this.blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // draw title
-    drawString(matrixStack, this.font, deityList.get(selected).getText(), this.guiLeft + FAVOR_LEFT, this.guiTop + 6, 0xFFFFFF);
+    this.font.func_243248_b(matrixStack, new StringTextComponent("** ").append(deityList.get(selected).getText()).appendString(" **").mergeStyle(TextFormatting.BLACK), 
+        this.guiLeft + FAVOR_LEFT, this.guiTop + 5, 0xFFFFFF);
     // draw "favor modifiers" text
-    String subtitle = "favor.favor_modifiers";
-    if(mode == DeityScreen.Mode.HOSTILE) {
-      subtitle = "gui.mirror.hostility_levels";
-    } 
-    this.font.func_243248_b(matrixStack, new TranslationTextComponent(subtitle).mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
-        guiLeft + (ITEM_LEFT + ITEM_WIDTH * 2) / 2, guiTop + 14, 0xFFFFFF);
+    String subtitle = mode.getTooltip();
+    this.font.func_243248_b(matrixStack, new TranslationTextComponent(subtitle).mergeStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
+        guiLeft + (ITEM_LEFT + ITEM_WIDTH * 2) / 2, guiTop + FAVOR_TOP, 0xFFFFFF);
     // draw favor text
     drawFavorText(matrixStack, mouseX, mouseY);        
     // draw buttons
@@ -244,6 +268,8 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       multiplier = 1.0F / (itemButtons.get(selected).size() / ITEM_COUNT_X);
     } else if(mode == Mode.ENTITY) {
       multiplier = 1.0F / entityButtons.get(selected).size();
+    } else if(mode == Mode.ABILITY) {
+      multiplier = 1.0F / abilityButtons.get(selected).size();
     } else if(mode == Mode.HOSTILE) {
       multiplier = 1.0F / hostileButtons.get(selected).size();
     }
@@ -253,22 +279,22 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private void drawFavorText(MatrixStack matrixStack, int mouseX, int mouseY) {
     // draw favor values
     final FavorLevel level = favor.getFavor(deityList.get(selected));
-    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.favor").mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
+    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.favor").mergeStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP, 0xFFFFFF);
     final long curFavor = level.getFavor();
     final long nextFavor = level.getFavorToNextLevel();
     this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(curFavor + " / " + nextFavor))
         .mergeStyle(TextFormatting.DARK_PURPLE), 
-        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 1, 0xFFFFFF);
-    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.level").mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
-        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 3, 0xFFFFFF);
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 1 + 1, 0xFFFFFF);
+    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.level").mergeStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 5 / 2, 0xFFFFFF);
     this.font.func_243248_b(matrixStack, new StringTextComponent(String.valueOf(level.getLevel() + " / " + (curFavor < 0 ? level.getMinLevel() : level.getMaxLevel()))).mergeStyle(TextFormatting.DARK_PURPLE), 
-        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 4, 0xFFFFFF);
-    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.next_level").mergeStyle(TextFormatting.BLACK, TextFormatting.ITALIC), 
-        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 6, 0xFFFFFF);
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 7 / 2 + 1, 0xFFFFFF);
+    this.font.func_243248_b(matrixStack, new TranslationTextComponent("favor.next_level").mergeStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 5, 0xFFFFFF);
     final boolean capped = level.getLevel() == level.getMinLevel() || level.getLevel() == level.getMaxLevel();
     this.font.func_243248_b(matrixStack, new StringTextComponent(capped ? "--" : String.valueOf(nextFavor - curFavor)).mergeStyle(TextFormatting.DARK_PURPLE), 
-        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 7, 0xFFFFFF);
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 6 + 1, 0xFFFFFF);
   }
   
   private void setSelectedTab(int index) {
@@ -291,6 +317,8 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       scrollEnabled = itemButtons.get(selected).size() > (ITEM_COUNT_X * ITEM_COUNT_Y);
     } else if(modeIn == Mode.ENTITY) {
       scrollEnabled = entityButtons.get(selected).size() > ENTITY_COUNT_Y;
+    } else if(modeIn == Mode.ABILITY) {
+      scrollEnabled = abilityButtons.get(selected).size() > ABILITY_COUNT_Y;
     } else if(modeIn == Mode.HOSTILE) {
       scrollEnabled = hostileButtons.get(selected).size() > HOSTILE_COUNT_Y;
     }
@@ -303,6 +331,11 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     for(int i = 0, l = entityButtons.size(); i < l; i++) {
       final boolean buttonsVisible = (i == selected && modeIn == Mode.ENTITY);
       entityButtons.get(i).forEach(b -> b.visible = buttonsVisible);
+    }
+    // hide / show the proper entity button lists
+    for(int i = 0, l = abilityButtons.size(); i < l; i++) {
+      final boolean buttonsVisible = (i == selected && modeIn == Mode.ABILITY);
+      abilityButtons.get(i).forEach(b -> b.visible = buttonsVisible);
     }
     // hide / show the proper hostile button lists
     for(int i = 0, l = hostileButtons.size(); i < l; i++) {
@@ -319,6 +352,9 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     } else if(mode == Mode.ENTITY) {
       final int startIndex = (int) Math.round(amount * (entityButtons.get(selected).size() - ENTITY_COUNT_Y));
       entityButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
+    } else if(mode == Mode.ABILITY) {
+      final int startIndex = (int) Math.round(amount * (abilityButtons.get(selected).size() - ABILITY_COUNT_Y));
+      abilityButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
     } else if(mode == Mode.HOSTILE) {
       final int startIndex = (int) Math.round(amount * (hostileButtons.get(selected).size() - HOSTILE_COUNT_Y));
       hostileButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
@@ -490,6 +526,68 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     }
   }
   
+  protected class AbilityButton extends Button implements Comparable<DeityScreen.AbilityButton> {
+    private final int minValue;
+    private final int maxValue;
+    private int index;
+    private final ITextComponent textHeader;
+    private final ITextComponent textRange;
+    
+    public AbilityButton(final DeityScreen gui, final SpecialFavorEffect.Type typeIn, final int minLevel, final int maxLevel, final int x, final int y) {
+      super(x, y, HOSTILE_WIDTH, 18, StringTextComponent.EMPTY, b -> {});
+      minValue = minLevel;
+      maxValue = maxLevel;
+      textHeader = new TranslationTextComponent(typeIn.getTranslationKey()).mergeStyle(TextFormatting.BLACK)
+          .append(new StringTextComponent(":").mergeStyle(TextFormatting.BLACK));
+      TextFormatting color = maxLevel > 0 ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
+      textRange = new TranslationTextComponent("favor.level_range", minLevel, maxLevel).mergeStyle(color);
+    }
+    
+    public AbilityButton(final DeityScreen gui, final FavorEffect effectIn, final int minLevel, final int maxLevel, final int x, final int y) {
+      super(x, y, HOSTILE_WIDTH, 18, StringTextComponent.EMPTY, b -> {});
+      minValue = minLevel;
+      maxValue = maxLevel;
+      textHeader = new TranslationTextComponent(effectIn.getTranslationKey()).mergeStyle(TextFormatting.BLACK)
+          .append(new StringTextComponent(":").mergeStyle(TextFormatting.BLACK));
+      TextFormatting color = maxLevel > 0 ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
+      textRange = new TranslationTextComponent("favor.level_range", minLevel, maxLevel).mergeStyle(color);
+    }
+    
+    @Override
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+      if(this.visible) {
+        DeityScreen.this.font.func_243248_b(matrixStack, textHeader, this.x, this.y, 0xFFFFFF);
+        DeityScreen.this.font.func_243248_b(matrixStack, textRange, this.x + 9, this.y + DeityScreen.this.font.FONT_HEIGHT, 0xFFFFFF);
+      }
+    }
+    
+    public void setIndex(final int i) {
+      index = i;
+    }
+    
+    /**
+     * Determines whether this button should show on the screen, and if so,
+     * what y-position to assign in order to align with the current scroll value.
+     * @param startIndex the start index of the buttons that are currently visible,
+     * based on the scroll value
+     **/
+    public void updateLocation(final int startIndex) {
+      if(index < startIndex || index >= (startIndex + DeityScreen.ABILITY_COUNT_Y)) {
+        this.visible = false;
+        this.isHovered = false;
+      } else {
+        this.visible = true;
+        this.y = DeityScreen.this.guiTop + DeityScreen.ABILITY_TOP + 2 * DeityScreen.this.font.FONT_HEIGHT * (index - startIndex);
+        this.x = DeityScreen.this.guiLeft + DeityScreen.ABILITY_LEFT;
+      }
+    }
+
+    @Override
+    public int compareTo(DeityScreen.AbilityButton button) {
+      return button.minValue - this.minValue;
+    }
+  }
+  
   protected class TabButton extends Button {
     
     private int id;
@@ -584,6 +682,17 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   }
   
   protected static enum Mode {
-    ITEM, ENTITY, HOSTILE;
+    ITEM("favor.favor_modifiers"), 
+    ENTITY("favor.favor_modifiers"), 
+    ABILITY("gui.mirror.abilities"), 
+    HOSTILE("gui.mirror.hostility_levels");
+    
+    private String tooltip;
+    
+    private Mode(final String tooltipIn) {
+      tooltip = tooltipIn;
+    }
+    
+    public String getTooltip() { return tooltip; }
   }
 }

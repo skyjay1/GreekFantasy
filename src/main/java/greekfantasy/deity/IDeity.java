@@ -3,13 +3,16 @@ package greekfantasy.deity;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.block.StatueBlock;
+import greekfantasy.deity.favor_effect.ConfiguredSpecialFavorEffect;
 import greekfantasy.deity.favor_effect.FavorEffect;
 import greekfantasy.deity.favor_effect.FavorEffectTrigger;
+import greekfantasy.deity.favor_effect.SpecialFavorEffect;
 import greekfantasy.deity.favor_effect.TriggeredFavorEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -85,6 +88,21 @@ public interface IDeity {
   
   /** @return a list of triggered favor effects associated with the deity **/
   public List<TriggeredFavorEffect> getTriggeredFavorEffects();
+  
+  /** @return a list of special favor effects associated with the deity **/
+  public List<SpecialFavorEffect> getSpecialFavorEffects();
+  
+  /**
+   * @param type the type of configured special favor effect
+   * @return a list of special favor effects of the given type
+   * @see #getSpecialFavorEffects()
+   */
+  default List<ConfiguredSpecialFavorEffect> getSpecialFavorEffects(SpecialFavorEffect.Type type) {
+    return getSpecialFavorEffects().stream()
+        .filter(e -> e.getType() == type)
+        .map(f -> new ConfiguredSpecialFavorEffect(this, f))
+        .collect(Collectors.toList());
+  }
   
   /**
    * @param rand a random instance

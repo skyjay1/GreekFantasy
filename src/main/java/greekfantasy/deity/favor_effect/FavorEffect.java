@@ -41,6 +41,8 @@ public class FavorEffect {
   private final int maxLevel;
   private final long minCooldown;
   
+  private final String translationKey;
+  
   protected FavorEffect(final Optional<ResourceLocation> functionIn, final Optional<CompoundNBT> potionIn, 
       final Optional<CompoundNBT> summonIn, final Optional<ItemStack> itemIn, final Optional<String> dataIn,
       final Optional<Long> favorIn, final int minLevelIn, final int maxLevelIn, final long minCooldownIn) {
@@ -53,6 +55,20 @@ public class FavorEffect {
     minLevel = minLevelIn;
     maxLevel = maxLevelIn;
     minCooldown = minCooldownIn;
+    
+    if(function.isPresent()) {
+      translationKey = "favor.effect.function";
+    } else if(potion.isPresent()) {
+      translationKey = "favor.effect.potion";
+    } else if(summon.isPresent()) {
+      translationKey = "favor.effect.summon";
+    } else if(item.isPresent() ) {
+      translationKey = "favor.effect.item";
+    } else if(favor.isPresent()) {
+      translationKey = "favor.effect.favor";
+    } else {
+      translationKey = "favor.effect.none";
+    }
   }
   
   /** @return a ResourceLocation of the function to execute **/
@@ -124,6 +140,8 @@ public class FavorEffect {
     // if the biome tag was not present OR it passed the tests, the effect can run
     return true;
   }
+  
+  public String getTranslationKey() { return translationKey; }
   
   @Override
   public String toString() {

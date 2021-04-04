@@ -6,12 +6,14 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.favor_effect.FavorEffect;
+import greekfantasy.deity.favor_effect.SpecialFavorEffect;
 import greekfantasy.deity.favor_effect.TriggeredFavorEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -24,7 +26,8 @@ public class Deity implements IDeity {
   
   public static final Deity EMPTY = new Deity(
       new ResourceLocation(GreekFantasy.MODID, "null"), false, false, ItemStack.EMPTY, ItemStack.EMPTY, 
-      new ResourceLocation(GreekFantasy.MODID, "null"), "none", Arrays.asList(), Arrays.asList(), Maps.newHashMap(), Maps.newHashMap());
+      new ResourceLocation(GreekFantasy.MODID, "null"), "none", Arrays.asList(), Arrays.asList(), Arrays.asList(), 
+      Maps.newHashMap(), Maps.newHashMap());
   
   public static final Codec<Deity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       ResourceLocation.CODEC.fieldOf("name").forGetter(Deity::getName),
@@ -36,6 +39,7 @@ public class Deity implements IDeity {
       Codec.STRING.optionalFieldOf("overlayString", "none").forGetter(Deity::getOverlayString),
       FavorEffect.CODEC.listOf().optionalFieldOf("effects", Arrays.asList()).forGetter(Deity::getFavorEffects),
       TriggeredFavorEffect.CODEC.listOf().optionalFieldOf("triggered_effects", Arrays.asList()).forGetter(Deity::getTriggeredFavorEffects),
+      SpecialFavorEffect.CODEC.listOf().optionalFieldOf("special_effects", Lists.newArrayList()).forGetter(Deity::getSpecialFavorEffects),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).optionalFieldOf("kill_favor_map", Maps.newHashMap()).forGetter(Deity::getKillFavorModifiers),
       Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).optionalFieldOf("item_favor_map", Maps.newHashMap()).forGetter(Deity::getItemFavorModifiers)
     ).apply(instance, Deity::new));
@@ -53,11 +57,13 @@ public class Deity implements IDeity {
   private final Map<ResourceLocation, Integer> itemFavorMap;
   private final List<FavorEffect> favorEffects;
   private final List<TriggeredFavorEffect> triggeredFavorEffects;
+  private final List<SpecialFavorEffect> specialFavorEffects;
 
   private Deity(final ResourceLocation lName, final boolean lIsEnabled, final boolean lIsFemale, 
       final ItemStack lLeftHandItem, final ItemStack lRightHandItem, 
       final ResourceLocation lBase, final String lOverlay,
       final List<FavorEffect> lFavorEffects, final List<TriggeredFavorEffect> lTriggeredFavorEffects, 
+      final List<SpecialFavorEffect> lSpecialFavorEffects, 
       final Map<ResourceLocation, Integer> lKillFavorMap, final Map<ResourceLocation, Integer> lItemFavorMap) {
     name = lName;
     texture = new ResourceLocation(lName.getNamespace(), "textures/deity/" + lName.getPath() + ".png");
@@ -65,6 +71,7 @@ public class Deity implements IDeity {
     itemFavorMap = ImmutableMap.copyOf(lItemFavorMap);
     favorEffects = ImmutableList.copyOf(lFavorEffects);
     triggeredFavorEffects = ImmutableList.copyOf(lTriggeredFavorEffects);
+    specialFavorEffects = ImmutableList.copyOf(lSpecialFavorEffects);
     isFemale = lIsFemale;
     isEnabled = lIsEnabled;
     leftHandItem = lLeftHandItem;
@@ -112,6 +119,9 @@ public class Deity implements IDeity {
   
   @Override
   public List<TriggeredFavorEffect> getTriggeredFavorEffects() { return triggeredFavorEffects; }
+  
+  @Override
+  public List<SpecialFavorEffect> getSpecialFavorEffects() { return specialFavorEffects; }
  
   @Override
   public String toString() {

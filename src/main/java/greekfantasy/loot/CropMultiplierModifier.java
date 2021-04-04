@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.favor.IFavor;
+import greekfantasy.deity.favor_effect.ConfiguredSpecialFavorEffect;
 import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;
 import net.minecraft.block.Block;
@@ -41,7 +42,6 @@ public class CropMultiplierModifier extends LootModifier {
     FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     // make sure this crop is harvested by a non-creative player
     if(entity instanceof PlayerEntity && context.has(LootParameters.BLOCK_STATE) && context.get(LootParameters.BLOCK_STATE).getBlock().isIn(crops)
-        && favorConfig.hasSpecials(SpecialFavorEffect.Type.CROP_HARVEST_MULTIPLIER)
         && !entity.isSpectator() && !((PlayerEntity)entity).isCreative()) {
       // check favor levels and effects
       final PlayerEntity player = (PlayerEntity)entity;
@@ -51,11 +51,11 @@ public class CropMultiplierModifier extends LootModifier {
       // if the player's favor has no cooldown, activate the effect
       if(lFavor.isPresent() && favor.hasNoTriggeredCooldown(time)) {
         long cooldown = -1;
-        for(final SpecialFavorEffect cropsMultiplier : favorConfig.getSpecials(SpecialFavorEffect.Type.CROP_HARVEST_MULTIPLIER)) {
+        for(final ConfiguredSpecialFavorEffect cropsMultiplier : favorConfig.getSpecials(SpecialFavorEffect.Type.CROP_HARVEST_MULTIPLIER)) {
           // if the item should be multiplied, change the size of each item stack
           if(cropsMultiplier.canApply(player, favor)) {
-            generatedLoot.forEach(i -> i.grow((int) Math.round(i.getCount() * cropsMultiplier.getMultiplier().orElse(0.0F))));
-            cooldown = Math.max(cooldown, cropsMultiplier.getRandomCooldown(player.getRNG()));
+            generatedLoot.forEach(i -> i.grow((int) Math.round(i.getCount() * cropsMultiplier.getEffect().getMultiplier().orElse(0.0F))));
+            cooldown = Math.max(cooldown, cropsMultiplier.getEffect().getRandomCooldown(player.getRNG()));
           }
         }
         // set the triggered cooldown

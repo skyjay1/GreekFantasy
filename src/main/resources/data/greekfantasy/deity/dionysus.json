@@ -2,5 +2,29 @@
   "name": "greekfantasy:dionysus",
   "enabled": false,
   "female": false,
-  "base": "minecraft:polished_diorite_slab"
+  "base": "minecraft:polished_diorite_slab",
+  "special_effects": [
+    {
+  	  "type": "potion_bonus_effect",
+  	  "potion": {
+  	  	"Potion": "minecraft:nausea",
+  	  	"Amplifier": 0,
+  	  	"Duration": 230
+  	  },
+	  "minlevel": -2,
+	  "maxlevel": -10,
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.04,
+  	  "mincooldown": 200
+  	},
+  	{
+  	  "type": "potion_bonus_length",
+  	  "multiplier": 0.34,
+	  "minlevel": 4,
+	  "maxlevel": 10,
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.04,
+  	  "mincooldown": 200
+  	}
+  ]
 }

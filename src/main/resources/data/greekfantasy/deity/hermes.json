@@ -49,6 +49,16 @@
   	  "mincooldown": 8200
   	}
   ],
+  "special_effects": [
+    {
+  	  "type": "trading_cancel",
+	  "minlevel": -1,
+	  "maxlevel": -10,
+  	  "chance": 1.0,
+  	  "level_multiplier": 0.0,
+  	  "mincooldown": 1
+  	}
+  ],
   "kill_favor_map": {
   	"greekfantasy:cerastes": 8,
   	"greekfantasy:harpy": 5,

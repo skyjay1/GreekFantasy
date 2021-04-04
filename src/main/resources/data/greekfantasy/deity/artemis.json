@@ -42,6 +42,43 @@
   	  "minlevel": 7,
   	  "maxlevel": 10,
   	  "mincooldown": 10600
+  	},
+  	{
+  	  "summon": { 
+  	  	"id": "greekfantasy:giant_boar"
+  	  },
+  	  "minlevel": -9,
+  	  "maxlevel": -10,
+  	  "mincooldown": 14000
+  	}
+  ],
+  "special_effects": [
+    {
+  	  "type": "arrow_damage_multiplier",
+  	  "multiplier": 0.88,
+	  "minlevel": 9,
+	  "maxlevel": 10,
+  	  "chance": 0.25,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 110
+  	},
+  	{
+  	  "type": "arrow_damage_multiplier",
+  	  "multiplier": 0.45,
+	  "minlevel": 4,
+	  "maxlevel": 8,
+  	  "chance": 0.15,
+  	  "level_multiplier": 0.02,
+  	  "mincooldown": 100
+  	},
+  	{
+  	  "type": "arrow_damage_multiplier",
+  	  "multiplier": -0.5,
+	  "minlevel": -3,
+	  "maxlevel": -10,
+  	  "chance": 0.15,
+  	  "level_multiplier": 0.02,
+  	  "mincooldown": 90
   	}
   ],
   "kill_favor_map": {

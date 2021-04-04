@@ -1,6 +1,6 @@
 {
   "name": "greekfantasy:persephone",
-  "enabled": false,
+  "enabled": true,
   "female": true,
   "base": "greekfantasy:polished_limestone_slab",
   "right_hand": {
@@ -13,6 +13,44 @@
   	"Count": 1,
   	"tag": {}
   },
+  "special_effects": [
+    {
+  	  "type": "crop_harvest_multiplier",
+  	  "multiplier": 0.75,
+	  "minlevel": 2,
+	  "maxlevel": 10,
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 80
+  	},
+  	{
+  	  "type": "crop_harvest_multiplier",
+  	  "multiplier": -0.9,
+	  "minlevel": -10,
+	  "maxlevel": -2,
+  	  "chance": 0.09,
+  	  "level_multiplier": 0.06,
+  	  "mincooldown": 90
+  	},
+  	{
+  	  "type": "crop_growth_multiplier",
+  	  "multiplier": 1.0,
+	  "minlevel": 5,
+	  "maxlevel": 10,
+  	  "chance": 0.08,
+  	  "level_multiplier": 0.02,
+  	  "mincooldown": 110
+  	},
+  	{
+  	  "type": "crop_growth_multiplier",
+  	  "multiplier": -1.0,
+	  "minlevel": -2,
+	  "maxlevel": -10,
+  	  "chance": 0.06,
+  	  "level_multiplier": 0.02,
+  	  "mincooldown": 120
+  	}
+  ],
   "item_favor_map": {
   	"greekfantasy:ambrosia": 45,
   	"greekfantasy:wild_rose": 3,

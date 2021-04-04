@@ -8,6 +8,34 @@
   	"Count": 1,
   	"tag": {}
   },
+  "special_effects": [
+    {
+  	  "type": "combat_start_effect",
+  	  "potion": {
+  	  	"Potion": "minecraft:strength",
+  	  	"Amplifier": 0,
+  	  	"Duration": 450
+  	  },
+	  "minlevel": 7,
+	  "maxlevel": 10,
+  	  "chance": 0.11,
+  	  "level_multiplier": 0.03,
+  	  "mincooldown": 160
+  	},
+  	{
+  	  "type": "combat_start_effect",
+  	  "potion": {
+  	  	"Potion": "minecraft:weakness",
+  	  	"Amplifier": 0,
+  	  	"Duration": 450
+  	  },
+	  "minlevel": -6,
+	  "maxlevel": -10,
+  	  "chance": 0.12,
+  	  "level_multiplier": 0.03,
+  	  "mincooldown": 160
+  	}
+  ],
   "right_hand": {
   	"id": "minecraft:iron_sword",
   	"Count": 1,

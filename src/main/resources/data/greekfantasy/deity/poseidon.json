@@ -290,6 +290,9 @@
   	  }
   	}
   ],
+  "special_effects": [
+  
+  ],
   "kill_favor_map": {
     "greekfantasy:cyclopes": -10,
     "greekfantasy:charybdis": 30,

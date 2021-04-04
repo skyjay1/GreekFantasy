@@ -9,6 +9,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.IFavor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -21,11 +22,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class SpecialFavorEffect {
   
   public static final SpecialFavorEffect EMPTY = new SpecialFavorEffect(SpecialFavorEffect.Type.NONE.getString(), 
-      FavorRange.EMPTY, Optional.empty(), Optional.empty(), 0.0F, 0.0F, 100L);
+      0, 0, Optional.empty(), Optional.empty(), 0.0F, 0.0F, 100L);
   
   public static final Codec<SpecialFavorEffect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       Codec.STRING.fieldOf("type").forGetter(SpecialFavorEffect::getTypeString),
-      FavorRange.CODEC.fieldOf("favor_range").forGetter(SpecialFavorEffect::getFavorRange),
+      Codec.INT.fieldOf("minlevel").forGetter(SpecialFavorEffect::getMinLevel),
+      Codec.INT.fieldOf("maxlevel").forGetter(SpecialFavorEffect::getMaxLevel),
       CompoundNBT.CODEC.optionalFieldOf("potion").forGetter(SpecialFavorEffect::getPotion),
       Codec.FLOAT.optionalFieldOf("multiplier").forGetter(SpecialFavorEffect::getMultiplier),
       Codec.FLOAT.fieldOf("chance").forGetter(SpecialFavorEffect::getChance),
@@ -35,19 +37,21 @@ public class SpecialFavorEffect {
   
   private final SpecialFavorEffect.Type type;
   private final String typeString;
-  private final FavorRange favorRange;
+  private final int minLevel;
+  private final int maxLevel;
   private final Optional<CompoundNBT> potion;
   private final Optional<Float> multiplier;
   private final float chance;
   private final float levelMultiplier;
   private final long minCooldown;
   
-  public SpecialFavorEffect(final String typeStringIn, final FavorRange favorRangeIn,
+  public SpecialFavorEffect(final String typeStringIn, final int minLevelIn, final int maxLevelIn,
       final Optional<CompoundNBT> potionIn, final Optional<Float> multiplierIn, 
       final float chanceIn, final float levelMultiplierIn, final long minCooldownIn) {
     typeString = typeStringIn;
     type = SpecialFavorEffect.Type.getById(typeStringIn);
-    favorRange = favorRangeIn;
+    minLevel = minLevelIn;
+    maxLevel = maxLevelIn;
     potion = potionIn;
     multiplier = multiplierIn;
     chance = chanceIn;
@@ -59,7 +63,9 @@ public class SpecialFavorEffect {
 
   public String getTypeString() { return typeString; }
 
-  public FavorRange getFavorRange() { return favorRange; }
+  public int getMinLevel() { return minLevel; }
+  
+  public int getMaxLevel() { return maxLevel; }
 
   public float getChance() { return chance; }
   
@@ -90,20 +96,39 @@ public class SpecialFavorEffect {
   
   /**
    * @param player the player
+   * @param deity the deity to check
    * @param favor the player's favor
    * @return true if this special effect can apply to the given player
    */
-  public boolean canApply(final PlayerEntity player, final IFavor favor) {
+  public boolean canApply(final PlayerEntity player, final IDeity deity, final IFavor favor) {
     return favor.isEnabled() && this != EMPTY && type != SpecialFavorEffect.Type.NONE 
-        && favorRange.getDeity().isEnabled() && favorRange.isInFavorRange(player, favor) 
-        && player.getRNG().nextFloat() < getAdjustedChance(favor.getFavor(favorRange.getDeity()).getLevel());
+        && deity.isEnabled() && isInFavorRange(player, deity, favor) 
+        && player.getRNG().nextFloat() < getAdjustedChance(favor.getFavor(deity).getLevel());
+  }
+  
+  /**
+   * @param player the player
+   * @param deity the deity to check
+   * @param f the player's favor 
+   * @return true if the player's favor matches this favor range
+   */
+  public boolean isInFavorRange(final PlayerEntity player, final IDeity deity, final IFavor f) {
+    if(this == EMPTY || !f.isEnabled()) {
+      return false;
+    }
+    final int playerLevel = f.getFavor(deity).getLevel();
+    if(maxLevel > minLevel) {
+      return playerLevel <= maxLevel && playerLevel >= minLevel;
+    } else {
+      return playerLevel <= minLevel && playerLevel >= maxLevel;
+    }
   }
 
   @Override
   public String toString() {
     final StringBuilder b = new StringBuilder("SpecialFavorEffect:");
     b.append(" type[").append(type.getString()).append(" ]");
-    b.append(" range[").append(favorRange.toString()).append("]");
+    b.append(" range[").append(minLevel).append(" ~ ").append(maxLevel).append("]");
     potion.ifPresent(nbt -> b.append(" potion[").append(nbt.toString()).append("]"));
     multiplier.ifPresent(f -> b.append(" multiplier[").append(f.toString()).append("]"));
     b.append(" chance[").append(chance).append("]");
@@ -136,13 +161,19 @@ public class SpecialFavorEffect {
         s -> DataResult.success(SpecialFavorEffect.Type.getById(s)), SpecialFavorEffect.Type::getString).stable();
     
     private final String name;
+    private final String translationKey;
     
     private Type(final String id) {
       name = id;
+      translationKey = "favor.effect.type." + id;
     }
     
     public static SpecialFavorEffect.Type getById(final String id) {
       return valueMap.getOrDefault(id, SpecialFavorEffect.Type.NONE);
+    }
+    
+    public String getTranslationKey() {
+      return translationKey;
     }
 
     @Override

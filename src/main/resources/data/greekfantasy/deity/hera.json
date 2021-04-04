@@ -12,6 +12,35 @@
   	  "mincooldown": 11000
   	}
   ],
+  "special_effects": [
+    {
+  	  "type": "breeding_offspring_multiplier",
+  	  "multiplier": -1.0,
+	  "minlevel": -6,
+	  "maxlevel": -10,
+  	  "chance": 0.20,
+  	  "level_multiplier": 0.02,
+  	  "mincooldown": 190
+  	},
+  	{
+  	  "type": "breeding_offspring_multiplier",
+  	  "multiplier": 1.0,
+	  "minlevel": 4,
+	  "maxlevel": 7,
+  	  "chance": 0.20,
+  	  "level_multiplier": 0.03,
+  	  "mincooldown": 150
+  	},
+  	{
+  	  "type": "breeding_offspring_multiplier",
+  	  "multiplier": 2.0,
+	  "minlevel": 8,
+	  "maxlevel": 10,
+  	  "chance": 0.20,
+  	  "level_multiplier": 0.04,
+  	  "mincooldown": 160
+  	}
+  ],
   "kill_favor_map": {
   	"greekfantasy:dryad": -5,
   	"greekfantasy:naiad": -5,

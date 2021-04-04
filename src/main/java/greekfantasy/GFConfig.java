@@ -353,7 +353,7 @@ public class GFConfig {
     final List<String> forest = biomesAsList(BiomeDictionary.Type.FOREST, BiomeDictionary.Type.CONIFEROUS, BiomeDictionary.Type.JUNGLE);
     final List<String> taiga = biomesAsList(BiomeDictionary.Type.CONIFEROUS);
     final List<String> mountains = biomesAsList(BiomeDictionary.Type.MOUNTAIN);
-    final List<String> sandy = biomesAsList(BiomeDictionary.Type.MESA, BiomeDictionary.Type.SANDY);
+    final List<String> sandy = biomesAsList(BiomeDictionary.Type.SANDY);
     final List<String> plains = biomesAsList(BiomeDictionary.Type.PLAINS);
     final List<String> hostileBlacklist = biomesAsList(BiomeDictionary.Type.END, BiomeDictionary.Type.WATER, BiomeDictionary.Type.COLD, BiomeDictionary.Type.SNOWY, BiomeDictionary.Type.MUSHROOM);
     final List<String> nonNetherHostileBlacklist = biomesAsList(BiomeDictionary.Type.NETHER, BiomeDictionary.Type.END, BiomeDictionary.Type.WATER, BiomeDictionary.Type.COLD, BiomeDictionary.Type.SNOWY, BiomeDictionary.Type.MUSHROOM);
@@ -397,6 +397,7 @@ public class GFConfig {
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, nonNetherHostileBlacklist));
     FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 900, true, biomesAsList(BiomeDictionary.Type.SWAMP)));
     FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 22, true, biomesAsList(BiomeDictionary.Type.FOREST)));
+    FEATURES.put("lion_den", new BiomeWhitelistConfig(builder, "lion_den", 9, true, sandy));
     builder.pop();
   }
   
@@ -517,13 +518,13 @@ public class GFConfig {
   public double getLightningMedusaChance() { return lightningMedusaChance; }
   public double getCirceChance() { return circeChance; }
   public double getGoldenRamChance() { return goldenRamChance; }
-  
+  public int getElpisSpawnChance() { return elpisSpawnChance; }
+  public int getNumSpartiSpawned() { return numSpartiSpawned; }
+
   public boolean showMedusaBossBar() { return medusaBossBar; }
   public boolean showCirceBossBar() { return circeBossBar; }
   public boolean showCretanBossBar() { return cretanBossBar; }
   
-  public int getElpisSpawnChance() { return elpisSpawnChance; }
-  public int getNumSpartiSpawned() { return numSpartiSpawned; }
   public boolean getGiantBoarNonNether() { return giantBoarNonNether; }
   public boolean isWhirlInvulnerable() { return whirlInvulnerable; }
   public boolean isDryadAngryOnHarvest() { return dryadAngryOnHarvest; }

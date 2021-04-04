@@ -241,6 +241,24 @@
       }
     }
   ],
+  "special_effects": [
+  	{
+  	  "type": "mining_autosmelt",
+	  "minlevel": 6,
+	  "maxlevel": 10,
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 60
+  	},
+  	{
+  	  "type": "mining_cancel_ores",
+	  "minlevel": -10,
+	  "maxlevel": -6,
+  	  "chance": 0.15,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 120
+  	}
+  ],
   "kill_favor_map": {
     "greekfantasy:cerberus": -35,
     "greekfantasy:fury": 6,

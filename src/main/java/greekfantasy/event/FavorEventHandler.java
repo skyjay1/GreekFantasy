@@ -6,6 +6,7 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.deity.favor.Favor;
 import greekfantasy.deity.favor.FavorManager;
 import greekfantasy.deity.favor.IFavor;
+import greekfantasy.deity.favor_effect.ConfiguredSpecialFavorEffect;
 import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;
 import greekfantasy.entity.ai.FleeFromFavorablePlayerGoal;
@@ -41,7 +42,6 @@ import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -102,8 +102,7 @@ public class FavorEventHandler {
    */
   @SubscribeEvent
   public static void onPlayerXP(final PlayerXpEvent.PickupXp event) {
-    if(!event.getPlayer().getEntityWorld().isRemote() && event.getPlayer().isServerWorld()
-        && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.XP_MULTIPLIER)) {
+    if(!event.getPlayer().getEntityWorld().isRemote() && event.getPlayer().isServerWorld()) {
       event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> event.getOrb().xpValue = FavorManager.onPlayerXP(event.getPlayer(), f, event.getOrb().xpValue));
     }
   }
@@ -240,13 +239,12 @@ public class FavorEventHandler {
    */
   @SubscribeEvent
   public static void onEntityInteract(final PlayerInteractEvent.EntityInteract event) {
-    if(!event.getPlayer().getEntityWorld().isRemote() && event.getTarget() instanceof AbstractVillagerEntity
-        && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.TRADING_CANCEL)) {
+    if(!event.getPlayer().getEntityWorld().isRemote() && event.getTarget() instanceof AbstractVillagerEntity) {
       AbstractVillagerEntity villager = (AbstractVillagerEntity)event.getTarget();
       event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
         // note: this special favor effect does not check or change cooldown time.
         // determine which special favor effect to use
-        for(final SpecialFavorEffect effect : GreekFantasy.PROXY.getFavorConfiguration().getSpecials(SpecialFavorEffect.Type.TRADING_CANCEL)) {
+        for(final ConfiguredSpecialFavorEffect effect : GreekFantasy.PROXY.getFavorConfiguration().getSpecials(SpecialFavorEffect.Type.TRADING_CANCEL)) {
           if(effect.canApply(event.getPlayer(), f)) {
             // close the container
             event.setCanceled(true);
@@ -294,8 +292,7 @@ public class FavorEventHandler {
   public static void onArrowJoinWorld(final EntityJoinWorldEvent event) {
     // attempt to add player target goals
     if((event.getEntity() instanceof ArrowEntity || event.getEntity() instanceof SpectralArrowEntity) 
-        && !event.getEntity().getEntityWorld().isRemote()
-        && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.ARROW_DAMAGE_MULTIPLIER)) {
+        && !event.getEntity().getEntityWorld().isRemote()) {
       final AbstractArrowEntity arrow = (AbstractArrowEntity) event.getEntity();
       final Entity thrower = arrow.func_234616_v_();
       if(thrower instanceof PlayerEntity) {
@@ -313,8 +310,7 @@ public class FavorEventHandler {
     final World world = event.getParentA().getEntityWorld();
     if(!event.isCanceled() && world instanceof ServerWorld && event.getCausedByPlayer() != null 
         && !event.getCausedByPlayer().isCreative() && !event.getCausedByPlayer().isSpectator()
-        && event.getParentA() instanceof AnimalEntity && event.getParentB() instanceof AnimalEntity
-        && GreekFantasy.PROXY.getFavorConfiguration().hasSpecials(SpecialFavorEffect.Type.BREEDING_OFFSPRING_MULTIPLIER)) {
+        && event.getParentA() instanceof AnimalEntity && event.getParentB() instanceof AnimalEntity) {
       event.getCausedByPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
         int numBabies = FavorManager.onBabySpawn(event.getCausedByPlayer(), f);
         if(numBabies < 1) {

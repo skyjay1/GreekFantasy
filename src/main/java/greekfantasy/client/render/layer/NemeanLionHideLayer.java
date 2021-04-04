@@ -3,14 +3,12 @@ package greekfantasy.client.render.layer;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.GreekFantasy;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.util.ResourceLocation;
 
 public class NemeanLionHideLayer<T extends LivingEntity, M extends BipedModel<T>, A extends BipedModel<T>> extends BipedArmorLayer<T, M, A> {
   

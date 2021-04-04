@@ -4,6 +4,7 @@ import greekfantasy.feature.AraCampFeature;
 import greekfantasy.feature.CyclopesCaveFeature;
 import greekfantasy.feature.GoldenAppleTree;
 import greekfantasy.feature.HarpyNestFeature;
+import greekfantasy.feature.LionDenFeature;
 import greekfantasy.feature.OliveTree;
 import greekfantasy.feature.OliveTreeFeature;
 import greekfantasy.feature.PythonPitFeature;
@@ -69,6 +70,8 @@ public final class GFWorldGen {
   public static final Feature<NoFeatureConfig> SATYR_CAMP_FEATURE = null;
   @ObjectHolder(MODID + ":python_pit")
   public static final Feature<NoFeatureConfig> PYTHON_PIT_FEATURE = null;
+  @ObjectHolder(MODID + ":lion_den")
+  public static final Feature<NoFeatureConfig> LION_DEN_FEATURE = null;
   @ObjectHolder(MODID + ":olive_tree")
   public static final Feature<BaseTreeFeatureConfig> OLIVE_TREE_FEATURE = null;
   @ObjectHolder(MODID + ":golden_apple_tree")
@@ -89,6 +92,7 @@ public final class GFWorldGen {
   private static ConfiguredFeature<?, ?> CYCLOPES_CAVE;
   private static ConfiguredFeature<?, ?> ARA_CAMP;
   private static ConfiguredFeature<?, ?> SATYR_CAMP;
+  private static ConfiguredFeature<?, ?> LION_DEN;
   private static ConfiguredFeature<?, ?> PYTHON_PIT;
   private static ConfiguredFeature<?, ?> OLIVE_TREE_SINGLE;
   private static ConfiguredFeature<?, ?> OLIVE_TREE_FOREST;
@@ -125,6 +129,8 @@ public final class GFWorldGen {
           .setRegistryName(MODID, "satyr_camp"),
         new PythonPitFeature(NoFeatureConfig.field_236558_a_)
           .setRegistryName(MODID, "python_pit"),
+        new LionDenFeature(NoFeatureConfig.field_236558_a_)
+          .setRegistryName(MODID, "lion_den"),
         new OliveTreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(MODID, "olive_tree"),
         new TreeFeature(BaseTreeFeatureConfig.CODEC)
@@ -171,6 +177,9 @@ public final class GFWorldGen {
     SATYR_CAMP = registerFeature("satyr_camp",
         SATYR_CAMP_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    LION_DEN = registerFeature("lion_den",
+        LION_DEN_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
+        .withPlacement(Placements.HEIGHTMAP_PLACEMENT)).chance(2);
     PYTHON_PIT = registerFeature("python_pit",
         PYTHON_PIT_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
@@ -223,6 +232,7 @@ public final class GFWorldGen {
       addFeature(event, "cyclopes_cave", GenerationStage.Decoration.SURFACE_STRUCTURES, CYCLOPES_CAVE);
       addFeature(event, "ara_camp",GenerationStage.Decoration.SURFACE_STRUCTURES, ARA_CAMP);
       addFeature(event, "satyr_camp", GenerationStage.Decoration.SURFACE_STRUCTURES, SATYR_CAMP);
+      addFeature(event, "lion_den", GenerationStage.Decoration.SURFACE_STRUCTURES, LION_DEN);
       addFeature(event, "python_pit", GenerationStage.Decoration.SURFACE_STRUCTURES, PYTHON_PIT);
       addFeature(event, "reeds", GenerationStage.Decoration.VEGETAL_DECORATION, REEDS);
       addFeature(event, "olive_tree_single", GenerationStage.Decoration.VEGETAL_DECORATION, OLIVE_TREE_SINGLE);    

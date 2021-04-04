@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.favor.IFavor;
+import greekfantasy.deity.favor_effect.ConfiguredSpecialFavorEffect;
 import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;
 import net.minecraft.block.Block;
@@ -48,8 +49,8 @@ public class AutosmeltOrCobbleModifier extends LootModifier {
     Entity entity = context.has(LootParameters.THIS_ENTITY) ? context.get(LootParameters.THIS_ENTITY) : null;
     FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     // determine if either of the mining effects can activate
-    final boolean canAutosmelt = favorConfig.hasSpecials(SpecialFavorEffect.Type.MINING_AUTOSMELT);
-    final boolean canCancel = favorConfig.hasSpecials(SpecialFavorEffect.Type.MINING_CANCEL_ORES);
+    final boolean canAutosmelt = true; // favorConfig.hasSpecials(SpecialFavorEffect.Type.MINING_AUTOSMELT);
+    final boolean canCancel = true; // favorConfig.hasSpecials(SpecialFavorEffect.Type.MINING_CANCEL_ORES);
     // make sure this is an ore mined by a non-creative player
     if(entity instanceof PlayerEntity && context.has(LootParameters.BLOCK_STATE) 
         && context.get(LootParameters.BLOCK_STATE).getBlock().isIn(ores) 
@@ -64,22 +65,22 @@ public class AutosmeltOrCobbleModifier extends LootModifier {
         ArrayList<ItemStack> replacement = new ArrayList<ItemStack>();
         if(canAutosmelt) {
           // autosmelt special favor effects
-          for(final SpecialFavorEffect autosmelt : favorConfig.getSpecials(SpecialFavorEffect.Type.MINING_AUTOSMELT)) {
+          for(final ConfiguredSpecialFavorEffect autosmelt : favorConfig.getSpecials(SpecialFavorEffect.Type.MINING_AUTOSMELT)) {
             // if the item should autosmelt, get the items to add to the list
             if(autosmelt.canApply(player, favor)) {
               generatedLoot.forEach((stack) -> replacement.add(smelt(stack, context)));
-              favor.setTriggeredTime(time, autosmelt.getRandomCooldown(player.getRNG()));
+              favor.setTriggeredTime(time, autosmelt.getEffect().getRandomCooldown(player.getRNG()));
               return replacement;
             }
           }
         }
         if(canCancel) {
           // unsmelt special favor effects
-          for(final SpecialFavorEffect unsmelt : favorConfig.getSpecials(SpecialFavorEffect.Type.MINING_CANCEL_ORES)) {
+          for(final ConfiguredSpecialFavorEffect unsmelt : favorConfig.getSpecials(SpecialFavorEffect.Type.MINING_CANCEL_ORES)) {
             // if the item should unsmelt, get the item to add to the list
             if(unsmelt.canApply(player, favor)) {
               replacement.add(new ItemStack(stone));
-              favor.setTriggeredTime(time, unsmelt.getRandomCooldown(player.getRNG()));
+              favor.setTriggeredTime(time, unsmelt.getEffect().getRandomCooldown(player.getRNG()));
               return replacement;
             }
           }

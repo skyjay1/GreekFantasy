@@ -42,6 +42,34 @@
   	  "mincooldown": 6500
   	}
   ],
+  "special_effects": [
+    {
+  	  "type": "combat_start_effect",
+  	  "potion": {
+  	  	"Potion": "minecraft:night_vision",
+  	  	"Amplifier": 0,
+  	  	"Duration": 540
+  	  },
+	  "minlevel": 4,
+	  "maxlevel": 10,
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 200
+  	},
+  	{
+  	  "type": "combat_start_effect",
+  	  "potion": {
+  	  	"Potion": "minecraft:blindness",
+  	  	"Amplifier": 1,
+  	  	"Duration": 65
+  	  },
+	  "minlevel": -2,
+	  "maxlevel": -10,
+  	  "chance": 0.10,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 200
+  	}
+  ],
   "kill_favor_map": {
   	"greekfantasy:shade": 15,
   	"greekfantasy:dryad": -5,

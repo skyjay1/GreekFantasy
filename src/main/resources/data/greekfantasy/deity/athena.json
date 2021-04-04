@@ -10,5 +10,25 @@
   "right_hand": { 
   	"id": "greekfantasy:iron_spear",
   	"Count": 1
-  }
+  },
+  "special_effects": [
+    {
+  	  "type": "xp_multiplier",
+  	  "multiplier": 0.25,
+	  "minlevel": 4,
+	  "maxlevel": 10,
+  	  "chance": 0.15,
+  	  "level_multiplier": 0.04,
+  	  "mincooldown": 40
+  	},
+  	{
+  	  "type": "xp_multiplier",
+  	  "multiplier": -0.35,
+	  "minlevel": -3,
+	  "maxlevel": -10,
+  	  "chance": 0.12,
+  	  "level_multiplier": 0.04,
+  	  "mincooldown": 40
+  	}
+  ]
 }

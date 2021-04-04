@@ -9,9 +9,7 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 
 public interface IHasName<T extends TileEntity> {

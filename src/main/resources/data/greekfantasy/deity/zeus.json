@@ -176,6 +176,9 @@
   	  }
   	}
   ],
+  "special_effects": [
+  
+  ],
   "kill_favor_map": {
   	"greekfantasy:talos": -15,
   	"greekfantasy:giant_boar": 15,
