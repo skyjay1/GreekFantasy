@@ -206,6 +206,8 @@ public final class GFWorldGen {
       GreekFantasy.LOGGER.error("Error registering features: config for '" + name + "' not found!");
     } else if(config.chance() > 0) {
       feature = feature.chance(1000 / config.chance());
+    } else {
+      feature = feature.chance(0);
     }
     return Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, name), feature);
   }
