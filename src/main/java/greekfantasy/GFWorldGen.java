@@ -211,11 +211,13 @@ public final class GFWorldGen {
   
   private static ConfiguredFeature<?, ?> registerFeature(final String name, ConfiguredFeature<?, ?> feature) {
     final BiomeWhitelistConfig config = GreekFantasy.CONFIG.FEATURES.get(name);
+    
     if(null == config) {
       GreekFantasy.LOGGER.error("Error registering features: config for '" + name + "' not found!");
     } else if(config.chance() > 0) {
       feature = feature.chance(1000 / config.chance());
     }
+    
     return Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, name), feature);
   }
 
@@ -287,7 +289,7 @@ public final class GFWorldGen {
     final RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
     if(null == config) {
       GreekFantasy.LOGGER.error("Error registering spawns: config for '" + name + "' not found!");
-    } else if(config.canSpawnInBiome(key)) {
+    } else if(config.chance() > 0 && config.canSpawnInBiome(key)) {
       event.getSpawns().withSpawner(entity.getClassification(), new MobSpawnInfo.Spawners(entity, config.chance(), min, max));
     }
   }
