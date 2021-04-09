@@ -19,6 +19,8 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -27,6 +29,8 @@ public class NemeanLionHideItem extends ArmorItem {
   protected static final IArmorMaterial MATERIAL = new NemeanLionHideArmorMaterial();
    
   private static final String TEXTURE = GreekFantasy.MODID + ":textures/models/armor/nemean_lion_hide_layer_1.png";
+  
+  public static final float IMMUNITY_CHANCE = 0.72F;
   
   public NemeanLionHideItem(Properties builderIn) {
     super(MATERIAL, EquipmentSlotType.HEAD, builderIn);
@@ -47,7 +51,11 @@ public class NemeanLionHideItem extends ArmorItem {
 
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-
+    tooltip.add(new TranslationTextComponent("enchantment.minecraft.projectile_protection").mergeStyle(TextFormatting.GRAY));
+  }
+  
+  public static float getProjectileImmunityChance() {
+    return IMMUNITY_CHANCE;
   }
   
   public static class NemeanLionHideArmorMaterial implements IArmorMaterial {

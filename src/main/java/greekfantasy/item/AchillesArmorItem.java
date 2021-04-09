@@ -33,8 +33,11 @@ public class AchillesArmorItem extends ArmorItem {
   @OnlyIn(Dist.CLIENT)
   private greekfantasy.client.render.model.armor.AchillesHelmetModel MODEL;
   
-  public static final double ACHILLES_HEEL_BASE = 0.2D;
-  public static final double ACHILLES_HEEL_BONUS = 0.15D;
+  public static final float ACHILLES_HEEL_BASE = 0.2F;
+  public static final float ACHILLES_HEEL_BONUS = 0.15F;
+  
+  public static final float IMMUNITY_BASE = 0.0F;
+  public static final float IMMUNITY_BONUS = 0.25F;
 
   public AchillesArmorItem(final EquipmentSlotType slot, Properties builderIn) {
     super(MATERIAL, slot, builderIn);
@@ -42,6 +45,7 @@ public class AchillesArmorItem extends ArmorItem {
   
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    tooltip.add(new TranslationTextComponent("enchantment.minecraft.projectile_protection").appendString(" +" + IMMUNITY_BONUS).mergeStyle(TextFormatting.GRAY));
     tooltip.add(new TranslationTextComponent("item.greekfantasy.achilles_armor.tooltip", ACHILLES_HEEL_BONUS).mergeStyle(TextFormatting.GRAY));
   }
 
@@ -97,10 +101,18 @@ public class AchillesArmorItem extends ArmorItem {
     return (A) MODEL;
   }
   
+  public static float getProjectileCritChance(final int numPieces) {
+    return ACHILLES_HEEL_BASE + ACHILLES_HEEL_BONUS * numPieces;
+  }
+  
+  public static float getProjectileImmunityChance(final int numPieces) {
+    return numPieces > 0 ? IMMUNITY_BASE + IMMUNITY_BONUS * numPieces : 0;
+  }
+  
   public static class AchillesArmorMaterial implements IArmorMaterial {
     private static final String NAME = "achilles";
     @Override
-    public int getDamageReductionAmount(EquipmentSlotType slot) { return ArmorMaterial.DIAMOND.getDamageReductionAmount(slot); }
+    public int getDamageReductionAmount(EquipmentSlotType slot) { return ArmorMaterial.IRON.getDamageReductionAmount(slot); }
     @Override
     public int getDurability(EquipmentSlotType slot) { return ArmorMaterial.IRON.getDurability(slot); }
     @Override
@@ -114,6 +126,6 @@ public class AchillesArmorItem extends ArmorItem {
     @Override
     public SoundEvent getSoundEvent() { return SoundEvents.ITEM_ARMOR_EQUIP_GOLD; }
     @Override
-    public float getToughness() { return ArmorMaterial.NETHERITE.getToughness() * 2.0F; }
+    public float getToughness() { return ArmorMaterial.NETHERITE.getToughness() + 1.0F; }
   }
 }

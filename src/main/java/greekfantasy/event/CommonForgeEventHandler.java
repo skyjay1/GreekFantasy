@@ -21,6 +21,7 @@ import greekfantasy.entity.GoldenRamEntity;
 import greekfantasy.entity.NemeanLionEntity;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.item.AchillesArmorItem;
+import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SFavorConfigurationPacket;
 import greekfantasy.network.SPanfluteSongPacket;
@@ -43,11 +44,11 @@ import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Effects;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
@@ -60,6 +61,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -69,6 +71,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
@@ -293,10 +296,24 @@ public class CommonForgeEventHandler {
       if(entity instanceof LivingEntity) {
         // if the projectile hit the legs/feet while wearing any achilles armor, multiply the damage
         int achillesArmor = countAchillesArmor((LivingEntity)entity);
-        double heelChance = AchillesArmorItem.ACHILLES_HEEL_BASE + AchillesArmorItem.ACHILLES_HEEL_BONUS * achillesArmor;
-        if(achillesArmor > 0 && (Math.random() < (heelChance)) && (arrow.getPosY() - arrow.getHeight() * 0.5D) < (entity.getPosY() + entity.getHeight() * 0.24D)) {
+        float critChance = -1;
+        float immuneChance = -1;
+        // if wearing nemean lion hide, determine arrow immunity chance
+        if(isWearingNemeanHide((LivingEntity)entity)) {
+          immuneChance = NemeanLionHideItem.getProjectileImmunityChance();
+        }
+        // if wearing achilles armmor, determine max arrow immunity chance
+        if(achillesArmor > 0) {
+          immuneChance = Math.max(immuneChance, AchillesArmorItem.getProjectileImmunityChance(achillesArmor));
+          // determine crit chance
+          if((arrow.getPosY() - arrow.getHeight() * 0.5D) < (entity.getPosY() + entity.getHeight() * 0.24D)) {
+            critChance = AchillesArmorItem.getProjectileCritChance(achillesArmor);
+          }
+        }
+        // if wearing achilles armor, check crit chance
+        if(critChance > 0 && (Math.random() < critChance)) {
           arrow.setDamage(arrow.getDamage() * (2.0D + 0.5D * achillesArmor));
-        } else if(isWearingNemeanHide((LivingEntity) entity) || (Math.random() < 0.25D * achillesArmor)) {
+        } else if(immuneChance > 0 && Math.random() < immuneChance) {
           // otherwise, cancel the event
           event.setCanceled(true);
           // "bounce" the projectile
@@ -396,6 +413,30 @@ public class CommonForgeEventHandler {
         ram.setLocationAndAngles(event.getX(), event.getY(), event.getZ(), 0, 0);
         event.getWorld().addEntity(ram);
       }
+    }
+  }
+  
+  /**
+   * Used to replace ocelot with Nemean Lion when the former is struck by lightning
+   * (while under the Strength potion effect)
+   * @param event the EntityStruckByLightning event
+   */
+  @SubscribeEvent
+  public static void onEntityStruckByLightning(final EntityStruckByLightningEvent event) {
+    if(event.getEntity() instanceof LivingEntity && event.getEntity().getType() == EntityType.OCELOT 
+        && ((LivingEntity)event.getEntity()).getActivePotionEffect(Effects.STRENGTH) != null
+        && event.getEntity().world.getDifficulty() != Difficulty.PEACEFUL 
+        && event.getEntity().world.rand.nextInt(100) < GreekFantasy.CONFIG.getLightningLionChance()) {
+      // remove the entity and spawn a nemean lion
+      NemeanLionEntity lion = GFRegistry.NEMEAN_LION_ENTITY.create(event.getEntity().world);
+      lion.copyLocationAndAnglesFrom(event.getEntity());
+      if(event.getEntity().hasCustomName()) {
+        lion.setCustomName(event.getEntity().getCustomName());
+        lion.setCustomNameVisible(event.getEntity().isCustomNameVisible());
+      }
+      lion.enablePersistence();
+      event.getEntity().getEntityWorld().addEntity(lion);
+      event.getEntity().remove();
     }
   }
   

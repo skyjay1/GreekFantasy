@@ -29,6 +29,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
@@ -112,7 +114,7 @@ public class NemeanLionEntity extends MonsterEntity {
     // randomly sit, or unsit if attacking
     if(!this.world.isRemote()) {
       if(this.getAttackTarget() == null && getPassengers().isEmpty()) {
-        if(rand.nextFloat() < 0.0028F) {
+        if(rand.nextFloat() < 0.0022F) {
           setSitting(!isSitting());
         }
       } else if(isSitting()) {
@@ -131,7 +133,11 @@ public class NemeanLionEntity extends MonsterEntity {
       this.rotationYawHead = this.renderYawOffset;
       // strangling damage
       if(this.hurtTime == 0 && !world.isRemote()) {
-        this.attackEntityFrom(DamageSource.causePlayerDamage(player), 0.5F + rand.nextFloat() * 0.5F);
+        this.attackEntityFrom(DamageSource.causePlayerDamage(player), 1.0F + rand.nextFloat());
+        // remove regen
+        if(this.getActivePotionEffect(Effects.REGENERATION) != null) {
+          this.removePotionEffect(Effects.REGENERATION);
+        }
       }
     }
   }
@@ -177,6 +183,15 @@ public class NemeanLionEntity extends MonsterEntity {
     
     return ActionResultType.FAIL;
   }
+  
+  @Override
+  public void removePassengers() {
+    if(this.getPassengers().size() > 0) {
+      // give lion regen effect
+      addPotionEffect(new EffectInstance(Effects.REGENERATION, 100, 0));
+    }
+    super.removePassengers();
+ }
 
   // Boss //
 
@@ -305,8 +320,16 @@ public class NemeanLionEntity extends MonsterEntity {
     @Override
     public void tick() {
       // randomly remove the passenger
-      if (this.lion.getRNG().nextInt(45) == 0) {
+      if (this.lion.getRNG().nextInt(42) == 0) {
+        // throw the passenger
+        Entity e = this.lion.getPassengers().get(0);
         this.lion.removePassengers();
+        if(e instanceof LivingEntity) {
+          LivingEntity passenger = (LivingEntity)e;
+          passenger.applyKnockback(2.5F + rand.nextFloat() * 2.0F, rand.nextDouble() * 2.0D - 1.0D, rand.nextDouble() * 2.0D - 1.0D);
+          passenger.velocityChanged = true;
+          lion.attackEntityAsMob(passenger);
+        }
       }
 
     }

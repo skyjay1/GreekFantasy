@@ -132,6 +132,7 @@ public class GFConfig {
   private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
   private final ForgeConfigSpec.DoubleValue GORGON_MEDUSA_CHANCE;
   private final ForgeConfigSpec.DoubleValue LIGHTNING_MEDUSA_CHANCE;
+  private final ForgeConfigSpec.DoubleValue LIGHTNING_LION_CHANCE;
   private final ForgeConfigSpec.DoubleValue CIRCE_CHANCE;
   private final ForgeConfigSpec.DoubleValue GOLDEN_RAM_CHANCE;
   private final ForgeConfigSpec.BooleanValue MEDUSA_BOSS_BAR;
@@ -144,6 +145,7 @@ public class GFConfig {
   private int satyrShamanChance;
   private double gorgonMedusaChance;
   private double lightningMedusaChance;
+  private double lightningLionChance;
   private double circeChance;
   private double goldenRamChance;
   private boolean medusaBossBar;
@@ -303,6 +305,8 @@ public class GFConfig {
         .defineInRange("gorgon_medusa_chance", 0.8D, 0.0D, 100.0D);
     LIGHTNING_MEDUSA_CHANCE = builder.comment("Percent chance that lightning striking a gorgon will turn it into a medusa")
         .defineInRange("lightning_medusa_chance", 95.0D, 0.0D, 100.0D);
+    LIGHTNING_LION_CHANCE = builder.comment("Percent chance that lightning striking an ocelot will turn it into a nemean lion")
+        .defineInRange("lightning_lion_chance", 90.0D, 0.0D, 100.0D);
     CIRCE_CHANCE = builder.comment("Percent chance that a witch will be a Circe")
         .defineInRange("circe_chance", 2.0D, 0.0D, 100.0D);
     GOLDEN_RAM_CHANCE = builder.comment("Percent chance that a yellow sheep will be a Golden Ram")
@@ -447,6 +451,7 @@ public class GFConfig {
     satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
     gorgonMedusaChance = GORGON_MEDUSA_CHANCE.get();
     lightningMedusaChance = LIGHTNING_MEDUSA_CHANCE.get();
+    lightningLionChance = LIGHTNING_LION_CHANCE.get();
     circeChance = CIRCE_CHANCE.get();
     goldenRamChance = GOLDEN_RAM_CHANCE.get();
     elpisSpawnChance = ELPIS_SPAWN_CHANCE.get();
@@ -516,6 +521,7 @@ public class GFConfig {
   public ResourceLocation getSatyrSong() { return satyrSong; }
   public double getGorgonMedusaChance() { return gorgonMedusaChance; }
   public double getLightningMedusaChance() { return lightningMedusaChance; }
+  public double getLightningLionChance() { return lightningLionChance; }
   public double getCirceChance() { return circeChance; }
   public double getGoldenRamChance() { return goldenRamChance; }
   public int getElpisSpawnChance() { return elpisSpawnChance; }
