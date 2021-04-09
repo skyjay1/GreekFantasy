@@ -474,7 +474,7 @@ public final class GFRegistry {
     registerEntityType(event, GIANT_BOAR_ENTITY, "giant_boar", GiantBoarEntity::getAttributes, null);
     registerEntityType(event, GIGANTE_ENTITY, "gigante", GiganteEntity::getAttributes, GiganteEntity::canSpawnOn);
     registerEntityType(event, GOLDEN_RAM_ENTITY, "golden_ram", GoldenRamEntity::getAttributes, null);
-    registerEntityType(event, GORGON_ENTITY, "gorgon", GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawn);
+    registerEntityType(event, GORGON_ENTITY, "gorgon", GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawnInLight);
     registerEntityType(event, HARPY_ENTITY, "harpy", HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn);
 //    registerEntityType(event, HYDRA_ENTITY, HydraEntity::getAttributes, null);
     registerEntityType(event, MAD_COW_ENTITY, "mad_cow", MadCowEntity::getAttributes, MadCowEntity::canSpawnOn);

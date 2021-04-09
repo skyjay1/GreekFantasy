@@ -3,11 +3,11 @@ loaderVersion="[35,)"
 # The license for your mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
 license="GNU GPLv3"
 # A URL to refer people to when problems occur with this mod
-# issueTrackerURL="https://github.com/skyjay1/GreekFantasy/issues"
+issueTrackerURL="https://github.com/skyjay1/GreekFantasy/issues"
 
 [[mods]]
     modId="greekfantasy"
-    version="16.4.15"
+    version="16.4.16"
     displayName="Greek Fantasy"
     credits=""
     authors="skyjay1"

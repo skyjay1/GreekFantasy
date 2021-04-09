@@ -186,11 +186,11 @@ public class BronzeBullEntity extends MonsterEntity {
 
   @Override
   public boolean attackEntityAsMob(final Entity entityIn) {
-    if (super.attackEntityAsMob(entityIn)) {
-      // set goring
+    // set goring
+    if(!isGoring()) {
       setGoring(true);
-      // break intersecting blocks
-      destroyIntersectingBlocks(2.25F, 2.0D);
+    }
+    if (super.attackEntityAsMob(entityIn)) {
       // apply extra knockback velocity when attacking (ignores knockback resistance)
       final double knockbackFactor = 0.92D;
       final Vector3d myPos = this.getPositionVec();
@@ -298,9 +298,9 @@ public class BronzeBullEntity extends MonsterEntity {
   
   public boolean isSpawning() { return spawnTime > 0 || getState() == SPAWNING; }
 
-  public boolean isFiring() { return getState() == FIRING; }
+  public boolean isFiring() { return getState() == FIRING || firingTime > 0; }
   
-  public boolean isGoring() { return getState() == GORING; }
+  public boolean isGoring() { return getState() == GORING || goringTime > 0; }
   
   public void setFiring(final boolean firing) {
     firingTime = firing ? MAX_FIRING_TIME : 0;
@@ -315,6 +315,8 @@ public class BronzeBullEntity extends MonsterEntity {
     setState(goring ? GORING : NONE);
     if(goring && !this.world.isRemote()) {
       this.world.setEntityState(this, GORING_CLIENT);
+      // break intersecting blocks
+      destroyIntersectingBlocks(1.45F + 0.75F * rand.nextFloat(), 2.0D);
     }
   }
 

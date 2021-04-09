@@ -18,6 +18,7 @@ import greekfantasy.entity.DryadEntity;
 import greekfantasy.entity.GeryonEntity;
 import greekfantasy.entity.GiantBoarEntity;
 import greekfantasy.entity.GoldenRamEntity;
+import greekfantasy.entity.NemeanLionEntity;
 import greekfantasy.entity.ShadeEntity;
 import greekfantasy.item.AchillesArmorItem;
 import greekfantasy.network.SDeityPacket;
@@ -151,12 +152,27 @@ public class CommonForgeEventHandler {
   }
   
   /**
-   * Used to set the player pose when the Swine effect is enabled.
+   * Used to set the player pose when the Swine effect is enabled;
+   * Used to place Golden String at the player's position;
+   * Used to set the player pose when they are riding a Nemean Lion;
    * @param event the PlayerTickEvent
    **/
   @SubscribeEvent
   public static void onLivingTick(final PlayerTickEvent event) {
-    if((event.phase == TickEvent.Phase.START) && event.player.isAlive()) {
+    if((event.phase == TickEvent.Phase.END) && event.player.isAlive()) {
+      // Update Nemean Lion riding pose
+      final boolean isRidingLion = event.player.getRidingEntity() instanceof NemeanLionEntity;
+      final Pose currentPose = event.player.getForcedPose();
+      // update the forced pose
+      if(isRidingLion && currentPose != Pose.FALL_FLYING) {
+        // apply the forced pose
+        event.player.setForcedPose(Pose.FALL_FLYING);
+        event.player.setPose(Pose.FALL_FLYING);
+      } else if(!isRidingLion && Pose.FALL_FLYING == currentPose) {
+        // clear the forced pose
+        event.player.setForcedPose(null);
+      }
+      
       // update Swine pose and armor
       if(GreekFantasy.CONFIG.isSwineEnabled()) {
         final boolean isSwine = isSwine(event.player);
@@ -179,11 +195,13 @@ public class CommonForgeEventHandler {
         if(isSwine && forcedPose != Pose.FALL_FLYING) {
           // apply the forced pose
           event.player.setForcedPose(Pose.FALL_FLYING);
+          event.player.setPose(Pose.FALL_FLYING);
         } else if(!isSwine && Pose.FALL_FLYING == forcedPose) {
           // clear the forced pose
           event.player.setForcedPose(null);
         }
       }
+      
       // place golden string if player is holding golden string
       // TODO also check if player is in a maze structure
       if(event.player.ticksExisted % 4 == 0 && (event.player.getHeldItemMainhand().getItem() == GFRegistry.GOLDEN_BALL || event.player.getHeldItemOffhand().getItem() == GFRegistry.GOLDEN_BALL)) {
@@ -275,14 +293,15 @@ public class CommonForgeEventHandler {
       if(entity instanceof LivingEntity) {
         // if the projectile hit the legs/feet while wearing any achilles armor, multiply the damage
         int achillesArmor = countAchillesArmor((LivingEntity)entity);
-        if(achillesArmor > 0 && (Math.random() < 0.78D) && (arrow.getPosY() - arrow.getHeight() * 0.5D) < (entity.getPosY() + entity.getHeight() * 0.24D)) {
+        double heelChance = AchillesArmorItem.ACHILLES_HEEL_BASE + AchillesArmorItem.ACHILLES_HEEL_BONUS * achillesArmor;
+        if(achillesArmor > 0 && (Math.random() < (heelChance)) && (arrow.getPosY() - arrow.getHeight() * 0.5D) < (entity.getPosY() + entity.getHeight() * 0.24D)) {
           arrow.setDamage(arrow.getDamage() * (2.0D + 0.5D * achillesArmor));
         } else if(isWearingNemeanHide((LivingEntity) entity) || (Math.random() < 0.25D * achillesArmor)) {
           // otherwise, cancel the event
           event.setCanceled(true);
           // "bounce" the projectile
           arrow.setDamage(0.0D);
-          arrow.setMotion(arrow.getMotion().mul(-0.45D, -0.65D, -0.45D));
+          arrow.setMotion(arrow.getMotion().mul(-0.45D, 0.65D, -0.45D));
         }
       }
     }

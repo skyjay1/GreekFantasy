@@ -1,7 +1,12 @@
 package greekfantasy.item;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -12,6 +17,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -23,9 +32,17 @@ public class AchillesArmorItem extends ArmorItem {
   private static final String TEXTURE_3 = GreekFantasy.MODID + ":textures/models/armor/achilles_layer_3.png";
   @OnlyIn(Dist.CLIENT)
   private greekfantasy.client.render.model.armor.AchillesHelmetModel MODEL;
+  
+  public static final double ACHILLES_HEEL_BASE = 0.2D;
+  public static final double ACHILLES_HEEL_BONUS = 0.15D;
 
   public AchillesArmorItem(final EquipmentSlotType slot, Properties builderIn) {
     super(MATERIAL, slot, builderIn);
+  }
+  
+  @OnlyIn(Dist.CLIENT)
+  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    tooltip.add(new TranslationTextComponent("item.greekfantasy.achilles_armor.tooltip", ACHILLES_HEEL_BONUS).mergeStyle(TextFormatting.GRAY));
   }
 
   /**
@@ -51,31 +68,34 @@ public class AchillesArmorItem extends ArmorItem {
       return TEXTURE_1;
     }
   }
-  
-  /** Override this method to have an item handle its own armor rendering.
-  *
-  * @param entityLiving The entity wearing the armor
-  * @param itemStack    The itemStack to render the model of
-  * @param armorSlot    The slot the armor is in
-  * @param _default     Original armor model. Will have attributes set.
-  * @return A ModelBiped to render instead of the default
-  */
- @OnlyIn(Dist.CLIENT)
- public <A extends net.minecraft.client.renderer.entity.model.BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default) {
-   // head slot uses different model, but the rest can use default
-   if(armorSlot != EquipmentSlotType.HEAD) {
-     return _default;
-   }
-   // update head model
-   if(MODEL == null) {
-     MODEL = new greekfantasy.client.render.model.armor.AchillesHelmetModel(1.0F);
-   }
-   MODEL.isChild = _default.isChild;
-   MODEL.isSneak = _default.isSneak;
-   MODEL.isSitting = _default.isSitting;
-   MODEL.setRotationAngles(entityLiving, entityLiving.limbSwing, entityLiving.limbSwingAmount, (float)entityLiving.ticksExisted, entityLiving.rotationYawHead, entityLiving.rotationPitch);
-   return (A) MODEL;
- }
+
+  /**
+   * Override this method to have an item handle its own armor rendering.
+   *
+   * @param entityLiving The entity wearing the armor
+   * @param itemStack    The itemStack to render the model of
+   * @param armorSlot    The slot the armor is in
+   * @param _default     Original armor model. Will have attributes set.
+   * @return A ModelBiped to render instead of the default
+   */
+  @OnlyIn(Dist.CLIENT)
+  public <A extends net.minecraft.client.renderer.entity.model.BipedModel<?>> A getArmorModel(LivingEntity entityLiving,
+      ItemStack itemStack, EquipmentSlotType armorSlot, A _default) {
+    // head slot uses different model, but the rest can use default
+    if (armorSlot != EquipmentSlotType.HEAD) {
+      return _default;
+    }
+    // update head model
+    if (MODEL == null) {
+      MODEL = new greekfantasy.client.render.model.armor.AchillesHelmetModel(1.0F);
+    }
+    MODEL.isChild = _default.isChild;
+    MODEL.isSneak = _default.isSneak;
+    MODEL.isSitting = _default.isSitting;
+    MODEL.setRotationAngles(entityLiving, entityLiving.limbSwing, entityLiving.limbSwingAmount, (float) entityLiving.ticksExisted,
+        entityLiving.rotationYawHead, entityLiving.rotationPitch);
+    return (A) MODEL;
+  }
   
   public static class AchillesArmorMaterial implements IArmorMaterial {
     private static final String NAME = "achilles";

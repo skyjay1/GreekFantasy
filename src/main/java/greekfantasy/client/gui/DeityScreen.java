@@ -38,7 +38,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private static final ResourceLocation SCREEN_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/gui/deity.png");
   private static final ResourceLocation TABS_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/gui/deity_tabs.png");
 
-  private static final int SCREEN_WIDTH = 195;
+  private static final int SCREEN_WIDTH = 196;
   private static final int SCREEN_HEIGHT = 160;
   
   private static final int TAB_WIDTH = 28;
@@ -51,7 +51,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   // private static final int FAVOR_WIDTH = 69;
   // private static final int FAVOR_HEIGHT = 86;
   private static final int FAVOR_LEFT = 9;
-  private static final int FAVOR_TOP = 16; // 30
+  private static final int FAVOR_TOP = 16;
   
   private static final int BTN_LEFT = 7;
   private static final int BTN_TOP = 89;
@@ -70,10 +70,10 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private static final int ENTITY_COUNT_Y = 13;
   private static final int ENTITY_WIDTH = 90;
   
-  private static final int ABILITY_LEFT = ENTITY_LEFT;
-  private static final int ABILITY_TOP = ENTITY_TOP;
-  private static final int ABILITY_COUNT_Y = 6;
-  private static final int ABILITY_WIDTH = ENTITY_WIDTH;
+  private static final int BLESSING_LEFT = ENTITY_LEFT;
+  private static final int BLESSING_TOP = ENTITY_TOP;
+  private static final int BLESSING_COUNT_Y = 6;
+  private static final int BLESSING_WIDTH = ENTITY_WIDTH;
   
   private static final int HOSTILE_LEFT = ENTITY_LEFT + 9;
   private static final int HOSTILE_TOP = ENTITY_TOP;
@@ -89,9 +89,10 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private final DeityScreen.TabButton[] tabButtons = new DeityScreen.TabButton[TAB_COUNT];
   private final List<List<DeityScreen.ItemButton>> itemButtons = new ArrayList<>();
   private final List<List<DeityScreen.EntityButton>> entityButtons = new ArrayList<>();
-  private final List<List<DeityScreen.AbilityButton>> abilityButtons = new ArrayList<>();
+  private final List<List<DeityScreen.BlessingButton>> blessingButtons = new ArrayList<>();
   private final List<List<DeityScreen.HostileButton>> hostileButtons = new ArrayList<>();
-  
+  private TabArrowButton tabLeftButton;
+  private TabArrowButton tabRightButton;
   private ScrollButton<DeityScreen> scrollButton;
   
   private int tabGroup;
@@ -144,18 +145,18 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         entityButtons.add(entityButtonList);
         
         // add ability list for each deity
-        final List<DeityScreen.AbilityButton> abilityButtonList = new ArrayList<>();
+        final List<DeityScreen.BlessingButton> blessingButtonList = new ArrayList<>();
         for(final SpecialFavorEffect e : d.getSpecialFavorEffects()) {
-          DeityScreen.AbilityButton button = new DeityScreen.AbilityButton(this, e.getType(), e.getMinLevel(), e.getMaxLevel(), 0, 0);
-          abilityButtonList.add(button);
+          DeityScreen.BlessingButton button = new DeityScreen.BlessingButton(this, e.getType(), e.getMinLevel(), e.getMaxLevel(), 0, 0);
+          blessingButtonList.add(button);
         }
         for(final FavorEffect e : d.getFavorEffects()) {
-          DeityScreen.AbilityButton button = new DeityScreen.AbilityButton(this, e, e.getMinLevel(), e.getMaxLevel(), 0, 0);
-          abilityButtonList.add(button);
+          DeityScreen.BlessingButton button = new DeityScreen.BlessingButton(this, e, e.getMinLevel(), e.getMaxLevel(), 0, 0);
+          blessingButtonList.add(button);
         }
-        abilityButtonList.sort(DeityScreen.AbilityButton::compareTo);
-        for(int i = 0, l = abilityButtonList.size(); i < l; i++) { abilityButtonList.get(i).setIndex(i); }
-        abilityButtons.add(abilityButtonList);
+        blessingButtonList.sort(DeityScreen.BlessingButton::compareTo);
+        for(int i = 0, l = blessingButtonList.size(); i < l; i++) { blessingButtonList.get(i).setIndex(i); }
+        blessingButtons.add(blessingButtonList);
 
         // add hostile range list for each deity
         hostileButtons.add(new ArrayList<>());
@@ -186,7 +187,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   @Override
   public void init(Minecraft minecraft, int width, int height) {
     super.init(minecraft, width, height);
-    this.guiLeft = (this.width - SCREEN_WIDTH) / 2;
+    this.guiLeft = (this.width - SCREEN_WIDTH - TAB_WIDTH) / 2;
     this.guiTop = (this.height - (SCREEN_HEIGHT - TAB_HEIGHT)) / 2 - 10;
     this.playerInventoryTitleY = this.height;
     // add 'done' button
@@ -196,14 +197,14 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       tabButtons[i] = addButton(new TabButton(this, i, deityList.get(i).getText(), guiLeft + (i * TAB_WIDTH), guiTop - TAB_HEIGHT + 4));
     }
     // add deity tab arrow buttons
-    addButton(new DeityScreen.TabArrowButton(this, true, guiLeft - ARROW_WIDTH - 4, guiTop - (ARROW_HEIGHT + 4)));
-    addButton(new DeityScreen.TabArrowButton(this, false, guiLeft + SCREEN_WIDTH + 4, guiTop - (ARROW_HEIGHT + 4)));
+    tabLeftButton = addButton(new DeityScreen.TabArrowButton(this, true, guiLeft - ARROW_WIDTH - 2, guiTop - (ARROW_HEIGHT + 4)));
+    tabRightButton = addButton(new DeityScreen.TabArrowButton(this, false, guiLeft + SCREEN_WIDTH + 2, guiTop - (ARROW_HEIGHT + 4)));
     // add item buttons
     itemButtons.forEach(l -> l.forEach(b -> addButton(b)));
     // add entity type text components
     entityButtons.forEach(l -> l.forEach(b -> addButton(b)));
     // add ability text components
-    abilityButtons.forEach(l -> l.forEach(b -> addButton(b)));
+    blessingButtons.forEach(l -> l.forEach(b -> addButton(b)));
     // add hostile buttons
     hostileButtons.forEach(l -> l.forEach(b -> addButton(b)));
     // add scroll button
@@ -214,7 +215,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     // add mode buttons
     addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP, "gui.mirror.item", DeityScreen.Mode.ITEM));
     addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + BTN_HEIGHT, "gui.mirror.entity", DeityScreen.Mode.ENTITY));
-    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + (BTN_HEIGHT) * 2, "gui.mirror.ability", DeityScreen.Mode.ABILITY));
+    addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + (BTN_HEIGHT) * 2, "gui.mirror.blessing", DeityScreen.Mode.BLESSING));
     addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + (BTN_HEIGHT) * 3, "gui.mirror.hostile", DeityScreen.Mode.HOSTILE));
     // set selected deity now that things are nonnull
     setSelectedTab(0);
@@ -268,8 +269,8 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       multiplier = 1.0F / (itemButtons.get(selected).size() / ITEM_COUNT_X);
     } else if(mode == Mode.ENTITY) {
       multiplier = 1.0F / entityButtons.get(selected).size();
-    } else if(mode == Mode.ABILITY) {
-      multiplier = 1.0F / abilityButtons.get(selected).size();
+    } else if(mode == Mode.BLESSING) {
+      multiplier = 1.0F / blessingButtons.get(selected).size();
     } else if(mode == Mode.HOSTILE) {
       multiplier = 1.0F / hostileButtons.get(selected).size();
     }
@@ -304,6 +305,9 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         tabButtons[i].updateDeity(i + tabGroup * TAB_COUNT);
       }
     }
+    // show/hide tab arrows
+//    tabLeftButton.visible = index > 0;
+//    tabRightButton.visible = index < tabButtons.length / TAB_COUNT;
   }
   
   private void setSelectedDeity(int index) {
@@ -317,8 +321,8 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       scrollEnabled = itemButtons.get(selected).size() > (ITEM_COUNT_X * ITEM_COUNT_Y);
     } else if(modeIn == Mode.ENTITY) {
       scrollEnabled = entityButtons.get(selected).size() > ENTITY_COUNT_Y;
-    } else if(modeIn == Mode.ABILITY) {
-      scrollEnabled = abilityButtons.get(selected).size() > ABILITY_COUNT_Y;
+    } else if(modeIn == Mode.BLESSING) {
+      scrollEnabled = blessingButtons.get(selected).size() > BLESSING_COUNT_Y;
     } else if(modeIn == Mode.HOSTILE) {
       scrollEnabled = hostileButtons.get(selected).size() > HOSTILE_COUNT_Y;
     }
@@ -333,9 +337,9 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       entityButtons.get(i).forEach(b -> b.visible = buttonsVisible);
     }
     // hide / show the proper entity button lists
-    for(int i = 0, l = abilityButtons.size(); i < l; i++) {
-      final boolean buttonsVisible = (i == selected && modeIn == Mode.ABILITY);
-      abilityButtons.get(i).forEach(b -> b.visible = buttonsVisible);
+    for(int i = 0, l = blessingButtons.size(); i < l; i++) {
+      final boolean buttonsVisible = (i == selected && modeIn == Mode.BLESSING);
+      blessingButtons.get(i).forEach(b -> b.visible = buttonsVisible);
     }
     // hide / show the proper hostile button lists
     for(int i = 0, l = hostileButtons.size(); i < l; i++) {
@@ -352,9 +356,9 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     } else if(mode == Mode.ENTITY) {
       final int startIndex = (int) Math.round(amount * (entityButtons.get(selected).size() - ENTITY_COUNT_Y));
       entityButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
-    } else if(mode == Mode.ABILITY) {
-      final int startIndex = (int) Math.round(amount * (abilityButtons.get(selected).size() - ABILITY_COUNT_Y));
-      abilityButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
+    } else if(mode == Mode.BLESSING) {
+      final int startIndex = (int) Math.round(amount * (blessingButtons.get(selected).size() - BLESSING_COUNT_Y));
+      blessingButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
     } else if(mode == Mode.HOSTILE) {
       final int startIndex = (int) Math.round(amount * (hostileButtons.get(selected).size() - HOSTILE_COUNT_Y));
       hostileButtons.get(selected).forEach(b -> b.updateLocation(startIndex));
@@ -526,14 +530,14 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     }
   }
   
-  protected class AbilityButton extends Button implements Comparable<DeityScreen.AbilityButton> {
+  protected class BlessingButton extends Button implements Comparable<DeityScreen.BlessingButton> {
     private final int minValue;
     private final int maxValue;
     private int index;
     private final ITextComponent textHeader;
     private final ITextComponent textRange;
     
-    public AbilityButton(final DeityScreen gui, final SpecialFavorEffect.Type typeIn, final int minLevel, final int maxLevel, final int x, final int y) {
+    public BlessingButton(final DeityScreen gui, final SpecialFavorEffect.Type typeIn, final int minLevel, final int maxLevel, final int x, final int y) {
       super(x, y, HOSTILE_WIDTH, 18, StringTextComponent.EMPTY, b -> {});
       minValue = minLevel;
       maxValue = maxLevel;
@@ -543,7 +547,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       textRange = new TranslationTextComponent("favor.level_range", minLevel, maxLevel).mergeStyle(color);
     }
     
-    public AbilityButton(final DeityScreen gui, final FavorEffect effectIn, final int minLevel, final int maxLevel, final int x, final int y) {
+    public BlessingButton(final DeityScreen gui, final FavorEffect effectIn, final int minLevel, final int maxLevel, final int x, final int y) {
       super(x, y, HOSTILE_WIDTH, 18, StringTextComponent.EMPTY, b -> {});
       minValue = minLevel;
       maxValue = maxLevel;
@@ -572,18 +576,18 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
      * based on the scroll value
      **/
     public void updateLocation(final int startIndex) {
-      if(index < startIndex || index >= (startIndex + DeityScreen.ABILITY_COUNT_Y)) {
+      if(index < startIndex || index >= (startIndex + DeityScreen.BLESSING_COUNT_Y)) {
         this.visible = false;
         this.isHovered = false;
       } else {
         this.visible = true;
-        this.y = DeityScreen.this.guiTop + DeityScreen.ABILITY_TOP + 2 * DeityScreen.this.font.FONT_HEIGHT * (index - startIndex);
-        this.x = DeityScreen.this.guiLeft + DeityScreen.ABILITY_LEFT;
+        this.y = DeityScreen.this.guiTop + DeityScreen.BLESSING_TOP + 2 * DeityScreen.this.font.FONT_HEIGHT * (index - startIndex);
+        this.x = DeityScreen.this.guiLeft + DeityScreen.BLESSING_LEFT;
       }
     }
 
     @Override
-    public int compareTo(DeityScreen.AbilityButton button) {
+    public int compareTo(DeityScreen.BlessingButton button) {
       return button.minValue - this.minValue;
     }
   }
@@ -684,7 +688,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   protected static enum Mode {
     ITEM("favor.favor_modifiers"), 
     ENTITY("favor.favor_modifiers"), 
-    ABILITY("gui.mirror.abilities"), 
+    BLESSING("gui.mirror.blessing_levels"), 
     HOSTILE("gui.mirror.hostility_levels");
     
     private String tooltip;

@@ -6,6 +6,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.Pose;
+import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
@@ -18,14 +20,20 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
@@ -57,7 +65,7 @@ public class NemeanLionEntity extends MonsterEntity {
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 84.0D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 100.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.28D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.92D)
         .createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
@@ -76,20 +84,21 @@ public class NemeanLionEntity extends MonsterEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(1, new NemeanLionEntity.SitGoal());
-    this.goalSelector.addGoal(2, new LeapAtTargetGoal(this, 0.54F));
-    this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.15D, true));
-    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.86D){
+    this.goalSelector.addGoal(1, new NemeanLionEntity.RunAroundLikeCrazyGoal(1.0D));
+    this.goalSelector.addGoal(2, new NemeanLionEntity.SitGoal());
+    this.goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.54F));
+    this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.15D, true));
+    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.86D){
       @Override
       public boolean shouldExecute() {
         return !NemeanLionEntity.this.isSitting() && NemeanLionEntity.this.rand.nextInt(400) == 0 && super.shouldExecute();
       }
     });
-    this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 8.0F));
-    this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
+    this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, false));
-    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, e -> EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e) && e.isNonBoss() && !e.isInWater()));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, false, false, e -> EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e) && !NemeanLionEntity.this.isBeingRidden()));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, e -> EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e) && e.isNonBoss() && !e.isInWater() && !NemeanLionEntity.this.isBeingRidden()));
     
   }
   
@@ -102,12 +111,27 @@ public class NemeanLionEntity extends MonsterEntity {
     
     // randomly sit, or unsit if attacking
     if(!this.world.isRemote()) {
-      if(this.getAttackTarget() == null) {
-        if(rand.nextFloat() < 0.015F) {
-          setSitting(true);
+      if(this.getAttackTarget() == null && getPassengers().isEmpty()) {
+        if(rand.nextFloat() < 0.0028F) {
+          setSitting(!isSitting());
         }
       } else if(isSitting()) {
         setSitting(false);
+      }
+    }
+    
+    // update rotation and attack damage while being ridden
+    if(isBeingRidden() && getPassengers().get(0) instanceof PlayerEntity) {
+      PlayerEntity player = (PlayerEntity)getPassengers().get(0);
+      this.rotationYaw = player.rotationYaw;
+      this.prevRotationYaw = this.rotationYaw;
+      this.rotationPitch = player.rotationPitch * 0.5F;
+      this.setRotation(this.rotationYaw, this.rotationPitch);
+      this.renderYawOffset = this.rotationYaw;
+      this.rotationYawHead = this.renderYawOffset;
+      // strangling damage
+      if(this.hurtTime == 0 && !world.isRemote()) {
+        this.attackEntityFrom(DamageSource.causePlayerDamage(player), 0.5F + rand.nextFloat() * 0.5F);
       }
     }
   }
@@ -131,6 +155,28 @@ public class NemeanLionEntity extends MonsterEntity {
 
   @Override
   public boolean isOnLadder() { return false; }
+  
+  // Riding //
+  
+  @Override
+  public double getMountedYOffset() { return super.getMountedYOffset() + 0.805D; }
+  
+  @Override
+  public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
+    if (!this.isBeingRidden() && !player.isSecondaryUseActive()) {
+      if (!this.world.isRemote() && this.canFitPassenger(player)) {
+        // mount the player to the entity
+        player.startRiding(this);
+        // reset sitting
+        if(isSitting()) {
+          setSitting(false);
+        }
+      }
+      return ActionResultType.func_233537_a_(this.world.isRemote);
+    }
+    
+    return ActionResultType.FAIL;
+  }
 
   // Boss //
 
@@ -213,5 +259,57 @@ public class NemeanLionEntity extends MonsterEntity {
       NemeanLionEntity.this.getNavigator().clearPath();
     }
     
+  }
+  
+  private class RunAroundLikeCrazyGoal extends Goal {
+    
+    private final NemeanLionEntity lion;
+    private final double speed;
+    private double targetX;
+    private double targetY;
+    private double targetZ;
+
+    public RunAroundLikeCrazyGoal(double speedIn) {
+      this.lion = NemeanLionEntity.this;
+      this.speed = speedIn;
+      this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+    }
+
+    @Override
+    public boolean shouldExecute() {
+      if (this.lion.isBeingRidden()) {
+        Vector3d vector3d = RandomPositionGenerator.findRandomTarget(this.lion, 5, 4);
+        if (vector3d == null) {
+          return false;
+        } else {
+          this.targetX = vector3d.x;
+          this.targetY = vector3d.y;
+          this.targetZ = vector3d.z;
+          return true;
+        }
+      } else {
+        return false;
+      }
+    }
+
+    @Override
+    public void startExecuting() {
+      this.lion.getNavigator().tryMoveToXYZ(this.targetX, this.targetY, this.targetZ, this.speed);
+    }
+
+    @Override
+    public boolean shouldContinueExecuting() {
+      return !this.lion.getNavigator().noPath() && this.lion.isBeingRidden();
+    }
+
+    @Override
+    public void tick() {
+      // randomly remove the passenger
+      if (this.lion.getRNG().nextInt(45) == 0) {
+        this.lion.removePassengers();
+      }
+
+    }
+
   }
 }

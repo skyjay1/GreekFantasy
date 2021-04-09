@@ -40,23 +40,21 @@ public class LionDenFeature extends SimpleTemplateFeature {
     Mirror mirror = Mirror.NONE;
 
     // position for generation
-    BlockPos tentPos = getHeightPos(reader, blockPosIn.add(4 + rand.nextInt(8), 0, 4 + rand.nextInt(8)));
+    BlockPos genPos = getHeightPos(reader, blockPosIn.add(4 + rand.nextInt(8), 0, 4 + rand.nextInt(8)));
     
     // placement settings
     PlacementSettings placement = new PlacementSettings()
         .setRotation(rotation).setMirror(mirror).setRandom(rand)
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
   
-    return generateDen(reader, manager.getTemplateDefaulted(getStructure(rand)), placement, tentPos, rand);
+    return generateDen(reader, manager.getTemplateDefaulted(getStructure(rand)), placement, genPos, rand);
   }
   
   protected boolean generateDen(final ISeedReader reader, final Template template, final PlacementSettings placement,
       final BlockPos pos, final Random rand) {
-    if(!isValidPosition(reader, pos, template.getSize().down(3), placement.getRotation())) {
+    if(!isValidPosition(reader, pos, template.getSize().down(4), placement.getRotation())) {
       return false;
     }
-    // DEBUG
-    System.out.println("Generated lion den near " + pos.toString());
     
     // placement settings
     ChunkPos chunkPos = new ChunkPos(pos);
@@ -64,17 +62,17 @@ public class LionDenFeature extends SimpleTemplateFeature {
     
     // actually generate the structure
     template.func_237146_a_(reader, pos.down(), pos.down(), placement.setBoundingBox(mbb), rand, 2);
-    fillBelow(reader, pos.down(2), template.getSize(), placement.getRotation(), new Block[] { Blocks.SANDSTONE });
+    fillBelow(reader, pos.down(3), template.getSize(), placement.getRotation(), new Block[] { Blocks.SANDSTONE });
     return true;
   }
   
   protected static boolean canPlaceOnBlock(final ISeedReader world, final BlockPos pos) {
-    return pos.getY() > 3 && world.getBlockState(pos).isSolid() && !world.getBlockState(pos.up(3)).isSolid();
+    return pos.getY() > 4 && world.getBlockState(pos).isSolid() && !world.getBlockState(pos.up(4)).isSolid();
   }
   
   @Override
   protected boolean isValidPosition(final ISeedReader reader, final BlockPos pos) {
-    return pos.getY() > 3 && reader.getBlockState(pos).isSolid() && isReplaceableAt(reader, pos.up(3));
+    return pos.getY() > 4 && reader.getBlockState(pos).isSolid() && isReplaceableAt(reader, pos.up(4));
   }
 
   @Override

@@ -84,7 +84,7 @@ public class UnicornEntity extends AbstractHorseEntity {
   
   @Override
   protected void damageEntity(final DamageSource source, final float amountIn) {
-    super.damageEntity(source, source.isDamageAbsolute() ? amountIn : amountIn * 0.5F);
+    super.damageEntity(source, source.isDamageAbsolute() || source.isUnblockable() ? amountIn : amountIn * 0.5F);
   }
 
   @Override

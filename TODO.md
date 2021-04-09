@@ -39,8 +39,8 @@ __Key:__
 - X X X X X Boss: Geryon (3-headed Gigante)
 - X X X X X Boss: Charybdis
 - X X X X X Boss: Talos
-- ~ ~ _ _ _ Boss: Nemean Lion (invulnerable to physical damage)
-- X ~ _ X X Boss: Bronze Bull
+- X X _ X ~ Boss: Nemean Lion (TODO: artificial summoning too)
+- X X  _ X X Boss: Bronze Bull
 - X X ~ X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
 - X X ~ X X Miniboss: Medusa
@@ -117,7 +117,7 @@ __Key:__
 __Key:__
 `[Design] [Worldgen] [Loot]`
 
-- Complete: Hary Nests, Satyr Camps, Ara Camps, Small Marble/Limestone Shrine, Small Nether Shrine, Marble veins, Limestone veins, Python Pit, Cyclopes Cave
+- Complete: Hary Nests, Satyr Camps, Ara Camps, Small Marble/Limestone Shrine, Small Nether Shrine, Marble veins, Limestone veins, Python Pit, Cyclopes Cave, Lion Den
 - _ _ _ Labyrinth
 - _ _ _ Centaur Camps
 - _ _ _ Ruined Temple
@@ -143,7 +143,7 @@ __Key:__
 - X X X Javelin and Bident
 - X X X Armor of Achilles (Hephaestus; said to be impenetrable)
 - X X X Golden Fleece
-- ~ X X Fiery gear (TODO: texture)
+- X X X Fiery gear
 - _ _ _ Iron Feather - from Stymphalian bird; throwable
 - _ _ _ Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 
@@ -151,7 +151,7 @@ __Key:__
 
 - Complete: Become petrified, Become cursed with Swine, Encounter Cerastes, Kill Shade, Tame a Unicorn, Obtain a Mysterious Box, Obtain Ambrosia, Obtain Winged Sandals (Much Fast, So Speed!), Summon / Kill a Cerberus, Summon / Kill a Geryon, Summon / Kill a Talos, Kill a Charybdis
 - _ Kill a Cretan Minotaur
-- _ Kill a Colchis Bull
+- _ Kill a Bronze Bull
 - _ Kill a Nemean Lion
 - _ Anger Dryads by chopping logs
 - _ Kill all minibosses: Python, Giant Boar, Circe
