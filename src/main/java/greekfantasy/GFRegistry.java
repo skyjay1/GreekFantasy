@@ -781,10 +781,8 @@ public final class GFRegistry {
           .setRegistryName(MODID, "golden_string"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "golden_ball"),
-        new Item(new Item.Properties().group(GREEK_GROUP)){
-          @Override
-          public boolean hasEffect(ItemStack stack) { return true; }
-        }.setRegistryName(MODID, "golden_fleece"),
+        new Item(new Item.Properties().group(GREEK_GROUP))
+		  .setRegistryName(MODID, "golden_fleece"),
         new DiscusItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
           .setRegistryName(MODID, "discus")
     );
