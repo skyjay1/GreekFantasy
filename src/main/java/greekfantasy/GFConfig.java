@@ -138,6 +138,7 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue MEDUSA_BOSS_BAR;
   private final ForgeConfigSpec.BooleanValue CIRCE_BOSS_BAR;
   private final ForgeConfigSpec.BooleanValue CRETAN_BOSS_BAR;
+  private final ForgeConfigSpec.BooleanValue NEMEAN_LION_BOSS_BAR;
   private final ForgeConfigSpec.IntValue ELPIS_SPAWN_CHANCE;
   public final ForgeConfigSpec.IntValue NUM_SPARTI_SPAWNED;
   private final ForgeConfigSpec.BooleanValue GIANT_BOAR_NON_NETHER;
@@ -151,6 +152,7 @@ public class GFConfig {
   private boolean medusaBossBar;
   private boolean circeBossBar;
   private boolean cretanBossBar;
+  private boolean nemeanLionBossBar;
   private int elpisSpawnChance;
   private int numSpartiSpawned;
   private boolean giantBoarNonNether;
@@ -317,6 +319,8 @@ public class GFConfig {
         .define("circe_boss_bar", true);
     CRETAN_BOSS_BAR = builder.comment("Whether to show the Cretan Minotaur boss bar")
         .define("cretan_boss_bar", true);
+    NEMEAN_LION_BOSS_BAR = builder.comment("Whether to show the Nemean Lion boss bar")
+        .define("nemean_lion_boss_bar", true);
     ELPIS_SPAWN_CHANCE = builder.comment("Percent chance that opening a mysterious box spawns an Elpis")
         .defineInRange("elpis_spawn_chance", 60, 0, 100);
     NUM_SPARTI_SPAWNED = builder.comment("Number of Sparti spawned by using a hydra tooth")
@@ -460,6 +464,7 @@ public class GFConfig {
     medusaBossBar = MEDUSA_BOSS_BAR.get();
     circeBossBar = CIRCE_BOSS_BAR.get();
     cretanBossBar = CRETAN_BOSS_BAR.get();
+    nemeanLionBossBar = NEMEAN_LION_BOSS_BAR.get();
     // misc mob settings
     giantBoarNonNether = GIANT_BOAR_NON_NETHER.get();
     dryadAngryOnHarvest = DRYAD_ANGRY_ON_HARVEST.get();
@@ -530,6 +535,7 @@ public class GFConfig {
   public boolean showMedusaBossBar() { return medusaBossBar; }
   public boolean showCirceBossBar() { return circeBossBar; }
   public boolean showCretanBossBar() { return cretanBossBar; }
+  public boolean showNemeanLionBossBar() { return nemeanLionBossBar; }
   
   public boolean getGiantBoarNonNether() { return giantBoarNonNether; }
   public boolean isWhirlInvulnerable() { return whirlInvulnerable; }

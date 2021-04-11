@@ -2,6 +2,7 @@ package greekfantasy.entity;
 
 import java.util.EnumSet;
 
+import greekfantasy.GreekFantasy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -63,6 +64,7 @@ public class NemeanLionEntity extends MonsterEntity {
     this.enablePersistence();
     this.stepHeight = 1.0F;
     this.experienceValue = 50;
+    bossInfo.setVisible(GreekFantasy.CONFIG.showNemeanLionBossBar());
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {

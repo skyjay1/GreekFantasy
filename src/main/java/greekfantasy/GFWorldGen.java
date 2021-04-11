@@ -179,7 +179,7 @@ public final class GFWorldGen {
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     LION_DEN = registerFeature("lion_den",
         LION_DEN_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
-        .withPlacement(Placements.HEIGHTMAP_PLACEMENT)).chance(2);
+        .chance(2).withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     PYTHON_PIT = registerFeature("python_pit",
         PYTHON_PIT_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
