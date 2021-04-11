@@ -131,6 +131,7 @@ public final class GFRegistry {
 //  public static EntityType<HydraEntity> HYDRA_ENTITY = buildEntityType(HydraEntity::new, "hydra", 1.4F, 1.2F, EntityClassification.MONSTER, b -> b.immuneToFire());
 //  public static EntityType<HydraHeadEntity> HYDRA_HEAD_ENTITY = buildEntityType(HydraHeadEntity::new, "hydra_head", 0.5F, 0.9F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning());
   public static EntityType<MadCowEntity> MAD_COW_ENTITY = buildEntityType(MadCowEntity::new, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<MakhaiEntity> MAKHAI_ENTITY = buildEntityType(MakhaiEntity::new, "makhai", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<MinotaurEntity> MINOTAUR_ENTITY = buildEntityType(MinotaurEntity::new, "minotaur", 0.7F, 1.94F, EntityClassification.MONSTER, b -> {});
   public static EntityType<NemeanLionEntity> NEMEAN_LION_ENTITY = buildEntityType(NemeanLionEntity::new, "nemean_lion", 1.92F, 2.28F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<NaiadEntity> NAIAD_ENTITY = buildEntityType(NaiadEntity::new, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, b -> {});
@@ -478,6 +479,7 @@ public final class GFRegistry {
     registerEntityType(event, HARPY_ENTITY, "harpy", HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn);
 //    registerEntityType(event, HYDRA_ENTITY, HydraEntity::getAttributes, null);
     registerEntityType(event, MAD_COW_ENTITY, "mad_cow", MadCowEntity::getAttributes, MadCowEntity::canSpawnOn);
+    registerEntityType(event, MAKHAI_ENTITY, "makhai", MakhaiEntity::getAttributes, null);
     registerEntityType(event, MINOTAUR_ENTITY, "minotaur", MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight);
     registerEntityType(event, NEMEAN_LION_ENTITY, "nemean_lion", NemeanLionEntity::getAttributes, null);
     registerEntityType(event, NAIAD_ENTITY, "naiad", NaiadEntity::getAttributes, NaiadEntity::canNaiadSpawnOn);
@@ -845,6 +847,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, GORGON_ENTITY, "gorgon", 0x3a8228, 0xbcbcbc);
     registerSpawnEgg(event, HARPY_ENTITY, "harpy", 0x724e36, 0x332411);
     registerSpawnEgg(event, MAD_COW_ENTITY, "mad_cow", 0x443626, 0xcf9797);
+    registerSpawnEgg(event, MAKHAI_ENTITY, "makhai", 0x513f38, 0xf33531);
     registerSpawnEgg(event, MINOTAUR_ENTITY, "minotaur", 0x443626, 0x734933);
     registerSpawnEgg(event, NAIAD_ENTITY, "naiad",  0x7caba1, 0xe67830);
     registerSpawnEgg(event, NEMEAN_LION_ENTITY, "nemean_lion",  0xd08d26, 0x7d3107);

@@ -161,4 +161,5 @@ _Can I do something with these?_
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
 - Story of King Midas (gold touch)
 - Story of Labyrinth (Minotaur miniboss, Golden String, etc)
+- Story of Icarus (improve Elytra)
 

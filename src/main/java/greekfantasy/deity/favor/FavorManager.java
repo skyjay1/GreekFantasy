@@ -9,23 +9,30 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GFWorldSavedData;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
+import greekfantasy.deity.favor_effect.ConfiguredFavorRange;
 import greekfantasy.deity.favor_effect.ConfiguredSpecialFavorEffect;
 import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.deity.favor_effect.FavorEffectManager;
 import greekfantasy.deity.favor_effect.FavorEffectTrigger;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;
+import greekfantasy.entity.MakhaiEntity;
 import greekfantasy.event.FavorChangedEvent.Source;
 import greekfantasy.network.SSimpleParticlesPacket;
 import greekfantasy.tileentity.StatueTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.IGrowable;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
@@ -34,6 +41,7 @@ import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -62,7 +70,7 @@ public class FavorManager {
     // attempt to trigger ENTITY_HURT_PLAYER favor effect
     triggerFavorEffect(FavorEffectTrigger.Type.ENTITY_HURT_PLAYER, source.getType().getRegistryName(), player, favor);
     // attempt to trigger effects on combat start
-    if(player.getCombatTracker().getCombatDuration() < 2) {
+    if(player.getCombatTracker().getCombatDuration() < 40) {
       onCombatStart(player, source, favor);
     }
   }
@@ -224,12 +232,37 @@ public class FavorManager {
   private static void onCombatStart(final PlayerEntity player, final Entity other, final IFavor favor) {
     final long time = IFavor.calculateTime(player);
     FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
+    // combat start effect
     if(favor.hasNoTriggeredCooldown(time)) {
       long cooldown = -1;
       for(final ConfiguredSpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
         if(effect.canApply(player, favor)) {
           effect.getEffect().getPotionEffect().ifPresent(e -> player.addPotionEffect(e));
           cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRNG()));
+        }
+      }
+      // set effect cooldown
+      if(cooldown > 0) {
+        favor.setTriggeredTime(time, cooldown);
+      }
+    }
+    // combat start summon mahkai (does not trigger when favor level is 0 or combat_start_effect was triggered)
+    if(favor.hasNoTriggeredCooldown(time)) {
+      long cooldown = -1;
+      int level = 0;
+      boolean isTame = false;
+      ConfiguredFavorRange mahkaiRange = favorConfig.getEntity(GFRegistry.MAKHAI_ENTITY);
+      for(final ConfiguredSpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.COMBAT_SUMMON_MAKHAI)) {
+        level = favor.getFavor(effect.getDeity()).getLevel();
+        if(effect.canApply(player, favor) && level != 0) {
+          // summon a mahkai
+          isTame = (mahkaiRange == ConfiguredFavorRange.EMPTY) ? level > 0 : !mahkaiRange.getHostileRange().isInFavorRange(player, favor);
+          final MakhaiEntity entity = summonMahkai(player, isTame);
+          // set cooldown
+          if(entity != null) {
+            cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRNG()));
+            break;
+          }
         }
       }
       // set effect cooldown
@@ -259,7 +292,8 @@ public class FavorManager {
     // attempt to trigger PLAYER_HURT_ENTITY favor effect
     triggerFavorEffect(FavorEffectTrigger.Type.PLAYER_HURT_ENTITY, entity.getType().getRegistryName(), playerIn, favor);
     // attempt to trigger effects on combat start
-    if(playerIn.getCombatTracker().getCombatDuration() < 2) {
+    System.out.println("duration=" + playerIn.getCombatTracker().getCombatDuration());
+    if(playerIn.getCombatTracker().getCombatDuration() < 40) {
       onCombatStart(playerIn, entity, favor);
     }
   }
@@ -449,5 +483,44 @@ public class FavorManager {
       }
     }
     return -1;
+  }
+  
+  /**
+   * Spawns a Mahkai near the player when they enter combat
+   * @param playerIn the player who entered combat
+   * @param tame true if the mahkai should support the player
+   * @return the MakhaiEntity if it was spawned, otherwise null
+   */
+  private static MakhaiEntity summonMahkai(final PlayerEntity playerIn, final boolean tame) {
+    // create a mahkai
+    final MakhaiEntity entity = GFRegistry.MAKHAI_ENTITY.create(playerIn.getEntityWorld());
+    final Random rand = playerIn.getRNG();
+    // attempt to spawn the mahkai nearby
+    BlockPos spawnPos;
+    for(int attempts = 24, range = 6; attempts > 0; attempts--) {
+      spawnPos = playerIn.getPosition().add(rand.nextInt(range) - rand.nextInt(range), rand.nextInt(2) - rand.nextInt(2), rand.nextInt(range) - rand.nextInt(range));
+      // check if this is a valid position
+      boolean isValidSpawn = playerIn.world.getBlockState(spawnPos.down()).isSolid()
+              && playerIn.world.getBlockState(spawnPos).getMaterial() == Material.AIR
+              && playerIn.world.getBlockState(spawnPos.up()).getMaterial() == Material.AIR;
+      if(isValidSpawn) {
+        // set entity position and data
+        entity.setPosition(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.01D, spawnPos.getZ() + 0.5D);
+        if(tame) {
+          entity.setOwner(playerIn);
+        } else {
+          entity.setRevengeTarget(playerIn);
+        }
+        // actually add the entity to the world
+        playerIn.world.addEntity(entity);
+        // set spawning
+        entity.onInitialSpawn((IServerWorld) playerIn.world, playerIn.world.getDifficultyForLocation(spawnPos), SpawnReason.MOB_SUMMONED, null, null);
+        entity.setSpawning(true);
+        return entity;
+      }
+    }
+    // no spawn location was found, remove the entity
+    entity.remove();
+    return null;
   }
 }

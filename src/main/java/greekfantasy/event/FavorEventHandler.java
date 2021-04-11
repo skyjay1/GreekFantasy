@@ -151,7 +151,7 @@ public class FavorEventHandler {
    **/
   @SubscribeEvent
   public static void onPlayerAttack(final AttackEntityEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getPlayer().isAlive()) {
+    if(!event.isCanceled() && !event.getEntityLiving().getEntityWorld().isRemote() && event.getPlayer().isAlive() && !event.getPlayer().isSpectator() && !event.getPlayer().isCreative()) {
       event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAttackEntity(event.getEntityLiving(), event.getPlayer(), f));
     }
   }
@@ -164,7 +164,8 @@ public class FavorEventHandler {
   public static void onPlayerAttacked(final LivingAttackEvent event) {
     if(!event.isCanceled() && event.getEntityLiving().isServerWorld() 
         && event.getEntityLiving() instanceof PlayerEntity
-        && event.getSource().getImmediateSource() != null) {
+        && event.getSource().getImmediateSource() != null
+        && !event.getEntityLiving().isSpectator() && !((PlayerEntity)event.getEntityLiving()).isCreative()) {
       ((PlayerEntity)event.getEntityLiving()).getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerHurt((PlayerEntity)event.getEntityLiving(), event.getSource().getImmediateSource(), f));
     }
   }

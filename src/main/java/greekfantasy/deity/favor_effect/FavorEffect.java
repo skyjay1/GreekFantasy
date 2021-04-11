@@ -54,7 +54,7 @@ public class FavorEffect {
     favor = favorIn;
     minLevel = minLevelIn;
     maxLevel = maxLevelIn;
-    minCooldown = minCooldownIn;
+    minCooldown = Math.max(1, minCooldownIn);
     
     if(function.isPresent()) {
       translationKey = "favor.effect.function";

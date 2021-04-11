@@ -27,7 +27,7 @@ public class HydraEntity extends MonsterEntity {
   public HydraEntity(final EntityType<? extends HydraEntity> type, final World worldIn) {
     super(type, worldIn);
     hydraHeads.add(new HydraHeadEntity(this, "head1"));
-    hydraHeads.add(new HydraHeadEntity(this, "head2"));
+    hydraHeads.add(new HydraHeadEntity(this, "bipedHead2"));
     HydraHeadEntity head;
     for(int j = 0, l = hydraHeads.size(); j < l; j++) {
       head = hydraHeads.get(j);

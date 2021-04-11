@@ -56,7 +56,7 @@ public class SpecialFavorEffect {
     multiplier = multiplierIn;
     chance = chanceIn;
     levelMultiplier = levelMultiplierIn;
-    minCooldown = minCooldownIn;
+    minCooldown = Math.max(1, minCooldownIn);
   }
   
   public SpecialFavorEffect.Type getType() { return type; }
@@ -148,7 +148,8 @@ public class SpecialFavorEffect {
     MINING_AUTOSMELT("mining_autosmelt"),
     MINING_CANCEL_ORES("mining_cancel_ores"),
     TRADING_CANCEL("trading_cancel"),
-    XP_MULTIPLIER("xp_multiplier");
+    XP_MULTIPLIER("xp_multiplier"),
+    COMBAT_SUMMON_MAKHAI("combat_summon_makhai");
     
     private static final Map<String, SpecialFavorEffect.Type> valueMap = new HashMap<>();
     static {

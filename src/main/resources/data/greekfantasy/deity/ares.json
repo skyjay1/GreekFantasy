@@ -1,12 +1,15 @@
 {
   "name": "greekfantasy:ares",
-  "enabled": false,
+  "enabled": true,
   "female": false,
   "base": "minecraft:polished_andesite_slab",
   "left_hand": {
   	"id": "minecraft:iron_sword",
-  	"Count": 1,
-  	"tag": {}
+  	"Count": 1
+  },
+  "right_hand": {
+  	"id": "minecraft:iron_sword",
+  	"Count": 1
   },
   "special_effects": [
     {
@@ -29,16 +32,19 @@
   	  	"Amplifier": 0,
   	  	"Duration": 450
   	  },
-	  "minlevel": -6,
+	  "minlevel": -5,
 	  "maxlevel": -10,
   	  "chance": 0.12,
   	  "level_multiplier": 0.03,
   	  "mincooldown": 160
+  	},
+  	{
+  	  "type": "combat_summon_makhai",
+	  "minlevel": -10,
+	  "maxlevel": 10,
+  	  "chance": 0.25,
+  	  "level_multiplier": 0.05,
+  	  "mincooldown": 100
   	}
-  ],
-  "right_hand": {
-  	"id": "minecraft:iron_sword",
-  	"Count": 1,
-  	"tag": {}
-  }
+  ]
 }
