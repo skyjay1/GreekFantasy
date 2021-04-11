@@ -10,7 +10,7 @@ import greekfantasy.GFWorldGen;
 import greekfantasy.GFWorldSavedData;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.favor.FavorCommand;
-import greekfantasy.deity.favor_effect.FavorConfiguration;
+import greekfantasy.deity.favor.FavorConfiguration;
 import greekfantasy.entity.ArionEntity;
 import greekfantasy.entity.CerastesEntity;
 import greekfantasy.entity.CirceEntity;

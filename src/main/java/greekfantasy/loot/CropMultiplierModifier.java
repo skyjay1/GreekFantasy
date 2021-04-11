@@ -5,9 +5,9 @@ import java.util.List;
 import com.google.gson.JsonObject;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.favor.FavorConfiguration;
 import greekfantasy.deity.favor.IFavor;
 import greekfantasy.deity.favor_effect.ConfiguredSpecialFavorEffect;
-import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;

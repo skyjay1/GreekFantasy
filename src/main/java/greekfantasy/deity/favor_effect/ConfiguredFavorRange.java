@@ -3,6 +3,8 @@ package greekfantasy.deity.favor_effect;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import greekfantasy.deity.favor.FavorRange;
+
 public class ConfiguredFavorRange {
 
   public static final ConfiguredFavorRange EMPTY = new ConfiguredFavorRange(FavorRange.EMPTY, FavorRange.EMPTY);

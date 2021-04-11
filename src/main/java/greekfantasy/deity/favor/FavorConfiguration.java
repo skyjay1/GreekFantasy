@@ -1,4 +1,4 @@
-package greekfantasy.deity.favor_effect;
+package greekfantasy.deity.favor;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -13,6 +13,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.Deity;
+import greekfantasy.deity.favor_effect.ConfiguredFavorRange;
+import greekfantasy.deity.favor_effect.ConfiguredSpecialFavorEffect;
+import greekfantasy.deity.favor_effect.SpecialFavorEffect;
+import greekfantasy.deity.favor_effect.SpecialFavorEffect.Type;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
 
@@ -78,10 +82,6 @@ public class FavorConfiguration {
   public boolean hasEntity(final EntityType<?> type) {
     return getEntityTargetMap().containsKey(type.getRegistryName());
   }
-  
-//  public boolean hasSpecials(final SpecialFavorEffect.Type type) {
-//    return specialFavorEffectMap.containsKey(type) && !specialFavorEffectMap.get(type).isEmpty();
-//  }
 
   @Override
   public String toString() {

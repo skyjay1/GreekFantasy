@@ -6,7 +6,7 @@ import java.util.Collection;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
-import greekfantasy.deity.favor_effect.FavorConfiguration;
+import greekfantasy.deity.favor.FavorConfiguration;
 import greekfantasy.event.CommonForgeEventHandler;
 import greekfantasy.event.FavorEventHandler;
 import greekfantasy.network.SDeityPacket;

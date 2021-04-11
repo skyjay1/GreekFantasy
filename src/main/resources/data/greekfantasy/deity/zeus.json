@@ -14,16 +14,6 @@
   "effects": [
   	{
   	  "potion": {
-  	  	"Potion": "minecraft:strength",
-  	  	"Amplifier": 1,
-  	  	"Duration": 900
-  	  },
-  	  "minlevel": 5,
-  	  "maxlevel": 10,
-  	  "mincooldown": 6800
-  	},
-  	{
-  	  "potion": {
   	  	"Potion": "minecraft:slow_falling",
   	  	"Amplifier": 0,
   	  	"Duration": 1200
@@ -189,12 +179,12 @@
   	"greekfantasy:dryad": -8,
   	"greekfantasy:python": 14,
   	"greekfantasy:satyr": -2,
+  	"greekfantasy:harpy": 5,
+  	"greekfantasy:nemean_lion": 11,
+  	"greekfantasy:python": 9,
+  	"greekfantasy:pegasus": -5,
   	"greekfantasy:ara": 4,
-  	"minecraft:villager": -10,
-  	"minecraft:zombie": 1,
-  	"minecraft:husk": 1,
-  	"minecraft:skeleton": 2,
-  	"minecraft:stray": 2
+  	"minecraft:villager": -10
   },
   "item_favor_map": {
   	"greekfantasy:ambrosia": 76,
@@ -218,6 +208,7 @@
   	"minecraft:zombie_head": 7,
   	"minecraft:arrow": 2,
   	"minecraft:bone": -2,
-  	"minecraft:spider_eye": -5
+  	"minecraft:spider_eye": -5,
+  	"minecraft:feather": 1
   }
 }

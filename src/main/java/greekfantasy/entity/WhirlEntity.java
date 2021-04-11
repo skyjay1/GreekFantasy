@@ -5,7 +5,7 @@ import java.util.Random;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.deity.favor_effect.FavorConfiguration;
+import greekfantasy.deity.favor.FavorConfiguration;
 import greekfantasy.entity.misc.ISwimmingMob;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

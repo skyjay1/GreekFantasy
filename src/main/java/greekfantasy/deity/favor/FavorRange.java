@@ -1,4 +1,4 @@
-package greekfantasy.deity.favor_effect;
+package greekfantasy.deity.favor;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -6,7 +6,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
-import greekfantasy.deity.favor.IFavor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 

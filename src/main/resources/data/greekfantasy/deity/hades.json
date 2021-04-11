@@ -314,9 +314,6 @@
   	"minecraft:crying_obsidian": 12,
   	"minecraft:cooked_mutton": 4,
   	"minecraft:apple": 1,
-  	"minecraft:gold_ingot": 5,
-  	"minecraft:potion": 6,
-  	"minecraft:splash_potion": 7,
-  	"minecraft:lingering_potion": 8
+  	"minecraft:gold_ingot": 5
   }
 }

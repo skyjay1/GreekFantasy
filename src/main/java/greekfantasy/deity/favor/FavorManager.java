@@ -16,7 +16,6 @@ import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor_effect.ConfiguredFavorRange;
 import greekfantasy.deity.favor_effect.ConfiguredSpecialFavorEffect;
-import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.deity.favor_effect.FavorEffectManager;
 import greekfantasy.deity.favor_effect.FavorEffectTrigger;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;

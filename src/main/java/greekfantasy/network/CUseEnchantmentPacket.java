@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.deity.favor_effect.FavorConfiguration;
+import greekfantasy.deity.favor.FavorConfiguration;
 import greekfantasy.entity.WhirlEntity;
 import greekfantasy.item.ThunderboltItem;
 import net.minecraft.enchantment.EnchantmentHelper;

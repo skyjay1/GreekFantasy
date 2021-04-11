@@ -15,8 +15,8 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 
 import greekfantasy.block.StatueBlock.StatueMaterial;
+import greekfantasy.deity.favor.FavorConfiguration;
 import greekfantasy.deity.favor.IFavor;
-import greekfantasy.deity.favor_effect.FavorConfiguration;
 import greekfantasy.tileentity.StatueTileEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;

@@ -68,6 +68,7 @@
   	"minecraft:cooked_mutton": 4,
   	"minecraft:beef": -3,
   	"minecraft:mutton": -2,
-  	"minecraft:apple": 2
+  	"minecraft:apple": 2,
+  	"minecraft:golden_apple": 12
   }
 }
