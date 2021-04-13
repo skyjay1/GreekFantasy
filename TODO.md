@@ -69,8 +69,8 @@ __Key:__
 `[Altar] [Deity]`
 
 - X _ Aphrodite
-- X _ Ares
-- X _ Athena
+- X X Ares
+- X X Athena
 - X _ Demeter
 - X _ Dionysus
 - X _ Hecate

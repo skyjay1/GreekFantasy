@@ -7,7 +7,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -21,11 +20,8 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -149,8 +145,13 @@ public class NemeanLionEntity extends MonsterEntity {
   @Override
   protected void damageEntity(final DamageSource source, final float amountIn) {
     float damageAmount = amountIn;
+    // cap damage at 2.0 (1 heart)
     if (!source.isDamageAbsolute() && !source.isMagicDamage() && !source.isUnblockable()) {
       damageAmount = Math.min(2.0F, amountIn);
+    }
+    // stop sitting when hurt
+    if (!this.world.isRemote() && this.isSitting()) {
+      this.setSitting(false);
     }
     super.damageEntity(source, damageAmount);
   }
@@ -158,7 +159,17 @@ public class NemeanLionEntity extends MonsterEntity {
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
     return source == DamageSource.IN_WALL || source == DamageSource.WITHER 
+        || source == DamageSource.CACTUS || source == DamageSource.SWEET_BERRY_BUSH
         || source.isProjectile() || super.isInvulnerableTo(source);
+  }
+  
+  @Override
+  protected void collideWithEntity(final Entity entityIn) {
+    // stop sitting when collided with entity
+    if (entityIn instanceof LivingEntity && !this.world.isRemote() && this.isSitting()) {
+      this.setSitting(false);
+    }
+    super.collideWithEntity(entityIn);
   }
 
   @Override
@@ -189,7 +200,7 @@ public class NemeanLionEntity extends MonsterEntity {
   @Override
   public void removePassengers() {
     if(this.getPassengers().size() > 0) {
-      // give lion regen effect
+      // give lion regen effect when player stops strangling
       addPotionEffect(new EffectInstance(Effects.REGENERATION, 100, 0));
     }
     super.removePassengers();
@@ -323,7 +334,7 @@ public class NemeanLionEntity extends MonsterEntity {
     public void tick() {
       // randomly remove the passenger
       if (this.lion.getRNG().nextInt(42) == 0) {
-        // throw the passenger
+        // throw the passenger and apply attack damage
         Entity e = this.lion.getPassengers().get(0);
         this.lion.removePassengers();
         if(e instanceof LivingEntity) {
