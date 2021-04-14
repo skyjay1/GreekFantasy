@@ -8,7 +8,10 @@ __Key:__
 ## Bugs and urgent updates
 
 - Summoning animations not playing on dedicated server
+
   X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
+  
+- Flight enchantment broken?
 
 ## Entity basics
 
@@ -40,7 +43,7 @@ __Key:__
 - X X X X X Boss: Charybdis
 - X X X X X Boss: Talos
 - X X _ X ~ Boss: Nemean Lion
-- X X  _ X X Boss: Bronze Bull
+- X X _ X X Boss: Bronze Bull
 - X X ~ X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
 - X X ~ X X Miniboss: Medusa
@@ -52,7 +55,7 @@ __Key:__
 - X X X X X Whirl
 - X X X X X Pegasus
 - X X X X X Golden Ram (becomes regular sheep when sheared)
-- ~ _ _ _ _ Makhai (spawns when combat starts (Ares), either to help or hurt player)
+- X X _ X X Makhai (spawns when combat starts (Ares), either to help or hurt player)
 - _ _ _ _ _ Arachne (spider/woman)
 - ~ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 

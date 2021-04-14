@@ -62,11 +62,11 @@ public class FavorEventHandler {
    **/
   @SubscribeEvent(priority = EventPriority.HIGHEST)
   public static void onPlayerDeath(final LivingDeathEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getEntityLiving() instanceof PlayerEntity) {
+    if(!event.isCanceled() && event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().getEntityWorld().isRemote()) {
       final PlayerEntity player = (PlayerEntity) event.getEntityLiving();
       final Entity source = event.getSource().getTrueSource();
       // trigger FavorManager
-      if(source != null && !player.isSpectator() && !player.isCreative()) {
+      if(source instanceof LivingEntity && !player.isSpectator() && !player.isCreative()) {
         player.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerKilled(player, (LivingEntity)source, f));
       }
     }
@@ -78,7 +78,7 @@ public class FavorEventHandler {
    */
   @SubscribeEvent
   public static void onLivingDeath(final LivingDeathEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getSource().getTrueSource() instanceof PlayerEntity) {
+    if(!event.isCanceled() && event.getSource().getTrueSource() instanceof PlayerEntity && !event.getEntityLiving().getEntityWorld().isRemote()) {
       // update favor manager
       event.getSource().getTrueSource().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onKillEntity(event.getEntityLiving(), (PlayerEntity)event.getSource().getTrueSource(), f));
     }
