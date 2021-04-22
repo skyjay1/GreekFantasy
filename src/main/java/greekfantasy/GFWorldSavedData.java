@@ -131,6 +131,7 @@ public class GFWorldSavedData extends WorldSavedData {
   public void removeFlyingPlayer(final PlayerEntity player) {
     flyingPlayers.remove(PlayerEntity.getOfflineUUID(player.getName().getUnformattedComponentText()));
     player.abilities.allowFlying = false;
+    player.abilities.isFlying = false;
     player.sendPlayerAbilities();
   }
   
@@ -222,7 +223,7 @@ public class GFWorldSavedData extends WorldSavedData {
     final ItemStack feet = player.getItemStackFromSlot(EquipmentSlotType.FEET);
     return (feet.getItem() == GFRegistry.WINGED_SANDALS
         && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, feet) > 0
-        && GreekFantasy.PROXY.getFavorConfiguration().getSpecialRange(FavorConfiguration.FLYING_RANGE).isInFavorRange(player, favor));
+        && GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.FLYING_RANGE).isInFavorRange(player, favor));
   }
 
   /**

@@ -306,7 +306,7 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
     @Override
     protected boolean canSwirl(Entity e) {
       return target.test(e) && ((e instanceof LivingEntity && entity.getAttractMobs()) || e instanceof ItemEntity)
-          && (!(e instanceof PlayerEntity) || !GreekFantasy.PROXY.getFavorConfiguration().getSpecialRange(FavorConfiguration.LORD_OF_THE_SEA_RANGE).isInFavorRange((PlayerEntity)e));
+          && (!(e instanceof PlayerEntity) || !GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.LORD_OF_THE_SEA_RANGE).isInFavorRange((PlayerEntity)e));
     }
   }
 }

@@ -137,6 +137,7 @@ public class GFConfig {
   private final ForgeConfigSpec.DoubleValue GOLDEN_RAM_CHANCE;
   private final ForgeConfigSpec.BooleanValue MEDUSA_BOSS_BAR;
   private final ForgeConfigSpec.BooleanValue CIRCE_BOSS_BAR;
+  private final ForgeConfigSpec.BooleanValue ARACHNE_BOSS_BAR;
   private final ForgeConfigSpec.BooleanValue CRETAN_BOSS_BAR;
   private final ForgeConfigSpec.BooleanValue NEMEAN_LION_BOSS_BAR;
   private final ForgeConfigSpec.IntValue ELPIS_SPAWN_CHANCE;
@@ -151,6 +152,7 @@ public class GFConfig {
   private double goldenRamChance;
   private boolean medusaBossBar;
   private boolean circeBossBar;
+  private boolean arachneBossBar;
   private boolean cretanBossBar;
   private boolean nemeanLionBossBar;
   private int elpisSpawnChance;
@@ -317,6 +319,8 @@ public class GFConfig {
         .define("medusa_boss_bar", true);
     CIRCE_BOSS_BAR = builder.comment("Whether to show the Circe boss bar")
         .define("circe_boss_bar", true);
+    ARACHNE_BOSS_BAR = builder.comment("Whether to show the Arachne boss bar")
+        .define("arachne_boss_bar", false);
     CRETAN_BOSS_BAR = builder.comment("Whether to show the Cretan Minotaur boss bar")
         .define("cretan_boss_bar", true);
     NEMEAN_LION_BOSS_BAR = builder.comment("Whether to show the Nemean Lion boss bar")
@@ -463,6 +467,7 @@ public class GFConfig {
     // boss bars
     medusaBossBar = MEDUSA_BOSS_BAR.get();
     circeBossBar = CIRCE_BOSS_BAR.get();
+    arachneBossBar = ARACHNE_BOSS_BAR.get();
     cretanBossBar = CRETAN_BOSS_BAR.get();
     nemeanLionBossBar = NEMEAN_LION_BOSS_BAR.get();
     // misc mob settings
@@ -534,6 +539,7 @@ public class GFConfig {
 
   public boolean showMedusaBossBar() { return medusaBossBar; }
   public boolean showCirceBossBar() { return circeBossBar; }
+  public boolean showArachneBossBar() { return arachneBossBar; }
   public boolean showCretanBossBar() { return cretanBossBar; }
   public boolean showNemeanLionBossBar() { return nemeanLionBossBar; }
   

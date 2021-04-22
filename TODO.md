@@ -56,7 +56,7 @@ __Key:__
 - X X X X X Pegasus
 - X X X X X Golden Ram (becomes regular sheep when sheared)
 - X X _ X X Makhai (spawns when combat starts (Ares), either to help or hurt player)
-- _ _ _ _ _ Arachne (spider/woman)
+- ~ _ X _ _ Arachne (spider/woman)
 - ~ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 
 ## Entity AI
@@ -162,6 +162,7 @@ _Can I do something with these?_
 - Special bows: Eurytus
 - Thyrsus: staff with pinecone and ivy leaves used by Dionysus ("Wild Staff") - what would it do?
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
+- Story of Antaeus (miniboss; heals when touching earth; "Earth Bond" enchantment for boots heals player similarly)
 - Story of King Midas (gold touch)
 - Story of Labyrinth (Minotaur miniboss, Golden String, etc)
 - Story of Icarus (improve Elytra)

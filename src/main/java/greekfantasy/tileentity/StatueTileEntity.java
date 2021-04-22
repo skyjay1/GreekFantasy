@@ -185,7 +185,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
       return item;
     }
     // attempt to give the Apollo Bow item
-    FavorRange range = favorConfig.getSpecialRange(FavorConfiguration.APOLLO_BOW_RANGE);
+    FavorRange range = favorConfig.getEnchantmentRange(FavorConfiguration.APOLLO_BOW_RANGE);
     if(item.getItem() == GFRegistry.CURSED_BOW && deity != Deity.EMPTY 
         && deity.getName().equals(range.getDeity().getName())
         && range.isInFavorRange(player, favor)) {
@@ -194,7 +194,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
       return bow;
     }
     // attempt to give the Artemis Bow item
-    range = favorConfig.getSpecialRange(FavorConfiguration.ARTEMIS_BOW_RANGE);
+    range = favorConfig.getEnchantmentRange(FavorConfiguration.ARTEMIS_BOW_RANGE);
     if(item.getItem() == GFRegistry.CURSED_BOW && deity != Deity.EMPTY 
         && deity.getName().equals(range.getDeity().getName())
         && range.isInFavorRange(player, favor)) {
@@ -218,7 +218,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
    */
   protected boolean tryEnchant(final PlayerEntity player, final IDeity deity, final IFavor favor, final ItemStack stack, 
       final String rangeKey, final Enchantment enchant) {
-    final FavorRange range = GreekFantasy.PROXY.getFavorConfiguration().getSpecialRange(rangeKey);
+    final FavorRange range = GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(rangeKey);
     if(enchant.canApply(stack) && deity != Deity.EMPTY && deity.getName().equals(range.getDeity().getName())
         && range.isInFavorRange(player, favor) && EnchantmentHelper.getEnchantmentLevel(enchant, stack) < 1) {
       // if the item has size 1, enchant directly

@@ -16,7 +16,6 @@ import greekfantasy.deity.Deity;
 import greekfantasy.deity.favor_effect.ConfiguredFavorRange;
 import greekfantasy.deity.favor_effect.ConfiguredSpecialFavorEffect;
 import greekfantasy.deity.favor_effect.SpecialFavorEffect;
-import greekfantasy.deity.favor_effect.SpecialFavorEffect.Type;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
 
@@ -59,7 +58,7 @@ public class FavorConfiguration {
   
   public Map<String, FavorRange> getEnchantmentMap() { return enchantmentMap; }
     
-  public FavorRange getSpecialRange(final String name) { return getEnchantmentMap().getOrDefault(name, FavorRange.EMPTY); }
+  public FavorRange getEnchantmentRange(final String name) { return getEnchantmentMap().getOrDefault(name, FavorRange.EMPTY); }
 
   public ConfiguredFavorRange getEntity(final EntityType<?> type) {
     return getEntityTargetMap().getOrDefault(type.getRegistryName(), ConfiguredFavorRange.EMPTY);

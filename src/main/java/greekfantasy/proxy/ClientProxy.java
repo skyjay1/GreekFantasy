@@ -46,6 +46,7 @@ public class ClientProxy extends Proxy {
   public void registerEntityRenders() {
     GreekFantasy.LOGGER.debug("registerEntityRenders");
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ARA_ENTITY, AraRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ARACHNE_ENTITY, ArachneRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ARION_ENTITY, ArionRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.BRONZE_BULL_ENTITY, BronzeBullRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.TALOS_ENTITY, TalosRenderer::new);

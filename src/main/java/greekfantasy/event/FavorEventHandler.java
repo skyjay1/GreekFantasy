@@ -91,7 +91,7 @@ public class FavorEventHandler {
   @SubscribeEvent
   public static void onPlayerTick(final PlayerTickEvent event) {
     final boolean tick = (event.phase == TickEvent.Phase.START) && event.player.isAlive();
-    if(tick && !event.player.getEntityWorld().isRemote() && event.player.isServerWorld()) {
+    if(tick && event.player.isServerWorld() && !event.player.getEntityWorld().isRemote()) {
       event.player.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerTick(event.player, f));
     }
   }
@@ -181,9 +181,9 @@ public class FavorEventHandler {
         && event.getSlot() == EquipmentSlotType.FEET && event.getTo().getItem() == GFRegistry.WINGED_SANDALS 
         && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, event.getTo()) > 0) {
       final PlayerEntity player = (PlayerEntity)event.getEntityLiving();
-      GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)event.getEntityLiving().getEntityWorld());
+      GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)player.getEntityWorld());
       // Check the player's favor level before enabling flight
-      if(GreekFantasy.PROXY.getFavorConfiguration().getSpecialRange(FavorConfiguration.FLYING_RANGE).isInFavorRange(player)) {
+      if(GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.FLYING_RANGE).isInFavorRange(player)) {
         data.addFlyingPlayer(player);
       }
     }

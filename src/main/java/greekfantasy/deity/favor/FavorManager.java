@@ -179,7 +179,7 @@ public class FavorManager {
     }
     // every few ticks, ensure that flying players can still fly
     if(GreekFantasy.CONFIG.isFlyingEnabled() && player.getEntityWorld() instanceof ServerWorld && 
-        !player.isCreative() && !player.isSpectator()  && player.ticksExisted > 10 && time % 11 == 0) {
+        !player.isCreative() && !player.isSpectator() && player.ticksExisted > 10 && time % 11 == 0) {
       final GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)player.getEntityWorld());
       if(data.hasFlyingPlayer(player) && !GFWorldSavedData.validatePlayer(player, favor)) {
         // remove the player as a flying player

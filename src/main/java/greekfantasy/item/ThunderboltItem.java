@@ -52,7 +52,7 @@ public class ThunderboltItem extends Item {
         int damageAmount = 15;
         final int fireflashLevel = EnchantmentHelper.getEnchantmentLevel(GFRegistry.FIREFLASH_ENCHANTMENT, stack);
         final boolean fireflash = GreekFantasy.CONFIG.isFireflashEnabled() && fireflashLevel > 0
-            && GreekFantasy.PROXY.getFavorConfiguration().getSpecialRange(FavorConfiguration.FIREFLASH_RANGE).isInFavorRange(player);
+            && GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.FIREFLASH_RANGE).isInFavorRange(player);
         // if enchanted with fireflash, cause an explosion
         if(fireflash) {
           damageAmount = 25;
