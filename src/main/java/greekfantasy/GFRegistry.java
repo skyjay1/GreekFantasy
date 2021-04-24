@@ -830,6 +830,7 @@ public final class GFRegistry {
     
     // spawn eggs
     registerSpawnEgg(event, ARA_ENTITY, "ara", 0xffffff, 0xbbbbbb);
+    registerSpawnEgg(event, ARACHNE_ENTITY, "arachne", 0x242424, 0xbd4444);
     registerSpawnEgg(event, ARION_ENTITY, "arion", 0xdfc014, 0xb58614);
     registerSpawnEgg(event, CENTAUR_ENTITY, "centaur", 0x734933, 0x83251f);
     registerSpawnEgg(event, CERASTES_ENTITY, "cerastes", 0x847758, 0x997c4d);

@@ -80,7 +80,7 @@ public class MakhaiEntity extends CreatureEntity implements IHasOwner<MakhaiEnti
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 30.0D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 12.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.29D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 5.0D)
         .createMutableAttribute(Attributes.ARMOR, 3.0D);
@@ -99,7 +99,7 @@ public class MakhaiEntity extends CreatureEntity implements IHasOwner<MakhaiEnti
     this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 5, false, false, e -> !MakhaiEntity.this.isOnSameTeam(e)));
     this.targetSelector.addGoal(1, new HasOwnerHurtByTargetGoal<>(this));
     this.targetSelector.addGoal(2, new HasOwnerHurtTargetGoal<>(this));
-    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, MobEntity.class, 5, false, false, e -> e instanceof IMob && EntityPredicates.CAN_AI_TARGET.test(e)));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, MobEntity.class, 5, false, false, e -> e instanceof IMob && EntityPredicates.CAN_AI_TARGET.test(e) && !MakhaiEntity.this.isOnSameTeam(e)));
   }
   
   @Override
