@@ -94,7 +94,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     }
     entity.enablePersistence();
     entity.renderYawOffset = whirl.renderYawOffset;
-    entity.func_242279_ag(); // setPortalCooldown
+    entity.setPortalCooldown();
     world.addEntity(entity);
     entity.setState(SPAWNING);
     // remove the old whirl
@@ -198,7 +198,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   protected boolean isDespawnPeaceful() { return true; }
   
   @Override
-  public boolean isNonBoss() { return false; }
+  public boolean canChangeDimension() { return false; }
   
   @Override
   public boolean canDespawn(final double disToPlayer) { return false; }

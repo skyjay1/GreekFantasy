@@ -137,7 +137,7 @@ public class CommonForgeEventHandler {
           for(int y = -2; y <= 2; y++) {
             for(int z = -r; z <= r; z++) {
               pos = deathPos.add(x, y, z);
-              if(event.getEntityLiving().getEntityWorld().getBlockState(pos).isIn(GFRegistry.GIGANTE_HEAD)) {
+              if(event.getEntityLiving().getEntityWorld().getBlockState(pos).matchesBlock(GFRegistry.GIGANTE_HEAD)) {
                 heads.add(pos);
               }
               if(heads.size() >= 3) break countHeads;
@@ -449,7 +449,7 @@ public class CommonForgeEventHandler {
     final int cRadius = GreekFantasy.CONFIG.getPalladiumChunkRange();
     final int cVertical = GreekFantasy.CONFIG.getPalladiumYRange() / 2; // divide by 2 to center on block
     if(GreekFantasy.CONFIG.isPalladiumEnabled() && !event.getEntityLiving().getEntityWorld().isRemote() 
-        && event.getWorld() instanceof ServerWorld && event.getEntityLiving() instanceof IMob && event.getEntityLiving().isNonBoss()) {
+        && event.getWorld() instanceof ServerWorld && event.getEntityLiving() instanceof IMob && event.getEntityLiving().canChangeDimension()) {
       // check for nearby Statue Tile Entity
       final ServerWorld world = (ServerWorld)event.getWorld();
       final BlockPos blockPos = new BlockPos(event.getX(), event.getY(), event.getZ());

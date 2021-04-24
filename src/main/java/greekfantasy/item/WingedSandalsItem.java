@@ -126,7 +126,7 @@ public class WingedSandalsItem extends ArmorItem {
     } else {
       // add jump boost tooltip
       tooltip.add(new TranslationTextComponent("effect.minecraft.jump_boost").mergeStyle(TextFormatting.AQUA)
-        .appendString(" ").append(new TranslationTextComponent("enchantment.level.5").mergeStyle(TextFormatting.AQUA)));
+        .appendString(" ").appendSibling(new TranslationTextComponent("enchantment.level.5").mergeStyle(TextFormatting.AQUA)));
     }
   }
 

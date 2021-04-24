@@ -50,14 +50,14 @@ public class DragonToothEntity extends ProjectileItemEntity {
   protected void onEntityHit(EntityRayTraceResult raytrace) {
     super.onEntityHit(raytrace);
     final float damage = GreekFantasy.CONFIG.doesDragonToothSpawnSparti() ? 0.0F : 1.5F;
-    raytrace.getEntity().attackEntityFrom(DamageSource.causeThrownDamage(this, func_234616_v_()), damage);
+    raytrace.getEntity().attackEntityFrom(DamageSource.causeThrownDamage(this, getShooter()), damage);
   }
 
   @Override
   protected void onImpact(RayTraceResult raytrace) {
     super.onImpact(raytrace);
     if (!this.world.isRemote() && this.isAlive() && GreekFantasy.CONFIG.doesDragonToothSpawnSparti()) {
-      Entity thrower = func_234616_v_();
+      Entity thrower = getShooter();
       // spawn a configurable number of sparti
       for(int i = 0, n = GreekFantasy.CONFIG.getNumSpartiSpawned(), life = 20 * GreekFantasy.CONFIG.getSpartiLifespan(); i < n; i++) {
         final SpartiEntity sparti = GFRegistry.SPARTI_ENTITY.create(world);
@@ -77,7 +77,7 @@ public class DragonToothEntity extends ProjectileItemEntity {
 
   @Override
   public void tick() {
-    Entity entity = func_234616_v_();
+    Entity entity = getShooter();
     if (entity instanceof net.minecraft.entity.player.PlayerEntity && !entity.isAlive()) {
       remove();
     } else {
@@ -87,7 +87,7 @@ public class DragonToothEntity extends ProjectileItemEntity {
 
   @Override
   public Entity changeDimension(ServerWorld serverWorld, ITeleporter iTeleporter) {
-    Entity entity = func_234616_v_();
+    Entity entity = getShooter();
     if (entity != null && entity.world.getDimensionKey() != serverWorld.getDimensionKey()) {
       setShooter((Entity) null);
     }

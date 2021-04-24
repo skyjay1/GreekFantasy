@@ -98,7 +98,7 @@ public class NemeanLionEntity extends MonsterEntity {
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, false, false, e -> EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e) && !NemeanLionEntity.this.isBeingRidden()));
-    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, e -> EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e) && e.isNonBoss() && !e.isInWater() && !NemeanLionEntity.this.isBeingRidden()));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, e -> EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e) && e.canChangeDimension() && !e.isInWater() && !NemeanLionEntity.this.isBeingRidden()));
     
   }
   
@@ -181,7 +181,7 @@ public class NemeanLionEntity extends MonsterEntity {
   public double getMountedYOffset() { return super.getMountedYOffset() + 0.805D; }
   
   @Override
-  public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
+  public ActionResultType getEntityInteractionResult(PlayerEntity player, Hand hand) {
     if (!this.isBeingRidden() && !player.isSecondaryUseActive()) {
       if (!this.world.isRemote() && this.canFitPassenger(player)) {
         // mount the player to the entity
@@ -209,7 +209,7 @@ public class NemeanLionEntity extends MonsterEntity {
   // Boss //
 
   @Override
-  public boolean isNonBoss() { return false; }
+  public boolean canChangeDimension() { return false; }
 
   @Override
   protected boolean canBeRidden(Entity entityIn) { return false; }

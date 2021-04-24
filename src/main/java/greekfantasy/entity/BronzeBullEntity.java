@@ -224,7 +224,7 @@ public class BronzeBullEntity extends MonsterEntity {
   public void collideWithNearbyEntities() { }
   
   @Override
-  public boolean isNonBoss() { return false; }
+  public boolean canChangeDimension() { return false; }
   
   @Override
   public boolean canDespawn(final double disToPlayer) { return false; }

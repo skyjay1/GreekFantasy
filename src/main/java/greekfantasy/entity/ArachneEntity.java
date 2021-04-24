@@ -43,6 +43,8 @@ public class ArachneEntity extends SpiderEntity {
   @Override
   public void livingTick() {
     super.livingTick();
+    // boss info
+    this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
   }
   
   @Nullable
@@ -58,7 +60,7 @@ public class ArachneEntity extends SpiderEntity {
   // Boss //
 
   @Override
-  public boolean isNonBoss() { return false; }
+  public boolean canChangeDimension() { return false; }
 
   @Override
   public void addTrackingPlayer(ServerPlayerEntity player) {

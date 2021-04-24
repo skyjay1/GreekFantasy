@@ -112,14 +112,14 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
   }
   
   @Override
-  public void func_241841_a(ServerWorld world, LightningBoltEntity bolt) { // onEntityStruckByLightning
+  public void causeLightningStrike(ServerWorld world, LightningBoltEntity bolt) { // onEntityStruckByLightning
     if (world.getDifficulty() != Difficulty.PEACEFUL && rand.nextInt(100) < GreekFantasy.CONFIG.getLightningMedusaChance()) {
       this.setMedusa(true);
       this.setHealth(this.getMaxHealth());
       this.enablePersistence();
       this.setFire(2);
     } else {
-      super.func_241841_a(world, bolt);
+      super.causeLightningStrike(world, bolt);
     }
   }
   
@@ -225,7 +225,7 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
   public boolean isImmuneToStareAttack(final LivingEntity target) {
     // check for mirror potion effect
     if((GreekFantasy.CONFIG.isMirrorPotionEnabled() && target.getActivePotionEffect(GFRegistry.MIRROR_EFFECT) != null) 
-        || target.isSpectator() || !target.isNonBoss() || (target instanceof PlayerEntity && ((PlayerEntity)target).isCreative())) {
+        || target.isSpectator() || !target.canChangeDimension() || (target instanceof PlayerEntity && ((PlayerEntity)target).isCreative())) {
       return true;
     }
     // check for mirror enchantment
@@ -318,7 +318,7 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
   // Boss //
   
   @Override
-  public boolean isNonBoss() { return !isMedusa(); }
+  public boolean canChangeDimension() { return !isMedusa(); }
   
   @Override
   public ResourceLocation getLootTable() {

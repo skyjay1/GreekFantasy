@@ -50,7 +50,7 @@ public class HelmOfDarknessItem extends ArmorItem {
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
     tooltip.add(new TranslationTextComponent("effect.minecraft.invisibility").mergeStyle(TextFormatting.GRAY)
-        .appendString(" ").append(new TranslationTextComponent("enchantment.level.infinity").mergeStyle(TextFormatting.GRAY)));
+        .appendString(" ").appendSibling(new TranslationTextComponent("enchantment.level.infinity").mergeStyle(TextFormatting.GRAY)));
   }
 
   /**

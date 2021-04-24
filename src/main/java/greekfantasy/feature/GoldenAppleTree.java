@@ -32,9 +32,9 @@ public class GoldenAppleTree extends Tree {
     return GFWorldGen.GOLDEN_APPLE_TREE_FEATURE.withConfiguration(new BaseTreeFeatureConfig.Builder(
         new SimpleBlockStateProvider(Blocks.OAK_LOG.getDefaultState()), 
         new SimpleBlockStateProvider(GFRegistry.GOLDEN_APPLE_LEAVES.getDefaultState()), 
-        new FancyFoliagePlacer(FeatureSpread.func_242252_a(2), FeatureSpread.func_242252_a(4), 4), 
+        new FancyFoliagePlacer(FeatureSpread.create(2), FeatureSpread.create(4), 4), 
         new FancyTrunkPlacer(4, 6, 0), new TwoLayerFeature(0, 0, 0, OptionalInt.of(4)))
-        .setIgnoreVines().func_236702_a_(Heightmap.Type.MOTION_BLOCKING).build());
+        .setIgnoreVines().setHeightmap(Heightmap.Type.MOTION_BLOCKING).build());
   }
 
 }

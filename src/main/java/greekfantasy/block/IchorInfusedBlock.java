@@ -28,7 +28,7 @@ public class IchorInfusedBlock extends Block {
   @Nullable
   private BlockPattern bronzeBullPattern;
   // TODO: change to copper for 1.17
-  private static final Predicate<BlockState> IS_BODY_BLOCK = (state) -> state != null && (state.isIn(Blocks.GOLD_BLOCK));
+  private static final Predicate<BlockState> IS_BODY_BLOCK = (state) -> state != null && (state.matchesBlock(Blocks.GOLD_BLOCK));
   
   public IchorInfusedBlock(final Properties properties) {
     super(properties);

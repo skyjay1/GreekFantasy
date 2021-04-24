@@ -198,8 +198,8 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
     }
     
     @Override
-    protected void func_234039_g_() {
-      super.func_234039_g_();
+    protected void resetSwingCooldown() {
+      super.resetSwingCooldown();
       GiganteEntity.this.setAttackCooldown();
     }
   }

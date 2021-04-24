@@ -143,7 +143,7 @@ public class UnicornEntity extends AbstractHorseEntity {
   }
 
   @Override
-  public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
+  public ActionResultType getEntityInteractionResult(PlayerEntity player, Hand hand) {
     ItemStack itemstack = player.getHeldItem(hand);
     if (!this.isChild()) {
       if (this.isTame() && player.isSecondaryUseActive()) {
@@ -152,7 +152,7 @@ public class UnicornEntity extends AbstractHorseEntity {
       }
 
       if (this.isBeingRidden()) {
-        return super.func_230254_b_(player, hand);
+        return super.getEntityInteractionResult(player, hand);
       }
       
       if((itemstack.isEmpty() && this.isTame()) || itemstack.getItem() == GFRegistry.GOLDEN_BRIDLE) {
@@ -184,7 +184,7 @@ public class UnicornEntity extends AbstractHorseEntity {
     }
 
 //    if (this.isChild()) {
-      return super.func_230254_b_(player, hand);
+      return super.getEntityInteractionResult(player, hand);
 //    } else {
 //      this.mountTo(player);
 //      return ActionResultType.func_233537_a_(this.world.isRemote());

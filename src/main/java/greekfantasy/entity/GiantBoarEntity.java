@@ -75,7 +75,7 @@ public class GiantBoarEntity extends HoglinEntity {
     }
     entity.enablePersistence();
     entity.renderYawOffset = hoglin.renderYawOffset;
-    entity.func_242279_ag(); // setPortalCooldown
+    entity.setPortalCooldown();
     world.addEntity(entity);
     entity.setSpawning(true);
     // remove the old hoglin
@@ -201,7 +201,7 @@ public class GiantBoarEntity extends HoglinEntity {
   // Boss //
   
   @Override
-  public boolean isNonBoss() { return false; }
+  public boolean canChangeDimension() { return false; }
   
   @Override
   public boolean canDespawn(final double disToPlayer) { return false; }

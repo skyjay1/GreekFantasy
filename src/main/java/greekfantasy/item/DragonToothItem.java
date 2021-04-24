@@ -22,7 +22,7 @@ public class DragonToothItem extends Item {
     if(!world.isRemote()) {
       DragonToothEntity dragonTooth = DragonToothEntity.create(world, player);
       // this unmapped method from ProjectileEntity does some math, then calls #shoot
-      dragonTooth.func_234612_a_(player, player.rotationPitch, player.rotationYaw, 0.0F, 1.5F, 1.0F);
+      dragonTooth.setDirectionAndMovement(player, player.rotationPitch, player.rotationYaw, 0.0F, 1.5F, 1.0F);
       world.addEntity(dragonTooth);
     }
     

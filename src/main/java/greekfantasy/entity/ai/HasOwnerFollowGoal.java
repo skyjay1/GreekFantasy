@@ -123,7 +123,7 @@ public class HasOwnerFollowGoal<T extends MobEntity & IHasOwner<T>> extends Goal
   }
 
   private boolean isTeleportFriendlyBlock(BlockPos pos) {
-    PathNodeType pathType = WalkNodeProcessor.func_237231_a_(this.world, pos.toMutable());
+    PathNodeType pathType = WalkNodeProcessor.getFloorNodeType(this.world, pos.toMutable());
 
     if (pathType != PathNodeType.WALKABLE) {
       return false;

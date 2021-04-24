@@ -78,7 +78,7 @@ public class GoldenStringBlock extends Block implements IWaterLoggable {
   public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
     BlockPos blockpos = pos.down();
     BlockState blockstate = worldIn.getBlockState(blockpos);
-    return blockstate.isSolidSide(worldIn, blockpos, Direction.UP) || blockstate.isIn(Blocks.HOPPER);
+    return blockstate.isSolidSide(worldIn, blockpos, Direction.UP) || blockstate.matchesBlock(Blocks.HOPPER);
   }
 
   @Override

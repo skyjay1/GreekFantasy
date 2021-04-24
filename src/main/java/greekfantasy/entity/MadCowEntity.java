@@ -27,7 +27,7 @@ public class MadCowEntity extends CowEntity implements IMob {
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return CowEntity.func_234188_eI_()
+    return CowEntity.registerAttributes()
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
         .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 0.25D);
   }

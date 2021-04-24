@@ -29,7 +29,7 @@ public class PoisonSpitEntity extends EffectProjectileEntity {
     this.setPosition(thrower.getPosX(), thrower.getPosYEye() - 0.1D, thrower.getPosZ());
     // this unmapped method from ProjectileEntity does some math, then calls #shoot
     // params: thrower, rotationPitch, rotationYaw, ???, speed, inaccuracy
-    func_234612_a_(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, 0.78F, 0.85F);
+    setDirectionAndMovement(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, 0.78F, 0.85F);
     markVelocityChanged();
   }
   

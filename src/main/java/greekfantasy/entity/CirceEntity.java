@@ -135,7 +135,7 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
   //Boss //
 
   @Override
-  public boolean isNonBoss() { return false; }
+  public boolean canChangeDimension() { return false; }
 
   @Override
   public void addTrackingPlayer(ServerPlayerEntity player) {

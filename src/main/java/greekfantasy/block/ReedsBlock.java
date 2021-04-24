@@ -84,7 +84,7 @@ public class ReedsBlock extends DoublePlantBlock implements IWaterLoggable, IGro
     BlockState stateDown = world.getBlockState(pos.down());
     // upper block only checks that a lower block is present
     if(state.get(HALF) == DoubleBlockHalf.UPPER) {
-      return stateDown.isIn(this) && stateDown.get(HALF) == DoubleBlockHalf.LOWER;
+      return stateDown.matchesBlock(this) && stateDown.get(HALF) == DoubleBlockHalf.LOWER;
     }
     // lower block checks for near water and compatible soil
     final boolean nearWater = isInWater(world, pos) || isNextToWater(world, pos.down());
@@ -136,7 +136,7 @@ public class ReedsBlock extends DoublePlantBlock implements IWaterLoggable, IGro
    * @return true if the given position has water (or frosted ice)
    **/
   public static boolean isInWater(final IBlockReader worldIn, final BlockPos pos) {
-    return worldIn.getFluidState(pos).isTagged(FluidTags.WATER) || worldIn.getBlockState(pos).isIn(Blocks.FROSTED_ICE);
+    return worldIn.getFluidState(pos).isTagged(FluidTags.WATER) || worldIn.getBlockState(pos).matchesBlock(Blocks.FROSTED_ICE);
   }
   
   /**

@@ -56,7 +56,7 @@ public abstract class EnchantedBowItem extends BowItem {
               AbstractArrowEntity abstractarrowentity = arrowitem.createArrow(worldIn, itemstack, playerentity);
               abstractarrowentity = customArrow(abstractarrowentity);
               // params: thrower, rotationPitch, rotationYaw, ???, speed, inaccuracy
-              abstractarrowentity.func_234612_a_(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, f * 3.0F,
+              abstractarrowentity.setDirectionAndMovement(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, f * 3.0F,
                   (arrows > 0 ? 8.0F : 1.0F));
               if (f == 1.0F) {
                 abstractarrowentity.setIsCritical(true);

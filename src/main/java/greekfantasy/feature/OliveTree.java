@@ -31,9 +31,9 @@ public class OliveTree extends Tree {
     return GFWorldGen.OLIVE_TREE_FEATURE.withConfiguration(new BaseTreeFeatureConfig.Builder(
         new SimpleBlockStateProvider(GFRegistry.OLIVE_LOG.getDefaultState()), 
         new SimpleBlockStateProvider(GFRegistry.OLIVE_LEAVES.getDefaultState()), 
-        new FancyFoliagePlacer(FeatureSpread.func_242252_a(2), FeatureSpread.func_242252_a(4), 4), 
+        new FancyFoliagePlacer(FeatureSpread.create(2), FeatureSpread.create(4), 4), 
         new FancyTrunkPlacer(3, 11, 0), new TwoLayerFeature(0, 0, 0, OptionalInt.of(4)))
-        .setIgnoreVines().func_236702_a_(Heightmap.Type.MOTION_BLOCKING).build());
+        .setIgnoreVines().setHeightmap(Heightmap.Type.MOTION_BLOCKING).build());
   }
 
 }

@@ -146,7 +146,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   
   @Override
   public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.isIn(newState.getBlock())) {
+    if (!state.matchesBlock(newState.getBlock())) {
       final DoubleBlockHalf half = state.get(HALF);
       final boolean isUpper = half == DoubleBlockHalf.UPPER;
       final BlockPos tePos = isUpper ? pos.down() : pos;

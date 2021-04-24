@@ -101,11 +101,13 @@ public class FavorEffectManager {
    * @param positive true if the effect was positive
    */
   public static void sendStatusMessage(final PlayerEntity playerIn, final IDeity deity, final boolean positive) {
-    final String message = positive ? "positive" : "negative";
-    final TextFormatting color = positive ? TextFormatting.GREEN : TextFormatting.RED;
-    final SoundEvent sound = positive ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_ITEM_BREAK;
-    playerIn.sendStatusMessage(new TranslationTextComponent("favor.effect." + message, deity.getText()).mergeStyle(color), false);
-    playerIn.getEntityWorld().playSound(playerIn.getPosX(), playerIn.getPosY(), playerIn.getPosZ(), sound, SoundCategory.PLAYERS, 0.4F, 0.9F + playerIn.getRNG().nextFloat() * 0.2F, false);
+    if(GreekFantasy.CONFIG.isFavorNotifyEnabled()) {
+      final String message = positive ? "positive" : "negative";
+      final TextFormatting color = positive ? TextFormatting.GREEN : TextFormatting.RED;
+      final SoundEvent sound = positive ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_ITEM_BREAK;
+      playerIn.sendStatusMessage(new TranslationTextComponent("favor.effect." + message, deity.getText()).mergeStyle(color), !GreekFantasy.CONFIG.isFavorNotifyChat());
+      playerIn.getEntityWorld().playSound(playerIn.getPosX(), playerIn.getPosY(), playerIn.getPosZ(), sound, SoundCategory.PLAYERS, 0.4F, 0.9F + playerIn.getRNG().nextFloat() * 0.2F, false);
+    }
   }
   
   /**
@@ -134,7 +136,9 @@ public class FavorEffectManager {
       } else GreekFantasy.LOGGER.debug("Failed to run any part of a favor effect for " + deity.getName().toString() + "... " + effect.toString());
       // if any of the effects ran successfully, send a message to the player, play a sound, and return cooldown
       if(flag) {
-        if(!effect.getFavor().isPresent()) sendStatusMessage(playerIn, deity, effect.isPositive());
+        if(!effect.getFavor().isPresent()) {
+          sendStatusMessage(playerIn, deity, effect.isPositive());
+        }
         return Math.abs(effect.getMinCooldown()) + playerIn.getRNG().nextInt((int)Math.max(1, Math.abs(effect.getMinCooldown())));
       }
     }
@@ -195,7 +199,7 @@ public class FavorEffectManager {
           spawnPos = playerIn.getPosition().add(rand.nextInt(range) - rand.nextInt(range), rand.nextInt(2) - rand.nextInt(2), rand.nextInt(range) - rand.nextInt(range));
           // check if this is a valid position
           boolean isValidSpawn = EntitySpawnPlacementRegistry.canSpawnEntity(entityType.get(), (IServerWorld)worldIn, SpawnReason.MOB_SUMMONED, spawnPos, rand) 
-              || (waterMob && worldIn.getBlockState(spawnPos).isIn(Blocks.WATER))
+              || (waterMob && worldIn.getBlockState(spawnPos).matchesBlock(Blocks.WATER))
               || (!waterMob && worldIn.getBlockState(spawnPos.down()).isSolid()
                   && worldIn.getBlockState(spawnPos).getMaterial() == Material.AIR
                   && worldIn.getBlockState(spawnPos.up()).getMaterial() == Material.AIR);

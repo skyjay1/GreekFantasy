@@ -74,90 +74,74 @@ public class ArachneModel<T extends ArachneEntity> extends BipedModel<T> {
 
     spiderLeg1 = new ModelRenderer(this);
     spiderLeg1.setRotationPoint(-4.0F, 11.0F, 2.0F);
-//    setRotationAngle(spiderLeg1, 0.0F, 0.7854F, -0.7854F);
     spiderLeg1.setTextureOffset(32, 32).addBox(-13.0F, -1.0F, -1.0F, 14.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderFoot1 = new ModelRenderer(this);
     spiderFoot1.setRotationPoint(-13.0F, -1.0F, 0.0F);
     spiderLeg1.addChild(spiderFoot1);
-//    setRotationAngle(spiderFoot1, 0.0F, -0.5236F, -1.0472F);
     spiderFoot1.setTextureOffset(32, 37).addBox(-7.0F, 0.0F, -1.0F, 7.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderLeg2 = new ModelRenderer(this);
     spiderLeg2.setRotationPoint(4.0F, 11.0F, 2.0F);
-//    setRotationAngle(spiderLeg2, 0.0F, -0.7854F, 0.7854F);
     spiderLeg2.setTextureOffset(32, 32).addBox(-1.0F, -1.0F, -1.0F, 14.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderFoot2 = new ModelRenderer(this);
     spiderFoot2.setRotationPoint(13.0F, -1.0F, 0.0F);
     spiderLeg2.addChild(spiderFoot2);
-//    setRotationAngle(spiderFoot2, 0.0F, 0.5236F, 1.0472F);
     spiderFoot2.setTextureOffset(32, 37).addBox(0.0F, 0.0F, -1.0F, 8.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderLeg3 = new ModelRenderer(this);
     spiderLeg3.setRotationPoint(-4.0F, 11.0F, 1.0F);
-//    setRotationAngle(spiderLeg3, 0.0F, 0.2618F, -0.6109F);
     spiderLeg3.setTextureOffset(32, 32).addBox(-13.0F, -1.0F, -1.0F, 14.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderFoot3 = new ModelRenderer(this);
     spiderFoot3.setRotationPoint(-13.0F, -1.0F, 0.0F);
     spiderLeg3.addChild(spiderFoot3);
-//    setRotationAngle(spiderFoot3, 0.0F, 0.0F, -1.0472F);
     spiderFoot3.setTextureOffset(32, 37).addBox(-7.0F, 0.0F, -1.0F, 7.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderLeg4 = new ModelRenderer(this);
     spiderLeg4.setRotationPoint(4.0F, 11.0F, 1.0F);
-//    setRotationAngle(spiderLeg4, 0.0F, -0.2618F, 0.6109F);
     spiderLeg4.setTextureOffset(32, 32).addBox(-1.0F, -1.0F, -1.0F, 14.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderFoot4 = new ModelRenderer(this);
     spiderFoot4.setRotationPoint(13.0F, -1.0F, 0.0F);
     spiderLeg4.addChild(spiderFoot4);
-//    setRotationAngle(spiderFoot4, 0.0F, 0.0F, 1.0472F);
     spiderFoot4.setTextureOffset(33, 37).addBox(0.0F, 0.0F, -1.0F, 7.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderLeg5 = new ModelRenderer(this);
     spiderLeg5.setRotationPoint(-4.0F, 11.0F, 0.0F);
-//    setRotationAngle(spiderLeg5, 0.0F, -0.2618F, -0.6109F);
     spiderLeg5.setTextureOffset(32, 32).addBox(-13.0F, -1.0F, -1.0F, 14.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderFoot5 = new ModelRenderer(this);
     spiderFoot5.setRotationPoint(-13.0F, -1.0F, 0.0F);
     spiderLeg5.addChild(spiderFoot5);
-//    setRotationAngle(spiderFoot5, 0.0F, 0.0F, -1.0472F);
     spiderFoot5.setTextureOffset(32, 37).addBox(-7.0F, 0.0F, -1.0F, 7.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderLeg6 = new ModelRenderer(this);
     spiderLeg6.setRotationPoint(4.0F, 11.0F, 0.0F);
-//    setRotationAngle(spiderLeg6, 0.0F, 0.2618F, 0.6109F);
     spiderLeg6.setTextureOffset(32, 32).addBox(-1.0F, -1.0F, -1.0F, 14.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderFoot6 = new ModelRenderer(this);
     spiderFoot6.setRotationPoint(13.0F, -1.0F, 0.0F);
     spiderLeg6.addChild(spiderFoot6);
-//    setRotationAngle(spiderFoot6, 0.0F, 0.0F, 1.0472F);
     spiderFoot6.setTextureOffset(32, 37).addBox(0.0F, 0.0F, -1.0F, 7.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderLeg7 = new ModelRenderer(this);
     spiderLeg7.setRotationPoint(-4.0F, 11.0F, -1.0F);
-//    setRotationAngle(spiderLeg7, 0.0F, -0.7854F, -0.7854F);
     spiderLeg7.setTextureOffset(32, 32).addBox(-13.0F, -1.0F, -1.0F, 14.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderFoot7 = new ModelRenderer(this);
     spiderFoot7.setRotationPoint(-13.0F, -1.0F, 0.0F);
     spiderLeg7.addChild(spiderFoot7);
-//    setRotationAngle(spiderFoot7, 0.0F, 0.5236F, -1.0472F);
     spiderFoot7.setTextureOffset(32, 37).addBox(-7.0F, 0.0F, -1.0F, 7.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderLeg8 = new ModelRenderer(this);
     spiderLeg8.setRotationPoint(4.0F, 11.0F, -1.0F);
-//    setRotationAngle(spiderLeg8, 0.0F, 0.7854F, 0.7854F);
     spiderLeg8.setTextureOffset(32, 32).addBox(-1.0F, -1.0F, -1.0F, 14.0F, 2.0F, 2.0F, 0.0F, false);
 
     spiderFoot8 = new ModelRenderer(this);
     spiderFoot8.setRotationPoint(13.0F, -1.0F, 0.0F);
     spiderLeg8.addChild(spiderFoot8);
-//    setRotationAngle(spiderFoot8, 0.0F, -0.5236F, 1.0472F);
     spiderFoot8.setTextureOffset(32, 37).addBox(0.0F, 0.0F, -1.0F, 7.0F, 2.0F, 2.0F, 0.0F, false);
   }
   

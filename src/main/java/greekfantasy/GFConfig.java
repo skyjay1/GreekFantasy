@@ -180,8 +180,12 @@ public class GFConfig {
   // favor
   private final ForgeConfigSpec.BooleanValue FAVOR_ENABLED;
   private final ForgeConfigSpec.BooleanValue FAVOR_DECREASES;
+  private final ForgeConfigSpec.BooleanValue FAVOR_NOTIFY;
+  private final ForgeConfigSpec.BooleanValue FAVOR_NOTIFY_CHAT;
   private final ForgeConfigSpec.LongValue FAVOR_DECREASE_INTERVAL;
   private boolean favorEnabled;
+  private boolean favorNotify;
+  private boolean favorNotifyChat;
   private boolean favorDecreases;
   private long favorDecreaseInterval;
   
@@ -347,6 +351,10 @@ public class GFConfig {
     builder.push("favor");
     FAVOR_ENABLED = builder.comment("Set to false to disable all favor and gods")
         .define("favor_enabled", true);
+    FAVOR_NOTIFY = builder.comment("Set to false to disable favor notification messages")
+        .define("favor_notify", true);
+    FAVOR_NOTIFY_CHAT = builder.comment("Set to false to display favor notification messages in HUD instead of chat")
+        .define("favor_notify_chat", true);
     FAVOR_DECREASES = builder.comment("Whether favor tends toward zero over time")
         .define("favor_decreases", true);
     FAVOR_DECREASE_INTERVAL = builder.comment("Number of ticks between decreasing favor, if enabled")
@@ -487,6 +495,8 @@ public class GFConfig {
     palladiumYRange = PALLADIUM_Y_RANGE.get();
     // favor
     favorEnabled = FAVOR_ENABLED.get();
+    favorNotify = FAVOR_NOTIFY.get();
+    favorNotifyChat = FAVOR_NOTIFY_CHAT.get();
     favorDecreases = FAVOR_DECREASES.get();
     favorDecreaseInterval = FAVOR_DECREASE_INTERVAL.get();
   }
@@ -558,6 +568,8 @@ public class GFConfig {
   public int getPalladiumYRange() { return palladiumYRange; }
   
   public boolean isFavorEnabled() { return favorEnabled; }
+  public boolean isFavorNotifyEnabled() { return favorNotify; }
+  public boolean isFavorNotifyChat() { return favorNotifyChat; }
   public boolean doesFavorDecrease() { return favorDecreases; }
   public long getFavorDecreaseInterval() { return favorDecreaseInterval; }
   public boolean canSwineApply(final String entityName) {

@@ -78,7 +78,7 @@ public class SpearItem extends TieredItem implements IVanishable {
   protected void throwSpear(final World world, final PlayerEntity thrower, final ItemStack stack) {
     stack.damageItem(1, thrower, e -> e.sendBreakAnimation(thrower.getActiveHand()));
     SpearEntity spear = new SpearEntity(world, thrower, stack, onHitEntity);
-    spear.func_234612_a_(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, 2.25F, 1.0F);
+    spear.setDirectionAndMovement(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, 2.25F, 1.0F);
     // set pickup status and remove the itemstack
     if (thrower.abilities.isCreativeMode) {
       spear.pickupStatus = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;

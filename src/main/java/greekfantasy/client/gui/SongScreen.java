@@ -161,7 +161,7 @@ public class SongScreen extends Screen {
     }
 
     @Override
-    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
         final boolean selected = isSelected();
         final int xOffset = 0;
@@ -200,7 +200,7 @@ public class SongScreen extends Screen {
       }
       RenderSystem.pushMatrix();
       RenderSystem.scalef(scale, scale, scale);
-      SongScreen.this.font.func_243248_b(matrixStack, text, x / scale, y / scale, 0);
+      SongScreen.this.font.drawText(matrixStack, text, x / scale, y / scale, 0);
       RenderSystem.popMatrix();
     }
     

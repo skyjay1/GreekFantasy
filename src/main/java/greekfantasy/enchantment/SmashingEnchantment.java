@@ -30,7 +30,7 @@ public class SmashingEnchantment extends Enchantment {
    * @return whether the given entity should not be affected by smash attack
    **/
   private boolean isExemptFromSmashAttack(final Entity entity) {
-    return !entity.isNonBoss() || entity.hasNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY
+    return !entity.canChangeDimension() || entity.hasNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY
         || entity.isSpectator()
         || (entity instanceof PlayerEntity && ((PlayerEntity)entity).isCreative());
   }

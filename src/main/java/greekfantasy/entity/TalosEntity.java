@@ -210,7 +210,7 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
   public void collideWithNearbyEntities() { }
   
   @Override
-  public boolean isNonBoss() { return false; }
+  public boolean canChangeDimension() { return false; }
   
   @Override
   public boolean canDespawn(final double disToPlayer) { return false; }
@@ -415,8 +415,8 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
     }
     
     @Override
-    protected void func_234039_g_() {
-      super.func_234039_g_();
+    protected void resetSwingCooldown() {
+      super.resetSwingCooldown();
       TalosEntity.this.setAttackCooldown(MELEE_COOLDOWN);
     }
   }

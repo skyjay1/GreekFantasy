@@ -30,7 +30,7 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
   @Override
   protected void onEntityHit(EntityRayTraceResult raytrace) {
     super.onEntityHit(raytrace);
-    Entity thrower = func_234616_v_();
+    Entity thrower = getShooter();
     if (raytrace.getEntity() != thrower && raytrace.getEntity() instanceof LivingEntity) {
       final LivingEntity entity = (LivingEntity)raytrace.getEntity();
       // add potion effects
@@ -57,7 +57,7 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
 
   @Override
   public void tick() {
-    Entity thrower = func_234616_v_();
+    Entity thrower = getShooter();
     if (thrower instanceof net.minecraft.entity.player.PlayerEntity && !thrower.isAlive()) {
       remove();
       return;
@@ -85,7 +85,7 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
     double d1 = this.getPosY() + motion.y;
     double d2 = this.getPosZ() + motion.z;
     // lerp rotation and pitch
-    this.func_234617_x_();
+    this.updatePitchAndYaw();
     // actually move the entity
     this.setPosition(d0, d1, d2);
     // super method
@@ -94,7 +94,7 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
 
   @Override
   public Entity changeDimension(ServerWorld serverWorld, ITeleporter iTeleporter) {
-    Entity entity = func_234616_v_();
+    Entity entity = getShooter();
     if (entity != null && entity.world.getDimensionKey() != serverWorld.getDimensionKey()) {
       setShooter((Entity) null);
     }

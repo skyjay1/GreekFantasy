@@ -114,7 +114,7 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
       // check nest
       final Optional<BlockPos> nestPos = HarpyEntity.this.getNestPos();
       // check if there is still a nest at the position
-      if(nestPos.isPresent() && !world.getBlockState(nestPos.get()).isIn(GFRegistry.NEST_BLOCK)) {
+      if(nestPos.isPresent() && !world.getBlockState(nestPos.get()).matchesBlock(GFRegistry.NEST_BLOCK)) {
         HarpyEntity.this.setNestPos(Optional.empty());
       }
     }
@@ -219,7 +219,7 @@ public class HarpyEntity extends MonsterEntity implements IFlyingAnimal {
 
     @Override
     public boolean isTargetBlock(IWorldReader worldIn, BlockPos pos) {
-      return worldIn.getBlockState(pos).isIn(GFRegistry.NEST_BLOCK);
+      return worldIn.getBlockState(pos).matchesBlock(GFRegistry.NEST_BLOCK);
     }
     
     @Override

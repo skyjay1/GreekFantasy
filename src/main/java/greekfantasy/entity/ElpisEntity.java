@@ -142,7 +142,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   }
   
   @Override
-  protected ActionResultType func_230254_b_(final PlayerEntity player, final Hand hand) { // processInteract
+  protected ActionResultType getEntityInteractionResult(final PlayerEntity player, final Hand hand) { // processInteract
     ItemStack stack = player.getHeldItem(hand);
     if(this.isNoneState() && TRADE_ITEM.test(stack.getItem())) {
       this.setState(STATE_TRADING);
@@ -156,7 +156,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
       return ActionResultType.CONSUME;
     }
     
-    return super.func_230254_b_(player, hand);
+    return super.getEntityInteractionResult(player, hand);
   }
   
   @Override

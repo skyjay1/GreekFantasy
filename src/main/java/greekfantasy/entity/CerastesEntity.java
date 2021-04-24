@@ -99,7 +99,7 @@ public class CerastesEntity extends CreatureEntity implements IHasOwner<Cerastes
   public static boolean canCerastesSpawnOn(final EntityType<? extends MobEntity> entity, final IWorld world, final SpawnReason reason, 
       final BlockPos pos, final Random rand) {
     final BlockPos blockpos = pos.down();
-    return reason == SpawnReason.SPAWNER || world.getBlockState(blockpos).isIn(Blocks.SAND);
+    return reason == SpawnReason.SPAWNER || world.getBlockState(blockpos).matchesBlock(Blocks.SAND);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -277,12 +277,12 @@ public class CerastesEntity extends CreatureEntity implements IHasOwner<Cerastes
   }
 
   @Override
-  public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
+  public ActionResultType getEntityInteractionResult(PlayerEntity player, Hand hand) {
     if (tryTameOrHeal(this, player, hand)) {
       return ActionResultType.SUCCESS;
     }
 
-    return super.func_230254_b_(player, hand);
+    return super.getEntityInteractionResult(player, hand);
   }
   
   // Owner methods //

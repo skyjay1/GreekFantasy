@@ -128,7 +128,7 @@ public class VaseBlock extends HorizontalBlock implements IWaterLoggable {
   
   @Override
   public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.isIn(newState.getBlock())) {
+    if (!state.matchesBlock(newState.getBlock())) {
       // drop items from inventory
       TileEntity tileentity = worldIn.getTileEntity(pos);
       if (!worldIn.isRemote() && tileentity instanceof VaseTileEntity) {

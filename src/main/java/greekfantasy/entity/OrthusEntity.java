@@ -201,7 +201,7 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   
   @Override
   public boolean canBeLeashedTo(PlayerEntity player) {
-    return !this.func_233678_J__() && super.canBeLeashedTo(player);
+    return !this.isAngry() && super.canBeLeashedTo(player);
   }
   
   // IAngerable methods
@@ -293,7 +293,7 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   }
 
   @Override
-  public AgeableEntity func_241840_a(ServerWorld world, AgeableEntity parent) {
+  public AgeableEntity createChild(ServerWorld world, AgeableEntity parent) {
     OrthusEntity baby = GFRegistry.ORTHUS_ENTITY.create(world);
     UUID uuid = this.getOwnerId();
     if (uuid != null) {
@@ -340,7 +340,7 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   }
   
   @Override
-  public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
+  public ActionResultType getEntityInteractionResult(PlayerEntity player, Hand hand) {
     ItemStack itemstack = player.getHeldItem(hand);
     Item item = itemstack.getItem();
     if (this.world.isRemote()) {
@@ -359,9 +359,9 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
         }
 
         // attempt to udpate Sitting state
-        ActionResultType actionresulttype = super.func_230254_b_(player, hand);
+        ActionResultType actionresulttype = super.getEntityInteractionResult(player, hand);
         if ((!actionresulttype.isSuccessOrConsume() || this.isChild()) && this.isOwner(player)) {
-          this.func_233687_w_(!this.isSitting());
+          this.setSitting(!this.isQueuedToSit());
           this.isJumping = false;
           this.navigator.clearPath();
           this.setFireAttack(false);
@@ -374,7 +374,7 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
         
       } else if (item.isIn(FOOD)) {
         // reset anger
-        if(this.func_233678_J__()) {
+        if(this.isAngry()) {
           this.setAngerTarget(null);
         }
         // consume the item
@@ -390,7 +390,7 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
           this.func_241355_J__();
           this.navigator.clearPath();
           this.setAttackTarget((LivingEntity) null);
-          this.func_233687_w_(true);
+          this.setSitting(true);
           this.world.setEntityState(this, (byte) 7);
         } else {
           this.world.setEntityState(this, (byte) 6);
@@ -399,7 +399,7 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
         return ActionResultType.SUCCESS;
       }
 
-      return super.func_230254_b_(player, hand);
+      return super.getEntityInteractionResult(player, hand);
     }
   }
   
@@ -461,7 +461,7 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
 
     @Override
     public boolean shouldExecute() {  
-      return super.shouldExecute() && !OrthusEntity.this.isFireAttack() && !OrthusEntity.this.isSitting() && !OrthusEntity.this.isEntitySleeping();
+      return super.shouldExecute() && !OrthusEntity.this.isFireAttack() && !OrthusEntity.this.isQueuedToSit() && !OrthusEntity.this.isEntitySleeping();
     }
     
     @Override

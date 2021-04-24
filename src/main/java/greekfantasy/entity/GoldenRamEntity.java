@@ -46,7 +46,7 @@ public class GoldenRamEntity extends SheepEntity implements IAngerable {
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return SheepEntity.func_234225_eI_()
+    return SheepEntity.registerAttributes()
         .createMutableAttribute(Attributes.MAX_HEALTH, 20.0D)
         .createMutableAttribute(Attributes.ARMOR, 4.0D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.0D)
@@ -68,7 +68,7 @@ public class GoldenRamEntity extends SheepEntity implements IAngerable {
       SheepEntity entity = EntityType.SHEEP.create(world);
       entity.copyLocationAndAnglesFrom(this);
       entity.renderYawOffset = this.renderYawOffset;
-      entity.func_242279_ag(); // setPortalCooldown
+      entity.setPortalCooldown();
       entity.setFleeceColor(this.getFleeceColor());
       entity.setSheared(true);
       entity.setGrowingAge(this.getGrowingAge());
@@ -107,7 +107,7 @@ public class GoldenRamEntity extends SheepEntity implements IAngerable {
   public boolean canMateWith(AnimalEntity otherAnimal) { return false; }
 
   @Nullable
-  public SheepEntity func_241840_a(ServerWorld world, AgeableEntity parentB) {
+  public SheepEntity createChild(ServerWorld world, AgeableEntity parentB) {
      return null;
   }
   

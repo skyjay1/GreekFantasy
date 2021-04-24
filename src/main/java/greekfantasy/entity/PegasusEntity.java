@@ -234,7 +234,7 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
   }
 
   @Override
-  public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
+  public ActionResultType getEntityInteractionResult(PlayerEntity player, Hand hand) {
     ItemStack itemstack = player.getHeldItem(hand);
     if (!this.isChild()) {
       if (this.isTame() && player.isSecondaryUseActive()) {
@@ -243,7 +243,7 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
       }
 
       if (this.isBeingRidden()) {
-        return super.func_230254_b_(player, hand);
+        return super.getEntityInteractionResult(player, hand);
       }
       
       if((itemstack.isEmpty() && this.isTame()) || itemstack.getItem() == GFRegistry.GOLDEN_BRIDLE) {
@@ -275,7 +275,7 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
     }
 
 //    if (this.isChild()) {
-      return super.func_230254_b_(player, hand);
+      return super.getEntityInteractionResult(player, hand);
 //    } else {
 //      this.mountTo(player);
 //      return ActionResultType.func_233537_a_(this.world.isRemote());
@@ -299,7 +299,7 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
   }
   
   @Override
-  public AgeableEntity func_241840_a(ServerWorld world, AgeableEntity mate) {
+  public AgeableEntity createChild(ServerWorld world, AgeableEntity mate) {
      PegasusEntity child;
      PegasusEntity pegasusMate = (PegasusEntity) mate;
      child = GFRegistry.PEGASUS_ENTITY.create(world);

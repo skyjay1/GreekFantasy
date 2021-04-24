@@ -22,7 +22,7 @@ public class OrthusHeadItemEntity extends ItemEntity {
   private static final ResourceLocation FRAME_BLOCK_TAG = new ResourceLocation(GreekFantasy.MODID, "valid_cerberus_frame");
   
   private static final Predicate<BlockState> IS_FRAME = b -> b.isIn(BlockTags.getCollection().get(FRAME_BLOCK_TAG));
-  private static final Predicate<BlockState> IS_LAVA = b -> b.isIn(Blocks.LAVA);
+  private static final Predicate<BlockState> IS_LAVA = b -> b.matchesBlock(Blocks.LAVA);
   private static final Predicate<BlockState> IS_AIR = b -> b.getMaterial() == Material.AIR;
 
   public OrthusHeadItemEntity(EntityType<? extends ItemEntity> type, World world) {

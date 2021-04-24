@@ -23,7 +23,7 @@ public abstract class SwirlGoal<T extends WaterMobEntity> extends Goal {
   protected final boolean breakBoats;
   
   protected static final Predicate<Entity> target = (EntityPredicates.CAN_AI_TARGET.or(e -> e instanceof BoatEntity || e instanceof ItemEntity))
-      .and(e -> e.getType() != GFRegistry.WHIRL_ENTITY && e.isNonBoss() && e.isInWaterOrBubbleColumn());
+      .and(e -> e.getType() != GFRegistry.WHIRL_ENTITY && e.canChangeDimension() && e.isInWaterOrBubbleColumn());
   
   protected List<Entity> trackedEntities = new ArrayList<>();
   protected int progressTime;

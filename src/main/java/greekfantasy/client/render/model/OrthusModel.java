@@ -73,13 +73,13 @@ public class OrthusModel<T extends OrthusEntity> extends AgeableModel<T> {
   @Override
   public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
     // tail
-    if (entity.func_233678_J__()) {
+    if (entity.isAngry()) {
       this.tail.rotateAngleY = 0.0F;
     } else {
       this.tail.rotateAngleY = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
     }
     // sitting / walking
-    if (entity.isEntitySleeping() || entity.isSitting()) {
+    if (entity.isEntitySleeping() || entity.isQueuedToSit()) {
       this.mane.setRotationPoint(-1.0F, 16.0F, -3.0F);
       this.mane.rotateAngleX = 1.2566371F;
       this.mane.rotateAngleY = 0.0F;

@@ -56,7 +56,7 @@ public class ArionEntity extends HorseEntity {
     entity.setTamedBy(player);
     entity.enablePersistence();
     entity.renderYawOffset = horse.renderYawOffset;
-    entity.func_242279_ag(); // setPortalCooldown
+    entity.setPortalCooldown();
     entity.setGrowingAge(horse.getGrowingAge());
     world.addEntity(entity);
     // drop the old horse items
@@ -136,7 +136,7 @@ public class ArionEntity extends HorseEntity {
   public double getMountedYOffset() { return super.getMountedYOffset() - 0.25D; }
 
   @Override
-  public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
+  public ActionResultType getEntityInteractionResult(PlayerEntity player, Hand hand) {
     // Most of this is copied from HorseEntity
     ItemStack itemstack = player.getHeldItem(hand);
     if (!this.isChild()) {
@@ -146,7 +146,7 @@ public class ArionEntity extends HorseEntity {
       }
 
       if (this.isBeingRidden()) {
-        return super.func_230254_b_(player, hand);
+        return super.getEntityInteractionResult(player, hand);
       }
     }
 
@@ -178,7 +178,7 @@ public class ArionEntity extends HorseEntity {
       return ActionResultType.func_233537_a_(this.world.isRemote);
     }
     // DO NOT CALL SUPER METHOD
-    // return super.func_230254_b_(player, hand);
+    // return super.getEntityInteractionResult(player, hand);
     return ActionResultType.PASS;
   }
 }

@@ -87,7 +87,7 @@ public class SpearEntity extends AbstractArrowEntity {
       this.setDamage(this.getDamage() + EnchantmentHelper.getModifierForCreature(this.getArrowStack(), living.getCreatureAttribute()));
     }
 
-    Entity thrower = func_234616_v_();
+    Entity thrower = getShooter();
     DamageSource source = DamageSource.causeThrownDamage(this, (thrower == null) ? this : thrower);
     onHitEntity.accept(entity);
     SoundEvent sound = SoundEvents.ITEM_TRIDENT_HIT;
@@ -115,7 +115,7 @@ public class SpearEntity extends AbstractArrowEntity {
 
   @Override
   public void onCollideWithPlayer(PlayerEntity player) {
-    Entity thrower = func_234616_v_();
+    Entity thrower = getShooter();
     if (thrower != null && thrower.getUniqueID() != player.getUniqueID()) {
       return;
     }

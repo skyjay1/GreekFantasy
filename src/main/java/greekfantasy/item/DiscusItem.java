@@ -49,7 +49,7 @@ public class DiscusItem extends Item {
   protected void throwDiscus(final World world, final PlayerEntity thrower, final ItemStack stack, int usedTicks) {
     DiscusEntity discus = DiscusEntity.create(world, thrower);
     float speed = 1.5F - 0.05F * Math.min(Math.abs(usedTicks - OPTIMAL_USE_DURATION), OPTIMAL_USE_DURATION * 3 / 4);
-    discus.func_234612_a_(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, speed, 3.5F);
+    discus.setDirectionAndMovement(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, speed, 3.5F);
     world.addEntity(discus);
     // remove from item stack
     if(!thrower.isCreative()) {

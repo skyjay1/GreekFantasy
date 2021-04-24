@@ -55,7 +55,7 @@ public abstract class SimpleTemplateFeature extends Feature<NoFeatureConfig> {
   protected static BlockPos getHeightPos(final ISeedReader world, final BlockPos original) {
     int y = world.getHeight(Heightmap.Type.WORLD_SURFACE, original).getY();
     final BlockPos pos = new BlockPos(original.getX(), y, original.getZ());
-    return world.getBlockState(pos).isIn(Blocks.SNOW) ? pos.down(2) : pos.down();
+    return world.getBlockState(pos).matchesBlock(Blocks.SNOW) ? pos.down(2) : pos.down();
   }
   
   protected static void fillBelow(final ISeedReader world, final BlockPos origin, final BlockPos size, final Rotation rotation, final Block[] blocks) {

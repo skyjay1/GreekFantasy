@@ -31,7 +31,7 @@ public class HuntingEnchantment extends Enchantment {
       return;
     }
     // if it's an animal, use high attack damage
-    if(target.isNonBoss() && target instanceof AnimalEntity && (level >= 3 || user.getRNG().nextInt(4 - level) == 0)) {
+    if(target.canChangeDimension() && target instanceof AnimalEntity && (level >= 3 || user.getRNG().nextInt(4 - level) == 0)) {
       float amount = 1.0F;
       DamageSource source = DamageSource.causeMobDamage(user);
       // if config option is enabled, use max damage

@@ -233,7 +233,7 @@ public class GeryonEntity extends MonsterEntity {
   // Boss //
   
   @Override
-  public boolean isNonBoss() { return false; }
+  public boolean canChangeDimension() { return false; }
   
   @Override
   public boolean canDespawn(final double disToPlayer) { return false; }
@@ -427,7 +427,7 @@ public class GeryonEntity extends MonsterEntity {
    * @return whether the given entity should not be affected by smash attack
    **/
   private boolean isExemptFromSmashAttack(final Entity entity) {
-    return !entity.isNonBoss() || entity.hasNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY 
+    return !entity.canChangeDimension() || entity.hasNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY 
         || entity.getType() == GFRegistry.MAD_COW_ENTITY || entity.isSpectator()
         || (entity instanceof PlayerEntity && ((PlayerEntity)entity).isCreative());
   }
@@ -506,8 +506,8 @@ public class GeryonEntity extends MonsterEntity {
     }
     
     @Override
-    protected void func_234039_g_() {
-      super.func_234039_g_();
+    protected void resetSwingCooldown() {
+      super.resetSwingCooldown();
       GeryonEntity.this.setAttackCooldown();
     }
   }
@@ -528,7 +528,7 @@ public class GeryonEntity extends MonsterEntity {
     @Override
     public void startExecuting() {
       GeryonEntity.this.setSmashAttack(true);
-      GeryonEntity.this.getNavigator().getPathToEntity(GeryonEntity.this.getAttackTarget(), 0);
+      GeryonEntity.this.getNavigator().pathfind(GeryonEntity.this.getAttackTarget(), 0);
       isBlockSmash = GeryonEntity.this.getNavigator().noPath();
           //.getPathToEntity(GeryonEntity.this.getAttackTarget(), 0) == null;
     }

@@ -1,6 +1,7 @@
 {
   "itemGroup.greekfantasy": "Greek Fantasy",
   "entity.greekfantasy.ara": "Ara",
+  "entity.greekfantasy.arachne": "Arachne",
   "entity.greekfantasy.arion": "Arion",
   "entity.greekfantasy.bronze_bull": "Bronze Bull",
   "entity.greekfantasy.centaur": "Centaur",
@@ -45,6 +46,7 @@
   "entity.greekfantasy.unicorn": "Unicorn",
   "entity.greekfantasy.whirl": "Whirl",
   "item.greekfantasy.ara_spawn_egg": "Spawn Ara",
+  "item.greekfantasy.arachne_spawn_egg": "Spawn Arachne",
   "item.greekfantasy.arion_spawn_egg": "Spawn Arion",
   "item.greekfantasy.centaur_spawn_egg": "Spawn Centaur",
   "item.greekfantasy.cerastes_spawn_egg": "Spawn Cerastes",

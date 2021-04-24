@@ -115,27 +115,27 @@ public final class GFWorldGen {
   public static void registerFeatures(final RegistryEvent.Register<Feature<?>> event) {
     GreekFantasy.LOGGER.debug("registerFeatures");
     event.getRegistry().registerAll(
-        new HarpyNestFeature(NoFeatureConfig.field_236558_a_)
+        new HarpyNestFeature(NoFeatureConfig.CODEC)
           .setRegistryName(MODID, "harpy_nest"),
-        new SmallShrineFeature(NoFeatureConfig.field_236558_a_)
+        new SmallShrineFeature(NoFeatureConfig.CODEC)
           .setRegistryName(MODID, "small_shrine"),
-        new SmallNetherShrineFeature(NoFeatureConfig.field_236558_a_)
+        new SmallNetherShrineFeature(NoFeatureConfig.CODEC)
           .setRegistryName(MODID, "small_nether_shrine"),
-        new CyclopesCaveFeature(NoFeatureConfig.field_236558_a_)
+        new CyclopesCaveFeature(NoFeatureConfig.CODEC)
           .setRegistryName(MODID, "cyclopes_cave"),
-        new AraCampFeature(NoFeatureConfig.field_236558_a_)
+        new AraCampFeature(NoFeatureConfig.CODEC)
           .setRegistryName(MODID, "ara_camp"),
-        new SatyrCampFeature(NoFeatureConfig.field_236558_a_)
+        new SatyrCampFeature(NoFeatureConfig.CODEC)
           .setRegistryName(MODID, "satyr_camp"),
-        new PythonPitFeature(NoFeatureConfig.field_236558_a_)
+        new PythonPitFeature(NoFeatureConfig.CODEC)
           .setRegistryName(MODID, "python_pit"),
-        new LionDenFeature(NoFeatureConfig.field_236558_a_)
+        new LionDenFeature(NoFeatureConfig.CODEC)
           .setRegistryName(MODID, "lion_den"),
         new OliveTreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(MODID, "olive_tree"),
         new TreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(MODID, "golden_apple_tree"),
-        new ReedsFeature(BlockClusterFeatureConfig.field_236587_a_)
+        new ReedsFeature(BlockClusterFeatureConfig.CODEC)
           .setRegistryName(MODID, "reeds"));
   }
 
@@ -155,36 +155,36 @@ public final class GFWorldGen {
     MARBLE = registerFeature("marble", 
         Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.MARBLE.getDefaultState(), 33))
         // unmapped methods copied from world.gen.feature.Features
-        // 33 = vein size, 80 = maxY, func_242728_a = spreadHorizontally, func_242731_b = repeat
-        .range(80).square().func_242731_b(10));
+        // 33 = vein size, 80 = maxY, square = spreadHorizontally, count = repeat
+        .range(80).square().count(10));
     LIMESTONE = registerFeature("limestone", 
         Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.LIMESTONE.getDefaultState(), 33))
-        .range(80).square().func_242731_b(10));
+        .range(80).square().count(10));
     HARPY_NEST = registerFeature("harpy_nest", 
-        HARPY_NEST_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_) // NoFeatureConfig.NO_FEATURE_CONFIG
+        HARPY_NEST_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG) // NoFeatureConfig.NO_FEATURE_CONFIG
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     SMALL_SHRINE = registerFeature("small_shrine", 
-        SMALL_SHRINE_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
+        SMALL_SHRINE_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     SMALL_NETHER_SHRINE = registerFeature("small_nether_shrine",
-        SMALL_NETHER_SHRINE_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_));
+        SMALL_NETHER_SHRINE_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
     CYCLOPES_CAVE = registerFeature("cyclopes_cave",
-        CYCLOPES_CAVE_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
+        CYCLOPES_CAVE_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
         .chance(3).withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     ARA_CAMP = registerFeature("ara_camp", 
-        ARA_CAMP_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_).chance(2)
+        ARA_CAMP_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG).chance(2)
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     SATYR_CAMP = registerFeature("satyr_camp",
-        SATYR_CAMP_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
+        SATYR_CAMP_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     LION_DEN = registerFeature("lion_den",
-        LION_DEN_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
+        LION_DEN_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
         .chance(2).withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     PYTHON_PIT = registerFeature("python_pit",
-        PYTHON_PIT_FEATURE.withConfiguration(NoFeatureConfig.field_236559_b_)
+        PYTHON_PIT_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     OLIVE_TREE_SINGLE = registerFeature("olive_tree_single", 
-        OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).func_242731_b(40));
+        OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).count(40));
     OLIVE_TREE_FOREST = 
         Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, "olive_tree"), 
           OliveTree.getConfiguredTree()
@@ -197,14 +197,14 @@ public final class GFWorldGen {
             new DoublePlantBlockPlacer()))
               .tries(48).replaceable()
               .xSpread(4).zSpread(4)
-              .build()).func_242731_b(2));
+              .build()).count(2));
     SWAMP_REEDS = registerFeature("reeds_swamp",
         REEDS_FEATURE.withConfiguration((new BlockClusterFeatureConfig.Builder(
             new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
             new DoublePlantBlockPlacer()))
               .tries(32).replaceable()
               .xSpread(3).ySpread(3).zSpread(3)
-              .build()).func_242731_b(2));
+              .build()).count(2));
     GOLDEN_APPLE_TREE = Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, "golden_apple_tree"), 
         GoldenAppleTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT));
   }
@@ -300,7 +300,7 @@ public final class GFWorldGen {
     DefaultBiomeFeatures.withBatsAndHostiles(builder);
 
     BiomeGenerationSettings.Builder biomeGenBuilder = (new BiomeGenerationSettings.Builder())
-        .withSurfaceBuilder(ConfiguredSurfaceBuilders.field_244178_j);
+        .withSurfaceBuilder(ConfiguredSurfaceBuilders.GRASS);
     DefaultBiomeFeatures.withStrongholdAndMineshaft(biomeGenBuilder);
     biomeGenBuilder.withStructure(StructureFeatures.RUINED_PORTAL);
     
@@ -336,7 +336,7 @@ public final class GFWorldGen {
         .withSkyColor(getSkyColorWithTemperatureModifier(0.6F))
         .setMoodSound(MoodSoundAmbience.DEFAULT_CAVE)
         .build())
-      .withMobSpawnSettings(builder.copy())
+      .withMobSpawnSettings(builder.build())
       .withGenerationSettings(biomeGenBuilder.build())
       .build();
   }

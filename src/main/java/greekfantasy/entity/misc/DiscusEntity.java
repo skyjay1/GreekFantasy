@@ -51,13 +51,13 @@ public class DiscusEntity extends ProjectileItemEntity {
   protected void onEntityHit(EntityRayTraceResult raytrace) {
     super.onEntityHit(raytrace);
     final float damage = 4.0F;
-    raytrace.getEntity().attackEntityFrom(DamageSource.causeThrownDamage(this, func_234616_v_()), damage);
+    raytrace.getEntity().attackEntityFrom(DamageSource.causeThrownDamage(this, getShooter()), damage);
   }
 
   @Override
   protected void onImpact(RayTraceResult raytrace) {
     super.onImpact(raytrace);
-    if(rand.nextFloat() < 0.028F && !(func_234616_v_() instanceof PlayerEntity && ((PlayerEntity)func_234616_v_()).isCreative())) {
+    if(rand.nextFloat() < 0.028F && !(getShooter() instanceof PlayerEntity && ((PlayerEntity)getShooter()).isCreative())) {
       final Vector3d vec = raytrace.getHitVec();
       final ItemEntity item = new ItemEntity(this.world, vec.x, vec.y + 0.25D, vec.z, new ItemStack(getDefaultItem()));
       this.world.addEntity(item);
@@ -69,7 +69,7 @@ public class DiscusEntity extends ProjectileItemEntity {
 
   @Override
   public void tick() {
-    Entity entity = func_234616_v_();
+    Entity entity = getShooter();
     if (entity instanceof net.minecraft.entity.player.PlayerEntity && !entity.isAlive()) {
       remove();
     } else {
@@ -87,7 +87,7 @@ public class DiscusEntity extends ProjectileItemEntity {
 
   @Override
   public Entity changeDimension(ServerWorld serverWorld, ITeleporter iTeleporter) {
-    Entity entity = func_234616_v_();
+    Entity entity = this.getShooter();
     if (entity != null && entity.world.getDimensionKey() != serverWorld.getDimensionKey()) {
       setShooter((Entity) null);
     }

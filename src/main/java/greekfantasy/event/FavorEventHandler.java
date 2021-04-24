@@ -295,7 +295,7 @@ public class FavorEventHandler {
     if((event.getEntity() instanceof ArrowEntity || event.getEntity() instanceof SpectralArrowEntity) 
         && !event.getEntity().getEntityWorld().isRemote()) {
       final AbstractArrowEntity arrow = (AbstractArrowEntity) event.getEntity();
-      final Entity thrower = arrow.func_234616_v_();
+      final Entity thrower = arrow.getShooter();
       if(thrower instanceof PlayerEntity) {
         thrower.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onShootArrow((PlayerEntity)thrower, f, arrow));
       }
