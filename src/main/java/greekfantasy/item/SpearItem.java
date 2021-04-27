@@ -7,6 +7,8 @@ import com.google.common.collect.Multimap;
 
 import greekfantasy.entity.misc.SpearEntity;
 import net.minecraft.block.BlockState;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.enchantment.IVanishable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -38,6 +40,7 @@ public class SpearItem extends TieredItem implements IVanishable {
   public SpearItem(IItemTier tier, Item.Properties properties, final Consumer<Entity> hitEntityConsumer) {
     super(tier, properties);
     onHitEntity = hitEntityConsumer;
+    // item properties
     ImmutableMultimap.Builder<Attribute, AttributeModifier> mapBuilder = ImmutableMultimap.builder();
     mapBuilder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", 5.0D + tier.getAttackDamage(), AttributeModifier.Operation.ADDITION));
     mapBuilder.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.9D, AttributeModifier.Operation.ADDITION));
@@ -118,5 +121,15 @@ public class SpearItem extends TieredItem implements IVanishable {
   @Override
   public Multimap<Attribute, AttributeModifier> getAttributeModifiers(final EquipmentSlotType slot) {
     return slot == EquipmentSlotType.MAINHAND ? this.spearAttributes : super.getAttributeModifiers(slot);
+  }
+  
+  @Override
+  public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+    return super.canApplyAtEnchantingTable(stack, enchantment) || enchantment == Enchantments.LOYALTY;
+  }
+
+  @Override
+  public int getItemEnchantability() {
+     return Math.max(1, super.getItemEnchantability() / 2);
   }
 }

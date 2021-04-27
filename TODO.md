@@ -10,8 +10,6 @@ __Key:__
 - Summoning animations not playing on dedicated server
 
   X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
-  
-- Flight enchantment broken?
 
 ## Entity basics
 
@@ -109,7 +107,8 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- _ _ _ *no in-progress items*
+- _ _ _ Apple of Discord (Hera/Aphrodite/Athena +-3000)
+- X Bident/Spear Loyalty enchantment
 
 ## Achievements
 
@@ -164,6 +163,6 @@ _Can I do something with these?_
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
 - Story of Antaeus (miniboss; heals when touching earth; "Earth Bond" enchantment for boots heals player similarly)
 - Story of King Midas (gold touch)
-- Story of Labyrinth (Minotaur miniboss, Golden String, etc)
+- Story of Labyrinth (Cretan Minotaur miniboss, Golden String, etc)
 - Story of Icarus (improve Elytra)
 

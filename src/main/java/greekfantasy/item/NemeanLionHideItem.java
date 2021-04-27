@@ -30,7 +30,7 @@ public class NemeanLionHideItem extends ArmorItem {
    
   private static final String TEXTURE = GreekFantasy.MODID + ":textures/models/armor/nemean_lion_hide_layer_1.png";
   
-  public static final float IMMUNITY_CHANCE = 0.72F;
+  public static final float IMMUNITY_CHANCE = 0.56F;
   
   public NemeanLionHideItem(Properties builderIn) {
     super(MATERIAL, EquipmentSlotType.HEAD, builderIn);

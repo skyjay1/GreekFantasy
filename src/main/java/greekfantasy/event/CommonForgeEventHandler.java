@@ -293,6 +293,7 @@ public class CommonForgeEventHandler {
     if(!event.isCanceled() && !arrow.getEntityWorld().isRemote() && 
         event.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY) {
       Entity entity = ((EntityRayTraceResult)event.getRayTraceResult()).getEntity();
+      double damage = arrow.getDamage();
       if(entity instanceof LivingEntity) {
         // if the projectile hit the legs/feet while wearing any achilles armor, multiply the damage
         int achillesArmor = countAchillesArmor((LivingEntity)entity);
@@ -301,10 +302,12 @@ public class CommonForgeEventHandler {
         // if wearing nemean lion hide, determine arrow immunity chance
         if(isWearingNemeanHide((LivingEntity)entity)) {
           immuneChance = NemeanLionHideItem.getProjectileImmunityChance();
+          damage *= 0.5D;
         }
         // if wearing achilles armmor, determine max arrow immunity chance
         if(achillesArmor > 0) {
           immuneChance = Math.max(immuneChance, AchillesArmorItem.getProjectileImmunityChance(achillesArmor));
+          damage *= 0.8D;
           // determine crit chance
           if((arrow.getPosY() - arrow.getHeight() * 0.5D) < (entity.getPosY() + entity.getHeight() * 0.24D)) {
             critChance = AchillesArmorItem.getProjectileCritChance(achillesArmor);
@@ -317,9 +320,10 @@ public class CommonForgeEventHandler {
           // otherwise, cancel the event
           event.setCanceled(true);
           // "bounce" the projectile
-          arrow.setDamage(0.0D);
+          damage = 0.0D;
           arrow.setMotion(arrow.getMotion().mul(-0.45D, 0.65D, -0.45D));
         }
+        arrow.setDamage(damage);
       }
     }
   }

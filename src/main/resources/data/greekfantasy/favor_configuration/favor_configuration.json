@@ -146,21 +146,16 @@
 	},
     "minecraft:iron_golem": {
       "hostile": { 
-	    "deity": "greekfantasy:hades",
-	    "minlevel": 4,
-	    "maxlevel": 9
-	  },
-      "flee": { 
-	    "deity": "greekfantasy:hades",
-	    "minlevel": -3,
-	    "maxlevel": -10
+	    "deity": "greekfantasy:hermes",
+	    "minlevel": -4,
+	    "maxlevel": -9
 	  }
 	},
     "minecraft:llama": {
       "hostile": { 
 	    "deity": "greekfantasy:poseidon",
 	    "minlevel": -10,
-	    "maxlevel": -2
+	    "maxlevel": -1
 	  }
 	},
     "minecraft:silverfish": {
