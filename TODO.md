@@ -53,7 +53,7 @@ __Key:__
 - X X X X X Whirl
 - X X X X X Pegasus
 - X X X X X Golden Ram (becomes regular sheep when sheared)
-- X X _ X X Makhai (spawns when combat starts (Ares), either to help or hurt player)
+- X X _ X X Makhai
 - ~ _ X _ _ Arachne (spider/woman)
 - ~ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 
@@ -107,7 +107,7 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- _ _ _ Apple of Discord (Hera/Aphrodite/Athena +-3000)
+- X ~ X Apple of Discord (Hera/Aphrodite/Athena +-1000)
 - X Bident/Spear Loyalty enchantment
 
 ## Achievements

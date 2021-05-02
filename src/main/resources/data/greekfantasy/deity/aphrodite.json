@@ -5,7 +5,6 @@
   "base": "minecraft:quartz_slab",
   "right_hand": {
   	"id": "greekfantasy:mirror",
-  	"Count": 1,
-  	"tag": {}
+  	"Count": 1
   }
 }

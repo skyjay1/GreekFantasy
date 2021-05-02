@@ -240,8 +240,7 @@ public class FavorEffectManager {
       }
       // prepare to execute the function
       final Optional<FunctionObject> mcfunction = manager.get(function.get());
-      final BlockPos pos = playerIn.getPosition().up();
-      final Vector3d vec = Vector3d.copyCenteredWithVerticalOffset(pos, 0.5D);
+      final Vector3d vec = playerIn.getPositionVec().add(0.0D, 1.0D, 0.0D);
       if(mcfunction.isPresent()) {
         // make a command source at the player
         final CommandSource commandSource = manager.getCommandSource().withEntity(playerIn).withPos(vec).withPermissionLevel(4).withFeedbackDisabled();

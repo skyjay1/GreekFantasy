@@ -62,6 +62,7 @@ import net.minecraft.item.ItemTier;
 import net.minecraft.item.Items;
 import net.minecraft.item.Rarity;
 import net.minecraft.item.SpawnEggItem;
+import net.minecraft.item.Item.Properties;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.BasicParticleType;
@@ -222,6 +223,8 @@ public final class GFRegistry {
   public static final Item GOLDEN_FLEECE = null;
   @ObjectHolder("fiery_gear")
   public static final Item FIERY_GEAR = null;
+  @ObjectHolder("golden_apple_of_discord")
+  public static final Item GOLDEN_APPLE_OF_DISCORD = null;
   
   // Block //
   @ObjectHolder("reeds")
@@ -787,6 +790,8 @@ public final class GFRegistry {
           .setRegistryName(MODID, "golden_ball"),
         new Item(new Item.Properties().group(GREEK_GROUP))
 		  .setRegistryName(MODID, "golden_fleece"),
+		    new GoldenAppleOfDiscordItem(new Item.Properties().group(GREEK_GROUP).food(GoldenAppleOfDiscordItem.GOLDEN_APPLE_OF_DISCORD))
+		    .setRegistryName(MODID, "golden_apple_of_discord"),
         new DiscusItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
           .setRegistryName(MODID, "discus")
     );

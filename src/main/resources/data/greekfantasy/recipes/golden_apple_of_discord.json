@@ -1,0 +1,11 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:golden_apple" },
+	{ "item": "greekfantasy:flint_knife" }
+  ],
+  "result": {
+    "item": "greekfantasy:golden_apple_of_discord",
+    "count": 1
+  }
+}

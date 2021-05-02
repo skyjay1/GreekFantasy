@@ -1,20 +1,12 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import greekfantasy.entity.ai.HasOwnerFollowGoal;
-import greekfantasy.entity.ai.HasOwnerHurtByTargetGoal;
-import greekfantasy.entity.ai.HasOwnerHurtTargetGoal;
-import greekfantasy.entity.misc.IHasOwner;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.CreatureAttribute;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
@@ -24,15 +16,22 @@ import net.minecraft.entity.Pose;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.OwnerHurtByTargetGoal;
+import net.minecraft.entity.ai.goal.OwnerHurtTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.CreeperEntity;
+import net.minecraft.entity.monster.GhastEntity;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -41,24 +40,21 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class MakhaiEntity extends CreatureEntity implements IHasOwner<MakhaiEntity> {
-  protected static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(MakhaiEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+public class MakhaiEntity extends TameableEntity {
   protected static final DataParameter<Byte> STATE = EntityDataManager.createKey(MakhaiEntity.class, DataSerializers.BYTE);
   protected static final String KEY_STATE = "MahkaiState";
   // bytes to use in STATE
@@ -69,7 +65,7 @@ public class MakhaiEntity extends CreatureEntity implements IHasOwner<MakhaiEnti
   private static final byte SPAWN_CLIENT = 9;
   private static final byte DESPAWN_CLIENT = 10;
     
-  /** The max time spent 'spawning' **/
+  /** The max time spent spawning or despawning **/
   protected final int maxSpawnTime = 25;
   protected int spawnTime;
   protected int despawnTime;
@@ -92,20 +88,19 @@ public class MakhaiEntity extends CreatureEntity implements IHasOwner<MakhaiEnti
     this.goalSelector.addGoal(0, new MakhaiEntity.SpawningGoal());
     this.goalSelector.addGoal(1, new SwimGoal(this));
     this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
-    this.goalSelector.addGoal(3, new HasOwnerFollowGoal<>(this, 1.0D, 16.0F, 5.0F, false));
+    this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
     this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.78D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 5, false, false, e -> !MakhaiEntity.this.isOnSameTeam(e)));
-    this.targetSelector.addGoal(1, new HasOwnerHurtByTargetGoal<>(this));
-    this.targetSelector.addGoal(2, new HasOwnerHurtTargetGoal<>(this));
+    this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+    this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
     this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, MobEntity.class, 5, false, false, e -> e instanceof IMob && EntityPredicates.CAN_AI_TARGET.test(e) && !MakhaiEntity.this.isOnSameTeam(e)));
   }
   
   @Override
   protected void registerData() {
     super.registerData();
-    this.getDataManager().register(OWNER, Optional.empty());
     this.getDataManager().register(STATE, Byte.valueOf(NONE));
   }
   
@@ -166,33 +161,12 @@ public class MakhaiEntity extends CreatureEntity implements IHasOwner<MakhaiEnti
     final ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     setEquipmentOnSpawn();
     setSpawning(true);
+    setChild(false);
     return data;
   }
-
-  // Owner methods //
-    
-  @Override
-  public Optional<UUID> getOwnerID() { return this.getDataManager().get(OWNER); }
   
   @Override
-  public void setOwner(@Nullable final UUID uuid) { this.getDataManager().set(OWNER, Optional.ofNullable(uuid)); }
-    
-  @Override
-  public LivingEntity getOwner() {
-    if(hasOwner()) {
-      return this.getEntityWorld().getPlayerByUuid(getOwnerID().get());
-    }
-    return null;
-  }
-  
-  @Override
-  public boolean isTamingItem(final ItemStack item) { return false; }
-  
-  @Override
-  public float getHealAmount(final ItemStack item) { return 0; }
-  
-  @Override
-  public int getTameChance(final Random rand) { return 0; }
+  public boolean isBreedingItem(final ItemStack item) { return false; }
   
   // State methods //
   
@@ -257,7 +231,7 @@ public class MakhaiEntity extends CreatureEntity implements IHasOwner<MakhaiEnti
   public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.UNDEAD; }
   
   @Override
-  public boolean canDespawn(double distanceToClosestPlayer) { return !this.hasOwner(); }
+  public boolean canDespawn(double distanceToClosestPlayer) { return !this.isTamed(); }
   
   @Override
   protected float getStandingEyeHeight(Pose pose, EntitySize size) { return this.isSpawning() ? 0.05F : 1.74F; }
@@ -265,16 +239,22 @@ public class MakhaiEntity extends CreatureEntity implements IHasOwner<MakhaiEnti
   @Override
   public double getYOffset() { return -0.6D; }
   
-  // Team methods //
-
   @Override
-  public Team getTeam() {
-    return getOwnerTeam(super.getTeam());
-  }
-
+  public boolean canBeLeashedTo(PlayerEntity player) { return false; }
+  
   @Override
-  public boolean isOnSameTeam(final Entity entity) {
-    return isOnSameTeamAs(entity) || super.isOnSameTeam(entity);
+  public boolean canMateWith(AnimalEntity otherAnimal) { return false; }
+  
+  @Override
+  public AgeableEntity createChild(ServerWorld world, AgeableEntity mate) { return null; }
+  
+  @Override
+  public void setSitting(boolean sitting) { }
+  
+  @Override
+  public void onDeath(DamageSource cause) {
+    setOwnerId(null);
+    super.onDeath(cause);
   }
   
   // NBT methods //
@@ -282,14 +262,12 @@ public class MakhaiEntity extends CreatureEntity implements IHasOwner<MakhaiEnti
   @Override
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
-    writeOwner(compound);
     compound.putByte(KEY_STATE, getState());
   }
 
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
-    readOwner(compound);
     setState(compound.getByte(KEY_STATE));
   }
   
@@ -301,6 +279,25 @@ public class MakhaiEntity extends CreatureEntity implements IHasOwner<MakhaiEnti
       return false;
     }
     return super.canAttack(entity);
+  }
+  
+  @Override
+  public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner) {
+    if (!(target instanceof CreeperEntity) && !(target instanceof GhastEntity)) {
+      if (target instanceof TameableEntity) {
+        TameableEntity tameable = (TameableEntity) target;
+        return !tameable.isTamed() || tameable.getOwner() != owner;
+      } else if (target instanceof PlayerEntity && owner instanceof PlayerEntity
+          && !((PlayerEntity) owner).canAttackPlayer((PlayerEntity) target)) {
+        return false;
+      } else if (target instanceof AbstractHorseEntity && ((AbstractHorseEntity) target).isTame()) {
+        return false;
+      } else {
+        return !(target instanceof TameableEntity) || !((TameableEntity) target).isTamed();
+      }
+    } else {
+      return false;
+    }
   }
   
   // Goals //

@@ -202,7 +202,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
           if(f.isEnabled()) {
             FavorLevel level = f.getFavor(ideity);
             ItemStack copy = stack.copy();
-            if(FavorManager.onGiveItem(teStatue, ideity, playerIn, level, stack)) {
+            if(FavorManager.onGiveItem(teStatue, ideity, playerIn, f, level, stack)) {
               final boolean happy = ideity.getItemFavorModifier(copy.getItem()) > 0;
               GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(happy, pos, 10));
             } else {

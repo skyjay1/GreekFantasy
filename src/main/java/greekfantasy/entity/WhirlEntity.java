@@ -148,7 +148,7 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
       double posZ = this.getPosZ();
       // for each y-position, increase the angle and spawn particle here
       for(float a = 0, nA = 28 + rand.nextInt(4), dA = (2 * (float)Math.PI) / nA; y < maxY; a += dA) {
-        float radius = y * 0.5F;
+        float radius = y * 0.35F;
         float cosA = MathHelper.cos(a) * radius;
         float sinA = MathHelper.sin(a) * radius;
         //bubbles(posX + cosA, posY + y, posZ + sinA, 0.125D, 1);

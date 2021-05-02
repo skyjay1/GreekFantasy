@@ -6,7 +6,6 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.client.render.layer.SpartiClothingLayer;
 import greekfantasy.client.render.model.SpartiModel;
 import greekfantasy.entity.SpartiEntity;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
@@ -21,20 +20,17 @@ public class SpartiRenderer<T extends SpartiEntity> extends BipedRenderer<T, Spa
   }
   
   @Override
-  public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
-      final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
-    matrixStackIn.push();
+  protected void preRenderCallback(final T entity, MatrixStack matrix, float ageInTicks) {
     // if the entity is spawning, shift the entity down
-    if(entityIn.isSpawning()) {
+    if(entity.isSpawning()) {
       final float height = 1.99F;
       final float translate = 0.035F;
-      final float translateY = height * entityIn.getSpawnPercent(partialTick) - height;
-      final float translateX = translate * (entityIn.getRNG().nextFloat() - 0.5F);
-      final float translateZ = translate * (entityIn.getRNG().nextFloat() - 0.5F);
-      matrixStackIn.translate(translateX, translateY, translateZ);
+      final float translateY = height * entity.getSpawnPercent() - height;
+      final float translateX = translate * (entity.getRNG().nextFloat() - 0.5F);
+      final float translateZ = translate * (entity.getRNG().nextFloat() - 0.5F);
+//      GreekFantasy.LOGGER.debug("tY=" + translateY + "; spawn=" + entity.getSpawnPercent());
+      matrix.translate(translateX, translateY, translateZ);
     }
-    super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
-    matrixStackIn.pop();
   }
   
   @Override

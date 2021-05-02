@@ -41,6 +41,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
@@ -205,15 +206,17 @@ public class FavorEventHandler {
    * @param event the left click empty event
    */
   @SubscribeEvent
-  public static void onLeftClickTrident(final PlayerInteractEvent.LeftClickEmpty event) {
-    final ItemStack item = event.getPlayer().getHeldItemMainhand();
+  public static void onStopUsingTrident(final LivingEntityUseItemEvent.Stop event) {
+    final ItemStack item = event.getEntityLiving().getHeldItemMainhand();
     // Determine if the event can run (player using enchanted trident with no cooldown)
-    if(!event.isCanceled() && event.getPlayer() instanceof PlayerEntity
+    if(!event.isCanceled() && event.getEntityLiving() instanceof PlayerEntity
         && GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == Items.TRIDENT
         && EnchantmentHelper.getEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) > 0
-        && !event.getPlayer().getCooldownTracker().hasCooldown(Items.TRIDENT)) {
+        && !((PlayerEntity)event.getEntityLiving()).getCooldownTracker().hasCooldown(Items.TRIDENT)) {
       // The player has used an enchanted item, send a packet to the server that will also check favor
-      GreekFantasy.CHANNEL.sendToServer(new CUseEnchantmentPacket(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT.getRegistryName()));            
+      GreekFantasy.CHANNEL.sendToServer(new CUseEnchantmentPacket(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT.getRegistryName()));
+      // cancel the event
+      event.setCanceled(true);
     }
   }
   

@@ -291,7 +291,6 @@ public class FavorManager {
     // attempt to trigger PLAYER_HURT_ENTITY favor effect
     triggerFavorEffect(FavorEffectTrigger.Type.PLAYER_HURT_ENTITY, entity.getType().getRegistryName(), playerIn, favor);
     // attempt to trigger effects on combat start
-    System.out.println("duration=" + playerIn.getCombatTracker().getCombatDuration());
     if(playerIn.getCombatTracker().getCombatDuration() < 40) {
       onCombatStart(playerIn, entity, favor);
     }
@@ -320,15 +319,18 @@ public class FavorManager {
    * @param altar the altar
    * @param deity the deity of the altar
    * @param playerIn the player
-   * @param info the favor info (from capability)
+   * @param favor the player's favor
+   * @param info the favor level
    * @param item the item that was used
    * @return true if the item affected the player's favor
    */
   public static boolean onGiveItem(final StatueTileEntity altar, final IDeity deity,
-      final PlayerEntity playerIn, final FavorLevel info, final ItemStack item) {
+      final PlayerEntity playerIn, final IFavor favor, final FavorLevel info, final ItemStack item) {
     final long favorModifier = deity.getItemFavorModifier(item.getItem());
     if(favorModifier != 0 && (info.getFavor() + favorModifier) <= FavorLevel.MAX_FAVOR_POINTS) {
+      // add favor
       info.addFavor(playerIn, deity, favorModifier, Source.GIVE_ITEM);
+      // remove the item from the player
       if(!playerIn.isCreative()) {
         item.shrink(1);
       }
@@ -506,7 +508,8 @@ public class FavorManager {
         // set entity position and data
         entity.setPosition(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.01D, spawnPos.getZ() + 0.5D);
         if(tame) {
-          entity.setOwner(playerIn);
+          entity.setTamed(true);
+          entity.setOwnerId(playerIn.getUniqueID());
         } else {
           entity.setRevengeTarget(playerIn);
         }

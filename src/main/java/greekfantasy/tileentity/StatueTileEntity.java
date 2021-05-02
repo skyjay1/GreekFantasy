@@ -202,6 +202,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
       bow.getItem().onCreated(bow, player.getEntityWorld(), player);
       return bow;
     }
+    // return the original item
     return item;
   }
   

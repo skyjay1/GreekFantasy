@@ -6,14 +6,17 @@ import greekfantasy.entity.SpartiEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.ITeleporter;
@@ -56,20 +59,20 @@ public class DragonToothEntity extends ProjectileItemEntity {
   @Override
   protected void onImpact(RayTraceResult raytrace) {
     super.onImpact(raytrace);
-    if (!this.world.isRemote() && this.isAlive() && GreekFantasy.CONFIG.doesDragonToothSpawnSparti()) {
+    if (!this.world.isRemote() && world instanceof IServerWorld && this.isAlive() && GreekFantasy.CONFIG.doesDragonToothSpawnSparti()) {
       Entity thrower = getShooter();
       // spawn a configurable number of sparti
       for(int i = 0, n = GreekFantasy.CONFIG.getNumSpartiSpawned(), life = 20 * GreekFantasy.CONFIG.getSpartiLifespan(); i < n; i++) {
         final SpartiEntity sparti = GFRegistry.SPARTI_ENTITY.create(world);
         sparti.setLocationAndAngles(raytrace.getHitVec().x, raytrace.getHitVec().y, raytrace.getHitVec().z, 0, 0);
+        world.addEntity(sparti);
         if (thrower instanceof PlayerEntity) {
           sparti.rotationPitch = MathHelper.wrapDegrees(thrower.rotationYaw + 180.0F);
-          sparti.setOwner((PlayerEntity) thrower);
+          sparti.setTamed(true);
+          sparti.setOwnerId(thrower.getUniqueID());
         }
-        world.addEntity(sparti);
         sparti.setLimitedLife(life);
-        sparti.setEquipmentOnSpawn();
-        sparti.setSpawning(true);
+        sparti.onInitialSpawn((IServerWorld)world, world.getDifficultyForLocation(new BlockPos(raytrace.getHitVec())), SpawnReason.MOB_SUMMONED, null, null);
       }
       remove();
     }
@@ -99,4 +102,8 @@ public class DragonToothEntity extends ProjectileItemEntity {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 
+  @Override
+  protected float getGravityVelocity() {
+    return 0.11F;
+  }
 }

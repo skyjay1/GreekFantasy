@@ -36,7 +36,7 @@ public class Deity implements IDeity {
       ItemStack.CODEC.optionalFieldOf("left_hand", ItemStack.EMPTY).forGetter(Deity::getLeftHandItem),
       ItemStack.CODEC.optionalFieldOf("right_hand", ItemStack.EMPTY).forGetter(Deity::getRightHandItem),
       ResourceLocation.CODEC.optionalFieldOf("base", new ResourceLocation(GreekFantasy.MODID, "polished_marble_slab")).forGetter(Deity::getBase),
-      Codec.STRING.optionalFieldOf("overlayString", "none").forGetter(Deity::getOverlayString),
+      Codec.STRING.optionalFieldOf("overlay", "none").forGetter(Deity::getOverlayString),
       FavorEffect.CODEC.listOf().optionalFieldOf("effects", Arrays.asList()).forGetter(Deity::getFavorEffects),
       TriggeredFavorEffect.CODEC.listOf().optionalFieldOf("triggered_effects", Arrays.asList()).forGetter(Deity::getTriggeredFavorEffects),
       SpecialFavorEffect.CODEC.listOf().optionalFieldOf("special_effects", Lists.newArrayList()).forGetter(Deity::getSpecialFavorEffects),

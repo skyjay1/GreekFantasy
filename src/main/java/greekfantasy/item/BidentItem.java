@@ -4,13 +4,16 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.SpartiEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.IItemTier;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeMod;
 
@@ -32,19 +35,20 @@ public class BidentItem extends SpearItem {
         final SpartiEntity sparti = GFRegistry.SPARTI_ENTITY.create(world);
         sparti.setPosition(raytrace.getHitVec().getX(), raytrace.getHitVec().getY(), raytrace.getHitVec().getZ());
         sparti.rotationPitch = MathHelper.wrapDegrees(thrower.rotationYaw + 180.0F);
-        sparti.setOwner((PlayerEntity) thrower);
+        sparti.setTamed(true);
+        sparti.setOwnerId(thrower.getUniqueID());
         // Lifespan is 1/3 the usual amount
         sparti.setLimitedLife(GreekFantasy.CONFIG.getSpartiLifespan() * 20 / 3);
         sparti.setEquipmentOnSpawn();
         thrower.playSound(SoundEvents.BLOCK_LAVA_EXTINGUISH, 0.8F, 0.9F + thrower.getRNG().nextFloat() * 0.2F);
         world.addEntity(sparti);
-        // update spawning flag
-        sparti.setSpawning(true);
+        // entity data on spawn
+        sparti.onInitialSpawn((IServerWorld)world, world.getDifficultyForLocation(new BlockPos(raytrace.getHitVec())), SpawnReason.MOB_SUMMONED, null, null);
       }
-      return;
+    } else {
+      // Default behavior when not enchanted
+      super.throwSpear(world, thrower, stack);
     }
-    // Default behavior when not enchanted
-    super.throwSpear(world, thrower, stack);
   }
   
   /**

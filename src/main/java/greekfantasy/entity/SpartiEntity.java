@@ -1,20 +1,13 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import greekfantasy.entity.ai.HasOwnerFollowGoal;
-import greekfantasy.entity.ai.HasOwnerHurtByTargetGoal;
-import greekfantasy.entity.ai.HasOwnerHurtTargetGoal;
-import greekfantasy.entity.misc.IHasOwner;
+import greekfantasy.GreekFantasy;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.CreatureAttribute;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
@@ -24,15 +17,23 @@ import net.minecraft.entity.Pose;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.OwnerHurtByTargetGoal;
+import net.minecraft.entity.ai.goal.OwnerHurtTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.CreeperEntity;
+import net.minecraft.entity.monster.GhastEntity;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.passive.WolfEntity;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -43,7 +44,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -53,17 +53,17 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEntity> {
-  protected static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+public class SpartiEntity extends TameableEntity {
   protected static final DataParameter<Boolean> SPAWNING = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.BOOLEAN);
 
   protected static final String KEY_SPAWN_TIME = "Spawning";
   protected static final String KEY_LIFE_TICKS = "LifeTicks";
   //bytes to use in World#setEntityState
-  private static final byte SPAWN_CLIENT = 9;
+  private static final byte SPAWN_CLIENT = 11;
     
   /** The max time spent 'spawning' **/
   protected final int maxSpawnTime = 60;
@@ -93,12 +93,12 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
     this.goalSelector.addGoal(0, new SpartiEntity.SpawningGoal());
     this.goalSelector.addGoal(1, new SwimGoal(this));
     this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
-    this.goalSelector.addGoal(3, new HasOwnerFollowGoal<>(this, 1.0D, 16.0F, 5.0F, false));
+    this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.0D, 16.0F, 5.0F, false));
     this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.78D));
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
-    this.targetSelector.addGoal(1, new HasOwnerHurtByTargetGoal<>(this));
-    this.targetSelector.addGoal(2, new HasOwnerHurtTargetGoal<>(this));
+    this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+    this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
     this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, MobEntity.class, 5, false, false, e -> {
       return e instanceof IMob && !(e instanceof CreeperEntity);
     }));
@@ -107,27 +107,34 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
   @Override
   protected void registerData() {
     super.registerData();
-    this.getDataManager().register(OWNER, Optional.empty());
     this.getDataManager().register(SPAWNING, Boolean.valueOf(false));
   }
   
   @Override
   public void livingTick() {
     super.livingTick();
+
+    // lifespan
+    if (this.limitedLifespan && --this.limitedLifeTicks <= 0) {
+      this.limitedLifeTicks = 20;
+      attackEntityFrom(DamageSource.STARVE, 2.0F);
+    }
     
-    // spawn time
-    if(isSpawning()) {
-      // update timer
+    // update spawn time
+    if(isSpawning() && spawnTime > 0) {
       if(--spawnTime <= 0) {
         setSpawning(false);
       }
-      // spawn particles
+    }
+    
+    // particles when spawning
+    if(isSpawning() && world.isRemote()) {
       int i = MathHelper.floor(this.getPosX());
       int j = MathHelper.floor(this.getPosY() - (double)0.2F);
       int k = MathHelper.floor(this.getPosZ());
       BlockPos pos = new BlockPos(i, j, k);
-      BlockState blockstate = this.world.getBlockState(pos);
-      if (!blockstate.isAir(this.world, pos)) {
+      BlockState blockstate = world.getBlockState(pos);
+      if (!world.isAirBlock(pos)) {
         for(int count = 0; count < 10; count++) {
          this.world.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate).setPos(pos), 
              this.getPosX() + ((double)this.rand.nextFloat() - 0.5D) * (double)this.getWidth(), 
@@ -136,12 +143,6 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
              4.0D * ((double)this.rand.nextFloat() - 0.5D), 0.6D, ((double)this.rand.nextFloat() - 0.5D) * 4.0D);
         }
       }
-    }
-
-    // lifespan
-    if (this.limitedLifespan && --this.limitedLifeTicks <= 0) {
-      this.limitedLifeTicks = 20;
-      attackEntityFrom(DamageSource.STARVE, 2.0F);
     }
   }
   
@@ -156,61 +157,35 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
     final ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     setEquipmentOnSpawn();
     setSpawning(true);
+    setChild(false);
     return data;
   }
 
-  // Owner methods //
-    
-  @Override
-  public Optional<UUID> getOwnerID() { return this.getDataManager().get(OWNER); }
-  
-  @Override
-  public void setOwner(@Nullable final UUID uuid) { this.getDataManager().set(OWNER, Optional.ofNullable(uuid)); }
-    
-  @Override
-  public LivingEntity getOwner() {
-    if(hasOwner()) {
-      return this.getEntityWorld().getPlayerByUuid(getOwnerID().get());
-    }
-    return null;
-  }
-  
-  @Override
-  public boolean isTamingItem(final ItemStack item) { return false; }
-  
-  @Override
-  public float getHealAmount(final ItemStack item) { return 0; }
-  
-  @Override
-  public int getTameChance(final Random rand) { return 0; }
-  
   // Spawn methods //
   
   public void setSpawning(final boolean spawning) {
     this.spawnTime = spawning ? maxSpawnTime : 0;
     this.getDataManager().set(SPAWNING, spawning);
     this.recalculateSize();
+    GreekFantasy.LOGGER.debug("setSpawning: " + spawning);
     if(spawning && !world.isRemote()) {
-      world.setEntityState(this, SPAWN_CLIENT);
+      GreekFantasy.LOGGER.debug("send message to client...");
+      this.world.setEntityState(this, SPAWN_CLIENT);
     }
   }
   
   public boolean isSpawning() { return spawnTime > 0 || this.getDataManager().get(SPAWNING); }
   
-  public float getSpawnTime(final float ageInTicks) {
-    return (float) (spawnTime + (ageInTicks < 1.0F ? ageInTicks : 0));
-  }
-  
-  public float getSpawnPercent(final float ageInTicks) {
-    return 1.0F - (getSpawnTime(ageInTicks) / (float)maxSpawnTime);
+  public float getSpawnPercent() {
+    return spawnTime > 0 ? 1.0F - ((float)spawnTime / (float)maxSpawnTime) : 1.0F;
   }
   
   @OnlyIn(Dist.CLIENT)
   public void handleStatusUpdate(byte id) {
     switch(id) {
     case SPAWN_CLIENT:
+      GreekFantasy.LOGGER.debug("handleStatusUpdate: spawning");
       setSpawning(true);
-      spawnTime = maxSpawnTime;
       break;
     default:
       super.handleStatusUpdate(id);
@@ -246,24 +221,30 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
   public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.UNDEAD; }
   
   @Override
-  public boolean canDespawn(double distanceToClosestPlayer) { return !this.hasOwner(); }
+  public boolean canDespawn(double distanceToClosestPlayer) { return !this.isTamed(); }
   
   @Override
   protected float getStandingEyeHeight(Pose pose, EntitySize size) { return this.isSpawning() ? 0.05F : 1.74F; }
   
   @Override
-  public double getYOffset() { return -0.6D; }
+  public double getYOffset() { return -0.6D; }  
   
-  // Team methods //
-
   @Override
-  public Team getTeam() {
-    return getOwnerTeam(super.getTeam());
-  }
-
+  public boolean canBeLeashedTo(PlayerEntity player) { return false; }
+  
   @Override
-  public boolean isOnSameTeam(final Entity entity) {
-    return isOnSameTeamAs(entity) || super.isOnSameTeam(entity);
+  public boolean canMateWith(AnimalEntity otherAnimal) { return false; }
+  
+  @Override
+  public AgeableEntity createChild(ServerWorld world, AgeableEntity mate) { return null; }
+  
+  @Override
+  public void setSitting(boolean sitting) { }
+  
+  @Override
+  public void onDeath(DamageSource cause) {
+    setOwnerId(null);
+    super.onDeath(cause);
   }
   
   // NBT methods //
@@ -271,7 +252,7 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
   @Override
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
-    writeOwner(compound);
+    compound.putBoolean(KEY_SPAWN_TIME, isSpawning());
     if (this.limitedLifespan) {
       compound.putInt(KEY_LIFE_TICKS, this.limitedLifeTicks);
     }
@@ -280,20 +261,39 @@ public class SpartiEntity extends CreatureEntity implements IHasOwner<SpartiEnti
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
-    readOwner(compound);
+    setSpawning(compound.getBoolean(KEY_SPAWN_TIME));
     if (compound.contains(KEY_LIFE_TICKS)) {
       setLimitedLife(compound.getInt(KEY_LIFE_TICKS));
     }
   }
   
   // Attack predicate methods //
-
+  
   @Override
   public boolean canAttack(LivingEntity entity) {
     if (isOwner(entity)) {
       return false;
     }
     return super.canAttack(entity);
+  }
+
+  @Override
+  public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner) {
+    if (!(target instanceof CreeperEntity) && !(target instanceof GhastEntity)) {
+      if (target instanceof TameableEntity) {
+        TameableEntity tameable = (TameableEntity) target;
+        return !tameable.isTamed() || tameable.getOwner() != owner;
+      } else if (target instanceof PlayerEntity && owner instanceof PlayerEntity
+          && !((PlayerEntity) owner).canAttackPlayer((PlayerEntity) target)) {
+        return false;
+      } else if (target instanceof AbstractHorseEntity && ((AbstractHorseEntity) target).isTame()) {
+        return false;
+      } else {
+        return !(target instanceof TameableEntity) || !((TameableEntity) target).isTamed();
+      }
+    } else {
+      return false;
+    }
   }
   
   // Goals //
