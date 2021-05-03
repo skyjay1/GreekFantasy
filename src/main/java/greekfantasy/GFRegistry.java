@@ -130,8 +130,8 @@ public final class GFRegistry {
   public static EntityType<GorgonEntity> GORGON_ENTITY = buildEntityType(GorgonEntity::new, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
   public static EntityType<HarpyEntity> HARPY_ENTITY = buildEntityType(HarpyEntity::new, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, b -> {});
   public static EntityType<HealingSpellEntity> HEALING_SPELL_ENTITY = buildEntityType(HealingSpellEntity::new, "healing_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).updateInterval(10));
-//  public static EntityType<HydraEntity> HYDRA_ENTITY = buildEntityType(HydraEntity::new, "hydra", 1.4F, 1.2F, EntityClassification.MONSTER, b -> b.immuneToFire());
-//  public static EntityType<HydraHeadEntity> HYDRA_HEAD_ENTITY = buildEntityType(HydraHeadEntity::new, "hydra_head", 0.5F, 0.9F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning());
+  public static EntityType<HydraEntity> HYDRA_ENTITY = buildEntityType(HydraEntity::new, "hydra", 1.9F, 1.6F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<HydraHeadEntity> HYDRA_HEAD_ENTITY = buildEntityType(HydraHeadEntity::new, "hydra_head", 0.68F, 1.56F, EntityClassification.MISC, b -> b.disableSummoning());
   public static EntityType<MadCowEntity> MAD_COW_ENTITY = buildEntityType(MadCowEntity::new, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, b -> {});
   public static EntityType<MakhaiEntity> MAKHAI_ENTITY = buildEntityType(MakhaiEntity::new, "makhai", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<MinotaurEntity> MINOTAUR_ENTITY = buildEntityType(MinotaurEntity::new, "minotaur", 0.7F, 1.94F, EntityClassification.MONSTER, b -> {});
@@ -482,7 +482,8 @@ public final class GFRegistry {
     registerEntityType(event, GOLDEN_RAM_ENTITY, "golden_ram", GoldenRamEntity::getAttributes, null);
     registerEntityType(event, GORGON_ENTITY, "gorgon", GorgonEntity::getAttributes, GorgonEntity::canMonsterSpawnInLight);
     registerEntityType(event, HARPY_ENTITY, "harpy", HarpyEntity::getAttributes, HarpyEntity::canMonsterSpawn);
-//    registerEntityType(event, HYDRA_ENTITY, HydraEntity::getAttributes, null);
+    registerEntityType(event, HYDRA_ENTITY, "hydra", HydraEntity::getAttributes, null);
+    registerEntityType(event, HYDRA_HEAD_ENTITY, "hydra_head", HydraHeadEntity::getAttributes, null);
     registerEntityType(event, MAD_COW_ENTITY, "mad_cow", MadCowEntity::getAttributes, MadCowEntity::canSpawnOn);
     registerEntityType(event, MAKHAI_ENTITY, "makhai", MakhaiEntity::getAttributes, null);
     registerEntityType(event, MINOTAUR_ENTITY, "minotaur", MinotaurEntity::getAttributes, MinotaurEntity::canMonsterSpawnInLight);
@@ -503,7 +504,6 @@ public final class GFRegistry {
     event.getRegistry().register(DISCUS_ENTITY.setRegistryName(MODID, "discus"));
     event.getRegistry().register(DRAGON_TOOTH_ENTITY.setRegistryName(MODID, "dragon_tooth"));
     event.getRegistry().register(HEALING_SPELL_ENTITY.setRegistryName(MODID, "healing_spell"));
-//    event.getRegistry().register(HYDRA_HEAD_ENTITY);
     event.getRegistry().register(ORTHUS_HEAD_ITEM_ENTITY.setRegistryName(MODID, "orthus_head_item"));
     event.getRegistry().register(POISON_SPIT_ENTITY.setRegistryName(MODID, "poison_spit"));
     event.getRegistry().register(SWINE_SPELL_ENTITY.setRegistryName(MODID, "swine_spell"));
@@ -868,7 +868,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, UNICORN_ENTITY, "unicorn", 0xeeeeee, 0xe8e8e8);
     registerSpawnEgg(event, WHIRL_ENTITY, "whirl", 0x1EF6FF, 0xededed);
     
-//    registerSpawnEgg(event, HYDRA_ENTITY, 0xeeeeee, 0xe8e8e8);
+    registerSpawnEgg(event, HYDRA_ENTITY, "hydra", 0xeeeeee, 0xe8e8e8);
   }
   
   @SubscribeEvent

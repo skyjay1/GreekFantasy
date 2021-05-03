@@ -167,9 +167,7 @@ public class SpartiEntity extends TameableEntity {
     this.spawnTime = spawning ? maxSpawnTime : 0;
     this.getDataManager().set(SPAWNING, spawning);
     this.recalculateSize();
-    GreekFantasy.LOGGER.debug("setSpawning: " + spawning);
     if(spawning && !world.isRemote()) {
-      GreekFantasy.LOGGER.debug("send message to client...");
       this.world.setEntityState(this, SPAWN_CLIENT);
     }
   }
@@ -184,7 +182,6 @@ public class SpartiEntity extends TameableEntity {
   public void handleStatusUpdate(byte id) {
     switch(id) {
     case SPAWN_CLIENT:
-      GreekFantasy.LOGGER.debug("handleStatusUpdate: spawning");
       setSpawning(true);
       break;
     default:

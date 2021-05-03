@@ -1,46 +1,56 @@
 package greekfantasy.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.Nullable;
 
+import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.MoverType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class HydraEntity extends MonsterEntity {
   
-  public List<HydraHeadEntity> hydraHeads = new ArrayList<>();
+  private static final DataParameter<Byte> HEADS = EntityDataManager.createKey(HydraEntity.class, DataSerializers.BYTE);
+  private static final String KEY_HEADS = "Heads";
   
+  public static final int MAX_HEADS = 10;
+    
   public HydraEntity(final EntityType<? extends HydraEntity> type, final World worldIn) {
     super(type, worldIn);
-    hydraHeads.add(new HydraHeadEntity(this, "head1"));
-    hydraHeads.add(new HydraHeadEntity(this, "bipedHead2"));
-    HydraHeadEntity head;
-    for(int j = 0, l = hydraHeads.size(); j < l; j++) {
-      head = hydraHeads.get(j);
-      head.setPosition(this.getPosX(), this.getPosY(), this.getPosZ());
-      worldIn.addEntity(head);
-    }
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 204.0D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 200.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D);
+        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.0D)
+        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.6D)
+        .createMutableAttribute(Attributes.ARMOR, 5.0D);
+  }
+  
+  @Override
+  public void registerData() {
+    super.registerData();
+    this.getDataManager().register(HEADS, Byte.valueOf((byte)0));
   }
   
   @Override
@@ -49,8 +59,8 @@ public class HydraEntity extends MonsterEntity {
     this.goalSelector.addGoal(1, new SwimGoal(this));
 //    this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
 //    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
-//    this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
-//    this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
+    this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
 //    this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp());
 //    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
   }
@@ -58,94 +68,108 @@ public class HydraEntity extends MonsterEntity {
   @Override
   public void livingTick() {
     super.livingTick();
-  
-    final int numParts = hydraHeads.size();
-    HydraHeadEntity part;
     
-    // get the positions for each part
-    Vector3d[] partPrevPos = new Vector3d[numParts];
-    for (int j = 0; j < numParts; ++j) {
-      partPrevPos[j] = new Vector3d(hydraHeads.get(j).getPosX(), hydraHeads.get(j).getPosY(), hydraHeads.get(j).getPosZ());
-    }
-    // move each part
-    updatePartPositions();    
-    // update previous positions for each part
-    Vector3d partPos;
-    for(int l = 0; l < numParts; ++l) {
-      part = hydraHeads.get(l);
-      partPos = partPrevPos[l];
-      part.prevPosX = partPos.x;
-      part.prevPosY = partPos.y;
-      part.prevPosZ = partPos.z;
-      part.lastTickPosX = partPos.x;
-      part.lastTickPosY = partPos.y;
-      part.lastTickPosZ = partPos.z;
-   }
-  }
-  
-  // Parts //
-  
-  public List<HydraHeadEntity> getHydraHeads() {
-    return hydraHeads;
-  }
-  
-  public void updatePartPositions() {
-    HydraHeadEntity part;
-    if(hydraHeads != null) {
-      for(int k = 0, l = hydraHeads.size(); k < l; ++k) {
-        part = hydraHeads.get(k);
-        setPartPosition(part, 0.5D * k, 0.6D, -1.0D);
+    if(!getPassengers().isEmpty() && !world.isRemote()) {
+      // determine if all heads are charred
+      int charred = 0;
+      HydraHeadEntity head;
+      for(final Entity entity : getPassengers()) {
+        head = (HydraHeadEntity)entity;
+        if(head.isCharred()) {
+          charred++;
+        }
+      }
+      // if all heads are charred, kill the hydra; otherwise, heal the hydra
+      if(charred == getHeads()) {
+        this.attackEntityFrom(DamageSource.STARVE, 50.0F);
+      } else if(getHealth() < getMaxHealth() && rand.nextFloat() < 0.125F){
+        heal(1.0F * (getHeads() - charred));
       }
     }
   }
   
-  private void setPartPosition(HydraHeadEntity part, double offsetX, double offsetY, double offsetZ) {
-    part.setPosition(this.getPosX() + offsetX, this.getPosY() + offsetY, this.getPosZ() + offsetZ);
-    part.velocityChanged = true;
+  @Override
+  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+      @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+    final ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    addHead(0);
+    addHead(1);
+    setChild(false);
+    return data;
   }
   
-  public boolean attackEntityPartFrom(HydraHeadEntity part, DamageSource source, float damage) {
-    return false; // TODO
+  // Heads //
+  
+  public int getHeads() { return getDataManager().get(HEADS).intValue(); }
+  
+  public void setHeads(final int heads) { getDataManager().set(HEADS, Byte.valueOf((byte)heads)); }
+  
+  /**
+   * Adds a head to this hydra
+   * @param id a unique id of the head
+   * @return the hydra head entity
+   */
+  public HydraHeadEntity addHead(final int id) {
+//    GreekFantasy.LOGGER.debug("Adding head with id " + id);
+    HydraHeadEntity head =  GFRegistry.HYDRA_HEAD_ENTITY.create(getEntityWorld());
+    if(!world.isRemote() && head != null) {
+      head.setLocationAndAngles(getPosX(), getPosY(), getPosZ(), 0, 0);
+      // add the entity to the world
+      world.addEntity(head);
+      // update the entity data
+      head.setPartId(id);
+      if(head.startRiding(this)) {
+        // increase the number of heads
+        setHeads(getHeads() + 1);
+      } else {
+        head.remove();
+      }
+    }
+    return head;
+  }
+  
+  @Override
+  protected void removePassenger(Entity passenger) {
+    super.removePassenger(passenger);
+    setHeads(Math.max(0, getHeads() - 1));
+  }
+  
+  @Override
+  public void removePassengers() {
+    super.removePassengers();
+    setHeads(0);
   }
   
   @Override
   public void remove() {
     super.remove();
-    for(final HydraHeadEntity e : hydraHeads) {
-      e.remove();
+    for(final Entity e : getPassengers()) {
+      if(e.getType() == GFRegistry.HYDRA_HEAD_ENTITY) {
+        e.remove();
+      }
     }
   }
   
   @Override
-  public void setPosition(double x, double y, double z) {
-    super.setPosition(x, y, z);
-    updatePartPositions();
-  }
+  protected boolean canBeRidden(Entity entityIn) { return false; }
   
   @Override
-  public void setMotion(Vector3d motionIn) {
-    super.setMotion(motionIn);
-    //updatePartPositions();
-  }
-  
-  @Override
-  public void move(MoverType typeIn, Vector3d pos) {
-    super.move(typeIn, pos);
-    for(int k = 0, l = hydraHeads.size(); k < l; ++k) {
-      hydraHeads.get(k).move(typeIn, pos);
-    }
-  }
-  
+  protected boolean canFitPassenger(Entity passenger) { return this.getPassengers().size() < MAX_HEADS; }
 
-  /**
-   * Gets the bounding box of this Entity, adjusted to take auxiliary entities into account (e.g. the tile contained by
-   * a minecart, such as a command block).
-   */
-  @OnlyIn(Dist.CLIENT)
-  public AxisAlignedBB getRenderBoundingBox() {
-    float f = 1.0F;
-    return super.getRenderBoundingBox().grow(f, f, f);
+  public void updatePassenger(Entity passenger, int id, Entity.IMoveCallback callback) {
+    if (this.isPassenger(passenger)) {
+      double radius = getWidth() * 0.5D;
+      // Math.cos(Math.toRadians(rotationYawHead)) * 
+      double wid = ((double)getHeads() * 0.5D - (double)id) * 0.85D;
+      double dx = this.getPosX() + radius * Math.cos(wid / Math.PI);
+      double dy = this.getPosY() + this.getMountedYOffset() + passenger.getYOffset();
+      double dz = this.getPosZ() + radius * Math.sin(wid / Math.PI);
+      callback.accept(passenger, dx, dy, dz);
+    }
   }
+  
+  @Override
+  public double getMountedYOffset() { return super.getMountedYOffset(); }
   
   // Sounds //
   
@@ -168,11 +192,12 @@ public class HydraEntity extends MonsterEntity {
   @Override
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
+    compound.putByte(KEY_HEADS, (byte)getHeads());
   }
 
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
-    
+    setHeads((int)compound.getByte(KEY_HEADS));    
   }
 }

@@ -31,6 +31,8 @@ public class HydraModel<T extends HydraEntity> extends EntityModel<T> {
   public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     curse.rotateAngleZ = (entity.getEntityId() + ageInTicks) * 0.3425F;
     inside.rotateAngleZ = -curse.rotateAngleZ;
+    curse.rotateAngleX = headPitch * 0.017453292F;
+    curse.rotateAngleY = netHeadYaw * 0.017453292F;
   }
 
   @Override
