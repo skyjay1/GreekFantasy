@@ -7,7 +7,6 @@ import greekfantasy.entity.HydraHeadEntity;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
 
 public class HydraHeadModel<T extends HydraHeadEntity> extends EntityModel<T> {
   
@@ -28,47 +27,47 @@ public class HydraHeadModel<T extends HydraHeadEntity> extends EntityModel<T> {
     textureWidth = 64;
     textureHeight = 32;
 
+    neckSevered = new ModelRenderer(this);
+    neckSevered.setRotationPoint(0.0F, 24.0F, 1.0F);
+    neckSevered.setTextureOffset(0, 16).addBox(-2.0F, -9.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
+    neckSevered.setTextureOffset(25, 22).addBox(-1.0F, -8.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
+
     neck = new ModelRenderer(this);
-    neck.setRotationPoint(0.0F, 22.0F, 0.0F);
+    neck.setRotationPoint(0.0F, 22.0F, 0.0F); // neck.setRotationPoint(0.0F, 22.0F, 4.0F);
 
     neck1 = new ModelRenderer(this);
     neck1.setRotationPoint(0.0F, 2.0F, -3.0F);
-    neck1.rotateAngleX = 0.7854F;
-    neck1.setTextureOffset(0, 18).addBox(-2.0F, -7.0F, 0.0F, 4.0F, 8.0F, 6.0F, 0.0F, false);
-    neck1.setTextureOffset(25, 24).addBox(-1.0F, -6.0F, 6.0F, 2.0F, 6.0F, 2.0F, 0.0F, false);
+    neck1.rotateAngleX = 0.5236F;
+    neck1.setTextureOffset(0, 16).addBox(-2.0F, -9.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
+    neck1.setTextureOffset(25, 22).addBox(-1.0F, -8.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
     neck.addChild(neck1);
-    
-    neckSevered = new ModelRenderer(this);
-    neckSevered.setRotationPoint(0.0F, 24.0F, 1.0F);
-    neckSevered.setTextureOffset(0, 18).addBox(-2.0F, -7.0F, 0.0F, 4.0F, 8.0F, 6.0F, -0.01F, false);
-    neckSevered.setTextureOffset(25, 24).addBox(-1.0F, -6.0F, 6.0F, 2.0F, 6.0F, 2.0F, -0.01F, false);
 
     neck2 = new ModelRenderer(this);
-    neck2.setRotationPoint(0.0F, -7.0F, 0.0F);
+    neck2.setRotationPoint(0.0F, -9.0F, 0.0F);
     neck2.rotateAngleX = -0.3491F;
-    neck2.setTextureOffset(0, 18).addBox(-2.01F, -7.0F, 0.0F, 4.0F, 8.0F, 6.0F, 0.0F, false);
-    neck2.setTextureOffset(25, 24).addBox(-1.0F, -7.0F, 6.0F, 2.0F, 6.0F, 2.0F, 0.0F, false);
+    neck2.setTextureOffset(0, 16).addBox(-2.01F, -10.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
+    neck2.setTextureOffset(25, 22).addBox(-1.0F, -10.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
     neck1.addChild(neck2);
 
     neck3 = new ModelRenderer(this);
-    neck3.setRotationPoint(0.0F, -7.0F, 0.0F);
-    neck3.rotateAngleX = -0.3491F;
-    neck3.setTextureOffset(0, 18).addBox(-2.0F, -7.0F, 0.0F, 4.0F, 8.0F, 6.0F, 0.0F, false);
-    neck3.setTextureOffset(25, 24).addBox(-1.0F, -7.0F, 6.0F, 2.0F, 6.0F, 2.0F, 0.0F, false);
+    neck3.setRotationPoint(0.0F, -10.0F, 0.0F);
+    neck3.rotateAngleX = -0.1745F;
+    neck3.setTextureOffset(0, 16).addBox(-2.0F, -10.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
+    neck3.setTextureOffset(25, 22).addBox(-1.0F, -9.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
     neck2.addChild(neck3);
 
     head = new ModelRenderer(this);
-    head.setRotationPoint(0.0F, -6.0F, 3.0F);
+    head.setRotationPoint(0.0F, -9.0F, 3.0F);
+    neck3.addChild(head);
     head.setTextureOffset(0, 0).addBox(-3.0F, -8.0F, -4.0F, 6.0F, 8.0F, 8.0F, 0.0F, false);
     head.setTextureOffset(33, 0).addBox(-3.0F, -4.0F, -10.0F, 6.0F, 3.0F, 6.0F, 0.0F, false);
-    head.setTextureOffset(15, 16).addBox(-2.5F, -3.25F, -9.5F, 5.0F, 3.0F, 4.0F, 0.0F, false);
-    head.setTextureOffset(34, 22).addBox(-1.0F, -8.0F, 4.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
-    neck3.addChild(head);
+    head.setTextureOffset(38, 25).addBox(-2.5F, -3.25F, -9.5F, 5.0F, 3.0F, 4.0F, 0.0F, false);
+    head.setTextureOffset(25, 22).addBox(-1.0F, -8.0F, 4.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
 
     mouth = new ModelRenderer(this);
     mouth.setRotationPoint(0.0F, -1.0F, -4.0F);
-    head.addChild(mouth);
     mouth.setTextureOffset(33, 9).addBox(-3.0F, 0.0F, -6.0F, 6.0F, 1.0F, 6.0F, 0.0F, false);
+    head.addChild(mouth);
 
     ModelRenderer leftHorn = new ModelRenderer(this);
     leftHorn.setRotationPoint(3.0F, -6.0F, 1.0F);
@@ -77,17 +76,17 @@ public class HydraHeadModel<T extends HydraHeadEntity> extends EntityModel<T> {
     head.addChild(leftHorn);
 
     ModelRenderer leftHorn2 = new ModelRenderer(this);
-    leftHorn2.setRotationPoint(1.0F, -3.0F, 0.0F);
+    leftHorn2.setRotationPoint(0.0F, -3.0F, 0.0F);
     leftHorn2.rotateAngleX = 0.5236F;
     leftHorn2.rotateAngleY = 0.0873F;
-    leftHorn2.setTextureOffset(56, 22).addBox(-3.0F, -3.0F, -2.0F, 2.0F, 3.0F, 2.0F, 0.0F, false);
+    leftHorn2.setTextureOffset(56, 22).addBox(-2.0F, -3.0F, -2.0F, 2.0F, 3.0F, 2.0F, 0.0F, false);
     leftHorn.addChild(leftHorn2);
 
     ModelRenderer leftHorn3 = new ModelRenderer(this);
     leftHorn3.setRotationPoint(0.0F, -3.0F, 0.0F);
     leftHorn3.rotateAngleX = 1.0472F;
     leftHorn3.rotateAngleY = 0.0873F;
-    leftHorn3.setTextureOffset(56, 17).addBox(-3.0F, -4.0F, -1.0F, 2.0F, 4.0F, 1.0F, 0.0F, false);
+    leftHorn3.setTextureOffset(56, 17).addBox(-2.0F, -4.0F, -1.0F, 2.0F, 4.0F, 1.0F, 0.0F, false);
     leftHorn2.addChild(leftHorn3);
 
     ModelRenderer rightHorn1 = new ModelRenderer(this);
@@ -128,16 +127,16 @@ public class HydraHeadModel<T extends HydraHeadEntity> extends EntityModel<T> {
     neckSevered.rotateAngleX = neck1.rotateAngleX + neck.rotateAngleX;
     neckSevered.rotateAngleY = neck1.rotateAngleY + neck.rotateAngleY;
     neckSevered.rotateAngleZ = neck1.rotateAngleZ + neck.rotateAngleZ;
-    neckSevered.setRotationPoint(neck.rotationPointX, neck.rotationPointY + 1, neck.rotationPointZ - 3);
+    neckSevered.setRotationPoint(neck.rotationPointX, neck.rotationPointY + 2, neck.rotationPointZ - 3);
   }
 
   @Override
   public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
     final float idleSwingCos = MathHelper.cos((21 * entityIn.getEntityId() + entityIn.ticksExisted + partialTick) * 0.22F);
     mouth.rotateAngleX = (0.2618F + 0.08F * idleSwingCos);
-//    neck1.rotateAngleX = 0.7854F + idleSwingCos * 0.04F;
+//    neck1.rotateAngleX = 0.5236F + idleSwingCos * 0.04F;
     neck2.rotateAngleX = -0.3491F + idleSwingCos * 0.04F;
-    neck3.rotateAngleX = -0.3491F + idleSwingCos * 0.02F;
+    neck3.rotateAngleX = -0.1745F + idleSwingCos * 0.02F;
   }
 
   @Override

@@ -17,6 +17,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -104,6 +105,13 @@ public class HydraHeadEntity extends MonsterEntity {
     // recalculate size
     if(isCharred() || isSevered()) {
       recalculateSize();
+    }
+    
+    if(isCharred() && world.isRemote() && rand.nextInt(5) == 0) {
+      world.addParticle(ParticleTypes.SMOKE, 
+          getPosX() + (rand.nextDouble() - 0.5D) * getWidth(), 
+          getPosY() + getHeight(), 
+          getPosZ() + (rand.nextDouble() - 0.5D) * getWidth(), 0.0D, 0.0D, 0.0D);
     }
     
     super.tick();

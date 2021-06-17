@@ -343,6 +343,7 @@ public class FavorEventHandler {
   public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
     if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity 
         && event.getTarget() instanceof PlayerEntity
+		&& event.getTarget().getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()).isEnabled()
         && GreekFantasy.PROXY.getFavorConfiguration().hasEntity(event.getEntityLiving().getType())
         && !GreekFantasy.PROXY.getFavorConfiguration().getEntity(event.getEntityLiving().getType()).getHostileRange().isInFavorRange((PlayerEntity)event.getTarget())
         && event.getTarget() != event.getEntityLiving().getRevengeTarget()) {

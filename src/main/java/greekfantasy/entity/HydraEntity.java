@@ -11,6 +11,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -61,7 +62,7 @@ public class HydraEntity extends MonsterEntity {
 //    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
-//    this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp());
+    this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
 //    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
   }
   
@@ -159,17 +160,19 @@ public class HydraEntity extends MonsterEntity {
   public void updatePassenger(Entity passenger, int id, Entity.IMoveCallback callback) {
     if (this.isPassenger(passenger)) {
       double radius = getWidth() * 0.5D;
+      double heads = (double)getHeads();
       // Math.cos(Math.toRadians(rotationYawHead)) * 
-      double wid = ((double)getHeads() * 0.5D - (double)id) * 0.85D;
-      double dx = this.getPosX() + radius * Math.cos(wid / Math.PI);
+      double wid = (heads * 0.5D - (double)id) * 0.85D;
+      double angleOff = Math.toRadians(this.rotationYaw) + Math.PI / 2.0D;
+      double dx = this.getPosX() + radius * Math.cos(wid / Math.PI + angleOff);
       double dy = this.getPosY() + this.getMountedYOffset() + passenger.getYOffset();
-      double dz = this.getPosZ() + radius * Math.sin(wid / Math.PI);
+      double dz = this.getPosZ() + radius * Math.sin(wid / Math.PI + angleOff);
       callback.accept(passenger, dx, dy, dz);
     }
   }
   
   @Override
-  public double getMountedYOffset() { return super.getMountedYOffset(); }
+  public double getMountedYOffset() { return super.getMountedYOffset() + 0.32D; }
   
   // Sounds //
   
