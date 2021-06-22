@@ -137,13 +137,13 @@ public class FavorEventHandler {
    */
   @SubscribeEvent
   public static void onPlayerClone(final PlayerEvent.Clone event) {
-    if(event.isWasDeath()) {
+    // if(event.isWasDeath()) { // remove this to fix issue #61
       LazyOptional<IFavor> original = event.getOriginal().getCapability(GreekFantasy.FAVOR);
       LazyOptional<IFavor> copy = event.getPlayer().getCapability(GreekFantasy.FAVOR);
       if(original.isPresent() && copy.isPresent()) {
         copy.ifPresent(f -> f.deserializeNBT(original.orElseGet(() -> GreekFantasy.FAVOR.getDefaultInstance()).serializeNBT()));
       }
-    }
+    // }
   }
   
   /**

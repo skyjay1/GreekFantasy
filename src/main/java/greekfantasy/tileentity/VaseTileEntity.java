@@ -41,7 +41,9 @@ public class VaseTileEntity extends TileEntity implements IClearable, IInventory
 
   private void inventoryChanged() {
     this.markDirty();
-    this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+    if(getWorld() != null) {
+      getWorld().notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 2);
+    }
   }
 
   public void dropAllItems() {

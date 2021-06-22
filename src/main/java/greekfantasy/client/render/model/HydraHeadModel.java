@@ -117,13 +117,7 @@ public class HydraHeadModel<T extends HydraHeadEntity> extends EntityModel<T> {
     // rotate head angles
     head.rotateAngleX = headPitch * ((float)Math.PI / 180F);
     head.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F);
-//    neck.setRotationPoint(0.0F, 22.0F, 0.0F);
-//    neck1.setRotationPoint(0, 2, -3);
-//    neck.rotateAngleX = MathHelper.sin(ageInTicks * 0.05F) * 0.25F;
-//    neck.rotateAngleX = entityIn.rotationPitch * 0.017453292F;
-//    neck.rotateAngleY = entityIn.rotationYaw * 0.017453292F;
-//    neck.rotateAngleY = (float) Math.toRadians(-90.0D);
-//    neck.rotateAngleY = 0;
+    // copy head angles to severed portion
     neckSevered.rotateAngleX = neck1.rotateAngleX + neck.rotateAngleX;
     neckSevered.rotateAngleY = neck1.rotateAngleY + neck.rotateAngleY;
     neckSevered.rotateAngleZ = neck1.rotateAngleZ + neck.rotateAngleZ;
@@ -133,8 +127,13 @@ public class HydraHeadModel<T extends HydraHeadEntity> extends EntityModel<T> {
   @Override
   public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
     final float idleSwingCos = MathHelper.cos((21 * entityIn.getEntityId() + entityIn.ticksExisted + partialTick) * 0.22F);
-    mouth.rotateAngleX = (0.2618F + 0.08F * idleSwingCos);
-//    neck1.rotateAngleX = 0.5236F + idleSwingCos * 0.04F;
+    // used to move the entire neck in a swinging motion (bite attack)
+    final float swingPercent = entityIn.getSwingProgress(partialTick);
+    // alternative that does not use cos: swing = 2.0D * Math.min(swingPercent - 0.5D, -(swingPercent - 0.5D)) + 1.0D;
+    final float swing = MathHelper.cos((swingPercent - 0.5F) * (float)Math.PI);
+    // animate mouth and neck parts
+    mouth.rotateAngleX = (0.2618F + 0.45F * swing + 0.08F * idleSwingCos);
+    neck1.rotateAngleX = 0.5236F + swing * 0.78F;
     neck2.rotateAngleX = -0.3491F + idleSwingCos * 0.04F;
     neck3.rotateAngleX = -0.1745F + idleSwingCos * 0.02F;
   }
@@ -154,7 +153,6 @@ public class HydraHeadModel<T extends HydraHeadEntity> extends EntityModel<T> {
       // render neck (and all children)
       neck.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
     }
-//    matrixStackIn.translate(0, -1.0D, 0);
   }
   
   public void setSpawnPercent(final float spawnPercentIn) { spawnPercent = spawnPercentIn; }

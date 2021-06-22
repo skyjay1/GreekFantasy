@@ -3,7 +3,6 @@ package greekfantasy.entity;
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
-import greekfantasy.GreekFantasy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
@@ -14,6 +13,8 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.MoveTowardsTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,7 +45,7 @@ public class HydraEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.MAX_HEALTH, 200.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.0D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.6D)
+        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.66D)
         .createMutableAttribute(Attributes.ARMOR, 5.0D);
   }
   
@@ -58,7 +59,7 @@ public class HydraEntity extends MonsterEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(1, new SwimGoal(this));
-//    this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
+    this.goalSelector.addGoal(4, new MoveTowardsTargetGoal(this, 1.0D, (float)getAttribute(Attributes.FOLLOW_RANGE).getBaseValue()));
 //    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
@@ -161,9 +162,11 @@ public class HydraEntity extends MonsterEntity {
     if (this.isPassenger(passenger)) {
       double radius = getWidth() * 0.5D;
       double heads = (double)getHeads();
-      // Math.cos(Math.toRadians(rotationYawHead)) * 
+      // the distance between heads
       double wid = (heads * 0.5D - (double)id) * 0.85D;
+      // the angle to add based on hydra rotation yaw
       double angleOff = Math.toRadians(this.rotationYaw) + Math.PI / 2.0D;
+      // determine x,y,z position for the head
       double dx = this.getPosX() + radius * Math.cos(wid / Math.PI + angleOff);
       double dy = this.getPosY() + this.getMountedYOffset() + passenger.getYOffset();
       double dz = this.getPosZ() + radius * Math.sin(wid / Math.PI + angleOff);

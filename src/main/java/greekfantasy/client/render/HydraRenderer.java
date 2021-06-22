@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 public class HydraRenderer<T extends HydraEntity> extends MobRenderer<T, HydraModel<T>> {
   
   private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/hydra/hydra_body.png");
-  private static final float SCALE = 1.25F;
+  private static final float SCALE = 1.35F;
   
   
   public HydraRenderer(final EntityRendererManager renderManagerIn) {

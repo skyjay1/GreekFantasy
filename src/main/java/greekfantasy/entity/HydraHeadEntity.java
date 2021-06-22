@@ -1,14 +1,19 @@
 package greekfantasy.entity;
 
+import java.util.EnumSet;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.MonsterEntity;
@@ -19,7 +24,8 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -57,7 +63,7 @@ public class HydraHeadEntity extends MonsterEntity {
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
     return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 16.0D)
+        .createMutableAttribute(Attributes.MAX_HEALTH, 22.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D);
   }
@@ -73,11 +79,11 @@ public class HydraHeadEntity extends MonsterEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(1, new SwimGoal(this));
-//    this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
+    this.goalSelector.addGoal(4, new HydraHeadEntity.BiteAttackGoal());
 //    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
 //    this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
-//    this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp());
+//    this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
 //    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
   }
   
@@ -126,13 +132,14 @@ public class HydraHeadEntity extends MonsterEntity {
   
   @Override
   public void onDeath(DamageSource cause) {
-    // set this head to "severed"
-    setSevered();
-    // either set this head to "charred" or add another head that is currently "severed"
+    // set state to "charred" or "severed" depending on fire timer
     if(this.getFireTimer() > 0) {
       setNoAI(true);
       setCharred();
     } else {
+      // set this head to "severed"
+      this.setSevered();
+      // create another head that is currently "severed"
       HydraHeadEntity head = getHydra().addHead(getHydra().getHeads());
       head.setSevered();
     }
@@ -206,7 +213,6 @@ public class HydraHeadEntity extends MonsterEntity {
 
   public void setNormal() { setHeadState(NORMAL); }
   public void setCharred() { setHeadState(CHARRED); } 
-
   public void setSevered() { 
     setHeadState(SEVERED);
     severedTime = 1;
@@ -270,5 +276,92 @@ public class HydraHeadEntity extends MonsterEntity {
   @OnlyIn(Dist.CLIENT)
   public float getSpawnPercent() {
     return growTime > 0 ? (float)growTime / (float)maxGrowTime : 1.0F;
+  }
+  
+  // Goals //
+  
+  protected class BiteAttackGoal extends Goal {
+    private final int attackInterval = 20;
+
+    private int swingCooldown;
+    private long lastCheckTime;
+
+    public BiteAttackGoal() {
+      super();
+      this.setMutexFlags(EnumSet.of(Goal.Flag.LOOK));
+    }
+
+    @Override
+    public boolean shouldExecute() {
+      long i = HydraHeadEntity.this.world.getGameTime();
+      // do not execute if timer is too recent or head is severed/charred
+      if (i - this.lastCheckTime < attackInterval || !HydraHeadEntity.this.isNormal()) {
+        return false;
+      } else {
+        this.lastCheckTime = i;
+        LivingEntity livingentity = HydraHeadEntity.this.getAttackTarget();
+        if (livingentity == null) {
+          return false;
+        } else if (!livingentity.isAlive()) {
+          return false;
+        } else {
+          return this.getAttackReachSqr(livingentity) >= HydraHeadEntity.this.getDistanceSq(livingentity.getPosX(),
+                livingentity.getPosY(), livingentity.getPosZ());
+        }
+      }
+    }
+
+    @Override
+    public boolean shouldContinueExecuting() {
+      LivingEntity livingentity = HydraHeadEntity.this.getAttackTarget();
+      if (livingentity == null) {
+        return false;
+      } else if (!livingentity.isAlive()) {
+        return false;
+      } else {
+        return EntityPredicates.CAN_HOSTILE_AI_TARGET.test(livingentity);
+      }
+    }
+
+    @Override
+    public void startExecuting() {
+      HydraHeadEntity.this.setAggroed(true);
+      this.swingCooldown = 0;
+    }
+
+    @Override
+    public void tick() {
+      LivingEntity livingentity = HydraHeadEntity.this.getAttackTarget();
+      HydraHeadEntity.this.getLookController().setLookPositionWithEntity(livingentity, 30.0F, 30.0F);
+      double d0 = HydraHeadEntity.this.getDistanceSq(livingentity.getPosX(), livingentity.getPosY(), livingentity.getPosZ());
+      
+      this.swingCooldown = Math.max(this.swingCooldown - 1, 0);
+      this.checkAndPerformAttack(livingentity, d0);
+    }
+
+    @Override
+    public void resetTask() {
+      LivingEntity livingentity = HydraHeadEntity.this.getAttackTarget();
+      if (!EntityPredicates.CAN_AI_TARGET.test(livingentity)) {
+        HydraHeadEntity.this.setAttackTarget((LivingEntity) null);
+      }
+
+      HydraHeadEntity.this.setAggroed(false);
+    }
+
+    protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
+      double d0 = this.getAttackReachSqr(enemy);
+      if (distToEnemySqr <= d0 && this.swingCooldown <= 0) {
+        this.swingCooldown = attackInterval;
+        HydraHeadEntity.this.swingArm(Hand.MAIN_HAND);
+        HydraHeadEntity.this.attackEntityAsMob(enemy);
+      }
+
+    }
+    
+    protected double getAttackReachSqr(LivingEntity attackTarget) {
+      return (double) (HydraHeadEntity.this.getWidth() * 4.5F * HydraHeadEntity.this.getWidth() * 4.5F + attackTarget.getWidth());
+    }
+
   }
 }
