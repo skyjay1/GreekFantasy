@@ -18,7 +18,6 @@ public class ArachneEyesLayer<T extends ArachneEntity> extends AbstractEyesLayer
 
   @Override
   public RenderType getRenderType() {
-//    return RenderType.getEntityCutout(new ResourceLocation(GreekFantasy.MODID, "textures/entity/arachne/arachne_eyes.png"));
     return RENDER_TYPE;
   }
 

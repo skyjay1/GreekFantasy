@@ -1,17 +1,6 @@
 package greekfantasy;
 
-import greekfantasy.feature.AraCampFeature;
-import greekfantasy.feature.CyclopesCaveFeature;
-import greekfantasy.feature.GoldenAppleTree;
-import greekfantasy.feature.HarpyNestFeature;
-import greekfantasy.feature.LionDenFeature;
-import greekfantasy.feature.OliveTree;
-import greekfantasy.feature.OliveTreeFeature;
-import greekfantasy.feature.PythonPitFeature;
-import greekfantasy.feature.ReedsFeature;
-import greekfantasy.feature.SatyrCampFeature;
-import greekfantasy.feature.SmallNetherShrineFeature;
-import greekfantasy.feature.SmallShrineFeature;
+import greekfantasy.feature.*;
 import greekfantasy.util.BiomeWhitelistConfig;
 import net.minecraft.entity.EntityType;
 import net.minecraft.tags.BlockTags;
@@ -72,6 +61,8 @@ public final class GFWorldGen {
   public static final Feature<NoFeatureConfig> PYTHON_PIT_FEATURE = null;
   @ObjectHolder(MODID + ":lion_den")
   public static final Feature<NoFeatureConfig> LION_DEN_FEATURE = null;
+  @ObjectHolder(MODID + ":arachne_pit")
+  public static final Feature<NoFeatureConfig> ARACHNE_PIT_FEATURE = null;
   @ObjectHolder(MODID + ":olive_tree")
   public static final Feature<BaseTreeFeatureConfig> OLIVE_TREE_FEATURE = null;
   @ObjectHolder(MODID + ":golden_apple_tree")
@@ -93,6 +84,7 @@ public final class GFWorldGen {
   private static ConfiguredFeature<?, ?> ARA_CAMP;
   private static ConfiguredFeature<?, ?> SATYR_CAMP;
   private static ConfiguredFeature<?, ?> LION_DEN;
+  private static ConfiguredFeature<?, ?> ARACHNE_PIT;
   private static ConfiguredFeature<?, ?> PYTHON_PIT;
   private static ConfiguredFeature<?, ?> OLIVE_TREE_SINGLE;
   private static ConfiguredFeature<?, ?> OLIVE_TREE_FOREST;
@@ -131,6 +123,8 @@ public final class GFWorldGen {
           .setRegistryName(MODID, "python_pit"),
         new LionDenFeature(NoFeatureConfig.CODEC)
           .setRegistryName(MODID, "lion_den"),
+        new ArachnePitFeature(NoFeatureConfig.CODEC)
+          .setRegistryName(MODID, "arachne_pit"),
         new OliveTreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(MODID, "olive_tree"),
         new TreeFeature(BaseTreeFeatureConfig.CODEC)
@@ -182,6 +176,9 @@ public final class GFWorldGen {
         .chance(2).withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     PYTHON_PIT = registerFeature("python_pit",
         PYTHON_PIT_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
+        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+    ARACHNE_PIT = registerFeature("arachne_pit",
+        ARACHNE_PIT_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG).chance(3)
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     OLIVE_TREE_SINGLE = registerFeature("olive_tree_single", 
         OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).count(40));
@@ -235,7 +232,8 @@ public final class GFWorldGen {
       addFeature(event, "ara_camp",GenerationStage.Decoration.SURFACE_STRUCTURES, ARA_CAMP);
       addFeature(event, "satyr_camp", GenerationStage.Decoration.SURFACE_STRUCTURES, SATYR_CAMP);
       addFeature(event, "lion_den", GenerationStage.Decoration.SURFACE_STRUCTURES, LION_DEN);
-      addFeature(event, "python_pit", GenerationStage.Decoration.SURFACE_STRUCTURES, PYTHON_PIT);
+      addFeature(event, "python_pit", GenerationStage.Decoration.UNDERGROUND_STRUCTURES, PYTHON_PIT);
+      addFeature(event, "arachne_pit", GenerationStage.Decoration.UNDERGROUND_STRUCTURES, ARACHNE_PIT);
       addFeature(event, "reeds", GenerationStage.Decoration.VEGETAL_DECORATION, REEDS);
       addFeature(event, "olive_tree_single", GenerationStage.Decoration.VEGETAL_DECORATION, OLIVE_TREE_SINGLE);    
       addFeature(event, "reeds_swamp", GenerationStage.Decoration.VEGETAL_DECORATION, SWAMP_REEDS);

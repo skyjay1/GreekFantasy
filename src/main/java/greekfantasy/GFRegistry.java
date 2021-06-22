@@ -52,6 +52,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.BannerPatternItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Foods;
@@ -73,6 +74,7 @@ import net.minecraft.potion.Effects;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.potion.Potions;
+import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.HandSide;
@@ -225,6 +227,8 @@ public final class GFRegistry {
   public static final Item FIERY_GEAR = null;
   @ObjectHolder("golden_apple_of_discord")
   public static final Item GOLDEN_APPLE_OF_DISCORD = null;
+  @ObjectHolder("spider_banner_pattern")
+  public static final Item SPIDER_PATTERN = null;
   
   // Block //
   @ObjectHolder("reeds")
@@ -443,7 +447,7 @@ public final class GFRegistry {
   // Particle Type //
   @ObjectHolder("gorgon_face")
   public static final BasicParticleType GORGON_PARTICLE = new BasicParticleType(true);
-
+  
   protected static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
     @Override
     public ItemStack createIcon() { return new ItemStack(PANFLUTE); }
@@ -832,6 +836,12 @@ public final class GFRegistry {
         tooltip.add(new TranslationTextComponent("block.greekfantasy.mysterious_box.tooltip").mergeStyle(TextFormatting.ITALIC, TextFormatting.GRAY));
       }
     }.setRegistryName(MODID, "mysterious_box"));
+    
+    // banner pattern
+    final BannerPattern SPIDER_BANNER_PATTERN = BannerPattern.create("greekfantasy_spider", "greekfantasy_spider", "greekfantasy_spider", true);
+    event.getRegistry().register(new BannerPatternItem(SPIDER_BANNER_PATTERN, new Item.Properties()
+        .group(GREEK_GROUP).maxStackSize(1).rarity(Rarity.RARE))
+        .setRegistryName(MODID, "spider_banner_pattern"));
     
     // spawn eggs
     registerSpawnEgg(event, ARA_ENTITY, "ara", 0xffffff, 0xbbbbbb);

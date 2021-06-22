@@ -14,7 +14,7 @@ public class ArachneRenderer<T extends ArachneEntity> extends BipedRenderer<T, A
 
   public ArachneRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new ArachneModel<T>(0.0F), 0.8F);
-//    this.addLayer(new ArachneEyesLayer<>(this));
+    // this.addLayer(new ArachneEyesLayer<>(this)); // this was not working correctly...
   }
 
   @Override

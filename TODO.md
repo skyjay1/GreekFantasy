@@ -89,6 +89,7 @@ __Key:__
 __Key:__
 `[Design] [Worldgen] [Loot]`
 
+- X X ~ Arachne Pit
 - ~ _ _ Labyrinth
 - _ _ _ Centaur Camps
 - _ _ _ Ruined Temple

@@ -83,9 +83,10 @@ public class HydraEntity extends MonsterEntity {
       }
       // if all heads are charred, kill the hydra; otherwise, heal the hydra
       if(charred == getHeads()) {
-        this.attackEntityFrom(DamageSource.STARVE, 50.0F);
+        DamageSource source = this.getLastDamageSource();
+        attackEntityFrom(source != null ? source : DamageSource.STARVE, getMaxHealth() * 2.0F);
       } else if(getHealth() < getMaxHealth() && rand.nextFloat() < 0.125F){
-        heal(1.0F * (getHeads() - charred));
+        heal(1.25F * (getHeads() - charred));
       }
     }
   }
@@ -96,6 +97,7 @@ public class HydraEntity extends MonsterEntity {
     final ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     addHead(0);
     addHead(1);
+    addHead(2);
     setChild(false);
     return data;
   }
@@ -113,8 +115,8 @@ public class HydraEntity extends MonsterEntity {
    */
   public HydraHeadEntity addHead(final int id) {
 //    GreekFantasy.LOGGER.debug("Adding head with id " + id);
-    HydraHeadEntity head =  GFRegistry.HYDRA_HEAD_ENTITY.create(getEntityWorld());
-    if(!world.isRemote() && head != null) {
+    if(!world.isRemote()) {
+      HydraHeadEntity head =  GFRegistry.HYDRA_HEAD_ENTITY.create(getEntityWorld());
       head.setLocationAndAngles(getPosX(), getPosY(), getPosZ(), 0, 0);
       // add the entity to the world
       world.addEntity(head);
@@ -126,8 +128,9 @@ public class HydraEntity extends MonsterEntity {
       } else {
         head.remove();
       }
+      return head;
     }
-    return head;
+    return null;
   }
   
   @Override
@@ -163,7 +166,7 @@ public class HydraEntity extends MonsterEntity {
       double radius = getWidth() * 0.5D;
       double heads = (double)getHeads();
       // the distance between heads
-      double wid = (heads * 0.5D - (double)id) * 0.85D;
+      double wid = ((double)id - heads / 2.0D) * 0.85D;
       // the angle to add based on hydra rotation yaw
       double angleOff = Math.toRadians(this.rotationYaw) + Math.PI / 2.0D;
       // determine x,y,z position for the head
