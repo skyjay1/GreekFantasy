@@ -1,6 +1,6 @@
 {
   "name": "greekfantasy:aphrodite",
-  "enabled": false,
+  "enabled": true,
   "female": true,
   "base": "minecraft:quartz_slab",
   "right_hand": {

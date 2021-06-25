@@ -4,12 +4,18 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.render.SwineRenderer;
 import greekfantasy.entity.PegasusEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -80,6 +86,7 @@ public class ClientForgeEventHandler {
    **/
   @SubscribeEvent(priority = EventPriority.HIGH)
   public static void onPlayerTick(final PlayerTickEvent event) {
+    // winged sandals logic
     if(event.phase == TickEvent.Phase.START && event.side == LogicalSide.CLIENT && GreekFantasy.CONFIG.isOverstepEnabled() 
         && event.player instanceof ClientPlayerEntity) {
       final ClientPlayerEntity player = (ClientPlayerEntity)event.player;
@@ -144,6 +151,11 @@ public class ClientForgeEventHandler {
   /** @return whether the player should have the client-side overstep step-height logic applied **/
   private static boolean hasOverstep(final PlayerEntity player) {
     return EnchantmentHelper.getEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
+  }
+  
+  /** @return whether the player should have the client-side silkwalker step-height logic applied **/
+  private static boolean hasSilkwalker(final PlayerEntity player) {
+    return EnchantmentHelper.getEnchantmentLevel(GFRegistry.SILKWALKER_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
   }
   
   /** @return whether the entity should have the client-side stun/petrify FOV or particle effects **/

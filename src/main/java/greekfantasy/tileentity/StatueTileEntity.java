@@ -1,5 +1,7 @@
 package greekfantasy.tileentity;
 
+import java.util.Optional;
+
 import javax.annotation.Nullable;
 
 import com.mojang.authlib.GameProfile;
@@ -13,6 +15,7 @@ import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.FavorConfiguration;
 import greekfantasy.deity.favor.FavorRange;
 import greekfantasy.deity.favor.IFavor;
+import greekfantasy.event.FavorChangedEvent;
 import greekfantasy.util.ModelPart;
 import greekfantasy.util.StatuePose;
 import greekfantasy.util.StatuePoses;
@@ -201,6 +204,32 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
       ItemStack bow = new ItemStack(GFRegistry.ARTEMIS_BOW);
       bow.getItem().onCreated(bow, player.getEntityWorld(), player);
       return bow;
+    }
+    // attempt to handle apple of discord
+    IDeity aphrodite = GreekFantasy.PROXY.DEITY.get(new ResourceLocation(GreekFantasy.MODID, "aphrodite")).orElse(Deity.EMPTY);
+    IDeity athena = GreekFantasy.PROXY.DEITY.get(new ResourceLocation(GreekFantasy.MODID, "athena")).orElse(Deity.EMPTY);
+    IDeity hera = GreekFantasy.PROXY.DEITY.get(new ResourceLocation(GreekFantasy.MODID, "hera")).orElse(Deity.EMPTY);
+    if(item.getItem() == GFRegistry.GOLDEN_APPLE_OF_DISCORD && deity != Deity.EMPTY
+        && aphrodite.isEnabled() && athena.isEnabled() && hera.isEnabled()) {
+      // determine amount of favor to add/subtract
+      int dFavor = GreekFantasy.PROXY.getFavorConfiguration().getAppleOfDiscordAmount();
+      int dFavorMinus = -dFavor * 5 / 4;
+      int dAphrodite = dFavorMinus;
+      int dAthena = dFavorMinus;
+      int dHera = dFavorMinus;
+      if(deity.getName().equals(aphrodite.getName())) {
+        dAphrodite = dFavor;
+      } else if(deity.getName().equals(athena.getName())) {
+        dAthena = dFavor;
+      } else if(deity.getName().equals(hera.getName())) {
+        dHera = dFavor;
+      }
+      // actually update the favor
+      favor.getFavor(aphrodite).addFavor(player, aphrodite, dAphrodite, FavorChangedEvent.Source.GIVE_ITEM);
+      favor.getFavor(athena).addFavor(player, athena, dAthena, FavorChangedEvent.Source.GIVE_ITEM);
+      favor.getFavor(hera).addFavor(player, hera, dHera, FavorChangedEvent.Source.GIVE_ITEM);
+      item.shrink(1);
+      return item;
     }
     // return the original item
     return item;

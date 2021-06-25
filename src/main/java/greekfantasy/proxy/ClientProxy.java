@@ -13,6 +13,7 @@ import greekfantasy.client.render.tileentity.MobHeadTileEntityRenderer;
 import greekfantasy.client.render.tileentity.StatueTileEntityRenderer;
 import greekfantasy.client.render.tileentity.VaseTileEntityRenderer;
 import greekfantasy.entity.misc.DragonToothEntity;
+import greekfantasy.entity.misc.WebBallEntity;
 import greekfantasy.entity.misc.DiscusEntity;
 import greekfantasy.event.ClientForgeEventHandler;
 import greekfantasy.event.ClientModEventHandler;
@@ -48,6 +49,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ARA_ENTITY, AraRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ARACHNE_ENTITY, ArachneRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.ARION_ENTITY, ArionRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.BABY_SPIDER_ENTITY, BabySpiderRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.BRONZE_BULL_ENTITY, BronzeBullRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.TALOS_ENTITY, TalosRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.CENTAUR_ENTITY, CentaurRenderer::new);
@@ -92,6 +94,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SPEAR_ENTITY, SpearRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.SWINE_SPELL_ENTITY, SwineSpellRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.UNICORN_ENTITY, UnicornRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.WEB_BALL_ENTITY,  m -> new SpriteRenderer<WebBallEntity>(m, Minecraft.getInstance().getItemRenderer()));
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.WHIRL_ENTITY, WhirlRenderer::new);
   }
   

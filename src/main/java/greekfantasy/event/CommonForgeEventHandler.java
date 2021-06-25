@@ -27,7 +27,9 @@ import greekfantasy.network.SFavorConfigurationPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -61,6 +63,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -161,8 +164,8 @@ public class CommonForgeEventHandler {
    * @param event the PlayerTickEvent
    **/
   @SubscribeEvent
-  public static void onLivingTick(final PlayerTickEvent event) {
-    if((event.phase == TickEvent.Phase.END) && event.player.isAlive()) {
+  public static void onPlayerTick(final PlayerTickEvent event) {
+    if(event.phase == TickEvent.Phase.START && event.player.isAlive()) {
       // Update Nemean Lion riding pose
       final boolean isRidingLion = event.player.getRidingEntity() instanceof NemeanLionEntity;
       final Pose currentPose = event.player.getForcedPose();
@@ -202,6 +205,37 @@ public class CommonForgeEventHandler {
         } else if(!isSwine && Pose.FALL_FLYING == forcedPose) {
           // clear the forced pose
           event.player.setForcedPose(null);
+        }
+      }
+      
+      // update silkwalker enchantment
+      if(GreekFantasy.CONFIG.isSilkwalkerEnabled()
+          && hasSilkwalker(event.player) && !event.player.abilities.isFlying 
+          && event.player.motionMultiplier != Vector3d.ZERO) {
+        // this variable will become true if the player is collided with a cobweb
+        boolean cobweb = false;
+        // check all blocks within player's bounding box
+        AxisAlignedBB axisalignedbb = event.player.getBoundingBox();
+        BlockPos blockpos = new BlockPos(axisalignedbb.minX + 0.001D, axisalignedbb.minY + 0.001D, axisalignedbb.minZ + 0.001D);
+        BlockPos blockpos1 = new BlockPos(axisalignedbb.maxX - 0.001D, axisalignedbb.maxY - 0.001D, axisalignedbb.maxZ - 0.001D);
+        BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
+        if (event.player.world.isAreaLoaded(blockpos, blockpos1)) {
+          entryloop: 
+          for (int i = blockpos.getX(); i <= blockpos1.getX(); ++i) {
+            for (int j = blockpos.getY(); j <= blockpos1.getY(); ++j) {
+              for (int k = blockpos.getZ(); k <= blockpos1.getZ(); ++k) {
+                blockpos$mutable.setPos(i, j, k);
+                // if the block is a cobweb, exit the loops and change the motion multiplier
+                if (event.player.world.getBlockState(blockpos$mutable).matchesBlock(Blocks.COBWEB)) {
+                  cobweb = true;
+                  break entryloop;
+                }
+              }
+            }
+          }
+          if (cobweb) {
+            event.player.motionMultiplier = Vector3d.ZERO;
+          }
         }
       }
       
@@ -569,5 +603,10 @@ public class CommonForgeEventHandler {
   /** @return whether the entity should have the Swine effect applied **/
   private static boolean isSwine(final LivingEntity livingEntity) {
     return livingEntity.isPotionActive(GFRegistry.SWINE_EFFECT);
+  }
+  
+  /** @return whether the player should have the client-side silkwalker step-height logic applied **/
+  private static boolean hasSilkwalker(final PlayerEntity player) {
+    return EnchantmentHelper.getEnchantmentLevel(GFRegistry.SILKWALKER_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
   }
 }

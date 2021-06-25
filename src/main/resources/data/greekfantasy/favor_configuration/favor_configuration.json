@@ -118,6 +118,13 @@
 	    "maxlevel": 10
 	  }
 	},
+    "greekfantasy:baby_spider": {
+      "hostile": { 
+	    "deity": "greekfantasy:athena",
+	    "minlevel": -1,
+	    "maxlevel": 10
+	  }
+	},
     "minecraft:drowned": {
       "hostile": { 
 	    "deity": "greekfantasy:poseidon",
@@ -228,5 +235,6 @@
       "minlevel": 5,
       "maxlevel": 10
     }
-  }
+  },
+  "apple_of_discord": 1000
 }

@@ -40,6 +40,13 @@ public class ArachneModel<T extends ArachneEntity> extends BipedModel<T> {
     
     bipedHeadwear = new ModelRenderer(this);
     bipedHeadwear.setTextureOffset(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
+    
+    ModelRenderer mouth = new ModelRenderer(this);
+    mouth.setRotationPoint(0.0F, -2.0F, -4.0F);
+    mouth.rotateAngleX = -0.7854F;
+    mouth.setTextureOffset(25, 0).addBox(1.0F, 0.0F, 0.0F, 1.0F, 2.0F, 1.0F, 0.0F, false);
+    mouth.setTextureOffset(25, 0).addBox(-2.0F, 0.0F, 0.0F, 1.0F, 2.0F, 1.0F, 0.0F, false);
+    bipedHead.addChild(mouth);
 
     bipedRightArm = new ModelRenderer(this);
     bipedRightArm.setTextureOffset(42, 16).addBox(-3.0F, -1.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);

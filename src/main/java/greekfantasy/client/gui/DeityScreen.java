@@ -668,7 +668,8 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       tooltip = new TranslationTextComponent(translationKey.concat(".tooltip"));
     }
 
-    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    @Override
+    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
         final boolean selected = isSelected();
         final int xOffset = 0;

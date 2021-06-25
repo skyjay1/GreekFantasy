@@ -57,6 +57,7 @@ public class GFConfig {
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
   private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_USE;
   private final ForgeConfigSpec.BooleanValue OVERSTEP_ENABLED;
+  private final ForgeConfigSpec.BooleanValue SILKWALKER_ENABLED;
   private final ForgeConfigSpec.BooleanValue SMASHING_ENABLED;
   private final ForgeConfigSpec.BooleanValue HUNTING_ENABLED;
   private final ForgeConfigSpec.BooleanValue POISON_ENABLED;
@@ -76,6 +77,7 @@ public class GFConfig {
   private boolean stunPreventsJump;
   private boolean stunPreventsUse;
   private boolean overstepEnabled;
+  private boolean silkwalkerEnabled;
   private boolean smashingEnabled;
   private boolean huntingEnabled;
   private boolean poisonEnabled;
@@ -232,6 +234,7 @@ public class GFConfig {
     STUN_PREVENTS_USE = builder.comment("When stunned, players are prevented from using items")
         .define("stun_prevents_use", true);
     OVERSTEP_ENABLED = builder.define("enable_overstep_enchantment", true);
+    SILKWALKER_ENABLED = builder.define("enable_silkwalker_enchantment", true);
     SMASHING_ENABLED = builder.define("enable_smashing_enchantment", true);
     HUNTING_ENABLED = builder.define("enable_hunting_enchantment", true);
     POISON_ENABLED = builder.define("enable_poison_enchantment", true);
@@ -447,6 +450,7 @@ public class GFConfig {
     stunPreventsJump = STUN_PREVENTS_JUMP.get();
     stunPreventsUse = STUN_PREVENTS_USE.get();
     overstepEnabled = OVERSTEP_ENABLED.get();
+    silkwalkerEnabled = SILKWALKER_ENABLED.get();
     smashingEnabled = SMASHING_ENABLED.get();
     huntingEnabled = HUNTING_ENABLED.get();
     poisonEnabled = POISON_ENABLED.get();
@@ -520,6 +524,7 @@ public class GFConfig {
   
   public boolean isForceFOVReset() { return forceFOVReset; }
   public boolean isOverstepEnabled() { return overstepEnabled; }
+  public boolean isSilkwalkerEnabled() { return silkwalkerEnabled; }
   public boolean isSmashingEnabled() { return smashingEnabled; }
   public boolean isHuntingEnabled() { return huntingEnabled; }
   public boolean isPoisonEnabled() { return poisonEnabled; }

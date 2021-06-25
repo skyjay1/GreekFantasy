@@ -108,6 +108,7 @@ public final class GFRegistry {
   public static EntityType<AraEntity> ARA_ENTITY = buildEntityType(AraEntity::new, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<ArachneEntity> ARACHNE_ENTITY = buildEntityType(ArachneEntity::new, "arachne", 0.94F, 1.9F, EntityClassification.MONSTER, b -> {});
   public static EntityType<ArionEntity> ARION_ENTITY = buildEntityType(ArionEntity::new, "arion", 1.39F, 1.98F, EntityClassification.CREATURE, b -> b.immuneToFire());
+  public static EntityType<BabySpiderEntity> BABY_SPIDER_ENTITY = buildEntityType(BabySpiderEntity::new, "baby_spider", 0.5F, 0.65F, EntityClassification.MONSTER, b -> {});
   public static EntityType<BronzeBullEntity> BRONZE_BULL_ENTITY = buildEntityType(BronzeBullEntity::new, "bronze_bull", 1.95F, 2.98F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<CentaurEntity> CENTAUR_ENTITY = buildEntityType(CentaurEntity::new, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {});
@@ -152,6 +153,7 @@ public final class GFRegistry {
   public static EntityType<SwineSpellEntity> SWINE_SPELL_ENTITY = buildEntityType(SwineSpellEntity::new, "swine_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).updateInterval(10));
   public static EntityType<TalosEntity> TALOS_ENTITY = buildEntityType(TalosEntity::new, "talos", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
   public static EntityType<UnicornEntity> UNICORN_ENTITY = buildEntityType(UnicornEntity::new, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
+  public static EntityType<WebBallEntity> WEB_BALL_ENTITY = buildEntityType(WebBallEntity::new, "web_ball", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).updateInterval(10));
   public static EntityType<WhirlEntity> WHIRL_ENTITY = buildEntityType(WhirlEntity::new, "whirl", 2.9F, 5.0F, EntityClassification.WATER_CREATURE, b -> {});
 
   // OBJECT HOLDERS //
@@ -229,6 +231,8 @@ public final class GFRegistry {
   public static final Item GOLDEN_APPLE_OF_DISCORD = null;
   @ObjectHolder("spider_banner_pattern")
   public static final Item SPIDER_PATTERN = null;
+  @ObjectHolder("web_ball")
+  public static final Item WEB_BALL = null;
   
   // Block //
   @ObjectHolder("reeds")
@@ -433,6 +437,8 @@ public final class GFRegistry {
   public static final Enchantment DAYBREAK_ENCHANTMENT = null;
   @ObjectHolder("raising")
   public static final Enchantment RAISING_ENCHANTMENT = null;
+  @ObjectHolder("silkwalker")
+  public static final Enchantment SILKWALKER_ENCHANTMENT = null;
   
   // Potion //
   @ObjectHolder("mirror")
@@ -466,6 +472,7 @@ public final class GFRegistry {
     registerEntityType(event, ARA_ENTITY, "ara", AraEntity::getAttributes, AraEntity::canAraSpawnOn);
     registerEntityType(event, ARACHNE_ENTITY, "arachne", ArachneEntity::getAttributes, null);
     registerEntityType(event, ARION_ENTITY, "arion", ArionEntity::getAttributes, ArionEntity::canSpawnOn);
+    registerEntityType(event, BABY_SPIDER_ENTITY, "baby_spider", BabySpiderEntity::getAttributes, BabySpiderEntity::canMonsterSpawnInLight);
     registerEntityType(event, BRONZE_BULL_ENTITY, "bronze_bull", BronzeBullEntity::getAttributes, null);
     registerEntityType(event, CENTAUR_ENTITY, "centaur", CentaurEntity::getAttributes, CentaurEntity::canSpawnOn);
     registerEntityType(event, CERASTES_ENTITY, "cerastes", CerastesEntity::getAttributes, CerastesEntity::canCerastesSpawnOn);
@@ -511,6 +518,7 @@ public final class GFRegistry {
     event.getRegistry().register(ORTHUS_HEAD_ITEM_ENTITY.setRegistryName(MODID, "orthus_head_item"));
     event.getRegistry().register(POISON_SPIT_ENTITY.setRegistryName(MODID, "poison_spit"));
     event.getRegistry().register(SWINE_SPELL_ENTITY.setRegistryName(MODID, "swine_spell"));
+    event.getRegistry().register(WEB_BALL_ENTITY.setRegistryName(MODID, "web_ball"));
   }
   
   @SubscribeEvent
@@ -797,7 +805,9 @@ public final class GFRegistry {
 		    new GoldenAppleOfDiscordItem(new Item.Properties().group(GREEK_GROUP).food(GoldenAppleOfDiscordItem.GOLDEN_APPLE_OF_DISCORD))
 		    .setRegistryName(MODID, "golden_apple_of_discord"),
         new DiscusItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
-          .setRegistryName(MODID, "discus")
+          .setRegistryName(MODID, "discus"),
+        new WebBallItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
+          .setRegistryName(MODID, "web_ball")
     );
     
     // block items
@@ -878,7 +888,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, UNICORN_ENTITY, "unicorn", 0xeeeeee, 0xe8e8e8);
     registerSpawnEgg(event, WHIRL_ENTITY, "whirl", 0x1EF6FF, 0xededed);
     
-    registerSpawnEgg(event, HYDRA_ENTITY, "hydra", 0xeeeeee, 0xe8e8e8);
+    registerSpawnEgg(event, HYDRA_ENTITY, "hydra", 0x372828, 0x9d4217);
   }
   
   @SubscribeEvent
@@ -931,7 +941,9 @@ public final class GFRegistry {
           .setRegistryName(MODID, "daybreak"),
         new DeityEnchantment(Enchantment.Rarity.VERY_RARE, EnchantmentType.WEAPON, EquipmentSlotType.MAINHAND, 
               TextFormatting.RED, 1, e -> e.getItem() == GFRegistry.BIDENT)
-          .setRegistryName(MODID, "raising")
+          .setRegistryName(MODID, "raising"),
+        new SilkwalkerEnchantment(Enchantment.Rarity.RARE)
+          .setRegistryName(MODID, "silkwalker")
     );
   }
 

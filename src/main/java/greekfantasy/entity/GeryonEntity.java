@@ -464,12 +464,12 @@ public class GeryonEntity extends MonsterEntity {
     }
     final Vector3d facing = Vector3d.fromPitchYaw(this.getPitchYaw());
     final AxisAlignedBB box = this.getBoundingBox().offset(facing.normalize().scale(offset));
-    BlockPos p;
+    BlockPos.Mutable p = new BlockPos.Mutable();
     BlockState s;
     for(double x = box.minX - 0.25D; x < box.maxX + 0.25D; x++) {
       for(double y = box.minY + 1.1D; y < box.maxY + 0.5D; y++) {
         for(double z = box.minZ - 0.25D; z < box.maxZ + 0.25D; z++) {
-          p = new BlockPos(x, y, z);
+          p.setPos(x, y, z);
           s = this.getEntityWorld().getBlockState(p);
           if((s.isSolid() || s.getMaterial().blocksMovement()) && !s.isIn(BlockTags.WITHER_IMMUNE)) {
             this.getEntityWorld().destroyBlock(p, true);

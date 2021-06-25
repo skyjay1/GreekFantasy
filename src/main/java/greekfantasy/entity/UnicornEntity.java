@@ -1,7 +1,10 @@
 package greekfantasy.entity;
 
+import javax.annotation.Nullable;
+
 import greekfantasy.GFRegistry;
 import net.minecraft.block.SoundType;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -22,6 +25,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -208,6 +212,14 @@ public class UnicornEntity extends AbstractHorseEntity {
     } else {
       return otherAnimal instanceof UnicornEntity && this.canMate() && ((UnicornEntity)otherAnimal).canMate();
     }
+  }
+  
+  @Nullable
+  @Override
+  public AgeableEntity createChild(ServerWorld world, AgeableEntity mate) {
+    UnicornEntity unicorn = GFRegistry.UNICORN_ENTITY.create(world);
+    this.setOffspringAttributes(mate, unicorn);
+    return unicorn;
   }
 
 }

@@ -47,7 +47,7 @@ __Key:__
 - X X ~ X X Miniboss: Medusa
 - X X X _ _ Miniboss: Cretan Minotaur
 - X X X ~ X Miniboss: Circe
-- X _ ~ _ _ Miniboss: Hydra
+- X X ~ _ _ Miniboss: Hydra
 - X X X X X Fury
 - X X ~ X X Drakaina
 - X X X X X Arion
@@ -55,7 +55,8 @@ __Key:__
 - X X X X X Pegasus
 - X X X X X Golden Ram (becomes regular sheep when sheared)
 - X X _ X X Makhai
-- ~ _ X _ _ Arachne (spider/woman)
+- ~ _ X _ X Arachne (spider/woman)
+- X X X X X Baby Spider
 - ~ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 
 ## Entity AI
@@ -109,7 +110,8 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- X ~ X Apple of Discord (Hera/Aphrodite/Athena +-1000)
+- X X X Web Ball
+- X X X Apple of Discord (Hera/Aphrodite/Athena +-1000)
 - X Bident/Spear Loyalty enchantment
 
 ## Achievements
@@ -124,6 +126,7 @@ __Key:__
 
 ## Other
 
+- ~ Silkwalker enchantment (how to obtain?)
 - ~ Block and Item tags (wooden_doors, etc.)
 
 
@@ -136,7 +139,6 @@ _Can I do something with these?_
 - Amazonian Girdle (Hippolyta)
 - Hero statues (Hercules, Achilles, Helen of Troy, Jason, Perseus, Orpheus)
 - Eurynomos (blue skin; vulture head?)
-- Hydra
 - Telchine (seal hands)
 - Yale (Latin "Centicore")
 - Cretan Bull (giant bull)

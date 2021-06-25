@@ -22,7 +22,7 @@ import net.minecraft.util.ResourceLocation;
 public class FavorConfiguration {
 
   public static final ResourceLocation NAME = new ResourceLocation(GreekFantasy.MODID, "favor_configuration");
-  public static final FavorConfiguration EMPTY = new FavorConfiguration(Maps.newHashMap(), Maps.newHashMap());
+  public static final FavorConfiguration EMPTY = new FavorConfiguration(Maps.newHashMap(), Maps.newHashMap(), 0);
   
   public static final String FLYING_RANGE = "flying_enchantment";
   public static final String LORD_OF_THE_SEA_RANGE = "lord_of_the_sea_enchantment";
@@ -38,18 +38,22 @@ public class FavorConfiguration {
         .forGetter(FavorConfiguration::getEntityTargetMap),
       Codec.unboundedMap(Codec.STRING, FavorRange.CODEC)
         .optionalFieldOf("enchantment_favor_configuration", Maps.newHashMap())
-        .forGetter(FavorConfiguration::getEnchantmentMap)
+        .forGetter(FavorConfiguration::getEnchantmentMap),
+      Codec.INT.optionalFieldOf("apple_of_discord", 1000)
+        .forGetter(FavorConfiguration::getAppleOfDiscordAmount)
     ).apply(instance, FavorConfiguration::new));
 
   private final Map<ResourceLocation, ConfiguredFavorRange> entityTargetMap;
   private final Map<String, FavorRange> enchantmentMap;
   private final EnumMap<SpecialFavorEffect.Type, List<ConfiguredSpecialFavorEffect>> specialFavorEffectMap;
+  private final int appleOfDiscordAmount;
   
   public FavorConfiguration(Map<ResourceLocation, ConfiguredFavorRange> entityTargetMapIn,
-      Map<String, FavorRange> enchantmentMapIn) {
+      Map<String, FavorRange> enchantmentMapIn, int appleDiscordAmount) {
     super();
     entityTargetMap = ImmutableMap.copyOf(entityTargetMapIn);
     enchantmentMap = ImmutableMap.copyOf(enchantmentMapIn);
+    appleOfDiscordAmount = appleDiscordAmount;
     // map the special favor effects based on type
     specialFavorEffectMap = Maps.newEnumMap(SpecialFavorEffect.Type.class);
   }
@@ -63,6 +67,8 @@ public class FavorConfiguration {
   public ConfiguredFavorRange getEntity(final EntityType<?> type) {
     return getEntityTargetMap().getOrDefault(type.getRegistryName(), ConfiguredFavorRange.EMPTY);
   }
+  
+  public int getAppleOfDiscordAmount() { return appleOfDiscordAmount; }
   
   public List<ConfiguredSpecialFavorEffect> getSpecials(final SpecialFavorEffect.Type type) {
     // get or create the list
