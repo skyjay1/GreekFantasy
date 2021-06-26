@@ -51,6 +51,7 @@ public class ShadeEntity extends MonsterEntity {
   public ShadeEntity(final EntityType<? extends ShadeEntity> type, final World worldIn) {
     super(type, worldIn);
     this.stepHeight = 1.0F;
+    this.experienceValue = 0;
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -177,7 +178,7 @@ public class ShadeEntity extends MonsterEntity {
 
   @Override
   protected int getExperiencePoints(final PlayerEntity attackingPlayer) {
-    return getStoredXP();
+    return 0;
   }
   
   @Override
@@ -186,6 +187,16 @@ public class ShadeEntity extends MonsterEntity {
       this.setStoredXP(5 + this.rand.nextInt(10));
     }
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+  }
+  
+  @Override
+  public void onDeath(final DamageSource source) {
+    if(source.getTrueSource() instanceof PlayerEntity) {
+      PlayerEntity player = (PlayerEntity)source.getTrueSource();
+      player.giveExperiencePoints(getStoredXP());
+    }
+    
+    super.onDeath(source);
   }
   
   public boolean canTargetPlayerEntity(final LivingEntity entity) {
