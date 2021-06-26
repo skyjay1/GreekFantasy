@@ -54,7 +54,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class FavorEventHandler {
+public class CommonFavorEventHandler {
   
 
   /**

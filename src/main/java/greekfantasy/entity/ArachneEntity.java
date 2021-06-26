@@ -1,10 +1,16 @@
 package greekfantasy.entity;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.misc.WebBallEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.CreatureAttribute;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.IRangedAttackMob;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -20,6 +26,13 @@ import net.minecraft.entity.monster.SpiderEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.BowItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -31,12 +44,13 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
 
-public class ArachneEntity extends MonsterEntity {
+public class ArachneEntity extends MonsterEntity implements IRangedAttackMob {
   private static final DataParameter<Byte> CLIMBING = EntityDataManager.createKey(ArachneEntity.class, DataSerializers.BYTE);
 
   private final ServerBossInfo bossInfo = (ServerBossInfo) (new ServerBossInfo(this.getDisplayName(), BossInfo.Color.RED,
@@ -51,13 +65,15 @@ public class ArachneEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.MAX_HEALTH, 80.0D)
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.285D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.5D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.5D);
+        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.5D)
+        .createMutableAttribute(Attributes.FOLLOW_RANGE, 20.0D);
   }
 
   @Override
   protected void registerGoals() {
     this.goalSelector.addGoal(1, new SwimGoal(this));
-    this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
+    this.goalSelector.addGoal(2, new ArachneEntity.RangedAttackGoal(this, 1.0D, 75, 15.0F));
+    this.goalSelector.addGoal(4, new ArachneEntity.MeleeAttackGoal(this, 1.0D, true));
     this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
@@ -159,7 +175,27 @@ public class ArachneEntity extends MonsterEntity {
 
     this.dataManager.set(CLIMBING, b0);
   }
-  
+
+  // Ranged Attack //
+
+  @Override
+  public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
+    WebBallEntity web = WebBallEntity.create(world, this);
+    // set the web type with sometimes web, always spider, and no item
+    web.setWebType(getRNG().nextBoolean() || !hasSilkstep(target), true, false);
+    // this is copied from LlamaSpit code, it moves the arrow nearer to the centaur's human-body
+    web.setPosition(this.getPosX() - (this.getWidth() + 1.0F) * 0.5D * MathHelper.sin(this.renderYawOffset * 0.017453292F),
+        this.getPosYEye() - 0.1D,
+        this.getPosZ() + (this.getWidth() + 1.0F) * 0.5D * MathHelper.cos(this.renderYawOffset * 0.017453292F));
+    double dx = target.getPosX() - web.getPosX();
+    double dy = target.getPosYHeight(0.67D) - web.getPosY();
+    double dz = target.getPosZ() - web.getPosZ();
+    double dis = (double) MathHelper.sqrt(dx * dx + dz * dz);
+    web.shoot(dx, dy + dis * (double) 0.2F, dz, 1.14F, (float) (14 - this.world.getDifficulty().getId() * 4));
+    this.playSound(SoundEvents.ENTITY_LLAMA_SPIT, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
+    this.world.addEntity(web);
+  }
+
   // Misc //
 
   @Override
@@ -176,6 +212,10 @@ public class ArachneEntity extends MonsterEntity {
       return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
     }
     return super.isPotionApplicable(potioneffectIn);
+  }
+  
+  private static boolean hasSilkstep(final LivingEntity player) {
+    return player != null && EnchantmentHelper.getEnchantmentLevel(GFRegistry.SILKSTEP_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
   }
 
   //Boss //
@@ -202,6 +242,29 @@ public class ArachneEntity extends MonsterEntity {
   @Override
   public boolean canDespawn(double distanceToClosestPlayer) {
     return false;
+  }
+  
+  class RangedAttackGoal extends net.minecraft.entity.ai.goal.RangedAttackGoal {
+    public RangedAttackGoal(IRangedAttackMob entity, double moveSpeed, int attackInterval, float attackDistance) {
+      super(entity, moveSpeed, attackInterval, attackDistance);
+    }
+    
+    @Override
+    public boolean shouldExecute() {
+      return (super.shouldExecute() && ArachneEntity.this.getDistanceSq(ArachneEntity.this.getAttackTarget()) > 9.0D);
+    }
+  }
+  
+  class MeleeAttackGoal extends net.minecraft.entity.ai.goal.MeleeAttackGoal {
+    
+    public MeleeAttackGoal(CreatureEntity entity, double moveSpeed, boolean useLongMemory) {
+      super(entity, moveSpeed, useLongMemory);
+    }
+    
+    @Override
+    public boolean shouldExecute() {
+      return (super.shouldExecute() && ArachneEntity.this.getDistanceSq(ArachneEntity.this.getAttackTarget()) < 9.0D);
+    }
   }
 
 }

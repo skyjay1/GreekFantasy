@@ -21,7 +21,7 @@ public class WebBallItem extends Item {
     // spawn a dragon tooth entity that will then spawn a Sparti
     if(!world.isRemote()) {
       WebBallEntity webBall = WebBallEntity.create(world, player);
-      // this unmapped method from ProjectileEntity does some math, then calls #shoot
+      // this method from ProjectileEntity does some math, then calls #shoot
       webBall.setDirectionAndMovement(player, player.rotationPitch, player.rotationYaw, 0.0F, 1.5F, 1.0F);
       world.addEntity(webBall);
       // set the web type with hardcoded chances for web, spider, and item (config?)

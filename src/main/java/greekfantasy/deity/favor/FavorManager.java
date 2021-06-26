@@ -250,12 +250,11 @@ public class FavorManager {
       long cooldown = -1;
       int level = 0;
       boolean isTame = false;
-      ConfiguredFavorRange mahkaiRange = favorConfig.getEntity(GFRegistry.MAKHAI_ENTITY);
       for(final ConfiguredSpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.COMBAT_SUMMON_MAKHAI)) {
         level = favor.getFavor(effect.getDeity()).getLevel();
         if(effect.canApply(player, favor) && level != 0) {
           // summon a mahkai
-          isTame = (mahkaiRange == ConfiguredFavorRange.EMPTY) ? level > 0 : !mahkaiRange.getHostileRange().isInFavorRange(player, favor);
+          isTame = (level > 0 && player.getRNG().nextInt(10) != 0);
           final MakhaiEntity entity = summonMahkai(player, isTame);
           // set cooldown
           if(entity != null) {

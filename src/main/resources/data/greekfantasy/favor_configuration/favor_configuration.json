@@ -78,13 +78,6 @@
 	    "maxlevel": 5
 	  }
 	},
-    "greekfantasy:makhai": {
-      "hostile": { 
-	    "deity": "greekfantasy:ares",
-	    "minlevel": -10,
-	    "maxlevel": -1
-	  }
-	},
     "greekfantasy:minotaur": {
       "hostile": { 
 	    "deity": "greekfantasy:zeus",

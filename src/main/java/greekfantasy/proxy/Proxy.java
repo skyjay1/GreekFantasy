@@ -8,7 +8,7 @@ import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.FavorConfiguration;
 import greekfantasy.event.CommonForgeEventHandler;
-import greekfantasy.event.FavorEventHandler;
+import greekfantasy.event.CommonFavorEventHandler;
 import greekfantasy.network.SDeityPacket;
 import greekfantasy.network.SFavorConfigurationPacket;
 import greekfantasy.network.SPanfluteSongPacket;
@@ -43,7 +43,7 @@ public class Proxy {
   public void registerEventHandlers() {
     GreekFantasy.LOGGER.debug("registerEventHandlers");
     MinecraftForge.EVENT_BUS.register(CommonForgeEventHandler.class);;
-    MinecraftForge.EVENT_BUS.register(FavorEventHandler.class);
+    MinecraftForge.EVENT_BUS.register(CommonFavorEventHandler.class);
   }
   
   /**

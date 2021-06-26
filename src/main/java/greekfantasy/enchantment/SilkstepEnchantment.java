@@ -5,9 +5,9 @@ import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 
-public class SilkwalkerEnchantment extends Enchantment {
+public class SilkstepEnchantment extends Enchantment {
   
-  public SilkwalkerEnchantment(Rarity rarityIn) {
+  public SilkstepEnchantment(Rarity rarityIn) {
     super(rarityIn, EnchantmentType.ARMOR_FEET, new EquipmentSlotType[] { EquipmentSlotType.FEET });
   }
   

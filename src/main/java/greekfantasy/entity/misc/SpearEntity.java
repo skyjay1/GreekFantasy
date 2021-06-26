@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.item.SpearItem;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
@@ -20,6 +21,8 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -30,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class SpearEntity extends AbstractArrowEntity {
   protected static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(SpearEntity.class, DataSerializers.ITEMSTACK);
@@ -155,6 +159,16 @@ public class SpearEntity extends AbstractArrowEntity {
 
     setMotion(getMotion().mul(-0.01D, -0.1D, -0.01D));    
     playSound(sound, 1.0F, 1.0F);
+  }
+  
+  @Override
+  protected void arrowHit(LivingEntity living) {
+    super.arrowHit(living);
+    final CompoundNBT nbt = getArrowStack().getOrCreateChildTag(SpearItem.KEY_POTION).copy();
+    if(nbt.contains(SpearItem.KEY_POTION)) {
+      nbt.putByte("Id", (byte) Effect.getId(ForgeRegistries.POTIONS.getValue(new ResourceLocation(nbt.getString(SpearItem.KEY_POTION)))));
+      living.addPotionEffect(EffectInstance.read(nbt));
+    }
   }
 
   @Nullable

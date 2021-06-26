@@ -47,7 +47,7 @@ __Key:__
 - X X ~ X X Miniboss: Medusa
 - X X X _ _ Miniboss: Cretan Minotaur
 - X X X ~ X Miniboss: Circe
-- X X ~ _ _ Miniboss: Hydra
+- X X ~ X _ Miniboss: Hydra
 - X X X X X Fury
 - X X ~ X X Drakaina
 - X X X X X Arion
@@ -55,7 +55,7 @@ __Key:__
 - X X X X X Pegasus
 - X X X X X Golden Ram (becomes regular sheep when sheared)
 - X X _ X X Makhai
-- ~ _ X _ X Arachne (spider/woman)
+- X X X X X Arachne (spider/woman)
 - X X X X X Baby Spider
 - ~ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 

@@ -76,8 +76,8 @@ public class WebBallEntity extends ProjectileItemEntity {
   @Override
   protected void onEntityHit(EntityRayTraceResult raytrace) {
     super.onEntityHit(raytrace);
-    if (!this.world.isRemote() && world instanceof IServerWorld && this.isAlive()) {
-      onWebImpact(raytrace, raytrace.getEntity() != null ? raytrace.getEntity().getPosition() : getPosition());
+    if (!this.world.isRemote() && world instanceof IServerWorld && this.isAlive() && raytrace.getEntity() != null) {
+      onWebImpact(raytrace, raytrace.getEntity().getPosition());
       remove();
     }
   }
@@ -134,10 +134,6 @@ public class WebBallEntity extends ProjectileItemEntity {
   
   private void onWebImpact(final RayTraceResult raytrace, final BlockPos webPos) {
     final byte type = getWebType();
-    GreekFantasy.LOGGER.debug("impact: type = " + type + 
-        " (web=" + hasWeb(type) + 
-        ", spider=" + hasSpider(type) + 
-        ", item=" + hasItem(type) + ")");
     // nothing (drop string)
     if(type == 0) {
       entityDropItem(new ItemStack(Items.STRING));

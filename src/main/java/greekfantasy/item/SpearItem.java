@@ -1,12 +1,16 @@
 package greekfantasy.item;
 
+import java.util.List;
 import java.util.function.Consumer;
+
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
 import greekfantasy.entity.misc.SpearEntity;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.enchantment.IVanishable;
@@ -23,15 +27,27 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.TieredItem;
 import net.minecraft.item.UseAction;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.Effect;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class SpearItem extends TieredItem implements IVanishable {
+  
+  public static final String KEY_POTION = "Potion";
+  
   protected final Multimap<Attribute, AttributeModifier> spearAttributes;
   public final Consumer<Entity> onHitEntity;
   
@@ -57,6 +73,11 @@ public class SpearItem extends TieredItem implements IVanishable {
 
   @Override
   public int getUseDuration(final ItemStack stack) { return 72000; }
+  
+  @Override
+  public boolean hasEffect(final ItemStack stack) {
+    return super.hasEffect(stack) || stack.getOrCreateChildTag(KEY_POTION).contains(KEY_POTION);
+  }
 
   @Override
   public void onPlayerStoppedUsing(final ItemStack stack, final World world, final LivingEntity entity, final int duration) {
@@ -131,5 +152,17 @@ public class SpearItem extends TieredItem implements IVanishable {
   @Override
   public int getItemEnchantability() {
      return Math.max(1, super.getItemEnchantability() / 2);
+  }
+  
+  @OnlyIn(Dist.CLIENT)
+  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    final CompoundNBT nbt = stack.getOrCreateChildTag(KEY_POTION);
+    if(nbt.contains(KEY_POTION)) {
+      Effect potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(nbt.getString(KEY_POTION)));
+      int level = 1 + nbt.getInt("Amplifier");
+      tooltip.add(new TranslationTextComponent(potion.getName()).appendString(" ")
+          .appendSibling(new TranslationTextComponent("enchantment.level." + level))
+          .mergeStyle(TextFormatting.GREEN));
+    }
   }
 }

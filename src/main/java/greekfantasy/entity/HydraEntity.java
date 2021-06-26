@@ -85,6 +85,7 @@ public class HydraEntity extends MonsterEntity {
       if(charred == getHeads()) {
         DamageSource source = this.getLastDamageSource();
         attackEntityFrom(source != null ? source : DamageSource.STARVE, getMaxHealth() * 2.0F);
+        getPassengers().forEach(e -> e.remove());
       } else if(getHealth() < getMaxHealth() && rand.nextFloat() < 0.125F){
         heal(1.25F * (getHeads() - charred));
       }

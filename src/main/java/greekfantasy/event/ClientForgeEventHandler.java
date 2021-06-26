@@ -154,8 +154,8 @@ public class ClientForgeEventHandler {
   }
   
   /** @return whether the player should have the client-side silkwalker step-height logic applied **/
-  private static boolean hasSilkwalker(final PlayerEntity player) {
-    return EnchantmentHelper.getEnchantmentLevel(GFRegistry.SILKWALKER_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
+  private static boolean hasSilkstep(final PlayerEntity player) {
+    return EnchantmentHelper.getEnchantmentLevel(GFRegistry.SILKSTEP_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
   }
   
   /** @return whether the entity should have the client-side stun/petrify FOV or particle effects **/
