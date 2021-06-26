@@ -145,6 +145,7 @@ public class HydraHeadEntity extends MonsterEntity {
       // create another head that is currently "severed"
       HydraHeadEntity head = getHydra().addHead(getHydra().getHeads());
       head.setSevered();
+      world.addEntity(head);
     }
     // reset health to prevent removal
     this.setHealth(1.0F);

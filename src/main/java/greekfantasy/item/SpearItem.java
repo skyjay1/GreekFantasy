@@ -29,6 +29,7 @@ import net.minecraft.item.TieredItem;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -126,6 +127,11 @@ public class SpearItem extends TieredItem implements IVanishable {
   @Override
   public boolean hitEntity(final ItemStack stack, final LivingEntity target, final LivingEntity user) {
     stack.damageItem(1, user, e -> e.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+    final CompoundNBT nbt = stack.getOrCreateChildTag(SpearItem.KEY_POTION).copy();
+    if(nbt.contains(SpearItem.KEY_POTION)) {
+      nbt.putByte("Id", (byte) Effect.getId(ForgeRegistries.POTIONS.getValue(new ResourceLocation(nbt.getString(SpearItem.KEY_POTION)))));
+      target.addPotionEffect(EffectInstance.read(nbt));
+    }
     return true;
   }
 

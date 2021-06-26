@@ -47,7 +47,7 @@ __Key:__
 - X X ~ X X Miniboss: Medusa
 - X X X _ _ Miniboss: Cretan Minotaur
 - X X X ~ X Miniboss: Circe
-- X X ~ X _ Miniboss: Hydra
+- X X ~ X X Miniboss: Hydra
 - X X X X X Fury
 - X X ~ X X Drakaina
 - X X X X X Arion

@@ -35,7 +35,7 @@ public class ConfiguredSpecialFavorEffect {
    * @param player the player
    * @param favor the player's favor 
    * @return true if the player's favor matches this favor range
-   * @see SpecialFavorEffect#isInFavorRange(PlayerEntity, IFavor, IDeity)
+   * @see SpecialFavorEffect#isInFavorRange(PlayerEntity, IDeity, IFavor)
    */
   public boolean isInFavorRange(final PlayerEntity player, final IFavor favor) {
     return effect.isInFavorRange(player, deity, favor);
