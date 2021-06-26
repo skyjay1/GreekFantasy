@@ -3,9 +3,11 @@ package greekfantasy.entity;
 import javax.annotation.Nullable;
 
 import greekfantasy.GFRegistry;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -13,16 +15,21 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.MoveTowardsTargetGoal;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
@@ -38,6 +45,7 @@ public class HydraEntity extends MonsterEntity {
     
   public HydraEntity(final EntityType<? extends HydraEntity> type, final World worldIn) {
     super(type, worldIn);
+    this.stepHeight = 1.0F;
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
@@ -46,7 +54,8 @@ public class HydraEntity extends MonsterEntity {
         .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
         .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.0D)
         .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.66D)
-        .createMutableAttribute(Attributes.ARMOR, 5.0D);
+        .createMutableAttribute(Attributes.ARMOR, 5.0D)
+        .createMutableAttribute(Attributes.FOLLOW_RANGE, 16.0D);
   }
   
   @Override
@@ -59,12 +68,18 @@ public class HydraEntity extends MonsterEntity {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(1, new SwimGoal(this));
-    this.goalSelector.addGoal(4, new MoveTowardsTargetGoal(this, 1.0D, (float)getAttribute(Attributes.FOLLOW_RANGE).getBaseValue()));
-//    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+    this.goalSelector.addGoal(2, new HydraEntity.MoveToTargetGoal(this, 1.0D, false));
+    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D) {
+      @Override
+      public boolean shouldExecute() {
+        return HydraEntity.this.rand.nextInt(400) == 0 && super.shouldExecute();
+      }
+    });
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-//    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, false));
+    this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, AnimalEntity.class, false, false));
   }
   
   @Override
@@ -103,6 +118,17 @@ public class HydraEntity extends MonsterEntity {
     return data;
   }
   
+  @Override
+  public boolean isPotionApplicable(EffectInstance potioneffectIn) {
+    if (potioneffectIn.getPotion() == Effects.POISON) {
+      net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(
+          this, potioneffectIn);
+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
+      return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
+    }
+    return super.isPotionApplicable(potioneffectIn);
+  }
+  
   // Heads //
   
   public int getHeads() { return getDataManager().get(HEADS).intValue(); }
@@ -115,12 +141,12 @@ public class HydraEntity extends MonsterEntity {
    * @return the hydra head entity
    */
   public HydraHeadEntity addHead(final int id) {
-//    GreekFantasy.LOGGER.debug("Adding head with id " + id);
+    // GreekFantasy.LOGGER.debug("Adding head with id " + id);
     if(!world.isRemote()) {
-      HydraHeadEntity head =  GFRegistry.HYDRA_HEAD_ENTITY.create(getEntityWorld());
+      HydraHeadEntity head =  GFRegistry.HYDRA_HEAD_ENTITY.create(world);
       head.setLocationAndAngles(getPosX(), getPosY(), getPosZ(), 0, 0);
-      // add the entity to the world
-      world.addEntity(head);
+      // add the entity to the world (commented out bc of errors: "trying to add entity with duplicated UUID ...")
+      // world.addEntity(head);
       // update the entity data
       head.setPartId(id);
       if(head.startRiding(this)) {
@@ -209,5 +235,22 @@ public class HydraEntity extends MonsterEntity {
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
     setHeads((int)compound.getByte(KEY_HEADS));    
+  }
+  
+  class MoveToTargetGoal extends net.minecraft.entity.ai.goal.MeleeAttackGoal {
+
+    public MoveToTargetGoal(CreatureEntity creature, double speedIn, boolean useLongMemoryIn) {
+      super(creature, speedIn, useLongMemoryIn);
+    }
+
+    @Override
+    protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
+      double d0 = this.getAttackReachSqr(enemy);
+      if (distToEnemySqr <= d0 && this.getSwingCooldown() <= 0) {
+        this.resetSwingCooldown();
+        HydraEntity.this.setLastAttackedEntity(enemy);
+        // this version of the goal intentionally does *not* attack the target, that will be done by the heads
+      }
+    }
   }
 }

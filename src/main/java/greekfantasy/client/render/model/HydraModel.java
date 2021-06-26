@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import greekfantasy.entity.HydraEntity;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
 
 public class HydraModel<T extends HydraEntity> extends EntityModel<T> {
 
@@ -108,7 +109,7 @@ public class HydraModel<T extends HydraEntity> extends EntityModel<T> {
     bodyLower2.setRotationPoint(0.0F, 10.0F, 1.0F);
     bodyLower2.rotateAngleX = 0.6109F;
     bodyLower2.setTextureOffset(84, 0).addBox(-5.0F, 0.0F, 0.01F, 10.0F, 10.0F, 5.0F, 0.0F, false);
-    bodyLower2.setTextureOffset(120, 0).addBox(0.0F, 3.0F, 5.0F, 1.0F, 7.0F, 3.0F, 0.0F, false);
+    bodyLower2.setTextureOffset(120, 0).addBox(0.0F, 3.0F, 5.01F, 1.0F, 7.0F, 3.0F, 0.0F, false);
     bodyLower1.addChild(bodyLower2);
 
     bodyLower3 = new ModelRenderer(this);
@@ -120,13 +121,13 @@ public class HydraModel<T extends HydraEntity> extends EntityModel<T> {
     bodyLower4 = new ModelRenderer(this);
     bodyLower4.setRotationPoint(0.0F, 9.0F, 0.0F);
     bodyLower4.setTextureOffset(84, 32).addBox(-3.0F, 0.0F, 0.01F, 6.0F, 10.0F, 5.0F, 0.0F, false);
-    bodyLower4.setTextureOffset(120, 0).addBox(0.0F, 0.0F, 5.0F, 1.0F, 10.0F, 3.0F, 0.0F, false);
+    bodyLower4.setTextureOffset(120, 0).addBox(0.0F, 0.0F, 5.01F, 1.0F, 10.0F, 3.0F, 0.0F, false);
     bodyLower3.addChild(bodyLower4);
 
     bodyLower5 = new ModelRenderer(this);
     bodyLower5.setRotationPoint(0.0F, 9.0F, 0.0F);
     bodyLower5.setTextureOffset(84, 48).addBox(-2.0F, 0.0F, 0.01F, 4.0F, 10.0F, 4.0F, 0.0F, false);
-    bodyLower5.setTextureOffset(120, 16).addBox(0.0F, 0.0F, 4.0F, 1.0F, 10.0F, 3.0F, 0.0F, false);
+    bodyLower5.setTextureOffset(120, 16).addBox(0.0F, 0.0F, 4.01F, 1.0F, 10.0F, 3.0F, 0.0F, false);
     bodyLower4.addChild(bodyLower5);
   }
   
@@ -138,15 +139,17 @@ public class HydraModel<T extends HydraEntity> extends EntityModel<T> {
   @Override
   public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
     // animate snake body
-    final float limbSwingCos = (float) Math.cos(limbSwing);
-//    upperTail.rotateAngleY = limbSwingCos * 0.1F;
-    bodyUpper.rotateAngleY = limbSwingCos * 0.04F;
-    bodyMid.rotateAngleY = limbSwingCos * -0.05F;
+    final float idleSwingCos = MathHelper.cos((entityIn.ticksExisted + partialTick) * 0.12F);
+    final float limbSwingCos = MathHelper.cos(limbSwing);
+    // limb swing rotations
+    bodyUpper.rotateAngleY = limbSwingCos * 0.04F + idleSwingCos * 0.011F;
+    bodyMid.rotateAngleY = limbSwingCos * -0.12F + idleSwingCos * 0.011F;
+    bodyLower1.rotateAngleY = idleSwingCos * -0.022F;
     bodyLower1.rotateAngleZ = limbSwingCos * 0.1F;
-    bodyLower2.rotateAngleZ = limbSwingCos * -0.27F;
-    bodyLower3.rotateAngleZ = limbSwingCos * 0.67F;
-    bodyLower4.rotateAngleZ = limbSwingCos * -0.75F;
-    bodyLower5.rotateAngleZ = limbSwingCos * 0.62F;
+    bodyLower2.rotateAngleZ = limbSwingCos * -0.37F;
+    bodyLower3.rotateAngleZ = limbSwingCos * 0.77F;
+    bodyLower4.rotateAngleZ = limbSwingCos * -0.95F;
+    bodyLower5.rotateAngleZ = limbSwingCos * 0.72F;
   }
 
   @Override

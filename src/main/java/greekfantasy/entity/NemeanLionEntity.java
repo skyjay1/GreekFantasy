@@ -20,6 +20,7 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -98,7 +99,7 @@ public class NemeanLionEntity extends MonsterEntity {
     this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, false, false, e -> EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e) && !NemeanLionEntity.this.isBeingRidden()));
-    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, e -> EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e) && e.canChangeDimension() && !e.isInWater() && !NemeanLionEntity.this.isBeingRidden()));
+    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AnimalEntity.class, 10, false, false, e -> EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e) && e.canChangeDimension() && !e.isInWater() && !NemeanLionEntity.this.isBeingRidden()));
     
   }
   

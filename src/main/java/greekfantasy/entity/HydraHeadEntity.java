@@ -15,8 +15,11 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -80,11 +83,11 @@ public class HydraHeadEntity extends MonsterEntity {
     super.registerGoals();
     this.goalSelector.addGoal(1, new SwimGoal(this));
     this.goalSelector.addGoal(4, new HydraHeadEntity.BiteAttackGoal());
-//    this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
-//    this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
-//    this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-//    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
+    this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, AnimalEntity.class, false, false));
   }
   
   @Override
@@ -162,6 +165,9 @@ public class HydraHeadEntity extends MonsterEntity {
   public boolean attackEntityFrom(DamageSource source, float amount) {
     if(super.attackEntityFrom(source, amount) && hasHydra()) {
       getHydra().attackEntityFrom(source, amount * 0.1F);
+      if(getAttackTarget() != null) {
+        getHydra().setAttackTarget(getAttackTarget());
+      }
     }
     return false;
   }

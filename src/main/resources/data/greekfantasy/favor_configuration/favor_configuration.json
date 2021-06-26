@@ -1,6 +1,20 @@
 {
   "entity_favor_configuration": {
-    "greekfantasy:centaur": {
+    "greekfantasy:ara": {
+      "hostile": { 
+	    "deity": "greekfantasy:aphrodite",
+	    "minlevel": -2,
+	    "maxlevel": -10
+	  }
+	},
+    "greekfantasy:baby_spider": {
+      "hostile": { 
+	    "deity": "greekfantasy:athena",
+	    "minlevel": -1,
+	    "maxlevel": 10
+	  }
+	},
+	"greekfantasy:centaur": {
       "hostile": { 
 	    "deity": "greekfantasy:poseidon",
 	    "minlevel": -10,
@@ -108,13 +122,6 @@
       "hostile": { 
 	    "deity": "greekfantasy:poseidon",
 	    "minlevel": -5,
-	    "maxlevel": 10
-	  }
-	},
-    "greekfantasy:baby_spider": {
-      "hostile": { 
-	    "deity": "greekfantasy:athena",
-	    "minlevel": -1,
 	    "maxlevel": 10
 	  }
 	},

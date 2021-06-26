@@ -6,5 +6,15 @@
   "right_hand": {
   	"id": "greekfantasy:mirror",
   	"Count": 1
-  }
+  },
+  "effects": [
+  	{
+  	  "summon": { 
+  	  	"id": "greekfantasy:ara" 
+  	  },
+  	  "minlevel": -2,
+  	  "maxlevel": -10,
+  	  "mincooldown": 11000
+  	}
+  ]
 }

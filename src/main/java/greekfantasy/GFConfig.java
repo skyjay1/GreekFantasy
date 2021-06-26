@@ -392,6 +392,7 @@ public class GFConfig {
     MOB_SPAWNS.put("gigante", new BiomeWhitelistConfig(builder, "gigante_spawn", 10, true, mountains));
     MOB_SPAWNS.put("gorgon", new BiomeWhitelistConfig(builder, "gorgon_spawn", 30, false, nonNetherHostileBlacklist));
     MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 24, true, sandy));
+    MOB_SPAWNS.put("hydra", new BiomeWhitelistConfig(builder, "hydra_spawn", 8, true, biomesAsList(BiomeDictionary.Type.SANDY, BiomeDictionary.Type.SAVANNA)));
     MOB_SPAWNS.put("mad_cow", new BiomeWhitelistConfig(builder, "mad_cow_spawn", 2, false, nonNetherHostileBlacklist));
     MOB_SPAWNS.put("minotaur", new BiomeWhitelistConfig(builder, "minotaur_spawn", 60, false, nonNetherHostileBlacklist));
     MOB_SPAWNS.put("naiad", new BiomeWhitelistConfig(builder, "naiad_spawn", 12, true, biomesAsList(BiomeDictionary.Type.WATER)));
@@ -421,7 +422,7 @@ public class GFConfig {
     FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 900, true, biomesAsList(BiomeDictionary.Type.SWAMP)));
     FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 22, true, biomesAsList(BiomeDictionary.Type.FOREST)));
     FEATURES.put("lion_den", new BiomeWhitelistConfig(builder, "lion_den", 9, true, sandy));
-    FEATURES.put("arachne_pit", new BiomeWhitelistConfig(builder, "arachne_pit", 18, false, nonNetherHostileBlacklist));
+    FEATURES.put("arachne_pit", new BiomeWhitelistConfig(builder, "arachne_pit", 19, false, nonNetherHostileBlacklist));
     builder.pop();
   }
   

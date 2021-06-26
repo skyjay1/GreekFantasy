@@ -270,6 +270,7 @@ public final class GFWorldGen {
     addSpawns(event, GFRegistry.GIGANTE_ENTITY, 1, 4);
     addSpawns(event, GFRegistry.GORGON_ENTITY, 1, 2);
     addSpawns(event, GFRegistry.HARPY_ENTITY, 1, 3);
+    addSpawns(event, GFRegistry.HYDRA_ENTITY, 1, 1);
     addSpawns(event, GFRegistry.MAD_COW_ENTITY, 1, 1);
     addSpawns(event, GFRegistry.MINOTAUR_ENTITY, 3, 5);
     addSpawns(event, GFRegistry.NAIAD_ENTITY, 2, 5);
