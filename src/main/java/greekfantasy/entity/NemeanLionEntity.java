@@ -202,7 +202,7 @@ public class NemeanLionEntity extends MonsterEntity {
   public void removePassengers() {
     if(this.getPassengers().size() > 0) {
       // give lion regen effect when player stops strangling
-      addPotionEffect(new EffectInstance(Effects.REGENERATION, 100, 0));
+      addPotionEffect(new EffectInstance(Effects.REGENERATION, 84, 0));
     }
     super.removePassengers();
  }

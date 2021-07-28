@@ -11,6 +11,11 @@ public class NemeanLionModel<T extends NemeanLionEntity> extends BigCatModel<T> 
   public NemeanLionModel() {
     super(64, 64);
     body.setTextureOffset(0, 34).addBox(-5.0F, -11.0F, -4.0F, 10.0F, 4.0F, 10.0F, 0.0F, false);
+    body.setTextureOffset(20, 36).addBox(5.0F, -10.0F, -3.0F, 1.0F, 2.0F, 8.0F, 0.0F, false);
+    body.setTextureOffset(2, 36).addBox(-6.0F, -10.0F, -3.0F, 1.0F, 2.0F, 8.0F, 0.0F, false);
+    body.setTextureOffset(9, 43).addBox(-4.0F, -10.0F, 6.0F, 8.0F, 2.0F, 1.0F, 0.0F, false);
+    body.setTextureOffset(13, 43).addBox(-4.0F, -10.0F, -5.0F, 8.0F, 2.0F, 1.0F, 0.0F, false);
+    body.setTextureOffset(17, 43).addBox(-3.0F, -7.0F, 4.0F, 6.0F, 1.0F, 1.0F, 0.0F, false);
     
     mouth = new ModelRenderer(this);
     mouth.setRotationPoint(0.0F, 3.0F, -3.0F);
@@ -39,7 +44,7 @@ public class NemeanLionModel<T extends NemeanLionEntity> extends BigCatModel<T> 
     head.setTextureOffset(0, 13).addBox(-2.5F, 0.0F, -5.0F, 5.0F, 3.0F, 2.0F, 0.0F, false);
     head.setTextureOffset(15, 17).addBox(-2.0F, 2.5F, -4.5F, 4.0F, 1.0F, 1.0F, 0.0F, false);
     head.setTextureOffset(21, 1).addBox(-3.5F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, 0.0F, false);
-    head.setTextureOffset(28, 1).addBox(1.5F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, 0.0F, false);    
+    head.setTextureOffset(21, 1).addBox(1.5F, -5.0F, -2.0F, 2.0F, 2.0F, 1.0F, 0.0F, true);
     return head;
   }
 

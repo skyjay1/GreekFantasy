@@ -107,7 +107,7 @@ public class ReedsBlock extends DoublePlantBlock implements IWaterLoggable, IGro
   
   @Override
   protected boolean isValidGround(BlockState state, IBlockReader worldIn, BlockPos pos) {
-    return state.isSolidSide(worldIn, pos, Direction.UP) || super.isValidGround(state, worldIn, pos);
+    return state.matchesBlock(Blocks.GRAVEL) || state.matchesBlock(Blocks.SAND) || super.isValidGround(state, worldIn, pos);
   }
 
   @Override

@@ -259,7 +259,7 @@ public class FavorManager {
         level = favor.getFavor(effect.getDeity()).getLevel();
         if(effect.canApply(player, favor) && level != 0) {
           // summon a mahkai
-          final MakhaiEntity entity = summonMahkai(player, level > 0);
+          final MakhaiEntity entity = summonMahkai(player, level >= 0);
           // set cooldown
           if(entity != null) {
             cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRNG()));
