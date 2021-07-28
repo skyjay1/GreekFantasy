@@ -115,8 +115,12 @@ public class HydraHeadModel<T extends HydraHeadEntity> extends EntityModel<T> {
   @Override
   public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     // rotate head angles
+    float yaw = netHeadYaw * ((float)Math.PI / 180F);
     head.rotateAngleX = headPitch * ((float)Math.PI / 180F);
-    head.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F);
+    head.rotateAngleY = yaw * 0.4F;
+    neck1.rotateAngleY = yaw * 0.1F;
+    neck2.rotateAngleY = yaw * 0.2F;
+    neck3.rotateAngleY = yaw * 0.3F;
     // copy head angles to severed portion
     neckSevered.rotateAngleX = neck1.rotateAngleX + neck.rotateAngleX;
     neckSevered.rotateAngleY = neck1.rotateAngleY + neck.rotateAngleY;
@@ -126,7 +130,7 @@ public class HydraHeadModel<T extends HydraHeadEntity> extends EntityModel<T> {
 
   @Override
   public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-    final float idleSwingCos = MathHelper.cos((21 * entityIn.getEntityId() + entityIn.ticksExisted + partialTick) * 0.22F);
+    final float idleSwingCos = MathHelper.cos((31 * entityIn.getEntityId() + entityIn.ticksExisted + partialTick) * 0.19F);
     // used to move the entire neck in a swinging motion (bite attack)
     final float swingPercent = entityIn.getSwingProgress(partialTick);
     // alternative that does not use cos: swing = 2.0D * Math.min(swingPercent - 0.5D, -(swingPercent - 0.5D)) + 1.0D;

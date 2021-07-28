@@ -394,6 +394,7 @@ public class GFConfig {
     MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 24, true, sandy));
     MOB_SPAWNS.put("hydra", new BiomeWhitelistConfig(builder, "hydra_spawn", 8, true, biomesAsList(BiomeDictionary.Type.SANDY, BiomeDictionary.Type.SAVANNA)));
     MOB_SPAWNS.put("mad_cow", new BiomeWhitelistConfig(builder, "mad_cow_spawn", 2, false, nonNetherHostileBlacklist));
+    MOB_SPAWNS.put("makhai", new BiomeWhitelistConfig(builder, "makhai_spawn", 25, false, new ArrayList<>()));
     MOB_SPAWNS.put("minotaur", new BiomeWhitelistConfig(builder, "minotaur_spawn", 60, false, nonNetherHostileBlacklist));
     MOB_SPAWNS.put("naiad", new BiomeWhitelistConfig(builder, "naiad_spawn", 12, true, biomesAsList(BiomeDictionary.Type.WATER)));
     MOB_SPAWNS.put("orthus", new BiomeWhitelistConfig(builder, "orthus_spawn", 20, true, nether));

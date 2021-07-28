@@ -23,6 +23,7 @@ import greekfantasy.entity.MakhaiEntity;
 import greekfantasy.event.FavorChangedEvent.Source;
 import greekfantasy.network.SSimpleParticlesPacket;
 import greekfantasy.tileentity.StatueTileEntity;
+import greekfantasy.util.BiomeWhitelistConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -38,9 +39,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IServerWorld;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -223,7 +227,7 @@ public class FavorManager {
   
   /**
    * Called when the player is attacked (or attacks) and their combat tracker
-   * shows a duration of less than 2
+   * shows a duration of less than 40
    * @param player the player who is in combat
    * @param other the other entity that is involved in the combat
    * @param favor the player's favor
@@ -246,16 +250,16 @@ public class FavorManager {
       }
     }
     // combat start summon mahkai (does not trigger when favor level is 0 or combat_start_effect was triggered)
-    if(favor.hasNoTriggeredCooldown(time)) {
+    BiomeWhitelistConfig makhaiConfig = GreekFantasy.CONFIG.MOB_SPAWNS.get("makhai_spawn");
+    RegistryKey<Biome> biome = player.getEntityWorld().func_242406_i(player.getPosition()).orElse(Biomes.PLAINS);
+    if(favor.hasNoTriggeredCooldown(time) && makhaiConfig != null && makhaiConfig.chance() > 0 && makhaiConfig.canSpawnInBiome(biome)) {
       long cooldown = -1;
       int level = 0;
-      boolean isTame = false;
       for(final ConfiguredSpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.COMBAT_SUMMON_MAKHAI)) {
         level = favor.getFavor(effect.getDeity()).getLevel();
         if(effect.canApply(player, favor) && level != 0) {
           // summon a mahkai
-          isTame = (level > 0 && player.getRNG().nextInt(10) != 0);
-          final MakhaiEntity entity = summonMahkai(player, isTame);
+          final MakhaiEntity entity = summonMahkai(player, level > 0);
           // set cooldown
           if(entity != null) {
             cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRNG()));

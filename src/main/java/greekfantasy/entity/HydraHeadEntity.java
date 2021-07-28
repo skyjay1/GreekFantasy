@@ -195,10 +195,18 @@ public class HydraHeadEntity extends MonsterEntity {
   @Override
   public void updateRidden() {
     this.setMotion(Vector3d.ZERO);
-    if (canUpdate())
+    if (canUpdate()) {
       this.tick();
+    }
     if (this.isPassenger() && hasHydra()) {
-       getHydra().updatePassenger(this, getPartId(), Entity::setPosition);
+      HydraEntity hydra = getHydra();
+      hydra.updatePassenger(this, getPartId(), Entity::setPosition);
+      // clamp rotation based on hydra rotation
+      if (this.rotationYawHead > hydra.rotationYaw + 80) {
+        this.rotationYawHead = hydra.rotationYaw + 80;
+      } else if(this.rotationYawHead < hydra.rotationYaw - 80) {
+        this.rotationYawHead = hydra.rotationYaw - 80;
+      }
     }
   }
 

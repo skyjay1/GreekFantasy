@@ -56,7 +56,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class MakhaiEntity extends TameableEntity {
   protected static final DataParameter<Byte> STATE = EntityDataManager.createKey(MakhaiEntity.class, DataSerializers.BYTE);
-  protected static final String KEY_STATE = "MahkaiState";
+  protected static final String KEY_STATE = "MakhaiState";
   // bytes to use in STATE
   private static final byte NONE = (byte)0;
   private static final byte SPAWNING = (byte)1;

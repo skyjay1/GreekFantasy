@@ -41,7 +41,7 @@ public class HydraEntity extends MonsterEntity {
   private static final DataParameter<Byte> HEADS = EntityDataManager.createKey(HydraEntity.class, DataSerializers.BYTE);
   private static final String KEY_HEADS = "Heads";
   
-  public static final int MAX_HEADS = 10;
+  public static final int MAX_HEADS = 11;
     
   public HydraEntity(final EntityType<? extends HydraEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -190,16 +190,18 @@ public class HydraEntity extends MonsterEntity {
 
   public void updatePassenger(Entity passenger, int id, Entity.IMoveCallback callback) {
     if (this.isPassenger(passenger)) {
-      double radius = getWidth() * 0.5D;
+      int headsPerRow = MAX_HEADS / 2;
+      int row = id / headsPerRow;
       double heads = (double)getHeads();
-      // the distance between heads
-      double wid = ((double)id - heads / 2.0D) * 0.85D;
+      double radius = 0.08D + 0.4D * getWidth() + 0.35D * row;
+      // the index location of the head, based on id and row, and centered based on total heads
+      double index = ((double) (id % headsPerRow)) - 0.92D * getWidth();
       // the angle to add based on hydra rotation yaw
-      double angleOff = Math.toRadians(this.rotationYaw) + Math.PI / 2.0D;
+      double angleOff = Math.toRadians(this.rotationYaw + (heads / headsPerRow) * 6.0F) + Math.PI / 2.0D;
       // determine x,y,z position for the head
-      double dx = this.getPosX() + radius * Math.cos(wid / Math.PI + angleOff);
+      double dx = this.getPosX() + radius * Math.cos(index / Math.PI + angleOff);
       double dy = this.getPosY() + this.getMountedYOffset() + passenger.getYOffset();
-      double dz = this.getPosZ() + radius * Math.sin(wid / Math.PI + angleOff);
+      double dz = this.getPosZ() + radius * Math.sin(index / Math.PI + angleOff);
       callback.accept(passenger, dx, dy, dz);
     }
   }
