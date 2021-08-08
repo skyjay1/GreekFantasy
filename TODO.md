@@ -100,13 +100,13 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- _ _ _ Greek Fire
 - X X X Pomegranate logs
 - X _ X Pomegranate leaves
-- X X _ Pomegranate blocks: door, trapdoor
-- X X _ Oil Lamp
+- ~ X X Pomegranate/Olive door, trapdoor (TO DO: textures)
+- X X X Oil Lamp
 - _ _ _ Other heads: Minotaur, Python, Medusa
 - _ _ _ Olive blocks: button, fence, boat, pressure plate, sign
+- _ _ _ Greek Fire Block? (fire that cannot be extinguished by water)
 - _ _ _ Grapes / grapevines?
 
 
@@ -115,11 +115,11 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- _ _ _ Pomegranate (or seeds?)
-- X X _ Pomegranate sapling
-- _ _ _ Olives
-- _ _ _ Olive Oil
-- _ _ _ Greek Fire
+- X _ X Pomegranate (TO DO: restores hunger in nether or high favor with Hades, gives naseua otherwise)
+- X X X Pomegranate sapling
+- X X X Olives
+- X X X Olive Oil
+- X X X Greek Fire
 
 ## Achievements
 
@@ -163,7 +163,6 @@ _Can I do something with these?_
 - Pandos (biped, giant ears)
 - Horse of Diomedes (man-eating horse)
 - Underworld: underworld biome, tartarus, styx river, meadow of Asphodels, etc.
-- Underworld: Underworld pomegranate tree (restores hunger in nether or high favor with Hades, gives naseua otherwise)
 - Iron Feather - from Stymphalian bird; throwable
 - Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 - Belt of Aphrodite (maybe allows disguise as other player?)

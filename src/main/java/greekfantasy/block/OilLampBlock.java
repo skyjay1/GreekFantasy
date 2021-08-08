@@ -1,5 +1,8 @@
 package greekfantasy.block;
 
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -121,7 +124,48 @@ public class OilLampBlock extends HorizontalBlock implements IWaterLoggable {
 
   @Override
   public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {
-    return (state.get(HORIZONTAL_FACING).getAxis() == Axis.X) ? SHAPE_X : SHAPE_Z;
+    
+    VoxelShape BASE = VoxelShapes.or(
+        Block.makeCuboidShape(5.5D, 0.0D, 5.5D, 10.5D, 1.0D, 10.5D),
+        Block.makeCuboidShape(6.5D, 1.0D, 6.5D, 9.5D, 3.0D, 9.5D));
+    VoxelShape BODY_X = VoxelShapes.or(
+        Block.makeCuboidShape(3.0D, 3.0D, 6.0D, 13.0D, 4.0D, 10.0D),
+        Block.makeCuboidShape(3.0D, 4.0D, 5.0D, 13.0D, 6.0D, 11.0D),
+        Block.makeCuboidShape(4.0D, 6.0D, 6.0D, 12.0D, 7.0D, 10.0D),
+        Block.makeCuboidShape(7.0D, 7.0D, 7.0D, 9.0D, 8.0D, 9.0D));
+    VoxelShape BODY_Z = VoxelShapes.or(
+        Block.makeCuboidShape(6.0D, 3.0D, 3.0D, 10.0D, 4.0D, 13.0D),
+        Block.makeCuboidShape(5.0D, 4.0D, 3.0D, 11.0D, 6.0D, 13.0D),
+        Block.makeCuboidShape(6.0D, 6.0D, 4.0D, 10.0D, 7.0D, 12.0D),
+        Block.makeCuboidShape(7.0D, 7.0D, 7.0D, 9.0D, 8.0D, 9.0D));
+    VoxelShape HANDLE_NORTH = VoxelShapes.combine(
+        Block.makeCuboidShape(12.0D, 3.0D, 7.0D, 15.0D, 6.0D, 9.0D),
+        Block.makeCuboidShape(13.0D, 4.0D, 7.0D, 14.0D, 5.0D, 9.0D), IBooleanFunction.ONLY_FIRST);
+    VoxelShape HANDLE_SOUTH = VoxelShapes.combine(
+        Block.makeCuboidShape(1.0D, 3.0D, 7.0D, 4.0D, 6.0D, 9.0D),
+        Block.makeCuboidShape(2.0D, 4.0D, 7.0D, 3.0D, 5.0D, 9.0D), IBooleanFunction.ONLY_FIRST);
+    
+    VoxelShape HANDLE_WEST = VoxelShapes.combine(
+        Block.makeCuboidShape(7.0D, 3.0D, 1.0D, 9.0D, 6.0D, 4.0D),
+        Block.makeCuboidShape(7.0D, 4.0D, 2.0D, 9.0D, 5.0D, 3.0D), IBooleanFunction.ONLY_FIRST);
+    
+    VoxelShape HANDLE_EAST = VoxelShapes.combine(
+        Block.makeCuboidShape(7.0D, 3.0D, 12.0D, 9.0D, 6.0D, 15.0D),
+        Block.makeCuboidShape(7.0D, 4.0D, 13.0D, 9.0D, 5.0D, 14.0D), IBooleanFunction.ONLY_FIRST);
+    
+    VoxelShape SHAPE_NORTH = VoxelShapes.or(BASE, BODY_X, HANDLE_NORTH, Block.makeCuboidShape(0.0D, 4.0D, 7.0D, 3.0D, 6.0D, 9.0D));
+    VoxelShape SHAPE_SOUTH = VoxelShapes.or(BASE, BODY_X, HANDLE_SOUTH, Block.makeCuboidShape(13.0D, 4.0D, 7.0D, 16.0D, 6.0D, 9.0D));
+    VoxelShape SHAPE_WEST = VoxelShapes.or(BASE, BODY_Z, HANDLE_WEST, Block.makeCuboidShape(7.0D, 4.0D, 13.0D, 9.0D, 6.0D, 16.0D));
+    VoxelShape SHAPE_EAST = VoxelShapes.or(BASE, BODY_Z, HANDLE_EAST, Block.makeCuboidShape(7.0D, 4.0D, 0.0D, 9.0D, 6.0D, 3.0D));
+    
+    
+    EnumMap<Direction, VoxelShape> shapeMap = new EnumMap<>(Direction.class);
+    shapeMap.put(Direction.NORTH, SHAPE_NORTH);
+    shapeMap.put(Direction.SOUTH, SHAPE_SOUTH);
+    shapeMap.put(Direction.WEST, SHAPE_WEST);
+    shapeMap.put(Direction.EAST, SHAPE_EAST);
+    Direction dir = state.get(HORIZONTAL_FACING);
+    return shapeMap.getOrDefault(dir, BASE);
   }
   
   @OnlyIn(Dist.CLIENT)

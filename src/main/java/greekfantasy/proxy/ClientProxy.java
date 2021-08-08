@@ -12,9 +12,7 @@ import greekfantasy.client.render.layer.PlayerSkyjayLayer;
 import greekfantasy.client.render.tileentity.MobHeadTileEntityRenderer;
 import greekfantasy.client.render.tileentity.StatueTileEntityRenderer;
 import greekfantasy.client.render.tileentity.VaseTileEntityRenderer;
-import greekfantasy.entity.misc.DragonToothEntity;
-import greekfantasy.entity.misc.WebBallEntity;
-import greekfantasy.entity.misc.DiscusEntity;
+import greekfantasy.entity.misc.*;
 import greekfantasy.event.ClientForgeEventHandler;
 import greekfantasy.event.ClientModEventHandler;
 import net.minecraft.client.Minecraft;
@@ -73,6 +71,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GIGANTE_ENTITY, GiganteRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GOLDEN_RAM_ENTITY, GoldenRamRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GORGON_ENTITY, GorgonRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.GREEK_FIRE_ENTITY, m -> new SpriteRenderer<GreekFireEntity>(m, Minecraft.getInstance().getItemRenderer()));
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.HARPY_ENTITY, HarpyRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.HEALING_SPELL_ENTITY, HealingSpellRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.HYDRA_ENTITY, HydraRenderer::new);

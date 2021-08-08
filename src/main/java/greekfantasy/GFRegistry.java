@@ -136,6 +136,7 @@ public final class GFRegistry {
   public static EntityType<GiganteEntity> GIGANTE_ENTITY = buildEntityType(GiganteEntity::new, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, b -> {});
   public static EntityType<GoldenRamEntity> GOLDEN_RAM_ENTITY = buildEntityType(GoldenRamEntity::new, "golden_ram", 0.96F, 1.56F, EntityClassification.CREATURE, b -> b.immuneToFire());
   public static EntityType<GorgonEntity> GORGON_ENTITY = buildEntityType(GorgonEntity::new, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
+  public static EntityType<GreekFireEntity> GREEK_FIRE_ENTITY = buildEntityType(GreekFireEntity::new, "greek_fire", 0.45F, 0.45F, EntityClassification.MISC, b -> b.disableSummoning().trackingRange(4).updateInterval(10));
   public static EntityType<HarpyEntity> HARPY_ENTITY = buildEntityType(HarpyEntity::new, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, b -> {});
   public static EntityType<HealingSpellEntity> HEALING_SPELL_ENTITY = buildEntityType(HealingSpellEntity::new, "healing_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).updateInterval(10));
   public static EntityType<HydraEntity> HYDRA_ENTITY = buildEntityType(HydraEntity::new, "hydra", 2.4F, 2.24F, EntityClassification.MONSTER, b -> b.immuneToFire());
@@ -239,6 +240,8 @@ public final class GFRegistry {
   public static final Item SPIDER_PATTERN = null;
   @ObjectHolder("web_ball")
   public static final Item WEB_BALL = null;
+  @ObjectHolder("greek_fire")
+  public static final Item GREEK_FIRE = null;
   
   // Block //
   @ObjectHolder("reeds")
@@ -551,6 +554,7 @@ public final class GFRegistry {
     event.getRegistry().register(CURSE_ENTITY.setRegistryName(MODID, "curse"));
     event.getRegistry().register(DISCUS_ENTITY.setRegistryName(MODID, "discus"));
     event.getRegistry().register(DRAGON_TOOTH_ENTITY.setRegistryName(MODID, "dragon_tooth"));
+    event.getRegistry().register(GREEK_FIRE_ENTITY.setRegistryName(MODID, "greek_fire"));
     event.getRegistry().register(HEALING_SPELL_ENTITY.setRegistryName(MODID, "healing_spell"));
     event.getRegistry().register(ORTHUS_HEAD_ITEM_ENTITY.setRegistryName(MODID, "orthus_head_item"));
     event.getRegistry().register(POISON_SPIT_ENTITY.setRegistryName(MODID, "poison_spit"));
@@ -564,6 +568,7 @@ public final class GFRegistry {
     // entity types have already been created, now register the attributes
     event.put(ARA_ENTITY, AraEntity.getAttributes().create());
     event.put(ARACHNE_ENTITY, ArachneEntity.getAttributes().create());
+    event.put(ARION_ENTITY, ArionEntity.getAttributes().create());
     event.put(BABY_SPIDER_ENTITY, BabySpiderEntity.getAttributes().create());
     event.put(BRONZE_BULL_ENTITY, BronzeBullEntity.getAttributes().create());
     event.put(CENTAUR_ENTITY, CentaurEntity.getAttributes().create());
@@ -846,11 +851,11 @@ public final class GFRegistry {
           .setRegistryName(MODID, "gorgon_blood"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "horn"),
-        new PomegranateItem(new Item.Properties().group(GREEK_GROUP))
+        new PomegranateItem(new Item.Properties().group(GREEK_GROUP).food(PomegranateItem.POMEGRANATE))
           .setRegistryName(MODID, "pomegranate"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "olives"),
-        new Item(new Item.Properties().group(GREEK_GROUP).containerItem(Items.GLASS_BOTTLE))
+        new Item(new Item.Properties().group(GREEK_GROUP).maxStackSize(16).containerItem(Items.GLASS_BOTTLE))
           .setRegistryName(MODID, "olive_oil")
     );
     
@@ -903,7 +908,9 @@ public final class GFRegistry {
         new DiscusItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
           .setRegistryName(MODID, "discus"),
         new WebBallItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
-          .setRegistryName(MODID, "web_ball")
+          .setRegistryName(MODID, "web_ball"),
+        new GreekFireItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
+          .setRegistryName(MODID, "greek_fire")
     );
     
     // block items
