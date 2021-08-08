@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "greekfantasy:block/pomegranate_log_top",
+    "side": "greekfantasy:block/pomegranate_log"
+  }
+}

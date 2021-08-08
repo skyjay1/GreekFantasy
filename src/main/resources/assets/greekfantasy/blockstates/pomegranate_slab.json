@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "type=bottom": { "model": "greekfantasy:block/pomegranate_slab" },
+    "type=double": { "model": "greekfantasy:block/pomegranate_planks" },
+    "type=top": { "model": "greekfantasy:block/pomegranate_slab_top" }
+  }
+}

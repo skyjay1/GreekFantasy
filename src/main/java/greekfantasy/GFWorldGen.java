@@ -12,6 +12,7 @@ import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeAmbience;
 import net.minecraft.world.biome.BiomeGenerationSettings;
+import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.DefaultBiomeFeatures;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.biome.MoodSoundAmbience;
@@ -65,6 +66,8 @@ public final class GFWorldGen {
   public static final Feature<NoFeatureConfig> ARACHNE_PIT_FEATURE = null;
   @ObjectHolder(MODID + ":olive_tree")
   public static final Feature<BaseTreeFeatureConfig> OLIVE_TREE_FEATURE = null;
+  @ObjectHolder(MODID + ":pomegranate_tree")
+  public static final Feature<BaseTreeFeatureConfig> POMEGRANATE_TREE_FEATURE = null;
   @ObjectHolder(MODID + ":golden_apple_tree")
   public static final Feature<BaseTreeFeatureConfig> GOLDEN_APPLE_TREE_FEATURE = null;
   @ObjectHolder(MODID + ":reeds")
@@ -88,6 +91,7 @@ public final class GFWorldGen {
   private static ConfiguredFeature<?, ?> PYTHON_PIT;
   private static ConfiguredFeature<?, ?> OLIVE_TREE_SINGLE;
   private static ConfiguredFeature<?, ?> OLIVE_TREE_FOREST;
+  private static ConfiguredFeature<?, ?> POMEGRANATE_TREE;
   private static ConfiguredFeature<?, ?> GOLDEN_APPLE_TREE;
   private static ConfiguredFeature<?, ?> REEDS;
   private static ConfiguredFeature<?, ?> SWAMP_REEDS;
@@ -127,6 +131,8 @@ public final class GFWorldGen {
           .setRegistryName(MODID, "arachne_pit"),
         new OliveTreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(MODID, "olive_tree"),
+        new TreeFeature(BaseTreeFeatureConfig.CODEC)
+          .setRegistryName(MODID, "pomegranate_tree"),
         new TreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(MODID, "golden_apple_tree"),
         new ReedsFeature(BlockClusterFeatureConfig.CODEC)
@@ -188,6 +194,8 @@ public final class GFWorldGen {
             .withPlacement(Placements.VEGETATION_PLACEMENT)
             .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
             .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(10, 0.1F, 1))));
+    POMEGRANATE_TREE = registerFeature("pomegranate_tree",
+        PomegranateTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).chance(2).count(4));
     REEDS = registerFeature("reeds",
         REEDS_FEATURE.withConfiguration((new BlockClusterFeatureConfig.Builder(
             new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
@@ -221,6 +229,10 @@ public final class GFWorldGen {
   public static void addBiomeFeatures(final BiomeLoadingEvent event) {
     if(event.getCategory() == Biome.Category.NETHER) {
       addFeature(event, "small_nether_shrine", GenerationStage.Decoration.SURFACE_STRUCTURES, SMALL_NETHER_SHRINE);
+      if(Biomes.CRIMSON_FOREST.getLocation().equals(event.getName()) ||
+          Biomes.WARPED_FOREST.getLocation().equals(event.getName())) {
+        addFeature(event, "pomegranate_tree", GenerationStage.Decoration.VEGETAL_DECORATION, POMEGRANATE_TREE);
+      }
     } else if(event.getCategory() != Biome.Category.THEEND) {
       // add ore features
       addFeature(event, "marble", GenerationStage.Decoration.UNDERGROUND_DECORATION, MARBLE);

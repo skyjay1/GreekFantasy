@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "wooden_slab",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "greekfantasy:pomegranate_planks"
+    }
+  },
+  "result": {
+    "item": "greekfantasy:pomegranate_slab",
+    "count": 6
+  }
+}

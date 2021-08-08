@@ -8,6 +8,8 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableMap;
+
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.EffectGoal;
@@ -63,21 +65,21 @@ import net.minecraftforge.common.IPlantable;
 
 public class DryadEntity extends CreatureEntity implements IAngerable {
   
-  private static final DataParameter<String> DATA_VARIANT = EntityDataManager.createKey(DryadEntity.class, DataSerializers.STRING);
+  protected static final DataParameter<String> DATA_VARIANT = EntityDataManager.createKey(DryadEntity.class, DataSerializers.STRING);
   private static final String KEY_VARIANT = "Variant";
   private static final String KEY_TREE_POS = "Tree";
   private static final String KEY_HIDING = "HidingTime";
   
-  private Optional<BlockPos> treePos = Optional.empty();
+  protected Optional<BlockPos> treePos = Optional.empty();
   
   private static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(4, 10);
   private int angerTime;
   private UUID angerTarget;
   
   // whether the entity is pathing to a tree
-  private boolean isGoingToTree;
+  protected boolean isGoingToTree;
   // number of ticks the entity has been hiding
-  private int hidingTime;
+  protected int hidingTime;
   
   public DryadEntity(final EntityType<? extends DryadEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -118,7 +120,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   public void livingTick() {
     super.livingTick();
     // if entity has a tree position, check if it no longer exists
-    if(this.ticksExisted % 28 == 0 && treePos.isPresent() && !isTreeAt(getEntityWorld(), treePos.get(), getVariant().getBlocks())) {
+    if(this.ticksExisted % 28 == 0 && treePos.isPresent() && !isTreeAt(getEntityWorld(), treePos.get(), getVariant().getLogs())) {
       // if entity was hiding, exit the tree
       this.tryExitTree();
       // update tree pos
@@ -161,7 +163,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   public boolean isInvulnerableTo(final DamageSource source) {
     // immune to suffocation while hiding (presumably in a tree)
     if(source == DamageSource.IN_WALL) {
-      return !this.world.getBlockState(this.getPosition().up()).isIn(this.getVariant().getBlocks());
+      return !this.world.getBlockState(this.getPosition().up()).isIn(this.getVariant().getLogs());
     }
     return super.isInvulnerableTo(source);
   }
@@ -335,7 +337,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       if(cooldown > 0) {
         cooldown--;
       } else if(DryadEntity.this.treePos.isPresent() && DryadEntity.this.isWithinDistanceOfTree(1.5D) && DryadEntity.this.getAttackTarget() == null) {
-        return isTreeAt(DryadEntity.this.getEntityWorld(), DryadEntity.this.treePos.get(), DryadEntity.this.getVariant().getBlocks());
+        return isTreeAt(DryadEntity.this.getEntityWorld(), DryadEntity.this.treePos.get(), DryadEntity.this.getVariant().getLogs());
       }
       return false;      
     }
@@ -376,7 +378,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     @Override
     public boolean isTargetBlock(IWorldReader worldIn, BlockPos pos) {
       // valid block if there is a tree here and it has not been occupied by another dryad
-      return isTreeAt(worldIn, pos, DryadEntity.this.getVariant().getBlocks()) 
+      return isTreeAt(worldIn, pos, DryadEntity.this.getVariant().getLogs()) 
           && DryadEntity.this.getEntityWorld().getEntitiesWithinAABB(DryadEntity.class, new AxisAlignedBB(pos.up()).grow(0.5D)).isEmpty();
     }
 
@@ -436,29 +438,35 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     }
   }
   
-  public static enum Variant implements IStringSerializable {
-    ACACIA("acacia", () -> Blocks.ACACIA_SAPLING),
-    BIRCH("birch", () -> Blocks.BIRCH_SAPLING),
-    DARK_OAK("dark_oak", () -> Blocks.DARK_OAK_SAPLING),
-    JUNGLE("jungle", () -> Blocks.JUNGLE_SAPLING),
-    OAK("oak", () -> Blocks.OAK_SAPLING),
-    SPRUCE("spruce", () -> Blocks.SPRUCE_SAPLING),
-    OLIVE(GreekFantasy.MODID, "olive", () -> GFRegistry.OLIVE_SAPLING);
+  public static class Variant implements IStringSerializable {
+    public static final Variant ACACIA = new Variant("acacia", () -> Blocks.ACACIA_SAPLING);
+    public static final Variant BIRCH = new Variant("birch", () -> Blocks.BIRCH_SAPLING);
+    public static final Variant DARK_OAK = new Variant("dark_oak", () -> Blocks.DARK_OAK_SAPLING);
+    public static final Variant JUNGLE = new Variant("jungle", () -> Blocks.JUNGLE_SAPLING);
+    public static final Variant OAK = new Variant("oak", () -> Blocks.OAK_SAPLING);
+    public static final Variant SPRUCE = new Variant("spruce", () -> Blocks.SPRUCE_SAPLING);
+    public static final Variant OLIVE = new Variant(GreekFantasy.MODID, "olive", "dryad", "logs", () -> GFRegistry.OLIVE_SAPLING);
     
-    private final String name;
-    private final Supplier<Block> sapling;
-    private final ResourceLocation tag;
-    private final ResourceLocation lootTable;
+    public static ImmutableMap<String, Variant> OVERWORLD = ImmutableMap.<String, Variant>builder()
+        .put(ACACIA.name, ACACIA).put(BIRCH.name, BIRCH).put(DARK_OAK.name, DARK_OAK)
+        .put(JUNGLE.name, JUNGLE).put(OAK.name, OAK).put(SPRUCE.name, SPRUCE)
+        .put(OLIVE.name, OLIVE)
+        .build();
     
-    private Variant(final String nameIn, final Supplier<Block> saplingIn) {
-      this("minecraft", nameIn, saplingIn);
+    protected final String name;
+    protected final Supplier<Block> sapling;
+    protected final ResourceLocation tag;
+    protected final ResourceLocation lootTable;
+    
+    protected Variant(final String nameIn, final Supplier<Block> saplingIn) {
+      this("minecraft", nameIn, "dryad", "logs", saplingIn);
     }
     
-    private Variant(final String modid, final String nameIn, final Supplier<Block> saplingIn) {
+    protected Variant(final String modid, final String nameIn, final String entityIn, final String tagSuffixIn, final Supplier<Block> saplingIn) {
       name = nameIn;
       sapling = saplingIn;
-      tag = new ResourceLocation(modid, name + "_logs");
-      lootTable = new ResourceLocation(GreekFantasy.MODID, "entities/dryad/" + name);
+      tag = new ResourceLocation(modid, name + "_" + tagSuffixIn);
+      lootTable = new ResourceLocation(GreekFantasy.MODID, "entities/" + entityIn + "/" + name);
     }
     
     public static Variant getForBiome(final Optional<RegistryKey<Biome>> biome) {
@@ -466,38 +474,26 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     }
     
     public static Variant getRandom(final Random rand) {
-      int len = values().length;
-      return values()[rand.nextInt(len)];
+      int len = OVERWORLD.size();
+      return len > 0 ? OVERWORLD.entrySet().asList().get(rand.nextInt(len)).getValue() : OAK;
     }
 
     public static Variant getByName(final String n) {
-      // check the given name against all types
+      // check the given name in overworld and nether maps
       if(n != null && !n.isEmpty()) {
-        for(final Variant t : values()) {
-          if(t.getString().equals(n)) {
-            return t;
-          }
-        }
+        return OVERWORLD.getOrDefault(n, OAK);
       }
       // defaults to OAK
       return OAK;
     }
     
-    public ITag<Block> getBlocks() {
-      return Optional.ofNullable(BlockTags.getCollection().get(tag)).orElse(BlockTags.LOGS);
-    }
+    public ITag<Block> getLogs() { return Optional.ofNullable(BlockTags.getCollection().get(tag)).orElse(BlockTags.LOGS); }
     
-    public BlockState getSapling() {
-      return sapling.get().getDefaultState();
-    }
+    public BlockState getSapling() { return sapling.get().getDefaultState(); }
     
-    public ResourceLocation getLootTable() {
-      return lootTable;
-    }
+    public ResourceLocation getLootTable() { return lootTable; }
   
     @Override
-    public String getString() {
-      return name;
-    }
+    public String getString() { return name; }
   }
 }

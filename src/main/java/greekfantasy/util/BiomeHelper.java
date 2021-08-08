@@ -8,6 +8,7 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GFWorldGen;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.DryadEntity;
+import greekfantasy.entity.LampadEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -25,6 +26,7 @@ public final class BiomeHelper {
   private BiomeHelper() { }
   
   private static Map<RegistryKey<Biome>, DryadEntity.Variant> DRYAD_MAP = new HashMap<>();
+  private static Map<RegistryKey<Biome>, LampadEntity.Variant> LAMPAD_MAP = new HashMap<>();
   private static Map<RegistryKey<Biome>, Block> LOG_MAP = new HashMap<>();
   
   public static DryadEntity.Variant getDryadVariantForBiome(final Optional<RegistryKey<Biome>> biome) {
@@ -32,6 +34,13 @@ public final class BiomeHelper {
       initDryadMap();
     }
     return biome.flatMap(b -> Optional.ofNullable(DRYAD_MAP.get(b))).orElse(DryadEntity.Variant.OAK);
+  }
+  
+  public static LampadEntity.Variant getLampadVariantForBiome(final Optional<RegistryKey<Biome>> biome) {
+    if(LAMPAD_MAP.isEmpty()) {
+      initLampadMap();
+    }
+    return biome.flatMap(b -> Optional.ofNullable(LAMPAD_MAP.get(b))).orElse(LampadEntity.Variant.CRIMSON);
   }
   
   public static BlockState getLogForBiome(final Optional<RegistryKey<Biome>> biome) {
@@ -87,6 +96,14 @@ public final class BiomeHelper {
     DRYAD_MAP.put(Biomes.SNOWY_TUNDRA, DryadEntity.Variant.SPRUCE);
     // Olive biomes
     DRYAD_MAP.put(GFWorldGen.OLIVE_FOREST, DryadEntity.Variant.OLIVE);
+  }
+  
+  private static void initLampadMap() {
+    LAMPAD_MAP.clear();
+    // Nether biomes
+    LAMPAD_MAP.put(Biomes.CRIMSON_FOREST, LampadEntity.Variant.CRIMSON);
+    LAMPAD_MAP.put(Biomes.WARPED_FOREST, LampadEntity.Variant.WARPED);
+    LAMPAD_MAP.put(Biomes.SOUL_SAND_VALLEY, LampadEntity.Variant.POMEGRANATE);
   }
   
   private static void initLogMap() {

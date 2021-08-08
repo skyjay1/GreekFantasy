@@ -422,6 +422,7 @@ public class GFConfig {
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, nonNetherHostileBlacklist));
     FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 900, true, biomesAsList(BiomeDictionary.Type.SWAMP)));
     FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 22, true, biomesAsList(BiomeDictionary.Type.FOREST)));
+    FEATURES.put("pomegranate_tree", new BiomeWhitelistConfig(builder, "pomegranate_tree", 30, true, biomesAsList(BiomeDictionary.Type.NETHER)));
     FEATURES.put("lion_den", new BiomeWhitelistConfig(builder, "lion_den", 9, true, sandy));
     FEATURES.put("arachne_pit", new BiomeWhitelistConfig(builder, "arachne_pit", 19, false, nonNetherHostileBlacklist));
     builder.pop();

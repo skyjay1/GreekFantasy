@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:glass_bottle" },
+    { "item": "greekfantasy:olives" },
+    { "item": "greekfantasy:olives" },
+    { "item": "greekfantasy:olives" }
+  ],
+  "result": {
+    "item": "greekfantasy:olive_oil"
+  }
+}

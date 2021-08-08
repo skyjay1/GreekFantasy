@@ -1,6 +1,7 @@
 package greekfantasy.client.render;
 
-import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.render.model.NymphModel;
@@ -11,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class DryadRenderer<T extends DryadEntity> extends BipedRenderer<T, NymphModel<T>> {
   
-  public static final EnumMap<DryadEntity.Variant, ResourceLocation> TEXTURE_MAP = new EnumMap<>(DryadEntity.Variant.class);
+  public static final Map<DryadEntity.Variant, ResourceLocation> TEXTURE_MAP = new HashMap<>();
   
   static {
     TEXTURE_MAP.put(DryadEntity.Variant.ACACIA, new ResourceLocation(GreekFantasy.MODID, "textures/entity/dryad/acacia.png"));

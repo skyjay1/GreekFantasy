@@ -399,8 +399,8 @@ public class CommonForgeEventHandler {
       final List<DryadEntity> dryads = event.getWorld().getEntitiesWithinAABB(DryadEntity.class, aabb);
       for(final DryadEntity dryad : dryads) {
         // check if this is a tree according to the given dryad
-        if(DryadEntity.isTreeAt(event.getWorld(), event.getPos().down(1), dryad.getVariant().getBlocks())
-            || DryadEntity.isTreeAt(event.getWorld(), event.getPos().down(2), dryad.getVariant().getBlocks())) {
+        if(DryadEntity.isTreeAt(event.getWorld(), event.getPos().down(1), dryad.getVariant().getLogs())
+            || DryadEntity.isTreeAt(event.getWorld(), event.getPos().down(2), dryad.getVariant().getLogs())) {
           // anger the dryad
           dryad.setAttackTarget(event.getPlayer());
           dryad.tryExitTree();

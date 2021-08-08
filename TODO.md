@@ -100,8 +100,13 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
+- _ _ _ Greek Fire
+- X X X Pomegranate logs
+- X _ X Pomegranate leaves
+- X X _ Pomegranate blocks: door, trapdoor
+- X X _ Oil Lamp
 - _ _ _ Other heads: Minotaur, Python, Medusa
-- _ _ _ Olive blocks: button, fence, boat, door, trapdoor, pressure plate, sign
+- _ _ _ Olive blocks: button, fence, boat, pressure plate, sign
 - _ _ _ Grapes / grapevines?
 
 
@@ -110,9 +115,11 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- X X X Web Ball
-- X X X Apple of Discord (Hera/Aphrodite/Athena +-1000)
-- X Bident/Spear Loyalty enchantment
+- _ _ _ Pomegranate (or seeds?)
+- X X _ Pomegranate sapling
+- _ _ _ Olives
+- _ _ _ Olive Oil
+- _ _ _ Greek Fire
 
 ## Achievements
 
@@ -149,13 +156,14 @@ _Can I do something with these?_
 - Pegasus (and bull-like twin, Chrysaor)
 - Werewolf
 - Stymphalian bird
+- Cecrops (half-man, half-snake)
 - Ophiotaur (kill to obtain heart; use heart to banish a god)
 - Kyno (dog-head biped; see also "Cynocephaly")
 - Blemmyes (headless biped)
 - Pandos (biped, giant ears)
 - Horse of Diomedes (man-eating horse)
 - Underworld: underworld biome, tartarus, styx river, meadow of Asphodels, etc.
-- Underworld: Underworld pomegranate tree
+- Underworld: Underworld pomegranate tree (restores hunger in nether or high favor with Hades, gives naseua otherwise)
 - Iron Feather - from Stymphalian bird; throwable
 - Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 - Belt of Aphrodite (maybe allows disguise as other player?)

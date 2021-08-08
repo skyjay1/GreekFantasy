@@ -77,6 +77,7 @@ public class ClientProxy extends Proxy {
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.HEALING_SPELL_ENTITY, HealingSpellRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.HYDRA_ENTITY, HydraRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.HYDRA_HEAD_ENTITY, HydraHeadRenderer::new);
+    RenderingRegistry.registerEntityRenderingHandler(GFRegistry.LAMPAD_ENTITY, LampadRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.MAD_COW_ENTITY, MadCowRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.MAKHAI_ENTITY, MakhaiRenderer::new);
     RenderingRegistry.registerEntityRenderingHandler(GFRegistry.MINOTAUR_ENTITY, MinotaurRenderer::new);
@@ -116,7 +117,16 @@ public class ClientProxy extends Proxy {
   @Override
   public void registerRenderLayers() {
     GreekFantasy.LOGGER.debug("registerRenderLayers");
+    // cutout mipped
+    RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_LEAVES, RenderType.getCutoutMipped());
+    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_LEAVES, RenderType.getCutoutMipped());
+    // cutout
+    RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_DOOR, RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_TRAPDOOR, RenderType.getCutout());
     RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_SAPLING, RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_DOOR, RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_TRAPDOOR, RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_SAPLING, RenderType.getCutout());
     RenderTypeLookup.setRenderLayer(GFRegistry.GOLDEN_APPLE_SAPLING, RenderType.getCutout());    
     RenderTypeLookup.setRenderLayer(GFRegistry.REEDS, RenderType.getCutout());
     RenderTypeLookup.setRenderLayer(GFRegistry.WILD_ROSE, RenderType.getCutout());

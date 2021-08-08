@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "lit=true,waterlogged=false,facing=east": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 90
+    },
+    "lit=true,waterlogged=false,facing=north": {
+      "model": "greekfantasy:block/oil_lamp"
+    },
+    "lit=true,waterlogged=false,facing=south": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 180
+    },
+    "lit=true,waterlogged=false,facing=west": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 270
+    },
+    "lit=true,waterlogged=true,facing=east": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 90
+    },
+    "lit=true,waterlogged=true,facing=north": {
+      "model": "greekfantasy:block/oil_lamp"
+    },
+    "lit=true,waterlogged=true,facing=south": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 180
+    },
+    "lit=true,waterlogged=true,facing=west": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 270
+    },
+    "lit=false,waterlogged=false,facing=east": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 90
+    },
+    "lit=false,waterlogged=false,facing=north": {
+      "model": "greekfantasy:block/oil_lamp"
+    },
+    "lit=false,waterlogged=false,facing=south": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 180
+    },
+    "lit=false,waterlogged=false,facing=west": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 270
+    },
+    "lit=false,waterlogged=true,facing=east": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 90
+    },
+    "lit=false,waterlogged=true,facing=north": {
+      "model": "greekfantasy:block/oil_lamp"
+    },
+    "lit=false,waterlogged=true,facing=south": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 180
+    },
+    "lit=false,waterlogged=true,facing=west": {
+      "model": "greekfantasy:block/oil_lamp",
+      "y": 270
+    }
+  }
+}

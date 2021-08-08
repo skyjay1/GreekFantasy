@@ -63,10 +63,10 @@
                   "condition": "minecraft:table_bonus",
                   "enchantment": "minecraft:fortune",
                   "chances": [
+                    0.0125,
                     0.025,
-                    0.03625,
-                    0.0483333336,
-                    0.05
+                    0.04,
+                    0.09
                   ]
                 }
               ],
