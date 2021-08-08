@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.util.Hand;
 
 public class NymphModel<T extends MobEntity> extends BipedModel<T> {
 
@@ -62,6 +63,10 @@ public class NymphModel<T extends MobEntity> extends BipedModel<T> {
     bipedRightArm.setRotationPoint(-3.0F, 2.0F, 1.5F);
     bipedLeftLeg.setRotationPoint(1.5F, 12.0F, 1.5F);
     bipedRightLeg.setRotationPoint(-1.5F, 12.0F, 1.5F);
+    // held item
+    if(!entityIn.getHeldItem(Hand.MAIN_HAND).isEmpty()) {
+      this.getArmForSide(this.getMainHand(entityIn).opposite()).rotateAngleX += -0.42F;
+    }
   }
   
   @Override

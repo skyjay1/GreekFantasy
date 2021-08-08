@@ -19,17 +19,23 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.Tags.IOptionalNamedTag;
 
 public class LampadEntity extends DryadEntity {
+  
+  protected static final IOptionalNamedTag<Item> LAMPAD_TRADES = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "lampad_trade"));
   
   public LampadEntity(final EntityType<? extends LampadEntity> type, final World worldIn) {
     super(type, worldIn);
@@ -59,6 +65,10 @@ public class LampadEntity extends DryadEntity {
     return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
+  @Override
+  public IOptionalNamedTag<Item> getTradeTag() { return LAMPAD_TRADES; }
+  
+  @Override
   public DryadEntity.Variant getVariant() { return LampadEntity.Variant.getByName(this.getDataManager().get(DATA_VARIANT)); }
   
   public static class Variant extends DryadEntity.Variant {

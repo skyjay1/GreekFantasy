@@ -12,8 +12,13 @@ import com.google.common.collect.ImmutableMap;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.favor.IFavor;
+import greekfantasy.deity.favor_effect.ConfiguredFavorRange;
+import greekfantasy.deity.favor_effect.ConfiguredSpecialFavorEffect;
+import greekfantasy.deity.favor_effect.SpecialFavorEffect;
 import greekfantasy.entity.ai.EffectGoal;
 import greekfantasy.entity.ai.FindBlockGoal;
+import greekfantasy.network.SSimpleParticlesPacket;
 import greekfantasy.util.BiomeHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -37,7 +42,11 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.item.ExperienceOrbEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -45,8 +54,11 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.RangedInteger;
 import net.minecraft.util.RegistryKey;
@@ -62,6 +74,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.Tags.IOptionalNamedTag;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class DryadEntity extends CreatureEntity implements IAngerable {
   
@@ -71,6 +85,9 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   private static final String KEY_HIDING = "HidingTime";
   
   protected Optional<BlockPos> treePos = Optional.empty();
+  
+  protected static final IOptionalNamedTag<Item> DRYAD_TRADES = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "dryad_trade"));
+  protected Optional<PlayerEntity> tradingPlayer = Optional.empty();
   
   private static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(4, 10);
   private int angerTime;
@@ -97,14 +114,15 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
     this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
-    this.goalSelector.addGoal(1, new DryadEntity.FindTreeGoal(8, 28));
-    this.goalSelector.addGoal(2, new DryadEntity.HideGoal(640));
-    this.goalSelector.addGoal(3, new DryadEntity.GoToTreeGoal(0.9F, 320));
-    this.goalSelector.addGoal(4, new EffectGoal<>(this, () -> Effects.REGENERATION, 60, 120, 0, 1, 
+    this.goalSelector.addGoal(2, new DryadEntity.TradeGoal(50 + rand.nextInt(20)));
+    this.goalSelector.addGoal(3, new DryadEntity.FindTreeGoal(8, 28));
+    this.goalSelector.addGoal(4, new DryadEntity.HideGoal(640));
+    this.goalSelector.addGoal(5, new DryadEntity.GoToTreeGoal(0.9F, 320));
+    this.goalSelector.addGoal(6, new EffectGoal<>(this, () -> Effects.REGENERATION, 60, 120, 0, 1, 
         EffectGoal.randomPredicate(400).and(e -> ((DryadEntity)e).isHiding())));
-    this.goalSelector.addGoal(4, new DryadEntity.WalkingGoal(0.8F, 140));
-    this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(7, new DryadEntity.WalkingGoal(0.8F, 140));
+    this.goalSelector.addGoal(8, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    this.goalSelector.addGoal(9, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
     this.targetSelector.addGoal(3, new ResetAngerGoal<>(this, true));
@@ -221,9 +239,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   }
   
   @Override
-  public ResourceLocation getLootTable() {
-    return this.getVariant().getLootTable();
-  }  
+  public ResourceLocation getLootTable() { return this.getVariant().getLootTable(); }  
   
   // IAngerable methods
   
@@ -243,6 +259,89 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   public boolean canDespawn(double distanceToClosestPlayer) { return !treePos.isPresent() && this.ticksExisted > 4800; }
 
+  // Trade methods
+  
+  @Override
+  protected ActionResultType getEntityInteractionResult(final PlayerEntity player, final Hand hand) { 
+    ItemStack stack = player.getHeldItem(hand);
+    // check if the tradingPlayer is holding a trade item and the entity is not already trading
+    if(!this.world.isRemote() && !this.isAggressive() && !this.tradingPlayer.isPresent() 
+        && this.getHeldItemMainhand().isEmpty() && !stack.isEmpty() && getTradeTag().contains(stack.getItem())) {
+      // check if the tradingPlayer is eligible to trade
+      if(canPlayerTrade(player)) {
+        // initiate trading
+        this.setTradingPlayer(player);
+        // take the item from the tradingPlayer
+        this.setHeldItem(Hand.MAIN_HAND, new ItemStack(stack.getItem()));
+        if(!player.isCreative()) {
+          stack.shrink(1);
+        }
+        player.setHeldItem(hand, stack);
+        return ActionResultType.CONSUME;
+      } else {
+        // spawn particles
+        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(false, this.getPosition().up(1), 4));
+      }
+    }
+    
+    return super.getEntityInteractionResult(player, hand);
+  }
+
+  /**
+   * @param player the player
+   * @return true if the given player is allowed to trade with this entity
+   */
+  public boolean canPlayerTrade(final PlayerEntity player) {
+    if(player != null) {
+      IFavor favor = player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance());
+      if(favor.isEnabled()) {
+        // deny trade if special favor effect is denied
+        for(final ConfiguredSpecialFavorEffect effect : GreekFantasy.PROXY.getFavorConfiguration().getSpecials(SpecialFavorEffect.Type.TRADING_CANCEL)) {
+          if(effect.canApply(player, favor)) {
+            return false;
+          }
+        }
+        // deny trade if player is in hostile range
+        if(GreekFantasy.PROXY.getFavorConfiguration().hasEntity(getType())) {
+          ConfiguredFavorRange range = GreekFantasy.PROXY.getFavorConfiguration().getEntity(getType());
+          return !(range.hasHostileRange() && range.getHostileRange().isInFavorRange(player, favor));
+        }
+      }
+    }
+    // allow trading if above cases do not apply
+    return true;
+  }
+  
+  public void setTradingPlayer(final PlayerEntity player) { this.tradingPlayer = Optional.ofNullable(player); }
+  
+  /** @return an Item Tag of items to accept from the player while trading **/
+  public IOptionalNamedTag<Item> getTradeTag() { return DRYAD_TRADES; }
+  
+  /**
+   * Performs a trade by depleting the tradeItem and creating a resultItem
+   * @param player the player
+   * @param tradeItem the item offered by the player
+   * @return the ItemEntity of the result item
+   */
+  public ItemEntity trade(final Optional<PlayerEntity> player, final ItemStack tradeItem) {
+    // determine trade result
+    ItemStack resultItem = new ItemStack(this.getVariant().getSapling().getBlock().asItem());
+    // shrink/remove held item
+    tradeItem.shrink(1);
+    this.setHeldItem(Hand.MAIN_HAND, tradeItem);
+    if (tradeItem.getCount() <= 0) {
+      this.setTradingPlayer(null);
+    }
+    // spawn trade result as item
+    ItemEntity itemEntity = this.entityDropItem(resultItem, 1.2F);
+    // spawn xp
+    this.world.addEntity(new ExperienceOrbEntity(this.world, this.getPosX(), this.getPosY(), this.getPosZ(), 1 + rand.nextInt(2)));
+    // send packet to spawn particles
+    GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(true, this.getPosition().up(1), 6));
+    // return the item that was spawned
+    return itemEntity;
+  }
+  
   // Variant methods
 
   public void setVariant(final DryadEntity.Variant variant) { this.getDataManager().set(DATA_VARIANT, variant.getString()); }
@@ -435,6 +534,56 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     public boolean shouldExecute() {
       return !DryadEntity.this.isHiding() && !DryadEntity.this.isGoingToTree && DryadEntity.this.getAttackTarget() == null
            && super.shouldExecute();
+    }
+  }
+  
+  class TradeGoal extends Goal {
+    
+    protected final int maxThinkingTime;
+    protected int thinkingTime;
+        
+    public TradeGoal(final int maxThinkingTimeIn) {
+      this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+      maxThinkingTime = maxThinkingTimeIn;
+      thinkingTime = 0;
+    }
+
+    @Override
+    public boolean shouldExecute() {
+      return !DryadEntity.this.isAggressive() 
+          && !DryadEntity.this.getHeldItemMainhand().isEmpty()
+          && DryadEntity.this.getTradeTag().contains(DryadEntity.this.getHeldItemMainhand().getItem());
+    }
+    
+    @Override
+    public boolean shouldContinueExecuting() {
+      return thinkingTime > 0 && thinkingTime <= maxThinkingTime && shouldExecute();
+    }
+    
+    @Override
+    public void startExecuting() {
+      thinkingTime = 1;
+    }
+    
+    @Override
+    public void tick() {
+      // look at the tradingPlayer
+      if(DryadEntity.this.tradingPlayer.isPresent()) {
+        DryadEntity.this.lookController.setLookPositionWithEntity(DryadEntity.this.tradingPlayer.get(), DryadEntity.this.getHorizontalFaceSpeed(), 100.0F);
+      }
+      // stop moving and look down
+      DryadEntity.this.getNavigator().clearPath();
+      DryadEntity.this.getLookController().setLookPosition(DryadEntity.this.getEyePosition(1.0F).add(0.0D, -0.25D, 0.0D));
+      // if enough time has elapsed, commence the trade
+      if(thinkingTime++ >= maxThinkingTime) {
+        trade(DryadEntity.this.tradingPlayer, DryadEntity.this.getHeldItemMainhand());
+        resetTask();
+      }
+    }
+    
+    @Override
+    public void resetTask() {
+      thinkingTime = 0;
     }
   }
   

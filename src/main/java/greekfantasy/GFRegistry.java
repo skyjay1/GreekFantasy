@@ -984,7 +984,7 @@ public final class GFRegistry {
     registerSpawnEgg(event, GORGON_ENTITY, "gorgon", 0x3a8228, 0xbcbcbc);
     registerSpawnEgg(event, HARPY_ENTITY, "harpy", 0x724e36, 0x332411);
     registerSpawnEgg(event, HYDRA_ENTITY, "hydra", 0x372828, 0x9d4217);
-    registerSpawnEgg(event, LAMPAD_ENTITY, "lampad", 0x643026, 0x7e4a3a);
+    registerSpawnEgg(event, LAMPAD_ENTITY, "lampad", 0x643026, 0xfed93f);
     registerSpawnEgg(event, MAD_COW_ENTITY, "mad_cow", 0x443626, 0xcf9797);
     registerSpawnEgg(event, MAKHAI_ENTITY, "makhai", 0x513f38, 0xf33531);
     registerSpawnEgg(event, MINOTAUR_ENTITY, "minotaur", 0x443626, 0x734933);

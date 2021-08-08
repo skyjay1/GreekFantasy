@@ -1,0 +1,77 @@
+{
+  "pools": [
+	{
+	  "name": "main",
+	  "rolls": 1,
+	  "entries": [
+		{
+		  "type": "item",
+		  "name": "minecraft:crimson_stem",
+		  "functions": [
+			{
+			  "function": "set_count",
+			  "count": {
+				"min": 0,
+				"max": 4
+			  }
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "name": "pool1",
+	  "rolls": 1,
+	  "entries": [
+		{
+		  "type": "item",
+		  "name": "minecraft:nether_wart_block",
+		  "functions": [
+			{
+			  "function": "set_count",
+			  "count": {
+				"min": 0,
+				"max": 4
+			  }
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "name": "pool2",
+	  "rolls": 1,
+	  "entries": [
+		{
+		  "type": "item",
+		  "name": "minecraft:crimson_fungus",
+		  "functions": [
+			{
+			  "function": "set_count",
+			  "count": {
+				"min": 0,
+				"max": 6
+			  }
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "name": "pool3",
+	  "rolls": 1,
+	  "entries": [
+		{
+		  "type": "item",
+		  "name": "minecraft:shroomlight",
+		  "weight": 1,
+		  "quality": 2
+		},
+		{
+		  "type": "empty",
+		  "weight": 4
+		}
+	  ]
+	}
+  ]
+}

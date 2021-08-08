@@ -49,7 +49,8 @@ public class EffectGoal<T extends LivingEntity> extends Goal {
    * @return a predicate that passes approximately every {chance} ticks
    */
   public static <E extends LivingEntity> Predicate<E> randomPredicate(final int chance) {
-    return e -> e.getRNG().nextInt(chance) == 0;
+    final int c = Math.max(1, chance);
+    return e -> e.getRNG().nextInt(c) == 0;
   }
   
   /**

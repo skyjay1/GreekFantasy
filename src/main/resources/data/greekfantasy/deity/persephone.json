@@ -51,6 +51,12 @@
   	  "mincooldown": 120
   	}
   ],
+  "kill_favor_map": {
+  	"greekfantasy:dryad": -20,
+  	"greekfantasy:lampad": -20,
+  	"greekfantasy:satyr": -20,
+  	"greekfantasy:unicorn": -12
+  },
   "item_favor_map": {
   	"greekfantasy:ambrosia": 45,
   	"greekfantasy:wild_rose": 3,

@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:leaves",
+    "minecraft:crimson_fungus",
+    "minecraft:warped_fungus",
+    "minecraft:nether_wart",
+    "minecraft:nether_sprouts",
+    "minecraft:nether_sprouts",
+    "minecraft:twisting_vines",
+    "minecraft:crimson_roots",
+    "minecraft:warped_roots",
+    "minecraft:red_mushroom",
+    "minecraft:wither_rose",
+    "minecraft:brown_mushroom",
+    "greekfantasy:pomegranate"
+  ]
+}

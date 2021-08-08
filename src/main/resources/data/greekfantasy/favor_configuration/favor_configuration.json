@@ -44,12 +44,12 @@
 	},
 	"greekfantasy:dryad": {
       "hostile": { 
-	    "deity": "greekfantasy:zeus",
+	    "deity": "greekfantasy:persephone",
 	    "minlevel": -9,
 	    "maxlevel": -2
 	  },
       "flee": { 
-	    "deity": "greekfantasy:zeus",
+	    "deity": "greekfantasy:persephone",
 	    "minlevel": -10,
 	    "maxlevel": -10
 	  }
@@ -90,6 +90,18 @@
 	    "deity": "greekfantasy:zeus",
 	    "minlevel": -10,
 	    "maxlevel": 5
+	  }
+	},
+	"greekfantasy:lampad": {
+      "hostile": { 
+	    "deity": "greekfantasy:persephone",
+	    "minlevel": -9,
+	    "maxlevel": -2
+	  },
+      "flee": { 
+	    "deity": "greekfantasy:persephone",
+	    "minlevel": -10,
+	    "maxlevel": -10
 	  }
 	},
     "greekfantasy:minotaur": {
