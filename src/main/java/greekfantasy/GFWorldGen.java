@@ -187,7 +187,7 @@ public final class GFWorldGen {
         ARACHNE_PIT_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG).chance(3)
         .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
     OLIVE_TREE_SINGLE = registerFeature("olive_tree_single", 
-        OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).count(40));
+        OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).count(20));
     OLIVE_TREE_FOREST = 
         Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, "olive_tree"), 
           OliveTree.getConfiguredTree()
@@ -195,7 +195,7 @@ public final class GFWorldGen {
             .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
             .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(10, 0.1F, 1))));
     POMEGRANATE_TREE = registerFeature("pomegranate_tree",
-        PomegranateTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).chance(2).count(4));
+        PomegranateTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).count(20));
     REEDS = registerFeature("reeds",
         REEDS_FEATURE.withConfiguration((new BlockClusterFeatureConfig.Builder(
             new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
@@ -229,10 +229,7 @@ public final class GFWorldGen {
   public static void addBiomeFeatures(final BiomeLoadingEvent event) {
     if(event.getCategory() == Biome.Category.NETHER) {
       addFeature(event, "small_nether_shrine", GenerationStage.Decoration.SURFACE_STRUCTURES, SMALL_NETHER_SHRINE);
-      if(Biomes.CRIMSON_FOREST.getLocation().equals(event.getName()) ||
-          Biomes.WARPED_FOREST.getLocation().equals(event.getName())) {
-        addFeature(event, "pomegranate_tree", GenerationStage.Decoration.VEGETAL_DECORATION, POMEGRANATE_TREE);
-      }
+      addFeature(event, "pomegranate_tree", GenerationStage.Decoration.VEGETAL_DECORATION, POMEGRANATE_TREE);
     } else if(event.getCategory() != Biome.Category.THEEND) {
       // add ore features
       addFeature(event, "marble", GenerationStage.Decoration.UNDERGROUND_DECORATION, MARBLE);
@@ -269,6 +266,7 @@ public final class GFWorldGen {
   public static void addBiomeSpawns(final BiomeLoadingEvent event) {
     // nether spawns
     addSpawns(event, GFRegistry.FURY_ENTITY, 3, 3);
+    addSpawns(event, GFRegistry.LAMPAD_ENTITY, 1, 3);
     addSpawns(event, GFRegistry.ORTHUS_ENTITY, 1, 4);
     // overworld spawns
     addSpawns(event, GFRegistry.ARA_ENTITY, 2, 5);

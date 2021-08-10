@@ -395,6 +395,7 @@ public class GFConfig {
     MOB_SPAWNS.put("gorgon", new BiomeWhitelistConfig(builder, "gorgon_spawn", 30, false, nonNetherHostileBlacklist));
     MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 24, true, Biomes.DESERT.getLocation().toString(), Biomes.WOODED_MOUNTAINS.getLocation().toString()));
     MOB_SPAWNS.put("hydra", new BiomeWhitelistConfig(builder, "hydra_spawn", 8, true, BiomeDictionary.Type.SAVANNA.toString()));
+    MOB_SPAWNS.put("lampad", new BiomeWhitelistConfig(builder, "lampad_spawn", 20, true, Biomes.CRIMSON_FOREST.getLocation().toString(), Biomes.WARPED_FOREST.getLocation().toString()));
     MOB_SPAWNS.put("mad_cow", new BiomeWhitelistConfig(builder, "mad_cow_spawn", 2, false, nonNetherHostileBlacklist));
     MOB_SPAWNS.put("makhai", new BiomeWhitelistConfig(builder, "makhai_spawn", 25, false));
     MOB_SPAWNS.put("minotaur", new BiomeWhitelistConfig(builder, "minotaur_spawn", 60, false, nonNetherHostileBlacklist));
@@ -416,7 +417,7 @@ public class GFConfig {
     FEATURES.put("marble", new BiomeWhitelistConfig(builder, "marble", 1000, true, BiomeDictionary.Type.OVERWORLD.toString()));
     FEATURES.put("harpy_nest", new BiomeWhitelistConfig(builder, "harpy_nest", 12, false, nonNetherHostileBlacklist));
     FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 17, false, nonNetherHostileBlacklist));
-    FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 16, true, Biomes.SOUL_SAND_VALLEY.getLocation().toString()));
+    FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 30, true, Biomes.SOUL_SAND_VALLEY.getLocation().toString()));
     FEATURES.put("cyclopes_cave", new BiomeWhitelistConfig(builder, "cyclopes_cave", 8, true, BiomeDictionary.Type.PLAINS.toString()));
     FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 10, false, nonNetherHostileBlacklist));
     FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 15, false, nonNetherHostileBlacklist));

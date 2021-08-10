@@ -11,6 +11,13 @@ import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectType;
 import net.minecraft.util.SoundEvents;
 
+/**
+ * Indicates the the entity should appear as a pig.
+ * The actual code for this is in the player tick and player render events.
+ * This class handles modification of health and attack damage/knockback.
+ * @see greekfantasy.deity.favor.FavorManager#onPlayerTick(PlayerEntity, IFavor)
+ * @see greekfantasy.event.ClientForgeEventHandler#renderLiving(RenderLivingEvent.Pre)
+ */
 public class SwineEffect extends Effect {
   
   protected static final UUID UUID_HEALTH = UUID.fromString("5b73458d-f6f6-465d-8738-6d851e494c53");

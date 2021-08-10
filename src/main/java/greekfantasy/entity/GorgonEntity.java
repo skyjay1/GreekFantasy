@@ -222,6 +222,11 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
     return d1 > 1.0D - 0.025D / d0 ? player.canEntityBeSeen(this) : false;
   }
   
+  /**
+   * @param target the entity that may or may not be immune to stare attack
+   * @return true if the target entity cannot be affected by stare attack
+   * (the player has an enchanted mirror shield of the mirror potion effect)
+   */
   public boolean isImmuneToStareAttack(final LivingEntity target) {
     // check for mirror potion effect
     if((GreekFantasy.CONFIG.isMirrorPotionEnabled() && target.getActivePotionEffect(GFRegistry.MIRROR_EFFECT) != null) 
@@ -235,7 +240,11 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
     return false;
   }
   
-  public boolean useStareAttack(final LivingEntity target) {
+  /**
+   * Applies petrify / slowness / weakness / wither effects depending on config settings
+   * @param target the entity to which the effects will apply
+   */
+  protected void useStareAttack(final LivingEntity target) {
     // apply potion effect
     if(GreekFantasy.CONFIG.isParalysisNerf()) {
       target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, PETRIFY_DURATION, 1, false, false, true));
@@ -251,7 +260,6 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
     if(this.isServerWorld()) {
       this.world.setEntityState(this, STARE_ATTACK);
     }
-    return false;
   }
   
   public static boolean isMirrorShield(final ItemStack stack) {

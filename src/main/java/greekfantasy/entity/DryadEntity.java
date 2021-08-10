@@ -80,6 +80,8 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -87,18 +89,20 @@ import net.minecraftforge.fml.network.PacketDistributor;
 public class DryadEntity extends CreatureEntity implements IAngerable {
   
   protected static final DataParameter<String> DATA_VARIANT = EntityDataManager.createKey(DryadEntity.class, DataSerializers.STRING);
-  private static final String KEY_VARIANT = "Variant";
-  private static final String KEY_TREE_POS = "Tree";
-  private static final String KEY_HIDING = "HidingTime";
+  protected static final String KEY_VARIANT = "Variant";
+  protected static final String KEY_TREE_POS = "Tree";
+  protected static final String KEY_HIDING = "HidingTime";
+  
+  protected DryadEntity.Variant variant = DryadEntity.Variant.OAK;
   
   protected Optional<BlockPos> treePos = Optional.empty();
   
   protected static final IOptionalNamedTag<Item> DRYAD_TRADES = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "dryad_trade"));
   protected Optional<PlayerEntity> tradingPlayer = Optional.empty();
   
-  private static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(4, 10);
-  private int angerTime;
-  private UUID angerTarget;
+  protected static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(4, 10);
+  protected int angerTime;
+  protected UUID angerTarget;
   
   // whether the entity is pathing to a tree
   protected boolean isGoingToTree;
@@ -221,7 +225,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
-    this.setVariant(DryadEntity.Variant.getByName(compound.getString(KEY_VARIANT)));
+    this.setVariant(getVariantByName(compound.getString(KEY_VARIANT)));
     this.readAngerNBT((ServerWorld)this.world, compound);
     if(compound.contains(KEY_TREE_POS + ".x")) {
       final int x = compound.getInt(KEY_TREE_POS + ".x");
@@ -235,6 +239,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+    ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     final DryadEntity.Variant variant;
     if(reason == SpawnReason.COMMAND || reason == SpawnReason.SPAWN_EGG || reason == SpawnReason.SPAWNER || reason == SpawnReason.DISPENSER) {
       variant = DryadEntity.Variant.getRandom(worldIn.getRandom());
@@ -242,7 +247,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       variant = DryadEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
     }
     this.setVariant(variant);
-    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    return data;
   }
   
   @Override
@@ -270,6 +275,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   
   @Override
   protected ActionResultType getEntityInteractionResult(final PlayerEntity player, final Hand hand) { 
+    System.out.println("variant: " + getVariant().getString());
     ItemStack stack = player.getHeldItem(hand);
     // check if the tradingPlayer is holding a trade item and the entity is not already trading
     if(!this.world.isRemote() && !this.isAggressive() && !this.tradingPlayer.isPresent() 
@@ -360,19 +366,31 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   
   // Variant methods
 
-  public void setVariant(final DryadEntity.Variant variant) { this.getDataManager().set(DATA_VARIANT, variant.getString()); }
+  public void setVariant(final DryadEntity.Variant variantIn) { 
+    this.variant = variantIn;
+    this.getDataManager().set(DATA_VARIANT, variantIn.getString());
+  }
   
-  public boolean isHiding() { return hidingTime > 0; }
+  public DryadEntity.Variant getVariant() { return variant; }
   
-  public void setHiding(final boolean hiding) { hidingTime = hiding ? 1 : 0; }
-  
-  public DryadEntity.Variant getVariant() { return DryadEntity.Variant.getByName(this.getDataManager().get(DATA_VARIANT)); }
+  public DryadEntity.Variant getVariantByName(final String name) { return DryadEntity.Variant.getByName(name); }
+
+  public void notifyDataManagerChange(DataParameter<?> key) {
+    super.notifyDataManagerChange(key);
+    if(key.equals(DATA_VARIANT)) {
+      this.variant = getVariantByName(this.getDataManager().get(DATA_VARIANT));
+    }
+  }
   
   // Tree methods
   
   public Optional<BlockPos> getTreePos() { return treePos; }
   
   public Optional<Vector3d> getTreeVec() { return treePos.isPresent() ? Optional.of(new Vector3d(treePos.get().getX() + 0.5D, treePos.get().getY() + 1.0D, treePos.get().getZ() + 0.5D)) : Optional.empty(); }
+  
+  public boolean isHiding() { return hidingTime > 0; }
+  
+  public void setHiding(final boolean hiding) { hidingTime = hiding ? 1 : 0; }
   
   public void setTreePos(final Optional<BlockPos> pos) {
     treePos = pos;

@@ -27,10 +27,12 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 
 public class LampadEntity extends DryadEntity {
@@ -51,6 +53,7 @@ public class LampadEntity extends DryadEntity {
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+    ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     final LampadEntity.Variant variant;
     if(reason == SpawnReason.COMMAND || reason == SpawnReason.SPAWN_EGG || reason == SpawnReason.SPAWNER || reason == SpawnReason.DISPENSER) {
       variant = LampadEntity.Variant.getRandom(worldIn.getRandom());
@@ -62,19 +65,19 @@ public class LampadEntity extends DryadEntity {
     if(worldIn.getRandom().nextFloat() < 0.2F) {
       this.setHeldItem(Hand.OFF_HAND, new ItemStack(Items.SOUL_TORCH));
     }
-    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    return data;
   }
   
   @Override
   public IOptionalNamedTag<Item> getTradeTag() { return LAMPAD_TRADES; }
   
   @Override
-  public DryadEntity.Variant getVariant() { return LampadEntity.Variant.getByName(this.getDataManager().get(DATA_VARIANT)); }
+  public DryadEntity.Variant getVariantByName(final String name) { return LampadEntity.Variant.getByName(name); }
   
   public static class Variant extends DryadEntity.Variant {
     public static final Variant CRIMSON = new LampadEntity.Variant("crimson", () -> Blocks.CRIMSON_FUNGUS);
     public static final Variant WARPED = new Variant("warped", () -> Blocks.WARPED_FUNGUS);
-    public static final Variant POMEGRANATE = new Variant(GreekFantasy.MODID, "pomegranate", "dryad", "logs", () -> GFRegistry.POMEGRANATE_SAPLING);
+    public static final Variant POMEGRANATE = new Variant(GreekFantasy.MODID, "pomegranate", "lampad", "logs", () -> GFRegistry.POMEGRANATE_SAPLING);
     
     public static ImmutableMap<String, Variant> NETHER = ImmutableMap.<String, Variant>builder()
         .put(CRIMSON.getString(), CRIMSON).put(POMEGRANATE.getString(), POMEGRANATE).put(WARPED.getString(), WARPED)

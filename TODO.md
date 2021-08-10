@@ -88,7 +88,7 @@ __Key:__
 __Key:__
 `[Design] [Worldgen] [Loot]`
 
-- X X ~ Arachne Pit
+- X X X Arachne Pit
 - ~ _ _ Labyrinth
 - _ _ _ Centaur Camps
 - _ _ _ Ruined Temple
@@ -99,8 +99,8 @@ __Key:__
 `[In-game] [Use] [Obtainable]`
 
 - X X X Pomegranate logs
-- X _ X Pomegranate leaves
-- ~ X X Pomegranate/Olive door, trapdoor (TO DO: textures)
+- X X X Pomegranate leaves
+- X X X Pomegranate/Olive door, trapdoor
 - X X X Oil Lamp
 - _ _ _ Other heads: Minotaur, Python, Medusa
 - _ _ _ Olive blocks: button, fence, boat, pressure plate, sign
@@ -113,7 +113,7 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- X _ X Pomegranate (TO DO: restores hunger in nether or high favor with Hades, gives naseua otherwise)
+- X X X Pomegranate, Pomegranate Seeds
 - X X X Pomegranate sapling
 - X X X Olives
 - X X X Olive Oil

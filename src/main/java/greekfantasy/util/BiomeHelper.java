@@ -148,5 +148,9 @@ public final class BiomeHelper {
     LOG_MAP.put(Biomes.SNOWY_TUNDRA, Blocks.SPRUCE_LOG);
     // Olive biomes
     LOG_MAP.put(GFWorldGen.OLIVE_FOREST, GFRegistry.OLIVE_LOG);
+    // Nether biomes
+    LOG_MAP.put(Biomes.WARPED_FOREST, Blocks.WARPED_STEM);
+    LOG_MAP.put(Biomes.CRIMSON_FOREST, Blocks.CRIMSON_STEM);
+    LOG_MAP.put(Biomes.SOUL_SAND_VALLEY, GFRegistry.POMEGRANATE_LOG);
   }
 }

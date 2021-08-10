@@ -1,8 +1,5 @@
 package greekfantasy.block;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -22,7 +19,6 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -42,36 +38,32 @@ public class OilLampBlock extends HorizontalBlock implements IWaterLoggable {
   
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
   public static final BooleanProperty LIT = BlockStateProperties.LIT;
+    
+  protected static final VoxelShape[] SHAPES;
   
-  protected static final VoxelShape BODY = VoxelShapes.or(
-    Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 8.0D, 12.0D),
-    Block.makeCuboidShape(6.0D, 8.0D, 6.0D, 10.0D, 10.0D, 10.0D),
-    VoxelShapes.combine(
-        Block.makeCuboidShape(5.0D, 10.0D, 5.0D, 11.0D, 11.0D, 11.0D),
-        Block.makeCuboidShape(6.0D, 10.0D, 6.0D, 10.0D, 11.0D, 10.0D), IBooleanFunction.ONLY_FIRST));
-  
-  protected static final VoxelShape HANDLE_Z = VoxelShapes.or(
-    VoxelShapes.combine(
-        Block.makeCuboidShape(12.0D, 1.0D, 7.0D, 14.0D, 7.0D, 9.0D),
-        Block.makeCuboidShape(12.0D, 2.0D, 7.0D, 13.0D, 6.0D, 9.0D),
-        IBooleanFunction.ONLY_FIRST),
-    VoxelShapes.combine(
-        Block.makeCuboidShape(2.0D, 1.0D, 7.0D, 4.0D, 7.0D, 9.0D),
-        Block.makeCuboidShape(3.0D, 2.0D, 7.0D, 4.0D, 6.0D, 9.0D),
-        IBooleanFunction.ONLY_FIRST));
-  
-  protected static final VoxelShape HANDLE_X = VoxelShapes.or(
-    VoxelShapes.combine(
-        Block.makeCuboidShape(7.0D, 1.0D, 2.0D, 9.0D, 7.0D, 4.0D),
-        Block.makeCuboidShape(7.0D, 2.0D, 3.0D, 9.0D, 6.0D, 4.0D),
-        IBooleanFunction.ONLY_FIRST),
-    VoxelShapes.combine(
-        Block.makeCuboidShape(7.0D, 1.0D, 12.0D, 9.0D, 7.0D, 14.0D),
-        Block.makeCuboidShape(7.0D, 2.0D, 12.0D, 9.0D, 6.0D, 13.0D),
-        IBooleanFunction.ONLY_FIRST));
-  
-  protected static final VoxelShape SHAPE_X = VoxelShapes.combine(BODY, HANDLE_X, IBooleanFunction.OR);
-  protected static final VoxelShape SHAPE_Z = VoxelShapes.combine(BODY, HANDLE_Z, IBooleanFunction.OR);
+  static {
+    VoxelShape bodyX = Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 4.0D, 12.0D);
+    VoxelShape bodyZ = Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 4.0D, 12.0D);
+    VoxelShape handleN = VoxelShapes.combine(
+        Block.makeCuboidShape(12.0D, 0.0D, 7.0D, 14.0D, 4.0D, 9.0D),
+        Block.makeCuboidShape(12.0D, 1.0D, 7.0D, 13.0D, 3.0D, 9.0D), IBooleanFunction.ONLY_FIRST);
+    VoxelShape handleS = VoxelShapes.combine(
+        Block.makeCuboidShape(2.0D, 0.0D, 7.0D, 4.0D, 4.0D, 9.0D),
+        Block.makeCuboidShape(3.0D, 1.0D, 7.0D, 4.0D, 3.0D, 9.0D), IBooleanFunction.ONLY_FIRST);
+    VoxelShape handleW = VoxelShapes.combine(
+        Block.makeCuboidShape(7.0D, 0.0D, 2.0D, 9.0D, 4.0D, 4.0D),
+        Block.makeCuboidShape(7.0D, 1.0D, 3.0D, 9.0D, 3.0D, 4.0D), IBooleanFunction.ONLY_FIRST);
+    VoxelShape handleE = VoxelShapes.combine(
+        Block.makeCuboidShape(7.0D, 0.0D, 12.0D, 9.0D, 4.0D, 14.0D),
+        Block.makeCuboidShape(7.0D, 1.0D, 12.0D, 9.0D, 3.0D, 13.0D), IBooleanFunction.ONLY_FIRST);
+    // args: VoxelShapes.or(body, handle, spout)
+    VoxelShape shapeN = VoxelShapes.or(bodyX, handleN, Block.makeCuboidShape(1.0D, 2.0D, 6.0D, 4.0D, 4.0D, 10.0D));
+    VoxelShape shapeS = VoxelShapes.or(bodyX, handleS, Block.makeCuboidShape(12.0D, 2.0D, 6.0D, 15.0D, 4.0D, 10.0D));
+    VoxelShape shapeW = VoxelShapes.or(bodyZ, handleW, Block.makeCuboidShape(6.0D, 2.0D, 12.0D, 10.0D, 4.0D, 15.0D));
+    VoxelShape shapeE = VoxelShapes.or(bodyZ, handleE, Block.makeCuboidShape(6.0D, 2.0D, 1.0D, 10.0D, 4.0D, 4.0D));
+    // use the built shapes to populate the array
+    SHAPES = new VoxelShape[] { shapeS, shapeW, shapeN, shapeE };
+  }
   
   public OilLampBlock(final Block.Properties properties) {
     super(properties);
@@ -124,57 +116,17 @@ public class OilLampBlock extends HorizontalBlock implements IWaterLoggable {
 
   @Override
   public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {
-    
-    VoxelShape BASE = VoxelShapes.or(
-        Block.makeCuboidShape(5.5D, 0.0D, 5.5D, 10.5D, 1.0D, 10.5D),
-        Block.makeCuboidShape(6.5D, 1.0D, 6.5D, 9.5D, 3.0D, 9.5D));
-    VoxelShape BODY_X = VoxelShapes.or(
-        Block.makeCuboidShape(3.0D, 3.0D, 6.0D, 13.0D, 4.0D, 10.0D),
-        Block.makeCuboidShape(3.0D, 4.0D, 5.0D, 13.0D, 6.0D, 11.0D),
-        Block.makeCuboidShape(4.0D, 6.0D, 6.0D, 12.0D, 7.0D, 10.0D),
-        Block.makeCuboidShape(7.0D, 7.0D, 7.0D, 9.0D, 8.0D, 9.0D));
-    VoxelShape BODY_Z = VoxelShapes.or(
-        Block.makeCuboidShape(6.0D, 3.0D, 3.0D, 10.0D, 4.0D, 13.0D),
-        Block.makeCuboidShape(5.0D, 4.0D, 3.0D, 11.0D, 6.0D, 13.0D),
-        Block.makeCuboidShape(6.0D, 6.0D, 4.0D, 10.0D, 7.0D, 12.0D),
-        Block.makeCuboidShape(7.0D, 7.0D, 7.0D, 9.0D, 8.0D, 9.0D));
-    VoxelShape HANDLE_NORTH = VoxelShapes.combine(
-        Block.makeCuboidShape(12.0D, 3.0D, 7.0D, 15.0D, 6.0D, 9.0D),
-        Block.makeCuboidShape(13.0D, 4.0D, 7.0D, 14.0D, 5.0D, 9.0D), IBooleanFunction.ONLY_FIRST);
-    VoxelShape HANDLE_SOUTH = VoxelShapes.combine(
-        Block.makeCuboidShape(1.0D, 3.0D, 7.0D, 4.0D, 6.0D, 9.0D),
-        Block.makeCuboidShape(2.0D, 4.0D, 7.0D, 3.0D, 5.0D, 9.0D), IBooleanFunction.ONLY_FIRST);
-    
-    VoxelShape HANDLE_WEST = VoxelShapes.combine(
-        Block.makeCuboidShape(7.0D, 3.0D, 1.0D, 9.0D, 6.0D, 4.0D),
-        Block.makeCuboidShape(7.0D, 4.0D, 2.0D, 9.0D, 5.0D, 3.0D), IBooleanFunction.ONLY_FIRST);
-    
-    VoxelShape HANDLE_EAST = VoxelShapes.combine(
-        Block.makeCuboidShape(7.0D, 3.0D, 12.0D, 9.0D, 6.0D, 15.0D),
-        Block.makeCuboidShape(7.0D, 4.0D, 13.0D, 9.0D, 5.0D, 14.0D), IBooleanFunction.ONLY_FIRST);
-    
-    VoxelShape SHAPE_NORTH = VoxelShapes.or(BASE, BODY_X, HANDLE_NORTH, Block.makeCuboidShape(0.0D, 4.0D, 7.0D, 3.0D, 6.0D, 9.0D));
-    VoxelShape SHAPE_SOUTH = VoxelShapes.or(BASE, BODY_X, HANDLE_SOUTH, Block.makeCuboidShape(13.0D, 4.0D, 7.0D, 16.0D, 6.0D, 9.0D));
-    VoxelShape SHAPE_WEST = VoxelShapes.or(BASE, BODY_Z, HANDLE_WEST, Block.makeCuboidShape(7.0D, 4.0D, 13.0D, 9.0D, 6.0D, 16.0D));
-    VoxelShape SHAPE_EAST = VoxelShapes.or(BASE, BODY_Z, HANDLE_EAST, Block.makeCuboidShape(7.0D, 4.0D, 0.0D, 9.0D, 6.0D, 3.0D));
-    
-    
-    EnumMap<Direction, VoxelShape> shapeMap = new EnumMap<>(Direction.class);
-    shapeMap.put(Direction.NORTH, SHAPE_NORTH);
-    shapeMap.put(Direction.SOUTH, SHAPE_SOUTH);
-    shapeMap.put(Direction.WEST, SHAPE_WEST);
-    shapeMap.put(Direction.EAST, SHAPE_EAST);
-    Direction dir = state.get(HORIZONTAL_FACING);
-    return shapeMap.getOrDefault(dir, BASE);
+    int horizIndex = state.get(HORIZONTAL_FACING).getHorizontalIndex();
+    return horizIndex < 0 ? VoxelShapes.fullCube() : SHAPES[horizIndex] ;
   }
   
   @OnlyIn(Dist.CLIENT)
   public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
     if(stateIn.get(LIT).booleanValue()) {
       Direction d = stateIn.get(HORIZONTAL_FACING).rotateYCCW();
-      double addX = 0.45D * d.getXOffset();
-      double addY = 0.5D;
-      double addZ = 0.45D * d.getZOffset();
+      double addX = 0.32D * d.getXOffset();
+      double addY = 0.40D;
+      double addZ = 0.32D * d.getZOffset();
       Vector3d vec = Vector3d.copyCenteredHorizontally(pos).add(addX, addY, addZ);
       worldIn.addParticle(ParticleTypes.SMOKE, vec.getX(), vec.getY(), vec.getZ(), 0.0D, 0.0D, 0.0D);
       worldIn.addParticle(ParticleTypes.FLAME, vec.getX(), vec.getY(), vec.getZ(), 0.0D, 0.0D, 0.0D);

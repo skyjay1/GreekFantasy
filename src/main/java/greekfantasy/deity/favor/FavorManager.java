@@ -194,13 +194,14 @@ public class FavorManager {
     }
     
     // prevent players with a potion effect from using portals
-    if(GreekFantasy.CONFIG.isPrisonerEnabled() && player.getActivePotionEffect(GFRegistry.PRISONER_EFFECT) != null
-        && Dimension.THE_NETHER.equals(player.getEntityWorld().getDimensionKey())) {
+    if(GreekFantasy.CONFIG.isPrisonerEnabled() && player.getActivePotionEffect(GFRegistry.PRISONER_EFFECT) != null) {
       // remove the effect if the player has Hades level 8+
       Optional<Deity> hades = GreekFantasy.PROXY.DEITY.get(new ResourceLocation(GreekFantasy.MODID, "hades"));
-      if(hades.isPresent() && favor.getFavor(hades.get()).getLevel() >= 8
-          && player.getRNG().nextInt(400) == 0) {
-        // remove the potion effect and notify the player
+      if(!Dimension.THE_NETHER.equals(player.getEntityWorld().getDimensionKey())) {
+        // remove the potion effect when not in nether
+        player.removeActivePotionEffect(GFRegistry.PRISONER_EFFECT);
+      } else if (hades.isPresent() && favor.getFavor(hades.get()).getLevel() >= 8 && player.getRNG().nextInt(400) == 0) {
+        // remove the potion effect and notify the player when high enough favor
         player.removeActivePotionEffect(GFRegistry.PRISONER_EFFECT);
         FavorEffectManager.sendStatusMessage(player, hades.get(), true);
       } else {
