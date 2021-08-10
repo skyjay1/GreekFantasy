@@ -61,8 +61,7 @@ __Key:__
 
 ## Entity AI
 
-- _ Dryads plant trees?
-- _ Dryads trade with player
+- X Dryads trade with player
 - _ Satyrs trade with player
 - ~ Centaurs / Cyprians shoot arrows (TODO run around while shooting)
 
@@ -83,7 +82,6 @@ __Key:__
 
 - ~ Special abilities ideas:
   - _ Neutral mobs targetting player become neutral after a few seconds (Aphrodite)
-  - _ Allow trading with dryads (?)
 
 ## Structures
 
@@ -133,7 +131,8 @@ __Key:__
 
 ## Other
 
-- ~ Silkwalker enchantment (how to obtain?)
+- _ Prisoner potion effect (prevent leaving nether)
+- X Silkwalker enchantment
 - ~ Block and Item tags (wooden_doors, etc.)
 
 

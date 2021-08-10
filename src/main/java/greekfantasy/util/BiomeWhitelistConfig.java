@@ -2,11 +2,13 @@ package greekfantasy.util;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
@@ -24,12 +26,12 @@ public class BiomeWhitelistConfig {
    * @param biomes the biomes to include in the default list
    **/
   public BiomeWhitelistConfig(final ForgeConfigSpec.Builder builder, final String nameIn, final int weight, 
-      final boolean isWhitelist, final List<String> biomes) {
+      final boolean isWhitelist, final String... biomes) {
     name = nameIn;
     builder.push(nameIn);
     spawnChance = builder.worldRestart().defineInRange("chance", weight, 0, 1000);
     whitelist = builder.worldRestart().define("whitelist", isWhitelist);
-    spawnBiomes = builder.worldRestart().defineList("biome_types", biomes, o -> o instanceof String);
+    spawnBiomes = builder.worldRestart().defineList("biome_types", Lists.newArrayList(biomes), o -> o instanceof String);
     builder.pop();
   }
     
@@ -44,30 +46,20 @@ public class BiomeWhitelistConfig {
     return isWhitelist() == hasBiome(biomeKey);
   }
   
-  public boolean hasBiome(final RegistryKey<Biome> biome) { 
-//    if(biomeKeys.isEmpty()) {
-//      populateBiomeList();
-//    }
-    // check each entry to see if it matches one of the types
-    final List<? extends String> spawnBiomeList = spawnBiomes.get();
-    final Set<Type> types = BiomeDictionary.getTypes(biome);
-    for(final BiomeDictionary.Type t : types) {
-      if(spawnBiomeList.contains(t.getName())) {
+  public boolean hasBiome(final RegistryKey<Biome> biome) {
+    final Set<String> types = BiomeDictionary.getTypes(biome).stream().map(t -> t.getName()).collect(Collectors.toSet());
+    // check each string in the whitelist
+    for(final String whitelistName : spawnBiomes.get()) {
+      // if the whitelistName is a biome registry name, compare against the given biome
+      if(whitelistName.length() > 1 && whitelistName.contains(":") && biome.getLocation().toString().equals(whitelistName)) {
+        return true;
+      }
+      // if the whitelistName is a biome type, check if the given biome contains that type
+      if(types.contains(whitelistName)) {
         return true;
       }
     }
+    // the above tests failed, so the biome is not in this list
     return false;
   }
-//  
-//  public void populateBiomeList() {
-//    biomeKeys.clear();
-//    for(final String s : biomeStrings()) {
-//      final ResourceLocation r = new ResourceLocation(s);
-//      if(ForgeRegistries.BIOMES.containsKey(r)) {
-//        biomeKeys.add(s);
-//      } else {
-//        GreekFantasy.LOGGER.error("Could not parse biome type '" + s + "' from config for '" + name + "'");
-//      }
-//    }
-//  }
 }

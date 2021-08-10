@@ -37,11 +37,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Dimension;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
@@ -188,6 +190,22 @@ public class FavorManager {
       if(data.hasFlyingPlayer(player) && !GFWorldSavedData.validatePlayer(player, favor)) {
         // remove the player as a flying player
         data.removeFlyingPlayer(player);
+      }
+    }
+    
+    // prevent players with a potion effect from using portals
+    if(GreekFantasy.CONFIG.isPrisonerEnabled() && player.getActivePotionEffect(GFRegistry.PRISONER_EFFECT) != null
+        && Dimension.THE_NETHER.equals(player.getEntityWorld().getDimensionKey())) {
+      // remove the effect if the player has Hades level 8+
+      Optional<Deity> hades = GreekFantasy.PROXY.DEITY.get(new ResourceLocation(GreekFantasy.MODID, "hades"));
+      if(hades.isPresent() && favor.getFavor(hades.get()).getLevel() >= 8
+          && player.getRNG().nextInt(400) == 0) {
+        // remove the potion effect and notify the player
+        player.removeActivePotionEffect(GFRegistry.PRISONER_EFFECT);
+        FavorEffectManager.sendStatusMessage(player, hades.get(), true);
+      } else {
+        // every tick, reset the portal cooldown amount to ensure no portal travel
+        player.setPortalCooldown();
       }
     }
   }

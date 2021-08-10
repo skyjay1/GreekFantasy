@@ -402,7 +402,10 @@ public class CommonForgeEventHandler {
         if(DryadEntity.isTreeAt(event.getWorld(), event.getPos().down(1), dryad.getVariant().getLogs())
             || DryadEntity.isTreeAt(event.getWorld(), event.getPos().down(2), dryad.getVariant().getLogs())) {
           // anger the dryad
-          dryad.setAttackTarget(event.getPlayer());
+          GreekFantasy.LOGGER.debug("angry!");
+          dryad.setRevengeTarget(event.getPlayer());
+          dryad.setAngerTarget(event.getPlayer().getUniqueID());
+          dryad.func_230258_H__();
           dryad.tryExitTree();
         }
       }

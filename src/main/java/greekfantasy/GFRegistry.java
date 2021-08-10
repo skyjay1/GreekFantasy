@@ -3,7 +3,6 @@
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -49,14 +48,13 @@ import net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EntityType.IFactory;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BannerPatternItem;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.BlockNamedItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Foods;
 import net.minecraft.item.Item;
@@ -67,7 +65,6 @@ import net.minecraft.item.Items;
 import net.minecraft.item.Rarity;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.TallBlockItem;
-import net.minecraft.item.Item.Properties;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.BasicParticleType;
@@ -456,6 +453,8 @@ public final class GFRegistry {
   public static final Effect MIRROR_EFFECT = null;
   @ObjectHolder("swine")
   public static final Effect SWINE_EFFECT = null;
+  @ObjectHolder("prisoner")
+  public static final Effect PRISONER_EFFECT = null;
   
   // Enchantment //
   @ObjectHolder("overstep")
@@ -660,9 +659,11 @@ public final class GFRegistry {
   public static void registerBlocks(final RegistryEvent.Register<Block> event) {
     GreekFantasy.LOGGER.debug("registerBlocks");
         
-    registerLogLeavesPlanksEtc(event, AbstractBlock.Properties.create(Material.WOOD, MaterialColor.WOOD).hardnessAndResistance(2.0F, 3.0F).sound(SoundType.WOOD), "olive");
-    registerLogLeavesPlanksEtc(event, AbstractBlock.Properties.create(Material.WOOD, MaterialColor.WOOD).hardnessAndResistance(2.2F, 3.0F).sound(SoundType.WOOD), "pomegranate");
-    registerLeaves(event, "golden_apple");
+    registerLogPlanksEtc(event, "olive", AbstractBlock.Properties.create(Material.WOOD, MaterialColor.WOOD).hardnessAndResistance(2.0F, 3.0F).sound(SoundType.WOOD), 5, 5, 20);
+    registerLeaves(event, "olive", 30, 60);
+    registerLogPlanksEtc(event, "pomegranate", AbstractBlock.Properties.create(Material.WOOD, MaterialColor.WOOD).hardnessAndResistance(2.2F, 3.0F).sound(SoundType.WOOD), 0, 0, 0);
+    registerLeaves(event, "pomegranate", 0, 0);
+    registerLeaves(event, "golden_apple", 30, 60);
     
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "marble");
     registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
@@ -851,8 +852,10 @@ public final class GFRegistry {
           .setRegistryName(MODID, "gorgon_blood"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "horn"),
-        new PomegranateItem(new Item.Properties().group(GREEK_GROUP).food(PomegranateItem.POMEGRANATE))
+        new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "pomegranate"),
+        new PomegranateSeedsItem(new Item.Properties().group(GREEK_GROUP).food(PomegranateSeedsItem.POMEGRANATE_SEEDS))
+          .setRegistryName(MODID, "pomegranate_seeds"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "olives"),
         new Item(new Item.Properties().group(GREEK_GROUP).maxStackSize(16).containerItem(Items.GLASS_BOTTLE))
@@ -902,9 +905,9 @@ public final class GFRegistry {
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "golden_ball"),
         new Item(new Item.Properties().group(GREEK_GROUP))
-		  .setRegistryName(MODID, "golden_fleece"),
+          .setRegistryName(MODID, "golden_fleece"),
 		    new GoldenAppleOfDiscordItem(new Item.Properties().group(GREEK_GROUP).food(GoldenAppleOfDiscordItem.GOLDEN_APPLE_OF_DISCORD))
-		    .setRegistryName(MODID, "golden_apple_of_discord"),
+		      .setRegistryName(MODID, "golden_apple_of_discord"),
         new DiscusItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
           .setRegistryName(MODID, "discus"),
         new WebBallItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
@@ -1007,7 +1010,8 @@ public final class GFRegistry {
         new StunnedEffect().setRegistryName(MODID, "stunned"),
         new StunnedEffect().setRegistryName(MODID, "petrified"),
         new MirrorEffect().setRegistryName(MODID, "mirror"),
-        new SwineEffect().setRegistryName(MODID, "swine")
+        new SwineEffect().setRegistryName(MODID, "swine"),
+        new PrisonerEffect().setRegistryName(MODID, "prisoner")
     );
   }
   
@@ -1174,57 +1178,82 @@ public final class GFRegistry {
       }, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(15.0F, 6000.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> statueMaterial.getLightLevel()), deityId);
   }
   
-  private static void registerLogLeavesPlanksEtc(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {    
+  /**
+   * Creates and registers wood-related blocks (log, wood, stripped log, stripped wood, planks,
+   * slab, stairs, door, trapdoor)
+   * @param event the block registry event
+   * @param registryName the registry name to use as a prefix for the various blocks
+   * @param properties the block properties to use for each wood
+   * @param fireSpread the Fire Spread Speed (5)
+   * @param logFlammability the Flammability of log-based blocks (5)
+   * @param planksFlammability the Flammability of planks-based blocks (20)
+   */
+  private static void registerLogPlanksEtc(final RegistryEvent.Register<Block> event, final String registryName, 
+      final Block.Properties properties, final int fireSpread, final int logFlammability, final int planksFlammability) {
+    // stripped log block
+    final Block strippedLog = new RotatedPillarBlock(properties){
+      @Override
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return fireSpread; }
+      @Override
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return logFlammability; }
+    };
+    // stripped wood block
+    final Block strippedWood = new RotatedPillarBlock(properties){
+      @Override
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return fireSpread; }
+      @Override
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return logFlammability; }
+    };
     // log block
     final Block log = new RotatedPillarBlock(AbstractBlock.Properties.create(Material.WOOD, (state) -> {
       return state.get(RotatedPillarBlock.AXIS) == Direction.Axis.Y ? MaterialColor.SAND : MaterialColor.WOOD;
     }).hardnessAndResistance(2.0F).sound(SoundType.WOOD)) {
       @Override
-      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return fireSpread; }
       @Override
-      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return logFlammability; }
       @Override
       public BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
           if (toolType == ToolType.AXE) {
-            return GFRegistry.STRIPPED_OLIVE_LOG.getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
+            return strippedLog.getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
           }
           return super.getToolModifiedState(state, world, pos, player, stack, toolType);
       }
-    };
-    // stripped log block
-    final Block strippedLog = new RotatedPillarBlock(properties){
-      @Override
-      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
-      @Override
-      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
     };
     // wood block
     final Block wood = new RotatedPillarBlock(properties){
       @Override
-      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return fireSpread; }
       @Override
-      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return logFlammability; }
       @Override
       public BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
           if (toolType == ToolType.AXE) {
-            return GFRegistry.STRIPPED_OLIVE_WOOD.getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
+            return strippedWood.getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
           }
           return super.getToolModifiedState(state, world, pos, player, stack, toolType);
       }
     };
-    // stripped wood block
-    final Block strippedWood = new RotatedPillarBlock(properties){
-      @Override
-      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
-      @Override
-      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
-    };
     // planks block
     final Block planks = new Block(properties) {
       @Override
-      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return fireSpread; }
       @Override
-      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 20; }
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return planksFlammability; }
+    };
+    // slab block
+    final Block slab = new SlabBlock(properties) {
+      @Override
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return fireSpread; }
+      @Override
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return planksFlammability; }
+    };
+    // stairs block
+    final Block stairs = new StairsBlock(() -> planks.getDefaultState(), properties){
+      @Override
+      public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return fireSpread; }
+      @Override
+      public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return planksFlammability; }
     };
     // register logs, planks, slab, stair
     event.getRegistry().registerAll(     
@@ -1233,18 +1262,8 @@ public final class GFRegistry {
         wood.setRegistryName(MODID, registryName + "_wood"),
         strippedWood.setRegistryName(MODID, "stripped_" + registryName + "_wood"),
         planks.setRegistryName(MODID, registryName + "_planks"),
-        new SlabBlock(properties) {
-          @Override
-          public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
-          @Override
-          public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 20; }
-        }.setRegistryName(MODID, registryName + "_slab"),
-        new StairsBlock(() -> planks.getDefaultState(), properties){
-          @Override
-          public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 5; }
-          @Override
-          public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 20; }
-        }.setRegistryName(MODID, registryName + "_stairs")
+        slab.setRegistryName(MODID, registryName + "_slab"),
+        stairs.setRegistryName(MODID, registryName + "_stairs")
     );
     // register door and trapdoor
     final Block.Properties notSolid = Block.Properties.from(planks).notSolid().setAllowsSpawn((b, i, p, a) -> false);
@@ -1252,18 +1271,23 @@ public final class GFRegistry {
         new DoorBlock(notSolid).setRegistryName(MODID, registryName  + "_door"),
         new TrapDoorBlock(notSolid).setRegistryName(MODID, registryName + "_trapdoor")    
     );
-    // register leaves
-    registerLeaves(event, registryName);
   }
   
-  private static void registerLeaves(final RegistryEvent.Register<Block> event, final String registryName) {
+  /**
+   * Creates and registers a basic leaves block
+   * @param event the block register event
+   * @param registryName the block registry name
+   * @param fireSpread the FireSpreadSpeed (30)
+   * @param flammability the Flammability (60)
+   */
+  private static void registerLeaves(final RegistryEvent.Register<Block> event, final String registryName, final int fireSpread, final int flammability) {
     event.getRegistry().register(
         new LeavesBlock(AbstractBlock.Properties.create(Material.LEAVES).hardnessAndResistance(0.2F).tickRandomly().sound(SoundType.PLANT)
             .notSolid().setAllowsSpawn(GFRegistry::allowsSpawnOnLeaves).setSuffocates((s, r, p) -> false).setBlocksVision((s, r, p) -> false)) {
           @Override
-          public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 30; }
+          public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return fireSpread; }
           @Override
-          public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return 60; }
+          public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return flammability; }
         }.setRegistryName(MODID, registryName + "_leaves")
     );
   }

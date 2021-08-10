@@ -4,6 +4,8 @@ import java.util.EnumSet;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.deity.favor_effect.ConfiguredFavorRange;
+import net.minecraft.entity.IAngerable;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,12 +25,14 @@ public class NearestAttackableFavorablePlayerResetGoal extends Goal {
 
   @Override
   public boolean shouldExecute() {
-    if(entity.ticksExisted % interval == 0 && entity.isAlive() && entity.getAttackTarget() instanceof PlayerEntity
-        && entity.getAttackTarget().getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()).isEnabled() 
-        && entity.getAttackTarget() != entity.getRevengeTarget()) {
+    final LivingEntity target = entity.getAttackTarget();
+    if(entity.ticksExisted % interval == 0 && entity.isAlive() && target instanceof PlayerEntity
+        && target.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()).isEnabled() 
+        && target != entity.getRevengeTarget() 
+        && !(entity instanceof IAngerable && target.getUniqueID().equals(((IAngerable)entity).getAngerTarget()))) {
       // reset target if it is not in the favor range
       ConfiguredFavorRange range = GreekFantasy.PROXY.getFavorConfiguration().getEntity(entity.getType());
-      return range.hasHostileRange() && !range.getHostileRange().isInFavorRange((PlayerEntity)entity.getAttackTarget());
+      return range.hasHostileRange() && !range.getHostileRange().isInFavorRange((PlayerEntity)target);
     }
     return false;
   }

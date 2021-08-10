@@ -68,9 +68,6 @@ public class CyclopesCaveFeature extends SimpleTemplateFeature {
     entity.setLocationAndAngles(entityPos.getX() + rand.nextDouble(), entityPos.getY() + 0.5D, entityPos.getZ() + rand.nextDouble(), 0, 0);
     entity.enablePersistence();
     reader.addEntity(entity);
-   
-    // DEBUG
-    GreekFantasy.LOGGER.debug("Generating cyclopes cave near " + heightPos);
     
     return true;
   }

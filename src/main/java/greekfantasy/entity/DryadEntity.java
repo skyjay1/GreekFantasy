@@ -1,6 +1,7 @@
 package greekfantasy.entity;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -44,9 +45,15 @@ import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.piglin.PiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameterSets;
+import net.minecraft.loot.LootParameters;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -113,7 +120,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
+    this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
     this.goalSelector.addGoal(2, new DryadEntity.TradeGoal(50 + rand.nextInt(20)));
     this.goalSelector.addGoal(3, new DryadEntity.FindTreeGoal(8, 28));
     this.goalSelector.addGoal(4, new DryadEntity.HideGoal(640));
@@ -239,7 +246,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   }
   
   @Override
-  public ResourceLocation getLootTable() { return this.getVariant().getLootTable(); }  
+  public ResourceLocation getLootTable() { return this.getVariant().getDeathLootTable(); }
   
   // IAngerable methods
   
@@ -317,29 +324,38 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   /** @return an Item Tag of items to accept from the player while trading **/
   public IOptionalNamedTag<Item> getTradeTag() { return DRYAD_TRADES; }
   
+  public ResourceLocation getTradeLootTable() { return this.getVariant().getTradeLootTable(); }
+  
+  protected List<ItemStack> getTradeResult(final Optional<PlayerEntity> player, final ItemStack tradeItem) {
+    LootTable loottable = this.world.getServer().getLootTableManager().getLootTableFromLocation(this.getTradeLootTable());
+    return loottable.generate(new LootContext.Builder((ServerWorld)this.world)
+        .withRandom(this.world.rand)
+        .withParameter(LootParameters.THIS_ENTITY, this)
+        .withParameter(LootParameters.ORIGIN, this.getPositionVec())
+        .withParameter(LootParameters.TOOL, tradeItem)
+        .build(LootParameterSets.BARTER));
+ }
+  
   /**
    * Performs a trade by depleting the tradeItem and creating a resultItem
    * @param player the player
    * @param tradeItem the item offered by the player
-   * @return the ItemEntity of the result item
    */
-  public ItemEntity trade(final Optional<PlayerEntity> player, final ItemStack tradeItem) {
-    // determine trade result
-    ItemStack resultItem = new ItemStack(this.getVariant().getSapling().getBlock().asItem());
+  public void trade(final Optional<PlayerEntity> player, final ItemStack tradeItem) {
+    // drop trade results as item entities
+    getTradeResult(player, tradeItem).forEach(i -> entityDropItem(i, 1.2F));
     // shrink/remove held item
     tradeItem.shrink(1);
     this.setHeldItem(Hand.MAIN_HAND, tradeItem);
     if (tradeItem.getCount() <= 0) {
       this.setTradingPlayer(null);
     }
-    // spawn trade result as item
-    ItemEntity itemEntity = this.entityDropItem(resultItem, 1.2F);
-    // spawn xp
-    this.world.addEntity(new ExperienceOrbEntity(this.world, this.getPosX(), this.getPosY(), this.getPosZ(), 1 + rand.nextInt(2)));
+    // spawn xp orb
+    if(rand.nextInt(3) == 0) {
+      this.world.addEntity(new ExperienceOrbEntity(this.world, this.getPosX(), this.getPosY(), this.getPosZ(), 1 + rand.nextInt(2)));
+    }
     // send packet to spawn particles
     GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(true, this.getPosition().up(1), 6));
-    // return the item that was spawned
-    return itemEntity;
   }
   
   // Variant methods
@@ -605,7 +621,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     protected final String name;
     protected final Supplier<Block> sapling;
     protected final ResourceLocation tag;
-    protected final ResourceLocation lootTable;
+    protected final ResourceLocation deathLootTable;
+    protected final ResourceLocation tradeLootTable;
     
     protected Variant(final String nameIn, final Supplier<Block> saplingIn) {
       this("minecraft", nameIn, "dryad", "logs", saplingIn);
@@ -615,7 +632,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       name = nameIn;
       sapling = saplingIn;
       tag = new ResourceLocation(modid, name + "_" + tagSuffixIn);
-      lootTable = new ResourceLocation(GreekFantasy.MODID, "entities/" + entityIn + "/" + name);
+      deathLootTable = new ResourceLocation(GreekFantasy.MODID, "entities/" + entityIn + "/" + name);
+      tradeLootTable = new ResourceLocation(GreekFantasy.MODID, "gameplay/" + entityIn + "_trade");
     }
     
     public static Variant getForBiome(final Optional<RegistryKey<Biome>> biome) {
@@ -640,7 +658,9 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     
     public BlockState getSapling() { return sapling.get().getDefaultState(); }
     
-    public ResourceLocation getLootTable() { return lootTable; }
+    public ResourceLocation getDeathLootTable() { return deathLootTable; }
+    
+    public ResourceLocation getTradeLootTable() { return tradeLootTable; }
   
     @Override
     public String getString() { return name; }

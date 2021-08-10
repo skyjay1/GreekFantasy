@@ -58,8 +58,10 @@
   	"greekfantasy:unicorn": -12
   },
   "item_favor_map": {
-  	"greekfantasy:ambrosia": 45,
+  	"greekfantasy:ambrosia": 25,
   	"greekfantasy:wild_rose": 3,
+  	"greekfantasy:pomegranate": 4,
+  	"greekfantasy:pomegranate_seeds": 2,
   	"minecraft:milk_bucket": 11,
   	"minecraft:lily_of_the_valley": 3,
   	"minecraft:cornflower": 3,
