@@ -121,7 +121,7 @@ public class FavorEffectManager {
    */
   private static long performFavorEffect(final MinecraftServer server, final World worldIn, final PlayerEntity playerIn, final IDeity deity, final FavorEffect effect) {
     boolean flag = false;
-    if(effect.isInBiome(worldIn, playerIn.getPosition())) {
+    if(effect != FavorEffect.EMPTY && effect.isInBiome(worldIn, playerIn.getPosition())) {
       // attempt to run the function, summon, item, potion, or add-favor effect (exclusively, in that order)
       if(functionFavorEffect(server, worldIn, playerIn, effect.getFunction())) {
         flag = true;

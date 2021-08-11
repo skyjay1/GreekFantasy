@@ -55,7 +55,7 @@ public class OilBlock extends Block implements IWaterLoggable {
     super(properties);
     this.setDefaultState(this.getStateContainer().getBaseState()
         .with(LIT, false).with(WATERLOGGED, false));
-    this.fireDamage = 3.0F;
+    this.fireDamage = 2.5F;
   }
   
   @Override
@@ -77,10 +77,7 @@ public class OilBlock extends Block implements IWaterLoggable {
           heldItem.shrink(1);
         }
         // spawn oil bottle
-        ItemEntity item = playerIn.entityDropItem(new ItemStack(GFRegistry.OLIVE_OIL));
-        if(item != null) {
-          item.setNoPickupDelay();
-        }
+        playerIn.addItemStackToInventory(new ItemStack(GFRegistry.OLIVE_OIL));
         return ActionResultType.CONSUME;
       } else if(heldItem.getItem() == Items.FLINT_AND_STEEL) {
         // replace this block with fire
@@ -134,6 +131,10 @@ public class OilBlock extends Block implements IWaterLoggable {
   @Override
   public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
       BlockPos currentPos, BlockPos facingPos) {
+    // if invalid position, remove this block
+    if(!this.isValidPosition(stateIn, worldIn, currentPos)) {
+      return stateIn.getFluidState().getBlockState();
+    }
     // if a fire block is placed nearby, begin catching fire
     if (isFire(worldIn, facingState, facingPos)) {
       worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, 5);
@@ -179,7 +180,7 @@ public class OilBlock extends Block implements IWaterLoggable {
   
   @Override
   public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) { 
-    return worldIn.getBlockState(pos.down()).isOpaqueCube(worldIn, pos.down()); 
+    return worldIn.getBlockState(pos).getFluidState().getFluid() == Fluids.WATER || worldIn.getBlockState(pos.down()).isOpaqueCube(worldIn, pos.down()); 
   }
   
   @Override
