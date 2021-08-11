@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class SatyrShamanLayer<T extends SatyrEntity, M extends EntityModel<T>> extends LayerRenderer<T, M> {
   
-  private static final ResourceLocation SHAMAN_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/shaman.png");
+  private static final ResourceLocation SHAMAN_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/shaman_overlay.png");
   
   private final SatyrModel<T> layerModel = new SatyrModel<>(0.25F);
 

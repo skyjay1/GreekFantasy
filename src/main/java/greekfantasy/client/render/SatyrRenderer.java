@@ -1,5 +1,7 @@
 package greekfantasy.client.render;
 
+import java.util.EnumMap;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import greekfantasy.GreekFantasy;
@@ -11,13 +13,24 @@ import greekfantasy.entity.SatyrEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.entity.passive.horse.CoatColors;
 import net.minecraft.util.ResourceLocation;
 
 public class SatyrRenderer<T extends SatyrEntity> extends BipedRenderer<T, SatyrModel<T>> {
   
-  private static final ResourceLocation TEXTURE_SATYR = new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/satyr.png");
   private static final ResourceLocation TEXTURE_GROVER = new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/grover.png");
-
+ 
+  public static final EnumMap<CoatColors, ResourceLocation> BODY_TEXTURE_MAP = new EnumMap<>(CoatColors.class);
+  
+  static {
+    BODY_TEXTURE_MAP.put(CoatColors.BLACK, new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/black.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.BROWN, new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/brown.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.CHESTNUT, new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/chestnut.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.CREAMY, new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/creamy.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.DARKBROWN, new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/darkbrown.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.GRAY, new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/gray.png"));
+    BODY_TEXTURE_MAP.put(CoatColors.WHITE, new ResourceLocation(GreekFantasy.MODID, "textures/entity/satyr/white.png"));
+  }
   public SatyrRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new SatyrModel<T>(0.0F), 0.5F);
     this.addLayer(new SatyrShamanLayer<>(this));
@@ -33,6 +46,10 @@ public class SatyrRenderer<T extends SatyrEntity> extends BipedRenderer<T, Satyr
 
   @Override
   public ResourceLocation getEntityTexture(final T entity) {
-    return (entity.hasCustomName() && "Grover".equals(entity.getCustomName().getUnformattedComponentText())) ? TEXTURE_GROVER : TEXTURE_SATYR;
+    if(entity.hasCustomName() && "Grover".equals(entity.getCustomName().getUnformattedComponentText())) {
+      return TEXTURE_GROVER;
+    } else {
+      return BODY_TEXTURE_MAP.get(entity.getCoatColor());
+    }
   }
 }

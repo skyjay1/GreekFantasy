@@ -237,6 +237,8 @@ public final class GFRegistry {
   public static final Item SPIDER_PATTERN = null;
   @ObjectHolder("web_ball")
   public static final Item WEB_BALL = null;
+  @ObjectHolder("olive_oil")
+  public static final Item OLIVE_OIL = null;
   @ObjectHolder("greek_fire")
   public static final Item GREEK_FIRE = null;
   
@@ -357,6 +359,8 @@ public final class GFRegistry {
   public static final Block ICHOR_INFUSED_BLOCK = null;
   @ObjectHolder("golden_string")
   public static final Block GOLDEN_STRING_BLOCK = null;
+  @ObjectHolder("oil")
+  public static final Block OIL = null;
   @ObjectHolder("oil_lamp")
   public static final Block OIL_LAMP = null;
   
@@ -714,6 +718,9 @@ public final class GFRegistry {
           .setRegistryName(MODID, "ichor_infused_block"),
         new GoldenStringBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).setLightLevel(b -> 8).zeroHardnessAndResistance().doesNotBlockMovement().notSolid())
           .setRegistryName(MODID, "golden_string"),
+        new OilBlock(AbstractBlock.Properties.create(Material.FIRE).notSolid().doesNotBlockMovement().zeroHardnessAndResistance()
+            .tickRandomly().setLightLevel((state) -> 11).sound(SoundType.WET_GRASS))
+          .setRegistryName(MODID, "oil"),
         new OilLampBlock(AbstractBlock.Properties.create(Material.ROCK).notSolid().setLightLevel(b -> b.get(OilLampBlock.LIT) ? 11 : 0).hardnessAndResistance(0.2F, 0.1F))
           .setRegistryName(MODID, "oil_lamp")
     );
@@ -858,7 +865,7 @@ public final class GFRegistry {
           .setRegistryName(MODID, "pomegranate_seeds"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "olives"),
-        new Item(new Item.Properties().group(GREEK_GROUP).maxStackSize(16).containerItem(Items.GLASS_BOTTLE))
+        new OliveOilItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(16).containerItem(Items.GLASS_BOTTLE))
           .setRegistryName(MODID, "olive_oil")
     );
     

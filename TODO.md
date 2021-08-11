@@ -18,6 +18,7 @@ __Key:__
 
 - X X _ X X Naiad
 - X X _ X X Dryad
+- X X _ X X Lampad
 - X X _ X X Satyr
 - X X _ X X Centaur
 - X X X X X Cyprian Centaur (bull-head, hostile)
@@ -63,6 +64,7 @@ __Key:__
 
 - X Dryads trade with player
 - _ Satyrs trade with player
+- X More Satyr variants
 - ~ Centaurs / Cyprians shoot arrows (TODO run around while shooting)
 
 ## Favor
@@ -131,8 +133,7 @@ __Key:__
 
 ## Other
 
-- _ Prisoner potion effect (prevent leaving nether)
-- X Silkwalker enchantment
+- X Prisoner potion effect (prevent leaving nether)
 - ~ Block and Item tags (wooden_doors, etc.)
 
 

@@ -9,9 +9,13 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.entity.SatyrEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.passive.horse.CoatColors;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.ISeedReader;
@@ -51,47 +55,50 @@ public class SatyrCampFeature extends SimpleTemplateFeature {
         .setRotation(rotation).setMirror(mirror).setRandom(rand)
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
     
+    // determine satyr colors
+    SatyrEntity.GroupData data = new SatyrEntity.GroupData(Util.getRandomObject(CoatColors.values(), rand));
+    
     // generate the campfire
     BlockPos campfirePos = getHeightPos(reader, blockPosIn.add(4 + rand.nextInt(8), 0, 4 + rand.nextInt(8)));
-    if(generateTemplate(reader, manager.getTemplateDefaulted(STRUCTURE_CAMPFIRE), placement, campfirePos, rand, false, 0)) {
+    if(generateTemplate(reader, manager.getTemplateDefaulted(STRUCTURE_CAMPFIRE), placement, campfirePos, rand, false, data, 0)) {
       // add 1-2 satyrs
-      addSatyr(reader, rand, campfirePos.up(), 1 + rand.nextInt(2));
+      addSatyr(reader, rand, campfirePos.up(), data, 1 + rand.nextInt(2));
       // generate the first tent
       int tentsGenerated = 0;
       BlockPos tentPos = getHeightPos(reader, campfirePos.add(tent1Offset.rotate(rotation)));
-      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement, tentPos, rand, true, tentsGenerated)) {
+      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement, tentPos, rand, true, data, tentsGenerated)) {
         tentsGenerated++;
       }
       
       // generate the second tent
       tentPos = getHeightPos(reader, campfirePos.add(tent2Offset.rotate(rotation)));
       rotation = rotation.add(Rotation.CLOCKWISE_90);
-      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
+      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, data, tentsGenerated)) {
         tentsGenerated++;
       }
       
       // generate the third tent
       tentPos = getHeightPos(reader, campfirePos.add(tent3Offset.rotate(rotation)));
       rotation = rotation.add(Rotation.CLOCKWISE_90);
-      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
+      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, data, tentsGenerated)) {
         tentsGenerated++;
       }
       
       // generate the fourth tent
       tentPos = getHeightPos(reader, campfirePos.add(tent4Offset.rotate(rotation)));
       rotation = rotation.add(Rotation.CLOCKWISE_90);
-      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, tentsGenerated)) {
+      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, data, tentsGenerated)) {
         tentsGenerated++;
       }
-      // DEBUG
-//      GreekFantasy.LOGGER.debug("Generated " + tentsGenerated + " satyr tents near " + campfirePos);
+      
+      // finished
       return true;
     }
     return false;
   }
  
   protected boolean generateTemplate(final ISeedReader reader, final Template template, final PlacementSettings placement,
-      final BlockPos pos, final Random rand, final boolean satyrs, final int tentsGenerated) {
+      final BlockPos pos, final Random rand, final boolean satyrs, final ILivingEntityData data, final int tentsGenerated) {
     if((tentsGenerated > 2 || !isValidPosition(reader, pos, template.getSize(), placement.getRotation()))) {
       return false;
     }
@@ -104,12 +111,12 @@ public class SatyrCampFeature extends SimpleTemplateFeature {
     
     // add entities
     if(satyrs) {
-      addSatyr(reader, rand, pos.add(new BlockPos(3, 1, 2).rotate(placement.getRotation())), 1 + rand.nextInt(2));
+      addSatyr(reader, rand, pos.add(new BlockPos(3, 1, 2).rotate(placement.getRotation())), data, 1 + rand.nextInt(2));
     }
     return true;
   }
 
-  protected static void addSatyr(final ISeedReader world, final Random rand, final BlockPos pos, final int count) {
+  protected static void addSatyr(final ISeedReader world, final Random rand, final BlockPos pos, final ILivingEntityData data, final int count) {
     for(int i = 0; i < count; i++) {
       // spawn a satyr
       final SatyrEntity entity = GFRegistry.SATYR_ENTITY.create(world.getWorld());
@@ -119,6 +126,8 @@ public class SatyrCampFeature extends SimpleTemplateFeature {
       if(rand.nextInt(100) < GreekFantasy.CONFIG.getSatyrShamanChance()) {
         entity.setShaman(true);
       }
+      // coat colors
+      entity.setCoatColor(((SatyrEntity.GroupData)data).variant);
       world.addEntity(entity);
     }
   }

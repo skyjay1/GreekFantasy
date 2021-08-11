@@ -9,6 +9,7 @@ import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -100,11 +101,16 @@ public class OilLampBlock extends HorizontalBlock implements IWaterLoggable {
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
     ItemStack heldItem = playerIn.getHeldItem(handIn);
     if(heldItem.isEmpty() && state.get(LIT)) {
+      // extinguish the block
       worldIn.setBlockState(pos, state.with(LIT, false), 2);
+      // play sound effect
       playerIn.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 0.4F, 1.0F);
     } else if(heldItem.getItem() == Items.FLINT_AND_STEEL && !state.get(LIT) && !state.get(WATERLOGGED)) {
+      // light the block
       worldIn.setBlockState(pos, state.with(LIT, true), 2);
+      // play sound effect and damage item
       playerIn.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 0.4F, 1.0F);
+      heldItem.damageItem(1, playerIn, i -> i.sendBreakAnimation(EquipmentSlotType.MAINHAND));
     }
     return ActionResultType.SUCCESS;
   }

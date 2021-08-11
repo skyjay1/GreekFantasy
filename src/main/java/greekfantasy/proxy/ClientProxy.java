@@ -130,6 +130,7 @@ public class ClientProxy extends Proxy {
     RenderTypeLookup.setRenderLayer(GFRegistry.REEDS, RenderType.getCutout());
     RenderTypeLookup.setRenderLayer(GFRegistry.WILD_ROSE, RenderType.getCutout());
     RenderTypeLookup.setRenderLayer(GFRegistry.GOLDEN_STRING_BLOCK, RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.OIL, RenderType.getCutout());
   }
   
   @Override

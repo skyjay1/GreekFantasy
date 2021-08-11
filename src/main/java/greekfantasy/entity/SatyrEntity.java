@@ -35,6 +35,7 @@ import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.WolfEntity;
+import net.minecraft.entity.passive.horse.CoatColors;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -49,6 +50,7 @@ import net.minecraft.util.RangedInteger;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.TickRangeConverter;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
@@ -64,12 +66,14 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   
   private static final DataParameter<Byte> DATA_STATE = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BYTE);
   private static final DataParameter<Boolean> DATA_SHAMAN = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BOOLEAN);
+  private static final DataParameter<Byte> DATA_COLOR = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BYTE);
   private static final String KEY_SHAMAN = "Shaman";
+  private static final String KEY_COLOR = "Color";
   
   private static final Direction[] HORIZONTALS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
 
   private static final ResourceLocation SUMMONING_SONG = new ResourceLocation(GreekFantasy.MODID, "sarias_song");
-
+  
   // NONE, DANCING, and SUMMONING are values for DATA_STATE
   protected static final byte NONE = 0;
   protected static final byte DANCING = 1;
@@ -112,6 +116,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     super.registerData();
     this.getDataManager().register(DATA_STATE, Byte.valueOf(NONE));
     this.getDataManager().register(DATA_SHAMAN, Boolean.valueOf(false));
+    this.getDataManager().register(DATA_COLOR, Byte.valueOf((byte) 0));
   }
   
   @Override
@@ -179,9 +184,10 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       final LivingEntity target = (LivingEntity)source.getImmediateSource();
   	  final List<SatyrEntity> shamans = this.getEntityWorld().getEntitiesWithinAABB(SatyrEntity.class, this.getBoundingBox().grow(10.0D), e -> e.isShaman());
   	  for(final SatyrEntity shaman : shamans) {
-  	    if(shaman.getAttackTarget() == null) { // if IAngerable#canTargetEntity
-  	  	  shaman.setAngerTarget(target.getUniqueID());
-  	  	  shaman.setAngerTime(ANGER_RANGE.getRandomWithinRange(this.rand));
+  	    if(shaman.getAttackTarget() == null) {
+  	      shaman.setRevengeTarget(target);
+  	      shaman.setAngerTarget(target.getUniqueID());
+  	      shaman.func_230258_H__();
   	    }
   	  }   
     }
@@ -194,20 +200,27 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     if(super.isInvulnerableTo(source)) {
       return true;
     }
-    // immune to fire when on top of campfires
-    final BlockState campfire = world.getBlockState(this.getPositionUnderneath());
-    return source == DamageSource.IN_FIRE && campfire.isIn(BlockTags.CAMPFIRES) && campfire.get(CampfireBlock.LIT);
+    // immune to being in fires
+    return source == DamageSource.IN_FIRE;
   }
  
   @Override
   public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    // coat colors based on group data
+    CoatColors color;
+    if (spawnDataIn instanceof SatyrEntity.GroupData) {
+      color = ((SatyrEntity.GroupData)spawnDataIn).variant;
+   } else {
+      color = Util.getRandomObject(CoatColors.values(), this.rand);
+      spawnDataIn = new SatyrEntity.GroupData(color);
+   }
+    this.setCoatColor(color);
     // random chance to be a satyr shaman
     if(worldIn.getRandom().nextInt(100) < GreekFantasy.CONFIG.getSatyrShamanChance()) {
       this.setShaman(true);
     }
-    return spawnDataIn;
+    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
   @Override
@@ -242,6 +255,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   public void writeAdditional(CompoundNBT compound) {
     super.writeAdditional(compound);
     compound.putBoolean(KEY_SHAMAN, this.isShaman());
+    compound.putByte(KEY_COLOR, (byte) this.getCoatColor().getId());
     this.writeAngerNBT(compound);
   }
 
@@ -249,6 +263,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   public void readAdditional(CompoundNBT compound) {
     super.readAdditional(compound);
     this.setShaman(compound.getBoolean(KEY_SHAMAN));
+    this.setCoatColor(CoatColors.func_234254_a_(compound.getByte(KEY_COLOR)));
     this.readAngerNBT((ServerWorld)this.world, compound);
   }
   
@@ -267,7 +282,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
  
   // End IAngerable methods
   
-  // Dancing, summoning, and shaman getters/setters
+  // Idle, dancing, summoning
   
   public boolean isIdleState() { return this.getDataManager().get(DATA_STATE).byteValue() == NONE; }
   
@@ -281,6 +296,8 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   
   public void setSummoning(final boolean summoning) { this.getDataManager().set(DATA_STATE, Byte.valueOf(summoning ? SUMMONING : NONE)); }
   
+  // Shaman, coat colors
+  
   public boolean isShaman() { return this.getDataManager().get(DATA_SHAMAN); }
   
   public void setShaman(final boolean shaman) { 
@@ -290,6 +307,10 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       updateCombatAI();
     }
   }
+  
+  public void setCoatColor(final CoatColors color) { this.getDataManager().set(DATA_COLOR, (byte) color.getId()); }
+  
+  public CoatColors getCoatColor() { return CoatColors.func_234254_a_(this.getDataManager().get(DATA_COLOR).intValue()); }
   
   protected void updateCombatAI() {
     if(this.isServerWorld()) {
@@ -671,5 +692,12 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       return false;
     }
   }
-  
+
+  public static class GroupData implements ILivingEntityData {
+    public final CoatColors variant;
+    
+    public GroupData(CoatColors color) {
+      this.variant = color;
+    }
+ }
 }
