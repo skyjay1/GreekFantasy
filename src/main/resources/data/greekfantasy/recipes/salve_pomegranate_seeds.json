@@ -1,0 +1,12 @@
+{
+  "type": "greekfantasy:salve",
+  "ingredients": [
+    { "item": "greekfantasy:olive_oil" },
+    { "item": "minecraft:kelp" },
+    { "item": "greekfantasy:pomegranate_seeds" }
+  ],
+  "result": {
+    "item": "greekfantasy:salve"
+  },
+  "result_tag": "{Effects:[{Potion:\"minecraft:regeneration\"},{Potion:\"greekfantasy:prisoner\",Duration:1000}]}"
+}

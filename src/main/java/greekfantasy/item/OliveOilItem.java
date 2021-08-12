@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.item.Items;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -41,7 +42,7 @@ public class OliveOilItem extends BlockNamedItem {
   public ActionResultType tryPlace(BlockItemUseContext context) {
     ActionResultType result = super.tryPlace(context);
     if((result == ActionResultType.SUCCESS || result == ActionResultType.CONSUME) && !context.getPlayer().isCreative()) {
-      context.getPlayer().addItemStackToInventory(this.getContainerItem(context.getItem()));
+      context.getPlayer().addItemStackToInventory(new ItemStack(Items.GLASS_BOTTLE));
     }
     return result;
   }

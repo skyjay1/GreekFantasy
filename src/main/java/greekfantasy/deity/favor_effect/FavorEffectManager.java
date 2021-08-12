@@ -20,7 +20,6 @@ import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.DrownedEntity;
 import net.minecraft.entity.monster.GuardianEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
@@ -155,7 +154,10 @@ public class FavorEffectManager {
     if(potionTag.isPresent()) {
       final CompoundNBT nbt = potionTag.get().copy();
       nbt.putByte("Id", (byte) Effect.getId(ForgeRegistries.POTIONS.getValue(new ResourceLocation(potionTag.get().getString("Potion")))));
-      return playerIn.addPotionEffect(EffectInstance.read(nbt));
+      EffectInstance effect = EffectInstance.read(nbt);
+      if(effect != null) {
+        return playerIn.addPotionEffect(EffectInstance.read(nbt));
+      }
     }
     return false;
   }
@@ -169,11 +171,7 @@ public class FavorEffectManager {
    */
   private static boolean itemFavorEffect(final PlayerEntity playerIn, final Optional<ItemStack> itemTag) {
     if(itemTag.isPresent()) {
-      ItemEntity item = playerIn.entityDropItem(itemTag.get());
-      if(item != null) {
-        item.setNoPickupDelay();
-      }
-      return true;
+      return playerIn.addItemStackToInventory(itemTag.get());
     }
     return false;
   }

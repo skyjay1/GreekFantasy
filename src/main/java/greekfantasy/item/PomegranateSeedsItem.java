@@ -19,7 +19,7 @@ import net.minecraft.world.World;
 
 public class PomegranateSeedsItem extends BlockNamedItem {
   
-  public static final Food POMEGRANATE_SEEDS = new Food.Builder().setAlwaysEdible().hunger(2).saturation(0.1F).build();
+  public static final Food POMEGRANATE_SEEDS = new Food.Builder().fastToEat().setAlwaysEdible().hunger(2).saturation(0.1F).build();
   
   public PomegranateSeedsItem(final Item.Properties properties) {
     super(GFRegistry.POMEGRANATE_SAPLING, properties);

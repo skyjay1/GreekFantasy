@@ -119,6 +119,7 @@ __Key:__
 - X X X Pomegranate sapling
 - X X X Olives
 - X X X Olive Oil
+- X X X Salve
 - X X X Greek Fire
 
 ## Achievements

@@ -20,8 +20,8 @@ import net.minecraft.world.World;
 
 public class UnicornHornItem extends Item {
   
-  private final int USE_DURATION = 50;
-  private final int USE_COOLDOWN = 240;
+  private final int useDuration = 50;
+  private final int useCooldown = 240;
   
   public UnicornHornItem(final Item.Properties properties) {
     super(properties);
@@ -29,13 +29,13 @@ public class UnicornHornItem extends Item {
 
   @Override
   public int getUseDuration(final ItemStack stack) {
-    return USE_DURATION;
+    return useDuration;
   }
   
   @Override
   public ItemStack onItemUseFinish(final ItemStack stack, final World worldIn, final LivingEntity entityLiving) {
     if(entityLiving instanceof PlayerEntity) {
-      ((PlayerEntity)entityLiving).getCooldownTracker().setCooldown(this, USE_COOLDOWN);
+      ((PlayerEntity)entityLiving).getCooldownTracker().setCooldown(this, useCooldown);
     }
     // remove negative potion effects
     if(GreekFantasy.CONFIG.UNICORN_HORN_CURES_EFFECTS.get()) {

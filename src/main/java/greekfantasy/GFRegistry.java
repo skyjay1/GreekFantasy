@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import greekfantasy.block.*;
+import greekfantasy.crafting.SalveRecipe;
 import greekfantasy.deity.favor.IFavor;
 import greekfantasy.effect.*;
 import greekfantasy.enchantment.*;
@@ -65,7 +66,10 @@ import net.minecraft.item.Items;
 import net.minecraft.item.Rarity;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.TallBlockItem;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.ShapedRecipe;
+import net.minecraft.item.crafting.ShapelessRecipe;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleType;
@@ -96,6 +100,7 @@ import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ObjectHolder;
@@ -496,6 +501,10 @@ public final class GFRegistry {
   @ObjectHolder("gorgon_face")
   public static final BasicParticleType GORGON_PARTICLE = new BasicParticleType(true);
   
+  // Recipe Serializer //
+  @ObjectHolder(SalveRecipe.CATEGORY)
+  public static final IRecipeSerializer<ShapelessRecipe> SALVE_RECIPE_SERIALIZER = null;
+  
   protected static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
     @Override
     public ItemStack createIcon() { return new ItemStack(PANFLUTE); }
@@ -865,8 +874,10 @@ public final class GFRegistry {
           .setRegistryName(MODID, "pomegranate_seeds"),
         new Item(new Item.Properties().group(GREEK_GROUP))
           .setRegistryName(MODID, "olives"),
-        new OliveOilItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(16).containerItem(Items.GLASS_BOTTLE))
-          .setRegistryName(MODID, "olive_oil")
+        new OliveOilItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(16))
+          .setRegistryName(MODID, "olive_oil"),
+        new SalveItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(16).containerItem(Items.GLASS_BOTTLE))
+          .setRegistryName(MODID, "salve")
     );
     
     event.getRegistry().registerAll(
@@ -1065,6 +1076,12 @@ public final class GFRegistry {
         new SilkstepEnchantment(Enchantment.Rarity.RARE)
           .setRegistryName(MODID, "silkstep")
     );
+  }
+  
+  @SubscribeEvent
+  public static void registerRecipeSerializers(final Register<IRecipeSerializer<?>> event) {
+    GreekFantasy.LOGGER.debug("registerRecipeSerializers");
+    event.getRegistry().register(new SalveRecipe.Factory().setRegistryName(MODID, SalveRecipe.CATEGORY));
   }
 
   @SubscribeEvent

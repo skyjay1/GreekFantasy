@@ -1,0 +1,12 @@
+{
+  "type": "greekfantasy:salve",
+  "ingredients": [
+    { "item": "greekfantasy:olive_oil" },
+    { "item": "minecraft:kelp" },
+    { "item": "minecraft:blue_orchid" }
+  ],
+  "result": {
+    "item": "greekfantasy:salve"
+  },
+  "result_tag": "{Effects:[{Potion:\"minecraft:regeneration\"},{Potion:\"minecraft:saturation\",Duration:6}]}"
+}
