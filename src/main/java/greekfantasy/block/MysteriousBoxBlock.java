@@ -10,12 +10,15 @@ import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -117,6 +120,17 @@ public class MysteriousBoxBlock extends HorizontalBlock implements IWaterLoggabl
     else return SHAPE_CLOSED_Z;
   }
   
+  // Comparator methods
+
+  @Override
+  public boolean hasComparatorInputOverride(BlockState state) {
+    return true;
+  }
+
+  @Override
+  public int getComparatorInputOverride(BlockState state, World worldIn, BlockPos pos) {
+    return state.get(OPEN) ? 1 : 0;
+  }
 
   /**
    * Called periodically clientside on blocks near the player to show effects (like furnace fire particles). Note that

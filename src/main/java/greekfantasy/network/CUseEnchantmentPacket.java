@@ -25,30 +25,47 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
+/**
+ * Created when a client-side event fires that involves an enchanted item,
+ * such as right-clicking with the item. The packet sends the player and
+ * enchantment to the server to respond.
+ **/
 public class CUseEnchantmentPacket {
   
   protected ResourceLocation enchantment;
   
   public CUseEnchantmentPacket() { }
   
+  /**
+   * @param enchantmentIn the ResourceLocation ID of the enchantment that was used
+   **/
   public CUseEnchantmentPacket(final ResourceLocation enchantmentIn) { 
     enchantment = enchantmentIn;
   }
   
   /**
    * Reads the raw packet data from the data stream.
+   * @param buf the PacketBuffer
+   * @return a new instance of a CUseEnchantmentPacket based on the PacketBuffer
    */
   public static CUseEnchantmentPacket fromBytes(final PacketBuffer buf) {
     return new CUseEnchantmentPacket(buf.readResourceLocation()); 
   }
 
-  /**
+  /*
    * Writes the raw packet data to the data stream.
+   * @param msg the CUseEnchantmentPacket
+   * @param buf the PacketBuffer
    */
-  public static void toBytes(final CUseEnchantmentPacket msg, final PacketBuffer buf) { 
+   public static void toBytes(final CUseEnchantmentPacket msg, final PacketBuffer buf) { 
     buf.writeResourceLocation(msg.enchantment);
   }
 
+  /**
+   * Handles the packet when it is received.
+   * @param message the CUseEnchantmentPacket
+   * @param contextSupplier the NetworkEvent.Context supplier
+   */
   public static void handlePacket(final CUseEnchantmentPacket message, final Supplier<NetworkEvent.Context> contextSupplier) {
     NetworkEvent.Context context = contextSupplier.get();
     if (context.getDirection().getReceptionSide() == LogicalSide.SERVER) {

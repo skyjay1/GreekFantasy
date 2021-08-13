@@ -56,14 +56,11 @@ public class GFWorldSavedData extends WorldSavedData {
   
   /**
    * Get or create a collection of palladium positions
+   * @param world the world
    * @param chunk the chunk position
    * @return an immutable copy of the palladium block positions
    */
   public Set<BlockPos> getPalladium(final World world, final ChunkPos chunk) {
-// this would occasionally hard-refresh the set, but it's prob not necessary
-//    if(Math.random() < 0.02D) {
-//      putAllPalladium(chunk, fillPalladiumList(world, chunk));
-//    } else 
     if(!palladiumMap.containsKey(chunk)) {
       // add a new palladium set
       addAllPalladium(chunk, fillPalladiumList(world, chunk));
@@ -217,6 +214,7 @@ public class GFWorldSavedData extends WorldSavedData {
   
   /**
    * @param player the player
+   * @param favor the player's favor
    * @return true if the player is wearing enchanted sandals and has high favor
    */
   public static boolean validatePlayer(final PlayerEntity player, final IFavor favor) {
@@ -235,7 +233,10 @@ public class GFWorldSavedData extends WorldSavedData {
     return validatePalladium(world.getTileEntity(pos));
   }
   
-  /** @return if the given tile entity is a palladium **/
+  /** 
+   * @param te the StatueTileEntity
+   * @return if the given tile entity is a palladium 
+   **/
   public static boolean validatePalladium(final @Nullable TileEntity te) {
     return (te instanceof StatueTileEntity && ((StatueTileEntity)te).getStatueMaterial() == StatueMaterial.WOOD);
   }

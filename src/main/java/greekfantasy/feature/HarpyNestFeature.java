@@ -41,6 +41,10 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
   @Override
   public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
+    // check dimension from config
+    if(!SimpleTemplateFeature.isValidDimension(reader)) {
+      return false;
+    }
     // position for generation
     final BlockPos blockPos = blockPosIn.add( 4 + rand.nextInt(8), 0, 4 + rand.nextInt(8));
     final int y = reader.getHeight(Heightmap.Type.WORLD_SURFACE, blockPos).getY();

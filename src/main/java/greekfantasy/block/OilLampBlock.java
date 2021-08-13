@@ -138,4 +138,16 @@ public class OilLampBlock extends HorizontalBlock implements IWaterLoggable {
       worldIn.addParticle(ParticleTypes.FLAME, vec.getX(), vec.getY(), vec.getZ(), 0.0D, 0.0D, 0.0D);
     }
   }
+  
+  // Comparator methods
+
+  @Override
+  public boolean hasComparatorInputOverride(BlockState state) {
+    return true;
+  }
+
+  @Override
+  public int getComparatorInputOverride(BlockState state, World worldIn, BlockPos pos) {
+    return state.get(LIT) ? 15 : 0;
+  }
 }

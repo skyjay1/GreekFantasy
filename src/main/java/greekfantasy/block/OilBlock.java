@@ -176,6 +176,18 @@ public class OilBlock extends Block implements IWaterLoggable {
     return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : Fluids.EMPTY.getDefaultState();
   }
   
+  // Comparator methods
+
+  @Override
+  public boolean hasComparatorInputOverride(BlockState state) {
+    return true;
+  }
+
+  @Override
+  public int getComparatorInputOverride(BlockState state, World worldIn, BlockPos pos) {
+    return state.get(LIT) ? 15 : 0;
+  }
+  
   // Fire methods
   
   @Override

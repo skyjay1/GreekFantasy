@@ -337,7 +337,7 @@ public class CommonFavorEventHandler {
   
   /**
    * Used to prevent certain mobs from attacking players based on Favor
-   * @param event
+   * @param event the LivingSetAttackTargetEvent
    **/
   @SubscribeEvent
   public static void onLivingTarget(final LivingSetAttackTargetEvent event) {

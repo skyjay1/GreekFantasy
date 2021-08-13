@@ -106,6 +106,7 @@ public interface IDeity {
   
   /**
    * @param rand a random instance
+   * @param playerLevel the player's favor level for this deity
    * @return a favor effect chosen at random
    */
   default FavorEffect getRandomEffect(final Random rand, final int playerLevel) {
@@ -159,7 +160,10 @@ public interface IDeity {
   /** @return the id of the overlay texture **/
   public ResourceLocation getOverlay();
   
-  /** @return the overlay texture location, or null if none should be used **/
+  /** 
+   * @param overlay the statue material name
+   * @return the overlay texture location, or null if none should be used 
+   **/
   @Nullable
   public default ResourceLocation makeOverlay(final String overlay) {
     if("none".equals(overlay)) {

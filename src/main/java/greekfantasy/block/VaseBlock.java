@@ -10,12 +10,15 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -156,5 +159,21 @@ public class VaseBlock extends HorizontalBlock implements IWaterLoggable {
   public TileEntity createTileEntity(final BlockState state, final IBlockReader world) {
     final VaseTileEntity te = GFRegistry.VASE_TE.create();
     return te;
+  }
+  
+  // Comparator methods
+
+  @Override
+  public boolean hasComparatorInputOverride(BlockState state) {
+    return true;
+  }
+
+  @Override
+  public int getComparatorInputOverride(BlockState state, World worldIn, BlockPos pos) {
+    final TileEntity te = worldIn.getTileEntity(pos);
+    if(te instanceof IInventory) {
+      return Container.calcRedstoneFromInventory((IInventory)te);
+    }
+    return 0;
   }
 }

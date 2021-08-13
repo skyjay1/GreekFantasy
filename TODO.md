@@ -104,9 +104,9 @@ __Key:__
 - X X X Pomegranate leaves
 - X X X Pomegranate/Olive door, trapdoor
 - X X X Oil Lamp
+- X X X Oil Block (when lit, fire that cannot be extinguished by water)
 - _ _ _ Other heads: Minotaur, Python, Medusa
 - _ _ _ Olive blocks: button, fence, boat, pressure plate, sign
-- _ _ _ Greek Fire Block? (fire that cannot be extinguished by water)
 - _ _ _ Grapes / grapevines?
 
 
@@ -154,7 +154,6 @@ _Can I do something with these?_
 - Lamia (demon)
 - Daemon (spirit of specific trait, emotion, object, etc)
 - Phoenix
-- Pegasus (and bull-like twin, Chrysaor)
 - Werewolf
 - Stymphalian bird
 - Cecrops (half-man, half-snake)

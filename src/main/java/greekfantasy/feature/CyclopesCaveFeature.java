@@ -34,6 +34,10 @@ public class CyclopesCaveFeature extends SimpleTemplateFeature {
   @Override
   public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
+    // check dimension from config
+    if(!SimpleTemplateFeature.isValidDimension(reader)) {
+      return false;
+    }
     // load templates
     final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
     final Template template = manager.getTemplate(getStructure(rand));

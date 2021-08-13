@@ -131,7 +131,7 @@ public final class GFWorldGen {
           .setRegistryName(MODID, "arachne_pit"),
         new OliveTreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(MODID, "olive_tree"),
-        new TreeFeature(BaseTreeFeatureConfig.CODEC)
+        new PomegranateTreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(MODID, "pomegranate_tree"),
         new TreeFeature(BaseTreeFeatureConfig.CODEC)
           .setRegistryName(MODID, "golden_apple_tree"),
@@ -266,7 +266,7 @@ public final class GFWorldGen {
   public static void addBiomeSpawns(final BiomeLoadingEvent event) {
     // nether spawns
     addSpawns(event, GFRegistry.FURY_ENTITY, 3, 3);
-    addSpawns(event, GFRegistry.LAMPAD_ENTITY, 1, 3);
+    addSpawns(event, GFRegistry.LAMPAD_ENTITY, 3, 6);
     addSpawns(event, GFRegistry.ORTHUS_ENTITY, 1, 4);
     // overworld spawns
     addSpawns(event, GFRegistry.ARA_ENTITY, 2, 5);

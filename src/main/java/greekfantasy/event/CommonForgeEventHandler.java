@@ -430,7 +430,7 @@ public class CommonForgeEventHandler {
   /**
    * Used to sometimes replace Witch with Circe when a witch is spawned.
    * Used to sometimes replace Sheep with Golden Ram when a yellow sheep is spawned.
-   * @param event
+   * @param event the LivingSpawnEvent.SpecialSpawn
    */
   @SubscribeEvent
   public static void onEntitySpawn(final LivingSpawnEvent.SpecialSpawn event) {

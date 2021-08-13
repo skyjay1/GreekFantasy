@@ -29,7 +29,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
@@ -283,6 +285,25 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   public boolean hasDeity() {
     return !deity.equals(Deity.EMPTY.getName());
   }
+  
+  // Comparator methods
+
+  @Override
+  public boolean hasComparatorInputOverride(BlockState state) {
+    return true;
+  }
+
+  @Override
+  public int getComparatorInputOverride(BlockState state, World worldIn, BlockPos pos) {
+    final BlockPos tePos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos;
+    final TileEntity te = worldIn.getTileEntity(tePos);
+    if(te instanceof IInventory) {
+      return Container.calcRedstoneFromInventory((IInventory)te);
+    }
+    return 0;
+  }
+  
+  // Material
   
   public static enum StatueMaterial implements IStringSerializable {
     LIMESTONE("limestone", true, 0, () -> GFRegistry.POLISHED_LIMESTONE_SLAB.getDefaultState()),

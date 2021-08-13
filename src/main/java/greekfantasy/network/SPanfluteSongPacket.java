@@ -14,6 +14,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
+/**
+ * Called when datapacks are (re)loaded.
+ * Sent from the server to the client with a single ResourceLocation ID
+ * and the corresponding Song as it was read from JSON.
+ **/
 public class SPanfluteSongPacket {
 
   protected ResourceLocation songName;
@@ -21,6 +26,10 @@ public class SPanfluteSongPacket {
 
   public SPanfluteSongPacket() { }
 
+  /**
+   * @param songNameIn the ResourceLocation ID of the song
+   * @param songIn the Song
+   **/
   public SPanfluteSongPacket(final ResourceLocation songNameIn, final Song songIn) {
     this.songName = songNameIn;
     this.song = songIn;
@@ -28,6 +37,8 @@ public class SPanfluteSongPacket {
 
   /**
    * Reads the raw packet data from the data stream.
+   * @param buf the PacketBuffer
+   * @return a new instance of a SPanfluteSongPacket based on the PacketBuffer
    */
   public static SPanfluteSongPacket fromBytes(final PacketBuffer buf) {
     final ResourceLocation sName = buf.readResourceLocation();
@@ -38,6 +49,8 @@ public class SPanfluteSongPacket {
 
   /**
    * Writes the raw packet data to the data stream.
+   * @param msg the SPanfluteSongPacket
+   * @param buf the PacketBuffer
    */
   public static void toBytes(final SPanfluteSongPacket msg, final PacketBuffer buf) {
     DataResult<INBT> nbtResult = GreekFantasy.PROXY.PANFLUTE_SONGS.writeObject(msg.song);
@@ -46,6 +59,11 @@ public class SPanfluteSongPacket {
     buf.writeCompoundTag((CompoundNBT)tag);
   }
 
+  /**
+   * Handles the packet when it is received.
+   * @param message the SPanfluteSongPacket
+   * @param contextSupplier the NetworkEvent.Context supplier
+   */
   public static void handlePacket(final SPanfluteSongPacket message, final Supplier<NetworkEvent.Context> contextSupplier) {
     NetworkEvent.Context context = contextSupplier.get();
     if (context.getDirection().getReceptionSide() == LogicalSide.CLIENT) {

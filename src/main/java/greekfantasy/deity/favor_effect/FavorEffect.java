@@ -107,7 +107,10 @@ public class FavorEffect {
   /** @return whether the level required is positive **/
   public boolean isPositive() { return minLevel >= 0 || maxLevel >= 0; }
   
-  /** @return true if the player level is within an applicable range **/
+  /** 
+   * @param playerLevel the player's favor level
+   * @return true if the player level is within an applicable range
+   **/
   public boolean isInRange(final int playerLevel) {
     if(maxLevel > minLevel) {
       return playerLevel <= maxLevel && playerLevel >= minLevel;

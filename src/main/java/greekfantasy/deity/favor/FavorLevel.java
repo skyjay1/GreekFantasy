@@ -147,7 +147,10 @@ public class FavorLevel implements INBTSerializable<CompoundNBT> {
     return favor + " (" + level + ") range[" + minLevel + "," + maxLevel + "]";
   }
   
-  /** @return the favor level based on amount of favor **/
+  /**
+   * @param favorIn the favor amount
+   * @return the favor level based on amount of favor 
+   **/
   public static int calculateLevel(final long favorIn) {
     // calculate the current level based on favor
     final long f = Math.abs(favorIn);
@@ -155,7 +158,10 @@ public class FavorLevel implements INBTSerializable<CompoundNBT> {
     return sig * Math.floorDiv(-100 + (int)Math.sqrt(10000 + 40 * f), 20);
   }
   
-  /** @return the maximum amount of favor for a given level **/
+  /** 
+   * @param lv the favor level
+   * @return the maximum amount of favor for a given level 
+   **/
   public static long calculateFavor(final int lv) {
     final int l = Math.abs(lv);
     final int sig = (int)Math.signum(lv);

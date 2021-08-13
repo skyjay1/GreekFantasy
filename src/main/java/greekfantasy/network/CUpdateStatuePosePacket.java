@@ -14,8 +14,9 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 /**
- * Sent from the client to the server to update a StatueTileEntity
- * when the player closes a StatueContainer GUI
+ * Created when the player closes a StatueContainer GUI.
+ * The packet sends the BlockPos, StatuePose, and other settings
+ * to the server to update the StatueTileEntity NBT data. 
  **/
 public class CUpdateStatuePosePacket {
 
@@ -27,6 +28,12 @@ public class CUpdateStatuePosePacket {
 
   public CUpdateStatuePosePacket() { }
 
+  /**
+   * @param blockPosIn the BlockPos of the statue TileEntity (lower half)
+   * @param statuePoseIn the StatuePose settings
+   * @param statueFemaleIn true if the statue uses the female model
+   * @param textureNameIn the String name of the texture to use
+   **/
   public CUpdateStatuePosePacket(final BlockPos blockPosIn, final StatuePose statuePoseIn, 
       final boolean statueFemaleIn, final String textureNameIn) {
     this.blockPos = blockPosIn;
@@ -37,8 +44,10 @@ public class CUpdateStatuePosePacket {
   
   /**
    * Reads the raw packet data from the data stream.
+   * @param buf the PacketBuffer
+   * @return a new instance of a CUpdateStatuePosePacket based on the PacketBuffer
    */
-  public static CUpdateStatuePosePacket fromBytes(final PacketBuffer buf) {
+    public static CUpdateStatuePosePacket fromBytes(final PacketBuffer buf) {
     final BlockPos blockPos = buf.readBlockPos();
     final CompoundNBT nbt = buf.readCompoundTag();
     final boolean female = buf.readBoolean();
@@ -48,8 +57,10 @@ public class CUpdateStatuePosePacket {
 
   /**
    * Writes the raw packet data to the data stream.
+   * @param msg the CUpdateStatuePosePacket
+   * @param buf the PacketBuffer
    */
-  public static void toBytes(final CUpdateStatuePosePacket msg, final PacketBuffer buf) {
+    public static void toBytes(final CUpdateStatuePosePacket msg, final PacketBuffer buf) {
     buf.writeBlockPos(msg.blockPos);
     buf.writeCompoundTag(msg.statuePose.serializeNBT());
     buf.writeBoolean(msg.statueFemale);
@@ -60,6 +71,11 @@ public class CUpdateStatuePosePacket {
     buf.writeString(name, NAME_LEN);
   }
 
+  /**
+   * Handles the packet when it is received.
+   * @param message the CUpdateStatuePosePacket
+   * @param contextSupplier the NetworkEvent.Context supplier
+   */
   public static void handlePacket(final CUpdateStatuePosePacket message, final Supplier<NetworkEvent.Context> contextSupplier) {
     NetworkEvent.Context context = contextSupplier.get();
     if (context.getDirection().getReceptionSide() == LogicalSide.SERVER) {
@@ -70,7 +86,7 @@ public class CUpdateStatuePosePacket {
           final TileEntity tileentity = context.getSender().getEntityWorld().getTileEntity(message.blockPos);
           if (tileentity instanceof StatueTileEntity) {
             // update the tile entity using info from this packet
-            final StatueTileEntity statueTileEntity = (StatueTileEntity)tileentity;
+            final StatueTileEntity statueTileEntity = (StatueTileEntity) tileentity;
             statueTileEntity.setStatuePose(message.statuePose);
             statueTileEntity.setStatueFemale(message.statueFemale, true);
             statueTileEntity.setTextureName(message.textureName, true);

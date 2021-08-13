@@ -34,6 +34,7 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -124,16 +125,17 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
+    this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.1D, false));
     this.goalSelector.addGoal(2, new DryadEntity.TradeGoal(50 + rand.nextInt(20)));
     this.goalSelector.addGoal(3, new DryadEntity.FindTreeGoal(8, 28));
     this.goalSelector.addGoal(4, new DryadEntity.HideGoal(640));
     this.goalSelector.addGoal(5, new DryadEntity.GoToTreeGoal(0.9F, 320));
     this.goalSelector.addGoal(6, new EffectGoal<>(this, () -> Effects.REGENERATION, 60, 120, 0, 1, 
         EffectGoal.randomPredicate(400).and(e -> ((DryadEntity)e).isHiding())));
-    this.goalSelector.addGoal(7, new DryadEntity.WalkingGoal(0.8F, 140));
-    this.goalSelector.addGoal(8, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    this.goalSelector.addGoal(9, new LookRandomlyGoal(this));
+    this.goalSelector.addGoal(7, new AvoidEntityGoal<>(this, SatyrEntity.class, 10.0F, 1.2D, 1.1D, (entity) -> !this.isHiding() && !this.isGoingToTree && !this.tradingPlayer.isPresent()));
+    this.goalSelector.addGoal(8, new DryadEntity.WalkingGoal(0.8F, 140));
+    this.goalSelector.addGoal(9, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+    this.goalSelector.addGoal(10, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
     this.targetSelector.addGoal(3, new ResetAngerGoal<>(this, true));
@@ -275,7 +277,6 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   
   @Override
   protected ActionResultType getEntityInteractionResult(final PlayerEntity player, final Hand hand) { 
-    System.out.println("variant: " + getVariant().getString());
     ItemStack stack = player.getHeldItem(hand);
     // check if the tradingPlayer is holding a trade item and the entity is not already trading
     if(!this.world.isRemote() && !this.isAggressive() && !this.tradingPlayer.isPresent() 

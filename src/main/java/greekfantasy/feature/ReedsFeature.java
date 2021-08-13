@@ -24,6 +24,10 @@ public class ReedsFeature extends Feature<BlockClusterFeatureConfig> {
   @Override
   public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final BlockClusterFeatureConfig config) {
+    // check dimension from config
+    if(!SimpleTemplateFeature.isValidDimension(reader)) {
+      return false;
+    }
     BlockPos pos;
     BlockState state = GFRegistry.REEDS.getDefaultState();
     

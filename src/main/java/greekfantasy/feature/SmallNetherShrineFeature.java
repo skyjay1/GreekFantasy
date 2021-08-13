@@ -30,6 +30,10 @@ public class SmallNetherShrineFeature extends SimpleTemplateFeature {
   @Override
   public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
+    // check dimension from config
+    if(!SimpleTemplateFeature.isValidDimension(reader)) {
+      return false;
+    }
     // template loading
     final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
     final Template template = manager.getTemplateDefaulted(STRUCTURE);
@@ -55,8 +59,6 @@ public class SmallNetherShrineFeature extends SimpleTemplateFeature {
 
     // actually generate the structure
     if(template.func_237146_a_(reader, pos, pos, placement, rand, 2)) {
-      // DEBUG
-//      GreekFantasy.LOGGER.debug("Generating nether shrine near " + pos);
       return true;
     }
     return false;
@@ -65,7 +67,7 @@ public class SmallNetherShrineFeature extends SimpleTemplateFeature {
   // try to find a valid position in this chunk
   private Optional<BlockPos> getRandomPositionInChunk(final ISeedReader reader, final BlockPos blockPosIn, 
       final BlockPos size, final int down, final Random rand, final Rotation r) {
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < 8; i++) {
       BlockPos pos = new BlockPos(
         blockPosIn.getX() + 4 + rand.nextInt(8), 
         32 + rand.nextInt(120 - 32), 

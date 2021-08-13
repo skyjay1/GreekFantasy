@@ -154,17 +154,10 @@ public class ArachneEntity extends MonsterEntity implements IRangedAttackMob {
     }
   }
 
-  /**
-   * Returns true if the WatchableObject (Byte) is 0x01 otherwise returns false. The WatchableObject is updated using
-   * setBesideClimableBlock.
-   */
   public boolean isBesideClimbableBlock() {
     return (this.dataManager.get(CLIMBING) & 1) != 0;
   }
 
-  /**
-   * Updates the WatchableObject (Byte) created in entityInit(), setting it to 0x01 if par1 is true or 0x00 if it is false.
-   */
   public void setBesideClimbableBlock(boolean climbing) {
     byte b0 = this.dataManager.get(CLIMBING);
     if (climbing) {

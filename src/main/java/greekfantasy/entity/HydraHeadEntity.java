@@ -21,14 +21,18 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -151,6 +155,26 @@ public class HydraHeadEntity extends MonsterEntity {
     this.setHealth(1.0F);
     this.recalculateSize();
     world.setEntityState(this, CHANGE_SIZE_CLIENT);
+  }
+  
+  @Override
+  protected ActionResultType getEntityInteractionResult(final PlayerEntity player, final Hand hand) {
+    final ItemStack itemstack = player.getHeldItem(hand);
+    // light this head on fire when flint and steel is used
+    if (!itemstack.isEmpty() && itemstack.getItem() == Items.FLINT_AND_STEEL) {
+      final Vector3d pos = this.getPositionVec();
+      this.world.playSound(player, pos.x, pos.y, pos.z, SoundEvents.ITEM_FLINTANDSTEEL_USE, this.getSoundCategory(), 1.0F,
+          this.rand.nextFloat() * 0.4F + 0.8F);
+      player.swingArm(hand);
+
+      if (!this.world.isRemote()) {
+        this.setFire(4 + rand.nextInt(3));
+        itemstack.damageItem(1, player, c -> c.sendBreakAnimation(hand));
+      }
+      return ActionResultType.SUCCESS;
+    }
+
+    return super.getEntityInteractionResult(player, hand);
   }
   
   @Override

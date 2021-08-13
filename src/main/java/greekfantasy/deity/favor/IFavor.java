@@ -59,6 +59,7 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
   
   /**
    * Performs an action for each IDeity/FavorLevel pair that is registered
+   * @param action a BiConsumer of Deity and FavorLevel to perform an action
    * @param action the action to perform
    */
   default void forEach(final BiConsumer<Deity, FavorLevel> action, final boolean enabledOnly) {

@@ -80,14 +80,12 @@ public abstract class FindBlockGoal extends Goal {
     return isTargetBlock(this.creature.getEntityWorld(), this.creature.getPosition());
   }
   
-  /** @return a Vector3d representing the middle of the given block pos **/
-  protected Vector3d getVecForBlockPos(final BlockPos pos) {
-    return new Vector3d(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
-  }
-  
-  /** @return whether the entity is within the given distance to the target **/
+  /** 
+   * @param distance the maximum distance to consider "near" the target
+   * @return whether the entity is within the given distance to the target 
+   **/
   protected boolean isNearTarget(final double distance) {
-    return this.targetPos.isPresent() && getVecForBlockPos(targetPos.get()).isWithinDistanceOf(this.creature.getPositionVec(), distance);
+    return this.targetPos.isPresent() && Vector3d.copyCenteredHorizontally(targetPos.get()).isWithinDistanceOf(this.creature.getPositionVec(), distance);
   }
  
   /**

@@ -51,6 +51,8 @@ public class OrthusHeadItemEntity extends ItemEntity {
    * Checks for valid spawn conditions for a Cerberus
    * and, if those conditions are met, spawns a Cerberus
    * at this item's location
+   * @param lavaPos the BlockPos of a lava block
+   * @return true if the Cerberus was spawned
    **/
   protected boolean trySpawnCerberus(final BlockPos lavaPos) {
     // check for lava nearby

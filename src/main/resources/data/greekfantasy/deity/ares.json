@@ -99,6 +99,7 @@
   	"greekfantasy:boar_tusk": -5,
   	"greekfantasy:boar_ear": -2,
   	"greekfantasy:dog_claw": -6,
-  	"greekfantasy:snake_fang": 4
+  	"greekfantasy:snake_fang": 4,
+  	"minecraft:torch": 1
   }
 }

@@ -332,6 +332,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
    * Only used client-side. Calculates the portion of dancing
    * or summoning completed up to 8 ticks so that the model 
    * animates in that time.
+   * @param ageInTicks the age of the satyr entity
    * @return the percent
    **/
   public float getArmMovementPercent(final float ageInTicks) {
@@ -403,12 +404,6 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     @Override
     public void tick() {
       super.tick();
-      // soft reset when entity is hurt
-      if(SatyrEntity.this.hurtTime != 0) {
-        this.progress = 0;
-        this.cooldown = 30;
-        SatyrEntity.this.setSummoning(false);
-      }
     }
     
     @Override

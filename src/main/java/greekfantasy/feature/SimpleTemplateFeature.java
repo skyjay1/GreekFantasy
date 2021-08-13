@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.mojang.serialization.Codec;
 
+import greekfantasy.GreekFantasy;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -36,7 +37,7 @@ public abstract class SimpleTemplateFeature extends Feature<NoFeatureConfig> {
     return pos.getY() > 3 && reader.getBlockState(pos).isSolid() && isReplaceableAt(reader, pos.up(1));
   }
   
-  protected static boolean isPlantAt(IWorldGenerationReader reader, BlockPos pos) {
+  public static boolean isPlantAt(IWorldGenerationReader reader, BlockPos pos) {
     return reader.hasBlockState(pos, state -> {
       Material m = state.getMaterial();
       return (m == Material.TALL_PLANTS || m == Material.PLANTS);
@@ -47,18 +48,18 @@ public abstract class SimpleTemplateFeature extends Feature<NoFeatureConfig> {
     return (isAirAt(reader, pos) || isPlantAt(reader, pos));
   }
   
-  protected BlockPos getRandomPosition(final ISeedReader reader, BlockPos origin, final Random rand, int down) {
+  public static BlockPos getRandomPosition(final ISeedReader reader, BlockPos origin, final Random rand, int down) {
     final BlockPos blockPos = origin.add(4 + rand.nextInt(8), 0, 4 + rand.nextInt(8));
     return getHeightPos(reader, blockPos);
   }
   
-  protected static BlockPos getHeightPos(final ISeedReader world, final BlockPos original) {
+  public static BlockPos getHeightPos(final ISeedReader world, final BlockPos original) {
     int y = world.getHeight(Heightmap.Type.WORLD_SURFACE, original).getY();
     final BlockPos pos = new BlockPos(original.getX(), y, original.getZ());
     return world.getBlockState(pos).matchesBlock(Blocks.SNOW) ? pos.down(2) : pos.down();
   }
   
-  protected static void fillBelow(final ISeedReader world, final BlockPos origin, final BlockPos size, final Rotation rotation, final Block[] blocks) {
+  public static void fillBelow(final ISeedReader world, final BlockPos origin, final BlockPos size, final Rotation rotation, final Block[] blocks) {
     BlockPos tmp;
     BlockPos pos;
     Block block;
@@ -76,5 +77,10 @@ public abstract class SimpleTemplateFeature extends Feature<NoFeatureConfig> {
         }
       }
     }
+  }
+  
+  public static boolean isValidDimension(final ISeedReader world) {
+    String dimName = world.getWorld().getDimensionKey().getLocation().toString();
+    return GreekFantasy.CONFIG.IS_FEATURES_WHITELIST.get() == GreekFantasy.CONFIG.FEATURES_DIMENSION_WHITELIST.get().contains(dimName);
   }
 }

@@ -82,8 +82,9 @@
   	}
   ],
   "kill_favor_map": {
-  	"greekfantasy:dryad": -5,
-  	"greekfantasy:naiad": -5,
+  	"greekfantasy:dryad": -8,
+  	"greekfantasy:lampad": -8,
+  	"greekfantasy:naiad": -8,
   	"greekfantasy:giant_boar": 25,
   	"greekfantasy:mad_cow": 2,
   	"minecraft:wolf": 4,

@@ -10,20 +10,30 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
+/**
+ * Sent from the server to the client to ensure that an entity
+ * with the Swine potion effect is correctly rendered as a pig.
+ **/
 public class SSwineEffectPacket {
 
   protected int entity;
-  protected int effect;
+  protected int duration;
   
   public SSwineEffectPacket() { }
 
-  public SSwineEffectPacket(final int entityIn, final int effectIn) {
+  /**
+   * @param entityIn the entity ID of the entity to affect
+   * @param durationIn the length of the potion effect in ticks 
+   **/
+  public SSwineEffectPacket(final int entityIn, final int durationIn) {
     entity = entityIn;
-    effect = effectIn;
+    duration = durationIn;
   }
 
   /**
    * Reads the raw packet data from the data stream.
+   * @param buf the PacketBuffer
+   * @return a new instance of a SSwineEffectPacket based on the PacketBuffer
    */
   public static SSwineEffectPacket fromBytes(final PacketBuffer buf) {
     final int uuid = buf.readInt();
@@ -33,12 +43,19 @@ public class SSwineEffectPacket {
 
   /**
    * Writes the raw packet data to the data stream.
+   * @param msg the SSwineEffectPacket
+   * @param buf the PacketBuffer
    */
   public static void toBytes(final SSwineEffectPacket msg, final PacketBuffer buf) {
     buf.writeInt(msg.entity);
-    buf.writeInt(msg.effect);
+    buf.writeInt(msg.duration);
   }
 
+  /**
+   * Handles the packet when it is received.
+   * @param message the SSwineEffectPacket
+   * @param contextSupplier the NetworkEvent.Context supplier
+   */
   public static void handlePacket(final SSwineEffectPacket message, final Supplier<NetworkEvent.Context> contextSupplier) {
     NetworkEvent.Context context = contextSupplier.get();
     if (context.getDirection().getReceptionSide() == LogicalSide.CLIENT) {
@@ -46,7 +63,7 @@ public class SSwineEffectPacket {
         net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
         Entity e = mc.world.getEntityByID(message.entity);
         if(e instanceof LivingEntity) {
-          ((LivingEntity) e).addPotionEffect(new EffectInstance(GFRegistry.SWINE_EFFECT, message.effect));
+          ((LivingEntity) e).addPotionEffect(new EffectInstance(GFRegistry.SWINE_EFFECT, message.duration));
         }
       });
     }

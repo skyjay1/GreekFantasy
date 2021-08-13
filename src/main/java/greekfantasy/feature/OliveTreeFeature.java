@@ -37,6 +37,10 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
   @Override
   public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final BaseTreeFeatureConfig config) {
+    // check dimension from config
+    if(!SimpleTemplateFeature.isValidDimension(reader)) {
+      return false;
+    }
     // rotation / mirror
     Mirror mirror = Mirror.NONE;
     Rotation rotation = Rotation.randomRotation(rand);

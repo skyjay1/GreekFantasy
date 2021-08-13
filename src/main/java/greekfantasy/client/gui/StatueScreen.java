@@ -261,7 +261,8 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
       super(x, y, BTN_WIDTH, BTN_HEIGHT, title, pressedAction);
     }
 
-    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    @Override
+    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
         final boolean selected = isSelected();
         final int xOffset = 0;
@@ -290,7 +291,8 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
       this.textureY = tY;
     }
 
-    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    @Override
+    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
         int xOffset = BTN_WIDTH;
         int yOffset = SCREEN_HEIGHT + (this.isHovered() ? this.width : 0);

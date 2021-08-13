@@ -10,6 +10,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
+/**
+ * Created when an InstrumentItem is used and the song is updated.
+ * The packet sends the player, item slot, and song name to the server
+ * to update the NBT data.
+ **/
 public class CUpdateInstrumentPacket {
 
   protected int slot;
@@ -17,6 +22,10 @@ public class CUpdateInstrumentPacket {
   
   public CUpdateInstrumentPacket() { }
 
+  /**
+   * @param slotIn the ID of the inventory slot of the instrument ItemStack
+   * @param songNameIn the name of the song to apply to the ItemStack
+   **/
   public CUpdateInstrumentPacket(final int slotIn, final ResourceLocation songNameIn) {
     this.slot = slotIn;
     this.songName = songNameIn;
@@ -28,6 +37,8 @@ public class CUpdateInstrumentPacket {
   
   /**
    * Reads the raw packet data from the data stream.
+   * @param buf the PacketBuffer
+   * @return a new instance of a CUpdateInstrumentPacket based on the PacketBuffer
    */
   public static CUpdateInstrumentPacket fromBytes(final PacketBuffer buf) {
     final int msgSlot = buf.readInt();
@@ -37,12 +48,19 @@ public class CUpdateInstrumentPacket {
 
   /**
    * Writes the raw packet data to the data stream.
+   * @param msg the CUpdateInstrumentPacket
+   * @param buf the PacketBuffer
    */
   public static void toBytes(final CUpdateInstrumentPacket msg, final PacketBuffer buf) {
     buf.writeInt(msg.getSlot());
     buf.writeResourceLocation(msg.songName);
   }
 
+  /**
+   * Handles the packet when it is received.
+   * @param message the CUpdateInstrumentPacket
+   * @param contextSupplier the NetworkEvent.Context supplier
+   */
   public static void handlePacket(final CUpdateInstrumentPacket message, final Supplier<NetworkEvent.Context> contextSupplier) {
     NetworkEvent.Context context = contextSupplier.get();
     if (context.getDirection().getReceptionSide() == LogicalSide.SERVER) {
