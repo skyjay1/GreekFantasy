@@ -7,6 +7,7 @@ __Key:__
 
 ## Bugs and urgent updates
 
+- Pomegranate trees and Nether shrines not generating
 - Summoning animations not playing on dedicated server
 
   X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
@@ -100,13 +101,9 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- X X X Pomegranate logs
-- X X X Pomegranate leaves
-- X X X Pomegranate/Olive door, trapdoor
-- X X X Oil Lamp
-- X X X Oil Block (when lit, fire that cannot be extinguished by water)
 - _ _ _ Other heads: Minotaur, Python, Medusa
 - _ _ _ Olive blocks: button, fence, boat, pressure plate, sign
+- _ _ _ Pomegranate blocks: button, fence, boat, pressure plate, sign
 - _ _ _ Grapes / grapevines?
 
 
@@ -115,12 +112,7 @@ __Key:__
 __Key:__
 `[In-game] [Use] [Obtainable]`
 
-- X X X Pomegranate, Pomegranate Seeds
-- X X X Pomegranate sapling
-- X X X Olives
-- X X X Olive Oil
-- X X X Salve
-- X X X Greek Fire
+
 
 ## Achievements
 
@@ -134,7 +126,7 @@ __Key:__
 
 ## Other
 
-- X Prisoner potion effect (prevent leaving nether)
+- _ Crafting recipes for marble/limestone (renewable)
 - ~ Block and Item tags (wooden_doors, etc.)
 
 

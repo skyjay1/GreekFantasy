@@ -1,6 +1,7 @@
  package greekfantasy;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -8,6 +9,8 @@ import javax.annotation.Nullable;
 
 import greekfantasy.block.*;
 import greekfantasy.crafting.SalveRecipe;
+import greekfantasy.deity.Deity;
+import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.IFavor;
 import greekfantasy.effect.*;
 import greekfantasy.enchantment.*;
@@ -650,6 +653,7 @@ public final class GFRegistry {
   @SubscribeEvent
   public static void registerContainers(final RegistryEvent.Register<ContainerType<?>> event) {
     GreekFantasy.LOGGER.debug("registerContainers");
+    // Statue screen requires all of the information about the statue, its pose, etc.
     ContainerType<StatueContainer> statueContainer = IForgeContainerType.create((windowId, inv, data) -> {
       final boolean isFemale = data.readBoolean();
       final BlockPos blockpos = data.readBlockPos();
@@ -659,10 +663,12 @@ public final class GFRegistry {
       final Direction facing = Direction.byHorizontalIndex(data.readByte());
       return new StatueContainer(windowId, inv, new Inventory(2), pose, isFemale, name, blockpos, facing);
     });
+    // Deity screen requires Favor as a Compound Tag and Deity ID as a ResourceLocation
     ContainerType<DeityContainer> deityContainer = IForgeContainerType.create((windowId, inv, data) -> {
       final IFavor favor = GreekFantasy.FAVOR.getDefaultInstance();
       GreekFantasy.FAVOR.readNBT(favor, null, data.readCompoundTag());
-      return new DeityContainer(windowId, inv, favor);
+      ResourceLocation deityId = data.readResourceLocation();
+      return new DeityContainer(windowId, inv, favor, deityId);
     });
     event.getRegistry().register(statueContainer.setRegistryName(MODID, "statue_container"));
     event.getRegistry().register(deityContainer.setRegistryName(MODID, "deity_container"));

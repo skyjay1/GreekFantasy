@@ -1,5 +1,6 @@
 package greekfantasy.block;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -10,6 +11,7 @@ import greekfantasy.deity.Deity;
 import greekfantasy.deity.IDeity;
 import greekfantasy.deity.favor.FavorLevel;
 import greekfantasy.deity.favor.FavorManager;
+import greekfantasy.gui.DeityContainer;
 import greekfantasy.gui.StatueContainer;
 import greekfantasy.network.SSimpleParticlesPacket;
 import greekfantasy.tileentity.StatueTileEntity;
@@ -207,11 +209,21 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
             if(FavorManager.onGiveItem(teStatue, ideity, playerIn, f, level, stack)) {
               final boolean happy = ideity.getItemFavorModifier(copy.getItem()) > 0;
               GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(happy, pos, 10));
-            } else {
+            } else if(!stack.isEmpty()) {
               playerIn.setHeldItem(handIn, teStatue.handleItemInteraction(playerIn, ideity, f, stack));
+            } else {
+              // open deity screen
+              NetworkHooks.openGui((ServerPlayerEntity) playerIn,
+                  new SimpleNamedContainerProvider((id, inventory, player) -> 
+                    new DeityContainer(id, inventory, f, ideity.getName()),
+                      StringTextComponent.EMPTY),
+                  buf -> {
+                    buf.writeCompoundTag(f.serializeNBT());
+                    buf.writeResourceLocation(ideity.getName());
+                  });
             }
             // print current favor level
-            level.sendStatusMessage(playerIn, ideity);
+            // level.sendStatusMessage(playerIn, ideity);
           }
         });
         return ActionResultType.SUCCESS;

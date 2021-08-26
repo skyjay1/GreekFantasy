@@ -218,8 +218,20 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + (BTN_HEIGHT) * 2, "gui.mirror.blessing", DeityScreen.Mode.BLESSING));
     addButton(new ModeButton(this, guiLeft + BTN_LEFT, guiTop + BTN_TOP + (BTN_HEIGHT) * 3, "gui.mirror.hostile", DeityScreen.Mode.HOSTILE));
     // set selected deity now that things are nonnull
-    setSelectedTab(0);
-    setSelectedDeity(0);
+    int tab = 0;
+    int deity = 0;
+    if(container.getDeity().isPresent()) {
+      // determine which tab/deity to select based on the passed diety name
+      for(int i = 0, l = deityList.size(); i < l; i++) {
+        if(deityList.get(i).getName().equals(container.getDeity().get())) {
+          tab = i / TAB_COUNT;
+          deity = i;
+          break;
+        }
+      }
+    }
+    setSelectedTab(tab);
+    setSelectedDeity(deity);
     updateMode(DeityScreen.Mode.ITEM);
   }
   

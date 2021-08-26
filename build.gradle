@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -17,7 +17,8 @@ version = project.mod_version
 group = project.maven_group // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = project.archives_base_name
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+// Mojang ships Java 16 to end users in 1.17+ instead of Java 8 in 1.16 or lower, so your mod should target Java 16.
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 minecraft {
    
@@ -93,17 +94,32 @@ dependencies {
 	runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
 }
+// This block of code expands all the gradle properties in the specified resource targets.
+// It copies them into the targets and expands all the defined properties.
+def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
+def intoTargets = ["$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/"]
+def replaceProperties = [mod_id: mod_id, mod_name: mod_name, mod_version: mod_version,
+        mod_authors: mod_authors, mod_description: mod_description,
+        minecraft_version_range: minecraft_version_range, forge_version_range: forge_version_range,
+        loader_version_range: loader_version_range]
 processResources {
-    inputs.property "version", project.version
+    inputs.properties replaceProperties
+    replaceProperties.put 'project', project
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "META-INF/mods.toml"
-        expand "mod_version": project.version
-        expand "forge_version": project.forge_version
+    filesMatching(resourceTargets) {
+        expand replaceProperties
     }
 
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "META-INF/mods.toml"
+    intoTargets.each { target ->
+        if (file(target).exists()) {
+            copy {
+                from(sourceSets.main.resources) {
+                    include resourceTargets
+                    expand replaceProperties
+                }
+                into target
+            }
+        }
     }
 }
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -111,7 +127,7 @@ jar {
     manifest {
         attributes([
                 "Specification-Title": "Greek Fantasy",
-                "Specification-Vendor": "skyjay1",
+                "Specification-Vendor": "${mod_authors}",
                 "Specification-Version": "1", // We are version 1 of ourselves
                 "Implementation-Title": project.name,
                 "Implementation-Version": "${version}",
@@ -149,7 +165,7 @@ javadoc {
 
 task deobfJar(type: Jar, dependsOn: 'jar') {
     from "build/source/main"
-    classifier "dev"
+    classifier "deobf"
 }
 artifacts {
     archives deobfJar

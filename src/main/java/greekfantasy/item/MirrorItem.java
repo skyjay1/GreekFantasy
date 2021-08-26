@@ -1,6 +1,9 @@
 package greekfantasy.item;
 
+import java.util.Optional;
+
 import greekfantasy.GreekFantasy;
+import greekfantasy.deity.Deity;
 import greekfantasy.gui.DeityContainer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -37,9 +40,12 @@ public class MirrorItem extends Item {
           if(f.isEnabled()) {
             NetworkHooks.openGui((ServerPlayerEntity)playerIn, 
               new SimpleNamedContainerProvider((id, inventory, player) -> 
-              new DeityContainer(id, inventory, f), 
+              new DeityContainer(id, inventory, f, Deity.EMPTY.getName()), 
               StringTextComponent.EMPTY), 
-              buf -> buf.writeCompoundTag(f.serializeNBT()));
+              buf -> {
+                buf.writeCompoundTag(f.serializeNBT());
+                buf.writeResourceLocation(Deity.EMPTY.getName());
+              });
           }
         });
       }

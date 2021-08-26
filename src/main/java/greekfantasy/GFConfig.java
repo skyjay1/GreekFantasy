@@ -419,8 +419,8 @@ public class GFConfig {
     FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 17, false, nonNetherHostileBlacklist));
     FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 30, true, Biomes.SOUL_SAND_VALLEY.getLocation().toString(), Biomes.NETHER_WASTES.getLocation().toString()));
     FEATURES.put("cyclopes_cave", new BiomeWhitelistConfig(builder, "cyclopes_cave", 8, true, BiomeDictionary.Type.PLAINS.toString()));
-    FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 10, false, nonNetherHostileBlacklist));
-    FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 15, false, nonNetherHostileBlacklist));
+    FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 8, false, nonNetherHostileBlacklist));
+    FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 10, false, nonNetherHostileBlacklist));
     FEATURES.put("python_pit", new BiomeWhitelistConfig(builder, "python_pit", 6, true, BiomeDictionary.Type.JUNGLE.toString()));
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, nonNetherHostileBlacklist));
     FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 900, true, BiomeDictionary.Type.SWAMP.toString()));

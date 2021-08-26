@@ -83,6 +83,9 @@ public interface IDeity {
     return getItemFavorModifiers().getOrDefault(item.getRegistryName(), 0);
   }
   
+  /** @return self **/
+  default IDeity getIDeity() { return this; }
+  
   /** @return a list of favor effects associated with the deity **/
   public List<FavorEffect> getFavorEffects();
   
