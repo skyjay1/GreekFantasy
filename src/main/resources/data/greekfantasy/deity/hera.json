@@ -43,7 +43,6 @@
   ],
   "kill_favor_map": {
   	"greekfantasy:dryad": -5,
-  	"greekfantasy:naiad": -5,
   	"greekfantasy:gigante": 8,
   	"minecraft:villager": -9,
   	"minecraft:rabbit": -2,

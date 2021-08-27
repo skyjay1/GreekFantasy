@@ -102,6 +102,7 @@
   "item_favor_map": {
   	"greekfantasy:ambrosia": 62,
   	"minecraft:arrow": 3,
+  	"minecraft:bow": 3,
   	"minecraft:porkchop": 5,
   	"minecraft:beef": 5,
   	"minecraft:cooked_porkchop": 6,

@@ -425,7 +425,7 @@ public class GFConfig {
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, nonNetherHostileBlacklist));
     FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 900, true, BiomeDictionary.Type.SWAMP.toString()));
     FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 22, true, BiomeDictionary.Type.FOREST.toString()));
-    FEATURES.put("pomegranate_tree", new BiomeWhitelistConfig(builder, "pomegranate_tree", 40, true, Biomes.CRIMSON_FOREST.getLocation().toString(), Biomes.WARPED_FOREST.getLocation().toString()));
+    FEATURES.put("pomegranate_tree", new BiomeWhitelistConfig(builder, "pomegranate_tree", 40, true, Biomes.WARPED_FOREST.getLocation().toString()));
     FEATURES.put("lion_den", new BiomeWhitelistConfig(builder, "lion_den", 9, true, Biomes.DESERT.getLocation().toString(), Biomes.DESERT_HILLS.getLocation().toString()));
     FEATURES.put("arachne_pit", new BiomeWhitelistConfig(builder, "arachne_pit", 82, false, nonNetherHostileBlacklist));
     builder.pop();
