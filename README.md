@@ -13,5 +13,8 @@ Greek Fantasy is a Forge mod that adds tons of creatures inspired by Greek mytho
 - New bosses: Geryon and Cerberus
 - And more!
 
+## Wiki
+Visit the [wiki](https://github.com/skyjay1/GreekFantasy/wiki) for information about creatures
+
 ## Downloads
-All official versions of Extra Golems may be downloaded on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/greek-fantasy/files).
+All official versions of Greek Fantasy may be downloaded on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/greek-fantasy/files).
