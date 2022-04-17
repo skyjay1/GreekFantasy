@@ -23,8 +23,8 @@ public class SatyrGroverLayer<T extends SatyrEntity, M extends EntityModel<T>> e
   
   @Override
   public void render(MatrixStack matrixStack, IRenderTypeBuffer bufferIn, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) { 
-    if(!entity.isInvisible() && entity.hasCustomName() && "Grover".equals(entity.getCustomName().getUnformattedComponentText())) {
-      renderCopyCutoutModel(getEntityModel(), this.layerModel, GROVER_TEXTURE, matrixStack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, 1.0F, 1.0F, 1.0F); 
+    if(!entity.isInvisible() && entity.hasCustomName() && "Grover".equals(entity.getCustomName().getContents())) {
+      coloredCutoutModelCopyLayerRender(getParentModel(), this.layerModel, GROVER_TEXTURE, matrixStack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, 1.0F, 1.0F, 1.0F); 
     }
   }
 }

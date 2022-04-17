@@ -30,53 +30,53 @@ public class GiantBoarRenderer<T extends GiantBoarEntity> extends MobRenderer<T,
   public void render(final T entity, final float entityYaw, final float partialTicks, final MatrixStack matrixStackIn,
       final IRenderTypeBuffer bufferIn, final int packedLightIn) {
     if(!entity.isInvisible()) {
-      matrixStackIn.push();
+      matrixStackIn.pushPose();
       // scale the models
       final float spawnPercent = entity.getSpawnPercent(partialTicks % 1.0F);
       final float scale = 1.0F + (SCALE - 1.0F) * spawnPercent;
       matrixStackIn.scale(scale, scale, scale);
       
       // render the base model (erymanthian texture)
-      this.getEntityModel().setColorAlpha(1.0F);
+      this.getModel().setColorAlpha(1.0F);
       super.render(entity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
        
       // prepare to render transparent layer
       if(spawnPercent < 0.99F) {
         isAlphaLayer = true;
-        matrixStackIn.push();
+        matrixStackIn.pushPose();
         RenderSystem.enableAlphaTest();
         RenderSystem.defaultAlphaFunc();
         RenderSystem.enableBlend();
         // render transparent layer
-        this.entityModel.setColorAlpha(1.0F - spawnPercent);
+        this.model.setColorAlpha(1.0F - spawnPercent);
         super.render(entity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
         RenderSystem.disableAlphaTest();
         RenderSystem.disableBlend();
-        matrixStackIn.pop();
+        matrixStackIn.popPose();
         isAlphaLayer = false;
       }
-      matrixStackIn.pop();
+      matrixStackIn.popPose();
     }
   }
   
   @Override
-  protected boolean func_230495_a_(T entity) {
-     return entity.func_234364_eK_();
+  protected boolean isShaking(T entity) {
+     return entity.isConverting();
   }
   
   @Override
-  protected void preRenderCallback(final T entity, MatrixStack matrix, float ageInTicks) {
+  protected void scale(final T entity, MatrixStack matrix, float ageInTicks) {
     
   }
 
   @Override
-  public ResourceLocation getEntityTexture(T entity) {
+  public ResourceLocation getTextureLocation(T entity) {
      return GIANT_BOAR_TEXTURE;
   }
   
   @Override
   @Nullable
-  protected RenderType func_230496_a_(final T entity, boolean isVisible, boolean isVisibleToPlayer, boolean isGlowing) {
-    return isAlphaLayer ? RenderType.getEntityTranslucent(HOGLIN_TEXTURE, isGlowing) : super.func_230496_a_(entity, isVisible, isVisibleToPlayer, isGlowing);
+  protected RenderType getRenderType(final T entity, boolean isVisible, boolean isVisibleToPlayer, boolean isGlowing) {
+    return isAlphaLayer ? RenderType.entityTranslucent(HOGLIN_TEXTURE, isGlowing) : super.getRenderType(entity, isVisible, isVisibleToPlayer, isGlowing);
   }
 }

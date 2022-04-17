@@ -40,27 +40,27 @@ public class VaseTileEntity extends TileEntity implements IClearable, IInventory
   }
 
   private void inventoryChanged() {
-    this.markDirty();
-    if(getWorld() != null) {
-      getWorld().notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 2);
+    this.setChanged();
+    if(getLevel() != null) {
+      getLevel().sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 2);
     }
   }
 
   public void dropAllItems() {
-    if (this.world != null && !this.world.isRemote()) {
-      InventoryHelper.dropItems(this.world, this.getPos(), this.getInventory());
+    if (this.level != null && !this.level.isClientSide()) {
+      InventoryHelper.dropContents(this.level, this.getBlockPos(), this.getInventory());
     }
     this.inventoryChanged();
   }
 
   @Override
-  public void clear() {
+  public void clearContent() {
     this.inventory.clear();
     this.inventoryChanged();
   }
 
   @Override
-  public int getSizeInventory() {
+  public int getContainerSize() {
     return this.inventory.size();
   }
 
@@ -72,30 +72,30 @@ public class VaseTileEntity extends TileEntity implements IClearable, IInventory
   /**
    * Returns the stack in the given slot.
    */
-  public ItemStack getStackInSlot(int index) {
+  public ItemStack getItem(int index) {
     return index >= 0 && index < this.inventory.size() ? this.inventory.get(index) : ItemStack.EMPTY;
   }
 
   /**
    * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
    */
-  public ItemStack decrStackSize(int index, int count) {
+  public ItemStack removeItem(int index, int count) {
     this.inventoryChanged();
-    return ItemStackHelper.getAndSplit(this.inventory, index, count);
+    return ItemStackHelper.removeItem(this.inventory, index, count);
   }
 
   /**
    * Removes a stack from the given slot and returns it.
    */
-  public ItemStack removeStackFromSlot(int index) {
+  public ItemStack removeItemNoUpdate(int index) {
     this.inventoryChanged();
-    return ItemStackHelper.getAndRemove(this.inventory, index);
+    return ItemStackHelper.takeItem(this.inventory, index);
   }
 
   /**
    * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
    */
-  public void setInventorySlotContents(int index, ItemStack stack) {
+  public void setItem(int index, ItemStack stack) {
     if (index >= 0 && index < this.inventory.size()) {
       this.inventory.set(index, stack);
       this.inventoryChanged();
@@ -103,27 +103,27 @@ public class VaseTileEntity extends TileEntity implements IClearable, IInventory
   }
 
   @Override
-  public boolean isUsableByPlayer(PlayerEntity player) {
-    if (this.world.getTileEntity(this.pos) != this) {
+  public boolean stillValid(PlayerEntity player) {
+    if (this.level.getBlockEntity(this.worldPosition) != this) {
       return false;
     } else {
-      return !(player.getDistanceSq((double) this.pos.getX() + 0.5D, (double) this.pos.getY() + 0.5D,
-          (double) this.pos.getZ() + 0.5D) > 64.0D);
+      return !(player.distanceToSqr((double) this.worldPosition.getX() + 0.5D, (double) this.worldPosition.getY() + 0.5D,
+          (double) this.worldPosition.getZ() + 0.5D) > 64.0D);
     }
   }
   
   // NBT / SAVING
   
   @Override
-  public void read(BlockState state, CompoundNBT nbt) {
-    super.read(state, nbt);
+  public void load(BlockState state, CompoundNBT nbt) {
+    super.load(state, nbt);
     this.inventory.clear();
     ItemStackHelper.loadAllItems(nbt, this.inventory);
   }
 
   @Override
-  public CompoundNBT write(CompoundNBT nbt) {
-    super.write(nbt);
+  public CompoundNBT save(CompoundNBT nbt) {
+    super.save(nbt);
     ItemStackHelper.saveAllItems(nbt, this.inventory, true);
     return nbt;
   }

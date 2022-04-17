@@ -29,8 +29,8 @@ public class SalveItem extends Item {
   }
   
   @Override
-  public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-    if (this.isInGroup(group)) {
+  public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+    if (this.allowdedIn(group)) {
       ItemStack stack = new ItemStack(this);
       ListNBT list = new ListNBT();
       CompoundNBT effectTag = new CompoundNBT();
@@ -42,8 +42,8 @@ public class SalveItem extends Item {
   }
 
   @Override
-  public ItemStack onItemUseFinish(ItemStack item, World world, LivingEntity entity) {
-    ItemStack stack = super.onItemUseFinish(item, world, entity);
+  public ItemStack finishUsingItem(ItemStack item, World world, LivingEntity entity) {
+    ItemStack stack = super.finishUsingItem(item, world, entity);
     CompoundNBT tag = item.getTag();
     if (tag != null && tag.contains(KEY_EFFECTS, 9)) {
       ListNBT list = tag.getList(KEY_EFFECTS, 10);
@@ -61,9 +61,9 @@ public class SalveItem extends Item {
           effectTag.putByte("Duration", (byte) 115);
         }
         // read the effect instance from NBT
-        EffectInstance effect = EffectInstance.read(effectTag);
+        EffectInstance effect = EffectInstance.load(effectTag);
         if(effect != null) {
-          entity.addPotionEffect(effect);
+          entity.addEffect(effect);
         }
       }
     }
@@ -75,14 +75,14 @@ public class SalveItem extends Item {
   }
   
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-    ItemStack itemstack = player.getHeldItem(hand);
-    player.setActiveHand(hand);
-    return ActionResult.resultConsume(itemstack);
+  public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    ItemStack itemstack = player.getItemInHand(hand);
+    player.startUsingItem(hand);
+    return ActionResult.consume(itemstack);
   }
 
   @Override
-  public UseAction getUseAction(ItemStack stack) {
+  public UseAction getUseAnimation(ItemStack stack) {
     return UseAction.BOW;
   }
 

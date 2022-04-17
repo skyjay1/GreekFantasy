@@ -28,7 +28,7 @@ public class FavorCommand {
   public static void register(CommandDispatcher<CommandSource> commandSource) {
     LiteralCommandNode<CommandSource> commandNode = commandSource.register(
         Commands.literal("favor")
-        .requires(p -> p.hasPermissionLevel(2))
+        .requires(p -> p.hasPermission(2))
         .then(Commands.literal("add")
             .then(Commands.argument("targets", EntityArgument.players())
                 .then(Commands.argument("deity", DeityArgument.deity())
@@ -79,7 +79,7 @@ public class FavorCommand {
     );
     
     commandSource.register(Commands.literal("favor")
-        .requires(p -> p.hasPermissionLevel(2))
+        .requires(p -> p.hasPermission(2))
         .redirect(commandNode));
   }
   
@@ -90,7 +90,7 @@ public class FavorCommand {
       throw FAVOR_DISABLED_EXCEPTION.create(player.getDisplayName());
     }
     int amount = type.favorGetter.accept(player, favor, ideity, 0);
-    source.sendFeedback(new TranslationTextComponent("commands.favor.query." + type.name, player.getDisplayName(), amount, ideity.getText()), false);
+    source.sendSuccess(new TranslationTextComponent("commands.favor.query." + type.name, player.getDisplayName(), amount, ideity.getText()), false);
     return amount;
   }
   
@@ -107,9 +107,9 @@ public class FavorCommand {
     }
     // send command feedback
     if (players.size() == 1) {
-      source.sendFeedback(new TranslationTextComponent("commands.favor.set." + type.name + ".success.single", amount, ideity.getText(), players.iterator().next().getDisplayName()), true);
+      source.sendSuccess(new TranslationTextComponent("commands.favor.set." + type.name + ".success.single", amount, ideity.getText(), players.iterator().next().getDisplayName()), true);
     } else {
-      source.sendFeedback(new TranslationTextComponent("commands.favor.set." + type.name + ".success.multiple", amount, ideity.getText(), players.size()), true);
+      source.sendSuccess(new TranslationTextComponent("commands.favor.set." + type.name + ".success.multiple", amount, ideity.getText(), players.size()), true);
     } 
     
     return players.size();
@@ -128,9 +128,9 @@ public class FavorCommand {
     }
     // send command feedback
     if (players.size() == 1) {
-      source.sendFeedback(new TranslationTextComponent("commands.favor.add." + type.name + ".success.single", amount, ideity.getText(), players.iterator().next().getDisplayName()), true);
+      source.sendSuccess(new TranslationTextComponent("commands.favor.add." + type.name + ".success.single", amount, ideity.getText(), players.iterator().next().getDisplayName()), true);
     } else {
-      source.sendFeedback(new TranslationTextComponent("commands.favor.add." + type.name + ".success.multiple", amount, ideity.getText(), players.size()), true);
+      source.sendSuccess(new TranslationTextComponent("commands.favor.add." + type.name + ".success.multiple", amount, ideity.getText(), players.size()), true);
     } 
     
     return players.size();
@@ -143,9 +143,9 @@ public class FavorCommand {
     // send command feedback
     final String sub = (enabled ? "enabled" : "disabled");
     if (players.size() == 1) {
-      source.sendFeedback(new TranslationTextComponent("commands.favor." + sub + ".success.single", players.iterator().next().getDisplayName()), true);
+      source.sendSuccess(new TranslationTextComponent("commands.favor." + sub + ".success.single", players.iterator().next().getDisplayName()), true);
     } else {
-      source.sendFeedback(new TranslationTextComponent("commands.favor." + sub + ".success.multiple", players.size()), true);
+      source.sendSuccess(new TranslationTextComponent("commands.favor." + sub + ".success.multiple", players.size()), true);
     } 
     return 0;
   }
@@ -153,7 +153,7 @@ public class FavorCommand {
   private static int queryEnabled(CommandSource source, ServerPlayerEntity player) {
     final boolean enabled = player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()).isEnabled();
     // send command feedback
-    source.sendFeedback(new TranslationTextComponent("commands.favor.enabled." + (enabled ? "enabled" : "disabled"), player.getDisplayName()), true);
+    source.sendSuccess(new TranslationTextComponent("commands.favor.enabled." + (enabled ? "enabled" : "disabled"), player.getDisplayName()), true);
     return enabled ? 1 : 0;
   }
   
@@ -172,9 +172,9 @@ public class FavorCommand {
     }
     // send command feedback
     if (players.size() == 1) {
-      source.sendFeedback(new TranslationTextComponent("commands.favor.cooldown.success.single", cooldown, players.iterator().next().getDisplayName()), true);
+      source.sendSuccess(new TranslationTextComponent("commands.favor.cooldown.success.single", cooldown, players.iterator().next().getDisplayName()), true);
     } else {
-      source.sendFeedback(new TranslationTextComponent("commands.favor.cooldown.success.multiple", cooldown, players.size()), true);
+      source.sendSuccess(new TranslationTextComponent("commands.favor.cooldown.success.multiple", cooldown, players.size()), true);
     } 
     
     return players.size();
@@ -195,9 +195,9 @@ public class FavorCommand {
     }
     // send command feedback
     if (players.size() == 1) {
-      source.sendFeedback(new TranslationTextComponent("commands.favor.cap." + type.name + ".success.single", actualMin, actualMax, ideity.getText(), players.iterator().next().getDisplayName()), true);
+      source.sendSuccess(new TranslationTextComponent("commands.favor.cap." + type.name + ".success.single", actualMin, actualMax, ideity.getText(), players.iterator().next().getDisplayName()), true);
     } else {
-      source.sendFeedback(new TranslationTextComponent("commands.favor.cap." + type.name + ".success.multiple", actualMin, actualMax, ideity.getText(), players.size()), true);
+      source.sendSuccess(new TranslationTextComponent("commands.favor.cap." + type.name + ".success.multiple", actualMin, actualMax, ideity.getText(), players.size()), true);
     } 
     
     return players.size();

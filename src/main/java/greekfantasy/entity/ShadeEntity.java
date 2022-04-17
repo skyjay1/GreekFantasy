@@ -41,8 +41,8 @@ import net.minecraft.world.World;
 
 public class ShadeEntity extends MonsterEntity {
   
-  protected static final DataParameter<Integer> DATA_XP = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.VARINT);
-  protected static final DataParameter<Optional<UUID>> OWNER_UNIQUE_ID = EntityDataManager.createKey(ShadeEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+  protected static final DataParameter<Integer> DATA_XP = EntityDataManager.defineId(ShadeEntity.class, DataSerializers.INT);
+  protected static final DataParameter<Optional<UUID>> OWNER_UNIQUE_ID = EntityDataManager.defineId(ShadeEntity.class, DataSerializers.OPTIONAL_UUID);
   
   protected static final String KEY_XP = "StoredXP";
   protected static final String KEY_OWNER = "Owner";
@@ -50,16 +50,16 @@ public class ShadeEntity extends MonsterEntity {
   
   public ShadeEntity(final EntityType<? extends ShadeEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.stepHeight = 1.0F;
-    this.experienceValue = 0;
+    this.maxUpStep = 1.0F;
+    this.xpReward = 0;
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 12.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.21D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.86D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.1D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 12.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.21D)
+        .add(Attributes.KNOCKBACK_RESISTANCE, 0.86D)
+        .add(Attributes.ATTACK_DAMAGE, 0.1D);
   }
   
   @Override
@@ -74,45 +74,45 @@ public class ShadeEntity extends MonsterEntity {
   }
   
   @Override
-  protected void registerData() {
-    super.registerData();
-    this.getDataManager().register(DATA_XP, Integer.valueOf(0));
-    this.getDataManager().register(OWNER_UNIQUE_ID, Optional.empty());
+  protected void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(DATA_XP, Integer.valueOf(0));
+    this.getEntityData().define(OWNER_UNIQUE_ID, Optional.empty());
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     // spawn particles
-    if (world.isRemote()) {
+    if (level.isClientSide()) {
       final double motion = 0.08D;
       final double radius = 1.2D;
       for (int i = 0; i < 5; i++) {
-        world.addParticle(ParticleTypes.SMOKE, 
-            this.getPosX() + (world.rand.nextDouble() - 0.5D) * radius, 
-            this.getPosY() + 0.75D + (world.rand.nextDouble() - 0.5D) * radius * 0.75D, 
-            this.getPosZ() + (world.rand.nextDouble() - 0.5D) * radius,
-            (world.rand.nextDouble() - 0.5D) * motion, 
-            (world.rand.nextDouble() - 0.5D) * motion * 0.5D,
-            (world.rand.nextDouble() - 0.5D) * motion);
+        level.addParticle(ParticleTypes.SMOKE, 
+            this.getX() + (level.random.nextDouble() - 0.5D) * radius, 
+            this.getY() + 0.75D + (level.random.nextDouble() - 0.5D) * radius * 0.75D, 
+            this.getZ() + (level.random.nextDouble() - 0.5D) * radius,
+            (level.random.nextDouble() - 0.5D) * motion, 
+            (level.random.nextDouble() - 0.5D) * motion * 0.5D,
+            (level.random.nextDouble() - 0.5D) * motion);
       }
     }
   }
 
   @Override
-  public boolean attackEntityAsMob(final Entity entity) {
-    if (super.attackEntityAsMob(entity)) {
+  public boolean doHurtTarget(final Entity entity) {
+    if (super.doHurtTarget(entity)) {
       // remove XP or give wither effect
       if(entity instanceof PlayerEntity) {
         final PlayerEntity player = (PlayerEntity)entity;
-        if(GreekFantasy.CONFIG.SHADE_ATTACK.get() && player.experienceTotal > 0) {
+        if(GreekFantasy.CONFIG.SHADE_ATTACK.get() && player.totalExperience > 0) {
           // steal XP from player
-          final int xpSteal = Math.min(player.experienceTotal, 10);
+          final int xpSteal = Math.min(player.totalExperience, 10);
           player.giveExperiencePoints(-xpSteal);
           this.setStoredXP(this.getStoredXP() + xpSteal);
         } else {
           // brief wither effect
-          player.addPotionEffect(new EffectInstance(Effects.WITHER, 80));
+          player.addEffect(new EffectInstance(Effects.WITHER, 80));
         }
       }
       return true;
@@ -125,78 +125,78 @@ public class ShadeEntity extends MonsterEntity {
     if(super.isInvulnerableTo(source)) {
       return true;
     }
-    return source.getTrueSource() instanceof PlayerEntity && isInvulnerableToPlayer((PlayerEntity)source.getTrueSource());
+    return source.getEntity() instanceof PlayerEntity && isInvulnerableToPlayer((PlayerEntity)source.getEntity());
   }
   
   @Override
   protected SoundEvent getAmbientSound() { return SoundEvents.AMBIENT_CAVE; }
   @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_ENDERMAN_HURT; }
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENDERMAN_HURT; }
   @Override
   protected float getSoundVolume() { return 0.8F; }
   @Override
-  public boolean canAttack(final EntityType<?> typeIn) { return typeIn == EntityType.PLAYER; }
+  public boolean canAttackType(final EntityType<?> typeIn) { return typeIn == EntityType.PLAYER; }
   @Override
-  public boolean canBePushed() { return false; }
+  public boolean isPushable() { return false; }
   @Override
-  protected void collideWithNearbyEntities() { }
+  protected void pushEntities() { }
   @Override
-  public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.UNDEAD; }
+  public CreatureAttribute getMobType() { return CreatureAttribute.UNDEAD; }
   @Override
-  protected boolean isDespawnPeaceful() { return true; }
+  protected boolean shouldDespawnInPeaceful() { return true; }
   @Override
-  public boolean onLivingFall(float distance, float damageMultiplier) { return false; }
+  public boolean causeFallDamage(float distance, float damageMultiplier) { return false; }
   @Override
-  protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) { }
+  protected void checkFallDamage(double y, boolean onGroundIn, BlockState state, BlockPos pos) { }
   
   @Nullable
-  public UUID getOwnerUniqueId() { return this.dataManager.get(OWNER_UNIQUE_ID).orElse((UUID)null); }
+  public UUID getOwnerUniqueId() { return this.entityData.get(OWNER_UNIQUE_ID).orElse((UUID)null); }
   
-  public void setOwnerUniqueId(@Nullable UUID uniqueId) { this.dataManager.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId)); }
+  public void setOwnerUniqueId(@Nullable UUID uniqueId) { this.entityData.set(OWNER_UNIQUE_ID, Optional.ofNullable(uniqueId)); }
   
-  public int getStoredXP() { return this.getDataManager().get(DATA_XP).intValue(); }
+  public int getStoredXP() { return this.getEntityData().get(DATA_XP).intValue(); }
   
-  public void setStoredXP(int xp) { this.getDataManager().set(DATA_XP, xp); }
+  public void setStoredXP(int xp) { this.getEntityData().set(DATA_XP, xp); }
 
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
     compound.putInt(KEY_XP, this.getStoredXP());
     if (this.getOwnerUniqueId() != null) {
-      compound.putUniqueId(KEY_OWNER, this.getOwnerUniqueId());
+      compound.putUUID(KEY_OWNER, this.getOwnerUniqueId());
     }
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
     this.setStoredXP(compound.getInt(KEY_XP));
-    if (compound.hasUniqueId(KEY_OWNER)) {
-       this.setOwnerUniqueId(compound.getUniqueId(KEY_OWNER));
+    if (compound.hasUUID(KEY_OWNER)) {
+       this.setOwnerUniqueId(compound.getUUID(KEY_OWNER));
     }
   }
 
   @Override
-  protected int getExperiencePoints(final PlayerEntity attackingPlayer) {
+  protected int getExperienceReward(final PlayerEntity attackingPlayer) {
     return 0;
   }
   
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
     if(this.getStoredXP() == 0) {
-      this.setStoredXP(5 + this.rand.nextInt(10));
+      this.setStoredXP(5 + this.random.nextInt(10));
     }
-    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
   @Override
-  public void onDeath(final DamageSource source) {
-    if(source.getTrueSource() instanceof PlayerEntity) {
-      PlayerEntity player = (PlayerEntity)source.getTrueSource();
+  public void die(final DamageSource source) {
+    if(source.getEntity() instanceof PlayerEntity) {
+      PlayerEntity player = (PlayerEntity)source.getEntity();
       player.giveExperiencePoints(getStoredXP());
     }
     
-    super.onDeath(source);
+    super.die(source);
   }
   
   public boolean canTargetPlayerEntity(final LivingEntity entity) {
@@ -206,7 +206,7 @@ public class ShadeEntity extends MonsterEntity {
   public boolean isInvulnerableToPlayer(final PlayerEntity player) {
     if(GreekFantasy.CONFIG.SHADE_PLAYER_ONLY.get() && !player.isCreative()) {
       // check uuid to see if it matches
-      final UUID uuidPlayer = PlayerEntity.getOfflineUUID(player.getDisplayName().getUnformattedComponentText());
+      final UUID uuidPlayer = PlayerEntity.createPlayerUUID(player.getDisplayName().getContents());
       return this.getOwnerUniqueId() != null && !uuidPlayer.equals(this.getOwnerUniqueId());
     }
     return false;

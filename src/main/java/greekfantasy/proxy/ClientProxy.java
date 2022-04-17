@@ -109,35 +109,35 @@ public class ClientProxy extends Proxy {
   @Override
   public void registerContainerRenders() {
     GreekFantasy.LOGGER.debug("registerContainerRenders");
-    ScreenManager.registerFactory(GFRegistry.STATUE_CONTAINER, StatueScreen::new);
-    ScreenManager.registerFactory(GFRegistry.DEITY_CONTAINER, DeityScreen::new);
+    ScreenManager.register(GFRegistry.STATUE_CONTAINER, StatueScreen::new);
+    ScreenManager.register(GFRegistry.DEITY_CONTAINER, DeityScreen::new);
   }
   
   @Override
   public void registerRenderLayers() {
     GreekFantasy.LOGGER.debug("registerRenderLayers");
     // cutout mipped
-    RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_LEAVES, RenderType.getCutoutMipped());
-    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_LEAVES, RenderType.getCutoutMipped());
+    RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_LEAVES, RenderType.cutoutMipped());
+    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_LEAVES, RenderType.cutoutMipped());
     // cutout
-    RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_DOOR, RenderType.getCutout());
-    RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_TRAPDOOR, RenderType.getCutout());
-    RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_SAPLING, RenderType.getCutout());
-    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_DOOR, RenderType.getCutout());
-    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_TRAPDOOR, RenderType.getCutout());
-    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_SAPLING, RenderType.getCutout());
-    RenderTypeLookup.setRenderLayer(GFRegistry.GOLDEN_APPLE_SAPLING, RenderType.getCutout());    
-    RenderTypeLookup.setRenderLayer(GFRegistry.REEDS, RenderType.getCutout());
-    RenderTypeLookup.setRenderLayer(GFRegistry.WILD_ROSE, RenderType.getCutout());
-    RenderTypeLookup.setRenderLayer(GFRegistry.GOLDEN_STRING_BLOCK, RenderType.getCutout());
-    RenderTypeLookup.setRenderLayer(GFRegistry.OIL, RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_DOOR, RenderType.cutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_TRAPDOOR, RenderType.cutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.OLIVE_SAPLING, RenderType.cutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_DOOR, RenderType.cutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_TRAPDOOR, RenderType.cutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.POMEGRANATE_SAPLING, RenderType.cutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.GOLDEN_APPLE_SAPLING, RenderType.cutout());    
+    RenderTypeLookup.setRenderLayer(GFRegistry.REEDS, RenderType.cutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.WILD_ROSE, RenderType.cutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.GOLDEN_STRING_BLOCK, RenderType.cutout());
+    RenderTypeLookup.setRenderLayer(GFRegistry.OIL, RenderType.cutout());
   }
   
   @Override
   public void registerPlayerLayers() {
     GreekFantasy.LOGGER.debug("registerPlayerLayers");
     final Minecraft mc = Minecraft.getInstance();
-    final Map<String, PlayerRenderer> skinMap = mc.getRenderManager().getSkinMap();
+    final Map<String, PlayerRenderer> skinMap = mc.getEntityRenderDispatcher().getSkinMap();
     // add default renderer layers
     final PlayerRenderer defaultRenderer = skinMap.get("default");
     defaultRenderer.addLayer(new PlayerSkyjayLayer<>(defaultRenderer));
@@ -167,23 +167,23 @@ public class ClientProxy extends Proxy {
   }
   
   private static void registerInstrumentProperties(final Item instrument) {
-    ItemModelsProperties.registerProperty(instrument, new ResourceLocation("playing"),
-        (item, world, entity) -> (entity != null && entity.isHandActive() && entity.getActiveItemStack() == item) ? 1.0F : 0.0F);
+    ItemModelsProperties.register(instrument, new ResourceLocation("playing"),
+        (item, world, entity) -> (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
   }
   
   private static void registerBowProperties(final Item bow) {
-    ItemModelsProperties.registerProperty(bow, new ResourceLocation("pull"),
+    ItemModelsProperties.register(bow, new ResourceLocation("pull"),
         (item, world, entity) -> {
           if (entity == null) return 0.0F;
-          if (entity.getActiveItemStack() != item) return 0.0F;
-          return (item.getUseDuration() - entity.getItemInUseCount()) / 20.0F;
+          if (entity.getUseItem() != item) return 0.0F;
+          return (item.getUseDuration() - entity.getUseItemRemainingTicks()) / 20.0F;
         });
-    ItemModelsProperties.registerProperty(bow, new ResourceLocation("pulling"),
-        (item, world, entity) -> (entity != null && entity.isHandActive() && entity.getActiveItemStack() == item) ? 1.0F : 0.0F);
+    ItemModelsProperties.register(bow, new ResourceLocation("pulling"),
+        (item, world, entity) -> (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
   }
   
   private static void registerSpearProperties(final Item spear) {
-    ItemModelsProperties.registerProperty(spear, new ResourceLocation("throwing"), (item, world, entity) -> 
-      (entity != null && entity.isHandActive() && entity.getActiveItemStack() == item) ? 1.0F : 0.0F);
+    ItemModelsProperties.register(spear, new ResourceLocation("throwing"), (item, world, entity) -> 
+      (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
   }
 }

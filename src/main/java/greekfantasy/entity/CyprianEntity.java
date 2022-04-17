@@ -20,11 +20,11 @@ public class CyprianEntity extends CentaurEntity implements IMob {
   }
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 22.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.0D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.5D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 22.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.25D)
+        .add(Attributes.ATTACK_DAMAGE, 4.0D)
+        .add(Attributes.KNOCKBACK_RESISTANCE, 0.5D);
   }
 
   @Override
@@ -36,22 +36,22 @@ public class CyprianEntity extends CentaurEntity implements IMob {
   }
   
   @Override
-  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_COW_AMBIENT; }
+  protected SoundEvent getAmbientSound() { return SoundEvents.COW_AMBIENT; }
 
   @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_COW_HURT; }
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.COW_HURT; }
 
   @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_COW_DEATH; }
+  protected SoundEvent getDeathSound() { return SoundEvents.COW_DEATH; }
 
   @Override
   protected float getSoundVolume() { return 0.8F; }
   
   @Override
-  public SoundCategory getSoundCategory() { return SoundCategory.HOSTILE; }
+  public SoundCategory getSoundSource() { return SoundCategory.HOSTILE; }
   
   @Override
-  protected boolean isDespawnPeaceful() {
+  protected boolean shouldDespawnInPeaceful() {
     return true;
   }
   

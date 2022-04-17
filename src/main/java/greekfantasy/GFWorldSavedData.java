@@ -51,7 +51,7 @@ public class GFWorldSavedData extends WorldSavedData {
   }
   
   public static GFWorldSavedData getOrCreate(final ServerWorld server) {
-    return server.getSavedData().getOrCreate(() -> new GFWorldSavedData(GreekFantasy.MODID), GreekFantasy.MODID);
+    return server.getDataStorage().computeIfAbsent(() -> new GFWorldSavedData(GreekFantasy.MODID), GreekFantasy.MODID);
   }
   
   /**
@@ -78,7 +78,7 @@ public class GFWorldSavedData extends WorldSavedData {
       palladiumMap.put(chunk, new HashSet<>());
     }
     palladiumMap.get(chunk).add(pos);
-    this.markDirty();
+    this.setDirty();
   }
   
   /**
@@ -91,7 +91,7 @@ public class GFWorldSavedData extends WorldSavedData {
       palladiumMap.put(chunk, new HashSet<>());
     }
     palladiumMap.get(chunk).addAll(pos);
-    this.markDirty();
+    this.setDirty();
   }
   
   /**
@@ -101,7 +101,7 @@ public class GFWorldSavedData extends WorldSavedData {
    */
   public void putAllPalladium(final ChunkPos chunk, final Set<BlockPos> pos) {
     palladiumMap.put(chunk, pos);
-    this.markDirty();
+    this.setDirty();
   }
   
   /**
@@ -114,33 +114,33 @@ public class GFWorldSavedData extends WorldSavedData {
       palladiumMap.put(chunk, new HashSet<>());
     }
     palladiumMap.get(chunk).remove(pos);
-    this.markDirty();
+    this.setDirty();
   }
   
   // Flying Player methods //
   
   public void addFlyingPlayer(final PlayerEntity player) {
-    flyingPlayers.add(PlayerEntity.getOfflineUUID(player.getName().getUnformattedComponentText()));
-    player.abilities.allowFlying = true;
-    player.sendPlayerAbilities();
+    flyingPlayers.add(PlayerEntity.createPlayerUUID(player.getName().getContents()));
+    player.abilities.mayfly = true;
+    player.onUpdateAbilities();
   }
   
   public void removeFlyingPlayer(final PlayerEntity player) {
-    flyingPlayers.remove(PlayerEntity.getOfflineUUID(player.getName().getUnformattedComponentText()));
-    player.abilities.allowFlying = false;
-    player.abilities.isFlying = false;
-    player.sendPlayerAbilities();
+    flyingPlayers.remove(PlayerEntity.createPlayerUUID(player.getName().getContents()));
+    player.abilities.mayfly = false;
+    player.abilities.flying = false;
+    player.onUpdateAbilities();
   }
   
   public boolean hasFlyingPlayer(final PlayerEntity player) {
-    return flyingPlayers.contains(PlayerEntity.getOfflineUUID(player.getName().getUnformattedComponentText()));
+    return flyingPlayers.contains(PlayerEntity.createPlayerUUID(player.getName().getContents()));
   }
   
   public List<UUID> getFlyingPlayers() { return flyingPlayers; }
   
   public void forEachFlyingPlayer(final World worldIn, final Consumer<PlayerEntity> action) {
     flyingPlayers.forEach(uuid -> {
-      PlayerEntity p = worldIn.getPlayerByUuid(uuid);
+      PlayerEntity p = worldIn.getPlayerByUUID(uuid);
       if(p != null) {
         action.accept(p);
       }
@@ -150,7 +150,7 @@ public class GFWorldSavedData extends WorldSavedData {
   // NBT methods //
 
   @Override
-  public void read(CompoundNBT nbt) {
+  public void load(CompoundNBT nbt) {
     // read palladium map
     if(nbt.contains(KEY_MAP)) {
       final ListNBT chunkMap = nbt.getList(KEY_MAP, 10);
@@ -180,7 +180,7 @@ public class GFWorldSavedData extends WorldSavedData {
   }
 
   @Override
-  public CompoundNBT write(CompoundNBT compound) {
+  public CompoundNBT save(CompoundNBT compound) {
     // write palladium map
     final ListNBT chunkMap = new ListNBT();
     for(final Entry<ChunkPos, Set<BlockPos>> entry : palladiumMap.entrySet()) {
@@ -218,9 +218,9 @@ public class GFWorldSavedData extends WorldSavedData {
    * @return true if the player is wearing enchanted sandals and has high favor
    */
   public static boolean validatePlayer(final PlayerEntity player, final IFavor favor) {
-    final ItemStack feet = player.getItemStackFromSlot(EquipmentSlotType.FEET);
+    final ItemStack feet = player.getItemBySlot(EquipmentSlotType.FEET);
     return (feet.getItem() == GFRegistry.WINGED_SANDALS
-        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, feet) > 0
+        && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, feet) > 0
         && GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.FLYING_RANGE).isInFavorRange(player, favor));
   }
 
@@ -230,7 +230,7 @@ public class GFWorldSavedData extends WorldSavedData {
    * @return if the given position contains a palladium tile entity 
    */
   public static boolean validatePalladium(final World world, final BlockPos pos) {
-    return validatePalladium(world.getTileEntity(pos));
+    return validatePalladium(world.getBlockEntity(pos));
   }
   
   /** 
@@ -251,7 +251,7 @@ public class GFWorldSavedData extends WorldSavedData {
     // iterate through all tile entities in this chunk and fill a list with Palladium entries
     Set<BlockPos> palladiumSet = new HashSet<>();
     try {
-      Map<BlockPos, TileEntity> chunkTEMap = world.getChunk(chunkPos.x, chunkPos.z).getTileEntityMap();
+      Map<BlockPos, TileEntity> chunkTEMap = world.getChunk(chunkPos.x, chunkPos.z).getBlockEntities();
       for(final Entry<BlockPos, TileEntity> e : chunkTEMap.entrySet()) {
         if(validatePalladium(e.getValue())) {
           palladiumSet.add(e.getKey());

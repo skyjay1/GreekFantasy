@@ -22,16 +22,16 @@ public class OrthusRenderer<T extends OrthusEntity> extends MobRenderer<T, Orthu
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
   
   @Override
   public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
       final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
-    matrixStackIn.push();
+    matrixStackIn.pushPose();
     matrixStackIn.scale(SCALE, SCALE, SCALE);
     super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
-    matrixStackIn.pop();
+    matrixStackIn.popPose();
   }
 }

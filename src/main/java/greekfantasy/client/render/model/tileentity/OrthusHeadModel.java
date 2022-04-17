@@ -20,32 +20,32 @@ public class OrthusHeadModel extends Model implements IHasHead, IWallModel {
   }
 
   public OrthusHeadModel(final float modelSize, final float yOffset) {
-    super(RenderType::getEntityCutoutNoCull);
-    this.textureWidth = 64;
-    this.textureHeight = 32;
+    super(RenderType::entityCutoutNoCull);
+    this.texWidth = 64;
+    this.texHeight = 32;
     
     orthusHead = OrthusModel.getHeadModel(this, -5.55F, -3.0F, 0.0F, 0.0F);
   }
 
   @Override
-  public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
+  public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha) {
     orthusHead.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
   }
  
   @Override
-  public ModelRenderer getModelHead() {
+  public ModelRenderer getHead() {
     return this.orthusHead;
   }
 
   @Override
   public void setWallRotations(boolean onWall) {
     if(onWall) {
-      orthusHead.rotationPointY = -5.0F;
-      orthusHead.rotationPointZ = 0.2F;
+      orthusHead.y = -5.0F;
+      orthusHead.z = 0.2F;
     } else {
-      orthusHead.rotationPointY = -3.0F;
-      orthusHead.rotationPointZ = -3.0F;
+      orthusHead.y = -3.0F;
+      orthusHead.z = -3.0F;
     }
   }
   
@@ -55,7 +55,7 @@ public class OrthusHeadModel extends Model implements IHasHead, IWallModel {
   }
   
   public void setGuiRotations(final float yaw, final float pitch) {
-    this.orthusHead.rotateAngleX = pitch * 0.017453292F;
-    this.orthusHead.rotateAngleY = yaw * 0.017453292F;
+    this.orthusHead.xRot = pitch * 0.017453292F;
+    this.orthusHead.yRot = yaw * 0.017453292F;
   }
 }

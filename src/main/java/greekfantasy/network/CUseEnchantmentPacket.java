@@ -71,12 +71,12 @@ public class CUseEnchantmentPacket {
     if (context.getDirection().getReceptionSide() == LogicalSide.SERVER) {
       context.enqueueWork(() -> {
         final ServerPlayerEntity player = context.getSender();
-        final ItemStack item = player.getHeldItemMainhand();
+        final ItemStack item = player.getMainHandItem();
         // make sure the player is holding an enchanted trident and in correct favor range
         if(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT.getRegistryName().equals(message.enchantment)
             && GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == Items.TRIDENT
-            && EnchantmentHelper.getEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) > 0
-            && !player.getCooldownTracker().hasCooldown(Items.TRIDENT)
+            && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) > 0
+            && !player.getCooldowns().isOnCooldown(Items.TRIDENT)
             && GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.LORD_OF_THE_SEA_RANGE).isInFavorRange(player)) {
           // The player has used an enchanted item and has the correct favor range, so the effect should be applied
           useLordOfTheSea(player, item);
@@ -84,9 +84,9 @@ public class CUseEnchantmentPacket {
         // make sure the player is holding an enchanted clock and in correct favor range
         if(GFRegistry.DAYBREAK_ENCHANTMENT.getRegistryName().equals(message.enchantment)
             && GreekFantasy.CONFIG.isDaybreakEnabled() && item.getItem() == Items.CLOCK
-            && EnchantmentHelper.getEnchantmentLevel(GFRegistry.DAYBREAK_ENCHANTMENT, item) > 0
-            && player.getEntityWorld().getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)
-            && player.getEntityWorld().getDayTime() % 24000L > 13000L
+            && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.DAYBREAK_ENCHANTMENT, item) > 0
+            && player.getCommandSenderWorld().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)
+            && player.getCommandSenderWorld().getDayTime() % 24000L > 13000L
             && GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.DAYBREAK_RANGE).isInFavorRange(player)) {
           // The player has used an enchanted item and has the correct favor range, so the effect should be applied
           useDaybreak(player, item);
@@ -97,40 +97,40 @@ public class CUseEnchantmentPacket {
   }
   
   private static void useLordOfTheSea(final ServerPlayerEntity player, final ItemStack item) {
-    final RayTraceResult raytrace = ThunderboltItem.raytraceFromEntity(player.getEntityWorld(), player, 48.0F);
+    final RayTraceResult raytrace = ThunderboltItem.raytraceFromEntity(player.getCommandSenderWorld(), player, 48.0F);
     // add a lightning bolt at the resulting position
     if(raytrace.getType() != RayTraceResult.Type.MISS) {
-      final WhirlEntity whirl = GFRegistry.WHIRL_ENTITY.create(player.getEntityWorld());
-      final BlockPos pos = new BlockPos(raytrace.getHitVec());
+      final WhirlEntity whirl = GFRegistry.WHIRL_ENTITY.create(player.getCommandSenderWorld());
+      final BlockPos pos = new BlockPos(raytrace.getLocation());
       // make sure there is enough water here
-      if(player.getEntityWorld().getFluidState(pos).isTagged(FluidTags.WATER)
-          && player.getEntityWorld().getFluidState(pos.down((int)Math.ceil(whirl.getHeight()))).isTagged(FluidTags.WATER)) {
+      if(player.getCommandSenderWorld().getFluidState(pos).is(FluidTags.WATER)
+          && player.getCommandSenderWorld().getFluidState(pos.below((int)Math.ceil(whirl.getBbHeight()))).is(FluidTags.WATER)) {
         // summon a powerful whirl with limited life and mob attracting turned on
-        whirl.setLocationAndAngles(raytrace.getHitVec().getX(), raytrace.getHitVec().getY() - whirl.getHeight(), raytrace.getHitVec().getZ(), 0, 0);
-        player.getEntityWorld().addEntity(whirl);
+        whirl.moveTo(raytrace.getLocation().x(), raytrace.getLocation().y() - whirl.getBbHeight(), raytrace.getLocation().z(), 0, 0);
+        player.getCommandSenderWorld().addFreshEntity(whirl);
         whirl.setLimitedLife(GreekFantasy.CONFIG.getWhirlLifespan() * 20);
         whirl.setAttractMobs(true);
-        whirl.playSound(SoundEvents.ITEM_TRIDENT_THUNDER, 1.5F, 0.6F + whirl.getRNG().nextFloat() * 0.32F);
+        whirl.playSound(SoundEvents.TRIDENT_THUNDER, 1.5F, 0.6F + whirl.getRandom().nextFloat() * 0.32F);
         // summon a lightning bolt
-        LightningBoltEntity bolt = EntityType.LIGHTNING_BOLT.create(player.getEntityWorld());
+        LightningBoltEntity bolt = EntityType.LIGHTNING_BOLT.create(player.getCommandSenderWorld());
         bolt.setSilent(true);
-        bolt.setPosition(raytrace.getHitVec().getX(), raytrace.getHitVec().getY(), raytrace.getHitVec().getZ());
-        player.getEntityWorld().addEntity(bolt);
+        bolt.setPos(raytrace.getLocation().x(), raytrace.getLocation().y(), raytrace.getLocation().z());
+        player.getCommandSenderWorld().addFreshEntity(bolt);
         // cooldown and item damage
-        player.getCooldownTracker().setCooldown(item.getItem(), GreekFantasy.CONFIG.getWhirlLifespan() * 10);
+        player.getCooldowns().addCooldown(item.getItem(), GreekFantasy.CONFIG.getWhirlLifespan() * 10);
         if(!player.isCreative()) {
-          item.damageItem(25, player, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+          item.hurtAndBreak(25, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
         }        
       }
     }
   }
   
   private static void useDaybreak(final ServerPlayerEntity player, final ItemStack item) {
-    final ServerWorld world = player.getServerWorld();
-    long nextDay = world.getWorldInfo().getDayTime() + 24000L;
+    final ServerWorld world = player.getLevel();
+    long nextDay = world.getLevelData().getDayTime() + 24000L;
     world.setDayTime(nextDay - nextDay % 24000L);
     // break the item
-    player.sendBreakAnimation(EquipmentSlotType.MAINHAND);
+    player.broadcastBreakEvent(EquipmentSlotType.MAINHAND);
     if(!player.isCreative()) {
       item.shrink(1);
     }

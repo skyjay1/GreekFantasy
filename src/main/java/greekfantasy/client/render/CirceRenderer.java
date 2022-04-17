@@ -16,7 +16,7 @@ public class CirceRenderer<T extends CirceEntity> extends BipedRenderer<T, Circe
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
 }

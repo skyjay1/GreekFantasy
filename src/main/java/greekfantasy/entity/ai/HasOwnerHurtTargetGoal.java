@@ -16,11 +16,11 @@ public class HasOwnerHurtTargetGoal<T extends MobEntity & IHasOwner<T>> extends 
 
   public HasOwnerHurtTargetGoal(final T entityIn) {
     super(entityIn, false);
-    setMutexFlags(EnumSet.of(Goal.Flag.TARGET));
+    setFlags(EnumSet.of(Goal.Flag.TARGET));
     entity = entityIn;
   }
 
-  public boolean shouldExecute() {
+  public boolean canUse() {
     if (!entity.hasOwner()) {
       return false;
     }
@@ -28,19 +28,19 @@ public class HasOwnerHurtTargetGoal<T extends MobEntity & IHasOwner<T>> extends 
     if (owner == null) {
       return false;
     }
-    this.attacker = owner.getLastAttackedEntity();
-    int lastAttackedTime = owner.getLastAttackedEntityTime();
-    return (lastAttackedTime != this.timestamp && isSuitableTarget(this.attacker, EntityPredicate.DEFAULT)
+    this.attacker = owner.getLastHurtMob();
+    int lastAttackedTime = owner.getLastHurtMobTimestamp();
+    return (lastAttackedTime != this.timestamp && canAttack(this.attacker, EntityPredicate.DEFAULT)
         && entity.shouldAttackEntity(this.attacker, owner));
   }
 
   @Override
-  public void startExecuting() {
-    this.goalOwner.setAttackTarget(this.attacker);
+  public void start() {
+    this.mob.setTarget(this.attacker);
     LivingEntity owner = entity.getOwner();
     if (owner != null) {
-      this.timestamp = owner.getLastAttackedEntityTime();
+      this.timestamp = owner.getLastHurtMobTimestamp();
     }
-    super.startExecuting();
+    super.start();
   }
 }

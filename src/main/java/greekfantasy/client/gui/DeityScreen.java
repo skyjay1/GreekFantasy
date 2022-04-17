@@ -189,9 +189,9 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     super.init(minecraft, width, height);
     this.guiLeft = (this.width - SCREEN_WIDTH - TAB_WIDTH) / 2;
     this.guiTop = (this.height - (SCREEN_HEIGHT - TAB_HEIGHT)) / 2 - 10;
-    this.playerInventoryTitleY = this.height;
+    this.inventoryLabelY = this.height;
     // add 'done' button
-    addButton(new Button(guiLeft, guiTop + SCREEN_HEIGHT + 4, SCREEN_WIDTH, 20, new TranslationTextComponent("gui.done"), c -> this.minecraft.displayGuiScreen(null)));
+    addButton(new Button(guiLeft, guiTop + SCREEN_HEIGHT + 4, SCREEN_WIDTH, 20, new TranslationTextComponent("gui.done"), c -> this.minecraft.setScreen(null)));
     // add deity tabs
     for(int i = 0, l = Math.min(TAB_COUNT, deityList.size()); i < l; i++) {
       tabButtons[i] = addButton(new TabButton(this, i, deityList.get(i).getText(), guiLeft + (i * TAB_WIDTH), guiTop - TAB_HEIGHT + 4));
@@ -220,10 +220,10 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     // set selected deity now that things are nonnull
     int tab = 0;
     int deity = 0;
-    if(container.getDeity().isPresent()) {
+    if(menu.getDeity().isPresent()) {
       // determine which tab/deity to select based on the passed diety name
       for(int i = 0, l = deityList.size(); i < l; i++) {
-        if(deityList.get(i).getName().equals(container.getDeity().get())) {
+        if(deityList.get(i).getName().equals(menu.getDeity().get())) {
           tab = i / TAB_COUNT;
           deity = i;
           break;
@@ -247,20 +247,20 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   }
 
   @Override
-  protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) { }
+  protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) { }
   
   @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
     this.renderBackground(matrixStack); 
     // draw background image
-    this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
+    this.getMinecraft().getTextureManager().bind(SCREEN_TEXTURE);
     this.blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // draw title
-    this.font.drawText(matrixStack, new StringTextComponent("** ").appendSibling(deityList.get(selected).getText()).appendString(" **").mergeStyle(TextFormatting.BLACK), 
+    this.font.draw(matrixStack, new StringTextComponent("** ").append(deityList.get(selected).getText()).append(" **").withStyle(TextFormatting.BLACK), 
         this.guiLeft + FAVOR_LEFT, this.guiTop + 5, 0xFFFFFF);
     // draw "favor modifiers" text
     String subtitle = mode.getTooltip();
-    this.font.drawText(matrixStack, new TranslationTextComponent(subtitle).mergeStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
+    this.font.draw(matrixStack, new TranslationTextComponent(subtitle).withStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
         guiLeft + (ITEM_LEFT + ITEM_WIDTH * 2) / 2, guiTop + FAVOR_TOP, 0xFFFFFF);
     // draw favor text
     drawFavorText(matrixStack, mouseX, mouseY);        
@@ -292,22 +292,22 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
   private void drawFavorText(MatrixStack matrixStack, int mouseX, int mouseY) {
     // draw favor values
     final FavorLevel level = favor.getFavor(deityList.get(selected));
-    this.font.drawText(matrixStack, new TranslationTextComponent("favor.favor").mergeStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
+    this.font.draw(matrixStack, new TranslationTextComponent("favor.favor").withStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
         guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP, 0xFFFFFF);
     final long curFavor = level.getFavor();
     final long nextFavor = level.getFavorToNextLevel();
-    this.font.drawText(matrixStack, new StringTextComponent(String.valueOf(curFavor + " / " + nextFavor))
-        .mergeStyle(TextFormatting.DARK_PURPLE), 
-        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 1 + 1, 0xFFFFFF);
-    this.font.drawText(matrixStack, new TranslationTextComponent("favor.level").mergeStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
-        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 5 / 2, 0xFFFFFF);
-    this.font.drawText(matrixStack, new StringTextComponent(String.valueOf(level.getLevel() + " / " + (curFavor < 0 ? level.getMinLevel() : level.getMaxLevel()))).mergeStyle(TextFormatting.DARK_PURPLE), 
-        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 7 / 2 + 1, 0xFFFFFF);
-    this.font.drawText(matrixStack, new TranslationTextComponent("favor.next_level").mergeStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
-        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 5, 0xFFFFFF);
+    this.font.draw(matrixStack, new StringTextComponent(String.valueOf(curFavor + " / " + nextFavor))
+        .withStyle(TextFormatting.DARK_PURPLE), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.lineHeight * 1 + 1, 0xFFFFFF);
+    this.font.draw(matrixStack, new TranslationTextComponent("favor.level").withStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.lineHeight * 5 / 2, 0xFFFFFF);
+    this.font.draw(matrixStack, new StringTextComponent(String.valueOf(level.getLevel() + " / " + (curFavor < 0 ? level.getMinLevel() : level.getMaxLevel()))).withStyle(TextFormatting.DARK_PURPLE), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.lineHeight * 7 / 2 + 1, 0xFFFFFF);
+    this.font.draw(matrixStack, new TranslationTextComponent("favor.next_level").withStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.lineHeight * 5, 0xFFFFFF);
     final boolean capped = level.getLevel() == level.getMinLevel() || level.getLevel() == level.getMaxLevel();
-    this.font.drawText(matrixStack, new StringTextComponent(capped ? "--" : String.valueOf(nextFavor - curFavor)).mergeStyle(TextFormatting.DARK_PURPLE), 
-        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.FONT_HEIGHT * 6 + 1, 0xFFFFFF);
+    this.font.draw(matrixStack, new StringTextComponent(capped ? "--" : String.valueOf(nextFavor - curFavor)).withStyle(TextFormatting.DARK_PURPLE), 
+        guiLeft + FAVOR_LEFT, guiTop + FAVOR_TOP + font.lineHeight * 6 + 1, 0xFFFFFF);
   }
   
   private void setSelectedTab(int index) {
@@ -393,17 +393,17 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       value = itemValue;
       final String itemValueString = ((itemValue > 0) ? "+" : "") + itemValue;
       final TextFormatting color = (itemValue > 0) ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
-      valueText = new StringTextComponent(itemValueString).mergeStyle(color);
-      this.setMessage(new TranslationTextComponent(item.getTranslationKey()).appendSibling(new StringTextComponent(" " + itemValueString).mergeStyle(color)));
+      valueText = new StringTextComponent(itemValueString).withStyle(color);
+      this.setMessage(new TranslationTextComponent(item.getDescriptionId()).append(new StringTextComponent(" " + itemValueString).withStyle(color)));
     }
 
     @Override
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
         // draw item
-        DeityScreen.this.itemRenderer.renderItemIntoGUI(item, this.x + 1, this.y + 1);
+        DeityScreen.this.itemRenderer.renderGuiItem(item, this.x + 1, this.y + 1);
         // draw string
-        DeityScreen.this.font.drawText(matrixStack, valueText, this.x + 20, this.y + (1 + DeityScreen.this.font.FONT_HEIGHT) / 2, 0xFFFFFF);
+        DeityScreen.this.font.draw(matrixStack, valueText, this.x + 20, this.y + (1 + DeityScreen.this.font.lineHeight) / 2, 0xFFFFFF);
       }
     }
     
@@ -447,15 +447,15 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       super(x, y, ENTITY_WIDTH, 9, StringTextComponent.EMPTY, b -> {});
       value = entityValue;
       final TextFormatting color = entityValue < 0 ? TextFormatting.DARK_RED : TextFormatting.DARK_GREEN;
-      this.setMessage(new TranslationTextComponent(entityIn.getTranslationKey()).mergeStyle(TextFormatting.BLACK)
-          .appendSibling(new StringTextComponent(":").mergeStyle(TextFormatting.BLACK))
-          .appendSibling(new StringTextComponent(String.format("%4s", (entityValue < 0 ? "" : "+") + entityValue)).mergeStyle(color)));
+      this.setMessage(new TranslationTextComponent(entityIn.getDescriptionId()).withStyle(TextFormatting.BLACK)
+          .append(new StringTextComponent(":").withStyle(TextFormatting.BLACK))
+          .append(new StringTextComponent(String.format("%4s", (entityValue < 0 ? "" : "+") + entityValue)).withStyle(color)));
     }
     
     @Override
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
-        DeityScreen.this.font.drawText(matrixStack, this.getMessage(), this.x, this.y, 0xFFFFFF);
+        DeityScreen.this.font.draw(matrixStack, this.getMessage(), this.x, this.y, 0xFFFFFF);
       }
     }
     
@@ -475,9 +475,9 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         this.isHovered = false;
       } else {
         this.visible = true;
-        this.y = DeityScreen.this.guiTop + DeityScreen.ENTITY_TOP + DeityScreen.this.font.FONT_HEIGHT * (index - startIndex);
+        this.y = DeityScreen.this.guiTop + DeityScreen.ENTITY_TOP + DeityScreen.this.font.lineHeight * (index - startIndex);
         if(rightAlign < 0) {
-          rightAlign = ENTITY_WIDTH - DeityScreen.this.font.getStringWidth(getMessage().getString());
+          rightAlign = ENTITY_WIDTH - DeityScreen.this.font.width(getMessage().getString());
         }
         this.x = DeityScreen.this.guiLeft + DeityScreen.ENTITY_LEFT + rightAlign;
       }
@@ -502,16 +502,16 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       deity = deityIn;
       minValue = minLevel;
       maxValue = maxLevel;
-      entityName = new TranslationTextComponent(entityIn.getTranslationKey()).mergeStyle(TextFormatting.BLACK)
-          .appendSibling(new StringTextComponent(":").mergeStyle(TextFormatting.BLACK));
-      entityValue = new TranslationTextComponent("favor.level_range", minLevel, maxLevel).mergeStyle(TextFormatting.DARK_RED);
+      entityName = new TranslationTextComponent(entityIn.getDescriptionId()).withStyle(TextFormatting.BLACK)
+          .append(new StringTextComponent(":").withStyle(TextFormatting.BLACK));
+      entityValue = new TranslationTextComponent("favor.level_range", minLevel, maxLevel).withStyle(TextFormatting.DARK_RED);
     }
     
     @Override
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
-        DeityScreen.this.font.drawText(matrixStack, entityName, this.x, this.y, 0xFFFFFF);
-        DeityScreen.this.font.drawText(matrixStack, entityValue, this.x + 9, this.y + DeityScreen.this.font.FONT_HEIGHT, 0xFFFFFF);
+        DeityScreen.this.font.draw(matrixStack, entityName, this.x, this.y, 0xFFFFFF);
+        DeityScreen.this.font.draw(matrixStack, entityValue, this.x + 9, this.y + DeityScreen.this.font.lineHeight, 0xFFFFFF);
       }
     }
     
@@ -531,7 +531,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         this.isHovered = false;
       } else {
         this.visible = true;
-        this.y = DeityScreen.this.guiTop + DeityScreen.HOSTILE_TOP + 2 * DeityScreen.this.font.FONT_HEIGHT * (index - startIndex);
+        this.y = DeityScreen.this.guiTop + DeityScreen.HOSTILE_TOP + 2 * DeityScreen.this.font.lineHeight * (index - startIndex);
         this.x = DeityScreen.this.guiLeft + DeityScreen.HOSTILE_LEFT;
       }
     }
@@ -553,27 +553,27 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
       super(x, y, HOSTILE_WIDTH, 18, StringTextComponent.EMPTY, b -> {});
       minValue = minLevel;
       maxValue = maxLevel;
-      textHeader = new TranslationTextComponent(typeIn.getTranslationKey()).mergeStyle(TextFormatting.BLACK)
-          .appendSibling(new StringTextComponent(":").mergeStyle(TextFormatting.BLACK));
+      textHeader = new TranslationTextComponent(typeIn.getTranslationKey()).withStyle(TextFormatting.BLACK)
+          .append(new StringTextComponent(":").withStyle(TextFormatting.BLACK));
       TextFormatting color = maxLevel > 0 ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
-      textRange = new TranslationTextComponent("favor.level_range", minLevel, maxLevel).mergeStyle(color);
+      textRange = new TranslationTextComponent("favor.level_range", minLevel, maxLevel).withStyle(color);
     }
     
     public BlessingButton(final DeityScreen gui, final FavorEffect effectIn, final int minLevel, final int maxLevel, final int x, final int y) {
       super(x, y, HOSTILE_WIDTH, 18, StringTextComponent.EMPTY, b -> {});
       minValue = minLevel;
       maxValue = maxLevel;
-      textHeader = new TranslationTextComponent(effectIn.getTranslationKey()).mergeStyle(TextFormatting.BLACK)
-          .appendSibling(new StringTextComponent(":").mergeStyle(TextFormatting.BLACK));
+      textHeader = new TranslationTextComponent(effectIn.getTranslationKey()).withStyle(TextFormatting.BLACK)
+          .append(new StringTextComponent(":").withStyle(TextFormatting.BLACK));
       TextFormatting color = maxLevel > 0 ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
-      textRange = new TranslationTextComponent("favor.level_range", minLevel, maxLevel).mergeStyle(color);
+      textRange = new TranslationTextComponent("favor.level_range", minLevel, maxLevel).withStyle(color);
     }
     
     @Override
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
-        DeityScreen.this.font.drawText(matrixStack, textHeader, this.x, this.y, 0xFFFFFF);
-        DeityScreen.this.font.drawText(matrixStack, textRange, this.x + 9, this.y + DeityScreen.this.font.FONT_HEIGHT, 0xFFFFFF);
+        DeityScreen.this.font.draw(matrixStack, textHeader, this.x, this.y, 0xFFFFFF);
+        DeityScreen.this.font.draw(matrixStack, textRange, this.x + 9, this.y + DeityScreen.this.font.lineHeight, 0xFFFFFF);
       }
     }
     
@@ -593,7 +593,7 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
         this.isHovered = false;
       } else {
         this.visible = true;
-        this.y = DeityScreen.this.guiTop + DeityScreen.BLESSING_TOP + 2 * DeityScreen.this.font.FONT_HEIGHT * (index - startIndex);
+        this.y = DeityScreen.this.guiTop + DeityScreen.BLESSING_TOP + 2 * DeityScreen.this.font.lineHeight * (index - startIndex);
         this.x = DeityScreen.this.guiLeft + DeityScreen.BLESSING_LEFT;
       }
     }
@@ -615,17 +615,17 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     }
     
     @Override
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
         int selected = isSelected() ? 0 : 2;
         final int xOffset = (id % TAB_COUNT) * TAB_WIDTH;
         final int yOffset = isSelected() ? this.height : 2;
         // draw button background
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        DeityScreen.this.getMinecraft().getTextureManager().bindTexture(TABS_TEXTURE);
+        DeityScreen.this.getMinecraft().getTextureManager().bind(TABS_TEXTURE);
         this.blit(matrixStack, this.x, this.y - selected, xOffset, yOffset - selected, this.width, this.height - selected);
         // draw item
-        DeityScreen.this.itemRenderer.renderItemIntoGUI(item, this.x + (this.width - 16) / 2, this.y + (this.height - 16) / 2);
+        DeityScreen.this.itemRenderer.renderGuiItem(item, this.x + (this.width - 16) / 2, this.y + (this.height - 16) / 2);
       }
     }
     
@@ -657,13 +657,13 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     }
     
     @Override
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible && DeityScreen.this.deityList.size() > TAB_COUNT) {
         final int xOffset = isLeft ? ARROW_WIDTH : 0;
         final int yOffset = 128 + (isHovered ? ARROW_HEIGHT : 0);
         // draw button background
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        DeityScreen.this.getMinecraft().getTextureManager().bindTexture(TABS_TEXTURE);
+        DeityScreen.this.getMinecraft().getTextureManager().bind(TABS_TEXTURE);
         this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
       }
     }
@@ -681,13 +681,13 @@ public class DeityScreen extends ContainerScreen<DeityContainer> {
     }
 
     @Override
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
         final boolean selected = isSelected();
         final int xOffset = 0;
         final int yOffset = SCREEN_HEIGHT + (selected ? this.height : 0);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        DeityScreen.this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
+        DeityScreen.this.getMinecraft().getTextureManager().bind(SCREEN_TEXTURE);
         this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
         drawCenteredString(matrixStack, DeityScreen.this.font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor() | MathHelper.ceil(this.alpha * 255.0F) << 24);
       }

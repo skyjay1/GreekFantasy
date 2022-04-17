@@ -26,7 +26,7 @@ public class MadCowEyesLayer<T extends CowEntity, M extends EntityModel<T>> exte
   public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entity,
       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
     if (!entity.isInvisible()) {
-      renderCopyCutoutModel(getEntityModel(), this.layerModel, EYES_TEXTURE, matrixStackIn, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, 1.0F, 1.0F, 1.0F);
+      coloredCutoutModelCopyLayerRender(getParentModel(), this.layerModel, EYES_TEXTURE, matrixStackIn, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, 1.0F, 1.0F, 1.0F);
     }
   }
 

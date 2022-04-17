@@ -25,17 +25,17 @@ public class SatyrPanfluteLayer<T extends SatyrEntity> extends LayerRenderer<T, 
   public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entity,
       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
     if (!entity.isInvisible() && entity.holdingPanfluteTime > 0) {
-      matrixStackIn.push();
+      matrixStackIn.pushPose();
       // transforms
-      this.getEntityModel().translateHand(HandSide.RIGHT, matrixStackIn);
-      matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-90.0F));
-      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
+      this.getParentModel().translateToHand(HandSide.RIGHT, matrixStackIn);
+      matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
+      matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
       matrixStackIn.translate((double) (1.0F / 16.0F), 0.125D, -0.625D);
       // render the item stack
-      Minecraft.getInstance().getItemRenderer().renderItem(entity, new ItemStack(GFRegistry.PANFLUTE), ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, 
-          false, matrixStackIn, bufferIn, entity.getEntityWorld(), packedLightIn, OverlayTexture.NO_OVERLAY);
+      Minecraft.getInstance().getItemRenderer().renderStatic(entity, new ItemStack(GFRegistry.PANFLUTE), ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, 
+          false, matrixStackIn, bufferIn, entity.getCommandSenderWorld(), packedLightIn, OverlayTexture.NO_OVERLAY);
       // finish rendering
-      matrixStackIn.pop();
+      matrixStackIn.popPose();
     }
   }
 }

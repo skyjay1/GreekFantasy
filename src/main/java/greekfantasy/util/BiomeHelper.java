@@ -47,11 +47,11 @@ public final class BiomeHelper {
     if(LOG_MAP.isEmpty()) {
       initLogMap();
     }
-    return (biome.flatMap(b -> Optional.ofNullable(LOG_MAP.get(b))).orElse(Blocks.OAK_LOG)).getDefaultState();
+    return (biome.flatMap(b -> Optional.ofNullable(LOG_MAP.get(b))).orElse(Blocks.OAK_LOG)).defaultBlockState();
   }
   
   public static ITag<Block> getOliveLogs() {
-    return BlockTags.getCollection().get(TAG_OLIVE_LOGS);
+    return BlockTags.getAllTags().getTag(TAG_OLIVE_LOGS);
   }
 
   private static void initDryadMap() {

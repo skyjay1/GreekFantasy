@@ -23,6 +23,6 @@ public class GeryonClothingLayer<T extends GeryonEntity, M extends EntityModel<T
   
   @Override
   public void render(MatrixStack matrixStack, IRenderTypeBuffer bufferIn, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) { 
-    renderCopyCutoutModel(getEntityModel(), this.layerModel, GERYON_CLOTHES_TEXTURE, matrixStack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, 1.0F, 1.0F, 1.0F); 
+    coloredCutoutModelCopyLayerRender(getParentModel(), this.layerModel, GERYON_CLOTHES_TEXTURE, matrixStack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, 1.0F, 1.0F, 1.0F); 
   }
 }

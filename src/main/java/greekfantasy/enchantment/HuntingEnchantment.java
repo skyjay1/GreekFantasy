@@ -24,36 +24,36 @@ public class HuntingEnchantment extends Enchantment {
   }
   
   @Override
-  public void onEntityDamaged(LivingEntity user, Entity target, int level) {
+  public void doPostAttack(LivingEntity user, Entity target, int level) {
     // check for cooldown
-    final ItemStack item = user.getHeldItem(Hand.MAIN_HAND);
+    final ItemStack item = user.getItemInHand(Hand.MAIN_HAND);
     if(!isApplicableItem(item)) {
       return;
     }
     // if it's an animal, use high attack damage
-    if(target.canChangeDimension() && target instanceof AnimalEntity && (level >= 3 || user.getRNG().nextInt(4 - level) == 0)) {
+    if(target.canChangeDimensions() && target instanceof AnimalEntity && (level >= 3 || user.getRandom().nextInt(4 - level) == 0)) {
       float amount = 1.0F;
-      DamageSource source = DamageSource.causeMobDamage(user);
+      DamageSource source = DamageSource.mobAttack(user);
       // if config option is enabled, use max damage
       if(GreekFantasy.CONFIG.doesSwordOfHuntBypassArmor()) {
         // max damage is 128 (see issue #20)
         amount = Math.min(128.0F, ((AnimalEntity)target).getMaxHealth() * 1.25F);
-        source.setDamageBypassesArmor().setDamageIsAbsolute();
+        source.bypassArmor().bypassMagic();
       }
-      target.attackEntityFrom(source, amount);
+      target.hurt(source, amount);
     }
   }
 
   @Override 
-  public int getMinEnchantability(int level) { return 10 + super.getMinEnchantability(level); }
+  public int getMinCost(int level) { return 10 + super.getMinCost(level); }
   @Override
-  public int getMaxEnchantability(int level) { return 10 + super.getMaxEnchantability(level); }
+  public int getMaxCost(int level) { return 10 + super.getMaxCost(level); }
   @Override
-  public boolean isTreasureEnchantment() { return GreekFantasy.CONFIG.isHuntingEnabled(); }
+  public boolean isTreasureOnly() { return GreekFantasy.CONFIG.isHuntingEnabled(); }
   @Override
-  public boolean canVillagerTrade() { return GreekFantasy.CONFIG.isHuntingEnabled(); }
+  public boolean isTradeable() { return GreekFantasy.CONFIG.isHuntingEnabled(); }
   @Override
-  public boolean canGenerateInLoot() { return GreekFantasy.CONFIG.isHuntingEnabled(); }
+  public boolean isDiscoverable() { return GreekFantasy.CONFIG.isHuntingEnabled(); }
   @Override
   public int getMaxLevel() { return 3; }
   @Override

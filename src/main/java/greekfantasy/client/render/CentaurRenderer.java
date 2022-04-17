@@ -38,7 +38,7 @@ public class CentaurRenderer<T extends CentaurEntity> extends BipedRenderer<T,Ce
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return BODY_TEXTURE_MAP.get(entity.getCoatColor());
   }
 }

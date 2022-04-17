@@ -24,7 +24,7 @@ public class MysteriousBoxManager {
   private static List<ResourceLocation> functions = new ArrayList<>();
   
   private static void loadFunctions(final FunctionManager manager) {
-    manager.reloader.func_240931_a_().keySet().forEach(rl -> {
+    manager.library.getFunctions().keySet().forEach(rl -> {
       if(rl.getNamespace().equals(GreekFantasy.MODID) && rl.getPath().contains("mysterious_box")) {
         functions.add(rl);
       }
@@ -50,11 +50,11 @@ public class MysteriousBoxManager {
   public static boolean onBoxOpened(final World worldIn, final PlayerEntity playerIn, final BlockState state, final BlockPos pos) {
     final MinecraftServer server = worldIn.getServer();
     if(server != null) {
-      final FunctionManager manager = server.getFunctionManager();
+      final FunctionManager manager = server.getFunctions();
       final Optional<FunctionObject> function = getRandomFunction(manager, worldIn.getRandom());
       final Vector3d vec = new Vector3d(pos.getX() + 0.5D, pos.getY() + 0.85D, pos.getZ() + 0.5D);
       if(function.isPresent()) {
-        final CommandSource commandSource = manager.getCommandSource().withEntity(playerIn).withPos(vec).withPermissionLevel(4).withFeedbackDisabled();
+        final CommandSource commandSource = manager.getGameLoopSender().withEntity(playerIn).withPosition(vec).withPermission(4).withSuppressedOutput();
         manager.execute(function.get(), commandSource);
         // percent chance to spawn Elpis as well
         if(worldIn.getRandom().nextInt(100) < GreekFantasy.CONFIG.getElpisSpawnChance()) {
@@ -68,8 +68,8 @@ public class MysteriousBoxManager {
   
   public static void addElpis(final World worldIn, final BlockPos pos) {
     final ElpisEntity entity = GFRegistry.ELPIS_ENTITY.create(worldIn);
-    entity.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.85D, pos.getZ() + 0.5D, 0, 0);
-    entity.setHomePosAndDistance(pos.up(), ElpisEntity.wanderDistance);
-    worldIn.addEntity(entity);
+    entity.moveTo(pos.getX() + 0.5D, pos.getY() + 0.85D, pos.getZ() + 0.5D, 0, 0);
+    entity.restrictTo(pos.above(), ElpisEntity.wanderDistance);
+    worldIn.addFreshEntity(entity);
   }
 }

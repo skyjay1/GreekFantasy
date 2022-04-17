@@ -117,55 +117,55 @@ public final class GFRegistry {
 
   public static EntityType<AraEntity> ARA_ENTITY = buildEntityType(AraEntity::new, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<ArachneEntity> ARACHNE_ENTITY = buildEntityType(ArachneEntity::new, "arachne", 0.94F, 1.9F, EntityClassification.MONSTER, b -> {});
-  public static EntityType<ArionEntity> ARION_ENTITY = buildEntityType(ArionEntity::new, "arion", 1.39F, 1.98F, EntityClassification.CREATURE, b -> b.immuneToFire());
+  public static EntityType<ArionEntity> ARION_ENTITY = buildEntityType(ArionEntity::new, "arion", 1.39F, 1.98F, EntityClassification.CREATURE, b -> b.fireImmune());
   public static EntityType<BabySpiderEntity> BABY_SPIDER_ENTITY = buildEntityType(BabySpiderEntity::new, "baby_spider", 0.5F, 0.65F, EntityClassification.MONSTER, b -> {});
-  public static EntityType<BronzeBullEntity> BRONZE_BULL_ENTITY = buildEntityType(BronzeBullEntity::new, "bronze_bull", 1.95F, 2.98F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<BronzeBullEntity> BRONZE_BULL_ENTITY = buildEntityType(BronzeBullEntity::new, "bronze_bull", 1.95F, 2.98F, EntityClassification.MONSTER, b -> b.fireImmune());
   public static EntityType<CentaurEntity> CENTAUR_ENTITY = buildEntityType(CentaurEntity::new, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
   public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {});
-  public static EntityType<CerberusEntity> CERBERUS_ENTITY = buildEntityType(CerberusEntity::new, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
-  public static EntityType<CharybdisEntity> CHARYBDIS_ENTITY = buildEntityType(CharybdisEntity::new, "charybdis", 5.9F, 7.9F, EntityClassification.WATER_CREATURE, b -> b.immuneToFire());
-  public static EntityType<CirceEntity> CIRCE_ENTITY = buildEntityType(CirceEntity::new, "circe", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
-  public static EntityType<CretanMinotaurEntity> CRETAN_MINOTAUR_ENTITY = buildEntityType(CretanMinotaurEntity::new, "cretan_minotaur", 0.98F, 3.395F, EntityClassification.MONSTER, b -> b.immuneToFire());
-  public static EntityType<CurseEntity> CURSE_ENTITY = buildEntityType(CurseEntity::new, "curse", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).updateInterval(10));
+  public static EntityType<CerberusEntity> CERBERUS_ENTITY = buildEntityType(CerberusEntity::new, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, b -> b.fireImmune());
+  public static EntityType<CharybdisEntity> CHARYBDIS_ENTITY = buildEntityType(CharybdisEntity::new, "charybdis", 5.9F, 7.9F, EntityClassification.WATER_CREATURE, b -> b.fireImmune());
+  public static EntityType<CirceEntity> CIRCE_ENTITY = buildEntityType(CirceEntity::new, "circe", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.fireImmune());
+  public static EntityType<CretanMinotaurEntity> CRETAN_MINOTAUR_ENTITY = buildEntityType(CretanMinotaurEntity::new, "cretan_minotaur", 0.98F, 3.395F, EntityClassification.MONSTER, b -> b.fireImmune());
+  public static EntityType<CurseEntity> CURSE_ENTITY = buildEntityType(CurseEntity::new, "curse", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
   public static EntityType<CyclopesEntity> CYCLOPES_ENTITY = buildEntityType(CyclopesEntity::new, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, b -> {});
   public static EntityType<CyprianEntity> CYPRIAN_ENTITY = buildEntityType(CyprianEntity::new, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
-  public static EntityType<DiscusEntity> DISCUS_ENTITY = buildEntityType(DiscusEntity::new, "discus", 0.45F, 0.45F, EntityClassification.MISC, b -> b.disableSummoning().trackingRange(4).updateInterval(10));
-  public static EntityType<DragonToothEntity> DRAGON_TOOTH_ENTITY = buildEntityType(DragonToothEntity::new, "dragon_tooth", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).updateInterval(10));
+  public static EntityType<DiscusEntity> DISCUS_ENTITY = buildEntityType(DiscusEntity::new, "discus", 0.45F, 0.45F, EntityClassification.MISC, b -> b.noSummon().clientTrackingRange(4).updateInterval(10));
+  public static EntityType<DragonToothEntity> DRAGON_TOOTH_ENTITY = buildEntityType(DragonToothEntity::new, "dragon_tooth", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
   public static EntityType<DrakainaEntity> DRAKAINA_ENTITY = buildEntityType(DrakainaEntity::new, "drakaina", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
   public static EntityType<DryadEntity> DRYAD_ENTITY = buildEntityType(DryadEntity::new, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> {});
-  public static EntityType<ElpisEntity> ELPIS_ENTITY = buildEntityType(ElpisEntity::new, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, b -> b.immuneToFire());
-  public static EntityType<EmpusaEntity> EMPUSA_ENTITY = buildEntityType(EmpusaEntity::new, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
-  public static EntityType<FuryEntity> FURY_ENTITY = buildEntityType(FuryEntity::new, "fury", 0.67F, 1.4F, EntityClassification.MONSTER, b -> b.immuneToFire());
-  public static EntityType<GeryonEntity> GERYON_ENTITY = buildEntityType(GeryonEntity::new, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
-  public static EntityType<GiantBoarEntity> GIANT_BOAR_ENTITY = buildEntityType(GiantBoarEntity::new, "giant_boar", 2.653F, 2.66F, EntityClassification.CREATURE, b -> b.immuneToFire());
+  public static EntityType<ElpisEntity> ELPIS_ENTITY = buildEntityType(ElpisEntity::new, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, b -> b.fireImmune());
+  public static EntityType<EmpusaEntity> EMPUSA_ENTITY = buildEntityType(EmpusaEntity::new, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.fireImmune());
+  public static EntityType<FuryEntity> FURY_ENTITY = buildEntityType(FuryEntity::new, "fury", 0.67F, 1.4F, EntityClassification.MONSTER, b -> b.fireImmune());
+  public static EntityType<GeryonEntity> GERYON_ENTITY = buildEntityType(GeryonEntity::new, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.fireImmune());
+  public static EntityType<GiantBoarEntity> GIANT_BOAR_ENTITY = buildEntityType(GiantBoarEntity::new, "giant_boar", 2.653F, 2.66F, EntityClassification.CREATURE, b -> b.fireImmune());
   public static EntityType<GiganteEntity> GIGANTE_ENTITY = buildEntityType(GiganteEntity::new, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, b -> {});
-  public static EntityType<GoldenRamEntity> GOLDEN_RAM_ENTITY = buildEntityType(GoldenRamEntity::new, "golden_ram", 0.96F, 1.56F, EntityClassification.CREATURE, b -> b.immuneToFire());
+  public static EntityType<GoldenRamEntity> GOLDEN_RAM_ENTITY = buildEntityType(GoldenRamEntity::new, "golden_ram", 0.96F, 1.56F, EntityClassification.CREATURE, b -> b.fireImmune());
   public static EntityType<GorgonEntity> GORGON_ENTITY = buildEntityType(GorgonEntity::new, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
-  public static EntityType<GreekFireEntity> GREEK_FIRE_ENTITY = buildEntityType(GreekFireEntity::new, "greek_fire", 0.45F, 0.45F, EntityClassification.MISC, b -> b.disableSummoning().trackingRange(4).updateInterval(10));
+  public static EntityType<GreekFireEntity> GREEK_FIRE_ENTITY = buildEntityType(GreekFireEntity::new, "greek_fire", 0.45F, 0.45F, EntityClassification.MISC, b -> b.noSummon().clientTrackingRange(4).updateInterval(10));
   public static EntityType<HarpyEntity> HARPY_ENTITY = buildEntityType(HarpyEntity::new, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, b -> {});
-  public static EntityType<HealingSpellEntity> HEALING_SPELL_ENTITY = buildEntityType(HealingSpellEntity::new, "healing_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).updateInterval(10));
-  public static EntityType<HydraEntity> HYDRA_ENTITY = buildEntityType(HydraEntity::new, "hydra", 2.4F, 2.24F, EntityClassification.MONSTER, b -> b.immuneToFire());
-  public static EntityType<HydraHeadEntity> HYDRA_HEAD_ENTITY = buildEntityType(HydraHeadEntity::new, "hydra_head", 0.68F, 1.88F, EntityClassification.MISC, b -> b.disableSummoning());
-  public static EntityType<LampadEntity> LAMPAD_ENTITY = buildEntityType(LampadEntity::new, "lampad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> b.immuneToFire());
+  public static EntityType<HealingSpellEntity> HEALING_SPELL_ENTITY = buildEntityType(HealingSpellEntity::new, "healing_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
+  public static EntityType<HydraEntity> HYDRA_ENTITY = buildEntityType(HydraEntity::new, "hydra", 2.4F, 2.24F, EntityClassification.MONSTER, b -> b.fireImmune());
+  public static EntityType<HydraHeadEntity> HYDRA_HEAD_ENTITY = buildEntityType(HydraHeadEntity::new, "hydra_head", 0.68F, 1.88F, EntityClassification.MISC, b -> b.noSummon());
+  public static EntityType<LampadEntity> LAMPAD_ENTITY = buildEntityType(LampadEntity::new, "lampad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> b.fireImmune());
   public static EntityType<MadCowEntity> MAD_COW_ENTITY = buildEntityType(MadCowEntity::new, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, b -> {});
   public static EntityType<MakhaiEntity> MAKHAI_ENTITY = buildEntityType(MakhaiEntity::new, "makhai", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
   public static EntityType<MinotaurEntity> MINOTAUR_ENTITY = buildEntityType(MinotaurEntity::new, "minotaur", 0.7F, 1.94F, EntityClassification.MONSTER, b -> {});
-  public static EntityType<NemeanLionEntity> NEMEAN_LION_ENTITY = buildEntityType(NemeanLionEntity::new, "nemean_lion", 1.92F, 2.28F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<NemeanLionEntity> NEMEAN_LION_ENTITY = buildEntityType(NemeanLionEntity::new, "nemean_lion", 1.92F, 2.28F, EntityClassification.MONSTER, b -> b.fireImmune());
   public static EntityType<NaiadEntity> NAIAD_ENTITY = buildEntityType(NaiadEntity::new, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, b -> {});
-  public static EntityType<OrthusEntity> ORTHUS_ENTITY = buildEntityType(OrthusEntity::new, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, b -> b.immuneToFire());
-  public static EntityType<OrthusHeadItemEntity> ORTHUS_HEAD_ITEM_ENTITY = buildEntityType(OrthusHeadItemEntity::new, "orthus_head_item", 0.25F, 0.25F, EntityClassification.MISC, b -> b.disableSummoning().trackingRange(6).updateInterval(20));
+  public static EntityType<OrthusEntity> ORTHUS_ENTITY = buildEntityType(OrthusEntity::new, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, b -> b.fireImmune());
+  public static EntityType<OrthusHeadItemEntity> ORTHUS_HEAD_ITEM_ENTITY = buildEntityType(OrthusHeadItemEntity::new, "orthus_head_item", 0.25F, 0.25F, EntityClassification.MISC, b -> b.noSummon().clientTrackingRange(6).updateInterval(20));
   public static EntityType<PegasusEntity> PEGASUS_ENTITY = buildEntityType(PegasusEntity::new, "pegasus", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
-  public static EntityType<PoisonSpitEntity> POISON_SPIT_ENTITY = buildEntityType(PoisonSpitEntity::new, "poison_spit", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).updateInterval(10));
-  public static EntityType<PythonEntity> PYTHON_ENTITY = buildEntityType(PythonEntity::new, "python", 1.4F, 1.9F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<PoisonSpitEntity> POISON_SPIT_ENTITY = buildEntityType(PoisonSpitEntity::new, "poison_spit", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
+  public static EntityType<PythonEntity> PYTHON_ENTITY = buildEntityType(PythonEntity::new, "python", 1.4F, 1.9F, EntityClassification.MONSTER, b -> b.fireImmune());
   public static EntityType<SatyrEntity> SATYR_ENTITY = buildEntityType(SatyrEntity::new, "satyr", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
-  public static EntityType<ShadeEntity> SHADE_ENTITY = buildEntityType(ShadeEntity::new, "shade", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<ShadeEntity> SHADE_ENTITY = buildEntityType(ShadeEntity::new, "shade", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.fireImmune());
   public static EntityType<SirenEntity> SIREN_ENTITY = buildEntityType(SirenEntity::new, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, b -> {});
   public static EntityType<SpartiEntity> SPARTI_ENTITY = buildEntityType(SpartiEntity::new, "sparti", 0.6F, 1.98F, EntityClassification.CREATURE, b -> {});
-  public static EntityType<SpearEntity> SPEAR_ENTITY = buildEntityType(SpearEntity::new, "spear", 0.5F, 0.5F, EntityClassification.MISC, b -> b.disableSummoning().trackingRange(4).updateInterval(20));
-  public static EntityType<SwineSpellEntity> SWINE_SPELL_ENTITY = buildEntityType(SwineSpellEntity::new, "swine_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).updateInterval(10));
-  public static EntityType<TalosEntity> TALOS_ENTITY = buildEntityType(TalosEntity::new, "talos", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.immuneToFire());
+  public static EntityType<SpearEntity> SPEAR_ENTITY = buildEntityType(SpearEntity::new, "spear", 0.5F, 0.5F, EntityClassification.MISC, b -> b.noSummon().clientTrackingRange(4).updateInterval(20));
+  public static EntityType<SwineSpellEntity> SWINE_SPELL_ENTITY = buildEntityType(SwineSpellEntity::new, "swine_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
+  public static EntityType<TalosEntity> TALOS_ENTITY = buildEntityType(TalosEntity::new, "talos", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.fireImmune());
   public static EntityType<UnicornEntity> UNICORN_ENTITY = buildEntityType(UnicornEntity::new, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
-  public static EntityType<WebBallEntity> WEB_BALL_ENTITY = buildEntityType(WebBallEntity::new, "web_ball", 0.25F, 0.25F, EntityClassification.MISC, b -> b.immuneToFire().disableSummoning().trackingRange(4).updateInterval(10));
+  public static EntityType<WebBallEntity> WEB_BALL_ENTITY = buildEntityType(WebBallEntity::new, "web_ball", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
   public static EntityType<WhirlEntity> WHIRL_ENTITY = buildEntityType(WhirlEntity::new, "whirl", 2.9F, 5.0F, EntityClassification.WATER_CREATURE, b -> {});
 
   // OBJECT HOLDERS //
@@ -510,11 +510,11 @@ public final class GFRegistry {
   
   protected static ItemGroup GREEK_GROUP = new ItemGroup("greekfantasy") {
     @Override
-    public ItemStack createIcon() { return new ItemStack(PANFLUTE); }
+    public ItemStack makeIcon() { return new ItemStack(PANFLUTE); }
   };
   
   protected static final Predicate<IServerWorld> DIMENSION_MOB_PLACEMENT = world -> {
-    return GreekFantasy.CONFIG.IS_SPAWNS_WHITELIST.get() == GreekFantasy.CONFIG.SPAWNS_DIMENSION_WHITELIST.get().contains(world.getWorld().getDimensionKey().getLocation().toString());
+    return GreekFantasy.CONFIG.IS_SPAWNS_WHITELIST.get() == GreekFantasy.CONFIG.SPAWNS_DIMENSION_WHITELIST.get().contains(world.getLevel().dimension().location().toString());
   };
 
   // REGISTRY METHODS //
@@ -525,45 +525,45 @@ public final class GFRegistry {
     // entity types have already been created, now they are actually registered (along with placements)
     registerEntityType(event, ARA_ENTITY, "ara", AraEntity::canAraSpawnOn);
     registerEntityType(event, ARACHNE_ENTITY, "arachne", null);
-    registerEntityType(event, ARION_ENTITY, "arion", ArionEntity::canSpawnOn);
-    registerEntityType(event, BABY_SPIDER_ENTITY, "baby_spider", BabySpiderEntity::canMonsterSpawnInLight);
+    registerEntityType(event, ARION_ENTITY, "arion", ArionEntity::checkMobSpawnRules);
+    registerEntityType(event, BABY_SPIDER_ENTITY, "baby_spider", BabySpiderEntity::checkMonsterSpawnRules);
     registerEntityType(event, BRONZE_BULL_ENTITY, "bronze_bull", null);
-    registerEntityType(event, CENTAUR_ENTITY, "centaur", CentaurEntity::canSpawnOn);
+    registerEntityType(event, CENTAUR_ENTITY, "centaur", CentaurEntity::checkMobSpawnRules);
     registerEntityType(event, CERASTES_ENTITY, "cerastes", CerastesEntity::canCerastesSpawnOn);
     registerEntityType(event, CERBERUS_ENTITY, "cerberus", null);
     registerEntityType(event, CHARYBDIS_ENTITY, "charybdis", null);
     registerEntityType(event, CIRCE_ENTITY, "circe", null);
     registerEntityType(event, CRETAN_MINOTAUR_ENTITY, "cretan_minotaur", null);
-    registerEntityType(event, CYPRIAN_ENTITY, "cyprian", CyprianEntity::canSpawnOn);
+    registerEntityType(event, CYPRIAN_ENTITY, "cyprian", CyprianEntity::checkMobSpawnRules);
     registerEntityType(event, CYCLOPES_ENTITY, "cyclopes", CyclopesEntity::canCyclopesSpawnOn);
-    registerEntityType(event, DRAKAINA_ENTITY, "drakaina", DrakainaEntity::canMonsterSpawnInLight);
-    registerEntityType(event, DRYAD_ENTITY, "dryad", DryadEntity::canSpawnOn);
+    registerEntityType(event, DRAKAINA_ENTITY, "drakaina", DrakainaEntity::checkMonsterSpawnRules);
+    registerEntityType(event, DRYAD_ENTITY, "dryad", DryadEntity::checkMobSpawnRules);
     registerEntityType(event, ELPIS_ENTITY, "elpis", null);
-    registerEntityType(event, EMPUSA_ENTITY, "empusa", EmpusaEntity::canMonsterSpawnInLight);
-    registerEntityType(event, FURY_ENTITY, "fury", FuryEntity::canSpawnOn);
+    registerEntityType(event, EMPUSA_ENTITY, "empusa", EmpusaEntity::checkMonsterSpawnRules);
+    registerEntityType(event, FURY_ENTITY, "fury", FuryEntity::checkMobSpawnRules);
     registerEntityType(event, GERYON_ENTITY, "geryon", null);
     registerEntityType(event, GIANT_BOAR_ENTITY, "giant_boar", null);
-    registerEntityType(event, GIGANTE_ENTITY, "gigante", GiganteEntity::canSpawnOn);
+    registerEntityType(event, GIGANTE_ENTITY, "gigante", GiganteEntity::checkMobSpawnRules);
     registerEntityType(event, GOLDEN_RAM_ENTITY, "golden_ram", null);
-    registerEntityType(event, GORGON_ENTITY, "gorgon", GorgonEntity::canMonsterSpawnInLight);
-    registerEntityType(event, HARPY_ENTITY, "harpy", HarpyEntity::canMonsterSpawn);
+    registerEntityType(event, GORGON_ENTITY, "gorgon", GorgonEntity::checkMonsterSpawnRules);
+    registerEntityType(event, HARPY_ENTITY, "harpy", HarpyEntity::checkAnyLightMonsterSpawnRules);
     registerEntityType(event, HYDRA_ENTITY, "hydra", null);
     registerEntityType(event, HYDRA_HEAD_ENTITY, "hydra_head", null);
-    registerEntityType(event, LAMPAD_ENTITY, "lampad", LampadEntity::canSpawnOn);
-    registerEntityType(event, MAD_COW_ENTITY, "mad_cow", MadCowEntity::canSpawnOn);
+    registerEntityType(event, LAMPAD_ENTITY, "lampad", LampadEntity::checkMobSpawnRules);
+    registerEntityType(event, MAD_COW_ENTITY, "mad_cow", MadCowEntity::checkMobSpawnRules);
     registerEntityType(event, MAKHAI_ENTITY, "makhai", null);
-    registerEntityType(event, MINOTAUR_ENTITY, "minotaur", MinotaurEntity::canMonsterSpawnInLight);
+    registerEntityType(event, MINOTAUR_ENTITY, "minotaur", MinotaurEntity::checkMonsterSpawnRules);
     registerEntityType(event, NEMEAN_LION_ENTITY, "nemean_lion", null);
     registerEntityType(event, NAIAD_ENTITY, "naiad", NaiadEntity::canNaiadSpawnOn);
-    registerEntityType(event, ORTHUS_ENTITY, "orthus", OrthusEntity::canSpawnOn);
-    registerEntityType(event, PEGASUS_ENTITY, "pegasus", PegasusEntity::canSpawnOn);
+    registerEntityType(event, ORTHUS_ENTITY, "orthus", OrthusEntity::checkMobSpawnRules);
+    registerEntityType(event, PEGASUS_ENTITY, "pegasus", PegasusEntity::checkMobSpawnRules);
     registerEntityType(event, PYTHON_ENTITY, "python", null);
-    registerEntityType(event, SATYR_ENTITY, "satyr", SatyrEntity::canSpawnOn);
-    registerEntityType(event, SHADE_ENTITY, "shade", ShadeEntity::canMonsterSpawnInLight);
+    registerEntityType(event, SATYR_ENTITY, "satyr", SatyrEntity::checkMobSpawnRules);
+    registerEntityType(event, SHADE_ENTITY, "shade", ShadeEntity::checkMonsterSpawnRules);
     registerEntityType(event, SIREN_ENTITY, "siren", SirenEntity::canSirenSpawnOn);
     registerEntityType(event, SPARTI_ENTITY, "sparti", null);
     registerEntityType(event, TALOS_ENTITY, "talos", null);
-    registerEntityType(event, UNICORN_ENTITY, "unicorn", UnicornEntity::canSpawnOn);
+    registerEntityType(event, UNICORN_ENTITY, "unicorn", UnicornEntity::checkMobSpawnRules);
     registerEntityType(event, WHIRL_ENTITY, "whirl", WhirlEntity::canWhirlSpawnOn);
     event.getRegistry().register(SPEAR_ENTITY.setRegistryName(MODID, "spear"));
     event.getRegistry().register(CURSE_ENTITY.setRegistryName(MODID, "curse"));
@@ -581,55 +581,55 @@ public final class GFRegistry {
   public static void registerEntityAttributes(final EntityAttributeCreationEvent event) {
     GreekFantasy.LOGGER.debug("registerEntityAttributes");
     // entity types have already been created, now register the attributes
-    event.put(ARA_ENTITY, AraEntity.getAttributes().create());
-    event.put(ARACHNE_ENTITY, ArachneEntity.getAttributes().create());
-    event.put(ARION_ENTITY, ArionEntity.getAttributes().create());
-    event.put(BABY_SPIDER_ENTITY, BabySpiderEntity.getAttributes().create());
-    event.put(BRONZE_BULL_ENTITY, BronzeBullEntity.getAttributes().create());
-    event.put(CENTAUR_ENTITY, CentaurEntity.getAttributes().create());
-    event.put(CERASTES_ENTITY, CerastesEntity.getAttributes().create());
-    event.put(CERBERUS_ENTITY, CerberusEntity.getAttributes().create());
-    event.put(CHARYBDIS_ENTITY, CharybdisEntity.getAttributes().create());
-    event.put(CIRCE_ENTITY, CirceEntity.getAttributes().create());
-    event.put(CRETAN_MINOTAUR_ENTITY, CretanMinotaurEntity.getAttributes().create());
-    event.put(CYCLOPES_ENTITY, CyclopesEntity.getAttributes().create());
-    event.put(CYPRIAN_ENTITY, CyprianEntity.getAttributes().create());
-    event.put(DRAKAINA_ENTITY, DrakainaEntity.getAttributes().create());
-    event.put(DRYAD_ENTITY, DryadEntity.getAttributes().create());
-    event.put(ELPIS_ENTITY, ElpisEntity.getAttributes().create());
-    event.put(EMPUSA_ENTITY, EmpusaEntity.getAttributes().create());
-    event.put(FURY_ENTITY, FuryEntity.getAttributes().create());
-    event.put(GERYON_ENTITY, GeryonEntity.getAttributes().create());
-    event.put(GIANT_BOAR_ENTITY, GiantBoarEntity.getAttributes().create());
-    event.put(GIGANTE_ENTITY, GiganteEntity.getAttributes().create());
-    event.put(GOLDEN_RAM_ENTITY, GoldenRamEntity.getAttributes().create());
-    event.put(GORGON_ENTITY, GorgonEntity.getAttributes().create());
-    event.put(HARPY_ENTITY, HarpyEntity.getAttributes().create());
-    event.put(HYDRA_ENTITY, HydraEntity.getAttributes().create());
-    event.put(HYDRA_HEAD_ENTITY, HydraHeadEntity.getAttributes().create());
-    event.put(LAMPAD_ENTITY, LampadEntity.getAttributes().create());
-    event.put(MAD_COW_ENTITY, MadCowEntity.getAttributes().create());
-    event.put(MAKHAI_ENTITY, MakhaiEntity.getAttributes().create());
-    event.put(MINOTAUR_ENTITY, MinotaurEntity.getAttributes().create());
-    event.put(NAIAD_ENTITY, NaiadEntity.getAttributes().create());
-    event.put(NEMEAN_LION_ENTITY, NemeanLionEntity.getAttributes().create());
-    event.put(ORTHUS_ENTITY, OrthusEntity.getAttributes().create());
-    event.put(PEGASUS_ENTITY, PegasusEntity.getAttributes().create());
-    event.put(PYTHON_ENTITY, PythonEntity.getAttributes().create());
-    event.put(SATYR_ENTITY, SatyrEntity.getAttributes().create());
-    event.put(SHADE_ENTITY, ShadeEntity.getAttributes().create());
-    event.put(SIREN_ENTITY, SirenEntity.getAttributes().create());
-    event.put(SPARTI_ENTITY, SpartiEntity.getAttributes().create());
-    event.put(TALOS_ENTITY, TalosEntity.getAttributes().create());
-    event.put(UNICORN_ENTITY, UnicornEntity.getAttributes().create());
-    event.put(WHIRL_ENTITY, WhirlEntity.getAttributes().create());
+    event.put(ARA_ENTITY, AraEntity.getAttributes().build());
+    event.put(ARACHNE_ENTITY, ArachneEntity.getAttributes().build());
+    event.put(ARION_ENTITY, ArionEntity.getAttributes().build());
+    event.put(BABY_SPIDER_ENTITY, BabySpiderEntity.getAttributes().build());
+    event.put(BRONZE_BULL_ENTITY, BronzeBullEntity.getAttributes().build());
+    event.put(CENTAUR_ENTITY, CentaurEntity.getAttributes().build());
+    event.put(CERASTES_ENTITY, CerastesEntity.getAttributes().build());
+    event.put(CERBERUS_ENTITY, CerberusEntity.getAttributes().build());
+    event.put(CHARYBDIS_ENTITY, CharybdisEntity.getAttributes().build());
+    event.put(CIRCE_ENTITY, CirceEntity.getAttributes().build());
+    event.put(CRETAN_MINOTAUR_ENTITY, CretanMinotaurEntity.getAttributes().build());
+    event.put(CYCLOPES_ENTITY, CyclopesEntity.getAttributes().build());
+    event.put(CYPRIAN_ENTITY, CyprianEntity.getAttributes().build());
+    event.put(DRAKAINA_ENTITY, DrakainaEntity.getAttributes().build());
+    event.put(DRYAD_ENTITY, DryadEntity.getAttributes().build());
+    event.put(ELPIS_ENTITY, ElpisEntity.getAttributes().build());
+    event.put(EMPUSA_ENTITY, EmpusaEntity.getAttributes().build());
+    event.put(FURY_ENTITY, FuryEntity.getAttributes().build());
+    event.put(GERYON_ENTITY, GeryonEntity.getAttributes().build());
+    event.put(GIANT_BOAR_ENTITY, GiantBoarEntity.getAttributes().build());
+    event.put(GIGANTE_ENTITY, GiganteEntity.getAttributes().build());
+    event.put(GOLDEN_RAM_ENTITY, GoldenRamEntity.getAttributes().build());
+    event.put(GORGON_ENTITY, GorgonEntity.getAttributes().build());
+    event.put(HARPY_ENTITY, HarpyEntity.getAttributes().build());
+    event.put(HYDRA_ENTITY, HydraEntity.getAttributes().build());
+    event.put(HYDRA_HEAD_ENTITY, HydraHeadEntity.getAttributes().build());
+    event.put(LAMPAD_ENTITY, LampadEntity.getAttributes().build());
+    event.put(MAD_COW_ENTITY, MadCowEntity.getAttributes().build());
+    event.put(MAKHAI_ENTITY, MakhaiEntity.getAttributes().build());
+    event.put(MINOTAUR_ENTITY, MinotaurEntity.getAttributes().build());
+    event.put(NAIAD_ENTITY, NaiadEntity.getAttributes().build());
+    event.put(NEMEAN_LION_ENTITY, NemeanLionEntity.getAttributes().build());
+    event.put(ORTHUS_ENTITY, OrthusEntity.getAttributes().build());
+    event.put(PEGASUS_ENTITY, PegasusEntity.getAttributes().build());
+    event.put(PYTHON_ENTITY, PythonEntity.getAttributes().build());
+    event.put(SATYR_ENTITY, SatyrEntity.getAttributes().build());
+    event.put(SHADE_ENTITY, ShadeEntity.getAttributes().build());
+    event.put(SIREN_ENTITY, SirenEntity.getAttributes().build());
+    event.put(SPARTI_ENTITY, SpartiEntity.getAttributes().build());
+    event.put(TALOS_ENTITY, TalosEntity.getAttributes().build());
+    event.put(UNICORN_ENTITY, UnicornEntity.getAttributes().build());
+    event.put(WHIRL_ENTITY, WhirlEntity.getAttributes().build());
   }
   
   @SubscribeEvent
   public static void registerTileEntities(final RegistryEvent.Register<TileEntityType<?>> event) {
     GreekFantasy.LOGGER.debug("registerTileEntities");
     event.getRegistry().register(
-        TileEntityType.Builder.create(StatueTileEntity::new, 
+        TileEntityType.Builder.of(StatueTileEntity::new, 
             LIMESTONE_STATUE, MARBLE_STATUE, PALLADIUM, 
             ALTAR_APHRODITE, ALTAR_APOLLO, ALTAR_ARES, ALTAR_ARTEMIS, ALTAR_ATHENA, ALTAR_DEMETER,
             ALTAR_DIONYSUS, ALTAR_HADES, ALTAR_HECATE, ALTAR_HEPHAESTUS, ALTAR_HERA, ALTAR_HERMES, 
@@ -637,7 +637,7 @@ public final class GFRegistry {
         .build(null).setRegistryName(MODID, "statue_te")
     );
     event.getRegistry().register(
-        TileEntityType.Builder.create(VaseTileEntity::new, TERRACOTTA_VASE, 
+        TileEntityType.Builder.of(VaseTileEntity::new, TERRACOTTA_VASE, 
             WHITE_TERRACOTTA_VASE, ORANGE_TERRACOTTA_VASE, MAGENTA_TERRACOTTA_VASE, LIGHT_BLUE_TERRACOTTA_VASE, 
             YELLOW_TERRACOTTA_VASE, LIME_TERRACOTTA_VASE, PINK_TERRACOTTA_VASE, GRAY_TERRACOTTA_VASE, 
             LIGHT_GRAY_TERRACOTTA_VASE, CYAN_TERRACOTTA_VASE, PURPLE_TERRACOTTA_VASE, BLUE_TERRACOTTA_VASE, 
@@ -645,7 +645,7 @@ public final class GFRegistry {
         .build(null).setRegistryName(MODID, "vase_te")
     );
     event.getRegistry().register(
-        TileEntityType.Builder.create(MobHeadTileEntity::new, GIGANTE_HEAD, ORTHUS_HEAD, CERBERUS_HEAD)
+        TileEntityType.Builder.of(MobHeadTileEntity::new, GIGANTE_HEAD, ORTHUS_HEAD, CERBERUS_HEAD)
         .build(null).setRegistryName(MODID, "mob_head_te")
     );
   }
@@ -657,16 +657,16 @@ public final class GFRegistry {
     ContainerType<StatueContainer> statueContainer = IForgeContainerType.create((windowId, inv, data) -> {
       final boolean isFemale = data.readBoolean();
       final BlockPos blockpos = data.readBlockPos();
-      final CompoundNBT poseTag = data.readCompoundTag();
-      final String name = data.readString();
+      final CompoundNBT poseTag = data.readNbt();
+      final String name = data.readUtf();
       final StatuePose pose = new StatuePose(poseTag);
-      final Direction facing = Direction.byHorizontalIndex(data.readByte());
+      final Direction facing = Direction.from2DDataValue(data.readByte());
       return new StatueContainer(windowId, inv, new Inventory(2), pose, isFemale, name, blockpos, facing);
     });
     // Deity screen requires Favor as a Compound Tag and Deity ID as a ResourceLocation
     ContainerType<DeityContainer> deityContainer = IForgeContainerType.create((windowId, inv, data) -> {
       final IFavor favor = GreekFantasy.FAVOR.getDefaultInstance();
-      GreekFantasy.FAVOR.readNBT(favor, null, data.readCompoundTag());
+      GreekFantasy.FAVOR.readNBT(favor, null, data.readNbt());
       ResourceLocation deityId = data.readResourceLocation();
       return new DeityContainer(windowId, inv, favor, deityId);
     });
@@ -678,39 +678,39 @@ public final class GFRegistry {
   public static void registerBlocks(final RegistryEvent.Register<Block> event) {
     GreekFantasy.LOGGER.debug("registerBlocks");
         
-    registerLogPlanksEtc(event, "olive", AbstractBlock.Properties.create(Material.WOOD, MaterialColor.WOOD).hardnessAndResistance(2.0F, 3.0F).sound(SoundType.WOOD), 5, 5, 20);
+    registerLogPlanksEtc(event, "olive", AbstractBlock.Properties.of(Material.WOOD, MaterialColor.WOOD).strength(2.0F, 3.0F).sound(SoundType.WOOD), 5, 5, 20);
     registerLeaves(event, "olive", 30, 60);
-    registerLogPlanksEtc(event, "pomegranate", AbstractBlock.Properties.create(Material.WOOD, MaterialColor.WOOD).hardnessAndResistance(2.2F, 3.0F).sound(SoundType.WOOD), 0, 0, 0);
+    registerLogPlanksEtc(event, "pomegranate", AbstractBlock.Properties.of(Material.WOOD, MaterialColor.WOOD).strength(2.2F, 3.0F).sound(SoundType.WOOD), 0, 0, 0);
     registerLeaves(event, "pomegranate", 0, 0);
     registerLeaves(event, "golden_apple", 30, 60);
     
-    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "marble");
-    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F), "limestone");
+    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.of(Material.STONE, MaterialColor.QUARTZ).requiresCorrectToolForDrops().strength(1.5F, 6.0F), "marble");
+    registerBlockPolishedSlabAndStairs(event, AbstractBlock.Properties.of(Material.STONE, MaterialColor.STONE).requiresCorrectToolForDrops().strength(1.5F, 6.0F), "limestone");
     
-    registerBlockPolishedChiseledAndBricks(event, AbstractBlock.Properties.create(Material.ROCK, MaterialColor.GRAY).setRequiresTool().hardnessAndResistance(99.0F, 1200.0F), "cretan_stone");
+    registerBlockPolishedChiseledAndBricks(event, AbstractBlock.Properties.of(Material.STONE, MaterialColor.COLOR_GRAY).requiresCorrectToolForDrops().strength(99.0F, 1200.0F), "cretan_stone");
     
     event.getRegistry().registerAll(
-        new ReedsBlock(AbstractBlock.Properties.create(Material.OCEAN_PLANT).doesNotBlockMovement().zeroHardnessAndResistance().tickRandomly().sound(SoundType.CROP))
+        new ReedsBlock(AbstractBlock.Properties.of(Material.WATER_PLANT).noCollission().instabreak().randomTicks().sound(SoundType.CROP))
           .setRegistryName(MODID, "reeds"),
-        new SaplingBlock(new OliveTree(), AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly()
-            .zeroHardnessAndResistance().notSolid().sound(SoundType.PLANT))
+        new SaplingBlock(new OliveTree(), AbstractBlock.Properties.of(Material.PLANT).noCollission().randomTicks()
+            .instabreak().noOcclusion().sound(SoundType.GRASS))
           .setRegistryName(MODID, "olive_sapling"),
-        new PomegranateSaplingBlock(new PomegranateTree(), AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly()
-            .zeroHardnessAndResistance().notSolid().sound(SoundType.PLANT))
+        new PomegranateSaplingBlock(new PomegranateTree(), AbstractBlock.Properties.of(Material.PLANT).noCollission().randomTicks()
+            .instabreak().noOcclusion().sound(SoundType.GRASS))
           .setRegistryName(MODID, "pomegranate_sapling"),
-        new SaplingBlock(new GoldenAppleTree(), AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().tickRandomly()
-            .zeroHardnessAndResistance().notSolid().sound(SoundType.PLANT))
+        new SaplingBlock(new GoldenAppleTree(), AbstractBlock.Properties.of(Material.PLANT).noCollission().randomTicks()
+            .instabreak().noOcclusion().sound(SoundType.GRASS))
           .setRegistryName(MODID, "golden_apple_sapling"),
-        new NestBlock(AbstractBlock.Properties.create(Material.ORGANIC, MaterialColor.BROWN).hardnessAndResistance(0.5F).sound(SoundType.PLANT)
-            .setNeedsPostProcessing((s, r, p) -> true).notSolid())
+        new NestBlock(AbstractBlock.Properties.of(Material.GRASS, MaterialColor.COLOR_BROWN).strength(0.5F).sound(SoundType.GRASS)
+            .hasPostProcess((s, r, p) -> true).noOcclusion())
           .setRegistryName(MODID, "nest"),
-        new WildRoseBlock(Effects.SATURATION, 9, AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().zeroHardnessAndResistance().sound(SoundType.PLANT))
+        new WildRoseBlock(Effects.SATURATION, 9, AbstractBlock.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS))
           .setRegistryName(GreekFantasy.MODID, "wild_rose"),
-        new CappedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.QUARTZ).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)
-            .setNeedsPostProcessing((s, r, p) -> true).notSolid())
+        new CappedPillarBlock(AbstractBlock.Properties.of(Material.STONE, MaterialColor.QUARTZ).requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+            .hasPostProcess((s, r, p) -> true).noOcclusion())
           .setRegistryName(MODID, "marble_pillar"),
-        new CappedPillarBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)
-            .setNeedsPostProcessing((s, r, p) -> true).notSolid())
+        new CappedPillarBlock(AbstractBlock.Properties.of(Material.STONE, MaterialColor.STONE).requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+            .hasPostProcess((s, r, p) -> true).noOcclusion())
           .setRegistryName(MODID, "limestone_pillar"),
         new StatueBlock(StatueBlock.StatueMaterial.MARBLE)
           .setRegistryName(MODID, "marble_statue"),
@@ -721,22 +721,22 @@ public final class GFRegistry {
           te.setStatueFemale(true);
           te.setItem(new ItemStack(Items.SOUL_TORCH), HandSide.RIGHT);
         }).setRegistryName(MODID, "palladium"),
-        new MysteriousBoxBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.8F, 2.0F).sound(SoundType.WOOD).notSolid())
+        new MysteriousBoxBlock(AbstractBlock.Properties.of(Material.WOOD).strength(0.8F, 2.0F).sound(SoundType.WOOD).noOcclusion())
           .setRegistryName(MODID, "mysterious_box"),
-        new MobHeadBlock(HeadType.GIGANTE, AbstractBlock.Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(1.0F).notSolid())
+        new MobHeadBlock(HeadType.GIGANTE, AbstractBlock.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion())
           .setRegistryName(GreekFantasy.MODID, "gigante_head"),
-        new OrthusHeadBlock(HeadType.ORTHUS, AbstractBlock.Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(1.0F).notSolid())
+        new OrthusHeadBlock(HeadType.ORTHUS, AbstractBlock.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion())
           .setRegistryName(GreekFantasy.MODID, "orthus_head"),
-        new MobHeadBlock(HeadType.CERBERUS, AbstractBlock.Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(1.0F).notSolid())
+        new MobHeadBlock(HeadType.CERBERUS, AbstractBlock.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion())
           .setRegistryName(GreekFantasy.MODID, "cerberus_head"),
-        new IchorInfusedBlock(AbstractBlock.Properties.from(Blocks.GOLD_BLOCK))
+        new IchorInfusedBlock(AbstractBlock.Properties.copy(Blocks.GOLD_BLOCK))
           .setRegistryName(MODID, "ichor_infused_block"),
-        new GoldenStringBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).setLightLevel(b -> 8).zeroHardnessAndResistance().doesNotBlockMovement().notSolid())
+        new GoldenStringBlock(AbstractBlock.Properties.of(Material.DECORATION).lightLevel(b -> 8).instabreak().noCollission().noOcclusion())
           .setRegistryName(MODID, "golden_string"),
-        new OilBlock(AbstractBlock.Properties.create(Material.FIRE).notSolid().doesNotBlockMovement().zeroHardnessAndResistance()
-            .tickRandomly().setLightLevel((state) -> 11).sound(SoundType.WET_GRASS))
+        new OilBlock(AbstractBlock.Properties.of(Material.FIRE).noOcclusion().noCollission().instabreak()
+            .randomTicks().lightLevel((state) -> 11).sound(SoundType.WET_GRASS))
           .setRegistryName(MODID, "oil"),
-        new OilLampBlock(AbstractBlock.Properties.create(Material.ROCK).notSolid().setLightLevel(b -> b.get(OilLampBlock.LIT) ? 11 : 0).hardnessAndResistance(0.2F, 0.1F))
+        new OilLampBlock(AbstractBlock.Properties.of(Material.STONE).noOcclusion().lightLevel(b -> b.getValue(OilLampBlock.LIT) ? 11 : 0).strength(0.2F, 0.1F))
           .setRegistryName(MODID, "oil_lamp")
     );
     
@@ -777,11 +777,11 @@ public final class GFRegistry {
     );
     
     // Vase blocks
-    event.getRegistry().register(new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(0.5F, 1.0F).notSolid())
+    event.getRegistry().register(new VaseBlock(AbstractBlock.Properties.of(Material.STONE, MaterialColor.COLOR_ORANGE).strength(0.5F, 1.0F).noOcclusion())
         .setRegistryName(MODID, "terracotta_vase"));
     for(final DyeColor d : DyeColor.values()) {
-      event.getRegistry().register(new VaseBlock(AbstractBlock.Properties.create(Material.ROCK, d.getMapColor()).hardnessAndResistance(0.5F, 1.0F).notSolid())
-          .setRegistryName(MODID, d.getString() + "_terracotta_vase"));
+      event.getRegistry().register(new VaseBlock(AbstractBlock.Properties.of(Material.STONE, d.getMaterialColor()).strength(0.5F, 1.0F).noOcclusion())
+          .setRegistryName(MODID, d.getSerializedName() + "_terracotta_vase"));
     }
   }
 
@@ -791,152 +791,152 @@ public final class GFRegistry {
     final boolean nerfAmbrosia = GreekFantasy.CONFIG.NERF_AMBROSIA.get();
     // items
     event.getRegistry().registerAll(
-        new PanfluteItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
+        new PanfluteItem(new Item.Properties().tab(GREEK_GROUP).stacksTo(1))
           .setRegistryName(MODID, "panflute"),
-        new LyreItem(SoundEvents.BLOCK_NOTE_BLOCK_HARP, new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
+        new LyreItem(SoundEvents.NOTE_BLOCK_HARP, new Item.Properties().tab(GREEK_GROUP).stacksTo(1))
           .setRegistryName(MODID, "wooden_lyre"),
-        new LyreItem(SoundEvents.BLOCK_NOTE_BLOCK_GUITAR, new Item.Properties().group(GREEK_GROUP).maxStackSize(1))
+        new LyreItem(SoundEvents.NOTE_BLOCK_GUITAR, new Item.Properties().tab(GREEK_GROUP).stacksTo(1))
           .setRegistryName(MODID, "gold_lyre"),
-        new FlintKnifeItem(ItemTier.WOOD, 3, -2.0F, new Item.Properties().group(GREEK_GROUP))
+        new FlintKnifeItem(ItemTier.WOOD, 3, -2.0F, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "flint_knife"),
-        new ClubItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP))
+        new ClubItem(ItemTier.IRON, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "iron_club"),
-        new ClubItem(ItemTier.STONE, new Item.Properties().group(GREEK_GROUP))
+        new ClubItem(ItemTier.STONE, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "stone_club"),
-        new ClubItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP))
+        new ClubItem(ItemTier.WOOD, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "wooden_club"),
-        new IvorySwordItem(ItemTier.DIAMOND, 3, -2.2F, new Item.Properties().group(GREEK_GROUP))
+        new IvorySwordItem(ItemTier.DIAMOND, 3, -2.2F, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "ivory_sword"),
-        new ConchItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP))
+        new ConchItem(new Item.Properties().rarity(Rarity.UNCOMMON).tab(GREEK_GROUP))
           .setRegistryName(MODID, "conch"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "talos_heart"),
-        new ThunderboltItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
-            .maxDamage(GreekFantasy.CONFIG.THUNDERBOLT_DURABILITY.get()))
+        new ThunderboltItem(new Item.Properties().rarity(Rarity.RARE).tab(GREEK_GROUP)
+            .durability(GreekFantasy.CONFIG.THUNDERBOLT_DURABILITY.get()))
           .setRegistryName(MODID, "thunderbolt"),
-        new BagOfWindItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP)
-            .maxDamage(GreekFantasy.CONFIG.BAG_OF_WIND_DURABILITY.get()))
+        new BagOfWindItem(new Item.Properties().rarity(Rarity.UNCOMMON).tab(GREEK_GROUP)
+            .durability(GreekFantasy.CONFIG.BAG_OF_WIND_DURABILITY.get()))
           .setRegistryName(MODID, "bag_of_wind"),
-        new UnicornHornItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP)
-            .maxDamage(GreekFantasy.CONFIG.UNICORN_HORN_DURABILITY.get()))
+        new UnicornHornItem(new Item.Properties().rarity(Rarity.UNCOMMON).tab(GREEK_GROUP)
+            .durability(GreekFantasy.CONFIG.UNICORN_HORN_DURABILITY.get()))
           .setRegistryName(MODID, "unicorn_horn"),
-        new HealingRodItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
-            .maxDamage(GreekFantasy.CONFIG.HEALING_ROD_DURABILITY.get()))
+        new HealingRodItem(new Item.Properties().rarity(Rarity.RARE).tab(GREEK_GROUP)
+            .durability(GreekFantasy.CONFIG.HEALING_ROD_DURABILITY.get()))
           .setRegistryName(MODID, "healing_rod"),
-        new DragonToothItem(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP))
+        new DragonToothItem(new Item.Properties().rarity(Rarity.UNCOMMON).tab(GREEK_GROUP))
           .setRegistryName(MODID, "dragon_tooth"),
-        new SwineWandItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP)
-            .maxDamage(GreekFantasy.CONFIG.SWINE_WAND_DURABILITY.get()))
+        new SwineWandItem(new Item.Properties().rarity(Rarity.RARE).tab(GREEK_GROUP)
+            .durability(GreekFantasy.CONFIG.SWINE_WAND_DURABILITY.get()))
           .setRegistryName(MODID, "swine_wand"),
-        new EnchantedBowItem.CursedBowItem(new Item.Properties().maxDamage(384).group(GREEK_GROUP))
+        new EnchantedBowItem.CursedBowItem(new Item.Properties().durability(384).tab(GREEK_GROUP))
           .setRegistryName(MODID, "cursed_bow"),
-        new EnchantedBowItem.ApolloBowItem(new Item.Properties().maxDamage(620).group(GREEK_GROUP))
+        new EnchantedBowItem.ApolloBowItem(new Item.Properties().durability(620).tab(GREEK_GROUP))
           .setRegistryName(MODID, "apollo_bow"),
-        new EnchantedBowItem.ArtemisBowItem(new Item.Properties().maxDamage(562).group(GREEK_GROUP))
+        new EnchantedBowItem.ArtemisBowItem(new Item.Properties().durability(562).tab(GREEK_GROUP))
           .setRegistryName(MODID, "artemis_bow"),
-        new BidentItem(ItemTier.DIAMOND, new Item.Properties().group(GREEK_GROUP)
+        new BidentItem(ItemTier.DIAMOND, new Item.Properties().tab(GREEK_GROUP)
             .setISTER(() -> () -> greekfantasy.client.render.tileentity.ClientISTERProvider.bakeSpearISTER("bident")))
           .setRegistryName(MODID, "bident"),
-        new SpearItem(ItemTier.WOOD, new Item.Properties().group(GREEK_GROUP)
+        new SpearItem(ItemTier.WOOD, new Item.Properties().tab(GREEK_GROUP)
             .setISTER(() -> () -> greekfantasy.client.render.tileentity.ClientISTERProvider.bakeSpearISTER("wooden_spear")))
           .setRegistryName(MODID, "wooden_spear"),
-        new SpearItem(ItemTier.STONE, new Item.Properties().group(GREEK_GROUP)
+        new SpearItem(ItemTier.STONE, new Item.Properties().tab(GREEK_GROUP)
             .setISTER(() -> () -> greekfantasy.client.render.tileentity.ClientISTERProvider.bakeSpearISTER("stone_spear")))
           .setRegistryName(MODID, "stone_spear"),
-        new SpearItem(ItemTier.IRON, new Item.Properties().group(GREEK_GROUP)
+        new SpearItem(ItemTier.IRON, new Item.Properties().tab(GREEK_GROUP)
             .setISTER(() -> () -> greekfantasy.client.render.tileentity.ClientISTERProvider.bakeSpearISTER("iron_spear")))
           .setRegistryName(MODID, "iron_spear"),
-        new MirrorItem(new Item.Properties().group(GREEK_GROUP))
+        new MirrorItem(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "mirror"),
-        new SnakeskinArmorItem(EquipmentSlotType.HEAD, new Item.Properties().group(GREEK_GROUP))
+        new SnakeskinArmorItem(EquipmentSlotType.HEAD, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "snakeskin_helmet"),
-        new SnakeskinArmorItem(EquipmentSlotType.CHEST, new Item.Properties().group(GREEK_GROUP))
+        new SnakeskinArmorItem(EquipmentSlotType.CHEST, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "snakeskin_chestplate"),
-        new SnakeskinArmorItem(EquipmentSlotType.LEGS, new Item.Properties().group(GREEK_GROUP))
+        new SnakeskinArmorItem(EquipmentSlotType.LEGS, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "snakeskin_leggings"),
-        new SnakeskinArmorItem(EquipmentSlotType.FEET, new Item.Properties().group(GREEK_GROUP))
+        new SnakeskinArmorItem(EquipmentSlotType.FEET, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "snakeskin_boots"),
-        new AchillesArmorItem(EquipmentSlotType.HEAD, new Item.Properties().group(GREEK_GROUP))
+        new AchillesArmorItem(EquipmentSlotType.HEAD, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "achilles_helmet"),
-        new AchillesArmorItem(EquipmentSlotType.CHEST, new Item.Properties().group(GREEK_GROUP))
+        new AchillesArmorItem(EquipmentSlotType.CHEST, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "achilles_chestplate"),
-        new AchillesArmorItem(EquipmentSlotType.LEGS, new Item.Properties().group(GREEK_GROUP))
+        new AchillesArmorItem(EquipmentSlotType.LEGS, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "achilles_leggings"),
-        new AchillesArmorItem(EquipmentSlotType.FEET, new Item.Properties().group(GREEK_GROUP))
+        new AchillesArmorItem(EquipmentSlotType.FEET, new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "achilles_boots"),
-        new WingedSandalsItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
+        new WingedSandalsItem(new Item.Properties().rarity(Rarity.RARE).tab(GREEK_GROUP))
           .setRegistryName(MODID, "winged_sandals"),
-        new HelmOfDarknessItem(new Item.Properties().rarity(Rarity.RARE).group(GREEK_GROUP))
+        new HelmOfDarknessItem(new Item.Properties().rarity(Rarity.RARE).tab(GREEK_GROUP))
           .setRegistryName(MODID, "helm_of_darkness"),
-        new NemeanLionHideItem(new Item.Properties().rarity(Rarity.EPIC).isImmuneToFire().setNoRepair().group(GREEK_GROUP))
+        new NemeanLionHideItem(new Item.Properties().rarity(Rarity.EPIC).fireResistant().setNoRepair().tab(GREEK_GROUP))
           .setRegistryName(MODID, "nemean_lion_hide"),
-        new GorgonBloodItem(new Item.Properties().maxStackSize(16).containerItem(Items.GLASS_BOTTLE).group(GREEK_GROUP))
+        new GorgonBloodItem(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE).tab(GREEK_GROUP))
           .setRegistryName(MODID, "gorgon_blood"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "horn"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "pomegranate"),
-        new PomegranateSeedsItem(new Item.Properties().group(GREEK_GROUP).food(PomegranateSeedsItem.POMEGRANATE_SEEDS))
+        new PomegranateSeedsItem(new Item.Properties().tab(GREEK_GROUP).food(PomegranateSeedsItem.POMEGRANATE_SEEDS))
           .setRegistryName(MODID, "pomegranate_seeds"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "olives"),
-        new OliveOilItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(16))
+        new OliveOilItem(new Item.Properties().tab(GREEK_GROUP).stacksTo(16))
           .setRegistryName(MODID, "olive_oil"),
-        new SalveItem(new Item.Properties().group(GREEK_GROUP).maxStackSize(16).containerItem(Items.GLASS_BOTTLE))
+        new SalveItem(new Item.Properties().tab(GREEK_GROUP).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE))
           .setRegistryName(MODID, "salve")
     );
     
     event.getRegistry().registerAll(
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "boar_ear"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "boar_tusk"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "golden_bridle"),
         new AmbrosiaItem(new Item.Properties().food(nerfAmbrosia ? Foods.GOLDEN_APPLE : Foods.ENCHANTED_GOLDEN_APPLE)
-            .group(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC)) {
+            .tab(GREEK_GROUP).rarity(nerfAmbrosia ? Rarity.RARE : Rarity.EPIC)) {
         }.setRegistryName(MODID, "ambrosia"),
-        new HornOfPlentyItem(new Item.Properties().maxDamage(24).rarity(Rarity.RARE).group(GREEK_GROUP))
+        new HornOfPlentyItem(new Item.Properties().durability(24).rarity(Rarity.RARE).tab(GREEK_GROUP))
           .setRegistryName(MODID, "horn_of_plenty"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "magic_feather"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "snakeskin"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "purified_snakeskin"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "tough_snakeskin"),
-        new Item(new Item.Properties().rarity(Rarity.UNCOMMON).group(GREEK_GROUP)){
+        new Item(new Item.Properties().rarity(Rarity.UNCOMMON).tab(GREEK_GROUP)){
           @Override
-          public boolean hasEffect(ItemStack stack) { return true; }
+          public boolean isFoil(ItemStack stack) { return true; }
         }.setRegistryName(MODID, "ichor"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "dog_claw"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "fiery_hide"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "styxian_shard"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "snake_fang"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "cursed_hair"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "fiery_bat_wing"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "fiery_gear"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "golden_string"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "golden_ball"),
-        new Item(new Item.Properties().group(GREEK_GROUP))
+        new Item(new Item.Properties().tab(GREEK_GROUP))
           .setRegistryName(MODID, "golden_fleece"),
-		    new GoldenAppleOfDiscordItem(new Item.Properties().group(GREEK_GROUP).food(GoldenAppleOfDiscordItem.GOLDEN_APPLE_OF_DISCORD))
+		    new GoldenAppleOfDiscordItem(new Item.Properties().tab(GREEK_GROUP).food(GoldenAppleOfDiscordItem.GOLDEN_APPLE_OF_DISCORD))
 		      .setRegistryName(MODID, "golden_apple_of_discord"),
-        new DiscusItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
+        new DiscusItem(new Item.Properties().stacksTo(16).tab(GREEK_GROUP))
           .setRegistryName(MODID, "discus"),
-        new WebBallItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
+        new WebBallItem(new Item.Properties().stacksTo(16).tab(GREEK_GROUP))
           .setRegistryName(MODID, "web_ball"),
-        new GreekFireItem(new Item.Properties().maxStackSize(16).group(GREEK_GROUP))
+        new GreekFireItem(new Item.Properties().stacksTo(16).tab(GREEK_GROUP))
           .setRegistryName(MODID, "greek_fire")
     );
     
@@ -966,27 +966,27 @@ public final class GFRegistry {
     registerTallItemBlocks(event, OLIVE_DOOR, POMEGRANATE_DOOR);
     
     event.getRegistry().register(new MobHeadItem(GIGANTE_HEAD, new Item.Properties()
-        .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeGiganteHeadISTER))
+        .tab(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeGiganteHeadISTER))
         .setRegistryName(MODID, "gigante_head"));
     event.getRegistry().register(new OrthusHeadItem(ORTHUS_HEAD, new Item.Properties()
-        .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeOrthusHeadISTER))
+        .tab(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeOrthusHeadISTER))
         .setRegistryName(MODID, "orthus_head"));
     event.getRegistry().register(new MobHeadItem(CERBERUS_HEAD, new Item.Properties()
-        .group(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeCerberusHeadISTER))
+        .tab(GREEK_GROUP).setISTER(() -> greekfantasy.client.render.tileentity.ClientISTERProvider::bakeCerberusHeadISTER))
         .setRegistryName(MODID, "cerberus_head"));
     
     // mysterious box item
-    event.getRegistry().register(new BlockItem(MYSTERIOUS_BOX, new Item.Properties().group(GREEK_GROUP)) {
+    event.getRegistry().register(new BlockItem(MYSTERIOUS_BOX, new Item.Properties().tab(GREEK_GROUP)) {
       @OnlyIn(Dist.CLIENT)
-      public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(new TranslationTextComponent("block.greekfantasy.mysterious_box.tooltip").mergeStyle(TextFormatting.ITALIC, TextFormatting.GRAY));
+      public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        tooltip.add(new TranslationTextComponent("block.greekfantasy.mysterious_box.tooltip").withStyle(TextFormatting.ITALIC, TextFormatting.GRAY));
       }
     }.setRegistryName(MODID, "mysterious_box"));
     
     // banner pattern
     final BannerPattern SPIDER_BANNER_PATTERN = BannerPattern.create("greekfantasy_spider", "greekfantasy_spider", "greekfantasy_spider", true);
     event.getRegistry().register(new BannerPatternItem(SPIDER_BANNER_PATTERN, new Item.Properties()
-        .group(GREEK_GROUP).maxStackSize(1).rarity(Rarity.RARE))
+        .tab(GREEK_GROUP).stacksTo(1).rarity(Rarity.RARE))
         .setRegistryName(MODID, "spider_banner_pattern"));
     
     // spawn eggs
@@ -1105,42 +1105,42 @@ public final class GFRegistry {
   }
   
   public static void finishBrewingRecipes() {
-    final ItemStack awkward = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), Potions.AWKWARD);
+    final ItemStack awkward = PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD);
     // Mirror potion recipes
     if(GreekFantasy.CONFIG.isMirrorPotionEnabled()) {
-      final ItemStack mirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), MIRROR_POTION);
-      final ItemStack splashMirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), MIRROR_POTION);
-      final ItemStack lingeringMirror = PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), MIRROR_POTION);
+      final ItemStack mirror = PotionUtils.setPotion(new ItemStack(Items.POTION), MIRROR_POTION);
+      final ItemStack splashMirror = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), MIRROR_POTION);
+      final ItemStack lingeringMirror = PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), MIRROR_POTION);
       // Add brewing recipes for Mirror potion
       BrewingRecipeRegistry.addRecipe(
-          Ingredient.fromStacks(awkward), 
-          Ingredient.fromStacks(new ItemStack(SNAKESKIN)), mirror);
-      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
-          PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), LONG_MIRROR_POTION));
-      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.GUNPOWDER)), splashMirror);
-      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(mirror), Ingredient.fromStacks(new ItemStack(Items.DRAGON_BREATH)), lingeringMirror);
-      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(splashMirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
-          PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), LONG_MIRROR_POTION));
-      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(lingeringMirror), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
-          PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), LONG_MIRROR_POTION));
+          Ingredient.of(awkward), 
+          Ingredient.of(new ItemStack(SNAKESKIN)), mirror);
+      BrewingRecipeRegistry.addRecipe(Ingredient.of(mirror), Ingredient.of(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.setPotion(new ItemStack(Items.POTION), LONG_MIRROR_POTION));
+      BrewingRecipeRegistry.addRecipe(Ingredient.of(mirror), Ingredient.of(new ItemStack(Items.GUNPOWDER)), splashMirror);
+      BrewingRecipeRegistry.addRecipe(Ingredient.of(mirror), Ingredient.of(new ItemStack(Items.DRAGON_BREATH)), lingeringMirror);
+      BrewingRecipeRegistry.addRecipe(Ingredient.of(splashMirror), Ingredient.of(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), LONG_MIRROR_POTION));
+      BrewingRecipeRegistry.addRecipe(Ingredient.of(lingeringMirror), Ingredient.of(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), LONG_MIRROR_POTION));
     }
     // Swine potion recipes
     if(GreekFantasy.CONFIG.isSwinePotionEnabled()) {
-      final ItemStack swine = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), SWINE_POTION);
-      final ItemStack splashSwine = PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), SWINE_POTION);
-      final ItemStack lingeringSwine = PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), SWINE_POTION);
+      final ItemStack swine = PotionUtils.setPotion(new ItemStack(Items.POTION), SWINE_POTION);
+      final ItemStack splashSwine = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), SWINE_POTION);
+      final ItemStack lingeringSwine = PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), SWINE_POTION);
       // Add brewing recipes for Swine potion
       BrewingRecipeRegistry.addRecipe(
-          Ingredient.fromStacks(awkward), 
-          Ingredient.fromStacks(new ItemStack(BOAR_EAR)), swine);
-      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(swine), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
-          PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), LONG_SWINE_POTION));
-      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(swine), Ingredient.fromStacks(new ItemStack(Items.GUNPOWDER)), splashSwine);
-      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(swine), Ingredient.fromStacks(new ItemStack(Items.DRAGON_BREATH)), lingeringSwine);
-      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(splashSwine), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
-          PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), LONG_SWINE_POTION));
-      BrewingRecipeRegistry.addRecipe(Ingredient.fromStacks(lingeringSwine), Ingredient.fromStacks(new ItemStack(Items.REDSTONE)), 
-          PotionUtils.addPotionToItemStack(new ItemStack(Items.LINGERING_POTION), LONG_SWINE_POTION));
+          Ingredient.of(awkward), 
+          Ingredient.of(new ItemStack(BOAR_EAR)), swine);
+      BrewingRecipeRegistry.addRecipe(Ingredient.of(swine), Ingredient.of(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.setPotion(new ItemStack(Items.POTION), LONG_SWINE_POTION));
+      BrewingRecipeRegistry.addRecipe(Ingredient.of(swine), Ingredient.of(new ItemStack(Items.GUNPOWDER)), splashSwine);
+      BrewingRecipeRegistry.addRecipe(Ingredient.of(swine), Ingredient.of(new ItemStack(Items.DRAGON_BREATH)), lingeringSwine);
+      BrewingRecipeRegistry.addRecipe(Ingredient.of(splashSwine), Ingredient.of(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), LONG_SWINE_POTION));
+      BrewingRecipeRegistry.addRecipe(Ingredient.of(lingeringSwine), Ingredient.of(new ItemStack(Items.REDSTONE)), 
+          PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), LONG_SWINE_POTION));
     }
   }
 
@@ -1159,7 +1159,7 @@ public final class GFRegistry {
    **/
   private static <T extends Entity> EntityType<T> buildEntityType(final IFactory<T> factoryIn, final String name, final float width, final float height, 
       final EntityClassification classification, final Consumer<EntityType.Builder<T>> builderSpecs) {
-    EntityType.Builder<T> entityTypeBuilder = EntityType.Builder.create(factoryIn, classification).size(width, height).trackingRange(8);
+    EntityType.Builder<T> entityTypeBuilder = EntityType.Builder.of(factoryIn, classification).sized(width, height).clientTrackingRange(8);
     builderSpecs.accept(entityTypeBuilder);
     EntityType<T> entityType = entityTypeBuilder.build(name);
     return entityType;
@@ -1184,7 +1184,7 @@ public final class GFRegistry {
     event.getRegistry().register(entityType);
     // register placement (not used unless spawn information is registered with a biome)
     if(placementPredicate != null) {
-      final PlacementType placementType = entityType.getClassification() == EntityClassification.WATER_CREATURE ? PlacementType.IN_WATER : PlacementType.ON_GROUND;
+      final PlacementType placementType = entityType.getCategory() == EntityClassification.WATER_CREATURE ? PlacementType.IN_WATER : PlacementType.ON_GROUND;
       // wrap the spawn predicate in one that also checks dimension predicate
       final EntitySpawnPlacementRegistry.IPlacementPredicate<T> placement = (entity, world, reason, pos, rand) -> DIMENSION_MOB_PLACEMENT.test(world) && placementPredicate.test(entity, world, reason, pos, rand);
       EntitySpawnPlacementRegistry.register(entityType, placementType, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, placement);
@@ -1205,7 +1205,7 @@ public final class GFRegistry {
         te.setItem(te.getDeity().getRightHandItem(), HandSide.RIGHT);
         te.setItem(te.getDeity().getLeftHandItem(), HandSide.LEFT);
         te.setStatueFemale(te.getDeity().isFemale());
-      }, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(15.0F, 6000.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> statueMaterial.getLightLevel()), deityId);
+      }, Block.Properties.of(Material.STONE, MaterialColor.COLOR_LIGHT_GRAY).strength(15.0F, 6000.0F).sound(SoundType.STONE).noOcclusion().lightLevel(b -> statueMaterial.getLightLevel()), deityId);
   }
   
   /**
@@ -1235,9 +1235,9 @@ public final class GFRegistry {
       public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return logFlammability; }
     };
     // log block
-    final Block log = new RotatedPillarBlock(AbstractBlock.Properties.create(Material.WOOD, (state) -> {
-      return state.get(RotatedPillarBlock.AXIS) == Direction.Axis.Y ? MaterialColor.SAND : MaterialColor.WOOD;
-    }).hardnessAndResistance(2.0F).sound(SoundType.WOOD)) {
+    final Block log = new RotatedPillarBlock(AbstractBlock.Properties.of(Material.WOOD, (state) -> {
+      return state.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.Y ? MaterialColor.SAND : MaterialColor.WOOD;
+    }).strength(2.0F).sound(SoundType.WOOD)) {
       @Override
       public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return fireSpread; }
       @Override
@@ -1245,7 +1245,7 @@ public final class GFRegistry {
       @Override
       public BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
           if (toolType == ToolType.AXE) {
-            return strippedLog.getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
+            return strippedLog.defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS));
           }
           return super.getToolModifiedState(state, world, pos, player, stack, toolType);
       }
@@ -1259,7 +1259,7 @@ public final class GFRegistry {
       @Override
       public BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
           if (toolType == ToolType.AXE) {
-            return strippedWood.getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
+            return strippedWood.defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS));
           }
           return super.getToolModifiedState(state, world, pos, player, stack, toolType);
       }
@@ -1279,7 +1279,7 @@ public final class GFRegistry {
       public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return planksFlammability; }
     };
     // stairs block
-    final Block stairs = new StairsBlock(() -> planks.getDefaultState(), properties){
+    final Block stairs = new StairsBlock(() -> planks.defaultBlockState(), properties){
       @Override
       public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return fireSpread; }
       @Override
@@ -1296,7 +1296,7 @@ public final class GFRegistry {
         stairs.setRegistryName(MODID, registryName + "_stairs")
     );
     // register door and trapdoor
-    final Block.Properties notSolid = Block.Properties.from(planks).notSolid().setAllowsSpawn((b, i, p, a) -> false);
+    final Block.Properties notSolid = Block.Properties.copy(planks).noOcclusion().isValidSpawn((b, i, p, a) -> false);
     event.getRegistry().registerAll(
         new DoorBlock(notSolid).setRegistryName(MODID, registryName  + "_door"),
         new TrapDoorBlock(notSolid).setRegistryName(MODID, registryName + "_trapdoor")    
@@ -1312,8 +1312,8 @@ public final class GFRegistry {
    */
   private static void registerLeaves(final RegistryEvent.Register<Block> event, final String registryName, final int fireSpread, final int flammability) {
     event.getRegistry().register(
-        new LeavesBlock(AbstractBlock.Properties.create(Material.LEAVES).hardnessAndResistance(0.2F).tickRandomly().sound(SoundType.PLANT)
-            .notSolid().setAllowsSpawn(GFRegistry::allowsSpawnOnLeaves).setSuffocates((s, r, p) -> false).setBlocksVision((s, r, p) -> false)) {
+        new LeavesBlock(AbstractBlock.Properties.of(Material.LEAVES).strength(0.2F).randomTicks().sound(SoundType.GRASS)
+            .noOcclusion().isValidSpawn(GFRegistry::allowsSpawnOnLeaves).isSuffocating((s, r, p) -> false).isViewBlocking((s, r, p) -> false)) {
           @Override
           public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) { return fireSpread; }
           @Override
@@ -1328,11 +1328,11 @@ public final class GFRegistry {
     // raw, slab, and stairs
     event.getRegistry().register(raw);
     event.getRegistry().register(new SlabBlock(properties).setRegistryName(MODID, registryName + "_slab"));
-    event.getRegistry().register(new StairsBlock(() -> raw.getDefaultState(), properties).setRegistryName(MODID, registryName + "_stairs"));
+    event.getRegistry().register(new StairsBlock(() -> raw.defaultBlockState(), properties).setRegistryName(MODID, registryName + "_stairs"));
     // polished, slab, and stairs
     event.getRegistry().register(polished);
     event.getRegistry().register(new SlabBlock(properties).setRegistryName(MODID, "polished_" + registryName + "_slab"));
-    event.getRegistry().register(new StairsBlock(() -> polished.getDefaultState(), properties).setRegistryName(MODID, "polished_" + registryName + "_stairs"));
+    event.getRegistry().register(new StairsBlock(() -> polished.defaultBlockState(), properties).setRegistryName(MODID, "polished_" + registryName + "_stairs"));
   }
   
   private static void registerBlockPolishedChiseledAndBricks(final RegistryEvent.Register<Block> event, final Block.Properties properties, final String registryName) {
@@ -1347,7 +1347,7 @@ public final class GFRegistry {
   }
     
   private static void registerItemBlock(final RegistryEvent.Register<Item> event, final Block block) {
-    event.getRegistry().register(new BlockItem(block, new Item.Properties().group(GREEK_GROUP)).setRegistryName(block.getRegistryName()));
+    event.getRegistry().register(new BlockItem(block, new Item.Properties().tab(GREEK_GROUP)).setRegistryName(block.getRegistryName()));
   }
   
   private static void registerItemBlocks(final RegistryEvent.Register<Item> event, final Block... blocks) {
@@ -1357,7 +1357,7 @@ public final class GFRegistry {
   }
   
   private static void registerTallItemBlock(final RegistryEvent.Register<Item> event, final Block block) {
-    event.getRegistry().register(new TallBlockItem(block, new Item.Properties().group(GREEK_GROUP)).setRegistryName(block.getRegistryName()));
+    event.getRegistry().register(new TallBlockItem(block, new Item.Properties().tab(GREEK_GROUP)).setRegistryName(block.getRegistryName()));
   }
   
   private static void registerTallItemBlocks(final RegistryEvent.Register<Item> event, final Block... blocks) {
@@ -1368,7 +1368,7 @@ public final class GFRegistry {
   
   private static void registerSpawnEgg(final RegistryEvent.Register<Item> event, final EntityType<?> entity, 
       final String entityName, final int colorBase, final int colorSpots) {
-    event.getRegistry().register(new SpawnEggItem(entity, colorBase, colorSpots, new Item.Properties().group(GREEK_GROUP))
+    event.getRegistry().register(new SpawnEggItem(entity, colorBase, colorSpots, new Item.Properties().tab(GREEK_GROUP))
         .setRegistryName(MODID, entityName + "_spawn_egg"));
   }
 

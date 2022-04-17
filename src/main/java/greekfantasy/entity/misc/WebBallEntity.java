@@ -35,7 +35,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 public class WebBallEntity extends ProjectileItemEntity {
   
-  protected static final DataParameter<Byte> TYPE = EntityDataManager.createKey(WebBallEntity.class, DataSerializers.BYTE);
+  protected static final DataParameter<Byte> TYPE = EntityDataManager.defineId(WebBallEntity.class, DataSerializers.BYTE);
   protected static final String KEY_TYPE = "WebType";
   
   public static final byte WEB = 1;
@@ -63,9 +63,9 @@ public class WebBallEntity extends ProjectileItemEntity {
   }
   
   @Override
-  protected void registerData() {
-    super.registerData();
-    this.dataManager.register(TYPE, Byte.valueOf(WEB));
+  protected void defineSynchedData() {
+    super.defineSynchedData();
+    this.entityData.define(TYPE, Byte.valueOf(WEB));
   }
 
   @Override
@@ -74,26 +74,26 @@ public class WebBallEntity extends ProjectileItemEntity {
   }
 
   @Override
-  protected void onEntityHit(EntityRayTraceResult raytrace) {
-    super.onEntityHit(raytrace);
-    if (!this.world.isRemote() && world instanceof IServerWorld && this.isAlive() && raytrace.getEntity() != null) {
-      onWebImpact(raytrace, raytrace.getEntity().getPosition());
+  protected void onHitEntity(EntityRayTraceResult raytrace) {
+    super.onHitEntity(raytrace);
+    if (!this.level.isClientSide() && level instanceof IServerWorld && this.isAlive() && raytrace.getEntity() != null) {
+      onWebImpact(raytrace, raytrace.getEntity().blockPosition());
       remove();
     }
   }
 
   @Override
-  protected void onImpact(RayTraceResult raytrace) {
-    super.onImpact(raytrace);
-    if (!this.world.isRemote() && world instanceof IServerWorld && this.isAlive()) {
-      onWebImpact(raytrace, getPosition());
+  protected void onHit(RayTraceResult raytrace) {
+    super.onHit(raytrace);
+    if (!this.level.isClientSide() && level instanceof IServerWorld && this.isAlive()) {
+      onWebImpact(raytrace, blockPosition());
       remove();
     }
   }
 
   @Override
   public void tick() {
-    Entity entity = getShooter();
+    Entity entity = getOwner();
     if (entity instanceof net.minecraft.entity.player.PlayerEntity && !entity.isAlive()) {
       remove();
     } else {
@@ -103,32 +103,32 @@ public class WebBallEntity extends ProjectileItemEntity {
 
   @Override
   public Entity changeDimension(ServerWorld serverWorld, ITeleporter iTeleporter) {
-    Entity entity = getShooter();
-    if (entity != null && entity.world.getDimensionKey() != serverWorld.getDimensionKey()) {
-      setShooter((Entity) null);
+    Entity entity = getOwner();
+    if (entity != null && entity.level.dimension() != serverWorld.dimension()) {
+      setOwner((Entity) null);
     }
     return super.changeDimension(serverWorld, iTeleporter);
   }
   
   @Override
-  public IPacket<?> createSpawnPacket() {
+  public IPacket<?> getAddEntityPacket() {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 
   @Override
-  protected float getGravityVelocity() {
+  protected float getGravity() {
     return 0.08F;
   }
   
   @Override
-  public void readAdditional(CompoundNBT tag) {
-    super.readAdditional(tag);
+  public void readAdditionalSaveData(CompoundNBT tag) {
+    super.readAdditionalSaveData(tag);
     setWebType(tag.getByte(KEY_TYPE));
   }
 
   @Override
-  public void writeAdditional(CompoundNBT tag) {
-    super.writeAdditional(tag);
+  public void addAdditionalSaveData(CompoundNBT tag) {
+    super.addAdditionalSaveData(tag);
     tag.putByte(KEY_TYPE, getWebType());
   }
   
@@ -136,42 +136,42 @@ public class WebBallEntity extends ProjectileItemEntity {
     final byte type = getWebType();
     // nothing (drop string)
     if(type == 0) {
-      entityDropItem(new ItemStack(Items.STRING));
+      spawnAtLocation(new ItemStack(Items.STRING));
       return;
     }
     // web
-    if(hasWeb(type) && world.isAirBlock(webPos)) {
-      world.setBlockState(webPos, Blocks.COBWEB.getDefaultState());
+    if(hasWeb(type) && level.isEmptyBlock(webPos)) {
+      level.setBlockAndUpdate(webPos, Blocks.COBWEB.defaultBlockState());
     }
     // spider
     if(hasSpider(type)) {
-      BabySpiderEntity spider = GFRegistry.BABY_SPIDER_ENTITY.create(world);
-      spider.copyLocationAndAnglesFrom(this);
-      spider.setHomePosAndDistance(webPos, 12);
-      world.addEntity(spider);
+      BabySpiderEntity spider = GFRegistry.BABY_SPIDER_ENTITY.create(level);
+      spider.copyPosition(this);
+      spider.restrictTo(webPos, 12);
+      level.addFreshEntity(spider);
     }
     // item
     if(hasItem(type)) {
-      ResourceLocation resourcelocation = getType().getLootTable();
-      LootTable loottable = this.world.getServer().getLootTableManager().getLootTableFromLocation(resourcelocation);
-      LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.world))
-          .withRandom(this.rand)
+      ResourceLocation resourcelocation = getType().getDefaultLootTable();
+      LootTable loottable = this.level.getServer().getLootTables().get(resourcelocation);
+      LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.level))
+          .withRandom(this.random)
           .withParameter(LootParameters.THIS_ENTITY, this)
-          .withParameter(LootParameters.ORIGIN, this.getPositionVec())
+          .withParameter(LootParameters.ORIGIN, this.position())
           .withParameter(LootParameters.DAMAGE_SOURCE, DamageSource.FALL)
-          .withNullableParameter(LootParameters.KILLER_ENTITY, getShooter())
-          .withNullableParameter(LootParameters.DIRECT_KILLER_ENTITY, null);
-      LootContext ctx = lootcontext$builder.build(LootParameterSets.ENTITY);
-      loottable.generate(ctx).forEach(this::entityDropItem);
+          .withOptionalParameter(LootParameters.KILLER_ENTITY, getOwner())
+          .withOptionalParameter(LootParameters.DIRECT_KILLER_ENTITY, null);
+      LootContext ctx = lootcontext$builder.create(LootParameterSets.ENTITY);
+      loottable.getRandomItems(ctx).forEach(this::spawnAtLocation);
     }
   }
   
   public void setWebType(final byte b) {
-    getDataManager().set(TYPE, Byte.valueOf(b));
+    getEntityData().set(TYPE, Byte.valueOf(b));
   }
   
   public byte getWebType() {
-    return getDataManager().get(TYPE).byteValue();
+    return getEntityData().get(TYPE).byteValue();
   }
   
   public byte setWebType(final boolean web, final boolean spider, final boolean item) {

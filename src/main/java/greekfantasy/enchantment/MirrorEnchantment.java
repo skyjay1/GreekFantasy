@@ -10,6 +10,8 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
+import net.minecraft.enchantment.Enchantment.Rarity;
+
 public class MirrorEnchantment extends Enchantment {
 
   public MirrorEnchantment(Rarity rarityIn) {
@@ -21,20 +23,20 @@ public class MirrorEnchantment extends Enchantment {
   }
   
   @Override
-  public ITextComponent getDisplayName(int level) {
-    return ((IFormattableTextComponent)super.getDisplayName(level)).mergeStyle(TextFormatting.WHITE);
+  public ITextComponent getFullname(int level) {
+    return ((IFormattableTextComponent)super.getFullname(level)).withStyle(TextFormatting.WHITE);
   }
   
   @Override 
-  public int getMinEnchantability(int level) { return 10; }
+  public int getMinCost(int level) { return 10; }
   @Override
-  public int getMaxEnchantability(int level) { return 20; }
+  public int getMaxCost(int level) { return 20; }
   @Override
-  public boolean isTreasureEnchantment() { return GreekFantasy.CONFIG.isMirrorEnabled(); }
+  public boolean isTreasureOnly() { return GreekFantasy.CONFIG.isMirrorEnabled(); }
   @Override
-  public boolean canVillagerTrade() { return GreekFantasy.CONFIG.isMirrorEnabled(); }
+  public boolean isTradeable() { return GreekFantasy.CONFIG.isMirrorEnabled(); }
   @Override
-  public boolean canGenerateInLoot() { return GreekFantasy.CONFIG.isMirrorEnabled(); }
+  public boolean isDiscoverable() { return GreekFantasy.CONFIG.isMirrorEnabled(); }
   @Override
   public int getMaxLevel() { return 1; }
   @Override

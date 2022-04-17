@@ -31,123 +31,123 @@ public class FuryModel<T extends FuryEntity> extends BipedModel<T> {
   public FuryModel(float modelSize) {
     super(modelSize, 0.0F, 64, 64);
 
-    bipedHead = new ModelRenderer(this);
-    bipedHead.setRotationPoint(0.0F, 4.0F, 0.0F);
-    bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+    head = new ModelRenderer(this);
+    head.setPos(0.0F, 4.0F, 0.0F);
+    head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
     
-    bipedHeadwear.setRotationPoint(0.0F, 4.0F, 0.0F);
+    hat.setPos(0.0F, 4.0F, 0.0F);
 
-    bipedBody = new ModelRenderer(this);
-    bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-    bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 4.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
+    body = new ModelRenderer(this);
+    body.setPos(0.0F, 0.0F, 0.0F);
+    body.texOffs(16, 16).addBox(-4.0F, 4.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
-    bipedRightArm = new ModelRenderer(this);
-    bipedRightArm.setRotationPoint(-5.0F, 5.0F, 0.0F);
-    bipedRightArm.setTextureOffset(40, 16).addBox(-2.0F, -1.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);
+    rightArm = new ModelRenderer(this);
+    rightArm.setPos(-5.0F, 5.0F, 0.0F);
+    rightArm.texOffs(40, 16).addBox(-2.0F, -1.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);
 
-    bipedLeftArm = new ModelRenderer(this);
-    bipedLeftArm.setRotationPoint(5.0F, 5.0F, 0.0F);
-    bipedLeftArm.setTextureOffset(32, 48).addBox(-1.0F, -1.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);
-    bipedLeftArm.mirror = true;
+    leftArm = new ModelRenderer(this);
+    leftArm.setPos(5.0F, 5.0F, 0.0F);
+    leftArm.texOffs(32, 48).addBox(-1.0F, -1.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);
+    leftArm.mirror = true;
 
-    bipedRightLeg = new ModelRenderer(this);
-    bipedRightLeg.setRotationPoint(-2.0F, 16.0F, 0.0F);
-    bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 8.0F, 4.0F, 0.0F, false);
+    rightLeg = new ModelRenderer(this);
+    rightLeg.setPos(-2.0F, 16.0F, 0.0F);
+    rightLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 8.0F, 4.0F, 0.0F, false);
 
-    bipedLeftLeg = new ModelRenderer(this);
-    bipedLeftLeg.setRotationPoint(2.0F, 16.0F, 0.0F);
-    bipedLeftLeg.setTextureOffset(16, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 8.0F, 4.0F, 0.0F, false);
-    bipedLeftLeg.mirror = true;
+    leftLeg = new ModelRenderer(this);
+    leftLeg.setPos(2.0F, 16.0F, 0.0F);
+    leftLeg.texOffs(16, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 8.0F, 4.0F, 0.0F, false);
+    leftLeg.mirror = true;
     
     // chest
     
     chest = new ModelRenderer(this);
-    chest.setRotationPoint(0.0F, 5.0F, -2.0F);
-    chest.rotateAngleX = -0.2182F;
-    chest.setTextureOffset(0, 32).addBox(-4.01F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, modelSize);
+    chest.setPos(0.0F, 5.0F, -2.0F);
+    chest.xRot = -0.2182F;
+    chest.texOffs(0, 32).addBox(-4.01F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, modelSize);
     
     // wings
     
     leftWingArm = new ModelRenderer(this);
-    leftWingArm.setRotationPoint(1.0F, 8.0F, 2.0F);
-    leftWingArm.rotateAngleX = 0.0873F;
-    leftWingArm.rotateAngleY = 0.3927F;
-    leftWingArm.setTextureOffset(47, 33).addBox(0.0F, -2.0F, 0.0F, 2.0F, 2.0F, 4.0F, modelSize);
+    leftWingArm.setPos(1.0F, 8.0F, 2.0F);
+    leftWingArm.xRot = 0.0873F;
+    leftWingArm.yRot = 0.3927F;
+    leftWingArm.texOffs(47, 33).addBox(0.0F, -2.0F, 0.0F, 2.0F, 2.0F, 4.0F, modelSize);
     leftWingArm.mirror = true;
 
     leftWing = new ModelRenderer(this);
-    leftWing.setRotationPoint(3.0F, 0.0F, 4.0F);
-    leftWing.setTextureOffset(31, 33).addBox(-4.0F, -7.0F, 0.0F, 6.0F, 14.0F, 1.0F, modelSize);
+    leftWing.setPos(3.0F, 0.0F, 4.0F);
+    leftWing.texOffs(31, 33).addBox(-4.0F, -7.0F, 0.0F, 6.0F, 14.0F, 1.0F, modelSize);
     leftWing.mirror = true;
     leftWingArm.addChild(leftWing);
 
     leftWing2 = new ModelRenderer(this);
-    leftWing2.setRotationPoint(2.0F, -7.0F, 1.0F);
-    leftWing2.setTextureOffset(46, 43).addBox(0.0F, -3.0F, -1.0F, 8.0F, 20.0F, 1.0F, modelSize);
+    leftWing2.setPos(2.0F, -7.0F, 1.0F);
+    leftWing2.texOffs(46, 43).addBox(0.0F, -3.0F, -1.0F, 8.0F, 20.0F, 1.0F, modelSize);
     leftWing2.mirror = true;
     leftWing.addChild(leftWing2);
 
     rightWingArm = new ModelRenderer(this);
-    rightWingArm.setRotationPoint(-1.0F, 8.0F, 2.0F);
-    rightWingArm.rotateAngleX = 0.0873F;
-    rightWingArm.rotateAngleY = -0.3927F;
-    rightWingArm.setTextureOffset(33, 33).addBox(-2.0F, -2.0F, 0.0F, 2.0F, 2.0F, 4.0F, modelSize);
+    rightWingArm.setPos(-1.0F, 8.0F, 2.0F);
+    rightWingArm.xRot = 0.0873F;
+    rightWingArm.yRot = -0.3927F;
+    rightWingArm.texOffs(33, 33).addBox(-2.0F, -2.0F, 0.0F, 2.0F, 2.0F, 4.0F, modelSize);
 
     rightWing = new ModelRenderer(this);
-    rightWing.setRotationPoint(-2.0F, 0.0F, 4.0F);
-    rightWing.setTextureOffset(31, 33).addBox(-3.0F, -7.0F, 0.0F, 6.0F, 14.0F, 1.0F, 0.0F, true);
+    rightWing.setPos(-2.0F, 0.0F, 4.0F);
+    rightWing.texOffs(31, 33).addBox(-3.0F, -7.0F, 0.0F, 6.0F, 14.0F, 1.0F, 0.0F, true);
     rightWingArm.addChild(rightWing);
 
     rightWing2 = new ModelRenderer(this);
-    rightWing2.setRotationPoint(-3.0F, -8.0F, 1.0F);
-    rightWing2.setTextureOffset(46, 43).addBox(-8.0F, -2.0F, -1.0F, 8.0F, 20.0F, 1.0F, 0.0F, true);
+    rightWing2.setPos(-3.0F, -8.0F, 1.0F);
+    rightWing2.texOffs(46, 43).addBox(-8.0F, -2.0F, -1.0F, 8.0F, 20.0F, 1.0F, 0.0F, true);
     rightWing.addChild(rightWing2);
     
     // snake hair
     
     this.snakeHair = new ModelRenderer(this);
-    this.snakeHair.setRotationPoint(0.0F, 4.0F, 0.0F);
+    this.snakeHair.setPos(0.0F, 4.0F, 0.0F);
     snakeHair1 = makeSnakes(3.8F, (float) Math.PI / 6.0F, modelSize).toArray(new ModelRenderer[0]);
     snakeHair2 = makeSnakes(2.25F, (float) Math.PI / 4.0F, modelSize).toArray(new ModelRenderer[0]);
     snakeHair3 = makeSnakes(1.25F, (float) Math.PI / 3.0F, modelSize).toArray(new ModelRenderer[0]);
   }
   
   @Override
-  protected Iterable<ModelRenderer> getBodyParts() { return Iterables.concat(super.getBodyParts(), ImmutableList.of(this.chest, this.leftWingArm, this.rightWingArm)); }
+  protected Iterable<ModelRenderer> bodyParts() { return Iterables.concat(super.bodyParts(), ImmutableList.of(this.chest, this.leftWingArm, this.rightWingArm)); }
   
   @Override
-  public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
-    super.setRotationAngles(entity, limbSwing, limbSwingAmount, partialTick, rotationYaw, rotationPitch);
-    bipedHead.setRotationPoint(0.0F, 4.0F, 0.0F);    
-    snakeHair.copyModelAngles(this.bipedHead);
-    bipedHeadwear.setRotationPoint(0.0F, 4.0F, 0.0F);
-    bipedRightArm.setRotationPoint(-5.0F, 5.0F, 0.0F);
-    bipedLeftArm.setRotationPoint(5.0F, 5.0F, 0.0F);
-    bipedRightLeg.setRotationPoint(-2.0F, 16.0F, 0.0F);
-    bipedLeftLeg.setRotationPoint(2.0F, 16.0F, 0.0F);
+  public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
+    super.setupAnim(entity, limbSwing, limbSwingAmount, partialTick, rotationYaw, rotationPitch);
+    head.setPos(0.0F, 4.0F, 0.0F);    
+    snakeHair.copyFrom(this.head);
+    hat.setPos(0.0F, 4.0F, 0.0F);
+    rightArm.setPos(-5.0F, 5.0F, 0.0F);
+    leftArm.setPos(5.0F, 5.0F, 0.0F);
+    rightLeg.setPos(-2.0F, 16.0F, 0.0F);
+    leftLeg.setPos(2.0F, 16.0F, 0.0F);
     final float flyingLeft = 1.0F - entity.flyingTime * 0.74F;
-    bipedLeftLeg.rotateAngleX *= flyingLeft;
-    bipedRightLeg.rotateAngleX *= flyingLeft;
+    leftLeg.xRot *= flyingLeft;
+    rightLeg.xRot *= flyingLeft;
   }
   
   @Override
-  public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
-    super.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTick);
-    final float flying = (entity.flyingTime > 0.01F && entity.ticksExisted > 5) ? MathHelper.clamp(entity.flyingTime, 0.0F, 1.0F) : 0.0F;
-    float ticks = entity.getEntityId() * 2 + entity.ticksExisted + partialTick;
+  public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
+    super.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTick);
+    final float flying = (entity.flyingTime > 0.01F && entity.tickCount > 5) ? MathHelper.clamp(entity.flyingTime, 0.0F, 1.0F) : 0.0F;
+    float ticks = entity.getId() * 2 + entity.tickCount + partialTick;
     final float cosTicks = MathHelper.cos(ticks * (0.2F + flying * 0.25F));
     // left wing
-    this.leftWing.rotateAngleY = cosTicks * (0.035F + flying * 0.21F);
-    this.leftWing2.rotateAngleY = 0.3491F + cosTicks * (0.05F + flying * 0.11F);
+    this.leftWing.yRot = cosTicks * (0.035F + flying * 0.21F);
+    this.leftWing2.yRot = 0.3491F + cosTicks * (0.05F + flying * 0.11F);
     // right wing
-    this.rightWing.rotateAngleY = -cosTicks * (0.035F + flying * 0.21F);
-    this.rightWing2.rotateAngleY = -0.3491F - cosTicks * (0.05F + flying * 0.11F);
+    this.rightWing.yRot = -cosTicks * (0.035F + flying * 0.21F);
+    this.rightWing2.yRot = -0.3491F - cosTicks * (0.05F + flying * 0.11F);
   }
 
   private void animateSnakes(final ModelRenderer[] list, final float ticks, final float baseAngleX) {
     for(int i = 0, l = list.length; i < l; i++) {
       // update rotation angles
-      list[i].rotateAngleX = baseAngleX + (float) Math.cos(ticks * 0.32 + i * 2.89F) * 0.08F;
+      list[i].xRot = baseAngleX + (float) Math.cos(ticks * 0.32 + i * 2.89F) * 0.08F;
     }
   }
   
@@ -158,12 +158,12 @@ public class FuryModel<T extends FuryEntity> extends BipedModel<T> {
     animateSnakes(snakeHair2, ticks, 1.03F);
     animateSnakes(snakeHair3, ticks, 0.82F);
     // scale the hair before rendering
-    matrixStackIn.push();
-    this.snakeHair.copyModelAngles(this.bipedHead);
+    matrixStackIn.pushPose();
+    this.snakeHair.copyFrom(this.head);
     final float scale = 0.25F + (aggroTime * 0.75F);
     matrixStackIn.scale(scale, scale, scale);
     this.snakeHair.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
-    matrixStackIn.pop();
+    matrixStackIn.popPose();
   }
   
   private List<ModelRenderer> makeSnakes(final float radius, final float deltaAngle, final float modelSize) {

@@ -20,7 +20,7 @@ public class OliveTree extends Tree {
   private static ConfiguredFeature<BaseTreeFeatureConfig, ?> OLIVE_TREE_CONFIGURATION;
 
   @Override
-  protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getTreeFeature(final Random rand, final boolean hasNearbyFlora) {
+  protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getConfiguredFeature(final Random rand, final boolean hasNearbyFlora) {
     if(OLIVE_TREE_CONFIGURATION == null) {
       OLIVE_TREE_CONFIGURATION = getConfiguredTree();
     }
@@ -28,12 +28,12 @@ public class OliveTree extends Tree {
   }
   
   public static ConfiguredFeature<BaseTreeFeatureConfig, ?> getConfiguredTree() {
-    return GFWorldGen.OLIVE_TREE_FEATURE.withConfiguration(new BaseTreeFeatureConfig.Builder(
-        new SimpleBlockStateProvider(GFRegistry.OLIVE_LOG.getDefaultState()), 
-        new SimpleBlockStateProvider(GFRegistry.OLIVE_LEAVES.getDefaultState()), 
-        new FancyFoliagePlacer(FeatureSpread.create(2), FeatureSpread.create(4), 4), 
+    return GFWorldGen.OLIVE_TREE_FEATURE.configured(new BaseTreeFeatureConfig.Builder(
+        new SimpleBlockStateProvider(GFRegistry.OLIVE_LOG.defaultBlockState()), 
+        new SimpleBlockStateProvider(GFRegistry.OLIVE_LEAVES.defaultBlockState()), 
+        new FancyFoliagePlacer(FeatureSpread.fixed(2), FeatureSpread.fixed(4), 4), 
         new FancyTrunkPlacer(3, 11, 0), new TwoLayerFeature(0, 0, 0, OptionalInt.of(4)))
-        .setIgnoreVines().setHeightmap(Heightmap.Type.MOTION_BLOCKING).build());
+        .ignoreVines().heightmap(Heightmap.Type.MOTION_BLOCKING).build());
   }
 
 }

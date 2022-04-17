@@ -30,12 +30,12 @@ public class ClubItem extends TieredItem implements IVanishable {
 
   public ClubItem(IItemTier tier, Item.Properties properties) {
     super(tier, properties);
-    final double attackDamage = 5.5D + tier.getAttackDamage();
+    final double attackDamage = 5.5D + tier.getAttackDamageBonus();
     final double attackSpeed = -3.5D;
     final double moveSpeed = -0.1D;
     ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-    builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", attackDamage, AttributeModifier.Operation.ADDITION));
-    builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", attackSpeed, AttributeModifier.Operation.ADDITION));
+    builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", attackDamage, AttributeModifier.Operation.ADDITION));
+    builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", attackSpeed, AttributeModifier.Operation.ADDITION));
     builder.put(Attributes.ATTACK_KNOCKBACK, new AttributeModifier(ATTACK_KNOCKBACK_MODIFIER, "Weapon modifier", ATTACK_KNOCKBACK_AMOUNT, AttributeModifier.Operation.ADDITION));
     builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(MOVE_SPEED_MODIFIER, "Weapon modifier", moveSpeed, AttributeModifier.Operation.MULTIPLY_TOTAL));
     this.attributeModifiers = builder.build();
@@ -46,17 +46,17 @@ public class ClubItem extends TieredItem implements IVanishable {
    * on the stack.
    */
   @Override
-  public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+  public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
     // damage item
-    stack.damageItem(2, attacker, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
-    if(attacker instanceof PlayerEntity && !((PlayerEntity)attacker).getCooldownTracker().hasCooldown(this)) {
+    stack.hurtAndBreak(2, attacker, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+    if(attacker instanceof PlayerEntity && !((PlayerEntity)attacker).getCooldowns().isOnCooldown(this)) {
       // determine knockback amount
       float knockback = 0.0F;
       for(final AttributeModifier modifier : this.getAttributeModifiers(EquipmentSlotType.MAINHAND, stack).get(Attributes.ATTACK_KNOCKBACK)) {
         knockback += modifier.getAmount();
       }
       // apply knockback
-      target.applyKnockback(knockback * 0.75F, (double)MathHelper.sin(attacker.rotationYaw * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(attacker.rotationYaw * ((float)Math.PI / 180F))));
+      target.knockback(knockback * 0.75F, (double)MathHelper.sin(attacker.yRot * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(attacker.yRot * ((float)Math.PI / 180F))));
     }
     return true;
   }
@@ -65,9 +65,9 @@ public class ClubItem extends TieredItem implements IVanishable {
    * Called when a Block is destroyed using this Item. Return true to trigger the "Use Item" statistic.
    */
   @Override
-  public boolean onBlockDestroyed(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
-    if (!worldIn.isRemote && state.getBlockHardness(worldIn, pos) != 0.0F) {
-      stack.damageItem(1, entityLiving, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+  public boolean mineBlock(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
+    if (!worldIn.isClientSide && state.getDestroySpeed(worldIn, pos) != 0.0F) {
+      stack.hurtAndBreak(1, entityLiving, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
     }
     return true;
   }

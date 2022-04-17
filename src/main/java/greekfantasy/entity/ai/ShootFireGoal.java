@@ -19,7 +19,7 @@ public class ShootFireGoal extends Goal {
   private int cooldown;
   
   protected ShootFireGoal(final MobEntity entityIn, final int fireTimeIn, final int maxCooldownIn, final double fireRangeIn) {
-    this.setMutexFlags(EnumSet.allOf(Goal.Flag.class));
+    this.setFlags(EnumSet.allOf(Goal.Flag.class));
     entity = entityIn;
     maxShootFireTime = fireTimeIn;
     fireRange = fireRangeIn;
@@ -28,28 +28,28 @@ public class ShootFireGoal extends Goal {
   }
 
   @Override
-  public boolean shouldExecute() {  
+  public boolean canUse() {  
     if(this.cooldown > 0) {
       cooldown--;
-    } else if (entity.getAttackTarget() != null
-        && entity.getDistanceSq(entity.getAttackTarget()) < (fireRange * fireRange)
-        && entity.canEntityBeSeen(entity.getAttackTarget())) {
+    } else if (entity.getTarget() != null
+        && entity.distanceToSqr(entity.getTarget()) < (fireRange * fireRange)
+        && entity.canSee(entity.getTarget())) {
       return true;
     }
     return false;
   }
   
   @Override
-  public boolean shouldContinueExecuting() {
-    return entity.getAttackTarget() != null
-        && entity.canEntityBeSeen(entity.getAttackTarget())
-        && entity.getDistanceSq(entity.getAttackTarget()) < (fireRange * fireRange);
+  public boolean canContinueToUse() {
+    return entity.getTarget() != null
+        && entity.canSee(entity.getTarget())
+        && entity.distanceToSqr(entity.getTarget()) < (fireRange * fireRange);
   }
  
   @Override
-  public void startExecuting() {
+  public void start() {
     this.fireBreathingTime = 1;
-    entity.playSound(SoundEvents.ENTITY_CREEPER_PRIMED, 1.0F, 1.2F);
+    entity.playSound(SoundEvents.CREEPER_PRIMED, 1.0F, 1.2F);
   }
   
   @Override
@@ -57,22 +57,22 @@ public class ShootFireGoal extends Goal {
     if(fireBreathingTime > 0 && fireBreathingTime < maxShootFireTime) {
       fireBreathingTime++;
       // stop the entity from moving, and adjust look vecs
-      entity.getNavigator().clearPath();
-      entity.faceEntity(entity.getAttackTarget(), 100.0F, 100.0F);
-      entity.getLookController().setLookPositionWithEntity(entity.getAttackTarget(), 100.0F, 100.0F);
+      entity.getNavigation().stop();
+      entity.lookAt(entity.getTarget(), 100.0F, 100.0F);
+      entity.getLookControl().setLookAt(entity.getTarget(), 100.0F, 100.0F);
       // set fire to targetPos
       if(fireBreathingTime > 18 && fireBreathingTime % 7 == 0) {
-        final Vector3d entityPos = new Vector3d(entity.getPosX(), entity.getPosYEye(), entity.getPosZ());
-        igniteInRange(entityPos, entity.getAttackTarget().getPositionVec(), 0.65D, 5);
-        entity.playSound(SoundEvents.ITEM_FIRECHARGE_USE, 1.0F, 1.0F);
+        final Vector3d entityPos = new Vector3d(entity.getX(), entity.getEyeY(), entity.getZ());
+        igniteInRange(entityPos, entity.getTarget().position(), 0.65D, 5);
+        entity.playSound(SoundEvents.FIRECHARGE_USE, 1.0F, 1.0F);
       }
     } else {
-      resetTask();
+      stop();
     } 
   }
   
   @Override
-  public void resetTask() {
+  public void stop() {
     this.fireBreathingTime = 0;
     this.cooldown = maxCooldown;
   }
@@ -91,9 +91,9 @@ public class ShootFireGoal extends Goal {
       Vector3d scaled = startPos.add(vecDifference.scale(i));
       // make a box at this position along the vector
       final AxisAlignedBB aabb = new AxisAlignedBB(scaled.x - radius, scaled.y - radius, scaled.z - radius, scaled.x + radius, scaled.y + radius, scaled.z + radius);
-      for(final Entity e : entity.getEntityWorld().getEntitiesWithinAABBExcludingEntity(entity, aabb)) {
+      for(final Entity e : entity.getCommandSenderWorld().getEntities(entity, aabb)) {
         // set fire to any entities inside the box
-        e.setFire(fireTime + entity.getRNG().nextInt(5) - 2);
+        e.setSecondsOnFire(fireTime + entity.getRandom().nextInt(5) - 2);
       }
     }
   }

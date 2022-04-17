@@ -28,14 +28,14 @@ public class BabySpiderEntity extends SpiderEntity {
 
   public BabySpiderEntity(EntityType<? extends BabySpiderEntity> type, World worldIn) {
     super(type, worldIn);
-    this.experienceValue = 1;
+    this.xpReward = 1;
   }
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MonsterEntity.func_234295_eP_()
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
-        .createMutableAttribute(Attributes.MAX_HEALTH, 4.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, (double) 0.36F);
+    return MonsterEntity.createMonsterAttributes()
+        .add(Attributes.ATTACK_DAMAGE, 1.0D)
+        .add(Attributes.MAX_HEALTH, 4.0D)
+        .add(Attributes.MOVEMENT_SPEED, (double) 0.36F);
   }
 
   @Override
@@ -69,18 +69,18 @@ public class BabySpiderEntity extends SpiderEntity {
     }
 
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
       if (cooldown > 0) {
         cooldown--;
       } else {
-        return super.shouldExecute();
+        return super.canUse();
       }
       return false;
     }
 
     @Override
-    public void startExecuting() {
-      super.startExecuting();
+    public void start() {
+      super.start();
       BabySpiderEntity.this.isAttacking = true;
     }
     
@@ -88,27 +88,27 @@ public class BabySpiderEntity extends SpiderEntity {
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
-    public boolean shouldContinueExecuting() {
-       float f = this.attacker.getBrightness();
-       if (f >= 0.5F && this.attacker.getRNG().nextInt(100) == 0) {
-          this.attacker.setAttackTarget((LivingEntity)null);
+    public boolean canContinueToUse() {
+       float f = this.mob.getBrightness();
+       if (f >= 0.5F && this.mob.getRandom().nextInt(100) == 0) {
+          this.mob.setTarget((LivingEntity)null);
           return false;
        } else {
-          return super.shouldContinueExecuting();
+          return super.canContinueToUse();
        }
     }
 
 
     @Override
-    public void resetTask() {
-      super.resetTask();
+    public void stop() {
+      super.stop();
       cooldown = maxCooldown;
       BabySpiderEntity.this.isAttacking = false;
     }
 
     @Override
     protected double getAttackReachSqr(LivingEntity attackTarget) {
-       return (double)(6.0F + attackTarget.getWidth());
+       return (double)(6.0F + attackTarget.getBbWidth());
     }
   }
 
@@ -119,7 +119,7 @@ public class BabySpiderEntity extends SpiderEntity {
     }
     
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
       if(BabySpiderEntity.this.isAttacking) {
         return false;
       }
@@ -127,11 +127,11 @@ public class BabySpiderEntity extends SpiderEntity {
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
+    public boolean canContinueToUse() {
       if(BabySpiderEntity.this.isAttacking) {
         return false;
       }
-      return super.shouldContinueExecuting();
+      return super.canContinueToUse();
     }
   }
   
@@ -146,9 +146,9 @@ public class BabySpiderEntity extends SpiderEntity {
      * method as well.
      */
     @Override
-    public boolean shouldExecute() {
-       float f = this.goalOwner.getBrightness();
-       return f >= 0.5F ? false : super.shouldExecute();
+    public boolean canUse() {
+       float f = this.mob.getBrightness();
+       return f >= 0.5F ? false : super.canUse();
     }
  }
 }

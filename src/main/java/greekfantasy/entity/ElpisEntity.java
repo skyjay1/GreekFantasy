@@ -52,7 +52,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 
 public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
-  private static final DataParameter<Byte> STATE = EntityDataManager.createKey(ElpisEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Byte> STATE = EntityDataManager.defineId(ElpisEntity.class, DataSerializers.BYTE);
   private static final String KEY_STATE = "ElpisState";
   private static final String KEY_HOME = "ElpisHome";
   private static final String KEY_AGE = "ElpisAge";
@@ -78,23 +78,23 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   
   public ElpisEntity(final EntityType<? extends CreatureEntity> type, final World world) {
     super(type, world);
-    this.moveController = new FlyingMovementController(this, 20, true);
-    this.setPathPriority(PathNodeType.DANGER_FIRE, -1.0F);
-    this.setPathPriority(PathNodeType.DAMAGE_FIRE, -1.0F);
+    this.moveControl = new FlyingMovementController(this, 20, true);
+    this.setPathfindingMalus(PathNodeType.DANGER_FIRE, -1.0F);
+    this.setPathfindingMalus(PathNodeType.DAMAGE_FIRE, -1.0F);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.5D)
-        .createMutableAttribute(Attributes.FLYING_SPEED, 0.4D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 24.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.15D)
+        .add(Attributes.ATTACK_DAMAGE, 0.5D)
+        .add(Attributes.FLYING_SPEED, 0.4D);
   }
   
   @Override
-  protected void registerData() {
-    super.registerData();
-    this.getDataManager().register(STATE, Byte.valueOf(STATE_NONE));
+  protected void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(STATE, Byte.valueOf(STATE_NONE));
   }
   
   @Override
@@ -109,16 +109,16 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
-    if (this.world.isRemote() && rand.nextInt(12) == 0) {
+  public void aiStep() {
+    super.aiStep();
+    if (this.level.isClientSide() && random.nextInt(12) == 0) {
       spawnParticle(ParticleTypes.AMBIENT_ENTITY_EFFECT, true);
     }
     // update age
     ++age;
     // update despawn time
     if(despawnTime > 0) {
-      if(despawnTime > (maxDespawnTime / 2) && rand.nextInt(3) == 0) {
+      if(despawnTime > (maxDespawnTime / 2) && random.nextInt(3) == 0) {
         spawnParticle(ParticleTypes.PORTAL, false);
       }
       if(despawnTime++ >= maxDespawnTime) {
@@ -129,9 +129,9 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
     if (this.isTrading()) {
       // spawn particles when trading
       spawnParticle(ParticleTypes.HAPPY_VILLAGER, false);
-    } else if(TRADE_ITEM.test(this.getHeldItem(Hand.OFF_HAND).getItem())) {
+    } else if(TRADE_ITEM.test(this.getItemInHand(Hand.OFF_HAND).getItem())) {
       // update held item when done trading
-      this.setHeldItem(Hand.OFF_HAND, ItemStack.EMPTY);
+      this.setItemInHand(Hand.OFF_HAND, ItemStack.EMPTY);
     }
   }
 
@@ -142,25 +142,25 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   }
   
   @Override
-  protected ActionResultType getEntityInteractionResult(final PlayerEntity player, final Hand hand) { // processInteract
-    ItemStack stack = player.getHeldItem(hand);
+  protected ActionResultType mobInteract(final PlayerEntity player, final Hand hand) { // processInteract
+    ItemStack stack = player.getItemInHand(hand);
     if(this.isNoneState() && TRADE_ITEM.test(stack.getItem())) {
       this.setState(STATE_TRADING);
       // copy itemstack and set held item
-      this.setHeldItem(Hand.OFF_HAND, new ItemStack(stack.getItem()));
+      this.setItemInHand(Hand.OFF_HAND, new ItemStack(stack.getItem()));
       // reduce stack size
       if(!player.isCreative()) {
         stack.shrink(1);
       }
-      player.setHeldItem(hand, stack);
+      player.setItemInHand(hand, stack);
       return ActionResultType.CONSUME;
     }
     
-    return super.getEntityInteractionResult(player, hand);
+    return super.mobInteract(player, hand);
   }
   
   @Override
-  protected SoundEvent getAmbientSound() { return SoundEvents.BLOCK_NOTE_BLOCK_CHIME; }
+  protected SoundEvent getAmbientSound() { return SoundEvents.NOTE_BLOCK_CHIME; }
   
   @Override
   protected float getSoundVolume() { return 0.8F; }
@@ -169,104 +169,104 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
 //  protected float getSoundPitch() { return 1.2F + rand.nextFloat() * 0.2F; }
 
   @Override
-  public SoundCategory getSoundCategory() { return SoundCategory.NEUTRAL; }
+  public SoundCategory getSoundSource() { return SoundCategory.NEUTRAL; }
   
   @Override
-  public float getBlockPathWeight(BlockPos pos, IWorldReader worldIn) {
-    return worldIn.isAirBlock(pos) ? 10.0F : 0.0F;
+  public float getWalkTargetValue(BlockPos pos, IWorldReader worldIn) {
+    return worldIn.isEmptyBlock(pos) ? 10.0F : 0.0F;
   }
 
   @Override
-  public boolean onLivingFall(float distance, float damageMultiplier) {
+  public boolean causeFallDamage(float distance, float damageMultiplier) {
     return false;
   }
 
   @Override
-  protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
+  protected void checkFallDamage(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
   }
   
   @Override
-  protected PathNavigator createNavigator(World worldIn) {
+  protected PathNavigator createNavigation(World worldIn) {
     FlyingPathNavigator flyingpathnavigator = new FlyingPathNavigator(this, worldIn);
     flyingpathnavigator.setCanOpenDoors(false);
-    flyingpathnavigator.setCanSwim(false);
-    flyingpathnavigator.setCanEnterDoors(true);
+    flyingpathnavigator.setCanFloat(false);
+    flyingpathnavigator.setCanPassDoors(true);
     return flyingpathnavigator;
   }
 
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
-    compound.putByte(KEY_STATE, this.getDataManager().get(STATE).byteValue());
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
+    compound.putByte(KEY_STATE, this.getEntityData().get(STATE).byteValue());
     compound.putInt(KEY_AGE, age);
     compound.putInt(KEY_DESPAWN_TIMER, despawnTime);
-    if(this.getHomePosition() != BlockPos.ZERO && this.getMaximumHomeDistance() > -1.0F) {
-      compound.putInt(KEY_HOME + ".x", getHomePosition().getX());
-      compound.putInt(KEY_HOME + ".y", getHomePosition().getY());
-      compound.putInt(KEY_HOME + ".z", getHomePosition().getZ());
+    if(this.getRestrictCenter() != BlockPos.ZERO && this.getRestrictRadius() > -1.0F) {
+      compound.putInt(KEY_HOME + ".x", getRestrictCenter().getX());
+      compound.putInt(KEY_HOME + ".y", getRestrictCenter().getY());
+      compound.putInt(KEY_HOME + ".z", getRestrictCenter().getZ());
     }
   }
   
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
-    this.getDataManager().set(STATE, compound.getByte(KEY_STATE));
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
+    this.getEntityData().set(STATE, compound.getByte(KEY_STATE));
     age = compound.getInt(KEY_AGE);
     despawnTime = compound.getInt(KEY_DESPAWN_TIMER);
     if(compound.contains(KEY_HOME + ".x")) {
       final int x = compound.getInt(KEY_HOME + ".x");
       final int y = compound.getInt(KEY_HOME + ".y");
       final int z = compound.getInt(KEY_HOME + ".z");
-      this.setHomePosAndDistance(new BlockPos(x, y, z), wanderDistance);
+      this.restrictTo(new BlockPos(x, y, z), wanderDistance);
     }
   }
   
   @Override
-  public boolean canDespawn(final double disToPlayer) {
+  public boolean removeWhenFarAway(final double disToPlayer) {
     return this.isNoneState() && this.age > maxAge && disToPlayer > 12.0D;
   }
   
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    spawnDataIn = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     this.setLeftHanded(false);
     this.setState(STATE_NONE);
     return spawnDataIn;
   }
  
   public BlockPos getWanderCenter() {
-    final BlockPos home = this.getHomePosition();
-    return this.getMaximumHomeDistance() > -1.0F && home != BlockPos.ZERO ? home : this.getPosition();
+    final BlockPos home = this.getRestrictCenter();
+    return this.getRestrictRadius() > -1.0F && home != BlockPos.ZERO ? home : this.blockPosition();
   }
   
   protected void spawnParticle(final IParticleData particle, final boolean colored) {
-    if(world.isRemote()) {
+    if(level.isClientSide()) {
       final double motion = 0.09D;
       final double radius = 0.25D;
-      world.addParticle(particle, 
-          this.getPosX() + (world.rand.nextDouble() - 0.5D) * radius, 
-          this.getPosYEye() + (world.rand.nextDouble() - 0.5D) * radius * 0.75D, 
-          this.getPosZ() + (world.rand.nextDouble() - 0.5D) * radius,
-          colored ? 1.0F : (world.rand.nextDouble() - 0.5D) * motion, 
-          colored ? 0.60F : (world.rand.nextDouble() - 0.5D) * motion * 0.5D,
-          colored ? 0.92F : (world.rand.nextDouble() - 0.5D) * motion);
+      level.addParticle(particle, 
+          this.getX() + (level.random.nextDouble() - 0.5D) * radius, 
+          this.getEyeY() + (level.random.nextDouble() - 0.5D) * radius * 0.75D, 
+          this.getZ() + (level.random.nextDouble() - 0.5D) * radius,
+          colored ? 1.0F : (level.random.nextDouble() - 0.5D) * motion, 
+          colored ? 0.60F : (level.random.nextDouble() - 0.5D) * motion * 0.5D,
+          colored ? 0.92F : (level.random.nextDouble() - 0.5D) * motion);
     }
   }
   
   // state methods
   
   public void setState(final byte state) { 
-    this.getDataManager().set(STATE, state);
+    this.getEntityData().set(STATE, state);
     if(state == STATE_DESPAWNING) {
       despawnTime = 1;
-      if(!world.isRemote()) {
-        world.setEntityState(this, DESPAWN_CLIENT);
+      if(!level.isClientSide()) {
+        level.broadcastEntityEvent(this, DESPAWN_CLIENT);
       }
     }
   }
   
-  public byte getState() { return this.getDataManager().get(STATE).byteValue(); }
+  public byte getState() { return this.getEntityData().get(STATE).byteValue(); }
   
   public boolean isNoneState() { return getState() == STATE_NONE; }
   
@@ -277,11 +277,11 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   // Client methods
   
   @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
+  public void handleEntityEvent(byte id) {
     if(id == DESPAWN_CLIENT) {
       setState(STATE_DESPAWNING);
     } else {
-      super.handleStatusUpdate(id);
+      super.handleEntityEvent(id);
     }
   }
   
@@ -293,7 +293,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
     case STATE_DESPAWNING: return 1.0F - getDespawnPercent(partialTick);
     case STATE_NONE: default:
       final float minAlpha = 0.14F;
-      final float cosAlpha = 0.5F + 0.5F * MathHelper.cos((this.getEntityId() + this.ticksExisted + partialTick) * 0.025F);
+      final float cosAlpha = 0.5F + 0.5F * MathHelper.cos((this.getId() + this.tickCount + partialTick) * 0.025F);
       return MathHelper.clamp(cosAlpha, minAlpha, 1.0F);
     }
   }
@@ -313,27 +313,27 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
     int progress;
     
     public TradeGoal(final Supplier<ItemStack> resultStack, final int durationIn) {
-      this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+      this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
       result = resultStack;
       duration = durationIn;
     }
 
     @Override
-    public boolean shouldExecute() {
-      player = ElpisEntity.this.world.getClosestPlayer(ElpisEntity.this, 8.0D);
+    public boolean canUse() {
+      player = ElpisEntity.this.level.getNearestPlayer(ElpisEntity.this, 8.0D);
       return player != null && ElpisEntity.this.isTrading();
     }
     
     @Override
     public void tick() {
-      ElpisEntity.this.getLookController().setLookPositionWithEntity(player, ElpisEntity.this.getHorizontalFaceSpeed(), ElpisEntity.this.getVerticalFaceSpeed());
-      ElpisEntity.this.getNavigator().clearPath();
+      ElpisEntity.this.getLookControl().setLookAt(player, ElpisEntity.this.getMaxHeadYRot(), ElpisEntity.this.getMaxHeadXRot());
+      ElpisEntity.this.getNavigation().stop();
       if(progress++ >= duration) {
         // finish trading and spawn an item
-        final ItemEntity item = new ItemEntity(ElpisEntity.this.world, ElpisEntity.this.getPosX(), 
-            ElpisEntity.this.getPosY(), ElpisEntity.this.getPosZ(), result.get());
-        ElpisEntity.this.getEntityWorld().addEntity(item);
-        ElpisEntity.this.playSound(SoundEvents.ENTITY_PLAYER_LEVELUP, 0.8F, 1.0F);
+        final ItemEntity item = new ItemEntity(ElpisEntity.this.level, ElpisEntity.this.getX(), 
+            ElpisEntity.this.getY(), ElpisEntity.this.getZ(), result.get());
+        ElpisEntity.this.getCommandSenderWorld().addFreshEntity(item);
+        ElpisEntity.this.playSound(SoundEvents.PLAYER_LEVELUP, 0.8F, 1.0F);
         // start despawning
         ElpisEntity.this.despawnTime = 1;
         ElpisEntity.this.setState(STATE_DESPAWNING);
@@ -341,7 +341,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
     }
     
     @Override
-    public void resetTask() {
+    public void stop() {
       if(ElpisEntity.this.isTrading()) {
         ElpisEntity.this.setState(STATE_NONE);
       }
@@ -352,9 +352,9 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
   // Despawning goal
   
   class DoNothingGoal extends Goal {
-    public DoNothingGoal() { this.setMutexFlags(EnumSet.allOf(Goal.Flag.class)); }
+    public DoNothingGoal() { this.setFlags(EnumSet.allOf(Goal.Flag.class)); }
     @Override
-    public boolean shouldExecute() { return ElpisEntity.this.isDespawning(); }
+    public boolean canUse() { return ElpisEntity.this.isDespawning(); }
   }
   
   // TODO not doing anything...
@@ -373,19 +373,19 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
     private final double speed;
     
     public MoveRandomGoal(final int chanceIn, final int radiusIn, final double speedIn) {
-      setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+      setFlags(EnumSet.of(Goal.Flag.MOVE));
       chance = chanceIn;
       radius = radiusIn;
       speed = speedIn;
     }
 
     @Override
-    public boolean shouldExecute() {
-      return (ElpisEntity.this.getNavigator().noPath() && ElpisEntity.this.rand.nextInt(chance) == 0);
+    public boolean canUse() {
+      return (ElpisEntity.this.getNavigation().isDone() && ElpisEntity.this.random.nextInt(chance) == 0);
     }
 
     @Override
-    public boolean shouldContinueExecuting() {
+    public boolean canContinueToUse() {
       return false;
     }
 
@@ -394,12 +394,12 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
       BlockPos pos = ElpisEntity.this.getWanderCenter();
 
       for (int checks = 0; checks < 3; checks++) {
-        BlockPos posCheck = pos.add(ElpisEntity.this.rand.nextInt(radius * 2) - radius, ElpisEntity.this.rand.nextInt(radius) - (radius / 2), ElpisEntity.this.rand.nextInt(radius * 2) - radius);
-        if (ElpisEntity.this.world.isAirBlock(posCheck)) {
-          ElpisEntity.this.getNavigator().tryMoveToXYZ(posCheck.getX() + 0.5D, posCheck.getY() + 0.5D, posCheck.getZ() + 0.5D, speed);
+        BlockPos posCheck = pos.offset(ElpisEntity.this.random.nextInt(radius * 2) - radius, ElpisEntity.this.random.nextInt(radius) - (radius / 2), ElpisEntity.this.random.nextInt(radius * 2) - radius);
+        if (ElpisEntity.this.level.isEmptyBlock(posCheck)) {
+          ElpisEntity.this.getNavigation().moveTo(posCheck.getX() + 0.5D, posCheck.getY() + 0.5D, posCheck.getZ() + 0.5D, speed);
           //ElpisEntity.this.moveController.setMoveTo(posCheck.getX() + 0.5D, posCheck.getY() + 0.5D, posCheck.getZ() + 0.5D, speed);
-          if (ElpisEntity.this.getAttackTarget() == null) {
-            ElpisEntity.this.getLookController().setLookPosition(posCheck.getX() + 0.5D, posCheck.getY() + 0.5D, posCheck.getZ() + 0.5D, 180.0F, 20.0F);
+          if (ElpisEntity.this.getTarget() == null) {
+            ElpisEntity.this.getLookControl().setLookAt(posCheck.getX() + 0.5D, posCheck.getY() + 0.5D, posCheck.getZ() + 0.5D, 180.0F, 20.0F);
           }
           break;
         }

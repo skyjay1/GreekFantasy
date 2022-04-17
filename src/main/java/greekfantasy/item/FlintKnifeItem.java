@@ -15,7 +15,7 @@ public class FlintKnifeItem extends SwordItem {
   /**
    * Return whether this item is repairable in an anvil.
    */
-  public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+  public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
      return repair.getItem() == Items.FLINT;
   }
 }

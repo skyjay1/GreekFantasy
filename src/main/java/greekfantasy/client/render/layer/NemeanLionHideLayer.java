@@ -20,23 +20,23 @@ public class NemeanLionHideLayer<T extends LivingEntity, M extends BipedModel<T>
   
   @Override
   public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-    if(entitylivingbaseIn != null && entitylivingbaseIn.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.NEMEAN_LION_HIDE) {
+    if(entitylivingbaseIn != null && entitylivingbaseIn.getItemBySlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.NEMEAN_LION_HIDE) {
       super.render(matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch);
     }
   }
 
   @Override
-  protected void setModelSlotVisible(A modelIn, EquipmentSlotType slotIn) {
-    modelIn.setVisible(false);
+  protected void setPartVisibility(A modelIn, EquipmentSlotType slotIn) {
+    modelIn.setAllVisible(false);
     if (slotIn == EquipmentSlotType.HEAD) {
-      modelIn.bipedHead.showModel = true;
-      modelIn.bipedHeadwear.showModel = true;
-      modelIn.bipedBody.showModel = true;
-      modelIn.bipedRightArm.showModel = true;
-      modelIn.bipedLeftArm.showModel = true;
-      modelIn.bipedBody.showModel = true;
-      modelIn.bipedRightLeg.showModel = true;
-      modelIn.bipedLeftLeg.showModel = true;
+      modelIn.head.visible = true;
+      modelIn.hat.visible = true;
+      modelIn.body.visible = true;
+      modelIn.rightArm.visible = true;
+      modelIn.leftArm.visible = true;
+      modelIn.body.visible = true;
+      modelIn.rightLeg.visible = true;
+      modelIn.leftLeg.visible = true;
     }
  }
 }

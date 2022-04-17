@@ -102,21 +102,21 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent(priority = EventPriority.HIGHEST)
   public static void onPlayerDeath(final LivingDeathEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getEntityLiving() instanceof PlayerEntity) {
+    if(!event.isCanceled() && event.getEntityLiving().isEffectiveAi() && event.getEntityLiving() instanceof PlayerEntity) {
       final PlayerEntity player = (PlayerEntity) event.getEntityLiving();
       // attempt to spawn a shade
-      if(GreekFantasy.CONFIG.doesShadeSpawnOnDeath() && !player.getEntityWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY) && !player.isSpectator() && player.experienceLevel > 3) {
+      if(GreekFantasy.CONFIG.doesShadeSpawnOnDeath() && !player.getCommandSenderWorld().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !player.isSpectator() && player.experienceLevel > 3) {
         // save XP value
-        int xp = player.experienceTotal;
+        int xp = player.totalExperience;
         // remove XP from player
-        player.addExperienceLevel(-(player.experienceLevel + 1));
+        player.giveExperienceLevels(-(player.experienceLevel + 1));
         // give XP to shade and spawn into world
-        final ShadeEntity shade = GFRegistry.SHADE_ENTITY.create(player.getEntityWorld());
-        shade.setLocationAndAngles(player.getPosX(), player.getPosY(), player.getPosZ(), player.rotationYaw, player.rotationPitch);
-        shade.setStoredXP((int)(xp * (0.4F + player.getRNG().nextFloat() * 0.2F)));
-        shade.setOwnerUniqueId(PlayerEntity.getOfflineUUID(player.getDisplayName().getUnformattedComponentText()));
-        shade.enablePersistence();
-        player.getEntityWorld().addEntity(shade);
+        final ShadeEntity shade = GFRegistry.SHADE_ENTITY.create(player.getCommandSenderWorld());
+        shade.moveTo(player.getX(), player.getY(), player.getZ(), player.yRot, player.xRot);
+        shade.setStoredXP((int)(xp * (0.4F + player.getRandom().nextFloat() * 0.2F)));
+        shade.setOwnerUniqueId(PlayerEntity.createPlayerUUID(player.getDisplayName().getContents()));
+        shade.setPersistenceRequired();
+        player.getCommandSenderWorld().addFreshEntity(shade);
       }
     }
   }
@@ -127,10 +127,10 @@ public class CommonForgeEventHandler {
    */
   @SubscribeEvent
   public static void onLivingDeath(final LivingDeathEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() && event.getSource().getTrueSource() instanceof PlayerEntity) {
+    if(!event.isCanceled() && event.getEntityLiving().isEffectiveAi() && event.getSource().getEntity() instanceof PlayerEntity) {
       // check if the cow was killed by a player and if geryon can spawn here
-      final BlockPos deathPos = event.getEntityLiving().getPosition();
-      if(event.getEntityLiving() instanceof CowEntity && GeryonEntity.canGeryonSpawnOn(event.getEntityLiving().getEntityWorld(), deathPos)) {
+      final BlockPos deathPos = event.getEntityLiving().blockPosition();
+      if(event.getEntityLiving() instanceof CowEntity && GeryonEntity.canGeryonSpawnOn(event.getEntityLiving().getCommandSenderWorld(), deathPos)) {
         // check for Geryon Head blocks nearby
         final List<BlockPos> heads = new ArrayList<>();
         final int r = 3;
@@ -139,8 +139,8 @@ public class CommonForgeEventHandler {
         for(int x = -r; x <= r; x++) {
           for(int y = -2; y <= 2; y++) {
             for(int z = -r; z <= r; z++) {
-              pos = deathPos.add(x, y, z);
-              if(event.getEntityLiving().getEntityWorld().getBlockState(pos).matchesBlock(GFRegistry.GIGANTE_HEAD)) {
+              pos = deathPos.offset(x, y, z);
+              if(event.getEntityLiving().getCommandSenderWorld().getBlockState(pos).is(GFRegistry.GIGANTE_HEAD)) {
                 heads.add(pos);
               }
               if(heads.size() >= 3) break countHeads;
@@ -149,9 +149,9 @@ public class CommonForgeEventHandler {
         }
         // if we found at least three heads, remove them and spawn a geryon
         if(heads.size() >= 3) {
-          heads.subList(0, 3).forEach(p -> event.getEntityLiving().getEntityWorld().destroyBlock(p, false));
-          final float yaw = MathHelper.wrapDegrees(event.getSource().getTrueSource().rotationYaw + 180.0F);
-          GeryonEntity.spawnGeryon(event.getEntityLiving().getEntityWorld(), deathPos, yaw);
+          heads.subList(0, 3).forEach(p -> event.getEntityLiving().getCommandSenderWorld().destroyBlock(p, false));
+          final float yaw = MathHelper.wrapDegrees(event.getSource().getEntity().yRot + 180.0F);
+          GeryonEntity.spawnGeryon(event.getEntityLiving().getCommandSenderWorld(), deathPos, yaw);
         }
       }
     }
@@ -167,7 +167,7 @@ public class CommonForgeEventHandler {
   public static void onPlayerTick(final PlayerTickEvent event) {
     if(event.phase == TickEvent.Phase.START && event.player.isAlive()) {
       // Update Nemean Lion riding pose
-      final boolean isRidingLion = event.player.getRidingEntity() instanceof NemeanLionEntity;
+      final boolean isRidingLion = event.player.getVehicle() instanceof NemeanLionEntity;
       final Pose currentPose = event.player.getForcedPose();
       // update the forced pose
       if(isRidingLion && currentPose != Pose.FALL_FLYING) {
@@ -184,16 +184,16 @@ public class CommonForgeEventHandler {
         final boolean isSwine = isSwine(event.player);
         final Pose forcedPose = event.player.getForcedPose();
         // drop armor
-        if(isSwine && GreekFantasy.CONFIG.doesSwineDropArmor() && event.player.getRNG().nextInt(20) == 0) {
-          final Iterable<ItemStack> armor = ImmutableList.copyOf(event.player.getArmorInventoryList());
-          event.player.setItemStackToSlot(EquipmentSlotType.HEAD, ItemStack.EMPTY);
-          event.player.setItemStackToSlot(EquipmentSlotType.CHEST, ItemStack.EMPTY);
-          event.player.setItemStackToSlot(EquipmentSlotType.LEGS, ItemStack.EMPTY);
-          event.player.setItemStackToSlot(EquipmentSlotType.FEET, ItemStack.EMPTY);
+        if(isSwine && GreekFantasy.CONFIG.doesSwineDropArmor() && event.player.getRandom().nextInt(20) == 0) {
+          final Iterable<ItemStack> armor = ImmutableList.copyOf(event.player.getArmorSlots());
+          event.player.setItemSlot(EquipmentSlotType.HEAD, ItemStack.EMPTY);
+          event.player.setItemSlot(EquipmentSlotType.CHEST, ItemStack.EMPTY);
+          event.player.setItemSlot(EquipmentSlotType.LEGS, ItemStack.EMPTY);
+          event.player.setItemSlot(EquipmentSlotType.FEET, ItemStack.EMPTY);
           for(final ItemStack i : armor) {
-            final ItemEntity item = event.player.entityDropItem(i);
+            final ItemEntity item = event.player.spawnAtLocation(i);
             if(item != null) {
-              item.setNoPickupDelay();
+              item.setNoPickUpDelay();
             }
           }
         }
@@ -210,8 +210,8 @@ public class CommonForgeEventHandler {
       
       // update silkwalker enchantment
       if(GreekFantasy.CONFIG.isSilkwalkerEnabled()
-          && hasSilkstep(event.player) && !event.player.abilities.isFlying 
-          && event.player.motionMultiplier != Vector3d.ZERO) {
+          && hasSilkstep(event.player) && !event.player.abilities.flying 
+          && event.player.stuckSpeedMultiplier != Vector3d.ZERO) {
         // this variable will become true if the player is collided with a cobweb
         boolean cobweb = false;
         // check all blocks within player's bounding box
@@ -219,14 +219,14 @@ public class CommonForgeEventHandler {
         BlockPos blockpos = new BlockPos(axisalignedbb.minX + 0.001D, axisalignedbb.minY + 0.001D, axisalignedbb.minZ + 0.001D);
         BlockPos blockpos1 = new BlockPos(axisalignedbb.maxX - 0.001D, axisalignedbb.maxY - 0.001D, axisalignedbb.maxZ - 0.001D);
         BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
-        if (event.player.world.isAreaLoaded(blockpos, blockpos1)) {
+        if (event.player.level.hasChunksAt(blockpos, blockpos1)) {
           entryloop: 
           for (int i = blockpos.getX(); i <= blockpos1.getX(); ++i) {
             for (int j = blockpos.getY(); j <= blockpos1.getY(); ++j) {
               for (int k = blockpos.getZ(); k <= blockpos1.getZ(); ++k) {
-                blockpos$mutable.setPos(i, j, k);
+                blockpos$mutable.set(i, j, k);
                 // if the block is a cobweb, exit the loops and change the motion multiplier
-                if (event.player.world.getBlockState(blockpos$mutable).matchesBlock(Blocks.COBWEB)) {
+                if (event.player.level.getBlockState(blockpos$mutable).is(Blocks.COBWEB)) {
                   cobweb = true;
                   break entryloop;
                 }
@@ -234,21 +234,21 @@ public class CommonForgeEventHandler {
             }
           }
           if (cobweb) {
-            event.player.motionMultiplier = Vector3d.ZERO;
+            event.player.stuckSpeedMultiplier = Vector3d.ZERO;
           }
         }
       }
       
       // place golden string if player is holding golden string
       // TODO also check if player is in a maze structure
-      if(event.player.ticksExisted % 4 == 0 && (event.player.getHeldItemMainhand().getItem() == GFRegistry.GOLDEN_BALL || event.player.getHeldItemOffhand().getItem() == GFRegistry.GOLDEN_BALL)) {
-        BlockPos pos = event.player.getPosition();
-        BlockState current = event.player.getEntityWorld().getBlockState(pos);
-        BlockState string = GFRegistry.GOLDEN_STRING_BLOCK.getDefaultState().with(BlockStateProperties.WATERLOGGED, current.getFluidState().getFluid().isIn(FluidTags.WATER));
+      if(event.player.tickCount % 4 == 0 && (event.player.getMainHandItem().getItem() == GFRegistry.GOLDEN_BALL || event.player.getOffhandItem().getItem() == GFRegistry.GOLDEN_BALL)) {
+        BlockPos pos = event.player.blockPosition();
+        BlockState current = event.player.getCommandSenderWorld().getBlockState(pos);
+        BlockState string = GFRegistry.GOLDEN_STRING_BLOCK.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, current.getFluidState().getType().is(FluidTags.WATER));
         boolean replaceable = current.getMaterial() == Material.AIR || current.getMaterial() == Material.WATER;
         if(replaceable && current.getBlock() != GFRegistry.GOLDEN_STRING_BLOCK 
-            && string.isValidPosition(event.player.getEntityWorld(), pos)) {
-          event.player.getEntityWorld().setBlockState(pos, string, 3);
+            && string.canSurvive(event.player.getCommandSenderWorld(), pos)) {
+          event.player.getCommandSenderWorld().setBlock(pos, string, 3);
         }
       }
     }
@@ -262,10 +262,10 @@ public class CommonForgeEventHandler {
   @SubscribeEvent
   public static void onAddPotion(final PotionEvent.PotionAddedEvent event) {
     // send swine effect packet
-    if (!event.getEntityLiving().getEntityWorld().isRemote() && GreekFantasy.CONFIG.isSwineEnabled() 
-        && event.getPotionEffect().getPotion() == GFRegistry.SWINE_EFFECT
+    if (!event.getEntityLiving().getCommandSenderWorld().isClientSide() && GreekFantasy.CONFIG.isSwineEnabled() 
+        && event.getPotionEffect().getEffect() == GFRegistry.SWINE_EFFECT
         && GreekFantasy.CONFIG.canSwineApply(event.getEntityLiving().getType().getRegistryName().toString())) {
-      final int id = event.getEntityLiving().getEntityId();
+      final int id = event.getEntityLiving().getId();
       GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSwineEffectPacket(id, event.getPotionEffect().getDuration()));
     }
   }
@@ -291,12 +291,12 @@ public class CommonForgeEventHandler {
   @SubscribeEvent
   public static void onPlayerInteract(final PlayerInteractEvent.EntityInteract event) {
     // when player uses poisonous potato on adult hoglin outside of nether
-    if(!event.isCanceled() && (!GreekFantasy.CONFIG.getGiantBoarNonNether() || event.getWorld().getDimensionKey() != World.THE_NETHER) 
+    if(!event.isCanceled() && (!GreekFantasy.CONFIG.getGiantBoarNonNether() || event.getWorld().dimension() != World.NETHER) 
         && event.getTarget().getType() == EntityType.HOGLIN 
         && event.getTarget() instanceof HoglinEntity && event.getWorld() instanceof ServerWorld 
         && GIANT_BOAR_TRIGGER.contains(event.getItemStack().getItem())) {
       final HoglinEntity hoglin = (HoglinEntity)event.getTarget();
-      if(!hoglin.isChild()) {
+      if(!hoglin.isBaby()) {
         // spawn giant boar and shrink the item stack
         GiantBoarEntity.spawnGiantBoar((ServerWorld)event.getWorld(), hoglin);
         if(!event.getPlayer().isCreative()) {
@@ -306,7 +306,7 @@ public class CommonForgeEventHandler {
     } else if(!event.isCanceled() && event.getTarget().getType() == EntityType.HORSE && event.getTarget() instanceof HorseEntity
         && event.getWorld() instanceof ServerWorld && ARION_TRIGGER.contains(event.getItemStack().getItem())) {
       final HorseEntity horse = (HorseEntity)event.getTarget();
-      if(!horse.isChild() && horse.isTame()) {
+      if(!horse.isBaby() && horse.isTamed()) {
         // spawn Arion and shrink the item stack
         ArionEntity.spawnArion((ServerWorld)event.getWorld(), event.getPlayer(), horse);
         if(!event.getPlayer().isCreative()) {
@@ -324,10 +324,10 @@ public class CommonForgeEventHandler {
   @SubscribeEvent
   public static void onProjectileImpact(final ProjectileImpactEvent.Arrow event) {
     AbstractArrowEntity arrow = event.getArrow();
-    if(!event.isCanceled() && !arrow.getEntityWorld().isRemote() && 
+    if(!event.isCanceled() && !arrow.getCommandSenderWorld().isClientSide() && 
         event.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY) {
       Entity entity = ((EntityRayTraceResult)event.getRayTraceResult()).getEntity();
-      double damage = arrow.getDamage();
+      double damage = arrow.getBaseDamage();
       if(entity instanceof LivingEntity) {
         // if the projectile hit the legs/feet while wearing any achilles armor, multiply the damage
         int achillesArmor = countAchillesArmor((LivingEntity)entity);
@@ -343,21 +343,21 @@ public class CommonForgeEventHandler {
           immuneChance = Math.max(immuneChance, AchillesArmorItem.getProjectileImmunityChance(achillesArmor));
           damage *= 0.8D;
           // determine crit chance
-          if((arrow.getPosY() - arrow.getHeight() * 0.5D) < (entity.getPosY() + entity.getHeight() * 0.24D)) {
+          if((arrow.getY() - arrow.getBbHeight() * 0.5D) < (entity.getY() + entity.getBbHeight() * 0.24D)) {
             critChance = AchillesArmorItem.getProjectileCritChance(achillesArmor);
           }
         }
         // if wearing achilles armor, check crit chance
         if(critChance > 0 && (Math.random() < critChance)) {
-          arrow.setDamage(arrow.getDamage() * (2.0D + 0.5D * achillesArmor));
+          arrow.setBaseDamage(arrow.getBaseDamage() * (2.0D + 0.5D * achillesArmor));
         } else if(immuneChance > 0 && Math.random() < immuneChance) {
           // otherwise, cancel the event
           event.setCanceled(true);
           // "bounce" the projectile
           damage = 0.0D;
-          arrow.setMotion(arrow.getMotion().mul(-0.45D, 0.65D, -0.45D));
+          arrow.setDeltaMovement(arrow.getDeltaMovement().multiply(-0.45D, 0.65D, -0.45D));
         }
-        arrow.setDamage(damage);
+        arrow.setBaseDamage(damage);
       }
     }
   }
@@ -382,7 +382,7 @@ public class CommonForgeEventHandler {
   @SubscribeEvent
   public static void onLivingJump(final LivingJumpEvent event) {
     if(GreekFantasy.CONFIG.doesStunPreventJump() && isStunned(event.getEntityLiving())) {
-      event.getEntityLiving().setMotion(event.getEntityLiving().getMotion().add(0.0D, -0.42D, 0.0D));
+      event.getEntityLiving().setDeltaMovement(event.getEntityLiving().getDeltaMovement().add(0.0D, -0.42D, 0.0D));
     }
   }
   
@@ -393,19 +393,19 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent
   public static void onBreakBlock(final BlockEvent.BreakEvent event) {
-    if(GreekFantasy.CONFIG.isDryadAngryOnHarvest() && event.getPlayer() != null && !event.getPlayer().isCreative() && event.getState().isIn(BlockTags.LOGS)) {
+    if(GreekFantasy.CONFIG.isDryadAngryOnHarvest() && event.getPlayer() != null && !event.getPlayer().isCreative() && event.getState().is(BlockTags.LOGS)) {
       // make a list of nearby dryads
-      final AxisAlignedBB aabb = new AxisAlignedBB(event.getPos()).grow(GreekFantasy.CONFIG.getDryadAngryRange());
-      final List<DryadEntity> dryads = event.getWorld().getEntitiesWithinAABB(DryadEntity.class, aabb);
+      final AxisAlignedBB aabb = new AxisAlignedBB(event.getPos()).inflate(GreekFantasy.CONFIG.getDryadAngryRange());
+      final List<DryadEntity> dryads = event.getWorld().getEntitiesOfClass(DryadEntity.class, aabb);
       for(final DryadEntity dryad : dryads) {
         // check if this is a tree according to the given dryad
-        if(DryadEntity.isTreeAt(event.getWorld(), event.getPos().down(1), dryad.getVariant().getLogs())
-            || DryadEntity.isTreeAt(event.getWorld(), event.getPos().down(2), dryad.getVariant().getLogs())) {
+        if(DryadEntity.isTreeAt(event.getWorld(), event.getPos().below(1), dryad.getVariant().getLogs())
+            || DryadEntity.isTreeAt(event.getWorld(), event.getPos().below(2), dryad.getVariant().getLogs())) {
           // anger the dryad
           GreekFantasy.LOGGER.debug("angry!");
-          dryad.setRevengeTarget(event.getPlayer());
-          dryad.setAngerTarget(event.getPlayer().getUniqueID());
-          dryad.func_230258_H__();
+          dryad.setLastHurtByMob(event.getPlayer());
+          dryad.setPersistentAngerTarget(event.getPlayer().getUUID());
+          dryad.startPersistentAngerTimer();
           dryad.tryExitTree();
         }
       }
@@ -419,10 +419,10 @@ public class CommonForgeEventHandler {
   @SubscribeEvent
   public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
     // attempt to add rabbit-flees-cerastes goal
-    if(event.getEntity() != null && event.getEntity().getType() == EntityType.RABBIT && !event.getEntity().getEntityWorld().isRemote()) {
+    if(event.getEntity() != null && event.getEntity().getType() == EntityType.RABBIT && !event.getEntity().getCommandSenderWorld().isClientSide()) {
       final RabbitEntity rabbit = (RabbitEntity) event.getEntity();
       if(rabbit.getRabbitType() != 99) {
-        rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, e -> !((CerastesEntity)e).isHiding(), 6.0F, 2.2D, 2.2D, EntityPredicates.CAN_AI_TARGET::test));        
+        rabbit.goalSelector.addGoal(4, new AvoidEntityGoal<>(rabbit, CerastesEntity.class, e -> !((CerastesEntity)e).isHiding(), 6.0F, 2.2D, 2.2D, EntityPredicates.NO_CREATIVE_OR_SPECTATOR::test));        
       }
     }
   }
@@ -440,19 +440,19 @@ public class CommonForgeEventHandler {
       event.setCanceled(true);
       // spawn Circe instead of witch
       final CirceEntity circe = GFRegistry.CIRCE_ENTITY.create((World)event.getWorld());
-      circe.setLocationAndAngles(event.getX(), event.getY(), event.getZ(), 0, 0);
-      event.getWorld().addEntity(circe);
+      circe.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
+      event.getWorld().addFreshEntity(circe);
     }
     // check if the entity is a sheep
     if(event.getEntity() != null && event.getEntity().getType() == EntityType.SHEEP && event.getWorld() instanceof World) {
       // check if the sheep has yellow wool
       SheepEntity sheep = (SheepEntity)event.getEntity();
-      if(sheep.getFleeceColor() == DyeColor.YELLOW && (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.getGoldenRamChance()) {
+      if(sheep.getColor() == DyeColor.YELLOW && (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.getGoldenRamChance()) {
         // spawn Golden Ram instead of sheep
         event.setCanceled(true);
         final GoldenRamEntity ram = GFRegistry.GOLDEN_RAM_ENTITY.create((World)event.getWorld());
-        ram.setLocationAndAngles(event.getX(), event.getY(), event.getZ(), 0, 0);
-        event.getWorld().addEntity(ram);
+        ram.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
+        event.getWorld().addFreshEntity(ram);
       }
     }
   }
@@ -465,18 +465,18 @@ public class CommonForgeEventHandler {
   @SubscribeEvent
   public static void onEntityStruckByLightning(final EntityStruckByLightningEvent event) {
     if(event.getEntity() instanceof LivingEntity && event.getEntity().getType() == EntityType.OCELOT 
-        && ((LivingEntity)event.getEntity()).getActivePotionEffect(Effects.STRENGTH) != null
-        && event.getEntity().world.getDifficulty() != Difficulty.PEACEFUL 
-        && event.getEntity().world.rand.nextInt(100) < GreekFantasy.CONFIG.getLightningLionChance()) {
+        && ((LivingEntity)event.getEntity()).getEffect(Effects.DAMAGE_BOOST) != null
+        && event.getEntity().level.getDifficulty() != Difficulty.PEACEFUL 
+        && event.getEntity().level.random.nextInt(100) < GreekFantasy.CONFIG.getLightningLionChance()) {
       // remove the entity and spawn a nemean lion
-      NemeanLionEntity lion = GFRegistry.NEMEAN_LION_ENTITY.create(event.getEntity().world);
-      lion.copyLocationAndAnglesFrom(event.getEntity());
+      NemeanLionEntity lion = GFRegistry.NEMEAN_LION_ENTITY.create(event.getEntity().level);
+      lion.copyPosition(event.getEntity());
       if(event.getEntity().hasCustomName()) {
         lion.setCustomName(event.getEntity().getCustomName());
         lion.setCustomNameVisible(event.getEntity().isCustomNameVisible());
       }
-      lion.enablePersistence();
-      event.getEntity().getEntityWorld().addEntity(lion);
+      lion.setPersistenceRequired();
+      event.getEntity().getCommandSenderWorld().addFreshEntity(lion);
       event.getEntity().remove();
     }
   }
@@ -489,8 +489,8 @@ public class CommonForgeEventHandler {
   public static void onLivingCheckSpawn(final LivingSpawnEvent.CheckSpawn event) {
     final int cRadius = GreekFantasy.CONFIG.getPalladiumChunkRange();
     final int cVertical = GreekFantasy.CONFIG.getPalladiumYRange() / 2; // divide by 2 to center on block
-    if(GreekFantasy.CONFIG.isPalladiumEnabled() && !event.getEntityLiving().getEntityWorld().isRemote() 
-        && event.getWorld() instanceof ServerWorld && event.getEntityLiving() instanceof IMob && event.getEntityLiving().canChangeDimension()) {
+    if(GreekFantasy.CONFIG.isPalladiumEnabled() && !event.getEntityLiving().getCommandSenderWorld().isClientSide() 
+        && event.getWorld() instanceof ServerWorld && event.getEntityLiving() instanceof IMob && event.getEntityLiving().canChangeDimensions()) {
       // check for nearby Statue Tile Entity
       final ServerWorld world = (ServerWorld)event.getWorld();
       final BlockPos blockPos = new BlockPos(event.getX(), event.getY(), event.getZ());
@@ -501,7 +501,7 @@ public class CommonForgeEventHandler {
       for(int cX = -cRadius; cX <= cRadius; cX++) {
         for(int cZ = -cRadius; cZ <= cRadius; cZ++) {
           cPos = new ChunkPos(chunkPos.x + cX, chunkPos.z + cZ);
-          if(event.getWorld().chunkExists(cPos.x, cPos.z)) {
+          if(event.getWorld().hasChunk(cPos.x, cPos.z)) {
             // check each position to see if it's valid and within range
             for(final BlockPos p : data.getPalladium(world, cPos)) {
               if(!GFWorldSavedData.validatePalladium(world, p)) {
@@ -526,11 +526,11 @@ public class CommonForgeEventHandler {
    **/
   @SubscribeEvent
   public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
-    if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity
+    if(!event.getEntityLiving().getCommandSenderWorld().isClientSide() && event.getEntityLiving() instanceof MobEntity
         && event.getTarget() instanceof LivingEntity
         && GreekFantasy.CONFIG.isSwineEnabled() && GreekFantasy.CONFIG.doesSwinePreventTarget() 
         && (isSwine(event.getEntityLiving()) || isSwine(event.getTarget()))) {
-      ((MobEntity)event.getEntityLiving()).setAttackTarget(null);
+      ((MobEntity)event.getEntityLiving()).setTarget(null);
     }
   }
   
@@ -584,13 +584,13 @@ public class CommonForgeEventHandler {
   
   /** @return whether the living entity is wearing the Nemean Hide **/
   private static boolean isWearingNemeanHide(final LivingEntity livingEntity) {
-    return livingEntity.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.NEMEAN_LION_HIDE;
+    return livingEntity.getItemBySlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.NEMEAN_LION_HIDE;
   }
   
   /** @return whether the living entity is wearing Achilles Armor **/
   private static int countAchillesArmor(final LivingEntity livingEntity) {
     int count = 0;
-    for(final ItemStack stack : livingEntity.getArmorInventoryList()) {
+    for(final ItemStack stack : livingEntity.getArmorSlots()) {
       if(stack.getItem() instanceof AchillesArmorItem) {
         count++;
       }
@@ -600,16 +600,16 @@ public class CommonForgeEventHandler {
   
   /** @return whether the entity should have the Stunned or Petrified effect applied **/
   private static boolean isStunned(final LivingEntity entity) {
-    return entity.isPotionActive(GFRegistry.STUNNED_EFFECT) || entity.isPotionActive(GFRegistry.PETRIFIED_EFFECT);
+    return entity.hasEffect(GFRegistry.STUNNED_EFFECT) || entity.hasEffect(GFRegistry.PETRIFIED_EFFECT);
   }
   
   /** @return whether the entity should have the Swine effect applied **/
   private static boolean isSwine(final LivingEntity livingEntity) {
-    return livingEntity.isPotionActive(GFRegistry.SWINE_EFFECT);
+    return livingEntity.hasEffect(GFRegistry.SWINE_EFFECT);
   }
   
   /** @return whether the player should have the client-side silkwalker step-height logic applied **/
   private static boolean hasSilkstep(final PlayerEntity player) {
-    return EnchantmentHelper.getEnchantmentLevel(GFRegistry.SILKSTEP_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
+    return EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.SILKSTEP_ENCHANTMENT, player.getItemBySlot(EquipmentSlotType.FEET)) > 0;
   }
 }

@@ -58,7 +58,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class SpartiEntity extends TameableEntity {
-  protected static final DataParameter<Boolean> SPAWNING = EntityDataManager.createKey(SpartiEntity.class, DataSerializers.BOOLEAN);
+  protected static final DataParameter<Boolean> SPAWNING = EntityDataManager.defineId(SpartiEntity.class, DataSerializers.BOOLEAN);
 
   protected static final String KEY_SPAWN_TIME = "Spawning";
   protected static final String KEY_LIFE_TICKS = "LifeTicks";
@@ -76,15 +76,15 @@ public class SpartiEntity extends TameableEntity {
   
   public SpartiEntity(final EntityType<? extends SpartiEntity> type, final World worldIn) {
     super(type, worldIn);
-    spawningSize = EntitySize.flexible(0.8F, 0.2F);
+    spawningSize = EntitySize.scalable(0.8F, 0.2F);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 54.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.28D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.0D)
-        .createMutableAttribute(Attributes.ARMOR, 2.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 54.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.28D)
+        .add(Attributes.ATTACK_DAMAGE, 2.0D)
+        .add(Attributes.ARMOR, 2.0D);
   }
   
   @Override
@@ -105,19 +105,19 @@ public class SpartiEntity extends TameableEntity {
   }
   
   @Override
-  protected void registerData() {
-    super.registerData();
-    this.getDataManager().register(SPAWNING, Boolean.valueOf(false));
+  protected void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(SPAWNING, Boolean.valueOf(false));
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
 
     // lifespan
     if (this.limitedLifespan && --this.limitedLifeTicks <= 0) {
       this.limitedLifeTicks = 20;
-      attackEntityFrom(DamageSource.STARVE, 2.0F);
+      hurt(DamageSource.STARVE, 2.0F);
     }
     
     // update spawn time
@@ -128,36 +128,36 @@ public class SpartiEntity extends TameableEntity {
     }
     
     // particles when spawning
-    if(isSpawning() && world.isRemote()) {
-      int i = MathHelper.floor(this.getPosX());
-      int j = MathHelper.floor(this.getPosY() - (double)0.2F);
-      int k = MathHelper.floor(this.getPosZ());
+    if(isSpawning() && level.isClientSide()) {
+      int i = MathHelper.floor(this.getX());
+      int j = MathHelper.floor(this.getY() - (double)0.2F);
+      int k = MathHelper.floor(this.getZ());
       BlockPos pos = new BlockPos(i, j, k);
-      BlockState blockstate = world.getBlockState(pos);
-      if (!world.isAirBlock(pos)) {
+      BlockState blockstate = level.getBlockState(pos);
+      if (!level.isEmptyBlock(pos)) {
         for(int count = 0; count < 10; count++) {
-         this.world.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate).setPos(pos), 
-             this.getPosX() + ((double)this.rand.nextFloat() - 0.5D) * (double)this.getWidth(), 
-             this.getPosY() + 0.1D, 
-             this.getPosZ() + ((double)this.rand.nextFloat() - 0.5D) * (double)this.getWidth(), 
-             4.0D * ((double)this.rand.nextFloat() - 0.5D), 0.6D, ((double)this.rand.nextFloat() - 0.5D) * 4.0D);
+         this.level.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate).setPos(pos), 
+             this.getX() + ((double)this.random.nextFloat() - 0.5D) * (double)this.getBbWidth(), 
+             this.getY() + 0.1D, 
+             this.getZ() + ((double)this.random.nextFloat() - 0.5D) * (double)this.getBbWidth(), 
+             4.0D * ((double)this.random.nextFloat() - 0.5D), 0.6D, ((double)this.random.nextFloat() - 0.5D) * 4.0D);
         }
       }
     }
   }
   
   public void setEquipmentOnSpawn() {
-    this.setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+    this.setItemInHand(Hand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
     this.setDropChance(EquipmentSlotType.MAINHAND, 0);
   }
   
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    final ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    final ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     setEquipmentOnSpawn();
     setSpawning(true);
-    setChild(false);
+    setBaby(false);
     return data;
   }
 
@@ -165,27 +165,27 @@ public class SpartiEntity extends TameableEntity {
   
   public void setSpawning(final boolean spawning) {
     this.spawnTime = spawning ? maxSpawnTime : 0;
-    this.getDataManager().set(SPAWNING, spawning);
-    this.recalculateSize();
-    if(spawning && !world.isRemote()) {
-      this.world.setEntityState(this, SPAWN_CLIENT);
+    this.getEntityData().set(SPAWNING, spawning);
+    this.refreshDimensions();
+    if(spawning && !level.isClientSide()) {
+      this.level.broadcastEntityEvent(this, SPAWN_CLIENT);
     }
   }
   
-  public boolean isSpawning() { return spawnTime > 0 || this.getDataManager().get(SPAWNING); }
+  public boolean isSpawning() { return spawnTime > 0 || this.getEntityData().get(SPAWNING); }
   
   public float getSpawnPercent() {
     return spawnTime > 0 ? 1.0F - ((float)spawnTime / (float)maxSpawnTime) : 1.0F;
   }
   
   @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
+  public void handleEntityEvent(byte id) {
     switch(id) {
     case SPAWN_CLIENT:
       setSpawning(true);
       break;
     default:
-      super.handleStatusUpdate(id);
+      super.handleEntityEvent(id);
       break;
     }
   }
@@ -200,55 +200,55 @@ public class SpartiEntity extends TameableEntity {
   // Misc. methods //
   
   @Override
-  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_SKELETON_AMBIENT; }
+  protected SoundEvent getAmbientSound() { return SoundEvents.SKELETON_AMBIENT; }
 
   @Override
-  protected SoundEvent getHurtSound(DamageSource source) { return SoundEvents.ENTITY_SKELETON_HURT; }
+  protected SoundEvent getHurtSound(DamageSource source) { return SoundEvents.SKELETON_HURT; }
 
   @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_SKELETON_DEATH; }
+  protected SoundEvent getDeathSound() { return SoundEvents.SKELETON_DEATH; }
 
   @Override
-  protected void playStepSound(BlockPos pos, BlockState blockIn) { this.playSound(SoundEvents.ENTITY_SKELETON_STEP, 0.15F, 1.0F); }
+  protected void playStepSound(BlockPos pos, BlockState blockIn) { this.playSound(SoundEvents.SKELETON_STEP, 0.15F, 1.0F); }
   
   @Override
-  public EntitySize getSize(final Pose poseIn) { return this.isSpawning() ? spawningSize : super.getSize(poseIn); }
+  public EntitySize getDimensions(final Pose poseIn) { return this.isSpawning() ? spawningSize : super.getDimensions(poseIn); }
   
   @Override
-  public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.UNDEAD; }
+  public CreatureAttribute getMobType() { return CreatureAttribute.UNDEAD; }
   
   @Override
-  public boolean canDespawn(double distanceToClosestPlayer) { return !this.isTamed(); }
+  public boolean removeWhenFarAway(double distanceToClosestPlayer) { return !this.isTame(); }
   
   @Override
   protected float getStandingEyeHeight(Pose pose, EntitySize size) { return this.isSpawning() ? 0.05F : 1.74F; }
   
   @Override
-  public double getYOffset() { return -0.6D; }  
+  public double getMyRidingOffset() { return -0.6D; }  
   
   @Override
-  public boolean canBeLeashedTo(PlayerEntity player) { return false; }
+  public boolean canBeLeashed(PlayerEntity player) { return false; }
   
   @Override
-  public boolean canMateWith(AnimalEntity otherAnimal) { return false; }
+  public boolean canMate(AnimalEntity otherAnimal) { return false; }
   
   @Override
-  public AgeableEntity createChild(ServerWorld world, AgeableEntity mate) { return null; }
+  public AgeableEntity getBreedOffspring(ServerWorld world, AgeableEntity mate) { return null; }
   
   @Override
-  public void setSitting(boolean sitting) { }
+  public void setOrderedToSit(boolean sitting) { }
   
   @Override
-  public void onDeath(DamageSource cause) {
-    setOwnerId(null);
-    super.onDeath(cause);
+  public void die(DamageSource cause) {
+    setOwnerUUID(null);
+    super.die(cause);
   }
   
   // NBT methods //
   
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
     compound.putBoolean(KEY_SPAWN_TIME, isSpawning());
     if (this.limitedLifespan) {
       compound.putInt(KEY_LIFE_TICKS, this.limitedLifeTicks);
@@ -256,8 +256,8 @@ public class SpartiEntity extends TameableEntity {
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
     setSpawning(compound.getBoolean(KEY_SPAWN_TIME));
     if (compound.contains(KEY_LIFE_TICKS)) {
       setLimitedLife(compound.getInt(KEY_LIFE_TICKS));
@@ -268,25 +268,25 @@ public class SpartiEntity extends TameableEntity {
   
   @Override
   public boolean canAttack(LivingEntity entity) {
-    if (isOwner(entity)) {
+    if (isOwnedBy(entity)) {
       return false;
     }
     return super.canAttack(entity);
   }
 
   @Override
-  public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner) {
+  public boolean wantsToAttack(LivingEntity target, LivingEntity owner) {
     if (!(target instanceof CreeperEntity) && !(target instanceof GhastEntity)) {
       if (target instanceof TameableEntity) {
         TameableEntity tameable = (TameableEntity) target;
-        return !tameable.isTamed() || tameable.getOwner() != owner;
+        return !tameable.isTame() || tameable.getOwner() != owner;
       } else if (target instanceof PlayerEntity && owner instanceof PlayerEntity
-          && !((PlayerEntity) owner).canAttackPlayer((PlayerEntity) target)) {
+          && !((PlayerEntity) owner).canHarmPlayer((PlayerEntity) target)) {
         return false;
-      } else if (target instanceof AbstractHorseEntity && ((AbstractHorseEntity) target).isTame()) {
+      } else if (target instanceof AbstractHorseEntity && ((AbstractHorseEntity) target).isTamed()) {
         return false;
       } else {
-        return !(target instanceof TameableEntity) || !((TameableEntity) target).isTamed();
+        return !(target instanceof TameableEntity) || !((TameableEntity) target).isTame();
       }
     } else {
       return false;
@@ -298,17 +298,17 @@ public class SpartiEntity extends TameableEntity {
   class SpawningGoal extends Goal {
     
     public SpawningGoal() {
-      setMutexFlags(EnumSet.allOf(Goal.Flag.class));
+      setFlags(EnumSet.allOf(Goal.Flag.class));
     }
 
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
       return SpartiEntity.this.isSpawning();
     }
     
     @Override
     public void tick() {
-      SpartiEntity.this.getNavigator().clearPath();
+      SpartiEntity.this.getNavigation().stop();
     }
 
   }

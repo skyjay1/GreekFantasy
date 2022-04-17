@@ -48,21 +48,21 @@ import net.minecraftforge.common.BiomeDictionary;
 
 public class DrakainaEntity extends MonsterEntity {
   
-  private static final DataParameter<Byte> DATA_VARIANT = EntityDataManager.createKey(DrakainaEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Byte> DATA_VARIANT = EntityDataManager.defineId(DrakainaEntity.class, DataSerializers.BYTE);
   private static final String KEY_VARIANT = "Variant";
   private static final String KEY_BVARIANT = "BVariant";
   
   public DrakainaEntity(final EntityType<? extends DrakainaEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.experienceValue = 10;
-    this.setPathPriority(PathNodeType.WATER, -0.5F);
+    this.xpReward = 10;
+    this.setPathfindingMalus(PathNodeType.WATER, -0.5F);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.28D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.5D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 24.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.28D)
+        .add(Attributes.ATTACK_DAMAGE, 2.5D);
   }
  
   @Override
@@ -79,23 +79,23 @@ public class DrakainaEntity extends MonsterEntity {
   }
   
   @Override
-  protected void registerData() {
-    super.registerData();
-    this.getDataManager().register(DATA_VARIANT, DrakainaEntity.Variant.GREEN.getId());
+  protected void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(DATA_VARIANT, DrakainaEntity.Variant.GREEN.getId());
   }
 
   @Override
-  public void livingTick() {
+  public void aiStep() {
     if (this.isAlive()) {
-      boolean flag = this.shouldBurnInDay() && this.isInDaylight();
+      boolean flag = this.shouldBurnInDay() && this.isSunBurnTick();
       if (flag) {
-        ItemStack itemstack = this.getItemStackFromSlot(EquipmentSlotType.HEAD);
+        ItemStack itemstack = this.getItemBySlot(EquipmentSlotType.HEAD);
         if (!itemstack.isEmpty()) {
-          if (itemstack.isDamageable()) {
-            itemstack.setDamage(itemstack.getDamage() + this.rand.nextInt(2));
-            if (itemstack.getDamage() >= itemstack.getMaxDamage()) {
-              this.sendBreakAnimation(EquipmentSlotType.HEAD);
-              this.setItemStackToSlot(EquipmentSlotType.HEAD, ItemStack.EMPTY);
+          if (itemstack.isDamageableItem()) {
+            itemstack.setDamageValue(itemstack.getDamageValue() + this.random.nextInt(2));
+            if (itemstack.getDamageValue() >= itemstack.getMaxDamage()) {
+              this.broadcastBreakEvent(EquipmentSlotType.HEAD);
+              this.setItemSlot(EquipmentSlotType.HEAD, ItemStack.EMPTY);
             }
           }
 
@@ -103,24 +103,24 @@ public class DrakainaEntity extends MonsterEntity {
         }
 
         if (flag) {
-          this.setFire(8);
+          this.setSecondsOnFire(8);
         }
       }
     }
 
-    super.livingTick();
+    super.aiStep();
   }
   
   // Sounds //
 
   @Override
-  protected SoundEvent getAmbientSound() {return SoundEvents.ENTITY_CAT_HISS; }
+  protected SoundEvent getAmbientSound() {return SoundEvents.CAT_HISS; }
 
   @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_SPIDER_AMBIENT; }
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.SPIDER_AMBIENT; }
 
   @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_SPIDER_DEATH; }
+  protected SoundEvent getDeathSound() { return SoundEvents.SPIDER_DEATH; }
 
   @Override
   protected float getSoundVolume() { return 0.68F; }
@@ -128,32 +128,32 @@ public class DrakainaEntity extends MonsterEntity {
   // MISC //
   
   @Override
-  public ResourceLocation getLootTable() {
+  public ResourceLocation getDefaultLootTable() {
     return this.getVariant().getLootTable();
   }
 
   @Override
-  public boolean isImmuneToFire() {
-    return getVariant() == DrakainaEntity.Variant.RED || super.isImmuneToFire();
+  public boolean fireImmune() {
+    return getVariant() == DrakainaEntity.Variant.RED || super.fireImmune();
   }
   
   @Override
-  public boolean attackEntityAsMob(final Entity entityIn) {
-    if (super.attackEntityAsMob(entityIn)) {
+  public boolean doHurtTarget(final Entity entityIn) {
+    if (super.doHurtTarget(entityIn)) {
       // use special attack
       if(entityIn instanceof LivingEntity && GreekFantasy.CONFIG.DRAKAINA_ATTACK.get()) {
         final LivingEntity entity = (LivingEntity)entityIn;
         final DrakainaEntity.Variant variant = getVariant();
         switch(variant) {
-        case RED: entity.setFire(2 + rand.nextInt(4)); break;
-        case BROWN: entity.addPotionEffect(new EffectInstance(Effects.HUNGER, 20 * (2 + rand.nextInt(5)))); break;
-        case GREEN: entity.addPotionEffect(new EffectInstance(Effects.POISON, 20 * (2 + rand.nextInt(5)))); break;
+        case RED: entity.setSecondsOnFire(2 + random.nextInt(4)); break;
+        case BROWN: entity.addEffect(new EffectInstance(Effects.HUNGER, 20 * (2 + random.nextInt(5)))); break;
+        case GREEN: entity.addEffect(new EffectInstance(Effects.POISON, 20 * (2 + random.nextInt(5)))); break;
         }
       }
       // light target on fire if burning
-      float f = this.world.getDifficultyForLocation(this.getPosition()).getAdditionalDifficulty();
-      if (this.getHeldItemMainhand().isEmpty() && this.isBurning() && this.rand.nextFloat() < f * 0.3F) {
-         entityIn.setFire(2 * (int)f);
+      float f = this.level.getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();
+      if (this.getMainHandItem().isEmpty() && this.isOnFire() && this.random.nextFloat() < f * 0.3F) {
+         entityIn.setSecondsOnFire(2 * (int)f);
       }
       return true;
     }
@@ -165,29 +165,29 @@ public class DrakainaEntity extends MonsterEntity {
   }
   
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
     final DrakainaEntity.Variant variant;
     if(reason == SpawnReason.COMMAND || reason == SpawnReason.SPAWN_EGG || reason == SpawnReason.SPAWNER || reason == SpawnReason.DISPENSER) {
       variant = DrakainaEntity.Variant.getRandom(worldIn.getRandom());
     } else {
-      variant = DrakainaEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
+      variant = DrakainaEntity.Variant.getForBiome(worldIn.getBiomeName(this.blockPosition()));
     }
     this.setVariant(variant);
-    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
   // NBT and Variant //
   
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
     compound.putByte(KEY_BVARIANT, getVariant().getId());
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
     if(compound.contains(KEY_VARIANT)) {
       setVariant(DrakainaEntity.Variant.getByName(compound.getString(KEY_VARIANT)));
     } else {
@@ -195,9 +195,9 @@ public class DrakainaEntity extends MonsterEntity {
     }
   }
   
-  public void setVariant(final DrakainaEntity.Variant variant) { this.getDataManager().set(DATA_VARIANT, variant.getId()); }
+  public void setVariant(final DrakainaEntity.Variant variant) { this.getEntityData().set(DATA_VARIANT, variant.getId()); }
 
-  public DrakainaEntity.Variant getVariant() { return DrakainaEntity.Variant.getById(this.getDataManager().get(DATA_VARIANT)); }
+  public DrakainaEntity.Variant getVariant() { return DrakainaEntity.Variant.getById(this.getEntityData().get(DATA_VARIANT)); }
   
   public static enum Variant implements IStringSerializable {
     GREEN("green"),
@@ -237,7 +237,7 @@ public class DrakainaEntity extends MonsterEntity {
       // check the given name against all types
       if(n != null && !n.isEmpty()) {
         for(final Variant t : values()) {
-          if(t.getString().equals(n)) {
+          if(t.getSerializedName().equals(n)) {
             return t;
           }
         }
@@ -259,7 +259,7 @@ public class DrakainaEntity extends MonsterEntity {
     }
   
     @Override
-    public String getString() {
+    public String getSerializedName() {
       return name;
     }
   }

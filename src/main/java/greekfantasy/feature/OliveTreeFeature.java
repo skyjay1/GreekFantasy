@@ -35,7 +35,7 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
   }
 
   @Override
-  public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
+  public boolean place(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final BaseTreeFeatureConfig config) {
     // check dimension from config
     if(!SimpleTemplateFeature.isValidDimension(reader)) {
@@ -43,32 +43,32 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
     }
     // rotation / mirror
     Mirror mirror = Mirror.NONE;
-    Rotation rotation = Rotation.randomRotation(rand);
+    Rotation rotation = Rotation.getRandom(rand);
     
     // template for tree
-    final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
-    final Template template = manager.getTemplateDefaulted(getRandomTree(rand));
+    final TemplateManager manager = reader.getLevel().getStructureManager();
+    final Template template = manager.getOrCreate(getRandomTree(rand));
     
     // position for tree
     BlockPos placementPos = blockPosIn;
-    if(!config.forcePlacement) {
+    if(!config.fromSapling) {
       // placementPos = placementPos.add(rand.nextInt(12) + 2, 0, rand.nextInt(12) + 2)
       placementPos = getHeightPos(reader, placementPos);
-      if(!isDirtOrGrassAt(reader, placementPos.down()) || !isAllReplaceable(reader, placementPos.add(2, 1, 2), 3, 3)) {
+      if(!isDirtOrGrassAt(reader, placementPos.below()) || !isAllReplaceable(reader, placementPos.offset(2, 1, 2), 3, 3)) {
         return false;
       }
     }
     
     final BlockPos offset = new BlockPos(-3, 0, -3);
-    BlockPos pos = placementPos.add(offset.rotate(rotation));
+    BlockPos pos = placementPos.offset(offset.rotate(rotation));
 
     // placement settings
     MutableBoundingBox mbb = new MutableBoundingBox(pos.getX() - 8, pos.getY() - 16, pos.getZ() - 8, pos.getX() + 8, pos.getY() + 16, pos.getZ() + 8);
     PlacementSettings placement = new PlacementSettings()
         .setRotation(rotation).setMirror(mirror).setRandom(rand).setBoundingBox(mbb)
-        .addProcessor(BlockIgnoreStructureProcessor.AIR_AND_STRUCTURE_BLOCK);
+        .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_AND_AIR);
     // actually build using the template
-    template.func_237146_a_(reader, pos, pos, placement, rand, 2);
+    template.placeInWorld(reader, pos, pos, placement, rand, 2);
     return true;
   }
   
@@ -82,7 +82,7 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
   }
   
   protected static BlockPos getHeightPos(final ISeedReader world, final BlockPos original) {
-    int y = world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, original).getY();
+    int y = world.getHeightmapPos(Heightmap.Type.WORLD_SURFACE_WG, original).getY();
     return new BlockPos(original.getX(), y, original.getZ());
   }
   
@@ -90,7 +90,7 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
     for(int i = 0; i < width; i++) {
       for(int j = 0; j < height; j++) {
         for(int k = 0; k < width; k++) {
-          if(!isReplaceableAt(world, corner.add(i, j, k))) {
+          if(!isReplaceableAt(world, corner.offset(i, j, k))) {
             return false;
           }
         }
@@ -100,21 +100,21 @@ public class OliveTreeFeature extends Feature<BaseTreeFeatureConfig> {
   }
   
   protected static boolean isDirtOrGrassAt(IWorldGenerationReader reader, BlockPos pos) {
-    return reader.hasBlockState(pos, state -> {
+    return reader.isStateAtPosition(pos, state -> {
       Block block = state.getBlock();
       return (isDirt(block) || block == Blocks.GRASS_BLOCK);
     });
   }
 
   protected static boolean isPlantAt(IWorldGenerationReader reader, BlockPos pos) {
-    return reader.hasBlockState(pos, state -> {
+    return reader.isStateAtPosition(pos, state -> {
       Material m = state.getMaterial();
-      return (m == Material.TALL_PLANTS || m == Material.PLANTS);
+      return (m == Material.REPLACEABLE_PLANT || m == Material.PLANT);
     });
   }
   
   protected static boolean isReplaceableAt(IWorldGenerationReader reader, BlockPos pos) {
-    return (isAirAt(reader, pos) || isPlantAt(reader, pos));
+    return (isAir(reader, pos) || isPlantAt(reader, pos));
   }
   
 

@@ -21,19 +21,19 @@ public class GeryonRenderer<T extends GeryonEntity> extends BipedRenderer<T, Ger
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
   
   @Override
-  protected void preRenderCallback(final T entity, MatrixStack matrix, float f) {
+  protected void scale(final T entity, MatrixStack matrix, float f) {
     // if the entity is spawning, shift the entity down
     if(entity.isSpawning()) {
       final float height = 4.96F;
       final float translate = 0.019F;
       final float translateY = height * entity.getSpawnPercent(f) - height;
-      final float translateX = translate * (entity.getRNG().nextFloat() - 0.5F);
-      final float translateZ = translate * (entity.getRNG().nextFloat() - 0.5F);
+      final float translateX = translate * (entity.getRandom().nextFloat() - 0.5F);
+      final float translateZ = translate * (entity.getRandom().nextFloat() - 0.5F);
       matrix.translate(translateX, -translateY, translateZ);
     }
     matrix.scale(SCALE, SCALE, SCALE);

@@ -19,14 +19,14 @@ public class HydraHeadRenderer<T extends HydraHeadEntity> extends MobRenderer<T,
   }
   
   @Override
-  protected void preRenderCallback(final T entity, MatrixStack matrix, float ageInTicks) {
-    getEntityModel().setSpawnPercent(entity.getSpawnPercent());
-    getEntityModel().setCharred(entity.isCharred());
-    getEntityModel().setSevered(entity.isSevered());
+  protected void scale(final T entity, MatrixStack matrix, float ageInTicks) {
+    getModel().setSpawnPercent(entity.getSpawnPercent());
+    getModel().setCharred(entity.isCharred());
+    getModel().setSevered(entity.isSevered());
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return !entity.isCharred() ? TEXTURE : TEXTURE_CHARRED;
   }
 }

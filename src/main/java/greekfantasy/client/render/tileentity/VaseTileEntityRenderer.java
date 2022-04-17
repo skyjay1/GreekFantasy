@@ -23,38 +23,38 @@ public class VaseTileEntityRenderer extends TileEntityRenderer<VaseTileEntity> i
   @Override
   public void render(VaseTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn,
       int packedLightIn, int packedOverlayIn) {
-    final ItemStack itemstack = tileEntityIn.getStackInSlot(0);
+    final ItemStack itemstack = tileEntityIn.getItem(0);
     if (!itemstack.isEmpty()) {
       final float scale = 0.315F;
-      final float rotation = tileEntityIn.getBlockState().get(VaseBlock.HORIZONTAL_FACING).getHorizontalAngle();
-      matrixStackIn.push();
+      final float rotation = tileEntityIn.getBlockState().getValue(VaseBlock.FACING).toYRot();
+      matrixStackIn.pushPose();
       // render nameplate
       if(canRenderName(tileEntityIn)) {
         renderName(tileEntityIn, matrixStackIn, bufferIn, packedLightIn);
       }
       // transforms
       matrixStackIn.translate(0.5D, 0.70D, 0.5D);
-      matrixStackIn.rotate(Vector3f.YN.rotationDegrees(rotation));
+      matrixStackIn.mulPose(Vector3f.YN.rotationDegrees(rotation));
       matrixStackIn.scale(scale, scale, scale);
       // render the item stack
-      Minecraft.getInstance().getItemRenderer().renderItem(itemstack, ItemCameraTransforms.TransformType.FIXED, packedLightIn,
+      Minecraft.getInstance().getItemRenderer().renderStatic(itemstack, ItemCameraTransforms.TransformType.FIXED, packedLightIn,
           OverlayTexture.NO_OVERLAY, matrixStackIn, bufferIn);
       // finish rendering
-      matrixStackIn.pop();
+      matrixStackIn.popPose();
     }
   }
   
   
   @Override
   public boolean canRenderName(final VaseTileEntity entityIn) {
-    final ItemStack item = entityIn.getStackInSlot(0);
-    return !item.isEmpty() && item.hasDisplayName() && IHasName.isWithinDistanceToRenderName(entityIn, 6.0D);
+    final ItemStack item = entityIn.getItem(0);
+    return !item.isEmpty() && item.hasCustomHoverName() && IHasName.isWithinDistanceToRenderName(entityIn, 6.0D);
   }
 
   @Override
   public void renderName(VaseTileEntity entityIn, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-    matrixStackIn.push();
-    IHasName.renderNameplate(entityIn, entityIn.getStackInSlot(0).getDisplayName(), 1.15F, matrixStackIn, bufferIn, packedLightIn);
-    matrixStackIn.pop();
+    matrixStackIn.pushPose();
+    IHasName.renderNameplate(entityIn, entityIn.getItem(0).getHoverName(), 1.15F, matrixStackIn, bufferIn, packedLightIn);
+    matrixStackIn.popPose();
   }
 }

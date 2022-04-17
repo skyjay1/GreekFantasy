@@ -40,80 +40,80 @@ public class VaseBlock extends HorizontalBlock implements IWaterLoggable {
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
   
   protected static final VoxelShape BODY = VoxelShapes.or(
-    Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 8.0D, 12.0D),
-    Block.makeCuboidShape(6.0D, 8.0D, 6.0D, 10.0D, 10.0D, 10.0D),
-    VoxelShapes.combine(
-        Block.makeCuboidShape(5.0D, 10.0D, 5.0D, 11.0D, 11.0D, 11.0D),
-        Block.makeCuboidShape(6.0D, 10.0D, 6.0D, 10.0D, 11.0D, 10.0D), IBooleanFunction.ONLY_FIRST));
+    Block.box(4.0D, 0.0D, 4.0D, 12.0D, 8.0D, 12.0D),
+    Block.box(6.0D, 8.0D, 6.0D, 10.0D, 10.0D, 10.0D),
+    VoxelShapes.joinUnoptimized(
+        Block.box(5.0D, 10.0D, 5.0D, 11.0D, 11.0D, 11.0D),
+        Block.box(6.0D, 10.0D, 6.0D, 10.0D, 11.0D, 10.0D), IBooleanFunction.ONLY_FIRST));
   
   protected static final VoxelShape HANDLE_Z = VoxelShapes.or(
-    VoxelShapes.combine(
-        Block.makeCuboidShape(12.0D, 1.0D, 7.0D, 14.0D, 7.0D, 9.0D),
-        Block.makeCuboidShape(12.0D, 2.0D, 7.0D, 13.0D, 6.0D, 9.0D),
+    VoxelShapes.joinUnoptimized(
+        Block.box(12.0D, 1.0D, 7.0D, 14.0D, 7.0D, 9.0D),
+        Block.box(12.0D, 2.0D, 7.0D, 13.0D, 6.0D, 9.0D),
         IBooleanFunction.ONLY_FIRST),
-    VoxelShapes.combine(
-        Block.makeCuboidShape(2.0D, 1.0D, 7.0D, 4.0D, 7.0D, 9.0D),
-        Block.makeCuboidShape(3.0D, 2.0D, 7.0D, 4.0D, 6.0D, 9.0D),
+    VoxelShapes.joinUnoptimized(
+        Block.box(2.0D, 1.0D, 7.0D, 4.0D, 7.0D, 9.0D),
+        Block.box(3.0D, 2.0D, 7.0D, 4.0D, 6.0D, 9.0D),
         IBooleanFunction.ONLY_FIRST));
   
   protected static final VoxelShape HANDLE_X = VoxelShapes.or(
-    VoxelShapes.combine(
-        Block.makeCuboidShape(7.0D, 1.0D, 2.0D, 9.0D, 7.0D, 4.0D),
-        Block.makeCuboidShape(7.0D, 2.0D, 3.0D, 9.0D, 6.0D, 4.0D),
+    VoxelShapes.joinUnoptimized(
+        Block.box(7.0D, 1.0D, 2.0D, 9.0D, 7.0D, 4.0D),
+        Block.box(7.0D, 2.0D, 3.0D, 9.0D, 6.0D, 4.0D),
         IBooleanFunction.ONLY_FIRST),
-    VoxelShapes.combine(
-        Block.makeCuboidShape(7.0D, 1.0D, 12.0D, 9.0D, 7.0D, 14.0D),
-        Block.makeCuboidShape(7.0D, 2.0D, 12.0D, 9.0D, 6.0D, 13.0D),
+    VoxelShapes.joinUnoptimized(
+        Block.box(7.0D, 1.0D, 12.0D, 9.0D, 7.0D, 14.0D),
+        Block.box(7.0D, 2.0D, 12.0D, 9.0D, 6.0D, 13.0D),
         IBooleanFunction.ONLY_FIRST));
   
-  protected static final VoxelShape SHAPE_X = VoxelShapes.combine(BODY, HANDLE_X, IBooleanFunction.OR);
-  protected static final VoxelShape SHAPE_Z = VoxelShapes.combine(BODY, HANDLE_Z, IBooleanFunction.OR);
+  protected static final VoxelShape SHAPE_X = VoxelShapes.joinUnoptimized(BODY, HANDLE_X, IBooleanFunction.OR);
+  protected static final VoxelShape SHAPE_Z = VoxelShapes.joinUnoptimized(BODY, HANDLE_Z, IBooleanFunction.OR);
   
   public VaseBlock(final Block.Properties properties) {
     super(properties);
-    this.setDefaultState(this.getStateContainer().getBaseState()
-        .with(WATERLOGGED, false).with(HORIZONTAL_FACING, Direction.NORTH));
+    this.registerDefaultState(this.getStateDefinition().any()
+        .setValue(WATERLOGGED, false).setValue(FACING, Direction.NORTH));
   }
   
   @Override
-  protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-    builder.add(HORIZONTAL_FACING, WATERLOGGED);
+  protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    builder.add(FACING, WATERLOGGED);
   }
 
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
-    FluidState fluid = context.getWorld().getFluidState(context.getPos());
-    return this.getDefaultState().with(WATERLOGGED, fluid.isTagged(FluidTags.WATER)).with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing());
+    FluidState fluid = context.getLevel().getFluidState(context.getClickedPos());
+    return this.defaultBlockState().setValue(WATERLOGGED, fluid.is(FluidTags.WATER)).setValue(FACING, context.getHorizontalDirection());
   }
   
   @Override
-  public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
+  public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
       BlockPos currentPos, BlockPos facingPos) {
-    if (stateIn.get(WATERLOGGED)) {
-      worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+    if (stateIn.getValue(WATERLOGGED)) {
+      worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
     }
     return stateIn;
   }
 
   @Override
-  public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
+  public ActionResultType use(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
-    final TileEntity te = worldIn.getTileEntity(pos);
+    final TileEntity te = worldIn.getBlockEntity(pos);
     // item / inventory interaction
-    if(playerIn.isServerWorld() && te instanceof VaseTileEntity) {
+    if(playerIn.isEffectiveAi() && te instanceof VaseTileEntity) {
       final VaseTileEntity teVase = (VaseTileEntity)te;
-      final ItemStack teStack = teVase.getStackInSlot(0);
-      final ItemStack heldItem = playerIn.getHeldItem(handIn);
+      final ItemStack teStack = teVase.getItem(0);
+      final ItemStack heldItem = playerIn.getItemInHand(handIn);
       if(teStack.isEmpty()) {
         // attempt to add item to inventory
-        teVase.setInventorySlotContents(0, heldItem.copy());
+        teVase.setItem(0, heldItem.copy());
         // remove from player
-        playerIn.setHeldItem(handIn, ItemStack.EMPTY);
-      } else if(playerIn.isSneaking() || heldItem.isEmpty()) {
+        playerIn.setItemInHand(handIn, ItemStack.EMPTY);
+      } else if(playerIn.isShiftKeyDown() || heldItem.isEmpty()) {
         // attempt to drop item from inventory
-        ItemEntity dropItem = new ItemEntity(worldIn, playerIn.getPosX(), playerIn.getPosY(), playerIn.getPosZ(), teVase.removeStackFromSlot(0));
-        dropItem.setPickupDelay(0);
-        worldIn.addEntity(dropItem);
+        ItemEntity dropItem = new ItemEntity(worldIn, playerIn.getX(), playerIn.getY(), playerIn.getZ(), teVase.removeItemNoUpdate(0));
+        dropItem.setPickUpDelay(0);
+        worldIn.addFreshEntity(dropItem);
       }
       return ActionResultType.CONSUME;
     }
@@ -121,33 +121,33 @@ public class VaseBlock extends HorizontalBlock implements IWaterLoggable {
   }
   
   @Override
-  public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
+  public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
     // drop items from inventory
-    TileEntity tileentity = worldIn.getTileEntity(pos);
-    if (!worldIn.isRemote() && tileentity instanceof VaseTileEntity) {
-      InventoryHelper.dropItems(worldIn, pos, ((VaseTileEntity) tileentity).getInventory());
+    TileEntity tileentity = worldIn.getBlockEntity(pos);
+    if (!worldIn.isClientSide() && tileentity instanceof VaseTileEntity) {
+      InventoryHelper.dropContents(worldIn, pos, ((VaseTileEntity) tileentity).getInventory());
     }
   }
   
   @Override
-  public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.matchesBlock(newState.getBlock())) {
+  public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+    if (!state.is(newState.getBlock())) {
       // drop items from inventory
-      TileEntity tileentity = worldIn.getTileEntity(pos);
-      if (!worldIn.isRemote() && tileentity instanceof VaseTileEntity) {
-        InventoryHelper.dropItems(worldIn, pos, ((VaseTileEntity) tileentity).getInventory());
+      TileEntity tileentity = worldIn.getBlockEntity(pos);
+      if (!worldIn.isClientSide() && tileentity instanceof VaseTileEntity) {
+        InventoryHelper.dropContents(worldIn, pos, ((VaseTileEntity) tileentity).getInventory());
       }
     }
   }
   
   @Override
   public FluidState getFluidState(BlockState state) {
-    return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : Fluids.EMPTY.getDefaultState();
+    return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
   }
 
   @Override
   public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {
-    return (state.get(HORIZONTAL_FACING).getAxis() == Axis.X) ? SHAPE_X : SHAPE_Z;
+    return (state.getValue(FACING).getAxis() == Axis.X) ? SHAPE_X : SHAPE_Z;
   }
   
   @Override
@@ -164,15 +164,15 @@ public class VaseBlock extends HorizontalBlock implements IWaterLoggable {
   // Comparator methods
 
   @Override
-  public boolean hasComparatorInputOverride(BlockState state) {
+  public boolean hasAnalogOutputSignal(BlockState state) {
     return true;
   }
 
   @Override
-  public int getComparatorInputOverride(BlockState state, World worldIn, BlockPos pos) {
-    final TileEntity te = worldIn.getTileEntity(pos);
+  public int getAnalogOutputSignal(BlockState state, World worldIn, BlockPos pos) {
+    final TileEntity te = worldIn.getBlockEntity(pos);
     if(te instanceof IInventory) {
-      return Container.calcRedstoneFromInventory((IInventory)te);
+      return Container.getRedstoneSignalFromContainer((IInventory)te);
     }
     return 0;
   }

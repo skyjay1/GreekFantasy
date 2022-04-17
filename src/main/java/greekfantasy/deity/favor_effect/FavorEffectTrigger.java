@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 public class FavorEffectTrigger {
   
   public static final FavorEffectTrigger EMPTY = new FavorEffectTrigger(
-      FavorEffectTrigger.Type.ENTITY_KILLED_PLAYER.getString(), new ResourceLocation("null"));
+      FavorEffectTrigger.Type.ENTITY_KILLED_PLAYER.getSerializedName(), new ResourceLocation("null"));
   
   public static final Codec<FavorEffectTrigger> CODEC = RecordCodecBuilder.create(instance -> instance.group(
       Codec.STRING.fieldOf("type").forGetter(FavorEffectTrigger::getTypeString),
@@ -29,7 +29,7 @@ public class FavorEffectTrigger {
   public FavorEffectTrigger.Type getType() { return type; }
   
   /** @return the trigger type name (raw string) **/
-  public String getTypeString() { return type.getString(); }
+  public String getTypeString() { return type.getSerializedName(); }
 
   /**
    * @return the data associated with this trigger.
@@ -41,7 +41,7 @@ public class FavorEffectTrigger {
   @Override
   public String toString() {
     final StringBuilder b = new StringBuilder("FavorEffectTrigger:");
-    b.append(" type[").append(type.getString()).append("]");
+    b.append(" type[").append(type.getSerializedName()).append("]");
     b.append(" data[").append(data.toString()).append("]");
     return b.toString();
   }
@@ -62,7 +62,7 @@ public class FavorEffectTrigger {
     
     public static FavorEffectTrigger.Type getById(final String id) {
       for(final FavorEffectTrigger.Type t : values()) {
-        if(t.getString().equals(id)) {
+        if(t.getSerializedName().equals(id)) {
           return t;
         }
       }
@@ -70,7 +70,7 @@ public class FavorEffectTrigger {
     }
 
     @Override
-    public String getString() {
+    public String getSerializedName() {
       return name;
     }
   }

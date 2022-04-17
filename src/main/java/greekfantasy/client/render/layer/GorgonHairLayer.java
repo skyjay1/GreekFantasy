@@ -22,13 +22,13 @@ public class GorgonHairLayer<T extends GorgonEntity> extends LayerRenderer<T, Go
       float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
     if (!entity.isInvisible()) {
       // get packed light and a vertex builder bound to the correct texture
-      int packedOverlay = LivingRenderer.getPackedOverlay(entity, 0.0F);
-      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(this.getEntityTexture(entity)));
+      int packedOverlay = LivingRenderer.getOverlayCoords(entity, 0.0F);
+      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(entity)));
             
       // render snake hair
-      matrixStackIn.push();
-      this.getEntityModel().renderSnakeHair(matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, entity.ticksExisted + partialTick, 1.0F);
-      matrixStackIn.pop();
+      matrixStackIn.pushPose();
+      this.getParentModel().renderSnakeHair(matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, entity.tickCount + partialTick, 1.0F);
+      matrixStackIn.popPose();
     }
   }
 }

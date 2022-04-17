@@ -28,38 +28,38 @@ public class PythonPitFeature extends SimpleTemplateFeature {
   }
 
   @Override
-  public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
+  public boolean place(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
     // check dimension from config
     if(!SimpleTemplateFeature.isValidDimension(reader)) {
       return false;
     }
     // load templates
-    final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
-    final Template template = manager.getTemplate(getStructure(rand));
+    final TemplateManager manager = reader.getLevel().getStructureManager();
+    final Template template = manager.get(getStructure(rand));
     
     // rotation / mirror
-    Rotation rotation = Rotation.randomRotation(rand);
+    Rotation rotation = Rotation.getRandom(rand);
     Mirror mirror = Mirror.NONE;
 
     // position for generation
     final BlockPos offset = new BlockPos(-7, -4 - rand.nextInt(3), -7);
-    final BlockPos pos = getHeightPos(reader, blockPosIn).add(offset.rotate(rotation));
+    final BlockPos pos = getHeightPos(reader, blockPosIn).offset(offset.rotate(rotation));
     
     // placement settings
     ChunkPos chunkPos = new ChunkPos(pos);
-    MutableBoundingBox mbb = new MutableBoundingBox(chunkPos.getXStart() - 8, pos.getY() - 16, chunkPos.getZStart() - 8, chunkPos.getXEnd() + 8, pos.getY() + 16, chunkPos.getZEnd() + 8);
+    MutableBoundingBox mbb = new MutableBoundingBox(chunkPos.getMinBlockX() - 8, pos.getY() - 16, chunkPos.getMinBlockZ() - 8, chunkPos.getMaxBlockX() + 8, pos.getY() + 16, chunkPos.getMaxBlockZ() + 8);
     PlacementSettings placement = new PlacementSettings()
         .setRotation(rotation).setMirror(mirror).setRandom(rand).setBoundingBox(mbb)
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
     
     // check position
-    if(!isValidPosition(reader, pos, template.getSize().down(3), placement.getRotation())) {
+    if(!isValidPosition(reader, pos, template.getSize().below(3), placement.getRotation())) {
       return false;
     }
     
     // actually generate the structure
-    template.func_237146_a_(reader, pos, pos, placement, rand, 2);
+    template.placeInWorld(reader, pos, pos, placement, rand, 2);
    
     // DEBUG
 //    GreekFantasy.LOGGER.debug("Generating pyton pit near " + pos);
@@ -68,12 +68,12 @@ public class PythonPitFeature extends SimpleTemplateFeature {
   }
   
   protected static boolean canPlaceOnBlock(final ISeedReader world, final BlockPos pos) {
-    return pos.getY() > 3 && world.getBlockState(pos).isSolid() && !world.getBlockState(pos.up(3)).isSolid();
+    return pos.getY() > 3 && world.getBlockState(pos).canOcclude() && !world.getBlockState(pos.above(3)).canOcclude();
   }
   
   @Override
   protected boolean isValidPosition(final ISeedReader reader, final BlockPos pos) {
-    return pos.getY() > 11 && pos.getY() < 200 && reader.getBlockState(pos).isSolid();
+    return pos.getY() > 11 && pos.getY() < 200 && reader.getBlockState(pos).canOcclude();
   }
 
   @Override

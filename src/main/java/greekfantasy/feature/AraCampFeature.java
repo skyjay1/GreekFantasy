@@ -33,22 +33,22 @@ public class AraCampFeature extends SimpleTemplateFeature {
   }
 
   @Override
-  public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
+  public boolean place(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
     // check dimension from config
     if(!SimpleTemplateFeature.isValidDimension(reader)) {
       return false;
     }
     // load templates
-    final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
+    final TemplateManager manager = reader.getLevel().getStructureManager();
     int tentsGenerated = 0;
     
     // rotation / mirror
-    Rotation rotation = Rotation.randomRotation(rand);
+    Rotation rotation = Rotation.getRandom(rand);
     Mirror mirror = Mirror.NONE;
 
     // position for generation
-    BlockPos tentPos = getHeightPos(reader, blockPosIn.add(4 + rand.nextInt(8), 0, 4 + rand.nextInt(8)));
+    BlockPos tentPos = getHeightPos(reader, blockPosIn.offset(4 + rand.nextInt(8), 0, 4 + rand.nextInt(8)));
     
     // placement settings
     PlacementSettings placement = new PlacementSettings()
@@ -56,17 +56,17 @@ public class AraCampFeature extends SimpleTemplateFeature {
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
     
     // generate the first tent
-    if(generateTent(reader, manager.getTemplateDefaulted(getStructure(rand)), placement, tentPos, rand)) {
+    if(generateTent(reader, manager.getOrCreate(getStructure(rand)), placement, tentPos, rand)) {
       tentsGenerated++;
     }
     
     // position settings for second tent
     final BlockPos tent2Offset = new BlockPos(-1 - rand.nextInt(4), 0, 7 + rand.nextInt(3)).rotate(rotation);
-    tentPos = getHeightPos(reader, tentPos.add(tent2Offset));
-    rotation = rotation.add(Rotation.CLOCKWISE_90);
+    tentPos = getHeightPos(reader, tentPos.offset(tent2Offset));
+    rotation = rotation.getRotated(Rotation.CLOCKWISE_90);
     
     // generate the second tent
-    if(generateTent(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand)) {
+    if(generateTent(reader, manager.getOrCreate(getStructure(rand)), placement.setRotation(rotation), tentPos, rand)) {
       tentsGenerated++;
     }
     
@@ -78,40 +78,40 @@ public class AraCampFeature extends SimpleTemplateFeature {
   
   protected boolean generateTent(final ISeedReader reader, final Template template, final PlacementSettings placement,
       final BlockPos pos, final Random rand) {
-    if(!isValidPosition(reader, pos, template.getSize().down(3), placement.getRotation())) {
+    if(!isValidPosition(reader, pos, template.getSize().below(3), placement.getRotation())) {
       return false;
     }
     
     // placement settings
     ChunkPos chunkPos = new ChunkPos(pos);
-    MutableBoundingBox mbb = new MutableBoundingBox(chunkPos.getXStart() - 8, pos.getY() - 8, chunkPos.getZStart() - 8, chunkPos.getXEnd() + 8, pos.getY() + 16, chunkPos.getZEnd() + 8);
+    MutableBoundingBox mbb = new MutableBoundingBox(chunkPos.getMinBlockX() - 8, pos.getY() - 8, chunkPos.getMinBlockZ() - 8, chunkPos.getMaxBlockX() + 8, pos.getY() + 16, chunkPos.getMaxBlockZ() + 8);
     
     // actually generate the structure
-    template.func_237146_a_(reader, pos.down(), pos.down(), placement.setBoundingBox(mbb), rand, 2);
-    fillBelow(reader, pos.down(2), template.getSize(), placement.getRotation(), new Block[] { Blocks.STONE });
+    template.placeInWorld(reader, pos.below(), pos.below(), placement.setBoundingBox(mbb), rand, 2);
+    fillBelow(reader, pos.below(2), template.getSize(), placement.getRotation(), new Block[] { Blocks.STONE });
     
     // add entities
-    addAra(reader, rand, pos.add(new BlockPos(3, 1, 2).rotate(placement.getRotation())), 1 + rand.nextInt(3));
+    addAra(reader, rand, pos.offset(new BlockPos(3, 1, 2).rotate(placement.getRotation())), 1 + rand.nextInt(3));
     return true;
   }
     
   protected static void addAra(final ISeedReader world, final Random rand, final BlockPos pos, final int count) {
     for(int i = 0; i < count; i++) {
       // spawn an ara
-      final AraEntity entity = GFRegistry.ARA_ENTITY.create(world.getWorld());
-      entity.setLocationAndAngles(pos.getX() + rand.nextDouble(), pos.getY() + 0.5D, pos.getZ() + rand.nextDouble(), 0, 0);
-      entity.enablePersistence();
-      world.addEntity(entity);
+      final AraEntity entity = GFRegistry.ARA_ENTITY.create(world.getLevel());
+      entity.moveTo(pos.getX() + rand.nextDouble(), pos.getY() + 0.5D, pos.getZ() + rand.nextDouble(), 0, 0);
+      entity.setPersistenceRequired();
+      world.addFreshEntity(entity);
     }
   }
   
   protected static boolean canPlaceOnBlock(final ISeedReader world, final BlockPos pos) {
-    return pos.getY() > 3 && world.getBlockState(pos).isSolid() && !world.getBlockState(pos.up(3)).isSolid();
+    return pos.getY() > 3 && world.getBlockState(pos).canOcclude() && !world.getBlockState(pos.above(3)).canOcclude();
   }
   
   @Override
   protected boolean isValidPosition(final ISeedReader reader, final BlockPos pos) {
-    return pos.getY() > 3 && reader.getBlockState(pos).isSolid() && isReplaceableAt(reader, pos.up(3));
+    return pos.getY() > 3 && reader.getBlockState(pos).canOcclude() && isReplaceableAt(reader, pos.above(3));
   }
 
   @Override

@@ -42,7 +42,7 @@ public class SPanfluteSongPacket {
    */
   public static SPanfluteSongPacket fromBytes(final PacketBuffer buf) {
     final ResourceLocation sName = buf.readResourceLocation();
-    final CompoundNBT sNBT = buf.readCompoundTag();
+    final CompoundNBT sNBT = buf.readNbt();
     final Optional<Song> sSong = GreekFantasy.PROXY.PANFLUTE_SONGS.readObject(sNBT).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read deity from NBT for packet\n" + error));
     return new SPanfluteSongPacket(sName, sSong.orElse(Song.EMPTY));
   }
@@ -56,7 +56,7 @@ public class SPanfluteSongPacket {
     DataResult<INBT> nbtResult = GreekFantasy.PROXY.PANFLUTE_SONGS.writeObject(msg.song);
     INBT tag = nbtResult.resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to write deity to NBT for packet\n" + error)).get();
     buf.writeResourceLocation(msg.songName);
-    buf.writeCompoundTag((CompoundNBT)tag);
+    buf.writeNbt((CompoundNBT)tag);
   }
 
   /**

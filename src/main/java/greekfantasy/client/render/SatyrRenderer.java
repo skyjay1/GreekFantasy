@@ -45,8 +45,8 @@ public class SatyrRenderer<T extends SatyrEntity> extends BipedRenderer<T, Satyr
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
-    if(entity.hasCustomName() && "Grover".equals(entity.getCustomName().getUnformattedComponentText())) {
+  public ResourceLocation getTextureLocation(final T entity) {
+    if(entity.hasCustomName() && "Grover".equals(entity.getCustomName().getContents())) {
       return TEXTURE_GROVER;
     } else {
       return BODY_TEXTURE_MAP.get(entity.getCoatColor());

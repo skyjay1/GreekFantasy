@@ -36,6 +36,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import net.minecraft.item.Item.Properties;
+
 public class WingedSandalsItem extends ArmorItem {
   public static final UUID SPEED_MODIFIER = UUID.fromString("58b7ff54-706b-4b0b-80f7-0dce04a673e4");
   protected static final IArmorMaterial MATERIAL = new WingedSandalsArmorMaterial();
@@ -51,35 +53,35 @@ public class WingedSandalsItem extends ArmorItem {
     super(MATERIAL, EquipmentSlotType.FEET, builderIn);
     final double speedBonus = GreekFantasy.CONFIG.SANDALS_SPEED_BONUS.get();
     ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-    builder.putAll(super.getAttributeModifiers(EquipmentSlotType.FEET));
+    builder.putAll(super.getDefaultAttributeModifiers(EquipmentSlotType.FEET));
     flyingAttributeModifiers = builder.build();
     builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(SPEED_MODIFIER, "Armor speed modifier", speedBonus, AttributeModifier.Operation.MULTIPLY_TOTAL));
     this.attributeModifiers = builder.build();
   }
 
   @Override
-  public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+  public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
     // add the item to the group with enchantment already applied
-    if (this.isInGroup(group)) {
+    if (this.allowdedIn(group)) {
       final ItemStack stack = new ItemStack(this);
       if(GreekFantasy.CONFIG.isOverstepEnabled()) {
-        stack.addEnchantment(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
+        stack.enchant(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
       }
       items.add(stack);
     }
   }
   
   @Override
-  public void onCreated(ItemStack stack, World worldIn, PlayerEntity playerIn) {
+  public void onCraftedBy(ItemStack stack, World worldIn, PlayerEntity playerIn) {
     // add Overstep enchantment if not present
-    if(GreekFantasy.CONFIG.isOverstepEnabled() && EnchantmentHelper.getEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, stack) < 1) {
-      stack.addEnchantment(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
+    if(GreekFantasy.CONFIG.isOverstepEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, stack) < 1) {
+      stack.enchant(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
     }
   }
 
   @Override
-  public boolean hasEffect(ItemStack stack) {
-    return GreekFantasy.CONFIG.isOverstepEnabled() ? stack.getEnchantmentTagList().size() > 1 : super.hasEffect(stack);
+  public boolean isFoil(ItemStack stack) {
+    return GreekFantasy.CONFIG.isOverstepEnabled() ? stack.getEnchantmentTags().size() > 1 : super.isFoil(stack);
   }
 
   /**
@@ -90,17 +92,17 @@ public class WingedSandalsItem extends ArmorItem {
   public void inventoryTick(final ItemStack stack, final World worldIn, final Entity entityIn, 
       final int itemSlot, final boolean isSelected) {
     // add Overstep enchantment if not present
-    if(GreekFantasy.CONFIG.isOverstepEnabled() && EnchantmentHelper.getEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, stack) < 1) {
-      stack.addEnchantment(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
+    if(GreekFantasy.CONFIG.isOverstepEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, stack) < 1) {
+      stack.enchant(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
     }
     // add Jump Boost effect
-    if(itemSlot == EquipmentSlotType.FEET.getIndex() && stack.getMaxDamage() - stack.getDamage() > 10  && entityIn instanceof LivingEntity) {
+    if(itemSlot == EquipmentSlotType.FEET.getIndex() && stack.getMaxDamage() - stack.getDamageValue() > 10  && entityIn instanceof LivingEntity) {
       final LivingEntity entity = (LivingEntity)entityIn;
-      entity.addPotionEffect(new EffectInstance(Effects.JUMP_BOOST, 20, 4, false, false, false));
+      entity.addEffect(new EffectInstance(Effects.JUMP, 20, 4, false, false, false));
       entity.fallDistance = 0;
-      if(GreekFantasy.CONFIG.doesWingedSandalsDeplete()  && entity.getRNG().nextInt(40) == 0
+      if(GreekFantasy.CONFIG.doesWingedSandalsDeplete()  && entity.getRandom().nextInt(40) == 0
           && (!(entity instanceof PlayerEntity) || !entity.isSpectator() && !((PlayerEntity)entity).isCreative())) {
-        stack.damageItem(1, entity, (e) -> e.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+        stack.hurtAndBreak(1, entity, (e) -> e.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
       }
     }
   }
@@ -110,7 +112,7 @@ public class WingedSandalsItem extends ArmorItem {
    */
   @Override
   public Multimap<Attribute, AttributeModifier> getAttributeModifiers(final EquipmentSlotType equipmentSlot, final ItemStack stack) {
-    if(equipmentSlot == EquipmentSlotType.FEET && (stack.getMaxDamage() - stack.getDamage() > 10)) {
+    if(equipmentSlot == EquipmentSlotType.FEET && (stack.getMaxDamage() - stack.getDamageValue() > 10)) {
       //return EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, stack) < 1
       //    ? this.attributeModifiers : this.flyingAttributeModifiers;
       return attributeModifiers;
@@ -119,14 +121,14 @@ public class WingedSandalsItem extends ArmorItem {
   }
 
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+  public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
     // add broken tooltip
-    if(stack.getMaxDamage() - stack.getDamage() <= 10) {
-      tooltip.add(new TranslationTextComponent("item.tooltip.broken").mergeStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
+    if(stack.getMaxDamage() - stack.getDamageValue() <= 10) {
+      tooltip.add(new TranslationTextComponent("item.tooltip.broken").withStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
     } else {
       // add jump boost tooltip
-      tooltip.add(new TranslationTextComponent("effect.minecraft.jump_boost").mergeStyle(TextFormatting.AQUA)
-        .appendString(" ").appendSibling(new TranslationTextComponent("enchantment.level.5").mergeStyle(TextFormatting.AQUA)));
+      tooltip.add(new TranslationTextComponent("effect.minecraft.jump_boost").withStyle(TextFormatting.AQUA)
+        .append(" ").append(new TranslationTextComponent("enchantment.level.5").withStyle(TextFormatting.AQUA)));
     }
   }
 
@@ -162,10 +164,10 @@ public class WingedSandalsItem extends ArmorItem {
     if(MODEL == null) {
       MODEL = new greekfantasy.client.render.model.armor.WingedSandalsModel(1.0F);
     }
-    MODEL.isChild = _default.isChild;
-    MODEL.isSneak = _default.isSneak;
-    MODEL.isSitting = _default.isSitting;
-    MODEL.setRotationAngles(entityLiving, entityLiving.limbSwing, entityLiving.limbSwingAmount, (float)entityLiving.ticksExisted, entityLiving.rotationYawHead, entityLiving.rotationPitch);
+    MODEL.young = _default.young;
+    MODEL.crouching = _default.crouching;
+    MODEL.riding = _default.riding;
+    MODEL.setupAnim(entityLiving, entityLiving.animationPosition, entityLiving.animationSpeed, (float)entityLiving.tickCount, entityLiving.yHeadRot, entityLiving.xRot);
     // MODEL.rightArmPose = _default.rightArmPose;
     // MODEL.leftArmPose = _default.leftArmPose;
     return (A) MODEL;
@@ -175,19 +177,19 @@ public class WingedSandalsItem extends ArmorItem {
   public static class WingedSandalsArmorMaterial implements IArmorMaterial {
     private static final String NAME = "winged";
     @Override
-    public int getDamageReductionAmount(EquipmentSlotType arg0) { return 2; }
+    public int getDefenseForSlot(EquipmentSlotType arg0) { return 2; }
     @Override
-    public int getDurability(EquipmentSlotType arg0) { return 195; }
+    public int getDurabilityForSlot(EquipmentSlotType arg0) { return 195; }
     @Override
-    public int getEnchantability() { return 15; }
+    public int getEnchantmentValue() { return 15; }
     @Override
     public float getKnockbackResistance() { return 0.0F; }
     @Override
     public String getName() { return NAME; }
     @Override
-    public Ingredient getRepairMaterial() { return Ingredient.fromItems(GFRegistry.MAGIC_FEATHER); }
+    public Ingredient getRepairIngredient() { return Ingredient.of(GFRegistry.MAGIC_FEATHER); }
     @Override
-    public SoundEvent getSoundEvent() { return SoundEvents.ITEM_ARMOR_EQUIP_LEATHER; }
+    public SoundEvent getEquipSound() { return SoundEvents.ARMOR_EQUIP_LEATHER; }
     @Override
     public float getToughness() { return 0.0F; }
   }

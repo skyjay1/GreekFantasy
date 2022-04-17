@@ -10,14 +10,14 @@ import net.minecraft.util.ResourceLocation;
 
 public class CerberusEyesLayer<T extends CerberusEntity> extends AbstractEyesLayer<T, CerberusModel<T>> {
   
-  private static final RenderType RENDER_TYPE = RenderType.getEyes(new ResourceLocation(GreekFantasy.MODID, "textures/entity/cerberus/cerberus_eyes.png"));
+  private static final RenderType RENDER_TYPE = RenderType.eyes(new ResourceLocation(GreekFantasy.MODID, "textures/entity/cerberus/cerberus_eyes.png"));
 
   public CerberusEyesLayer(IEntityRenderer<T, CerberusModel<T>> ientityrenderer) {
     super(ientityrenderer);
   }
 
   @Override
-  public RenderType getRenderType() {
+  public RenderType renderType() {
     return RENDER_TYPE;
   }
 

@@ -27,37 +27,37 @@ public class ElpisRenderer<T extends ElpisEntity> extends BipedRenderer<T, Elpis
   public ElpisRenderer(final EntityRendererManager renderManagerIn) {
     super(renderManagerIn, new ElpisModel<T>(0.0F), 0.0F);
     // remove render layers
-    this.layerRenderers.clear();
+    this.layers.clear();
     // add custom implementation of render layers (specifically, the held item layer)
     addLayer(new HeadLayer<>(this, 1.0F, 1.0F, 1.0F));
     addLayer(new ElpisRenderer.HeldItemLayer<>(this));
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
   
   @Override
   public void render(final T entityIn, final float rotationYawIn, final float ageInTicks, final MatrixStack matrixStackIn,
       final IRenderTypeBuffer bufferIn, final int packedLightIn) {
-    matrixStackIn.push();
+    matrixStackIn.pushPose();
     matrixStackIn.scale(SCALE, SCALE, SCALE);
     RenderSystem.enableAlphaTest();
     RenderSystem.defaultAlphaFunc();
     RenderSystem.enableBlend();
-    this.entityModel.setAlpha(entityIn.getAlpha(ageInTicks));
+    this.model.setAlpha(entityIn.getAlpha(ageInTicks));
     super.render(entityIn, rotationYawIn, ageInTicks, matrixStackIn, bufferIn, packedLightIn);
     RenderSystem.disableAlphaTest();
     RenderSystem.disableBlend();
-    matrixStackIn.pop();
+    matrixStackIn.popPose();
   }
   
   @Override
   @Nullable
-  protected RenderType func_230496_a_(final T entity, boolean isVisible, boolean isVisibleToPlayer, boolean isGlowing) {
-    final ResourceLocation tex = this.getEntityTexture(entity);
-    return entity.isGlowing() ? RenderType.getOutline(tex) : RenderType.getEntityTranslucent(tex);
+  protected RenderType getRenderType(final T entity, boolean isVisible, boolean isVisibleToPlayer, boolean isGlowing) {
+    final ResourceLocation tex = this.getTextureLocation(entity);
+    return entity.isGlowing() ? RenderType.outline(tex) : RenderType.entityTranslucent(tex);
   }
   
   public static class HeldItemLayer<T extends LivingEntity, M extends EntityModel<T> & IHasArm> extends net.minecraft.client.renderer.entity.layers.HeldItemLayer<T, M> {

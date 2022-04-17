@@ -22,29 +22,29 @@ public class ReedsFeature extends Feature<BlockClusterFeatureConfig> {
   }
 
   @Override
-  public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
+  public boolean place(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final BlockClusterFeatureConfig config) {
     // check dimension from config
     if(!SimpleTemplateFeature.isValidDimension(reader)) {
       return false;
     }
     BlockPos pos;
-    BlockState state = GFRegistry.REEDS.getDefaultState();
+    BlockState state = GFRegistry.REEDS.defaultBlockState();
     
-    pos = reader.getHeight(Heightmap.Type.WORLD_SURFACE_WG, blockPosIn.add(rand.nextInt(8) - 4, 0, rand.nextInt(8) - 4));
+    pos = reader.getHeightmapPos(Heightmap.Type.WORLD_SURFACE_WG, blockPosIn.offset(rand.nextInt(8) - 4, 0, rand.nextInt(8) - 4));
     
     int placed = 0;
     
     BlockPos.Mutable mutpos = new BlockPos.Mutable();
-    for (int i = 0, l = config.tryCount; i < l; i++) {
+    for (int i = 0, l = config.tries; i < l; i++) {
       // get random position nearby
-      mutpos.setAndOffset(pos, rand.nextInt(config.xSpread + 1) - rand.nextInt(config.xSpread + 1), rand.nextInt(config.ySpread + 1) - rand.nextInt(config.ySpread + 1), rand.nextInt(config.zSpread + 1) - rand.nextInt(config.zSpread + 1));
-      BlockPos posDown = mutpos.down();
+      mutpos.setWithOffset(pos, rand.nextInt(config.xspread + 1) - rand.nextInt(config.xspread + 1), rand.nextInt(config.yspread + 1) - rand.nextInt(config.yspread + 1), rand.nextInt(config.zspread + 1) - rand.nextInt(config.zspread + 1));
+      BlockPos posDown = mutpos.below();
       BlockState stateDown = reader.getBlockState(posDown);
       FluidState fluidState = reader.getFluidState(mutpos);
       // check if the block can be placed here
-      if ((reader.isAirBlock(mutpos) || fluidState.isTagged(FluidTags.WATER) || (config.isReplaceable && reader.getBlockState(mutpos).getMaterial().isReplaceable())) 
-          && state.isValidPosition(reader, mutpos) && (config.whitelist.isEmpty() || config.whitelist.contains(stateDown.getBlock()))
+      if ((reader.isEmptyBlock(mutpos) || fluidState.is(FluidTags.WATER) || (config.canReplace && reader.getBlockState(mutpos).getMaterial().isReplaceable())) 
+          && state.canSurvive(reader, mutpos) && (config.whitelist.isEmpty() || config.whitelist.contains(stateDown.getBlock()))
           && !config.blacklist.contains(stateDown)) {
           // actually place the block
           config.blockPlacer.place(reader, mutpos, state, rand);

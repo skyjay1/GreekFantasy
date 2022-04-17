@@ -21,6 +21,8 @@ import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class IchorInfusedBlock extends Block {
   
   @Nullable
@@ -28,45 +30,45 @@ public class IchorInfusedBlock extends Block {
   @Nullable
   private BlockPattern bronzeBullPattern;
   // TODO: change to copper for 1.17
-  private static final Predicate<BlockState> IS_BODY_BLOCK = (state) -> state != null && (state.matchesBlock(Blocks.GOLD_BLOCK));
+  private static final Predicate<BlockState> IS_BODY_BLOCK = (state) -> state != null && (state.is(Blocks.GOLD_BLOCK));
   
   public IchorInfusedBlock(final Properties properties) {
     super(properties);
   }
   
   @Override
-  public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+  public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
     // check if a talos was built
     BlockPattern pattern = this.getTalosPattern();
-    BlockPattern.PatternHelper helper = pattern.match(worldIn, pos);
+    BlockPattern.PatternHelper helper = pattern.find(worldIn, pos);
     if(helper != null) {
       // remove the blocks that were used
-      for (int i = 0; i < pattern.getPalmLength(); ++i) {
-        for (int j = 0; j < pattern.getThumbLength(); ++j) {
-          for (int k = 0; k < pattern.getFingerLength(); ++k) {
-            CachedBlockInfo cachedblockinfo1 = helper.translateOffset(i, j, k);
+      for (int i = 0; i < pattern.getWidth(); ++i) {
+        for (int j = 0; j < pattern.getHeight(); ++j) {
+          for (int k = 0; k < pattern.getDepth(); ++k) {
+            CachedBlockInfo cachedblockinfo1 = helper.getBlock(i, j, k);
             worldIn.destroyBlock(cachedblockinfo1.getPos(), false);
           }
         }
       }
       // spawn the talos
-      TalosEntity.spawnTalos(worldIn, helper.translateOffset(1, 2, 0).getPos(), 0);
+      TalosEntity.spawnTalos(worldIn, helper.getBlock(1, 2, 0).getPos(), 0);
     }
     // check if a bronze bull was built
     pattern = this.getBronzeBullPattern();
-    helper = pattern.match(worldIn, pos);
+    helper = pattern.find(worldIn, pos);
     if(helper != null) {
       // remove the blocks that were used
-      for (int i = 0; i < pattern.getPalmLength(); ++i) {
-        for (int j = 0; j < pattern.getThumbLength(); ++j) {
-          for (int k = 0; k < pattern.getFingerLength(); ++k) {
-            CachedBlockInfo cachedblockinfo1 = helper.translateOffset(i, j, k);
+      for (int i = 0; i < pattern.getWidth(); ++i) {
+        for (int j = 0; j < pattern.getHeight(); ++j) {
+          for (int k = 0; k < pattern.getDepth(); ++k) {
+            CachedBlockInfo cachedblockinfo1 = helper.getBlock(i, j, k);
             worldIn.destroyBlock(cachedblockinfo1.getPos(), false);
           }
         }
       }
       // spawn the bronze bull
-      BronzeBullEntity.spawnBronzeBull(worldIn, helper.translateOffset(1, 1, 0).getPos(), 0);
+      BronzeBullEntity.spawnBronzeBull(worldIn, helper.getBlock(1, 1, 0).getPos(), 0);
     }
   }
 

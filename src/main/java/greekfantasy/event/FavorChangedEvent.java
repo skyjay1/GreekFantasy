@@ -76,6 +76,6 @@ public class FavorChangedEvent extends PlayerEvent {
     private Source(final String sourceName) { name = sourceName; }
 
     @Override
-    public String getString() { return name; }
+    public String getSerializedName() { return name; }
   }
 }

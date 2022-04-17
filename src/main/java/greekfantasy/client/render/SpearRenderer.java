@@ -27,21 +27,21 @@ public class SpearRenderer<T extends SpearEntity> extends EntityRenderer<T> {
 
   @Override
   public void render(T entity, float entityYaw, float partialTick, MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
-    matrixStack.push();
+    matrixStack.pushPose();
     
-    matrixStack.rotate(Vector3f.YP.rotationDegrees(MathHelper.lerp(partialTick, entity.prevRotationYaw, entity.rotationYaw) - 90.0F));
-    matrixStack.rotate(Vector3f.ZP.rotationDegrees(MathHelper.lerp(partialTick, entity.prevRotationPitch, entity.rotationPitch) + 90.0F));
+    matrixStack.mulPose(Vector3f.YP.rotationDegrees(MathHelper.lerp(partialTick, entity.yRotO, entity.yRot) - 90.0F));
+    matrixStack.mulPose(Vector3f.ZP.rotationDegrees(MathHelper.lerp(partialTick, entity.xRotO, entity.xRot) + 90.0F));
     
-    IVertexBuilder vertexBuilder = ItemRenderer.getEntityGlintVertexBuilder(buffer, RenderType.getEntityCutoutNoCull(getEntityTexture(entity)), false, entity.isEnchanted());
-    this.tridentModel.render(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+    IVertexBuilder vertexBuilder = ItemRenderer.getFoilBufferDirect(buffer, RenderType.entityCutoutNoCull(getTextureLocation(entity)), false, entity.isEnchanted());
+    this.tridentModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     
-    matrixStack.pop();
+    matrixStack.popPose();
     
     super.render(entity, entityYaw, partialTick, matrixStack, buffer, packedLight);
   }
 
   @Override
-  public ResourceLocation getEntityTexture(T entity) { return entity.getTexture(); }
+  public ResourceLocation getTextureLocation(T entity) { return entity.getTexture(); }
   
   public static class SpearItemStackRenderer extends ItemStackTileEntityRenderer {
     final TridentModel spearModel = new TridentModel();
@@ -52,12 +52,12 @@ public class SpearRenderer<T extends SpearEntity> extends EntityRenderer<T> {
     }
     
     @Override
-    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
-      matrixStack.push();
+    public void renderByItem(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
+      matrixStack.pushPose();
       matrixStack.scale(-1.0F, -1.0F, 1.0F);
-      IVertexBuilder vertexBuilder = ItemRenderer.getEntityGlintVertexBuilder(buffer, RenderType.getEntityCutoutNoCull(texture), false, item.hasEffect());
-      spearModel.render(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-      matrixStack.pop();
+      IVertexBuilder vertexBuilder = ItemRenderer.getFoilBufferDirect(buffer, RenderType.entityCutoutNoCull(texture), false, item.hasFoil());
+      spearModel.renderToBuffer(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+      matrixStack.popPose();
     }
   }
 }

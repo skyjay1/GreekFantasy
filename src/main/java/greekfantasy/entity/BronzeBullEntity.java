@@ -51,7 +51,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class BronzeBullEntity extends MonsterEntity {
   
-  private static final DataParameter<Byte> STATE = EntityDataManager.createKey(BronzeBullEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Byte> STATE = EntityDataManager.defineId(BronzeBullEntity.class, DataSerializers.BYTE);
   private static final String KEY_STATE = "BullState";
   private static final String KEY_SPAWN = "SpawnTime";
   // bytes to use in STATE
@@ -77,40 +77,40 @@ public class BronzeBullEntity extends MonsterEntity {
   
   public BronzeBullEntity(final EntityType<? extends BronzeBullEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.stepHeight = 1.0F;
-    this.experienceValue = 50;
+    this.maxUpStep = 1.0F;
+    this.xpReward = 50;
   }
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 150.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.28D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 9.0D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.75D)
-        .createMutableAttribute(Attributes.ARMOR, 8.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 150.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.28D)
+        .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+        .add(Attributes.FOLLOW_RANGE, 24.0D)
+        .add(Attributes.ATTACK_DAMAGE, 9.0D)
+        .add(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.75D)
+        .add(Attributes.ARMOR, 8.0D);
   }
   
   public static BronzeBullEntity spawnBronzeBull(final World world, final BlockPos pos, final float yaw) {
     BronzeBullEntity entity = GFRegistry.BRONZE_BULL_ENTITY.create(world);
-    entity.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
-    entity.renderYawOffset = yaw;
-    world.addEntity(entity);
+    entity.moveTo(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
+    entity.yBodyRot = yaw;
+    world.addFreshEntity(entity);
     entity.setSpawning(true);
     // trigger spawn for nearby players
-    for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(25.0D))) {
+    for (ServerPlayerEntity player : world.getEntitiesOfClass(ServerPlayerEntity.class, entity.getBoundingBox().inflate(25.0D))) {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
     }
     // play sound
-    world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_WITHER_SPAWN, entity.getSoundCategory(), 1.2F, 1.0F, false);
+    world.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
     return entity;
   }
   
   @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(STATE, Byte.valueOf(NONE));
+  public void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(STATE, Byte.valueOf(NONE));
   }
 
   @Override
@@ -126,8 +126,8 @@ public class BronzeBullEntity extends MonsterEntity {
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
@@ -157,142 +157,142 @@ public class BronzeBullEntity extends MonsterEntity {
     }    
     
     // update fire attack target
-    if(this.isServerWorld() && (this.isFiring() || this.isGoring()) && this.getAttackTarget() == null) {
+    if(this.isEffectiveAi() && (this.isFiring() || this.isGoring()) && this.getTarget() == null) {
       this.setFiring(false);
       this.setGoring(false);
     }
   
     // spawn particles
-    if (world.isRemote() && this.isFiring()) {
+    if (level.isClientSide() && this.isFiring()) {
       spawnFireParticles();
     }
    
     // spawn particles
-    if(this.world.isRemote()) {
-      final double x = this.getPosX();
-      final double y = this.getPosY() + 0.25D;
-      final double z = this.getPosZ();
+    if(this.level.isClientSide()) {
+      final double x = this.getX();
+      final double y = this.getY() + 0.25D;
+      final double z = this.getZ();
       final double motion = 0.06D;
-      final double radius = this.getWidth() * 1.15D;
-      world.addParticle(ParticleTypes.LAVA, 
-          x + (world.rand.nextDouble() - 0.5D) * radius, 
-          y + (world.rand.nextDouble() - 0.5D) * radius, 
-          z + (world.rand.nextDouble() - 0.5D) * radius,
-          (world.rand.nextDouble() - 0.5D) * motion, 
-          (world.rand.nextDouble() - 0.5D) * 0.07D,
-          (world.rand.nextDouble() - 0.5D) * motion);
+      final double radius = this.getBbWidth() * 1.15D;
+      level.addParticle(ParticleTypes.LAVA, 
+          x + (level.random.nextDouble() - 0.5D) * radius, 
+          y + (level.random.nextDouble() - 0.5D) * radius, 
+          z + (level.random.nextDouble() - 0.5D) * radius,
+          (level.random.nextDouble() - 0.5D) * motion, 
+          (level.random.nextDouble() - 0.5D) * 0.07D,
+          (level.random.nextDouble() - 0.5D) * motion);
     }
  }
 
   @Override
-  public boolean attackEntityAsMob(final Entity entityIn) {
+  public boolean doHurtTarget(final Entity entityIn) {
     // set goring
     if(!isGoring()) {
       setGoring(true);
     }
-    if (super.attackEntityAsMob(entityIn)) {
+    if (super.doHurtTarget(entityIn)) {
       // apply extra knockback velocity when attacking (ignores knockback resistance)
       final double knockbackFactor = 0.92D;
-      final Vector3d myPos = this.getPositionVec();
-      final Vector3d ePos = entityIn.getPositionVec();
+      final Vector3d myPos = this.position();
+      final Vector3d ePos = entityIn.position();
       final double dX = Math.signum(ePos.x - myPos.x) * knockbackFactor;
       final double dZ = Math.signum(ePos.z - myPos.z) * knockbackFactor;
-      entityIn.addVelocity(dX, knockbackFactor / 2.0D, dZ);
-      entityIn.velocityChanged = true;
-      this.playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1.0F, 0.6F + rand.nextFloat() * 0.2F);
+      entityIn.push(dX, knockbackFactor / 2.0D, dZ);
+      entityIn.hurtMarked = true;
+      this.playSound(SoundEvents.IRON_GOLEM_ATTACK, 1.0F, 0.6F + random.nextFloat() * 0.2F);
       return true;
     }
     return false;
   }
   
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-     ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+     ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
      this.setSpawning(true);
      return data;
   }
 
   @Override
-  protected float getJumpUpwardsMotion() {
-    return 0.42F * this.getJumpFactor();
+  protected float getJumpPower() {
+    return 0.42F * this.getBlockJumpFactor();
   }
 
   @Override
-  public boolean canBePushed() { return false; }
+  public boolean isPushable() { return false; }
   
   @Override
-  public void collideWithNearbyEntities() { }
+  public void pushEntities() { }
   
   @Override
-  public boolean canChangeDimension() { return false; }
+  public boolean canChangeDimensions() { return false; }
   
   @Override
-  public boolean canDespawn(final double disToPlayer) { return false; }
+  public boolean removeWhenFarAway(final double disToPlayer) { return false; }
   
   @Override
-  protected boolean canBeRidden(Entity entityIn) { return false; }
+  protected boolean canRide(Entity entityIn) { return false; }
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
-    return isSpawning() || source.isMagicDamage() || source == DamageSource.DROWN || source == DamageSource.IN_WALL || source == DamageSource.WITHER 
-        || source.getImmediateSource() instanceof AbstractArrowEntity || super.isInvulnerableTo(source);
+    return isSpawning() || source.isMagic() || source == DamageSource.DROWN || source == DamageSource.IN_WALL || source == DamageSource.WITHER 
+        || source.getDirectEntity() instanceof AbstractArrowEntity || super.isInvulnerableTo(source);
   }
   
   @Override
-  public int getTalkInterval() { return 280; }
+  public int getAmbientSoundInterval() { return 280; }
 
   @Override
-  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_BLAZE_AMBIENT; }
+  protected SoundEvent getAmbientSound() { return SoundEvents.BLAZE_AMBIENT; }
 
   @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_IRON_GOLEM_HURT; }
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.IRON_GOLEM_HURT; }
 
   @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_IRON_GOLEM_DEATH; }
+  protected SoundEvent getDeathSound() { return SoundEvents.IRON_GOLEM_DEATH; }
 
   @Override
   protected float getSoundVolume() { return 1.8F; }
   
   @Override
-  protected float getSoundPitch() { return 0.6F + rand.nextFloat() * 0.25F; }
+  protected float getVoicePitch() { return 0.6F + random.nextFloat() * 0.25F; }
   
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-     super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+     super.addAdditionalSaveData(compound);
      compound.putByte(KEY_STATE, this.getState());
      compound.putInt(KEY_SPAWN, spawnTime);
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-     super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+     super.readAdditionalSaveData(compound);
      this.setState(compound.getByte(KEY_STATE));
      spawnTime = compound.getInt(KEY_SPAWN);
   }
   
   public void spawnFireParticles() {
-    if(!world.isRemote()) {
+    if(!level.isClientSide()) {
       return;
     }
-    Vector3d lookVec = this.getLookVec();
+    Vector3d lookVec = this.getLookAngle();
     Vector3d pos = this.getEyePosition(1.0F);
     final double motion = 0.06D;
     final double radius = 0.75D;
     
     for (int i = 0; i < 5; i++) {
-      world.addParticle(ParticleTypes.FLAME, 
-          pos.x + (world.rand.nextDouble() - 0.5D) * radius, 
-          pos.y + (world.rand.nextDouble() - 0.5D) * radius, 
-          pos.z + (world.rand.nextDouble() - 0.5D) * radius,
+      level.addParticle(ParticleTypes.FLAME, 
+          pos.x + (level.random.nextDouble() - 0.5D) * radius, 
+          pos.y + (level.random.nextDouble() - 0.5D) * radius, 
+          pos.z + (level.random.nextDouble() - 0.5D) * radius,
           lookVec.x * motion * FIRE_RANGE, 
           lookVec.y * motion * 0.5D,
           lookVec.z * motion * FIRE_RANGE);
     }
   }
   
-  public byte getState() { return this.getDataManager().get(STATE).byteValue(); }
+  public byte getState() { return this.getEntityData().get(STATE).byteValue(); }
   
-  public void setState(final byte state) { this.getDataManager().set(STATE, Byte.valueOf(state)); }
+  public void setState(final byte state) { this.getEntityData().set(STATE, Byte.valueOf(state)); }
   
   public boolean isNoneState() { return getState() == NONE; }
   
@@ -305,31 +305,31 @@ public class BronzeBullEntity extends MonsterEntity {
   public void setFiring(final boolean firing) {
     firingTime = firing ? MAX_FIRING_TIME : 0;
     setState(firing ? FIRING : NONE);
-    if(firing && !this.world.isRemote()) {
-      this.world.setEntityState(this, FIRING_CLIENT);
+    if(firing && !this.level.isClientSide()) {
+      this.level.broadcastEntityEvent(this, FIRING_CLIENT);
     }
   }
   
   public void setGoring(final boolean goring) { 
     goringTime = goring ? MAX_GORING_TIME : 0;
     setState(goring ? GORING : NONE);
-    if(goring && !this.world.isRemote()) {
-      this.world.setEntityState(this, GORING_CLIENT);
+    if(goring && !this.level.isClientSide()) {
+      this.level.broadcastEntityEvent(this, GORING_CLIENT);
       // break intersecting blocks
-      destroyIntersectingBlocks(1.45F + 0.75F * rand.nextFloat(), 2.0D);
+      destroyIntersectingBlocks(1.45F + 0.75F * random.nextFloat(), 2.0D);
     }
   }
 
   public void setSpawning(final boolean spawning) {
     spawnTime = spawning ? MAX_SPAWN_TIME : 0;
     setState(spawning ? SPAWNING : NONE);
-    if(spawning && !this.world.isRemote()) {
-      this.world.setEntityState(this, SPAWN_CLIENT);
+    if(spawning && !this.level.isClientSide()) {
+      this.level.broadcastEntityEvent(this, SPAWN_CLIENT);
     }
   }
   
   @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
+  public void handleEntityEvent(byte id) {
     switch(id) {
     case SPAWN_CLIENT:
       setSpawning(true);
@@ -341,7 +341,7 @@ public class BronzeBullEntity extends MonsterEntity {
       setGoring(true);
       break;
     default:
-      super.handleStatusUpdate(id);
+      super.handleEntityEvent(id);
       break;
     }
   }
@@ -364,14 +364,14 @@ public class BronzeBullEntity extends MonsterEntity {
   // Boss Logic
 
   @Override
-  public void addTrackingPlayer(ServerPlayerEntity player) {
-    super.addTrackingPlayer(player);
+  public void startSeenByPlayer(ServerPlayerEntity player) {
+    super.startSeenByPlayer(player);
     this.bossInfo.addPlayer(player);
   }
 
   @Override
-  public void removeTrackingPlayer(ServerPlayerEntity player) {
-    super.removeTrackingPlayer(player);
+  public void stopSeenByPlayer(ServerPlayerEntity player) {
+    super.stopSeenByPlayer(player);
     this.bossInfo.removePlayer(player);
   }
   
@@ -381,20 +381,20 @@ public class BronzeBullEntity extends MonsterEntity {
    * @param offset the forward distance to offset the bounding box
    **/
   private void destroyIntersectingBlocks(final float maxHardness, final double offset) {
-    if(!world.getGameRules().getBoolean(GameRules.MOB_GRIEFING)) {
+    if(!level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
       return;
     }
-    final Vector3d facing = Vector3d.fromPitchYaw(this.getPitchYaw());
-    final AxisAlignedBB box = this.getBoundingBox().offset(facing.normalize().scale(offset));
+    final Vector3d facing = Vector3d.directionFromRotation(this.getRotationVector());
+    final AxisAlignedBB box = this.getBoundingBox().move(facing.normalize().scale(offset));
     BlockPos p;
     BlockState s;
     for(double x = box.minX - 0.25D; x < box.maxX + 0.25D; x++) {
       for(double y = box.minY + 1.1D; y < box.maxY + 0.5D; y++) {
         for(double z = box.minZ - 0.25D; z < box.maxZ + 0.25D; z++) {
           p = new BlockPos(x, y, z);
-          s = this.getEntityWorld().getBlockState(p);
-          if((s.isSolid() || s.getMaterial().blocksMovement()) && s.getBlockHardness(world, p) < maxHardness && !s.isIn(BlockTags.WITHER_IMMUNE)) {
-            this.getEntityWorld().destroyBlock(p, true);
+          s = this.getCommandSenderWorld().getBlockState(p);
+          if((s.canOcclude() || s.getMaterial().blocksMotion()) && s.getDestroySpeed(level, p) < maxHardness && !s.is(BlockTags.WITHER_IMMUNE)) {
+            this.getCommandSenderWorld().destroyBlock(p, true);
           }
         }
       }
@@ -405,16 +405,16 @@ public class BronzeBullEntity extends MonsterEntity {
   
   class SpawningGoal extends Goal {
 
-    public SpawningGoal() { setMutexFlags(EnumSet.allOf(Goal.Flag.class)); }
+    public SpawningGoal() { setFlags(EnumSet.allOf(Goal.Flag.class)); }
 
     @Override
-    public boolean shouldExecute() { return BronzeBullEntity.this.isSpawning(); }
+    public boolean canUse() { return BronzeBullEntity.this.isSpawning(); }
 
     @Override
     public void tick() { 
-      BronzeBullEntity.this.getNavigator().clearPath(); 
-      BronzeBullEntity.this.getLookController().setLookPosition(BronzeBullEntity.this.getPosX(), BronzeBullEntity.this.getPosY(), BronzeBullEntity.this.getPosZ());
-      BronzeBullEntity.this.setRotation(0, 0);
+      BronzeBullEntity.this.getNavigation().stop(); 
+      BronzeBullEntity.this.getLookControl().setLookAt(BronzeBullEntity.this.getX(), BronzeBullEntity.this.getY(), BronzeBullEntity.this.getZ());
+      BronzeBullEntity.this.setRot(0, 0);
     }
   }
   
@@ -425,24 +425,24 @@ public class BronzeBullEntity extends MonsterEntity {
     }
 
     @Override
-    public boolean shouldExecute() {  
-      return super.shouldExecute() && BronzeBullEntity.this.isNoneState();
+    public boolean canUse() {  
+      return super.canUse() && BronzeBullEntity.this.isNoneState();
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
-      return super.shouldContinueExecuting() && BronzeBullEntity.this.isFiring();
+    public boolean canContinueToUse() {
+      return super.canContinueToUse() && BronzeBullEntity.this.isFiring();
     }
    
     @Override
-    public void startExecuting() {
-      super.startExecuting();
+    public void start() {
+      super.start();
       BronzeBullEntity.this.setFiring(true);
     }
    
     @Override
-    public void resetTask() {
-      super.resetTask();
+    public void stop() {
+      super.stop();
       BronzeBullEntity.this.setFiring(false);
     }
   }

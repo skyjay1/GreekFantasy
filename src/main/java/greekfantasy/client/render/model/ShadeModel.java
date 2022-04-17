@@ -10,16 +10,16 @@ public class ShadeModel<T extends ShadeEntity> extends BipedModel<T> {
 
   public ShadeModel(float modelSize) {
     super(modelSize, 0.0F, 64, 32);
-    this.bipedLeftLeg.showModel = false;
-    this.bipedRightLeg.showModel = false;
+    this.leftLeg.visible = false;
+    this.rightLeg.visible = false;
   }
   
   @Override
-  public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, 
+  public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, 
       int packedOverlayIn, final float r, final float g, final float b, final float a) {
-    matrixStackIn.push();
-    super.render(matrixStackIn, bufferIn, 15728880, packedOverlayIn, r, g, b, 0.6F);
-    matrixStackIn.pop();
+    matrixStackIn.pushPose();
+    super.renderToBuffer(matrixStackIn, bufferIn, 15728880, packedOverlayIn, r, g, b, 0.6F);
+    matrixStackIn.popPose();
   }
   
 }

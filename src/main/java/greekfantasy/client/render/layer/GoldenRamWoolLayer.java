@@ -22,11 +22,11 @@ public class GoldenRamWoolLayer<T extends GoldenRamEntity> extends LayerRenderer
 
   public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entityIn, float limbSwing,
       float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-    if (entityIn.getSheared() || entityIn.isInvisible()) {
+    if (entityIn.isSheared() || entityIn.isInvisible()) {
       return;
     }
 
-    renderCopyCutoutModel(getEntityModel(), this.sheepModel, TEXTURE, matrixStackIn, bufferIn, packedLightIn, entityIn, limbSwing,
+    coloredCutoutModelCopyLayerRender(getParentModel(), this.sheepModel, TEXTURE, matrixStackIn, bufferIn, packedLightIn, entityIn, limbSwing,
         limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, 1.0F, 1.0F, 1.0F);
   }
 }

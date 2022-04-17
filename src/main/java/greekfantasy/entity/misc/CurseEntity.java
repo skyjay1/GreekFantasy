@@ -20,9 +20,9 @@ import net.minecraftforge.fml.network.NetworkHooks;
 public class CurseEntity extends EffectProjectileEntity {
   
   private static final Effect[] CURSES = { 
-      Effects.BLINDNESS, Effects.SLOWNESS, Effects.POISON, Effects.INSTANT_DAMAGE, Effects.WEAKNESS,
-      Effects.WITHER, Effects.LEVITATION, Effects.GLOWING, Effects.MINING_FATIGUE, Effects.HUNGER,
-      Effects.NAUSEA, Effects.UNLUCK };
+      Effects.BLINDNESS, Effects.MOVEMENT_SLOWDOWN, Effects.POISON, Effects.HARM, Effects.WEAKNESS,
+      Effects.WITHER, Effects.LEVITATION, Effects.GLOWING, Effects.DIG_SLOWDOWN, Effects.HUNGER,
+      Effects.CONFUSION, Effects.UNLUCK };
   
   public CurseEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
     super(entityType, world);
@@ -31,12 +31,12 @@ public class CurseEntity extends EffectProjectileEntity {
   protected CurseEntity(World worldIn, LivingEntity thrower) {
     this(GFRegistry.CURSE_ENTITY, worldIn);
     this.lifespan = 90;
-    super.setShooter(thrower);
-    this.setPosition(thrower.getPosX(), thrower.getPosYEye() - 0.1D, thrower.getPosZ());
+    super.setOwner(thrower);
+    this.setPos(thrower.getX(), thrower.getEyeY() - 0.1D, thrower.getZ());
     // this unmapped method from ProjectileEntity does some math, then calls #shoot
     // params: thrower, rotationPitch, rotationYaw, ???, speed, inaccuracy
-    setDirectionAndMovement(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, 0.78F, 0.4F);
-    markVelocityChanged();
+    shootFromRotation(thrower, thrower.xRot, thrower.yRot, 0.0F, 0.78F, 0.4F);
+    markHurt();
   }
   
   public static CurseEntity create(World worldIn, LivingEntity thrower) {
@@ -44,13 +44,13 @@ public class CurseEntity extends EffectProjectileEntity {
   }
 
   @Override
-  public IPacket<?> createSpawnPacket() {
+  public IPacket<?> getAddEntityPacket() {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 
   @Override
   protected List<EffectInstance> getPotionEffects(final LivingEntity entity) { 
-    return ImmutableList.of(new EffectInstance(CURSES[entity.getRNG().nextInt(CURSES.length)], 200, entity.getRNG().nextInt(2))); 
+    return ImmutableList.of(new EffectInstance(CURSES[entity.getRandom().nextInt(CURSES.length)], 200, entity.getRandom().nextInt(2))); 
   }
   
   protected IParticleData getImpactParticle(final LivingEntity entity) { return ParticleTypes.DAMAGE_INDICATOR; }

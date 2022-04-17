@@ -18,18 +18,18 @@ public class NearestAttackableFavorablePlayerResetGoal extends Goal {
   public NearestAttackableFavorablePlayerResetGoal(final MobEntity entityIn) { this(entityIn, 10); }
   
   public NearestAttackableFavorablePlayerResetGoal(final MobEntity entityIn, int intervalIn) {
-    this.setMutexFlags(EnumSet.of(Goal.Flag.TARGET));
+    this.setFlags(EnumSet.of(Goal.Flag.TARGET));
     entity = entityIn;
     interval = intervalIn;
   }
 
   @Override
-  public boolean shouldExecute() {
-    final LivingEntity target = entity.getAttackTarget();
-    if(entity.ticksExisted % interval == 0 && entity.isAlive() && target instanceof PlayerEntity
+  public boolean canUse() {
+    final LivingEntity target = entity.getTarget();
+    if(entity.tickCount % interval == 0 && entity.isAlive() && target instanceof PlayerEntity
         && target.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()).isEnabled() 
-        && target != entity.getRevengeTarget() 
-        && !(entity instanceof IAngerable && target.getUniqueID().equals(((IAngerable)entity).getAngerTarget()))) {
+        && target != entity.getLastHurtByMob() 
+        && !(entity instanceof IAngerable && target.getUUID().equals(((IAngerable)entity).getPersistentAngerTarget()))) {
       // reset target if it is not in the favor range
       ConfiguredFavorRange range = GreekFantasy.PROXY.getFavorConfiguration().getEntity(entity.getType());
       return range.hasHostileRange() && !range.getHostileRange().isInFavorRange((PlayerEntity)target);
@@ -38,11 +38,11 @@ public class NearestAttackableFavorablePlayerResetGoal extends Goal {
   }
   
   @Override
-  public boolean shouldContinueExecuting() { return false; }
+  public boolean canContinueToUse() { return false; }
   
   @Override
-  public void startExecuting() {
-    entity.setAttackTarget(null);
+  public void start() {
+    entity.setTarget(null);
   }
 }
 

@@ -51,7 +51,7 @@ public interface IHasOwner<E extends LivingEntity> {
    * Sets this entity's owner as the given player
    * @param entity a player
    **/
-  default void setOwner(final PlayerEntity entity) { setOwner(entity.getUniqueID()); }
+  default void setOwner(final PlayerEntity entity) { setOwner(entity.getUUID()); }
 
   /**
    * @param entity the entity to check
@@ -80,15 +80,15 @@ public interface IHasOwner<E extends LivingEntity> {
     }
     // donot target creatures that cannot be targeted by owner
     if (target instanceof PlayerEntity && owner instanceof PlayerEntity
-        && !((PlayerEntity) owner).canAttackPlayer((PlayerEntity) target)) {
+        && !((PlayerEntity) owner).canHarmPlayer((PlayerEntity) target)) {
       return false;
     }
     // do not target tamed horses
-    if (target instanceof AbstractHorseEntity && ((AbstractHorseEntity) target).isTame()) {
+    if (target instanceof AbstractHorseEntity && ((AbstractHorseEntity) target).isTamed()) {
       return false;
     }
     // do not target tamed tameables
-    return !(target instanceof TameableEntity) || !((TameableEntity) target).isTamed();
+    return !(target instanceof TameableEntity) || !((TameableEntity) target).isTame();
   }
   
   /**
@@ -116,7 +116,7 @@ public interface IHasOwner<E extends LivingEntity> {
         return true;
       }
       if (owner != null) {
-        return owner.isOnSameTeam(entity);
+        return owner.isAlliedTo(entity);
       }
     }
     return false;
@@ -128,7 +128,7 @@ public interface IHasOwner<E extends LivingEntity> {
    **/
   default void writeOwner(final CompoundNBT compound) {
     if (hasOwner()) {
-      compound.putUniqueId(KEY_OWNER, getOwnerID().get());
+      compound.putUUID(KEY_OWNER, getOwnerID().get());
     }
   }
 
@@ -137,46 +137,46 @@ public interface IHasOwner<E extends LivingEntity> {
    * @param compound the tag compound
    **/
   default void readOwner(final CompoundNBT compound) {
-    if (compound.hasUniqueId(KEY_OWNER)) {
-      setOwner(compound.getUniqueId(KEY_OWNER));
+    if (compound.hasUUID(KEY_OWNER)) {
+      setOwner(compound.getUUID(KEY_OWNER));
     }
   }
   
   default boolean tryTameOrHeal(final E self, final PlayerEntity player, final Hand hand) {
-    ItemStack itemstack = player.getHeldItem(hand);
+    ItemStack itemstack = player.getItemInHand(hand);
     boolean hasOwner = hasOwner();
     float healAmount = getHealAmount(itemstack);
-    int tameChance = isTamingItem(itemstack) ? getTameChance(player.getRNG()) : 0;
+    int tameChance = isTamingItem(itemstack) ? getTameChance(player.getRandom()) : 0;
     boolean success = false;
     if (!hasOwner && tameChance > 0) {
       // attempt to tame the entity
-      if(player.getRNG().nextInt(tameChance) == 0) {
+      if(player.getRandom().nextInt(tameChance) == 0) {
         this.setOwner(player);
       }
-      if(self.world.isRemote()) {
+      if(self.level.isClientSide()) {
         for(int i = 0; i < 3; i++) {
-          self.world.addParticle(ParticleTypes.HEART, self.getPosX(), self.getPosYEye(), self.getPosZ(), 0, 0, 0);
+          self.level.addParticle(ParticleTypes.HEART, self.getX(), self.getEyeY(), self.getZ(), 0, 0, 0);
         }
       }
       success = true;
     } else if(hasOwner && healAmount > 0 && self.getHealth() < self.getMaxHealth()) {
       // attempt to heal the entity
       self.heal(getHealAmount(itemstack));
-      if(self.world.isRemote()) {
-        self.world.addParticle(ParticleTypes.HEART, self.getPosX(), self.getPosYEye(), self.getPosZ(), 0, 0, 0);
+      if(self.level.isClientSide()) {
+        self.level.addParticle(ParticleTypes.HEART, self.getX(), self.getEyeY(), self.getZ(), 0, 0, 0);
       }
       success = true;
     }
     
     if (success) {
       // attempt to consume the item
-      if(!player.abilities.isCreativeMode) {
+      if(!player.abilities.instabuild) {
         itemstack.shrink(1);
       }
       // spawn particles
-      if(self.world.isRemote()) {
+      if(self.level.isClientSide()) {
         for(int i = 0; i < 3; i++) {
-          self.world.addParticle(ParticleTypes.HEART, self.getPosX(), self.getPosYEye(), self.getPosZ(), 0, 0, 0);
+          self.level.addParticle(ParticleTypes.HEART, self.getX(), self.getEyeY(), self.getZ(), 0, 0, 0);
         }
       }
     }
@@ -194,7 +194,7 @@ public interface IHasOwner<E extends LivingEntity> {
   
   default boolean hasTamingItemInHand(PlayerEntity player) {
     for(Hand hand : Hand.values()) {
-       ItemStack itemstack = player.getHeldItem(hand);
+       ItemStack itemstack = player.getItemInHand(hand);
        if (isTamingItem(itemstack)) {
           return true;
        }

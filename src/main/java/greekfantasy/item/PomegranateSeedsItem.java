@@ -19,36 +19,36 @@ import net.minecraft.world.World;
 
 public class PomegranateSeedsItem extends BlockNamedItem {
   
-  public static final Food POMEGRANATE_SEEDS = new Food.Builder().fastToEat().setAlwaysEdible().hunger(2).saturation(0.1F).build();
+  public static final Food POMEGRANATE_SEEDS = new Food.Builder().fast().alwaysEat().nutrition(2).saturationMod(0.1F).build();
   
   public PomegranateSeedsItem(final Item.Properties properties) {
     super(GFRegistry.POMEGRANATE_SAPLING, properties);
   }
   
   @Override
-  public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-    if (this.isInGroup(group)) {
+  public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+    if (this.allowdedIn(group)) {
       items.add(new ItemStack(this));
     }
   }
 
   @Override
-  public ItemStack onItemUseFinish(ItemStack item, World world, LivingEntity entity) {
+  public ItemStack finishUsingItem(ItemStack item, World world, LivingEntity entity) {
     ResourceLocation hades = new ResourceLocation(GreekFantasy.MODID, "hades");
     IFavor favor = entity.getCapability(GreekFantasy.FAVOR).orElse(null);
     // determine how to eat the item
-    if(Dimension.THE_NETHER.equals(world.getDimensionKey()) 
+    if(Dimension.NETHER.equals(world.dimension()) 
         || (entity instanceof PlayerEntity && favor != null && favor.getFavor(hades).getLevel() >= 4)) {
       // normal eating when in nether or high favor with Hades (level 4+)
-      item = super.onItemUseFinish(item, world, entity);
+      item = super.finishUsingItem(item, world, entity);
       // give prisoner potion effect
       if(GreekFantasy.CONFIG.isPrisonerEnabled()) {
-        entity.addPotionEffect(new EffectInstance(GFRegistry.PRISONER_EFFECT, GreekFantasy.CONFIG.getPrisonerDuration()));
+        entity.addEffect(new EffectInstance(GFRegistry.PRISONER_EFFECT, GreekFantasy.CONFIG.getPrisonerDuration()));
       }
     } else {
       // give naseau effect and shrink the itemstack
-      entity.addPotionEffect(new EffectInstance(Effects.NAUSEA, 220));
-      if (!(entity instanceof PlayerEntity) || !((PlayerEntity) entity).abilities.isCreativeMode) {
+      entity.addEffect(new EffectInstance(Effects.CONFUSION, 220));
+      if (!(entity instanceof PlayerEntity) || !((PlayerEntity) entity).abilities.instabuild) {
         item.shrink(1);
       }
     }

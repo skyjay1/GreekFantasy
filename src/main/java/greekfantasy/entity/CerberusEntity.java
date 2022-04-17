@@ -50,7 +50,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CerberusEntity extends CreatureEntity {
   
-  private static final DataParameter<Byte> STATE = EntityDataManager.createKey(CerberusEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Byte> STATE = EntityDataManager.defineId(CerberusEntity.class, DataSerializers.BYTE);
   private static final String KEY_STATE = "CerberusState";
   // bytes to use in STATE
   private static final byte NONE = (byte)0;
@@ -74,37 +74,37 @@ public class CerberusEntity extends CreatureEntity {
 
   public CerberusEntity(final EntityType<? extends CerberusEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.stepHeight = 1.0F;
-    this.experienceValue = 50;
+    this.maxUpStep = 1.0F;
+    this.xpReward = 50;
   }
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 190.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.26D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 8.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 190.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.26D)
+        .add(Attributes.FOLLOW_RANGE, 48.0D)
+        .add(Attributes.ATTACK_DAMAGE, 8.0D);
   }
   
   public static CerberusEntity spawnCerberus(final World world, final Vector3d pos) {
     CerberusEntity entity = GFRegistry.CERBERUS_ENTITY.create(world);
-    entity.setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), 0.0F, 0.0F);
-    entity.renderYawOffset = 0.0F;
-    world.addEntity(entity);
+    entity.moveTo(pos.x(), pos.y(), pos.z(), 0.0F, 0.0F);
+    entity.yBodyRot = 0.0F;
+    world.addFreshEntity(entity);
     entity.setSpawning(true);
     // trigger spawn for nearby players
-    for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(25.0D))) {
+    for (ServerPlayerEntity player : world.getEntitiesOfClass(ServerPlayerEntity.class, entity.getBoundingBox().inflate(25.0D))) {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
     }
     // play sound
-    world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_WITHER_SPAWN, entity.getSoundCategory(), 1.2F, 1.0F, false);
+    world.playLocalSound(pos.x(), pos.y(), pos.z(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
     return entity;
   }
   
   @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(STATE, Byte.valueOf(NONE));
+  public void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(STATE, Byte.valueOf(NONE));
   }
 
   @Override
@@ -124,8 +124,8 @@ public class CerberusEntity extends CreatureEntity {
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
@@ -150,20 +150,20 @@ public class CerberusEntity extends CreatureEntity {
     }
     
     // update firing
-    if(this.isServerWorld() && this.isFiring() && this.getAttackTarget() == null) {
+    if(this.isEffectiveAi() && this.isFiring() && this.getTarget() == null) {
       this.setFiring(false);
     }
   
     // spawn particles
-    if (world.isRemote() && this.isFiring()) {
+    if (level.isClientSide() && this.isFiring()) {
       spawnFireParticles();
     }
   }
   
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    final ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    final ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     setSpawning(true);
     return data;
   }
@@ -174,63 +174,63 @@ public class CerberusEntity extends CreatureEntity {
   }
   
   @Override
-  public void applyEntityCollision(Entity entityIn) { 
-    if(this.canBePushed() && !this.isSpawning()) {
-      super.applyEntityCollision(entityIn);
+  public void push(Entity entityIn) { 
+    if(this.isPushable() && !this.isSpawning()) {
+      super.push(entityIn);
     }
   }
   
   @Override
   protected SoundEvent getAmbientSound() {
-    return SoundEvents.ENTITY_WOLF_GROWL;
+    return SoundEvents.WOLF_GROWL;
   }
   
   @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_WOLF_HURT; }
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.WOLF_HURT; }
 
   @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_WOLF_DEATH; }
+  protected SoundEvent getDeathSound() { return SoundEvents.WOLF_DEATH; }
 
   @Override
   protected float getSoundVolume() { return 1.2F; }
   
   @Override
-  protected float getSoundPitch() { return 0.4F + rand.nextFloat() * 0.2F; }
+  protected float getVoicePitch() { return 0.4F + random.nextFloat() * 0.2F; }
   
   @Override
-  protected void playStepSound(BlockPos pos, BlockState blockIn) { this.playSound(SoundEvents.ENTITY_WOLF_STEP, 0.15F, 0.6F); }
+  protected void playStepSound(BlockPos pos, BlockState blockIn) { this.playSound(SoundEvents.WOLF_STEP, 0.15F, 0.6F); }
  
   // Boss logic
 
   @Override
-  public void addTrackingPlayer(ServerPlayerEntity player) {
-    super.addTrackingPlayer(player);
+  public void startSeenByPlayer(ServerPlayerEntity player) {
+    super.startSeenByPlayer(player);
     this.bossInfo.addPlayer(player);
   }
 
   @Override
-  public void removeTrackingPlayer(ServerPlayerEntity player) {
-    super.removeTrackingPlayer(player);
+  public void stopSeenByPlayer(ServerPlayerEntity player) {
+    super.stopSeenByPlayer(player);
     this.bossInfo.removePlayer(player);
   }
   
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-     super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+     super.addAdditionalSaveData(compound);
      compound.putByte(KEY_STATE, this.getCerberusState());
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-     super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+     super.readAdditionalSaveData(compound);
      this.setCerberusState(compound.getByte(KEY_STATE));
   }
   
   // State logic
   
-  public byte getCerberusState() { return this.getDataManager().get(STATE).byteValue(); }
+  public byte getCerberusState() { return this.getEntityData().get(STATE).byteValue(); }
   
-  public void setCerberusState(final byte state) { this.getDataManager().set(STATE, Byte.valueOf(state)); }
+  public void setCerberusState(final byte state) { this.getEntityData().set(STATE, Byte.valueOf(state)); }
   
   public boolean isNoneState() { return getCerberusState() == NONE; }
   
@@ -243,8 +243,8 @@ public class CerberusEntity extends CreatureEntity {
   public void setSummoning(final boolean summoning) { 
     setCerberusState(summoning ? SUMMONING : NONE);
     this.summonTime = summoning ? 1 : 0;
-    if(summoning && !world.isRemote()) {
-      world.setEntityState(this, SUMMON_CLIENT);
+    if(summoning && !level.isClientSide()) {
+      level.broadcastEntityEvent(this, SUMMON_CLIENT);
     }
   }
   
@@ -253,8 +253,8 @@ public class CerberusEntity extends CreatureEntity {
   public void setSpawning(final boolean spawning) {
     spawnTime = spawning ? MAX_SPAWN_TIME : 0;
     setCerberusState(spawning ? SPAWNING : NONE);
-    if(spawning && !world.isRemote()) {
-      world.setEntityState(this, SPAWN_CLIENT);
+    if(spawning && !level.isClientSide()) {
+      level.broadcastEntityEvent(this, SPAWN_CLIENT);
     }
   }
   
@@ -275,19 +275,19 @@ public class CerberusEntity extends CreatureEntity {
   // Fire-breathing particles
   
   public void spawnFireParticles() {
-    if(!world.isRemote()) {
+    if(!level.isClientSide()) {
       return;
     }
-    Vector3d lookVec = this.getLookVec();
+    Vector3d lookVec = this.getLookAngle();
     Vector3d pos = this.getEyePosition(1.0F);
     final double motion = 0.06D;
     final double radius = 0.75D;
     
     for (int i = 0; i < 5; i++) {
-      world.addParticle(ParticleTypes.FLAME, 
-          pos.x + (world.rand.nextDouble() - 0.5D) * radius, 
-          pos.y + (world.rand.nextDouble() - 0.5D) * radius, 
-          pos.z + (world.rand.nextDouble() - 0.5D) * radius,
+      level.addParticle(ParticleTypes.FLAME, 
+          pos.x + (level.random.nextDouble() - 0.5D) * radius, 
+          pos.y + (level.random.nextDouble() - 0.5D) * radius, 
+          pos.z + (level.random.nextDouble() - 0.5D) * radius,
           lookVec.x * motion * FIRE_RANGE, 
           lookVec.y * motion * 0.5D,
           lookVec.z * motion * FIRE_RANGE);
@@ -295,33 +295,33 @@ public class CerberusEntity extends CreatureEntity {
   }
   
   private void addSpawningParticles(final IParticleData particle, final int count) {
-    if(!this.world.isRemote()) {
+    if(!this.level.isClientSide()) {
       return;
     }
-    final double x = this.getPosX();
-    final double y = this.getPosY() + 0.1D;
-    final double z = this.getPosZ();
+    final double x = this.getX();
+    final double y = this.getY() + 0.1D;
+    final double z = this.getZ();
     final double motion = 0.08D;
-    final double radius = this.getWidth();
+    final double radius = this.getBbWidth();
     for (int i = 0; i < count; i++) {
-      world.addParticle(particle, 
-          x + (world.rand.nextDouble() - 0.5D) * radius, 
-          y + (world.rand.nextDouble() - 0.5D) * radius, 
-          z + (world.rand.nextDouble() - 0.5D) * radius,
-          (world.rand.nextDouble() - 0.5D) * motion, 
+      level.addParticle(particle, 
+          x + (level.random.nextDouble() - 0.5D) * radius, 
+          y + (level.random.nextDouble() - 0.5D) * radius, 
+          z + (level.random.nextDouble() - 0.5D) * radius,
+          (level.random.nextDouble() - 0.5D) * motion, 
           0.15D,
-          (world.rand.nextDouble() - 0.5D) * motion);
+          (level.random.nextDouble() - 0.5D) * motion);
     }
   }
   
   @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
+  public void handleEntityEvent(byte id) {
     if(id == SPAWN_CLIENT) {
       setSpawning(true);
     } else if(id == SUMMON_CLIENT) {
-      this.getEntityWorld().playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_WOLF_HOWL, this.getSoundCategory(), 1.1F, 0.9F + this.getRNG().nextFloat() * 0.2F, false);
+      this.getCommandSenderWorld().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.WOLF_HOWL, this.getSoundSource(), 1.1F, 0.9F + this.getRandom().nextFloat() * 0.2F, false);
     } else {
-      super.handleStatusUpdate(id);
+      super.handleEntityEvent(id);
     }
   }
   
@@ -329,13 +329,13 @@ public class CerberusEntity extends CreatureEntity {
   
   class SpawningGoal extends Goal {
 
-    public SpawningGoal() { setMutexFlags(EnumSet.allOf(Goal.Flag.class)); }
+    public SpawningGoal() { setFlags(EnumSet.allOf(Goal.Flag.class)); }
 
     @Override
-    public boolean shouldExecute() { return CerberusEntity.this.isSpawning(); }
+    public boolean canUse() { return CerberusEntity.this.isSpawning(); }
 
     @Override
-    public void tick() { CerberusEntity.this.getNavigator().clearPath(); }
+    public void tick() { CerberusEntity.this.getNavigation().stop(); }
   }
   
   class FireAttackGoal extends ShootFireGoal {
@@ -345,24 +345,24 @@ public class CerberusEntity extends CreatureEntity {
     }
 
     @Override
-    public boolean shouldExecute() {  
-      return super.shouldExecute() && CerberusEntity.this.isNoneState();
+    public boolean canUse() {  
+      return super.canUse() && CerberusEntity.this.isNoneState();
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
-      return super.shouldContinueExecuting() && CerberusEntity.this.isFiring();
+    public boolean canContinueToUse() {
+      return super.canContinueToUse() && CerberusEntity.this.isFiring();
     }
    
     @Override
-    public void startExecuting() {
-      super.startExecuting();
+    public void start() {
+      super.start();
       CerberusEntity.this.setFiring(true);
     }
    
     @Override
-    public void resetTask() {
-      super.resetTask();
+    public void stop() {
+      super.stop();
       CerberusEntity.this.setFiring(false);
     }
   }
@@ -377,17 +377,17 @@ public class CerberusEntity extends CreatureEntity {
     }
     
     @Override
-    public boolean shouldExecute() { return super.shouldExecute() && CerberusEntity.this.isNoneState(); }
+    public boolean canUse() { return super.canUse() && CerberusEntity.this.isNoneState(); }
     
     @Override
-    public void startExecuting() { 
-      super.startExecuting();
+    public void start() { 
+      super.start();
       CerberusEntity.this.setSummoning(true);
     }
     
     @Override
-    public void resetTask() {
-      super.resetTask();
+    public void stop() {
+      super.stop();
       CerberusEntity.this.setSummoning(false);
     }
     
@@ -395,7 +395,7 @@ public class CerberusEntity extends CreatureEntity {
     public void tick() {
       super.tick();
       if(this.progress == 8) {
-        CerberusEntity.this.getEntityWorld().setEntityState(CerberusEntity.this, SUMMON_CLIENT);
+        CerberusEntity.this.getCommandSenderWorld().broadcastEntityEvent(CerberusEntity.this, SUMMON_CLIENT);
       }
     }
     

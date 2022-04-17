@@ -13,6 +13,6 @@ public class StunnedEffect extends Effect {
   
   public StunnedEffect() {
     super(EffectType.HARMFUL, 0xC0C0C0);
-    this.addAttributesModifier(Attributes.MOVEMENT_SPEED, UUID_STUN.toString(), -1.0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    this.addAttributeModifier(Attributes.MOVEMENT_SPEED, UUID_STUN.toString(), -1.0D, AttributeModifier.Operation.MULTIPLY_TOTAL);
   }
 }

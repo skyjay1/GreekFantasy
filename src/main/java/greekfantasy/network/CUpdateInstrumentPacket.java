@@ -67,12 +67,12 @@ public class CUpdateInstrumentPacket {
       context.enqueueWork(() -> {
         final ServerPlayerEntity player = context.getSender();
         // make sure they are holding an instrument in this slot
-        if(message.getSlot() >= 0 && message.getSlot() < player.inventory.getSizeInventory()) {
-          final ItemStack stack = player.inventory.getStackInSlot(message.getSlot());
+        if(message.getSlot() >= 0 && message.getSlot() < player.inventory.getContainerSize()) {
+          final ItemStack stack = player.inventory.getItem(message.getSlot());
           if(stack.getItem() instanceof InstrumentItem) {
             // update the deity stored in the instrument NBT
             InstrumentItem.writeSong(stack, message.songName);
-            player.inventory.setInventorySlotContents(message.getSlot(), stack);
+            player.inventory.setItem(message.getSlot(), stack);
           }
         }
       });

@@ -70,11 +70,11 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
   
-  protected static final VoxelShape AABB_STATUE_BOTTOM = VoxelShapes.combine(
-      Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D),
-      Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D),
+  protected static final VoxelShape AABB_STATUE_BOTTOM = VoxelShapes.joinUnoptimized(
+      Block.box(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D),
+      Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D),
       IBooleanFunction.OR);
-  protected static final VoxelShape AABB_STATUE_TOP = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 24.0D, 14.0D);
+  protected static final VoxelShape AABB_STATUE_TOP = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 24.0D, 14.0D);
   
   protected final StatueMaterial statueMaterial; 
   private final ResourceLocation deity;
@@ -85,7 +85,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   }
   
   public StatueBlock(final StatueMaterial material, final Consumer<StatueTileEntity> teInit) {
-    this(material, teInit, Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_GRAY).hardnessAndResistance(1.5F, 6.0F).sound(SoundType.STONE).notSolid().setLightLevel(b -> material.getLightLevel()));
+    this(material, teInit, Block.Properties.of(Material.STONE, MaterialColor.COLOR_LIGHT_GRAY).strength(1.5F, 6.0F).sound(SoundType.STONE).noOcclusion().lightLevel(b -> material.getLightLevel()));
   }
   
   public StatueBlock(final StatueMaterial material, final Consumer<StatueTileEntity> teInit, final AbstractBlock.Properties properties) {
@@ -94,28 +94,28 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   
   public StatueBlock(final StatueMaterial material, final Consumer<StatueTileEntity> teInit, final AbstractBlock.Properties properties, final ResourceLocation deityName) {
     super(properties);
-    this.setDefaultState(this.getStateContainer().getBaseState()
-        .with(WATERLOGGED, false).with(HALF, DoubleBlockHalf.LOWER).with(HORIZONTAL_FACING, Direction.NORTH));
+    this.registerDefaultState(this.getStateDefinition().any()
+        .setValue(WATERLOGGED, false).setValue(HALF, DoubleBlockHalf.LOWER).setValue(FACING, Direction.NORTH));
     this.statueMaterial = material;
     this.tileEntityInit = teInit;
     this.deity = deityName;
   }
   
   @Override
-  protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-    builder.add(HALF, HORIZONTAL_FACING, WATERLOGGED);
+  protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    builder.add(HALF, FACING, WATERLOGGED);
   }
   
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
-    FluidState fluid = context.getWorld().getFluidState(context.getPos());
-    return this.getDefaultState().with(WATERLOGGED, fluid.isTagged(FluidTags.WATER)).with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+    FluidState fluid = context.getLevel().getFluidState(context.getClickedPos());
+    return this.defaultBlockState().setValue(WATERLOGGED, fluid.is(FluidTags.WATER)).setValue(FACING, context.getHorizontalDirection().getOpposite());
   }
   
   @SuppressWarnings("deprecation")
   @Override
-  public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
-    super.onBlockAdded(state, worldIn, pos, oldState, isMoving);
+  public void onPlace(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+    super.onPlace(state, worldIn, pos, oldState, isMoving);
     // update palladium data
     if(statueMaterial == StatueBlock.StatueMaterial.WOOD && worldIn instanceof net.minecraft.world.server.ServerWorld) {
       GFWorldSavedData data = GFWorldSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)worldIn);
@@ -124,78 +124,78 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   }
 
   @Override
-  public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+  public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
     // place upper block
-    final Direction facing = state.get(HORIZONTAL_FACING);
-    FluidState fluid = worldIn.getFluidState(pos.up());
-    worldIn.setBlockState(pos.up(), state.with(WATERLOGGED, fluid.isTagged(FluidTags.WATER)).with(HALF, DoubleBlockHalf.UPPER).with(HORIZONTAL_FACING, facing), 3);
+    final Direction facing = state.getValue(FACING);
+    FluidState fluid = worldIn.getFluidState(pos.above());
+    worldIn.setBlock(pos.above(), state.setValue(WATERLOGGED, fluid.is(FluidTags.WATER)).setValue(HALF, DoubleBlockHalf.UPPER).setValue(FACING, facing), 3);
   }
   
   @Override
-  public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
-    final DoubleBlockHalf half = state.get(HALF);
+  public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
+    final DoubleBlockHalf half = state.getValue(HALF);
     final boolean isUpper = half == DoubleBlockHalf.UPPER;
-    final BlockPos tePos = isUpper ? pos.down() : pos;
+    final BlockPos tePos = isUpper ? pos.below() : pos;
     // drop items from inventory
-    TileEntity tileentity = worldIn.getTileEntity(tePos);
-    if (canDropItems(state, worldIn) && !worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
-      InventoryHelper.dropItems(worldIn, pos, ((StatueTileEntity) tileentity).getInventory());
+    TileEntity tileentity = worldIn.getBlockEntity(tePos);
+    if (canDropItems(state, worldIn) && !worldIn.isClientSide() && tileentity instanceof StatueTileEntity) {
+      InventoryHelper.dropContents(worldIn, pos, ((StatueTileEntity) tileentity).getInventory());
     }
     // replace other block with air
-    final BlockPos otherHalf = isUpper ? pos.down() : pos.up();
+    final BlockPos otherHalf = isUpper ? pos.below() : pos.above();
     worldIn.destroyBlock(otherHalf, true, player);
-    worldIn.playEvent(player, 2001, pos, Block.getStateId(state));
-    super.onBlockHarvested(worldIn, pos, state, player);
+    worldIn.levelEvent(player, 2001, pos, Block.getId(state));
+    super.playerWillDestroy(worldIn, pos, state, player);
   }
   
   @Override
-  public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (!state.matchesBlock(newState.getBlock())) {
-      final DoubleBlockHalf half = state.get(HALF);
+  public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+    if (!state.is(newState.getBlock())) {
+      final DoubleBlockHalf half = state.getValue(HALF);
       final boolean isUpper = half == DoubleBlockHalf.UPPER;
-      final BlockPos tePos = isUpper ? pos.down() : pos;
+      final BlockPos tePos = isUpper ? pos.below() : pos;
       // drop items from inventory
-      TileEntity tileentity = worldIn.getTileEntity(tePos);
-      if (canDropItems(state, worldIn) && !worldIn.isRemote() && tileentity instanceof StatueTileEntity) {
-        InventoryHelper.dropItems(worldIn, pos, ((StatueTileEntity) tileentity).getInventory());
+      TileEntity tileentity = worldIn.getBlockEntity(tePos);
+      if (canDropItems(state, worldIn) && !worldIn.isClientSide() && tileentity instanceof StatueTileEntity) {
+        InventoryHelper.dropContents(worldIn, pos, ((StatueTileEntity) tileentity).getInventory());
       }
       // replace other block with air
-      final BlockPos otherHalf = isUpper ? pos.down() : pos.up();
+      final BlockPos otherHalf = isUpper ? pos.below() : pos.above();
       worldIn.destroyBlock(otherHalf, true);
       // update palladium data
       if(statueMaterial == StatueBlock.StatueMaterial.WOOD && worldIn instanceof net.minecraft.world.server.ServerWorld) {
         GFWorldSavedData data = GFWorldSavedData.getOrCreate((net.minecraft.world.server.ServerWorld)worldIn);
         data.removePalladium(new ChunkPos(pos), pos);
       }
-      super.onReplaced(state, worldIn, pos, newState, isMoving);
+      super.onRemove(state, worldIn, pos, newState, isMoving);
     }
   }
 
   @Override
-  public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
-    return worldIn.isAirBlock(pos.up()) || worldIn.getBlockState(pos.up()).getMaterial().isReplaceable();
+  public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos) {
+    return worldIn.isEmptyBlock(pos.above()) || worldIn.getBlockState(pos.above()).getMaterial().isReplaceable();
   }
   
   @Override
-  public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
+  public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
       BlockPos currentPos, BlockPos facingPos) {
-    if (stateIn.get(WATERLOGGED)) {
-      worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+    if (stateIn.getValue(WATERLOGGED)) {
+      worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
     }
     return stateIn;
   }
 
   @Override
-  public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
+  public ActionResultType use(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
     // do not open gui for wooden statues
     if(!this.statueMaterial.hasGui()) {
       return ActionResultType.PASS;
     }
     // prepare to interact with this block
-    final BlockPos tePos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos;
-    final TileEntity te = worldIn.getTileEntity(tePos);
-    final ItemStack stack = playerIn.getHeldItem(handIn);
+    final BlockPos tePos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+    final TileEntity te = worldIn.getBlockEntity(tePos);
+    final ItemStack stack = playerIn.getItemInHand(handIn);
     // player interaction is server side only  
     if (playerIn instanceof ServerPlayerEntity && te instanceof StatueTileEntity) {
       final StatueTileEntity teStatue = (StatueTileEntity)te;
@@ -210,7 +210,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
               final boolean happy = ideity.getItemFavorModifier(copy.getItem()) > 0;
               GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(happy, pos, 10));
             } else if(!stack.isEmpty()) {
-              playerIn.setHeldItem(handIn, teStatue.handleItemInteraction(playerIn, ideity, f, stack));
+              playerIn.setItemInHand(handIn, teStatue.handleItemInteraction(playerIn, ideity, f, stack));
             } else {
               // open deity screen
               NetworkHooks.openGui((ServerPlayerEntity) playerIn,
@@ -218,7 +218,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
                     new DeityContainer(id, inventory, f, ideity.getName()),
                       StringTextComponent.EMPTY),
                   buf -> {
-                    buf.writeCompoundTag(f.serializeNBT());
+                    buf.writeNbt(f.serializeNBT());
                     buf.writeResourceLocation(ideity.getName());
                   });
             }
@@ -229,8 +229,8 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
         return ActionResultType.SUCCESS;
       } 
       // handle nametag interaction
-      if(!stack.isEmpty() && stack.getItem() == Items.NAME_TAG && stack.hasDisplayName()) {        
-        teStatue.setTextureName(stack.getDisplayName().getUnformattedComponentText(), true);
+      if(!stack.isEmpty() && stack.getItem() == Items.NAME_TAG && stack.hasCustomHoverName()) {        
+        teStatue.setTextureName(stack.getHoverName().getContents(), true);
     		if(!playerIn.isCreative()) {
     		  stack.shrink(1);
     		}
@@ -240,7 +240,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
       final StatuePose currentPose = teStatue.getStatuePose();
       final boolean isFemale = teStatue.isStatueFemale();
       final String name = teStatue.getTextureName();
-      final Direction facing = state.get(StatueBlock.HORIZONTAL_FACING);
+      final Direction facing = state.getValue(StatueBlock.FACING);
       // open the container GUI
       NetworkHooks.openGui((ServerPlayerEntity)playerIn, 
         new SimpleNamedContainerProvider((id, inventory, player) -> 
@@ -249,9 +249,9 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
             buf -> {
               buf.writeBoolean(isFemale);
               buf.writeBlockPos(tePos);
-              buf.writeCompoundTag(currentPose.serializeNBT());
-              buf.writeString(name);
-              buf.writeByte(facing.getHorizontalIndex());
+              buf.writeNbt(currentPose.serializeNBT());
+              buf.writeUtf(name);
+              buf.writeByte(facing.get2DDataValue());
             }
         );
     }
@@ -260,16 +260,16 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   
   @Override
   public FluidState getFluidState(BlockState state) {
-    return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : Fluids.EMPTY.getDefaultState();
+    return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
   }
   
   @Override
   public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {    
-    return state.get(HALF) == DoubleBlockHalf.UPPER ? AABB_STATUE_TOP : AABB_STATUE_BOTTOM;
+    return state.getValue(HALF) == DoubleBlockHalf.UPPER ? AABB_STATUE_TOP : AABB_STATUE_BOTTOM;
   }
 
   @Override
-  public PushReaction getPushReaction(BlockState state) {
+  public PushReaction getPistonPushReaction(BlockState state) {
     return PushReaction.DESTROY;
   }
 
@@ -281,7 +281,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   @Override
   public TileEntity createTileEntity(final BlockState state, final IBlockReader world) {
     final StatueTileEntity te = GFRegistry.STATUE_TE.create();
-    te.setUpper(state.get(HALF) == DoubleBlockHalf.UPPER);
+    te.setUpper(state.getValue(HALF) == DoubleBlockHalf.UPPER);
     tileEntityInit.accept(te);
     return te;
   }
@@ -301,16 +301,16 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   // Comparator methods
 
   @Override
-  public boolean hasComparatorInputOverride(BlockState state) {
+  public boolean hasAnalogOutputSignal(BlockState state) {
     return true;
   }
 
   @Override
-  public int getComparatorInputOverride(BlockState state, World worldIn, BlockPos pos) {
-    final BlockPos tePos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos;
-    final TileEntity te = worldIn.getTileEntity(tePos);
+  public int getAnalogOutputSignal(BlockState state, World worldIn, BlockPos pos) {
+    final BlockPos tePos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+    final TileEntity te = worldIn.getBlockEntity(tePos);
     if(te instanceof IInventory) {
-      return Container.calcRedstoneFromInventory((IInventory)te);
+      return Container.getRedstoneSignalFromContainer((IInventory)te);
     }
     return 0;
   }
@@ -318,9 +318,9 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
   // Material
   
   public static enum StatueMaterial implements IStringSerializable {
-    LIMESTONE("limestone", true, 0, () -> GFRegistry.POLISHED_LIMESTONE_SLAB.getDefaultState()),
-    MARBLE("marble", true, 0, () -> GFRegistry.POLISHED_MARBLE_SLAB.getDefaultState()),
-    WOOD("wood", false, 11, () -> Blocks.SPRUCE_SLAB.getDefaultState());
+    LIMESTONE("limestone", true, 0, () -> GFRegistry.POLISHED_LIMESTONE_SLAB.defaultBlockState()),
+    MARBLE("marble", true, 0, () -> GFRegistry.POLISHED_MARBLE_SLAB.defaultBlockState()),
+    WOOD("wood", false, 11, () -> Blocks.SPRUCE_SLAB.defaultBlockState());
     
     private final ResourceLocation stoneTexture;
     private final String name;
@@ -360,7 +360,7 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     
     public static StatueMaterial getByName(final String id) {
       for(final StatueMaterial s : values()) {
-        if(s.getString().equals(id)) {
+        if(s.getSerializedName().equals(id)) {
           return s;
         }
       }
@@ -369,6 +369,6 @@ public class StatueBlock extends HorizontalBlock implements IWaterLoggable {
     }
 
     @Override
-    public String getString() { return name; }
+    public String getSerializedName() { return name; }
   }
 }

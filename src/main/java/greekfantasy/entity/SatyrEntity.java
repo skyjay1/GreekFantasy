@@ -64,9 +64,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class SatyrEntity extends CreatureEntity implements IAngerable {
   
-  private static final DataParameter<Byte> DATA_STATE = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BYTE);
-  private static final DataParameter<Boolean> DATA_SHAMAN = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BOOLEAN);
-  private static final DataParameter<Byte> DATA_COLOR = EntityDataManager.createKey(SatyrEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Byte> DATA_STATE = EntityDataManager.defineId(SatyrEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Boolean> DATA_SHAMAN = EntityDataManager.defineId(SatyrEntity.class, DataSerializers.BOOLEAN);
+  private static final DataParameter<Byte> DATA_COLOR = EntityDataManager.defineId(SatyrEntity.class, DataSerializers.BYTE);
   private static final String KEY_SHAMAN = "Shaman";
   private static final String KEY_COLOR = "Color";
   
@@ -87,7 +87,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   public int summonTime;
   public boolean hasShamanTexture;
   
-  private static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(20, 39);
+  private static final RangedInteger ANGER_RANGE = TickRangeConverter.rangeOfSeconds(20, 39);
   private int angerTime;
   private UUID angerTarget;
   
@@ -98,25 +98,25 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   
   public SatyrEntity(final EntityType<? extends SatyrEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.setPathPriority(PathNodeType.DANGER_FIRE, -1.0F);
-    this.setPathPriority(PathNodeType.DAMAGE_FIRE, -1.0F);
+    this.setPathfindingMalus(PathNodeType.DANGER_FIRE, -1.0F);
+    this.setPathfindingMalus(PathNodeType.DAMAGE_FIRE, -1.0F);
     meleeAttackGoal = new MeleeAttackGoal(this, 1.0D, false);
     summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 280);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 2.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 24.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.25D)
+        .add(Attributes.ATTACK_DAMAGE, 2.0D);
   }
   
   @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(DATA_STATE, Byte.valueOf(NONE));
-    this.getDataManager().register(DATA_SHAMAN, Boolean.valueOf(false));
-    this.getDataManager().register(DATA_COLOR, Byte.valueOf((byte) 0));
+  public void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(DATA_STATE, Byte.valueOf(NONE));
+    this.getEntityData().define(DATA_SHAMAN, Boolean.valueOf(false));
+    this.getEntityData().define(DATA_COLOR, Byte.valueOf((byte) 0));
   }
   
   @Override
@@ -128,14 +128,14 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     this.goalSelector.addGoal(4, new SatyrEntity.StartDancingGoal(0.9D, 22, 12, 420));
     this.goalSelector.addGoal(6, new RandomWalkingGoal(this, 0.8D, 160) {
       @Override
-      public boolean shouldExecute() { 
-        return SatyrEntity.this.isIdleState() && SatyrEntity.this.getAttackTarget() == null && super.shouldExecute(); 
+      public boolean canUse() { 
+        return SatyrEntity.this.isIdleState() && SatyrEntity.this.getTarget() == null && super.canUse(); 
       }
     });
     this.goalSelector.addGoal(7, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::isAngryAt));
     this.targetSelector.addGoal(3, new ResetAngerGoal<>(this, true));
     // configurable goals
     if(GreekFantasy.CONFIG.SATYR_LIGHTS_CAMPFIRES.get()) {
@@ -144,20 +144,20 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
-    if (this.world.isRemote()) {
+  public void aiStep() {
+    super.aiStep();
+    if (this.level.isClientSide()) {
       // play music
       if(isSummoning()) {
         SongManager.playMusic(this, (InstrumentItem)GFRegistry.PANFLUTE, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
       } else if(isDancing()) {
-        SongManager.playMusic(this, (InstrumentItem)GFRegistry.PANFLUTE, GreekFantasy.CONFIG.getSatyrSong(), world.getGameTime(), 0.84F, 0.28F);
+        SongManager.playMusic(this, (InstrumentItem)GFRegistry.PANFLUTE, GreekFantasy.CONFIG.getSatyrSong(), level.getGameTime(), 0.84F, 0.28F);
       }
     } else {
       // anger timer
-      this.func_241359_a_((ServerWorld) this.world, true);
+      this.updatePersistentAnger((ServerWorld) this.level, true);
       // campfire checker
-      if(this.ticksExisted % 60 == 1 && campfirePos.isPresent() && !isValidCampfire(world, campfirePos.get())) {
+      if(this.tickCount % 60 == 1 && campfirePos.isPresent() && !isValidCampfire(level, campfirePos.get())) {
         campfirePos = Optional.empty();
         setDancing(false);
       }
@@ -177,17 +177,17 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   }
   
   @Override
-  public boolean attackEntityFrom(final DamageSource source, final float amount) {
-    final boolean attackEntityFrom = super.attackEntityFrom(source, amount);
-    if(attackEntityFrom && source.getImmediateSource() instanceof LivingEntity) {
+  public boolean hurt(final DamageSource source, final float amount) {
+    final boolean attackEntityFrom = super.hurt(source, amount);
+    if(attackEntityFrom && source.getDirectEntity() instanceof LivingEntity) {
       // alert all nearby satyr shamans
-      final LivingEntity target = (LivingEntity)source.getImmediateSource();
-  	  final List<SatyrEntity> shamans = this.getEntityWorld().getEntitiesWithinAABB(SatyrEntity.class, this.getBoundingBox().grow(10.0D), e -> e.isShaman());
+      final LivingEntity target = (LivingEntity)source.getDirectEntity();
+  	  final List<SatyrEntity> shamans = this.getCommandSenderWorld().getEntitiesOfClass(SatyrEntity.class, this.getBoundingBox().inflate(10.0D), e -> e.isShaman());
   	  for(final SatyrEntity shaman : shamans) {
-  	    if(shaman.getAttackTarget() == null) {
-  	      shaman.setRevengeTarget(target);
-  	      shaman.setAngerTarget(target.getUniqueID());
-  	      shaman.func_230258_H__();
+  	    if(shaman.getTarget() == null) {
+  	      shaman.setLastHurtByMob(target);
+  	      shaman.setPersistentAngerTarget(target.getUUID());
+  	      shaman.startPersistentAngerTimer();
   	    }
   	  }   
     }
@@ -205,14 +205,14 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   }
  
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
     // coat colors based on group data
     CoatColors color;
     if (spawnDataIn instanceof SatyrEntity.GroupData) {
       color = ((SatyrEntity.GroupData)spawnDataIn).variant;
    } else {
-      color = Util.getRandomObject(CoatColors.values(), this.rand);
+      color = Util.getRandom(CoatColors.values(), this.random);
       spawnDataIn = new SatyrEntity.GroupData(color);
    }
     this.setCoatColor(color);
@@ -220,12 +220,12 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     if(worldIn.getRandom().nextInt(100) < GreekFantasy.CONFIG.getSatyrShamanChance()) {
       this.setShaman(true);
     }
-    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
   @Override
-  public void notifyDataManagerChange(final DataParameter<?> key) {
-    super.notifyDataManagerChange(key);
+  public void onSyncedDataUpdated(final DataParameter<?> key) {
+    super.onSyncedDataUpdated(key);
     if(key == DATA_SHAMAN) {
       // change AI task for shaman / non-shaman
       updateCombatAI();
@@ -242,78 +242,78 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   }
   
   @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
+  public void handleEntityEvent(byte id) {
     if(id == PLAY_SUMMON_SOUND) {
-      this.getEntityWorld().playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_WOLF_HOWL, this.getSoundCategory(), 1.1F, 0.9F + this.getRNG().nextFloat() * 0.2F, false);
+      this.getCommandSenderWorld().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.WOLF_HOWL, this.getSoundSource(), 1.1F, 0.9F + this.getRandom().nextFloat() * 0.2F, false);
       this.summonTime = 0;
     } else {
-      super.handleStatusUpdate(id);
+      super.handleEntityEvent(id);
     }
   }
 
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
     compound.putBoolean(KEY_SHAMAN, this.isShaman());
     compound.putByte(KEY_COLOR, (byte) this.getCoatColor().getId());
-    this.writeAngerNBT(compound);
+    this.addPersistentAngerSaveData(compound);
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
     this.setShaman(compound.getBoolean(KEY_SHAMAN));
-    this.setCoatColor(CoatColors.func_234254_a_(compound.getByte(KEY_COLOR)));
-    this.readAngerNBT((ServerWorld)this.world, compound);
+    this.setCoatColor(CoatColors.byId(compound.getByte(KEY_COLOR)));
+    this.readPersistentAngerSaveData((ServerWorld)this.level, compound);
   }
   
   //IAngerable methods
   
   @Override
-  public void func_230258_H__() { this.setAngerTime(ANGER_RANGE.getRandomWithinRange(this.rand)); }
+  public void startPersistentAngerTimer() { this.setRemainingPersistentAngerTime(ANGER_RANGE.randomValue(this.random)); }
   @Override
-  public void setAngerTime(int time) { this.angerTime = time; }
+  public void setRemainingPersistentAngerTime(int time) { this.angerTime = time; }
   @Override
-  public int getAngerTime() { return this.angerTime; }
+  public int getRemainingPersistentAngerTime() { return this.angerTime; }
   @Override
-  public void setAngerTarget(@Nullable UUID target) { this.angerTarget = target; }
+  public void setPersistentAngerTarget(@Nullable UUID target) { this.angerTarget = target; }
   @Override
-  public UUID getAngerTarget() { return this.angerTarget; }
+  public UUID getPersistentAngerTarget() { return this.angerTarget; }
  
   // End IAngerable methods
   
   // Idle, dancing, summoning
   
-  public boolean isIdleState() { return this.getDataManager().get(DATA_STATE).byteValue() == NONE; }
+  public boolean isIdleState() { return this.getEntityData().get(DATA_STATE).byteValue() == NONE; }
   
-  public void setIdleState() { this.getDataManager().set(DATA_STATE, Byte.valueOf(NONE)); }
+  public void setIdleState() { this.getEntityData().set(DATA_STATE, Byte.valueOf(NONE)); }
   
-  public boolean isDancing() { return this.getDataManager().get(DATA_STATE).byteValue() == DANCING; }
+  public boolean isDancing() { return this.getEntityData().get(DATA_STATE).byteValue() == DANCING; }
   
-  public void setDancing(final boolean dancing) { this.getDataManager().set(DATA_STATE, Byte.valueOf(dancing ? DANCING : NONE)); }
+  public void setDancing(final boolean dancing) { this.getEntityData().set(DATA_STATE, Byte.valueOf(dancing ? DANCING : NONE)); }
   
-  public boolean isSummoning() { return this.getDataManager().get(DATA_STATE).byteValue() == SUMMONING; }
+  public boolean isSummoning() { return this.getEntityData().get(DATA_STATE).byteValue() == SUMMONING; }
   
-  public void setSummoning(final boolean summoning) { this.getDataManager().set(DATA_STATE, Byte.valueOf(summoning ? SUMMONING : NONE)); }
+  public void setSummoning(final boolean summoning) { this.getEntityData().set(DATA_STATE, Byte.valueOf(summoning ? SUMMONING : NONE)); }
   
   // Shaman, coat colors
   
-  public boolean isShaman() { return this.getDataManager().get(DATA_SHAMAN); }
+  public boolean isShaman() { return this.getEntityData().get(DATA_SHAMAN); }
   
   public void setShaman(final boolean shaman) { 
     this.hasShamanTexture = shaman;
-    this.getDataManager().set(DATA_SHAMAN, Boolean.valueOf(shaman));
-    if(this.isServerWorld()) {
+    this.getEntityData().set(DATA_SHAMAN, Boolean.valueOf(shaman));
+    if(this.isEffectiveAi()) {
       updateCombatAI();
     }
   }
   
-  public void setCoatColor(final CoatColors color) { this.getDataManager().set(DATA_COLOR, (byte) color.getId()); }
+  public void setCoatColor(final CoatColors color) { this.getEntityData().set(DATA_COLOR, (byte) color.getId()); }
   
-  public CoatColors getCoatColor() { return CoatColors.func_234254_a_(this.getDataManager().get(DATA_COLOR).intValue()); }
+  public CoatColors getCoatColor() { return CoatColors.byId(this.getEntityData().get(DATA_COLOR).intValue()); }
   
   protected void updateCombatAI() {
-    if(this.isServerWorld()) {
+    if(this.isEffectiveAi()) {
       if(this.isShaman() && GreekFantasy.CONFIG.SATYR_ATTACK.get()) {
         this.goalSelector.addGoal(1, summonAnimalsGoal);
         this.goalSelector.removeGoal(meleeAttackGoal);
@@ -348,7 +348,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
   protected static boolean isValidCampfire(final IWorldReader world, final BlockPos pos) {
     // check if the block is actually a campfire
     final BlockState campfire = world.getBlockState(pos);
-    if(!campfire.isIn(BlockTags.CAMPFIRES) || !campfire.get(CampfireBlock.LIT) || campfire.get(CampfireBlock.WATERLOGGED)) {
+    if(!campfire.is(BlockTags.CAMPFIRES) || !campfire.getValue(CampfireBlock.LIT) || campfire.getValue(CampfireBlock.WATERLOGGED)) {
       return false;
     }
     // check surrounding area (only flat or passable terrain is allowed)
@@ -356,10 +356,10 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
       for(int z = -1; z <= 1; z++) {
         if(!(x == 0 && z == 0)) {
           // check for impassable blocks
-          final BlockPos p = pos.add(x, 0, z);
-          if(!world.getBlockState(p.down()).getMaterial().isSolid() || 
-              world.getBlockState(p).isSolid() ||
-              world.getBlockState(p).getMaterial().blocksMovement()) {
+          final BlockPos p = pos.offset(x, 0, z);
+          if(!world.getBlockState(p.below()).getMaterial().isSolid() || 
+              world.getBlockState(p).canOcclude() ||
+              world.getBlockState(p).getMaterial().blocksMotion()) {
             return false;
           }
         }
@@ -379,9 +379,9 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     for (int x = -2; x <= 2; x++) {
       for (int z = -2; z <= 2; z++) {
         // check for impassable blocks
-        final BlockPos p = pos.add(x, 0, z);
+        final BlockPos p = pos.offset(x, 0, z);
         final BlockState state = world.getBlockState(p);
-        if (state.isIn(BlockTags.CAMPFIRES) && (state.get(CampfireBlock.LIT) == lit) && !state.get(CampfireBlock.WATERLOGGED)) {
+        if (state.is(BlockTags.CAMPFIRES) && (state.getValue(CampfireBlock.LIT) == lit) && !state.getValue(CampfireBlock.WATERLOGGED)) {
           return Optional.of(p);
         }
       }
@@ -396,8 +396,8 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
     
     @Override
-    public void startExecuting() {
-      super.startExecuting();
+    public void start() {
+      super.start();
       SatyrEntity.this.setSummoning(true);
     }
     
@@ -407,15 +407,15 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
     
     @Override
-    public void resetTask() {
-      super.resetTask();
+    public void stop() {
+      super.stop();
       SatyrEntity.this.setSummoning(false);
     }
     
     @Override
     protected void summonMob(final WolfEntity mobEntity) {
-      mobEntity.setAngerTime(800);
-      mobEntity.setAngerTarget(SatyrEntity.this.getAttackTarget().getUniqueID());
+      mobEntity.setRemainingPersistentAngerTime(800);
+      mobEntity.setPersistentAngerTarget(SatyrEntity.this.getTarget().getUUID());
       super.summonMob(mobEntity);
     }
     
@@ -427,8 +427,8 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
 
     @Override
-    public boolean shouldExecute() {
-      return SatyrEntity.this.getAttackTarget() == null && super.shouldExecute();
+    public boolean canUse() {
+      return SatyrEntity.this.getTarget() == null && super.canUse();
     }
     
     @Override
@@ -451,32 +451,32 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     private int travelTime = 0;
     
     public DancingGoal(final double speedIn, final int dancingTimeIn) {
-      this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.JUMP));
+      this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.JUMP));
       this.moveSpeed = speedIn;
       this.maxDancingTime = dancingTimeIn;
    }
     
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
       return SatyrEntity.this.isDancing() && this.updateTarget();
     }
     
     @Override
-    public void startExecuting() {
-      super.startExecuting();
+    public void start() {
+      super.start();
       if(targetPos.isPresent()) {
-        SatyrEntity.this.getNavigator().tryMoveToXYZ(targetPos.get().x, targetPos.get().y, targetPos.get().z, moveSpeed);
+        SatyrEntity.this.getNavigation().moveTo(targetPos.get().x, targetPos.get().y, targetPos.get().z, moveSpeed);
         dancingTime = 1;
       }
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
+    public boolean canContinueToUse() {
       boolean isCampfireValid = true;
-      if(SatyrEntity.this.ticksExisted % 15 == 1) {
-        isCampfireValid = SatyrEntity.this.campfirePos.isPresent() && SatyrEntity.isValidCampfire(SatyrEntity.this.getEntityWorld(), SatyrEntity.this.campfirePos.get());
+      if(SatyrEntity.this.tickCount % 15 == 1) {
+        isCampfireValid = SatyrEntity.this.campfirePos.isPresent() && SatyrEntity.isValidCampfire(SatyrEntity.this.getCommandSenderWorld(), SatyrEntity.this.campfirePos.get());
       }
-      return SatyrEntity.this.getAttackTarget() == null && SatyrEntity.this.hurtTime == 0 && this.targetPos.isPresent() && isCampfireValid;
+      return SatyrEntity.this.getTarget() == null && SatyrEntity.this.hurtTime == 0 && this.targetPos.isPresent() && isCampfireValid;
     }
     
     @Override
@@ -487,26 +487,26 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
         if(isNearTarget(1.26D)) {
           this.updateTarget();
           if(SatyrEntity.this.isOnGround()) {
-            SatyrEntity.this.jump();
+            SatyrEntity.this.jumpFromGround();
           }
-          SatyrEntity.this.getNavigator().tryMoveToXYZ(targetPos.get().x, targetPos.get().y, targetPos.get().z, moveSpeed);
+          SatyrEntity.this.getNavigation().moveTo(targetPos.get().x, targetPos.get().y, targetPos.get().z, moveSpeed);
           this.travelTime = 0;
         }
       } else {
-        resetTask();
+        stop();
       }
     }
    
     @Override
-    public void resetTask() {
+    public void stop() {
       // move out of the way
-      if(SatyrEntity.this.campfirePos.isPresent() && campfirePos.get().withinDistance(SatyrEntity.this.getPosition(), 4.0D)) {
-        final Vector3d vec = RandomPositionGenerator.findRandomTargetBlockAwayFrom(SatyrEntity.this, 4, 4, Vector3d.copyCenteredHorizontally(SatyrEntity.this.campfirePos.get()));
+      if(SatyrEntity.this.campfirePos.isPresent() && campfirePos.get().closerThan(SatyrEntity.this.blockPosition(), 4.0D)) {
+        final Vector3d vec = RandomPositionGenerator.getPosAvoid(SatyrEntity.this, 4, 4, Vector3d.atBottomCenterOf(SatyrEntity.this.campfirePos.get()));
         if(vec != null) {
-          SatyrEntity.this.getNavigator().tryMoveToXYZ(vec.getX(), vec.getY(), vec.getZ(), this.moveSpeed);
+          SatyrEntity.this.getNavigation().moveTo(vec.x(), vec.y(), vec.z(), this.moveSpeed);
         }
       } else {
-        SatyrEntity.this.getNavigator().clearPath();
+        SatyrEntity.this.getNavigation().stop();
       }
       // reset values
       SatyrEntity.this.campfirePos = Optional.empty();
@@ -523,8 +523,8 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
      **/
     private boolean updateTarget() {
       if(SatyrEntity.this.campfirePos.isPresent()) {
-        final Direction nextDir = getClosestDirection().rotateY();
-        final BlockPos target = campfirePos.get().offset(nextDir);
+        final Direction nextDir = getClosestDirection().getClockWise();
+        final BlockPos target = campfirePos.get().relative(nextDir);
         this.targetPos = Optional.of(new Vector3d(target.getX() + 0.5D, target.getY(), target.getZ() + 0.5D));
         return true;
       }
@@ -537,13 +537,13 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
      **/
     private Direction getClosestDirection() {
       Direction dClosest = Direction.NORTH;
-      final Vector3d curPos = SatyrEntity.this.getPositionVec();
+      final Vector3d curPos = SatyrEntity.this.position();
       double dMin = 100.0D;
       if(SatyrEntity.this.campfirePos.isPresent()) {
         for(final Direction dir : HORIZONTALS) {
-          final BlockPos dPos = campfirePos.get().offset(dir);
+          final BlockPos dPos = campfirePos.get().relative(dir);
           final Vector3d dVec = new Vector3d(dPos.getX() + 0.5D, dPos.getY(), dPos.getZ() + 0.5D);
-          final double dSq = curPos.squareDistanceTo(dVec);
+          final double dSq = curPos.distanceToSqr(dVec);
           if(dSq < dMin) {
             dClosest = dir;
             dMin = dSq;
@@ -554,7 +554,7 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
     
     private boolean isNearTarget(final double distance) {
-      return this.targetPos.isPresent() && this.targetPos.get().isWithinDistanceOf(SatyrEntity.this.getPositionVec(), distance);
+      return this.targetPos.isPresent() && this.targetPos.get().closerThan(SatyrEntity.this.position(), distance);
     }
   }
   
@@ -567,15 +567,15 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
     
     @Override
-    public boolean shouldExecute() {
-      return SatyrEntity.this.getAttackTarget() == null && SatyrEntity.this.isIdleState() && super.shouldExecute();
+    public boolean canUse() {
+      return SatyrEntity.this.getTarget() == null && SatyrEntity.this.isIdleState() && super.canUse();
     }
 
     @Override
-    protected boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
+    protected boolean isValidTarget(IWorldReader worldIn, BlockPos pos) {
       // checks if the given block is within 1 block of a campfire
       for(final Direction d : SatyrEntity.HORIZONTALS) {
-        if(SatyrEntity.isValidCampfire(worldIn, pos.offset(d, 1))) {
+        if(SatyrEntity.isValidCampfire(worldIn, pos.relative(d, 1))) {
           return true;
         }
       }
@@ -583,27 +583,27 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
     
     @Override
-    public double getTargetDistanceSq() {
+    public double acceptedDistance() {
       return 2.0D;
     }
     
     @Override
     public void tick() {
-      if (this.getIsAboveDestination()) {
+      if (this.isReachedTarget()) {
         // check surrounding blocks to find a campfire
-        final Optional<BlockPos> campfire = SatyrEntity.getCampfireNear(SatyrEntity.this.world, SatyrEntity.this.getPosition(), true);
-        if (campfire.isPresent() && SatyrEntity.isValidCampfire(SatyrEntity.this.world, campfire.get())) {
+        final Optional<BlockPos> campfire = SatyrEntity.getCampfireNear(SatyrEntity.this.level, SatyrEntity.this.blockPosition(), true);
+        if (campfire.isPresent() && SatyrEntity.isValidCampfire(SatyrEntity.this.level, campfire.get())) {
           SatyrEntity.this.campfirePos = campfire;
           SatyrEntity.this.setDancing(true);
         } else {
-          resetTask();
+          stop();
         }
       }
       super.tick();
     }
    
     @Override
-    protected int getRunDelay(CreatureEntity entity) { return 200 + entity.getRNG().nextInt(chance); }
+    protected int nextStartTick(CreatureEntity entity) { return 200 + entity.getRandom().nextInt(chance); }
   }
   
   class LightCampfireGoal extends MoveToBlockGoal {
@@ -619,11 +619,11 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
 
     @Override
-    protected boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
+    protected boolean isValidTarget(IWorldReader worldIn, BlockPos pos) {
       // checks if the given block is within 2 blocks of an unlit campfire
       for(final Direction d : SatyrEntity.HORIZONTALS) {
-        final BlockState blockstate = worldIn.getBlockState(pos.offset(d, 1));
-        if(blockstate.isIn(BlockTags.CAMPFIRES) && !blockstate.get(CampfireBlock.LIT)) {
+        final BlockState blockstate = worldIn.getBlockState(pos.relative(d, 1));
+        if(blockstate.is(BlockTags.CAMPFIRES) && !blockstate.getValue(CampfireBlock.LIT)) {
           return true;
         }
       }
@@ -631,56 +631,56 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
     }
     
     @Override
-    public double getTargetDistanceSq() {
+    public double acceptedDistance() {
       return 2.0D;
     }
 
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
       return SatyrEntity.this.isIdleState()
-          && SatyrEntity.this.getAttackTarget() == null 
-          && !SatyrEntity.this.getEntityWorld().isRaining()
-          && SatyrEntity.this.getEntityWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)
-          && super.shouldExecute();
+          && SatyrEntity.this.getTarget() == null 
+          && !SatyrEntity.this.getCommandSenderWorld().isRaining()
+          && SatyrEntity.this.getCommandSenderWorld().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
+          && super.canUse();
     }
 
     @Override
-    public void startExecuting() {
+    public void start() {
       this.lightCampfireTimer = 0;
-      super.startExecuting();
+      super.start();
     }
 
     @Override
     public void tick() {
-      final Optional<BlockPos> campfire = SatyrEntity.getCampfireNear(SatyrEntity.this.world, SatyrEntity.this.getPosition(), false);
-      if (this.getIsAboveDestination() && campfire.isPresent()) {
+      final Optional<BlockPos> campfire = SatyrEntity.getCampfireNear(SatyrEntity.this.level, SatyrEntity.this.blockPosition(), false);
+      if (this.isReachedTarget() && campfire.isPresent()) {
         if (this.lightCampfireTimer >= maxLightCampfireTime) {
           // find and light campfire
           this.lightCampfire(campfire.get());
         } else {
           ++this.lightCampfireTimer;
-          if(SatyrEntity.this.getRNG().nextInt(12) == 0) {
-            SatyrEntity.this.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 1.0F, 1.0F);
-            SatyrEntity.this.swingArm(Hand.MAIN_HAND);
+          if(SatyrEntity.this.getRandom().nextInt(12) == 0) {
+            SatyrEntity.this.playSound(SoundEvents.FLINTANDSTEEL_USE, 1.0F, 1.0F);
+            SatyrEntity.this.swing(Hand.MAIN_HAND);
           }
-          SatyrEntity.this.getLookController().setLookPosition(Vector3d.copyCenteredHorizontally(campfire.get()));
+          SatyrEntity.this.getLookControl().setLookAt(Vector3d.atBottomCenterOf(campfire.get()));
         }
       }
       super.tick();
     }
     
     @Override
-    protected int getRunDelay(CreatureEntity entity) { return 200 + entity.getRNG().nextInt(chance) + maxLightCampfireTime; }
+    protected int nextStartTick(CreatureEntity entity) { return 200 + entity.getRandom().nextInt(chance) + maxLightCampfireTime; }
 
     protected boolean lightCampfire(final BlockPos pos) {
-      if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(SatyrEntity.this.world, SatyrEntity.this)) {
-        final BlockState state = SatyrEntity.this.world.getBlockState(pos);
-        if (state.isIn(BlockTags.CAMPFIRES)) {
-          if(SatyrEntity.this.getRNG().nextInt(20) == 0) {
-            SatyrEntity.this.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 1.0F, 1.0F);
+      if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(SatyrEntity.this.level, SatyrEntity.this)) {
+        final BlockState state = SatyrEntity.this.level.getBlockState(pos);
+        if (state.is(BlockTags.CAMPFIRES)) {
+          if(SatyrEntity.this.getRandom().nextInt(20) == 0) {
+            SatyrEntity.this.playSound(SoundEvents.FLINTANDSTEEL_USE, 1.0F, 1.0F);
           }
-          SatyrEntity.this.world.setBlockState(pos, state.with(CampfireBlock.LIT, Boolean.valueOf(true)), 2);
-          SatyrEntity.this.swingArm(Hand.MAIN_HAND);
+          SatyrEntity.this.level.setBlock(pos, state.setValue(CampfireBlock.LIT, Boolean.valueOf(true)), 2);
+          SatyrEntity.this.swing(Hand.MAIN_HAND);
           return true;
         }
       }

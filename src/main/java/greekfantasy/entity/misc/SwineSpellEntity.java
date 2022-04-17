@@ -27,12 +27,12 @@ public class SwineSpellEntity extends EffectProjectileEntity {
   
   protected SwineSpellEntity(World worldIn, LivingEntity thrower) {
     this(GFRegistry.SWINE_SPELL_ENTITY, worldIn);
-    super.setShooter(thrower);
-    this.setPosition(thrower.getPosX(), thrower.getPosYEye() - 0.1D, thrower.getPosZ());
+    super.setOwner(thrower);
+    this.setPos(thrower.getX(), thrower.getEyeY() - 0.1D, thrower.getZ());
     // this unmapped method from ProjectileEntity does some math, then calls #shoot
     // params: thrower, rotationPitch, rotationYaw, ???, speed, inaccuracy
-    setDirectionAndMovement(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, 0.75F, 0.5F);
-    markVelocityChanged();
+    shootFromRotation(thrower, thrower.xRot, thrower.yRot, 0.0F, 0.75F, 0.5F);
+    markHurt();
   }
   
   public static SwineSpellEntity create(World worldIn, LivingEntity thrower) {
@@ -40,12 +40,12 @@ public class SwineSpellEntity extends EffectProjectileEntity {
   }
 
   @Override
-  public IPacket<?> createSpawnPacket() {
+  public IPacket<?> getAddEntityPacket() {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 
   protected List<EffectInstance> getPotionEffects(final LivingEntity entity) {
-    Effect effect = Effects.SLOWNESS;
+    Effect effect = Effects.MOVEMENT_SLOWDOWN;
     int amp = 1;
     if(GreekFantasy.CONFIG.isSwineEnabled() && GreekFantasy.CONFIG.canSwineApply(entity.getType().getRegistryName().toString())) {
       effect = GFRegistry.SWINE_EFFECT;
@@ -55,8 +55,8 @@ public class SwineSpellEntity extends EffectProjectileEntity {
     final int slowness = entity instanceof PlayerEntity ? 1 : duration;
     return ImmutableList.of(
         new EffectInstance(effect, duration, amp, false, true),
-        new EffectInstance(Effects.SLOWNESS, slowness, amp + 1, false, false, false),
-        new EffectInstance(Effects.MINING_FATIGUE, duration - 1, amp + 1, false, false, false),
+        new EffectInstance(Effects.MOVEMENT_SLOWDOWN, slowness, amp + 1, false, false, false),
+        new EffectInstance(Effects.DIG_SLOWDOWN, duration - 1, amp + 1, false, false, false),
         new EffectInstance(Effects.WEAKNESS, duration - 1, amp + 1, false, false, false)); 
   }
   

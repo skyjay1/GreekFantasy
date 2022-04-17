@@ -5,6 +5,8 @@ import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 
+import net.minecraft.enchantment.Enchantment.Rarity;
+
 public class SilkstepEnchantment extends Enchantment {
   
   public SilkstepEnchantment(Rarity rarityIn) {
@@ -12,15 +14,15 @@ public class SilkstepEnchantment extends Enchantment {
   }
   
   @Override 
-  public int getMinEnchantability(int level) { return 5; }
+  public int getMinCost(int level) { return 5; }
   @Override
-  public int getMaxEnchantability(int level) { return 5; }
+  public int getMaxCost(int level) { return 5; }
   @Override
-  public boolean isTreasureEnchantment() { return false; }
+  public boolean isTreasureOnly() { return false; }
   @Override
-  public boolean canVillagerTrade() { return false; }
+  public boolean isTradeable() { return false; }
   @Override
-  public boolean canGenerateInLoot() { return true; }
+  public boolean isDiscoverable() { return true; }
   @Override
   public int getMaxLevel() { return 1; }
   @Override

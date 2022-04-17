@@ -38,30 +38,30 @@ import net.minecraft.world.World;
 
 public class HydraEntity extends MonsterEntity {
   
-  private static final DataParameter<Byte> HEADS = EntityDataManager.createKey(HydraEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Byte> HEADS = EntityDataManager.defineId(HydraEntity.class, DataSerializers.BYTE);
   private static final String KEY_HEADS = "Heads";
   
   public static final int MAX_HEADS = 11;
     
   public HydraEntity(final EntityType<? extends HydraEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.stepHeight = 1.0F;
+    this.maxUpStep = 1.0F;
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 200.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.0D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.66D)
-        .createMutableAttribute(Attributes.ARMOR, 5.0D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 16.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 200.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.24D)
+        .add(Attributes.ATTACK_DAMAGE, 0.0D)
+        .add(Attributes.KNOCKBACK_RESISTANCE, 0.66D)
+        .add(Attributes.ARMOR, 5.0D)
+        .add(Attributes.FOLLOW_RANGE, 16.0D);
   }
   
   @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(HEADS, Byte.valueOf((byte)0));
+  public void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(HEADS, Byte.valueOf((byte)0));
   }
   
   @Override
@@ -71,8 +71,8 @@ public class HydraEntity extends MonsterEntity {
     this.goalSelector.addGoal(2, new HydraEntity.MoveToTargetGoal(this, 1.0D, false));
     this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.8D) {
       @Override
-      public boolean shouldExecute() {
-        return HydraEntity.this.rand.nextInt(400) == 0 && super.shouldExecute();
+      public boolean canUse() {
+        return HydraEntity.this.random.nextInt(400) == 0 && super.canUse();
       }
     });
     this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
@@ -83,10 +83,10 @@ public class HydraEntity extends MonsterEntity {
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     
-    if(!getPassengers().isEmpty() && !world.isRemote()) {
+    if(!getPassengers().isEmpty() && !level.isClientSide()) {
       // determine if all heads are charred
       int charred = 0;
       HydraHeadEntity head;
@@ -99,41 +99,41 @@ public class HydraEntity extends MonsterEntity {
       // if all heads are charred, kill the hydra; otherwise, heal the hydra
       if(charred == getHeads()) {
         DamageSource source = this.getLastDamageSource();
-        attackEntityFrom(source != null ? source : DamageSource.STARVE, getMaxHealth() * 2.0F);
+        hurt(source != null ? source : DamageSource.STARVE, getMaxHealth() * 2.0F);
         getPassengers().forEach(e -> e.remove());
-      } else if(getHealth() < getMaxHealth() && rand.nextFloat() < 0.125F){
+      } else if(getHealth() < getMaxHealth() && random.nextFloat() < 0.125F){
         heal(1.25F * (getHeads() - charred));
       }
     }
   }
   
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    final ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    final ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     addHead(0);
     addHead(1);
     addHead(2);
-    setChild(false);
+    setBaby(false);
     return data;
   }
   
   @Override
-  public boolean isPotionApplicable(EffectInstance potioneffectIn) {
-    if (potioneffectIn.getPotion() == Effects.POISON) {
+  public boolean canBeAffected(EffectInstance potioneffectIn) {
+    if (potioneffectIn.getEffect() == Effects.POISON) {
       net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(
           this, potioneffectIn);
       net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
       return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
     }
-    return super.isPotionApplicable(potioneffectIn);
+    return super.canBeAffected(potioneffectIn);
   }
   
   // Heads //
   
-  public int getHeads() { return getDataManager().get(HEADS).intValue(); }
+  public int getHeads() { return getEntityData().get(HEADS).intValue(); }
   
-  public void setHeads(final int heads) { getDataManager().set(HEADS, Byte.valueOf((byte)heads)); }
+  public void setHeads(final int heads) { getEntityData().set(HEADS, Byte.valueOf((byte)heads)); }
   
   /**
    * Adds a head to this hydra
@@ -142,9 +142,9 @@ public class HydraEntity extends MonsterEntity {
    */
   public HydraHeadEntity addHead(final int id) {
     // GreekFantasy.LOGGER.debug("Adding head with id " + id);
-    if(!world.isRemote()) {
-      HydraHeadEntity head =  GFRegistry.HYDRA_HEAD_ENTITY.create(world);
-      head.setLocationAndAngles(getPosX(), getPosY(), getPosZ(), 0, 0);
+    if(!level.isClientSide()) {
+      HydraHeadEntity head =  GFRegistry.HYDRA_HEAD_ENTITY.create(level);
+      head.moveTo(getX(), getY(), getZ(), 0, 0);
       // add the entity to the world (commented out bc of errors: "trying to add entity with duplicated UUID ...")
       // world.addEntity(head);
       // update the entity data
@@ -167,8 +167,8 @@ public class HydraEntity extends MonsterEntity {
   }
   
   @Override
-  public void removePassengers() {
-    super.removePassengers();
+  public void ejectPassengers() {
+    super.ejectPassengers();
     setHeads(0);
   }
   
@@ -183,44 +183,44 @@ public class HydraEntity extends MonsterEntity {
   }
   
   @Override
-  protected boolean canBeRidden(Entity entityIn) { return false; }
+  protected boolean canRide(Entity entityIn) { return false; }
   
   @Override
-  protected boolean canFitPassenger(Entity passenger) { return this.getPassengers().size() < MAX_HEADS; }
+  protected boolean canAddPassenger(Entity passenger) { return this.getPassengers().size() < MAX_HEADS; }
 
   public void updatePassenger(Entity passenger, int id, Entity.IMoveCallback callback) {
-    if (this.isPassenger(passenger)) {
+    if (this.hasPassenger(passenger)) {
       int headsPerRow = MAX_HEADS / 2;
       int row = id / headsPerRow;
       double heads = (double)getHeads();
-      double radius = 0.08D + 0.4D * getWidth() + 0.35D * row;
+      double radius = 0.08D + 0.4D * getBbWidth() + 0.35D * row;
       // the index location of the head, based on id and row, and centered based on total heads
-      double index = ((double) (id % headsPerRow)) - 0.92D * getWidth();
+      double index = ((double) (id % headsPerRow)) - 0.92D * getBbWidth();
       // the angle to add based on hydra rotation yaw
-      double angleOff = Math.toRadians(this.rotationYaw + (heads / headsPerRow) * 6.0F) + Math.PI / 2.0D;
+      double angleOff = Math.toRadians(this.yRot + (heads / headsPerRow) * 6.0F) + Math.PI / 2.0D;
       // determine x,y,z position for the head
-      double dx = this.getPosX() + radius * Math.cos(index / Math.PI + angleOff);
-      double dy = this.getPosY() + this.getMountedYOffset() + passenger.getYOffset();
-      double dz = this.getPosZ() + radius * Math.sin(index / Math.PI + angleOff);
+      double dx = this.getX() + radius * Math.cos(index / Math.PI + angleOff);
+      double dy = this.getY() + this.getPassengersRidingOffset() + passenger.getMyRidingOffset();
+      double dz = this.getZ() + radius * Math.sin(index / Math.PI + angleOff);
       callback.accept(passenger, dx, dy, dz);
     }
   }
   
   @Override
-  public double getMountedYOffset() { return super.getMountedYOffset() + 0.32D; }
+  public double getPassengersRidingOffset() { return super.getPassengersRidingOffset() + 0.32D; }
   
   // Sounds //
   
   @Override
   protected SoundEvent getAmbientSound() {
-    return SoundEvents.ENTITY_BLAZE_AMBIENT;
+    return SoundEvents.BLAZE_AMBIENT;
   }
 
   @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_GENERIC_HURT; }
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.GENERIC_HURT; }
 
   @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_GENERIC_DEATH; }
+  protected SoundEvent getDeathSound() { return SoundEvents.GENERIC_DEATH; }
 
   @Override
   protected float getSoundVolume() { return 1.2F; }
@@ -228,14 +228,14 @@ public class HydraEntity extends MonsterEntity {
   // NBT methods //
   
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
     compound.putByte(KEY_HEADS, (byte)getHeads());
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
     setHeads((int)compound.getByte(KEY_HEADS));    
   }
   
@@ -248,9 +248,9 @@ public class HydraEntity extends MonsterEntity {
     @Override
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
       double d0 = this.getAttackReachSqr(enemy);
-      if (distToEnemySqr <= d0 && this.getSwingCooldown() <= 0) {
-        this.resetSwingCooldown();
-        HydraEntity.this.setLastAttackedEntity(enemy);
+      if (distToEnemySqr <= d0 && this.getTicksUntilNextAttack() <= 0) {
+        this.resetAttackCooldown();
+        HydraEntity.this.setLastHurtMob(enemy);
         // this version of the goal intentionally does *not* attack the target, that will be done by the heads
       }
     }

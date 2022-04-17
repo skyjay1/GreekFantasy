@@ -23,17 +23,17 @@ public class MirrorItem extends Item {
   }
 
   @Override
-  public ActionResult<ItemStack> onItemRightClick(final World world, final PlayerEntity playerIn, final Hand handIn) {
-    final ItemStack item = playerIn.getHeldItem(handIn);
-    if(!world.isRemote() && playerIn instanceof ServerPlayerEntity) {
-      if(playerIn.isSneaking()) {
+  public ActionResult<ItemStack> use(final World world, final PlayerEntity playerIn, final Hand handIn) {
+    final ItemStack item = playerIn.getItemInHand(handIn);
+    if(!world.isClientSide() && playerIn instanceof ServerPlayerEntity) {
+      if(playerIn.isShiftKeyDown()) {
         // print capability values on sneak-click
         playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
           if(f.isEnabled()) {
             GreekFantasy.PROXY.getDeityCollection(true).forEach(d -> f.getFavor(d).sendStatusMessage(playerIn, d));
           }
         });
-        playerIn.getCooldownTracker().setCooldown(item.getItem(), 20);
+        playerIn.getCooldowns().addCooldown(item.getItem(), 20);
       } else {
         // open capability gui on regular click
         playerIn.getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
@@ -43,13 +43,13 @@ public class MirrorItem extends Item {
               new DeityContainer(id, inventory, f, Deity.EMPTY.getName()), 
               StringTextComponent.EMPTY), 
               buf -> {
-                buf.writeCompoundTag(f.serializeNBT());
+                buf.writeNbt(f.serializeNBT());
                 buf.writeResourceLocation(Deity.EMPTY.getName());
               });
           }
         });
       }
     }
-    return ActionResult.resultSuccess(item);
+    return ActionResult.success(item);
   }
 }

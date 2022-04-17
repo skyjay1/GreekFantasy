@@ -19,21 +19,21 @@ public class HasOwnerBegGoal<T extends MobEntity & IHasOwner<T>> extends Goal {
   public HasOwnerBegGoal(final T entityHasOwner, final float minDistance) {
     this.entity = entityHasOwner;
     this.minPlayerDistance = minDistance;
-    this.playerPredicate = (new EntityPredicate()).setDistance((double) minDistance).allowInvulnerable().allowFriendlyFire().setSkipAttackChecks();
-    this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+    this.playerPredicate = (new EntityPredicate()).range((double) minDistance).allowInvulnerable().allowSameTeam().allowNonAttackable();
+    this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
   }
 
   @Override
-  public boolean shouldExecute() {
-    this.player = entity.world.getClosestPlayer(this.playerPredicate, entity);
+  public boolean canUse() {
+    this.player = entity.level.getNearestPlayer(this.playerPredicate, entity);
     return this.player == null ? false : entity.hasTamingItemInHand(this.player);
   }
 
   @Override
-  public boolean shouldContinueExecuting() {
+  public boolean canContinueToUse() {
     if (!this.player.isAlive()) {
       return false;
-    } else if (entity.getDistanceSq(this.player) > (double) (this.minPlayerDistance * this.minPlayerDistance)) {
+    } else if (entity.distanceToSqr(this.player) > (double) (this.minPlayerDistance * this.minPlayerDistance)) {
       return false;
     } else {
       return this.timeoutCounter > 0 && entity.hasTamingItemInHand(this.player);
@@ -41,23 +41,23 @@ public class HasOwnerBegGoal<T extends MobEntity & IHasOwner<T>> extends Goal {
   }
 
   @Override
-  public void startExecuting() {
-    this.timeoutCounter = 40 + entity.getRNG().nextInt(40);
+  public void start() {
+    this.timeoutCounter = 40 + entity.getRandom().nextInt(40);
   }
 
   @Override
-  public void resetTask() {
+  public void stop() {
     this.player = null;
   }
 
   @Override
   public void tick() {
-    entity.getLookController().setLookPosition(this.player.getPosX(), this.player.getPosYEye(),
-        this.player.getPosZ(), 10.0F, (float) entity.getVerticalFaceSpeed());
-    entity.getNavigator().clearPath();
+    entity.getLookControl().setLookAt(this.player.getX(), this.player.getEyeY(),
+        this.player.getZ(), 10.0F, (float) entity.getMaxHeadXRot());
+    entity.getNavigation().stop();
     --this.timeoutCounter;
-    if(entity.getAttackTarget() == this.player) {
-      entity.setAttackTarget(null);
+    if(entity.getTarget() == this.player) {
+      entity.setTarget(null);
     }
   }
 }

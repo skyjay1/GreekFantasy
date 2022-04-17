@@ -28,7 +28,7 @@ public class MobHeadTileEntity extends TileEntity {
   public void setHeadType(HeadType headTypeIn) {
     if(headType != headTypeIn) {
       this.headType = headTypeIn;
-      markDirty();
+      setChanged();
     }
   }
   
@@ -39,7 +39,7 @@ public class MobHeadTileEntity extends TileEntity {
   public void setWall(final boolean isOnWall) {
     if(wall != isOnWall) {
       wall = isOnWall;
-      markDirty();
+      setChanged();
     }
   }
 
@@ -61,25 +61,25 @@ public class MobHeadTileEntity extends TileEntity {
   
   @Override
   public SUpdateTileEntityPacket getUpdatePacket() {
-    return new SUpdateTileEntityPacket(getPos(), -1, getUpdateTag());
+    return new SUpdateTileEntityPacket(getBlockPos(), -1, getUpdateTag());
   }
   
   @Override
   public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket pkt) {
-    read(pkt.getNbtCompound());
+    read(pkt.getTag());
   }
   
   // NBT / SAVING
   
   @Override
-  public void read(BlockState state, CompoundNBT nbt) {
-    super.read(state, nbt);
+  public void load(BlockState state, CompoundNBT nbt) {
+    super.load(state, nbt);
     read(nbt);
   }
 
   @Override
-  public CompoundNBT write(CompoundNBT nbt) {
-    super.write(nbt);
+  public CompoundNBT save(CompoundNBT nbt) {
+    super.save(nbt);
     nbt.putByte(KEY_HEAD, headType.getId());
     nbt.putBoolean(KEY_WALL, wall);
     return nbt;

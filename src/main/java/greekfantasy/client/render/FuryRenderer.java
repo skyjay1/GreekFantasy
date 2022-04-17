@@ -18,7 +18,7 @@ public class FuryRenderer<T extends FuryEntity> extends BipedRenderer<T, FuryMod
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
 }

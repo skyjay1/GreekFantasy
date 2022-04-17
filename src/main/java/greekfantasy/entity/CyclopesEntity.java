@@ -34,30 +34,30 @@ public class CyclopesEntity extends MonsterEntity {
   
   public CyclopesEntity(final EntityType<? extends CyclopesEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.stepHeight = 1.0F;
+    this.maxUpStep = 1.0F;
   }
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 36.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.5D)
-        .createMutableAttribute(Attributes.ARMOR, 3.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 36.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.24D)
+        .add(Attributes.FOLLOW_RANGE, 24.0D)
+        .add(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
+        .add(Attributes.ATTACK_DAMAGE, 6.0D)
+        .add(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.5D)
+        .add(Attributes.ARMOR, 3.0D);
   }
   
   public static boolean canCyclopesSpawnOn(final EntityType<? extends MonsterEntity> entity, final IServerWorld world, final SpawnReason reason, 
       final BlockPos pos, final Random rand) {
-    return MonsterEntity.canMonsterSpawnInLight(entity, world, reason, pos, rand);
+    return MonsterEntity.checkMonsterSpawnRules(entity, world, reason, pos, rand);
   }
 
   @Override
   protected void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, MobEntity.class, 24.0F, 1.2D, 1.1D, (entity) -> {
-      return !entity.isSpectator() && entity.hasCustomName() && "Nobody".equals(entity.getCustomName().getUnformattedComponentText());
+      return !entity.isSpectator() && entity.hasCustomName() && "Nobody".equals(entity.getCustomName().getContents());
     }));
     this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
     this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
@@ -69,17 +69,17 @@ public class CyclopesEntity extends MonsterEntity {
   }
   
   @Nullable
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    if(this.rand.nextBoolean()) {
-      final ItemStack club = new ItemStack(rand.nextBoolean() ? GFRegistry.STONE_CLUB : GFRegistry.WOODEN_CLUB);
-      this.setHeldItem(Hand.MAIN_HAND, club);
+    if(this.random.nextBoolean()) {
+      final ItemStack club = new ItemStack(random.nextBoolean() ? GFRegistry.STONE_CLUB : GFRegistry.WOODEN_CLUB);
+      this.setItemInHand(Hand.MAIN_HAND, club);
     }
-    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
   @Override
-  protected float getJumpUpwardsMotion() {
-    return 0.52F * this.getJumpFactor();
+  protected float getJumpPower() {
+    return 0.52F * this.getBlockJumpFactor();
   }
 }

@@ -24,7 +24,7 @@ public class DrakainaRenderer<T extends DrakainaEntity> extends BipedRenderer<T,
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE_MAP.get(entity.getVariant());
   }
 }

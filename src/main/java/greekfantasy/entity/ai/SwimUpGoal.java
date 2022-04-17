@@ -21,48 +21,48 @@ public class SwimUpGoal<T extends CreatureEntity & ISwimmingMob> extends Goal {
   }
 
   @Override
-  public boolean shouldExecute() {
-    return (entity.isInWater() && entity.getPosY() < (this.targetY - 2.3D) && 
-        (entity.getNavigator().noPath() || entity.getPosY() < entity.getNavigator().getPath().getFinalPathPoint().y));
+  public boolean canUse() {
+    return (entity.isInWater() && entity.getY() < (this.targetY - 2.3D) && 
+        (entity.getNavigation().isDone() || entity.getY() < entity.getNavigation().getPath().getEndNode().y));
   }
 
   @Override
-  public boolean shouldContinueExecuting() {
-    return (shouldExecute() && !this.obstructed);
+  public boolean canContinueToUse() {
+    return (canUse() && !this.obstructed);
   }
 
   @Override
   public void tick() {
-    if (entity.getPosY() < (this.targetY - 1.0D) && (entity.getNavigator().noPath() || isCloseToPathTarget())) {
+    if (entity.getY() < (this.targetY - 1.0D) && (entity.getNavigation().isDone() || isCloseToPathTarget())) {
 
-      Vector3d vec = RandomPositionGenerator.findRandomTargetBlockTowards(entity, 4, 8,
-          new Vector3d(entity.getPosX(), this.targetY - 1.0D, entity.getPosZ()));
+      Vector3d vec = RandomPositionGenerator.getPosTowards(entity, 4, 8,
+          new Vector3d(entity.getX(), this.targetY - 1.0D, entity.getZ()));
 
       if (vec == null) {
         this.obstructed = true;
         return;
       }
-      entity.getNavigator().tryMoveToXYZ(vec.x, vec.y, vec.z, this.speed);
+      entity.getNavigation().moveTo(vec.x, vec.y, vec.z, this.speed);
     }
   }
 
   @Override
-  public void startExecuting() {
+  public void start() {
     entity.setSwimmingUp(true);
     this.obstructed = false;
   }
 
   @Override
-  public void resetTask() {
+  public void stop() {
     entity.setSwimmingUp(false);
   }
 
   protected boolean isCloseToPathTarget() {
-    Path path = entity.getNavigator().getPath();
+    Path path = entity.getNavigation().getPath();
     if (path != null) {
       BlockPos pos = path.getTarget();
       if (pos != null) {
-        double dis = entity.getDistanceSq(pos.getX(), pos.getY(), pos.getZ());
+        double dis = entity.distanceToSqr(pos.getX(), pos.getY(), pos.getZ());
         if (dis < 4.0D) {
           return true;
         }

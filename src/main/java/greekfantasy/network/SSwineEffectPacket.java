@@ -61,9 +61,9 @@ public class SSwineEffectPacket {
     if (context.getDirection().getReceptionSide() == LogicalSide.CLIENT) {
       context.enqueueWork(() -> {
         net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
-        Entity e = mc.world.getEntityByID(message.entity);
+        Entity e = mc.level.getEntity(message.entity);
         if(e instanceof LivingEntity) {
-          ((LivingEntity) e).addPotionEffect(new EffectInstance(GFRegistry.SWINE_EFFECT, message.duration));
+          ((LivingEntity) e).addEffect(new EffectInstance(GFRegistry.SWINE_EFFECT, message.duration));
         }
       });
     }

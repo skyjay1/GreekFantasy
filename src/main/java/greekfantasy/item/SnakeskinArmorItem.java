@@ -17,6 +17,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
+import net.minecraft.item.Item.Properties;
+
 public class SnakeskinArmorItem extends ArmorItem {
   protected static final IArmorMaterial MATERIAL = new SnakeskinArmorMaterial();
    
@@ -29,28 +31,28 @@ public class SnakeskinArmorItem extends ArmorItem {
   }
   
   @Override
-  public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+  public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
     // add the item to the group with enchantment already applied
-    if (this.isInGroup(group)) {
+    if (this.allowdedIn(group)) {
       final ItemStack stack = new ItemStack(this);
       if(GreekFantasy.CONFIG.isPoisonEnabled()) {
-        stack.addEnchantment(GFRegistry.POISON_ENCHANTMENT, 1);
+        stack.enchant(GFRegistry.POISON_ENCHANTMENT, 1);
       }
       items.add(stack);
     }
   }
   
   @Override
-  public void onCreated(ItemStack stack, World worldIn, PlayerEntity playerIn) {
+  public void onCraftedBy(ItemStack stack, World worldIn, PlayerEntity playerIn) {
     // add Poison enchantment if not present
-    if(GreekFantasy.CONFIG.isPoisonEnabled() && EnchantmentHelper.getEnchantmentLevel(GFRegistry.POISON_ENCHANTMENT, stack) < 1) {
-      stack.addEnchantment(GFRegistry.POISON_ENCHANTMENT, 1);
+    if(GreekFantasy.CONFIG.isPoisonEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.POISON_ENCHANTMENT, stack) < 1) {
+      stack.enchant(GFRegistry.POISON_ENCHANTMENT, 1);
     }
   }
 
   @Override
-  public boolean hasEffect(ItemStack stack) {
-    return GreekFantasy.CONFIG.isPoisonEnabled() ? stack.getEnchantmentTagList().size() > 1 : super.hasEffect(stack);
+  public boolean isFoil(ItemStack stack) {
+    return GreekFantasy.CONFIG.isPoisonEnabled() ? stack.getEnchantmentTags().size() > 1 : super.isFoil(stack);
   }
 
   /**
@@ -61,8 +63,8 @@ public class SnakeskinArmorItem extends ArmorItem {
   public void inventoryTick(final ItemStack stack, final World worldIn, final Entity entityIn, 
       final int itemSlot, final boolean isSelected) {
     // add Poison enchantment if not present
-    if(GreekFantasy.CONFIG.isPoisonEnabled() && EnchantmentHelper.getEnchantmentLevel(GFRegistry.POISON_ENCHANTMENT, stack) < 1) {
-      stack.addEnchantment(GFRegistry.POISON_ENCHANTMENT, 1);
+    if(GreekFantasy.CONFIG.isPoisonEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.POISON_ENCHANTMENT, stack) < 1) {
+      stack.enchant(GFRegistry.POISON_ENCHANTMENT, 1);
     }
   }
 
@@ -87,19 +89,19 @@ public class SnakeskinArmorItem extends ArmorItem {
   public static class SnakeskinArmorMaterial implements IArmorMaterial {
     private static final String NAME = "snakeskin";
     @Override
-    public int getDamageReductionAmount(EquipmentSlotType slot) { return ArmorMaterial.CHAIN.getDamageReductionAmount(slot); }
+    public int getDefenseForSlot(EquipmentSlotType slot) { return ArmorMaterial.CHAIN.getDefenseForSlot(slot); }
     @Override
-    public int getDurability(EquipmentSlotType slot) { return ArmorMaterial.IRON.getDurability(slot); }
+    public int getDurabilityForSlot(EquipmentSlotType slot) { return ArmorMaterial.IRON.getDurabilityForSlot(slot); }
     @Override
-    public int getEnchantability() { return ArmorMaterial.IRON.getEnchantability(); }
+    public int getEnchantmentValue() { return ArmorMaterial.IRON.getEnchantmentValue(); }
     @Override
     public float getKnockbackResistance() { return ArmorMaterial.LEATHER.getKnockbackResistance(); }
     @Override
     public String getName() { return NAME; }
     @Override
-    public Ingredient getRepairMaterial() { return Ingredient.fromItems(GFRegistry.TOUGH_SNAKESKIN); }
+    public Ingredient getRepairIngredient() { return Ingredient.of(GFRegistry.TOUGH_SNAKESKIN); }
     @Override
-    public SoundEvent getSoundEvent() { return SoundEvents.ITEM_ARMOR_EQUIP_TURTLE; }
+    public SoundEvent getEquipSound() { return SoundEvents.ARMOR_EQUIP_TURTLE; }
     @Override
     public float getToughness() { return ArmorMaterial.IRON.getToughness(); }
   }

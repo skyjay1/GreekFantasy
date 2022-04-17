@@ -63,9 +63,9 @@ public class CommonFavorEventHandler {
    **/
   @SubscribeEvent(priority = EventPriority.HIGHEST)
   public static void onPlayerDeath(final LivingDeathEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().getEntityWorld().isRemote()) {
+    if(!event.isCanceled() && event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().getCommandSenderWorld().isClientSide()) {
       final PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-      final Entity source = event.getSource().getTrueSource();
+      final Entity source = event.getSource().getEntity();
       // trigger FavorManager
       if(source instanceof LivingEntity && !player.isSpectator() && !player.isCreative()) {
         player.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerKilled(player, (LivingEntity)source, f));
@@ -79,9 +79,9 @@ public class CommonFavorEventHandler {
    */
   @SubscribeEvent
   public static void onLivingDeath(final LivingDeathEvent event) {
-    if(!event.isCanceled() && event.getSource().getTrueSource() instanceof PlayerEntity && !event.getEntityLiving().getEntityWorld().isRemote()) {
+    if(!event.isCanceled() && event.getSource().getEntity() instanceof PlayerEntity && !event.getEntityLiving().getCommandSenderWorld().isClientSide()) {
       // update favor manager
-      event.getSource().getTrueSource().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onKillEntity(event.getEntityLiving(), (PlayerEntity)event.getSource().getTrueSource(), f));
+      event.getSource().getEntity().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onKillEntity(event.getEntityLiving(), (PlayerEntity)event.getSource().getEntity(), f));
     }
   }
 
@@ -92,7 +92,7 @@ public class CommonFavorEventHandler {
   @SubscribeEvent
   public static void onPlayerTick(final PlayerTickEvent event) {
     final boolean tick = (event.phase == TickEvent.Phase.START) && event.player.isAlive();
-    if(tick && event.player.isServerWorld() && !event.player.getEntityWorld().isRemote()) {
+    if(tick && event.player.isEffectiveAi() && !event.player.getCommandSenderWorld().isClientSide()) {
       event.player.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerTick(event.player, f));
     }
   }
@@ -103,8 +103,8 @@ public class CommonFavorEventHandler {
    */
   @SubscribeEvent
   public static void onPlayerXP(final PlayerXpEvent.PickupXp event) {
-    if(!event.getPlayer().getEntityWorld().isRemote() && event.getPlayer().isServerWorld()) {
-      event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> event.getOrb().xpValue = FavorManager.onPlayerXP(event.getPlayer(), f, event.getOrb().xpValue));
+    if(!event.getPlayer().getCommandSenderWorld().isClientSide() && event.getPlayer().isEffectiveAi()) {
+      event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> event.getOrb().value = FavorManager.onPlayerXP(event.getPlayer(), f, event.getOrb().value));
     }
   }
   
@@ -114,7 +114,7 @@ public class CommonFavorEventHandler {
    */
   @SubscribeEvent
   public static void onAddPotion(final PotionEvent.PotionAddedEvent event) {
-    if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof PlayerEntity) {
+    if(!event.getEntityLiving().getCommandSenderWorld().isClientSide() && event.getEntityLiving() instanceof PlayerEntity) {
       // notify favor manager
       event.getEntityLiving().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAddPotion((PlayerEntity)event.getEntityLiving(), event.getPotionEffect(), f));
     }
@@ -152,7 +152,7 @@ public class CommonFavorEventHandler {
    **/
   @SubscribeEvent
   public static void onPlayerAttack(final AttackEntityEvent event) {
-    if(!event.isCanceled() && !event.getEntityLiving().getEntityWorld().isRemote() && event.getPlayer().isAlive() && !event.getPlayer().isSpectator() && !event.getPlayer().isCreative()) {
+    if(!event.isCanceled() && !event.getEntityLiving().getCommandSenderWorld().isClientSide() && event.getPlayer().isAlive() && !event.getPlayer().isSpectator() && !event.getPlayer().isCreative()) {
       event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onAttackEntity(event.getEntityLiving(), event.getPlayer(), f));
     }
   }
@@ -163,11 +163,11 @@ public class CommonFavorEventHandler {
    **/
   @SubscribeEvent
   public static void onPlayerAttacked(final LivingAttackEvent event) {
-    if(!event.isCanceled() && event.getEntityLiving().isServerWorld() 
+    if(!event.isCanceled() && event.getEntityLiving().isEffectiveAi() 
         && event.getEntityLiving() instanceof PlayerEntity
-        && event.getSource().getImmediateSource() != null
+        && event.getSource().getDirectEntity() != null
         && !event.getEntityLiving().isSpectator() && !((PlayerEntity)event.getEntityLiving()).isCreative()) {
-      ((PlayerEntity)event.getEntityLiving()).getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerHurt((PlayerEntity)event.getEntityLiving(), event.getSource().getImmediateSource(), f));
+      ((PlayerEntity)event.getEntityLiving()).getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onPlayerHurt((PlayerEntity)event.getEntityLiving(), event.getSource().getDirectEntity(), f));
     }
   }
   
@@ -178,11 +178,11 @@ public class CommonFavorEventHandler {
   @SubscribeEvent
   public static void onChangeEquipment(final LivingEquipmentChangeEvent event) {
     // Check which equipment was changed and if it is a player
-    if(GreekFantasy.CONFIG.isFlyingEnabled() && event.getEntityLiving() instanceof PlayerEntity && event.getEntityLiving().getEntityWorld() instanceof ServerWorld 
+    if(GreekFantasy.CONFIG.isFlyingEnabled() && event.getEntityLiving() instanceof PlayerEntity && event.getEntityLiving().getCommandSenderWorld() instanceof ServerWorld 
         && event.getSlot() == EquipmentSlotType.FEET && event.getTo().getItem() == GFRegistry.WINGED_SANDALS 
-        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, event.getTo()) > 0) {
+        && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, event.getTo()) > 0) {
       final PlayerEntity player = (PlayerEntity)event.getEntityLiving();
-      GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)player.getEntityWorld());
+      GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)player.getCommandSenderWorld());
       // Check the player's favor level before enabling flight
       if(GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.FLYING_RANGE).isInFavorRange(player)) {
         data.addFlyingPlayer(player);
@@ -196,7 +196,7 @@ public class CommonFavorEventHandler {
    **/
   @SubscribeEvent
   public static void onBreakBlock(final BlockEvent.BreakEvent event) {
-    if(event.getPlayer() != null && event.getPlayer().isServerWorld() && !event.getPlayer().isCreative()) {
+    if(event.getPlayer() != null && event.getPlayer().isEffectiveAi() && !event.getPlayer().isCreative()) {
       event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onBreakBlock(event.getPlayer(), event.getState().getBlock(), f));
     }
   }
@@ -207,12 +207,12 @@ public class CommonFavorEventHandler {
    */
   @SubscribeEvent
   public static void onStopUsingTrident(final LivingEntityUseItemEvent.Stop event) {
-    final ItemStack item = event.getEntityLiving().getHeldItemMainhand();
+    final ItemStack item = event.getEntityLiving().getMainHandItem();
     // Determine if the event can run (player using enchanted trident with no cooldown)
     if(!event.isCanceled() && event.getEntityLiving() instanceof PlayerEntity
         && GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == Items.TRIDENT
-        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) > 0
-        && !((PlayerEntity)event.getEntityLiving()).getCooldownTracker().hasCooldown(Items.TRIDENT)) {
+        && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) > 0
+        && !((PlayerEntity)event.getEntityLiving()).getCooldowns().isOnCooldown(Items.TRIDENT)) {
       // The player has used an enchanted item, send a packet to the server that will also check favor
       GreekFantasy.CHANNEL.sendToServer(new CUseEnchantmentPacket(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT.getRegistryName()));
       // cancel the event
@@ -226,12 +226,12 @@ public class CommonFavorEventHandler {
    */
   @SubscribeEvent
   public static void onUseClock(final PlayerInteractEvent.RightClickEmpty event) {
-    final ItemStack item = event.getPlayer().getHeldItemMainhand();
+    final ItemStack item = event.getPlayer().getMainHandItem();
     // Determine if the event can run (player using enchanted trident with no cooldown)
     if(!event.isCanceled() && GreekFantasy.CONFIG.isDaybreakEnabled() && item.getItem() == Items.CLOCK
-        && EnchantmentHelper.getEnchantmentLevel(GFRegistry.DAYBREAK_ENCHANTMENT, item) > 0
-        && event.getPlayer().getEntityWorld().getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)
-        && event.getPlayer().getEntityWorld().getDayTime() % 24000L > 13000L) {
+        && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.DAYBREAK_ENCHANTMENT, item) > 0
+        && event.getPlayer().getCommandSenderWorld().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)
+        && event.getPlayer().getCommandSenderWorld().getDayTime() % 24000L > 13000L) {
       // The player has used an enchanted clock, tell the server to change to daytime
       GreekFantasy.CHANNEL.sendToServer(new CUseEnchantmentPacket(GFRegistry.DAYBREAK_ENCHANTMENT.getRegistryName()));
     }
@@ -243,7 +243,7 @@ public class CommonFavorEventHandler {
    */
   @SubscribeEvent
   public static void onEntityInteract(final PlayerInteractEvent.EntityInteract event) {
-    if(!event.getPlayer().getEntityWorld().isRemote() && event.getTarget() instanceof AbstractVillagerEntity) {
+    if(!event.getPlayer().getCommandSenderWorld().isClientSide() && event.getTarget() instanceof AbstractVillagerEntity) {
       AbstractVillagerEntity villager = (AbstractVillagerEntity)event.getTarget();
       event.getPlayer().getCapability(GreekFantasy.FAVOR).ifPresent(f -> {
         // note: this special favor effect does not check or change cooldown time.
@@ -253,9 +253,9 @@ public class CommonFavorEventHandler {
             // close the container
             event.setCanceled(true);
             // cause the villager to shake its head and spawn particles
-            villager.setShakeHeadTicks(40);
-            villager.playSound(SoundEvents.ENTITY_VILLAGER_NO, 0.5F, 1.0F);
-            GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(false, event.getTarget().getPosition().up(1), 4));
+            villager.setUnhappyCounter(40);
+            villager.playSound(SoundEvents.VILLAGER_NO, 0.5F, 1.0F);
+            GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(false, event.getTarget().blockPosition().above(1), 4));
             return;
           }
         }        
@@ -270,7 +270,7 @@ public class CommonFavorEventHandler {
   @SubscribeEvent
   public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
     // attempt to add player target goals
-    if(event.getEntity() instanceof MobEntity && !event.getEntity().getEntityWorld().isRemote()
+    if(event.getEntity() instanceof MobEntity && !event.getEntity().getCommandSenderWorld().isClientSide()
         && GreekFantasy.PROXY.getFavorConfiguration().hasEntity(event.getEntity().getType())
         && GreekFantasy.PROXY.getFavorConfiguration().getEntity(event.getEntity().getType()).hasHostileRange()) {
       final MobEntity mob = (MobEntity)event.getEntity();
@@ -279,7 +279,7 @@ public class CommonFavorEventHandler {
       mob.targetSelector.addGoal(1, new NearestAttackableFavorablePlayerResetGoal(mob));
     }
     // attempt to add flee goals
-    if(event.getEntity() instanceof CreatureEntity && !event.getEntity().getEntityWorld().isRemote()
+    if(event.getEntity() instanceof CreatureEntity && !event.getEntity().getCommandSenderWorld().isClientSide()
         && GreekFantasy.PROXY.getFavorConfiguration().hasEntity(event.getEntity().getType())
         && GreekFantasy.PROXY.getFavorConfiguration().getEntity(event.getEntity().getType()).hasFleeRange()) {
       final CreatureEntity creature = (CreatureEntity)event.getEntity();
@@ -296,9 +296,9 @@ public class CommonFavorEventHandler {
   public static void onArrowJoinWorld(final EntityJoinWorldEvent event) {
     // attempt to add player target goals
     if((event.getEntity() instanceof ArrowEntity || event.getEntity() instanceof SpectralArrowEntity) 
-        && !event.getEntity().getEntityWorld().isRemote()) {
+        && !event.getEntity().getCommandSenderWorld().isClientSide()) {
       final AbstractArrowEntity arrow = (AbstractArrowEntity) event.getEntity();
-      final Entity thrower = arrow.getShooter();
+      final Entity thrower = arrow.getOwner();
       if(thrower instanceof PlayerEntity) {
         thrower.getCapability(GreekFantasy.FAVOR).ifPresent(f -> FavorManager.onShootArrow((PlayerEntity)thrower, f, arrow));
       }
@@ -311,7 +311,7 @@ public class CommonFavorEventHandler {
    */
   @SubscribeEvent
   public static void onBabySpawn(final BabyEntitySpawnEvent event) {
-    final World world = event.getParentA().getEntityWorld();
+    final World world = event.getParentA().getCommandSenderWorld();
     if(!event.isCanceled() && world instanceof ServerWorld && event.getCausedByPlayer() != null 
         && !event.getCausedByPlayer().isCreative() && !event.getCausedByPlayer().isSpectator()
         && event.getParentA() instanceof AnimalEntity && event.getParentB() instanceof AnimalEntity) {
@@ -323,11 +323,11 @@ public class CommonFavorEventHandler {
         } else if(numBabies > 1) {
           // number of babies is more than one, so spawn additional mobs
           for(int i = 1; i < numBabies; i++) {
-            AgeableEntity bonusChild = (AgeableEntity)event.getParentA().getType().create(event.getParentA().getEntityWorld());
+            AgeableEntity bonusChild = (AgeableEntity)event.getParentA().getType().create(event.getParentA().getCommandSenderWorld());
             if(bonusChild != null) {
-              bonusChild.copyLocationAndAnglesFrom(event.getParentA());
-              bonusChild.setChild(true);
-              world.addEntity(bonusChild);
+              bonusChild.copyPosition(event.getParentA());
+              bonusChild.setBaby(true);
+              world.addFreshEntity(bonusChild);
             }
           }
         }
@@ -341,13 +341,13 @@ public class CommonFavorEventHandler {
    **/
   @SubscribeEvent
   public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
-    if(!event.getEntityLiving().getEntityWorld().isRemote() && event.getEntityLiving() instanceof MobEntity 
+    if(!event.getEntityLiving().getCommandSenderWorld().isClientSide() && event.getEntityLiving() instanceof MobEntity 
         && event.getTarget() instanceof PlayerEntity
 		&& event.getTarget().getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()).isEnabled()
         && GreekFantasy.PROXY.getFavorConfiguration().hasEntity(event.getEntityLiving().getType())
         && !GreekFantasy.PROXY.getFavorConfiguration().getEntity(event.getEntityLiving().getType()).getHostileRange().isInFavorRange((PlayerEntity)event.getTarget())
-        && event.getTarget() != event.getEntityLiving().getRevengeTarget()) {
-      ((MobEntity)event.getEntityLiving()).setAttackTarget(null);
+        && event.getTarget() != event.getEntityLiving().getLastHurtByMob()) {
+      ((MobEntity)event.getEntityLiving()).setTarget(null);
     }
   }
 }

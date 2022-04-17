@@ -46,25 +46,25 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
 
   private int attackCooldown;
   
-  private static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(20, 39);
+  private static final RangedInteger ANGER_RANGE = TickRangeConverter.rangeOfSeconds(20, 39);
   private int angerTime;
   private UUID angerTarget;
   
   public GiganteEntity(final EntityType<? extends GiganteEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.stepHeight = 1.0F;
-    this.experienceValue = 10;
+    this.maxUpStep = 1.0F;
+    this.xpReward = 10;
   }
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 100.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.22D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.9D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 5.5D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.65D)
-        .createMutableAttribute(Attributes.ARMOR, 5.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 100.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.22D)
+        .add(Attributes.KNOCKBACK_RESISTANCE, 0.9D)
+        .add(Attributes.FOLLOW_RANGE, 32.0D)
+        .add(Attributes.ATTACK_DAMAGE, 5.5D)
+        .add(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.65D)
+        .add(Attributes.ARMOR, 5.0D);
   }
 
   @Override
@@ -75,108 +75,108 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
     this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 10.0F));
     this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::isAngryAt));
     this.targetSelector.addGoal(3, new ResetAngerGoal<>(this, true));
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     
     // attack cooldown
     attackCooldown = Math.max(attackCooldown - 1,  0);
 
     // particles
-    if (world.isRemote() && horizontalMag(this.getMotion()) > (double)2.5000003E-7F && this.rand.nextInt(5) == 0) {
-       int i = MathHelper.floor(this.getPosX());
-       int j = MathHelper.floor(this.getPosY() - (double)0.2F);
-       int k = MathHelper.floor(this.getPosZ());
+    if (level.isClientSide() && getHorizontalDistanceSqr(this.getDeltaMovement()) > (double)2.5000003E-7F && this.random.nextInt(5) == 0) {
+       int i = MathHelper.floor(this.getX());
+       int j = MathHelper.floor(this.getY() - (double)0.2F);
+       int k = MathHelper.floor(this.getZ());
        BlockPos pos = new BlockPos(i, j, k);
-       BlockState blockstate = this.world.getBlockState(pos);
-       if (!blockstate.isAir(this.world, pos)) {
-          this.world.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate).setPos(pos), this.getPosX() + ((double)this.rand.nextFloat() - 0.5D) * (double)this.getWidth(), this.getPosY() + 0.1D, this.getPosZ() + ((double)this.rand.nextFloat() - 0.5D) * (double)this.getWidth(), 4.0D * ((double)this.rand.nextFloat() - 0.5D), 0.5D, ((double)this.rand.nextFloat() - 0.5D) * 4.0D);
+       BlockState blockstate = this.level.getBlockState(pos);
+       if (!blockstate.isAir(this.level, pos)) {
+          this.level.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate).setPos(pos), this.getX() + ((double)this.random.nextFloat() - 0.5D) * (double)this.getBbWidth(), this.getY() + 0.1D, this.getZ() + ((double)this.random.nextFloat() - 0.5D) * (double)this.getBbWidth(), 4.0D * ((double)this.random.nextFloat() - 0.5D), 0.5D, ((double)this.random.nextFloat() - 0.5D) * 4.0D);
        }
     }
 
-    if (!this.world.isRemote()) {
-       this.func_241359_a_((ServerWorld)this.world, true);
+    if (!this.level.isClientSide()) {
+       this.updatePersistentAnger((ServerWorld)this.level, true);
     }
 
  }
   
   @Override
-  protected float getJumpUpwardsMotion() {
-    return 0.82F * this.getJumpFactor();
+  protected float getJumpPower() {
+    return 0.82F * this.getBlockJumpFactor();
   }
   
   @Override
-  public boolean attackEntityAsMob(final Entity entityIn) {
-    if (super.attackEntityAsMob(entityIn)) {
-      entityIn.setMotion(entityIn.getMotion().add(0.0D, (double)0.25F, 0.0D));
+  public boolean doHurtTarget(final Entity entityIn) {
+    if (super.doHurtTarget(entityIn)) {
+      entityIn.setDeltaMovement(entityIn.getDeltaMovement().add(0.0D, (double)0.25F, 0.0D));
       return true;
     }
     return false;
   }
   
   @Nullable
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    if(this.rand.nextBoolean()) {
-      final ItemStack club = new ItemStack(rand.nextBoolean() ? GFRegistry.STONE_CLUB : GFRegistry.WOODEN_CLUB);
-      this.setHeldItem(Hand.MAIN_HAND, club);
+    if(this.random.nextBoolean()) {
+      final ItemStack club = new ItemStack(random.nextBoolean() ? GFRegistry.STONE_CLUB : GFRegistry.WOODEN_CLUB);
+      this.setItemInHand(Hand.MAIN_HAND, club);
     }
-    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
   @Override
-  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_VILLAGER_AMBIENT; }
+  protected SoundEvent getAmbientSound() { return SoundEvents.VILLAGER_AMBIENT; }
 
   @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_VILLAGER_HURT; }
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.VILLAGER_HURT; }
 
   @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_VILLAGER_DEATH; }
+  protected SoundEvent getDeathSound() { return SoundEvents.VILLAGER_DEATH; }
 
   @Override
   protected float getSoundVolume() { return 0.8F; }
   
   @Override
-  protected float getSoundPitch() { return 0.12F; }
+  protected float getVoicePitch() { return 0.12F; }
 
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-     super.writeAdditional(compound);
-     this.writeAngerNBT(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+     super.addAdditionalSaveData(compound);
+     this.addPersistentAngerSaveData(compound);
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-     super.readAdditional(compound);
-     this.readAngerNBT((ServerWorld)this.world, compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+     super.readAdditionalSaveData(compound);
+     this.readPersistentAngerSaveData((ServerWorld)this.level, compound);
   }
   
   @Override
-  public boolean canBePushed() { return false; }
+  public boolean isPushable() { return false; }
   
   @Override
-  public void applyEntityCollision(Entity entityIn) { 
-    if(this.canBePushed()) {
-      super.applyEntityCollision(entityIn);
+  public void push(Entity entityIn) { 
+    if(this.isPushable()) {
+      super.push(entityIn);
     }
   }
   
   // IAngerable methods
 
   @Override
-  public void func_230258_H__() { this.setAngerTime(ANGER_RANGE.getRandomWithinRange(this.rand)); }
+  public void startPersistentAngerTimer() { this.setRemainingPersistentAngerTime(ANGER_RANGE.randomValue(this.random)); }
   @Override
-  public void setAngerTime(int time) { this.angerTime = time; }
+  public void setRemainingPersistentAngerTime(int time) { this.angerTime = time; }
   @Override
-  public int getAngerTime() { return this.angerTime; }
+  public int getRemainingPersistentAngerTime() { return this.angerTime; }
   @Override
-  public void setAngerTarget(@Nullable UUID target) { this.angerTarget = target; }
+  public void setPersistentAngerTarget(@Nullable UUID target) { this.angerTarget = target; }
   @Override
-  public UUID getAngerTarget() { return this.angerTarget; }
+  public UUID getPersistentAngerTarget() { return this.angerTarget; }
 
   // Cooldown methods
   
@@ -198,8 +198,8 @@ public class GiganteEntity extends CreatureEntity implements IAngerable {
     }
     
     @Override
-    protected void resetSwingCooldown() {
-      super.resetSwingCooldown();
+    protected void resetAttackCooldown() {
+      super.resetAttackCooldown();
       GiganteEntity.this.setAttackCooldown();
     }
   }

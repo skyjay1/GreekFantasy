@@ -24,25 +24,25 @@ public class OliveOilItem extends BlockNamedItem {
   }
   
   @Override
-  public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-    if (this.isInGroup(group)) {
+  public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+    if (this.allowdedIn(group)) {
       items.add(new ItemStack(this));
     }
   }
   
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-    BlockRayTraceResult result = rayTrace(world, player, RayTraceContext.FluidMode.SOURCE_ONLY);
-    BlockRayTraceResult result2 = result.withPosition(result.getPos().up());
-    ActionResultType actionresult = super.onItemUse(new ItemUseContext(player, hand, result2));
-    return new ActionResult<>(actionresult, player.getHeldItem(hand));
+  public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    BlockRayTraceResult result = getPlayerPOVHitResult(world, player, RayTraceContext.FluidMode.SOURCE_ONLY);
+    BlockRayTraceResult result2 = result.withPosition(result.getBlockPos().above());
+    ActionResultType actionresult = super.useOn(new ItemUseContext(player, hand, result2));
+    return new ActionResult<>(actionresult, player.getItemInHand(hand));
   }
 
   @Override
-  public ActionResultType tryPlace(BlockItemUseContext context) {
-    ActionResultType result = super.tryPlace(context);
+  public ActionResultType place(BlockItemUseContext context) {
+    ActionResultType result = super.place(context);
     if((result == ActionResultType.SUCCESS || result == ActionResultType.CONSUME) && !context.getPlayer().isCreative()) {
-      context.getPlayer().addItemStackToInventory(new ItemStack(Items.GLASS_BOTTLE));
+      context.getPlayer().addItem(new ItemStack(Items.GLASS_BOTTLE));
     }
     return result;
   }

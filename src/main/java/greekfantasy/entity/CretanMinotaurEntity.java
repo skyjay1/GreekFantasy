@@ -20,17 +20,17 @@ public class CretanMinotaurEntity extends MinotaurEntity {
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 114.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.27D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 7.5D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.5D)
-        .createMutableAttribute(Attributes.ARMOR, 4.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 114.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.27D)
+        .add(Attributes.ATTACK_DAMAGE, 7.5D)
+        .add(Attributes.ATTACK_KNOCKBACK, 1.5D)
+        .add(Attributes.ARMOR, 4.0D);
   }
   
   @Override
-  public void registerData() {
-    super.registerData();
+  public void defineSynchedData() {
+    super.defineSynchedData();
   }
   
   @Override
@@ -44,8 +44,8 @@ public class CretanMinotaurEntity extends MinotaurEntity {
   }
  
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
   }
@@ -53,14 +53,14 @@ public class CretanMinotaurEntity extends MinotaurEntity {
   // Boss //
 
   @Override
-  public void addTrackingPlayer(ServerPlayerEntity player) {
-    super.addTrackingPlayer(player);
+  public void startSeenByPlayer(ServerPlayerEntity player) {
+    super.startSeenByPlayer(player);
     this.bossInfo.addPlayer(player);
   }
 
   @Override
-  public void removeTrackingPlayer(ServerPlayerEntity player) {
-    super.removeTrackingPlayer(player);
+  public void stopSeenByPlayer(ServerPlayerEntity player) {
+    super.stopSeenByPlayer(player);
     this.bossInfo.removePlayer(player);
   }
 
@@ -70,8 +70,8 @@ public class CretanMinotaurEntity extends MinotaurEntity {
   protected float getSoundVolume() { return 1.2F; }
   
   @Override
-  protected float getSoundPitch() { return super.getSoundPitch() - 0.2F; }
+  protected float getVoicePitch() { return super.getVoicePitch() - 0.2F; }
   
   @Override
-  public int getTalkInterval() { return 240; }
+  public int getAmbientSoundInterval() { return 240; }
 }

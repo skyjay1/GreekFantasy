@@ -18,7 +18,7 @@ public class ArachneRenderer<T extends ArachneEntity> extends BipedRenderer<T, A
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
 }

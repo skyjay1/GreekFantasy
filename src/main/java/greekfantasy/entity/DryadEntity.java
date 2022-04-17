@@ -89,7 +89,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 public class DryadEntity extends CreatureEntity implements IAngerable {
   
-  protected static final DataParameter<String> DATA_VARIANT = EntityDataManager.createKey(DryadEntity.class, DataSerializers.STRING);
+  protected static final DataParameter<String> DATA_VARIANT = EntityDataManager.defineId(DryadEntity.class, DataSerializers.STRING);
   protected static final String KEY_VARIANT = "Variant";
   protected static final String KEY_TREE_POS = "Tree";
   protected static final String KEY_HIDING = "HidingTime";
@@ -101,7 +101,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   protected static final IOptionalNamedTag<Item> DRYAD_TRADES = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "dryad_trade"));
   protected Optional<PlayerEntity> tradingPlayer = Optional.empty();
   
-  protected static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(4, 10);
+  protected static final RangedInteger ANGER_RANGE = TickRangeConverter.rangeOfSeconds(4, 10);
   protected int angerTime;
   protected UUID angerTarget;
   
@@ -115,10 +115,10 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 24.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.25D)
+        .add(Attributes.ATTACK_DAMAGE, 3.0D);
   }
 
   @Override
@@ -126,7 +126,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     super.registerGoals();
     this.goalSelector.addGoal(0, new SwimGoal(this));
     this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.1D, false));
-    this.goalSelector.addGoal(2, new DryadEntity.TradeGoal(50 + rand.nextInt(20)));
+    this.goalSelector.addGoal(2, new DryadEntity.TradeGoal(50 + random.nextInt(20)));
     this.goalSelector.addGoal(3, new DryadEntity.FindTreeGoal(8, 28));
     this.goalSelector.addGoal(4, new DryadEntity.HideGoal(640));
     this.goalSelector.addGoal(5, new DryadEntity.GoToTreeGoal(0.9F, 320));
@@ -137,21 +137,21 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     this.goalSelector.addGoal(9, new LookAtGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.addGoal(10, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::func_233680_b_));
+    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::isAngryAt));
     this.targetSelector.addGoal(3, new ResetAngerGoal<>(this, true));
   }
 
   @Override
-  protected void registerData() {
-    super.registerData();
-    this.getDataManager().register(DATA_VARIANT, DryadEntity.Variant.OAK.getString());
+  protected void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(DATA_VARIANT, DryadEntity.Variant.OAK.getSerializedName());
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     // if entity has a tree position, check if it no longer exists
-    if(this.ticksExisted % 28 == 0 && treePos.isPresent() && !isTreeAt(getEntityWorld(), treePos.get(), getVariant().getLogs())) {
+    if(this.tickCount % 28 == 0 && treePos.isPresent() && !isTreeAt(getCommandSenderWorld(), treePos.get(), getVariant().getLogs())) {
       // if entity was hiding, exit the tree
       this.tryExitTree();
       // update tree pos
@@ -159,8 +159,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     }
    
     // anger timer
-    if (!this.world.isRemote()) {
-      this.func_241359_a_((ServerWorld) this.world, true);
+    if (!this.level.isClientSide()) {
+      this.updatePersistentAnger((ServerWorld) this.level, true);
     }
   }
 
@@ -168,43 +168,43 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   public void move(final MoverType type, final Vector3d vec) {
     super.move(type, vec);
     // copied from Vex code
-    doBlockCollisions();
+    checkInsideBlocks();
   }
 
   @Override
   public void tick() {
     // determine how close the entity is to the tree
-    final boolean isHidingInTree = isHiding() && this.isWithinDistanceOfTree(2.05D) && getNavigator().noPath();
+    final boolean isHidingInTree = isHiding() && this.isWithinDistanceOfTree(2.05D) && getNavigation().isDone();
     // set clip and gravity values
     if(isHidingInTree) {
-      this.noClip = true;
-      this.setMotion(this.getMotion().mul(1.0D, 0.0D, 1.0D));
+      this.noPhysics = true;
+      this.setDeltaMovement(this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
       // snap to the tree's position if close enough
       final Optional<Vector3d> treeVec = getTreeVec();
-      this.setPosition(treeVec.get().getX(), treeVec.get().getY(), treeVec.get().getZ());
+      this.setPos(treeVec.get().x(), treeVec.get().y(), treeVec.get().z());
     }
     // super method
     super.tick();   
     // reset values
     this.setNoGravity(isHidingInTree);
-    this.noClip = false;
+    this.noPhysics = false;
   }
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
     // immune to suffocation while hiding (presumably in a tree)
     if(source == DamageSource.IN_WALL) {
-      return !this.world.getBlockState(this.getPosition().up()).isIn(this.getVariant().getLogs());
+      return !this.level.getBlockState(this.blockPosition().above()).is(this.getVariant().getLogs());
     }
     return super.isInvulnerableTo(source);
   }
   
   @Override
-  public boolean attackEntityAsMob(final Entity entity) {
-    if (super.attackEntityAsMob(entity)) {
+  public boolean doHurtTarget(final Entity entity) {
+    if (super.doHurtTarget(entity)) {
       // reset anger
-      if(entity.getUniqueID().equals(this.getAngerTarget())) {
-        this.setAngerTarget(null);
+      if(entity.getUUID().equals(this.getPersistentAngerTarget())) {
+        this.setPersistentAngerTarget(null);
       }
       return true;
     }
@@ -212,10 +212,10 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   }
 
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
-    compound.putString(KEY_VARIANT, this.getDataManager().get(DATA_VARIANT));
-    this.writeAngerNBT(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
+    compound.putString(KEY_VARIANT, this.getEntityData().get(DATA_VARIANT));
+    this.addPersistentAngerSaveData(compound);
     if(treePos.isPresent()) {
       compound.putInt(KEY_TREE_POS + ".x", treePos.get().getX());
       compound.putInt(KEY_TREE_POS + ".y", treePos.get().getY());
@@ -225,10 +225,10 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
     this.setVariant(getVariantByName(compound.getString(KEY_VARIANT)));
-    this.readAngerNBT((ServerWorld)this.world, compound);
+    this.readPersistentAngerSaveData((ServerWorld)this.level, compound);
     if(compound.contains(KEY_TREE_POS + ".x")) {
       final int x = compound.getInt(KEY_TREE_POS + ".x");
       final int y = compound.getInt(KEY_TREE_POS + ".y");
@@ -239,66 +239,66 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   }
   
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     final DryadEntity.Variant variant;
     if(reason == SpawnReason.COMMAND || reason == SpawnReason.SPAWN_EGG || reason == SpawnReason.SPAWNER || reason == SpawnReason.DISPENSER) {
       variant = DryadEntity.Variant.getRandom(worldIn.getRandom());
     } else {
-      variant = DryadEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
+      variant = DryadEntity.Variant.getForBiome(worldIn.getBiomeName(this.blockPosition()));
     }
     this.setVariant(variant);
     return data;
   }
   
   @Override
-  public ResourceLocation getLootTable() { return this.getVariant().getDeathLootTable(); }
+  public ResourceLocation getDefaultLootTable() { return this.getVariant().getDeathLootTable(); }
   
   // IAngerable methods
   
   @Override
-  public void func_230258_H__() { this.setAngerTime(ANGER_RANGE.getRandomWithinRange(this.rand)); }
+  public void startPersistentAngerTimer() { this.setRemainingPersistentAngerTime(ANGER_RANGE.randomValue(this.random)); }
   @Override
-  public void setAngerTime(int time) { this.angerTime = time; }
+  public void setRemainingPersistentAngerTime(int time) { this.angerTime = time; }
   @Override
-  public int getAngerTime() { return this.angerTime; }
+  public int getRemainingPersistentAngerTime() { return this.angerTime; }
   @Override
-  public void setAngerTarget(@Nullable UUID target) { this.angerTarget = target; }
+  public void setPersistentAngerTarget(@Nullable UUID target) { this.angerTarget = target; }
   @Override
-  public UUID getAngerTarget() { return this.angerTarget; }
+  public UUID getPersistentAngerTarget() { return this.angerTarget; }
 
   @Override
   public float getBrightness() { return 1.0F; }
   @Override
-  public boolean canDespawn(double distanceToClosestPlayer) { return !treePos.isPresent() && this.ticksExisted > 4800; }
+  public boolean removeWhenFarAway(double distanceToClosestPlayer) { return !treePos.isPresent() && this.tickCount > 4800; }
 
   // Trade methods
   
   @Override
-  protected ActionResultType getEntityInteractionResult(final PlayerEntity player, final Hand hand) { 
-    ItemStack stack = player.getHeldItem(hand);
+  protected ActionResultType mobInteract(final PlayerEntity player, final Hand hand) { 
+    ItemStack stack = player.getItemInHand(hand);
     // check if the tradingPlayer is holding a trade item and the entity is not already trading
-    if(!this.world.isRemote() && !this.isAggressive() && !this.tradingPlayer.isPresent() 
-        && this.getHeldItemMainhand().isEmpty() && !stack.isEmpty() && getTradeTag().contains(stack.getItem())) {
+    if(!this.level.isClientSide() && !this.isAggressive() && !this.tradingPlayer.isPresent() 
+        && this.getMainHandItem().isEmpty() && !stack.isEmpty() && getTradeTag().contains(stack.getItem())) {
       // check if the tradingPlayer is eligible to trade
       if(canPlayerTrade(player)) {
         // initiate trading
         this.setTradingPlayer(player);
         // take the item from the tradingPlayer
-        this.setHeldItem(Hand.MAIN_HAND, new ItemStack(stack.getItem()));
+        this.setItemInHand(Hand.MAIN_HAND, new ItemStack(stack.getItem()));
         if(!player.isCreative()) {
           stack.shrink(1);
         }
-        player.setHeldItem(hand, stack);
+        player.setItemInHand(hand, stack);
         return ActionResultType.CONSUME;
       } else {
         // spawn particles
-        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(false, this.getPosition().up(1), 4));
+        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(false, this.blockPosition().above(1), 4));
       }
     }
     
-    return super.getEntityInteractionResult(player, hand);
+    return super.mobInteract(player, hand);
   }
 
   /**
@@ -334,13 +334,13 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   public ResourceLocation getTradeLootTable() { return this.getVariant().getTradeLootTable(); }
   
   protected List<ItemStack> getTradeResult(final Optional<PlayerEntity> player, final ItemStack tradeItem) {
-    LootTable loottable = this.world.getServer().getLootTableManager().getLootTableFromLocation(this.getTradeLootTable());
-    return loottable.generate(new LootContext.Builder((ServerWorld)this.world)
-        .withRandom(this.world.rand)
+    LootTable loottable = this.level.getServer().getLootTables().get(this.getTradeLootTable());
+    return loottable.getRandomItems(new LootContext.Builder((ServerWorld)this.level)
+        .withRandom(this.level.random)
         .withParameter(LootParameters.THIS_ENTITY, this)
-        .withParameter(LootParameters.ORIGIN, this.getPositionVec())
+        .withParameter(LootParameters.ORIGIN, this.position())
         .withParameter(LootParameters.TOOL, tradeItem)
-        .build(LootParameterSets.BARTER));
+        .create(LootParameterSets.PIGLIN_BARTER));
  }
   
   /**
@@ -350,36 +350,36 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
    */
   public void trade(final Optional<PlayerEntity> player, final ItemStack tradeItem) {
     // drop trade results as item entities
-    getTradeResult(player, tradeItem).forEach(i -> entityDropItem(i, 1.2F));
+    getTradeResult(player, tradeItem).forEach(i -> spawnAtLocation(i, 1.2F));
     // shrink/remove held item
     tradeItem.shrink(1);
-    this.setHeldItem(Hand.MAIN_HAND, tradeItem);
+    this.setItemInHand(Hand.MAIN_HAND, tradeItem);
     if (tradeItem.getCount() <= 0) {
       this.setTradingPlayer(null);
     }
     // spawn xp orb
-    if(rand.nextInt(3) == 0) {
-      this.world.addEntity(new ExperienceOrbEntity(this.world, this.getPosX(), this.getPosY(), this.getPosZ(), 1 + rand.nextInt(2)));
+    if(random.nextInt(3) == 0) {
+      this.level.addFreshEntity(new ExperienceOrbEntity(this.level, this.getX(), this.getY(), this.getZ(), 1 + random.nextInt(2)));
     }
     // send packet to spawn particles
-    GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(true, this.getPosition().up(1), 6));
+    GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(true, this.blockPosition().above(1), 6));
   }
   
   // Variant methods
 
   public void setVariant(final DryadEntity.Variant variantIn) { 
     this.variant = variantIn;
-    this.getDataManager().set(DATA_VARIANT, variantIn.getString());
+    this.getEntityData().set(DATA_VARIANT, variantIn.getSerializedName());
   }
   
   public DryadEntity.Variant getVariant() { return variant; }
   
   public DryadEntity.Variant getVariantByName(final String name) { return DryadEntity.Variant.getByName(name); }
 
-  public void notifyDataManagerChange(DataParameter<?> key) {
-    super.notifyDataManagerChange(key);
+  public void onSyncedDataUpdated(DataParameter<?> key) {
+    super.onSyncedDataUpdated(key);
     if(key.equals(DATA_VARIANT)) {
-      this.variant = getVariantByName(this.getDataManager().get(DATA_VARIANT));
+      this.variant = getVariantByName(this.getEntityData().get(DATA_VARIANT));
     }
   }
   
@@ -396,9 +396,9 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   public void setTreePos(final Optional<BlockPos> pos) {
     treePos = pos;
     if(pos.isPresent()) {
-      this.setHomePosAndDistance(pos.get(), (int)(this.getAttribute(Attributes.FOLLOW_RANGE).getBaseValue()));
+      this.restrictTo(pos.get(), (int)(this.getAttribute(Attributes.FOLLOW_RANGE).getBaseValue()));
     } else {
-      this.setHomePosAndDistance(BlockPos.ZERO, -1);
+      this.restrictTo(BlockPos.ZERO, -1);
     }
   }
 
@@ -413,7 +413,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
   public static boolean isTreeAt(final IWorldReader worldIn, final BlockPos pos, final ITag<Block> logs) {
     // a "tree" is considered two log blocks on top of a dirt block (or other plant-sustaining block)
     return worldIn.getBlockState(pos).canSustainPlant(worldIn, pos, Direction.UP, (IPlantable)Blocks.OAK_SAPLING)
-        && worldIn.getBlockState(pos.up(1)).isIn(logs) && worldIn.getBlockState(pos.up(2)).isIn(logs);
+        && worldIn.getBlockState(pos.above(1)).is(logs) && worldIn.getBlockState(pos.above(2)).is(logs);
   }
   
   /** 
@@ -425,15 +425,15 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     this.isGoingToTree = false;
     this.setHiding(false);
     if(this.treePos.isPresent() && this.isWithinDistanceOfTree(2.0D)) {
-      if(this.getNavigator().noPath()) {
+      if(this.getNavigation().isDone()) {
         // choose several random positions to check
         int radius = 2;
         for (int i = 0; i < 10; i++) {
-          double x = this.getPosX() + rand.nextInt(radius * 2) - radius;
-          double y = this.getPosY() + rand.nextInt(radius) - radius / 2;
-          double z = this.getPosZ() + rand.nextInt(radius * 2) - radius;
+          double x = this.getX() + random.nextInt(radius * 2) - radius;
+          double y = this.getY() + random.nextInt(radius) - radius / 2;
+          double z = this.getZ() + random.nextInt(radius * 2) - radius;
           // try to path to the position
-          if(this.getNavigator().tryMoveToXYZ(x, y, z, 1.0D)) {
+          if(this.getNavigation().moveTo(x, y, z, 1.0D)) {
             return true;
           }
         }
@@ -451,7 +451,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     if(!treeVec.isPresent()) {
       return false;
     }
-    return treeVec.get().isWithinDistanceOf(getPositionVec(), dis);
+    return treeVec.get().closerThan(position(), dis);
   }
   
   class HideGoal extends Goal {
@@ -461,23 +461,23 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     private int cooldown;
     
     public HideGoal(final int maxHidingTimeIn) {
-      this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.JUMP));
+      this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.JUMP));
       this.maxHidingTime = maxHidingTimeIn;
       this.maxCooldown = 120;
     }
 
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
       if(cooldown > 0) {
         cooldown--;
-      } else if(DryadEntity.this.treePos.isPresent() && DryadEntity.this.isWithinDistanceOfTree(1.5D) && DryadEntity.this.getAttackTarget() == null) {
-        return isTreeAt(DryadEntity.this.getEntityWorld(), DryadEntity.this.treePos.get(), DryadEntity.this.getVariant().getLogs());
+      } else if(DryadEntity.this.treePos.isPresent() && DryadEntity.this.isWithinDistanceOfTree(1.5D) && DryadEntity.this.getTarget() == null) {
+        return isTreeAt(DryadEntity.this.getCommandSenderWorld(), DryadEntity.this.treePos.get(), DryadEntity.this.getVariant().getLogs());
       }
       return false;      
     }
     
     @Override
-    public void startExecuting() {
+    public void start() {
       DryadEntity.this.setHiding(true);
       DryadEntity.this.isGoingToTree = false;
     }
@@ -485,14 +485,14 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     @Override
     public void tick() {
       super.tick();
-      DryadEntity.this.getNavigator().clearPath();
-      if(DryadEntity.this.hidingTime++ > maxHidingTime && DryadEntity.this.getRNG().nextInt(100) == 0) {
-        resetTask();
+      DryadEntity.this.getNavigation().stop();
+      if(DryadEntity.this.hidingTime++ > maxHidingTime && DryadEntity.this.getRandom().nextInt(100) == 0) {
+        stop();
       }
     }
     
     @Override
-    public void resetTask() {
+    public void stop() {
       DryadEntity.this.tryExitTree();
       cooldown = maxCooldown;
     }
@@ -505,15 +505,15 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     }
     
     @Override
-    public boolean shouldExecute() {
-      return (!DryadEntity.this.getTreePos().isPresent() || DryadEntity.this.getRNG().nextInt(500) == 0) && super.shouldExecute();
+    public boolean canUse() {
+      return (!DryadEntity.this.getTreePos().isPresent() || DryadEntity.this.getRandom().nextInt(500) == 0) && super.canUse();
     }
     
     @Override
     public boolean isTargetBlock(IWorldReader worldIn, BlockPos pos) {
       // valid block if there is a tree here and it has not been occupied by another dryad
       return isTreeAt(worldIn, pos, DryadEntity.this.getVariant().getLogs()) 
-          && DryadEntity.this.getEntityWorld().getEntitiesWithinAABB(DryadEntity.class, new AxisAlignedBB(pos.up()).grow(0.5D)).isEmpty();
+          && DryadEntity.this.getCommandSenderWorld().getEntitiesOfClass(DryadEntity.class, new AxisAlignedBB(pos.above()).inflate(0.5D)).isEmpty();
     }
 
     @Override
@@ -528,33 +528,33 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     private final int chance;
     
     public GoToTreeGoal(final double speedIn, final int chanceIn) {
-      setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+      setFlags(EnumSet.of(Goal.Flag.MOVE));
       speed = speedIn;
       chance = chanceIn;
     }
 
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
       return !DryadEntity.this.isHiding() && DryadEntity.this.getTreePos().isPresent() 
-            && DryadEntity.this.getAttackTarget() == null && DryadEntity.this.getRNG().nextInt(chance) == 0;
+            && DryadEntity.this.getTarget() == null && DryadEntity.this.getRandom().nextInt(chance) == 0;
     }
 
     @Override
-    public boolean shouldContinueExecuting() {
+    public boolean canContinueToUse() {
       return DryadEntity.this.isGoingToTree && DryadEntity.this.getTreePos().isPresent() 
-          && !DryadEntity.this.getNavigator().noPath() && DryadEntity.this.getAttackTarget() == null ;
+          && !DryadEntity.this.getNavigation().isDone() && DryadEntity.this.getTarget() == null ;
     }
 
     @Override
-    public void startExecuting() {
+    public void start() {
       DryadEntity.this.isGoingToTree = true;
       final Optional<Vector3d> vec = DryadEntity.this.getTreeVec();
-      DryadEntity.this.getNavigator().tryMoveToXYZ(vec.get().getX(), vec.get().getY(), vec.get().getZ(), this.speed);
+      DryadEntity.this.getNavigation().moveTo(vec.get().x(), vec.get().y(), vec.get().z(), this.speed);
     }
 
     @Override
-    public void resetTask() {
-      DryadEntity.this.getNavigator().clearPath();
+    public void stop() {
+      DryadEntity.this.getNavigation().stop();
       DryadEntity.this.isGoingToTree = false;
     }
   }
@@ -566,9 +566,9 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     }
     
     @Override
-    public boolean shouldExecute() {
-      return !DryadEntity.this.isHiding() && !DryadEntity.this.isGoingToTree && DryadEntity.this.getAttackTarget() == null
-           && super.shouldExecute();
+    public boolean canUse() {
+      return !DryadEntity.this.isHiding() && !DryadEntity.this.isGoingToTree && DryadEntity.this.getTarget() == null
+           && super.canUse();
     }
   }
   
@@ -578,25 +578,25 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     protected int thinkingTime;
         
     public TradeGoal(final int maxThinkingTimeIn) {
-      this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+      this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
       maxThinkingTime = maxThinkingTimeIn;
       thinkingTime = 0;
     }
 
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
       return !DryadEntity.this.isAggressive() 
-          && !DryadEntity.this.getHeldItemMainhand().isEmpty()
-          && DryadEntity.this.getTradeTag().contains(DryadEntity.this.getHeldItemMainhand().getItem());
+          && !DryadEntity.this.getMainHandItem().isEmpty()
+          && DryadEntity.this.getTradeTag().contains(DryadEntity.this.getMainHandItem().getItem());
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
-      return thinkingTime > 0 && thinkingTime <= maxThinkingTime && shouldExecute();
+    public boolean canContinueToUse() {
+      return thinkingTime > 0 && thinkingTime <= maxThinkingTime && canUse();
     }
     
     @Override
-    public void startExecuting() {
+    public void start() {
       thinkingTime = 1;
     }
     
@@ -604,20 +604,20 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     public void tick() {
       // look at the tradingPlayer
       if(DryadEntity.this.tradingPlayer.isPresent()) {
-        DryadEntity.this.lookController.setLookPositionWithEntity(DryadEntity.this.tradingPlayer.get(), DryadEntity.this.getHorizontalFaceSpeed(), 100.0F);
+        DryadEntity.this.lookControl.setLookAt(DryadEntity.this.tradingPlayer.get(), DryadEntity.this.getMaxHeadYRot(), 100.0F);
       }
       // stop moving and look down
-      DryadEntity.this.getNavigator().clearPath();
-      DryadEntity.this.getLookController().setLookPosition(DryadEntity.this.getEyePosition(1.0F).add(0.0D, -0.25D, 0.0D));
+      DryadEntity.this.getNavigation().stop();
+      DryadEntity.this.getLookControl().setLookAt(DryadEntity.this.getEyePosition(1.0F).add(0.0D, -0.25D, 0.0D));
       // if enough time has elapsed, commence the trade
       if(thinkingTime++ >= maxThinkingTime) {
-        trade(DryadEntity.this.tradingPlayer, DryadEntity.this.getHeldItemMainhand());
-        resetTask();
+        trade(DryadEntity.this.tradingPlayer, DryadEntity.this.getMainHandItem());
+        stop();
       }
     }
     
     @Override
-    public void resetTask() {
+    public void stop() {
       thinkingTime = 0;
     }
   }
@@ -673,15 +673,15 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
       return OAK;
     }
     
-    public ITag<Block> getLogs() { return Optional.ofNullable(BlockTags.getCollection().get(tag)).orElse(BlockTags.LOGS); }
+    public ITag<Block> getLogs() { return Optional.ofNullable(BlockTags.getAllTags().getTag(tag)).orElse(BlockTags.LOGS); }
     
-    public BlockState getSapling() { return sapling.get().getDefaultState(); }
+    public BlockState getSapling() { return sapling.get().defaultBlockState(); }
     
     public ResourceLocation getDeathLootTable() { return deathLootTable; }
     
     public ResourceLocation getTradeLootTable() { return tradeLootTable; }
   
     @Override
-    public String getString() { return name; }
+    public String getSerializedName() { return name; }
   }
 }

@@ -37,14 +37,14 @@ public class SatyrCampFeature extends SimpleTemplateFeature {
   }
 
   @Override
-  public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
+  public boolean place(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
     // check dimension from config
     if(!SimpleTemplateFeature.isValidDimension(reader)) {
       return false;
     }
     // load templates
-    final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
+    final TemplateManager manager = reader.getLevel().getStructureManager();
   
     // position for generation
     final BlockPos tent1Offset = new BlockPos(4 + rand.nextInt(4), 0, rand.nextInt(4) - 2);
@@ -53,45 +53,45 @@ public class SatyrCampFeature extends SimpleTemplateFeature {
     final BlockPos tent4Offset = new BlockPos(2 + rand.nextInt(4), 0, 5 + rand.nextInt(3));
     
     // placement settings
-    Rotation rotation = Rotation.randomRotation(rand);
+    Rotation rotation = Rotation.getRandom(rand);
     Mirror mirror = Mirror.NONE;
     PlacementSettings placement = new PlacementSettings()
         .setRotation(rotation).setMirror(mirror).setRandom(rand)
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
     
     // determine satyr colors
-    SatyrEntity.GroupData data = new SatyrEntity.GroupData(Util.getRandomObject(CoatColors.values(), rand));
+    SatyrEntity.GroupData data = new SatyrEntity.GroupData(Util.getRandom(CoatColors.values(), rand));
     
     // generate the campfire
-    BlockPos campfirePos = getHeightPos(reader, blockPosIn.add(4 + rand.nextInt(8), 0, 4 + rand.nextInt(8)));
-    if(generateTemplate(reader, manager.getTemplateDefaulted(STRUCTURE_CAMPFIRE), placement, campfirePos, rand, false, data, 0)) {
+    BlockPos campfirePos = getHeightPos(reader, blockPosIn.offset(4 + rand.nextInt(8), 0, 4 + rand.nextInt(8)));
+    if(generateTemplate(reader, manager.getOrCreate(STRUCTURE_CAMPFIRE), placement, campfirePos, rand, false, data, 0)) {
       // add 1-2 satyrs
-      addSatyr(reader, rand, campfirePos.up(), data, 1 + rand.nextInt(2));
+      addSatyr(reader, rand, campfirePos.above(), data, 1 + rand.nextInt(2));
       // generate the first tent
       int tentsGenerated = 0;
-      BlockPos tentPos = getHeightPos(reader, campfirePos.add(tent1Offset.rotate(rotation)));
-      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement, tentPos, rand, true, data, tentsGenerated)) {
+      BlockPos tentPos = getHeightPos(reader, campfirePos.offset(tent1Offset.rotate(rotation)));
+      if(generateTemplate(reader, manager.getOrCreate(getStructure(rand)), placement, tentPos, rand, true, data, tentsGenerated)) {
         tentsGenerated++;
       }
       
       // generate the second tent
-      tentPos = getHeightPos(reader, campfirePos.add(tent2Offset.rotate(rotation)));
-      rotation = rotation.add(Rotation.CLOCKWISE_90);
-      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, data, tentsGenerated)) {
+      tentPos = getHeightPos(reader, campfirePos.offset(tent2Offset.rotate(rotation)));
+      rotation = rotation.getRotated(Rotation.CLOCKWISE_90);
+      if(generateTemplate(reader, manager.getOrCreate(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, data, tentsGenerated)) {
         tentsGenerated++;
       }
       
       // generate the third tent
-      tentPos = getHeightPos(reader, campfirePos.add(tent3Offset.rotate(rotation)));
-      rotation = rotation.add(Rotation.CLOCKWISE_90);
-      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, data, tentsGenerated)) {
+      tentPos = getHeightPos(reader, campfirePos.offset(tent3Offset.rotate(rotation)));
+      rotation = rotation.getRotated(Rotation.CLOCKWISE_90);
+      if(generateTemplate(reader, manager.getOrCreate(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, data, tentsGenerated)) {
         tentsGenerated++;
       }
       
       // generate the fourth tent
-      tentPos = getHeightPos(reader, campfirePos.add(tent4Offset.rotate(rotation)));
-      rotation = rotation.add(Rotation.CLOCKWISE_90);
-      if(generateTemplate(reader, manager.getTemplateDefaulted(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, data, tentsGenerated)) {
+      tentPos = getHeightPos(reader, campfirePos.offset(tent4Offset.rotate(rotation)));
+      rotation = rotation.getRotated(Rotation.CLOCKWISE_90);
+      if(generateTemplate(reader, manager.getOrCreate(getStructure(rand)), placement.setRotation(rotation), tentPos, rand, true, data, tentsGenerated)) {
         tentsGenerated++;
       }
       
@@ -110,12 +110,12 @@ public class SatyrCampFeature extends SimpleTemplateFeature {
     MutableBoundingBox mbb = new MutableBoundingBox(pos.getX() - 12, pos.getY() - 16, pos.getZ() - 12, pos.getX() + 12, pos.getY() + 16, pos.getZ() + 12);
     
     // actually generate the structure
-    template.func_237146_a_(reader, pos, pos, placement.setBoundingBox(mbb), rand, 2);
-    fillBelow(reader, pos.down(), template.getSize(), placement.getRotation(), new Block[] { Blocks.DIRT });
+    template.placeInWorld(reader, pos, pos, placement.setBoundingBox(mbb), rand, 2);
+    fillBelow(reader, pos.below(), template.getSize(), placement.getRotation(), new Block[] { Blocks.DIRT });
     
     // add entities
     if(satyrs) {
-      addSatyr(reader, rand, pos.add(new BlockPos(3, 1, 2).rotate(placement.getRotation())), data, 1 + rand.nextInt(2));
+      addSatyr(reader, rand, pos.offset(new BlockPos(3, 1, 2).rotate(placement.getRotation())), data, 1 + rand.nextInt(2));
     }
     return true;
   }
@@ -123,22 +123,22 @@ public class SatyrCampFeature extends SimpleTemplateFeature {
   protected static void addSatyr(final ISeedReader world, final Random rand, final BlockPos pos, final ILivingEntityData data, final int count) {
     for(int i = 0; i < count; i++) {
       // spawn a satyr
-      final SatyrEntity entity = GFRegistry.SATYR_ENTITY.create(world.getWorld());
-      entity.setLocationAndAngles(pos.getX() + rand.nextDouble(), pos.getY() + 0.5D, pos.getZ() + rand.nextDouble(), 0, 0);
-      entity.enablePersistence();
+      final SatyrEntity entity = GFRegistry.SATYR_ENTITY.create(world.getLevel());
+      entity.moveTo(pos.getX() + rand.nextDouble(), pos.getY() + 0.5D, pos.getZ() + rand.nextDouble(), 0, 0);
+      entity.setPersistenceRequired();
       // random shaman chance
       if(rand.nextInt(100) < GreekFantasy.CONFIG.getSatyrShamanChance()) {
         entity.setShaman(true);
       }
       // coat colors
       entity.setCoatColor(((SatyrEntity.GroupData)data).variant);
-      world.addEntity(entity);
+      world.addFreshEntity(entity);
     }
   }
   
   @Override
   protected boolean isValidPosition(final ISeedReader reader, final BlockPos pos) {
-    return pos.getY() > 3 && reader.getBlockState(pos).isSolid() && isReplaceableAt(reader, pos.up(3));
+    return pos.getY() > 3 && reader.getBlockState(pos).canOcclude() && isReplaceableAt(reader, pos.above(3));
   }
 
   @Override

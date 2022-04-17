@@ -17,7 +17,7 @@ public class NaiadRenderer<T extends NaiadEntity> extends BipedRenderer<T, Naiad
    * you call Render.bindEntityTexture.
    */
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return entity.getVariant().getTexture();
   }
 }

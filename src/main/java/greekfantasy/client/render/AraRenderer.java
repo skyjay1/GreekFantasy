@@ -18,7 +18,7 @@ public class AraRenderer<T extends AraEntity> extends BipedRenderer<T, AraModel<
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
 }

@@ -21,7 +21,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class SpecialFavorEffect {
   
-  public static final SpecialFavorEffect EMPTY = new SpecialFavorEffect(SpecialFavorEffect.Type.NONE.getString(), 
+  public static final SpecialFavorEffect EMPTY = new SpecialFavorEffect(SpecialFavorEffect.Type.NONE.getSerializedName(), 
       0, 0, Optional.empty(), Optional.empty(), 0.0F, 0.0F, 100L);
   
   public static final Codec<SpecialFavorEffect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -81,7 +81,7 @@ public class SpecialFavorEffect {
     if(getPotion().isPresent()) {
       final CompoundNBT nbt = getPotion().get().copy();
       nbt.putByte("Id", (byte) Effect.getId(ForgeRegistries.POTIONS.getValue(new ResourceLocation(getPotion().get().getString("Potion")))));
-      return Optional.of(EffectInstance.read(nbt));
+      return Optional.of(EffectInstance.load(nbt));
     }
     return Optional.empty();
   }
@@ -103,7 +103,7 @@ public class SpecialFavorEffect {
   public boolean canApply(final PlayerEntity player, final IDeity deity, final IFavor favor) {
     return favor.isEnabled() && this != EMPTY && type != SpecialFavorEffect.Type.NONE 
         && deity.isEnabled() && isInFavorRange(player, deity, favor) 
-        && player.getRNG().nextFloat() < getAdjustedChance(favor.getFavor(deity).getLevel());
+        && player.getRandom().nextFloat() < getAdjustedChance(favor.getFavor(deity).getLevel());
   }
   
   /**
@@ -127,7 +127,7 @@ public class SpecialFavorEffect {
   @Override
   public String toString() {
     final StringBuilder b = new StringBuilder("SpecialFavorEffect:");
-    b.append(" type[").append(type.getString()).append(" ]");
+    b.append(" type[").append(type.getSerializedName()).append(" ]");
     b.append(" range[").append(minLevel).append(" ~ ").append(maxLevel).append("]");
     potion.ifPresent(nbt -> b.append(" potion[").append(nbt.toString()).append("]"));
     multiplier.ifPresent(f -> b.append(" multiplier[").append(f.toString()).append("]"));
@@ -154,12 +154,12 @@ public class SpecialFavorEffect {
     private static final Map<String, SpecialFavorEffect.Type> valueMap = new HashMap<>();
     static {
       for(final SpecialFavorEffect.Type t : values()) {
-        valueMap.put(t.getString(), t);
+        valueMap.put(t.getSerializedName(), t);
       }
     }
     
     public static final Codec<SpecialFavorEffect.Type> CODEC = Codec.STRING.comapFlatMap(
-        s -> DataResult.success(SpecialFavorEffect.Type.getById(s)), SpecialFavorEffect.Type::getString).stable();
+        s -> DataResult.success(SpecialFavorEffect.Type.getById(s)), SpecialFavorEffect.Type::getSerializedName).stable();
     
     private final String name;
     private final String translationKey;
@@ -178,7 +178,7 @@ public class SpecialFavorEffect {
     }
 
     @Override
-    public String getString() {
+    public String getSerializedName() {
       return name;
     }
   }

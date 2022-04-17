@@ -42,11 +42,11 @@ public final class SongManager {
   }
   
   private static void playNoteAt(final LivingEntity entity, final InstrumentItem instrument, final int note, final float volume) {
-    final double x = entity.getPosX() + (entity.getRNG().nextDouble() - 0.5D) * 0.15D;
-    final double y = entity.getPosYEye() + 0.15D;
-    final double z = entity.getPosZ() + (entity.getRNG().nextDouble() - 0.5D) * 0.15D;
+    final double x = entity.getX() + (entity.getRandom().nextDouble() - 0.5D) * 0.15D;
+    final double y = entity.getEyeY() + 0.15D;
+    final double z = entity.getZ() + (entity.getRandom().nextDouble() - 0.5D) * 0.15D;
     final float pitch = instrument.getPitch(note);
-    entity.getEntityWorld().playSound(x, y, z, instrument.getSound(), entity.getSoundCategory(), volume, pitch, false);
-    entity.getEntityWorld().addParticle(ParticleTypes.NOTE, x, y, z, pitch / 24.0D, 0.0D, 0.0D);
+    entity.getCommandSenderWorld().playLocalSound(x, y, z, instrument.getSound(), entity.getSoundSource(), volume, pitch, false);
+    entity.getCommandSenderWorld().addParticle(ParticleTypes.NOTE, x, y, z, pitch / 24.0D, 0.0D, 0.0D);
   }
 }

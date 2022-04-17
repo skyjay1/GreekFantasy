@@ -18,6 +18,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class WildRoseBlock extends FlowerBlock {
 
   public WildRoseBlock(Effect effect, int duration, Properties properties) {
@@ -26,8 +28,8 @@ public class WildRoseBlock extends FlowerBlock {
   
   @OnlyIn(Dist.CLIENT)
   public void animateTick(BlockState blockstate, World world, BlockPos blockpos, Random rand) {
-    VoxelShape shape = getShape(blockstate, world, blockpos, ISelectionContext.dummy());
-    Vector3d center = shape.getBoundingBox().getCenter();
+    VoxelShape shape = getShape(blockstate, world, blockpos, ISelectionContext.empty());
+    Vector3d center = shape.bounds().getCenter();
     double posX = blockpos.getX() + center.x;
     double posZ = blockpos.getZ() + center.z;
     if(rand.nextInt(3) == 0) {
@@ -36,10 +38,10 @@ public class WildRoseBlock extends FlowerBlock {
   }
   
   @Override
-  public void onEntityCollision(BlockState blockstate, World world, BlockPos pos, Entity entity) {
-    if (!world.isRemote() && entity instanceof LivingEntity) {
+  public void entityInside(BlockState blockstate, World world, BlockPos pos, Entity entity) {
+    if (!world.isClientSide() && entity instanceof LivingEntity) {
       LivingEntity livingentity = (LivingEntity)entity;
-      livingentity.addPotionEffect(new EffectInstance(Effects.ABSORPTION, 78));
+      livingentity.addEffect(new EffectInstance(Effects.ABSORPTION, 78));
     }
   }
 

@@ -24,126 +24,126 @@ public class HydraHeadModel<T extends HydraHeadEntity> extends EntityModel<T> {
 
   public HydraHeadModel() {
     super();
-    textureWidth = 64;
-    textureHeight = 32;
+    texWidth = 64;
+    texHeight = 32;
 
     neckSevered = new ModelRenderer(this);
-    neckSevered.setRotationPoint(0.0F, 24.0F, 1.0F);
-    neckSevered.setTextureOffset(0, 16).addBox(-2.0F, -9.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
-    neckSevered.setTextureOffset(25, 22).addBox(-1.0F, -8.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
+    neckSevered.setPos(0.0F, 24.0F, 1.0F);
+    neckSevered.texOffs(0, 16).addBox(-2.0F, -9.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
+    neckSevered.texOffs(25, 22).addBox(-1.0F, -8.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
 
     neck = new ModelRenderer(this);
-    neck.setRotationPoint(0.0F, 22.0F, 0.0F); // neck.setRotationPoint(0.0F, 22.0F, 4.0F);
+    neck.setPos(0.0F, 22.0F, 0.0F); // neck.setRotationPoint(0.0F, 22.0F, 4.0F);
 
     neck1 = new ModelRenderer(this);
-    neck1.setRotationPoint(0.0F, 2.0F, -3.0F);
-    neck1.rotateAngleX = 0.5236F;
-    neck1.setTextureOffset(0, 16).addBox(-2.0F, -9.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
-    neck1.setTextureOffset(25, 22).addBox(-1.0F, -8.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
+    neck1.setPos(0.0F, 2.0F, -3.0F);
+    neck1.xRot = 0.5236F;
+    neck1.texOffs(0, 16).addBox(-2.0F, -9.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
+    neck1.texOffs(25, 22).addBox(-1.0F, -8.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
     neck.addChild(neck1);
 
     neck2 = new ModelRenderer(this);
-    neck2.setRotationPoint(0.0F, -9.0F, 0.0F);
-    neck2.rotateAngleX = -0.3491F;
-    neck2.setTextureOffset(0, 16).addBox(-2.01F, -10.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
-    neck2.setTextureOffset(25, 22).addBox(-1.0F, -10.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
+    neck2.setPos(0.0F, -9.0F, 0.0F);
+    neck2.xRot = -0.3491F;
+    neck2.texOffs(0, 16).addBox(-2.01F, -10.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
+    neck2.texOffs(25, 22).addBox(-1.0F, -10.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
     neck1.addChild(neck2);
 
     neck3 = new ModelRenderer(this);
-    neck3.setRotationPoint(0.0F, -10.0F, 0.0F);
-    neck3.rotateAngleX = -0.1745F;
-    neck3.setTextureOffset(0, 16).addBox(-2.0F, -10.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
-    neck3.setTextureOffset(25, 22).addBox(-1.0F, -9.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
+    neck3.setPos(0.0F, -10.0F, 0.0F);
+    neck3.xRot = -0.1745F;
+    neck3.texOffs(0, 16).addBox(-2.0F, -10.0F, 0.0F, 4.0F, 10.0F, 6.0F, 0.0F, false);
+    neck3.texOffs(25, 22).addBox(-1.0F, -9.0F, 6.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
     neck2.addChild(neck3);
 
     head = new ModelRenderer(this);
-    head.setRotationPoint(0.0F, -9.0F, 3.0F);
+    head.setPos(0.0F, -9.0F, 3.0F);
     neck3.addChild(head);
-    head.setTextureOffset(0, 0).addBox(-3.0F, -8.0F, -4.0F, 6.0F, 8.0F, 8.0F, 0.0F, false);
-    head.setTextureOffset(33, 0).addBox(-3.0F, -4.0F, -10.0F, 6.0F, 3.0F, 6.0F, 0.0F, false);
-    head.setTextureOffset(38, 25).addBox(-2.5F, -3.25F, -9.5F, 5.0F, 3.0F, 4.0F, 0.0F, false);
-    head.setTextureOffset(25, 22).addBox(-1.0F, -8.0F, 4.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
+    head.texOffs(0, 0).addBox(-3.0F, -8.0F, -4.0F, 6.0F, 8.0F, 8.0F, 0.0F, false);
+    head.texOffs(33, 0).addBox(-3.0F, -4.0F, -10.0F, 6.0F, 3.0F, 6.0F, 0.0F, false);
+    head.texOffs(38, 25).addBox(-2.5F, -3.25F, -9.5F, 5.0F, 3.0F, 4.0F, 0.0F, false);
+    head.texOffs(25, 22).addBox(-1.0F, -8.0F, 4.0F, 2.0F, 8.0F, 2.0F, 0.0F, false);
 
     mouth = new ModelRenderer(this);
-    mouth.setRotationPoint(0.0F, -1.0F, -4.0F);
-    mouth.setTextureOffset(33, 9).addBox(-3.0F, 0.0F, -6.0F, 6.0F, 1.0F, 6.0F, 0.0F, false);
+    mouth.setPos(0.0F, -1.0F, -4.0F);
+    mouth.texOffs(33, 9).addBox(-3.0F, 0.0F, -6.0F, 6.0F, 1.0F, 6.0F, 0.0F, false);
     head.addChild(mouth);
 
     ModelRenderer leftHorn = new ModelRenderer(this);
-    leftHorn.setRotationPoint(3.0F, -6.0F, 1.0F);
-    leftHorn.rotateAngleZ = 0.5236F;
-    leftHorn.setTextureOffset(56, 27).addBox(-2.0F, -3.0F, -2.0F, 2.0F, 3.0F, 2.0F, 0.0F, false);
+    leftHorn.setPos(3.0F, -6.0F, 1.0F);
+    leftHorn.zRot = 0.5236F;
+    leftHorn.texOffs(56, 27).addBox(-2.0F, -3.0F, -2.0F, 2.0F, 3.0F, 2.0F, 0.0F, false);
     head.addChild(leftHorn);
 
     ModelRenderer leftHorn2 = new ModelRenderer(this);
-    leftHorn2.setRotationPoint(0.0F, -3.0F, 0.0F);
-    leftHorn2.rotateAngleX = 0.5236F;
-    leftHorn2.rotateAngleY = 0.0873F;
-    leftHorn2.setTextureOffset(56, 22).addBox(-2.0F, -3.0F, -2.0F, 2.0F, 3.0F, 2.0F, 0.0F, false);
+    leftHorn2.setPos(0.0F, -3.0F, 0.0F);
+    leftHorn2.xRot = 0.5236F;
+    leftHorn2.yRot = 0.0873F;
+    leftHorn2.texOffs(56, 22).addBox(-2.0F, -3.0F, -2.0F, 2.0F, 3.0F, 2.0F, 0.0F, false);
     leftHorn.addChild(leftHorn2);
 
     ModelRenderer leftHorn3 = new ModelRenderer(this);
-    leftHorn3.setRotationPoint(0.0F, -3.0F, 0.0F);
-    leftHorn3.rotateAngleX = 1.0472F;
-    leftHorn3.rotateAngleY = 0.0873F;
-    leftHorn3.setTextureOffset(56, 17).addBox(-2.0F, -4.0F, -1.0F, 2.0F, 4.0F, 1.0F, 0.0F, false);
+    leftHorn3.setPos(0.0F, -3.0F, 0.0F);
+    leftHorn3.xRot = 1.0472F;
+    leftHorn3.yRot = 0.0873F;
+    leftHorn3.texOffs(56, 17).addBox(-2.0F, -4.0F, -1.0F, 2.0F, 4.0F, 1.0F, 0.0F, false);
     leftHorn2.addChild(leftHorn3);
 
     ModelRenderer rightHorn1 = new ModelRenderer(this);
-    rightHorn1.setRotationPoint(-3.0F, -6.0F, 1.0F);
-    rightHorn1.rotateAngleZ = -0.5236F;
-    rightHorn1.setTextureOffset(56, 27).addBox(0.0F, -3.0F, -2.0F, 2.0F, 3.0F, 2.0F, 0.0F, false);
+    rightHorn1.setPos(-3.0F, -6.0F, 1.0F);
+    rightHorn1.zRot = -0.5236F;
+    rightHorn1.texOffs(56, 27).addBox(0.0F, -3.0F, -2.0F, 2.0F, 3.0F, 2.0F, 0.0F, false);
     head.addChild(rightHorn1);
 
     ModelRenderer rightHorn2 = new ModelRenderer(this);
-    rightHorn2.setRotationPoint(1.0F, -3.0F, 0.0F);
-    rightHorn2.rotateAngleX = 0.5236F;
-    rightHorn2.rotateAngleY = -0.0873F;
-    rightHorn2.setTextureOffset(56, 22).addBox(-1.0F, -3.0F, -2.0F, 2.0F, 3.0F, 2.0F, 0.0F, false);
+    rightHorn2.setPos(1.0F, -3.0F, 0.0F);
+    rightHorn2.xRot = 0.5236F;
+    rightHorn2.yRot = -0.0873F;
+    rightHorn2.texOffs(56, 22).addBox(-1.0F, -3.0F, -2.0F, 2.0F, 3.0F, 2.0F, 0.0F, false);
     rightHorn1.addChild(rightHorn2);
 
     ModelRenderer rightHorn3 = new ModelRenderer(this);
-    rightHorn3.setRotationPoint(0.0F, -3.0F, 0.0F);
-    rightHorn3.rotateAngleX = 1.0472F;
-    rightHorn3.rotateAngleY = -0.0873F;
-    rightHorn3.setTextureOffset(56, 17).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 4.0F, 1.0F, 0.0F, false);
+    rightHorn3.setPos(0.0F, -3.0F, 0.0F);
+    rightHorn3.xRot = 1.0472F;
+    rightHorn3.yRot = -0.0873F;
+    rightHorn3.texOffs(56, 17).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 4.0F, 1.0F, 0.0F, false);
     rightHorn2.addChild(rightHorn3);
 
   }
   
 
   @Override
-  public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+  public void setupAnim(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     // rotate head angles
     float yaw = netHeadYaw * ((float)Math.PI / 180F);
-    head.rotateAngleX = headPitch * ((float)Math.PI / 180F);
-    head.rotateAngleY = yaw * 0.4F;
-    neck1.rotateAngleY = yaw * 0.1F;
-    neck2.rotateAngleY = yaw * 0.2F;
-    neck3.rotateAngleY = yaw * 0.3F;
+    head.xRot = headPitch * ((float)Math.PI / 180F);
+    head.yRot = yaw * 0.4F;
+    neck1.yRot = yaw * 0.1F;
+    neck2.yRot = yaw * 0.2F;
+    neck3.yRot = yaw * 0.3F;
     // copy head angles to severed portion
-    neckSevered.rotateAngleX = neck1.rotateAngleX + neck.rotateAngleX;
-    neckSevered.rotateAngleY = neck1.rotateAngleY + neck.rotateAngleY;
-    neckSevered.rotateAngleZ = neck1.rotateAngleZ + neck.rotateAngleZ;
-    neckSevered.setRotationPoint(neck.rotationPointX, neck.rotationPointY + 2, neck.rotationPointZ - 3);
+    neckSevered.xRot = neck1.xRot + neck.xRot;
+    neckSevered.yRot = neck1.yRot + neck.yRot;
+    neckSevered.zRot = neck1.zRot + neck.zRot;
+    neckSevered.setPos(neck.x, neck.y + 2, neck.z - 3);
   }
 
   @Override
-  public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-    final float idleSwingCos = MathHelper.cos((31 * entityIn.getEntityId() + entityIn.ticksExisted + partialTick) * 0.19F);
+  public void prepareMobModel(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
+    final float idleSwingCos = MathHelper.cos((31 * entityIn.getId() + entityIn.tickCount + partialTick) * 0.19F);
     // used to move the entire neck in a swinging motion (bite attack)
-    final float swingPercent = entityIn.getSwingProgress(partialTick);
+    final float swingPercent = entityIn.getAttackAnim(partialTick);
     // alternative that does not use cos: swing = 2.0D * Math.min(swingPercent - 0.5D, -(swingPercent - 0.5D)) + 1.0D;
     final float swing = MathHelper.cos((swingPercent - 0.5F) * (float)Math.PI);
     // animate mouth and neck parts
-    mouth.rotateAngleX = (0.2618F + 0.45F * swing + 0.08F * idleSwingCos);
-    neck1.rotateAngleX = 0.5236F + swing * 0.78F;
-    neck2.rotateAngleX = -0.3491F + idleSwingCos * 0.04F;
-    neck3.rotateAngleX = -0.1745F + idleSwingCos * 0.02F;
+    mouth.xRot = (0.2618F + 0.45F * swing + 0.08F * idleSwingCos);
+    neck1.xRot = 0.5236F + swing * 0.78F;
+    neck2.xRot = -0.3491F + idleSwingCos * 0.04F;
+    neck3.xRot = -0.1745F + idleSwingCos * 0.02F;
   }
 
   @Override
-  public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
+  public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha) {
     matrixStackIn.translate(0, 0.0D, 0.25D);
     // render the severed neck portion

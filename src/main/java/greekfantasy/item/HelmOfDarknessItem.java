@@ -25,6 +25,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import net.minecraft.item.Item.Properties;
+
 public class HelmOfDarknessItem extends ArmorItem {
   protected static final IArmorMaterial MATERIAL = new HelmOfDarknessArmorMaterial();
    
@@ -43,14 +45,14 @@ public class HelmOfDarknessItem extends ArmorItem {
       final int itemSlot, final boolean isSelected) {
     if(itemSlot == EquipmentSlotType.HEAD.getIndex() && entityIn instanceof LivingEntity) {
       final LivingEntity entity = (LivingEntity)entityIn;
-      entity.addPotionEffect(new EffectInstance(Effects.INVISIBILITY, 20, 0, false, true, false));
+      entity.addEffect(new EffectInstance(Effects.INVISIBILITY, 20, 0, false, true, false));
     }
   }
 
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    tooltip.add(new TranslationTextComponent("effect.minecraft.invisibility").mergeStyle(TextFormatting.GRAY)
-        .appendString(" ").appendSibling(new TranslationTextComponent("enchantment.level.infinity").mergeStyle(TextFormatting.GRAY)));
+  public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    tooltip.add(new TranslationTextComponent("effect.minecraft.invisibility").withStyle(TextFormatting.GRAY)
+        .append(" ").append(new TranslationTextComponent("enchantment.level.infinity").withStyle(TextFormatting.GRAY)));
   }
 
   /**
@@ -74,19 +76,19 @@ public class HelmOfDarknessItem extends ArmorItem {
   public static class HelmOfDarknessArmorMaterial implements IArmorMaterial {
     private static final String NAME = "helm_of_darkness";
     @Override
-    public int getDamageReductionAmount(EquipmentSlotType arg0) { return 2; }
+    public int getDefenseForSlot(EquipmentSlotType arg0) { return 2; }
     @Override
-    public int getDurability(EquipmentSlotType arg0) { return 363; }
+    public int getDurabilityForSlot(EquipmentSlotType arg0) { return 363; }
     @Override
-    public int getEnchantability() { return 15; }
+    public int getEnchantmentValue() { return 15; }
     @Override
     public float getKnockbackResistance() { return 0.0F; }
     @Override
     public String getName() { return NAME; }
     @Override
-    public Ingredient getRepairMaterial() { return Ingredient.fromItems(GFRegistry.STYXIAN_SHARD); }
+    public Ingredient getRepairIngredient() { return Ingredient.of(GFRegistry.STYXIAN_SHARD); }
     @Override
-    public SoundEvent getSoundEvent() { return SoundEvents.ITEM_ARMOR_EQUIP_IRON; }
+    public SoundEvent getEquipSound() { return SoundEvents.ARMOR_EQUIP_IRON; }
     @Override
     public float getToughness() { return 0.1F; }
   }

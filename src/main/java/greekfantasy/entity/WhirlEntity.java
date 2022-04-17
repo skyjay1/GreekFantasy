@@ -50,7 +50,7 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
 
   protected static final IOptionalNamedTag<Item> TRIGGER = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "charybdis_trigger"));
   
-  protected static final DataParameter<Boolean> ATTRACT_MOBS = EntityDataManager.createKey(WhirlEntity.class, DataSerializers.BOOLEAN);
+  protected static final DataParameter<Boolean> ATTRACT_MOBS = EntityDataManager.defineId(WhirlEntity.class, DataSerializers.BOOLEAN);
   protected static final String KEY_AFFECTS_MOBS = "AttractMobs";
   protected static final String KEY_LIFE_TICKS = "LifeTicks";
 
@@ -64,7 +64,7 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
   
   public WhirlEntity(final EntityType<? extends WhirlEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.experienceValue = 5;
+    this.xpReward = 5;
   }
 
   //copied from DolphinEntity
@@ -74,23 +74,23 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
       return false;
     }
 
-    RegistryKey<Biome> biome = world.func_242406_i(pos).orElse(Biomes.PLAINS);
-    return (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN)) && world.getFluidState(pos).isTagged(FluidTags.WATER);
+    RegistryKey<Biome> biome = world.getBiomeName(pos).orElse(Biomes.PLAINS);
+    return (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN)) && world.getFluidState(pos).is(FluidTags.WATER);
   }
 
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 10.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 0.25D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 10.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.15D)
+        .add(Attributes.ATTACK_DAMAGE, 0.25D)
+        .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+        .add(Attributes.FOLLOW_RANGE, 32.0D);
   }
   
   @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(ATTRACT_MOBS, Boolean.valueOf(false));
+  public void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(ATTRACT_MOBS, Boolean.valueOf(false));
   }
   
   @Override
@@ -101,14 +101,14 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     
     // remove if colliding with another whirl or a charybdis
-    final List<WaterMobEntity> waterMobList = this.world.getEntitiesWithinAABB(WaterMobEntity.class, this.getBoundingBox().grow(1.0D), 
+    final List<WaterMobEntity> waterMobList = this.level.getEntitiesOfClass(WaterMobEntity.class, this.getBoundingBox().inflate(1.0D), 
         e -> e != this && e.isAlive() && (e.getType() == GFRegistry.CHARYBDIS_ENTITY || e.getType() == GFRegistry.WHIRL_ENTITY));
     if(!waterMobList.isEmpty() && this.isAlive()) {
-      this.attackEntityFrom(DamageSource.STARVE, this.getMaxHealth() * 2.0F);
+      this.hurt(DamageSource.STARVE, this.getMaxHealth() * 2.0F);
       return;
     }
  
@@ -119,89 +119,89 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
     }
     
     // attract nearby items
-    final List<ItemEntity> itemEntityList = this.world.getEntitiesWithinAABB(EntityType.ITEM, this.getBoundingBox().grow(1.0), e -> e.isInWaterOrBubbleColumn() && (this.getPosY() + this.getHeight()) > e.getPosY());
+    final List<ItemEntity> itemEntityList = this.level.getEntities(EntityType.ITEM, this.getBoundingBox().inflate(1.0), e -> e.isInWaterOrBubble() && (this.getY() + this.getBbHeight()) > e.getY());
     for(final ItemEntity e : itemEntityList) {
       // check for trigger items
-      if(this.getEntityWorld() instanceof ServerWorld && !e.getItem().isEmpty() && e.getItem().getItem().isIn(TRIGGER)) {
-        CharybdisEntity.spawnCharybdis((ServerWorld) this.getEntityWorld(), this);
-        e.attackEntityFrom(DamageSource.causeMobDamage(this), 1.0F);
+      if(this.getCommandSenderWorld() instanceof ServerWorld && !e.getItem().isEmpty() && e.getItem().getItem().is(TRIGGER)) {
+        CharybdisEntity.spawnCharybdis((ServerWorld) this.getCommandSenderWorld(), this);
+        e.hurt(DamageSource.mobAttack(this), 1.0F);
       }
       // start to remove items
-      if(!e.cannotPickup()) {
-        e.attackEntityFrom(DamageSource.causeMobDamage(this), 1.0F);
+      if(!e.hasPickUpDelay()) {
+        e.hurt(DamageSource.mobAttack(this), 1.0F);
       }
       // play sound when item is removed
       if(!e.isAlive()) {
-        this.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 0.6F, 0.8F + this.getRNG().nextFloat() * 0.4F);
+        this.playSound(SoundEvents.GENERIC_DRINK, 0.6F, 0.8F + this.getRandom().nextFloat() * 0.4F);
       }
     }
     
     // spawn particles
-    if(this.world.isRemote() && ticksExisted % 3 == 0 && this.isInWaterOrBubbleColumn()) {
+    if(this.level.isClientSide() && tickCount % 3 == 0 && this.isInWaterOrBubble()) {
       // spawn particles in spiral
-      float maxY = this.getHeight() * 1.65F;
+      float maxY = this.getBbHeight() * 1.65F;
       float y = 0;
       float nY = 90;
       float dY = maxY / nY;
-      double posX = this.getPosX();
-      double posY = this.getPosY();
-      double posZ = this.getPosZ();
+      double posX = this.getX();
+      double posY = this.getY();
+      double posZ = this.getZ();
       // for each y-position, increase the angle and spawn particle here
-      for(float a = 0, nA = 28 + rand.nextInt(4), dA = (2 * (float)Math.PI) / nA; y < maxY; a += dA) {
+      for(float a = 0, nA = 28 + random.nextInt(4), dA = (2 * (float)Math.PI) / nA; y < maxY; a += dA) {
         float radius = y * 0.35F;
         float cosA = MathHelper.cos(a) * radius;
         float sinA = MathHelper.sin(a) * radius;
         //bubbles(posX + cosA, posY + y, posZ + sinA, 0.125D, 1);
-        world.addParticle(ParticleTypes.BUBBLE, posX + cosA, posY + y - (maxY * 0.4), posZ + sinA, 0.0D, 0.085D, 0.0D);
+        level.addParticle(ParticleTypes.BUBBLE, posX + cosA, posY + y - (maxY * 0.4), posZ + sinA, 0.0D, 0.085D, 0.0D);
         y += dY;
       }
     }
   }
   
   @Override
-  protected void collideWithEntity(final Entity entityIn) {
-    super.collideWithEntity(entityIn);
+  protected void doPush(final Entity entityIn) {
+    super.doPush(entityIn);
   }
 
   // Misc //
   
   @Override
-  protected boolean isDespawnPeaceful() { return true; }
+  protected boolean shouldDespawnInPeaceful() { return true; }
 
   @Override
-  protected boolean canBeRidden(Entity entityIn) { return false; }
+  protected boolean canRide(Entity entityIn) { return false; }
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
     return GreekFantasy.CONFIG.isWhirlInvulnerable()
-        || (!source.isCreativePlayer() && !source.isDamageAbsolute() && this.limitedLifespan) 
+        || (!source.isCreativePlayer() && !source.isBypassMagic() && this.limitedLifespan) 
         || super.isInvulnerableTo(source);
   }
   
   @Override
-  protected void damageEntity(final DamageSource source, final float amountIn) {
+  protected void actuallyHurt(final DamageSource source, final float amountIn) {
     float amount = amountIn;
-    if (!source.isDamageAbsolute() && getAttractMobs()) {
+    if (!source.isBypassMagic() && getAttractMobs()) {
       amount *= 0.25F;
     }
-    super.damageEntity(source, amount);
+    super.actuallyHurt(source, amount);
   }
   
   // Prevent entity collisions //
   
   @Override
-  public boolean canBePushed() { return false; }
+  public boolean isPushable() { return false; }
   
   @Override
-  protected void collideWithNearbyEntities() { }
+  protected void pushEntities() { }
   
   // Lifespan and Attract Mobs //
   
   public void setAttractMobs(final boolean attractsMobs) {
-    this.getDataManager().set(ATTRACT_MOBS, attractsMobs);
+    this.getEntityData().set(ATTRACT_MOBS, attractsMobs);
   }
   
-  public boolean getAttractMobs() { return this.getDataManager().get(ATTRACT_MOBS); }
+  public boolean getAttractMobs() { return this.getEntityData().get(ATTRACT_MOBS); }
 
   public void setLimitedLife(int life) {
     this.limitedLifespan = true;
@@ -209,13 +209,13 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
   }
   
   @Override
-  public ResourceLocation getLootTable() {
-    return limitedLifespan ? LootTables.EMPTY : super.getLootTable();
+  public ResourceLocation getDefaultLootTable() {
+    return limitedLifespan ? LootTables.EMPTY : super.getDefaultLootTable();
   }
   
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
     compound.putBoolean(KEY_AFFECTS_MOBS, getAttractMobs());
     if (this.limitedLifespan) {
       compound.putInt(KEY_LIFE_TICKS, this.limitedLifeTicks);
@@ -223,8 +223,8 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
     setAttractMobs(compound.getBoolean(KEY_AFFECTS_MOBS));
     if (compound.contains(KEY_LIFE_TICKS)) {
       setLimitedLife(compound.getInt(KEY_LIFE_TICKS));
@@ -234,13 +234,13 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
   // Sounds //
   
   @Override
-  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_HOSTILE_SPLASH; }
+  protected SoundEvent getAmbientSound() { return SoundEvents.HOSTILE_SPLASH; }
 
   @Override
   protected float getSoundVolume() { return 0.8F; }
   
   @Override
-  protected float getSoundPitch() { return 0.8F + rand.nextFloat() * 0.2F; }
+  protected float getVoicePitch() { return 0.8F + random.nextFloat() * 0.2F; }
   
   // Swimming //
   
@@ -252,24 +252,24 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
   
   @Override
   public void travel(final Vector3d vec) {
-    if (isServerWorld() && isInWater() && isSwimmingUpCalculated()) {
+    if (isEffectiveAi() && isInWater() && isSwimmingUpCalculated()) {
       moveRelative(0.01F, vec);
-      move(MoverType.SELF, getMotion());
-      setMotion(getMotion().scale(0.9D));
+      move(MoverType.SELF, getDeltaMovement());
+      setDeltaMovement(getDeltaMovement().scale(0.9D));
     } else {
       super.travel(vec);
     }
   }
 
   @Override
-  public boolean isPushedByWater() { return false; }
+  public boolean isPushedByFluid() { return false; }
 
   @Override
   public boolean isSwimmingUpCalculated() {
     if (this.swimmingUp) {
       return true;
     }
-    LivingEntity e = getAttackTarget();
+    LivingEntity e = getTarget();
     return e != null && e.isInWater();
   }
 
@@ -282,10 +282,10 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
     }
 
     @Override
-    public boolean shouldExecute() {
-      BlockPos pos = WhirlEntity.this.getPosition().up((int) Math.ceil(WhirlEntity.this.getHeight()));
-      BlockState state = WhirlEntity.this.world.getBlockState(pos);
-      return state.getBlock() == Blocks.WATER && super.shouldExecute();
+    public boolean canUse() {
+      BlockPos pos = WhirlEntity.this.blockPosition().above((int) Math.ceil(WhirlEntity.this.getBbHeight()));
+      BlockState state = WhirlEntity.this.level.getBlockState(pos);
+      return state.getBlock() == Blocks.WATER && super.canUse();
     }
   }
   
@@ -299,7 +299,7 @@ public class WhirlEntity extends WaterMobEntity implements ISwimmingMob {
     protected void onCollideWith(Entity e) {
       // attack living entities, if enabled
       if(entity.getAttractMobs() && e instanceof LivingEntity) {
-        e.attackEntityFrom(DamageSource.causeMobDamage(entity), 1.0F);
+        e.hurt(DamageSource.mobAttack(entity), 1.0F);
       }
     }
 

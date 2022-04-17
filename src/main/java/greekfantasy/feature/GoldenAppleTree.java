@@ -21,7 +21,7 @@ public class GoldenAppleTree extends Tree {
   private static ConfiguredFeature<BaseTreeFeatureConfig, ?> GOLDEN_APPLE_TREE_CONFIGURATION;
 
   @Override
-  protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getTreeFeature(final Random rand, final boolean hasNearbyFlora) {
+  protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getConfiguredFeature(final Random rand, final boolean hasNearbyFlora) {
     if(GOLDEN_APPLE_TREE_CONFIGURATION == null) {
       GOLDEN_APPLE_TREE_CONFIGURATION = getConfiguredTree();
     }
@@ -29,12 +29,12 @@ public class GoldenAppleTree extends Tree {
   }
   
   public static ConfiguredFeature<BaseTreeFeatureConfig, ?> getConfiguredTree() {
-    return GFWorldGen.GOLDEN_APPLE_TREE_FEATURE.withConfiguration(new BaseTreeFeatureConfig.Builder(
-        new SimpleBlockStateProvider(Blocks.OAK_LOG.getDefaultState()), 
-        new SimpleBlockStateProvider(GFRegistry.GOLDEN_APPLE_LEAVES.getDefaultState()), 
-        new FancyFoliagePlacer(FeatureSpread.create(2), FeatureSpread.create(4), 4), 
+    return GFWorldGen.GOLDEN_APPLE_TREE_FEATURE.configured(new BaseTreeFeatureConfig.Builder(
+        new SimpleBlockStateProvider(Blocks.OAK_LOG.defaultBlockState()), 
+        new SimpleBlockStateProvider(GFRegistry.GOLDEN_APPLE_LEAVES.defaultBlockState()), 
+        new FancyFoliagePlacer(FeatureSpread.fixed(2), FeatureSpread.fixed(4), 4), 
         new FancyTrunkPlacer(4, 6, 0), new TwoLayerFeature(0, 0, 0, OptionalInt.of(4)))
-        .setIgnoreVines().setHeightmap(Heightmap.Type.MOTION_BLOCKING).build());
+        .ignoreVines().heightmap(Heightmap.Type.MOTION_BLOCKING).build());
   }
 
 }

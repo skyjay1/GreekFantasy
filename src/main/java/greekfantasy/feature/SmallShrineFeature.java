@@ -30,22 +30,22 @@ public class SmallShrineFeature extends SimpleTemplateFeature {
   }
 
   @Override
-  public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
+  public boolean place(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
     // check dimension from config
     if(!SimpleTemplateFeature.isValidDimension(reader)) {
       return false;
     }
     // template loading
-    final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
-    final Template template = manager.getTemplateDefaulted(getStructure(rand));
+    final TemplateManager manager = reader.getLevel().getStructureManager();
+    final Template template = manager.getOrCreate(getStructure(rand));
     
     // position for generation
     BlockPos pos = this.getRandomPosition(reader, blockPosIn, rand, 1);
     
     // rotation / mirror
     Mirror mirror = Mirror.NONE;
-    Rotation rotation = Rotation.randomRotation(rand);
+    Rotation rotation = Rotation.getRandom(rand);
     
     // check for valid position
     final BlockPos size = template.getSize();
@@ -60,8 +60,8 @@ public class SmallShrineFeature extends SimpleTemplateFeature {
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
 
     // actually generate the structure
-    if(template.func_237146_a_(reader, pos, pos, placement, rand, 2)) {
-      fillBelow(reader, pos.up(1), size, rotation, new Block[] { Blocks.DIRT });
+    if(template.placeInWorld(reader, pos, pos, placement, rand, 2)) {
+      fillBelow(reader, pos.above(1), size, rotation, new Block[] { Blocks.DIRT });
       return true;
     }
     return false;

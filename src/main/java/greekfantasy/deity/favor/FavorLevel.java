@@ -123,7 +123,7 @@ public class FavorLevel implements INBTSerializable<CompoundNBT> {
    */
   public void sendStatusMessage(final PlayerEntity playerIn, final IDeity deity) {
     long favorToNext = Math.min(calculateFavor(maxLevel), getFavorToNextLevel());
-    playerIn.sendStatusMessage(new TranslationTextComponent("favor.current_favor", deity.getText(), getFavor(), (favorToNext == 0 ? "--" : favorToNext), getLevel()).mergeStyle(TextFormatting.LIGHT_PURPLE), false);
+    playerIn.displayClientMessage(new TranslationTextComponent("favor.current_favor", deity.getText(), getFavor(), (favorToNext == 0 ? "--" : favorToNext), getLevel()).withStyle(TextFormatting.LIGHT_PURPLE), false);
   }
 
   @Override

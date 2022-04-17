@@ -60,6 +60,6 @@ public class DeityArgument implements ArgumentType<ResourceLocation> {
         SUGGESTIONS.add(r);
       }
     });
-    return ISuggestionProvider.suggestIterable(SUGGESTIONS, p_listSuggestions_2_); 
+    return ISuggestionProvider.suggestResource(SUGGESTIONS, p_listSuggestions_2_); 
   }
 }

@@ -148,7 +148,7 @@ public interface IFavor extends INBTSerializable<CompoundNBT> {
   }
   
   public static long calculateTime(final Entity player) {
-    return player.getEntityWorld().getGameTime() + player.getEntityId() * 3;
+    return player.getCommandSenderWorld().getGameTime() + player.getId() * 3;
   }
   
   @Override

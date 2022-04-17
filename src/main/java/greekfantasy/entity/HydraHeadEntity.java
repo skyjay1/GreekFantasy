@@ -40,8 +40,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class HydraHeadEntity extends MonsterEntity {
   
-  private static final DataParameter<Byte> PART_ID = EntityDataManager.createKey(HydraHeadEntity.class, DataSerializers.BYTE);
-  private static final DataParameter<Byte> STATE = EntityDataManager.createKey(HydraHeadEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Byte> PART_ID = EntityDataManager.defineId(HydraHeadEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Byte> STATE = EntityDataManager.defineId(HydraHeadEntity.class, DataSerializers.BYTE);
   private static final String KEY_ID = "HydraHeadId";
   private static final String KEY_STATE = "HydraHeadState";
   // bytes to use in STATE
@@ -65,21 +65,21 @@ public class HydraHeadEntity extends MonsterEntity {
       
   public HydraHeadEntity(final EntityType<? extends HydraHeadEntity> type, final World world) {
     super(type, world);
-    severedSize = EntitySize.flexible(type.getWidth() * 0.75F, type.getHeight() * 0.25F);
+    severedSize = EntitySize.scalable(type.getWidth() * 0.75F, type.getHeight() * 0.25F);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 22.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.24D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 22.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.24D)
+        .add(Attributes.ATTACK_DAMAGE, 6.0D);
   }
   
   @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(PART_ID, Byte.valueOf((byte)0));
-    this.getDataManager().register(STATE, Byte.valueOf(NORMAL));
+  public void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(PART_ID, Byte.valueOf((byte)0));
+    this.getEntityData().define(STATE, Byte.valueOf(NORMAL));
   }
   
   @Override
@@ -97,7 +97,7 @@ public class HydraHeadEntity extends MonsterEntity {
   @Override
   public void tick() {
     // remove when not linked to a hydra
-    if(!hasHydra() && !world.isRemote()) {
+    if(!hasHydra() && !level.isClientSide()) {
       remove();
       return;
     }
@@ -117,14 +117,14 @@ public class HydraHeadEntity extends MonsterEntity {
     
     // recalculate size
     if(isCharred() || isSevered()) {
-      recalculateSize();
+      refreshDimensions();
     }
     
-    if(isCharred() && world.isRemote() && rand.nextInt(5) == 0) {
-      world.addParticle(ParticleTypes.SMOKE, 
-          getPosX() + (rand.nextDouble() - 0.5D) * getWidth(), 
-          getPosY() + getHeight(), 
-          getPosZ() + (rand.nextDouble() - 0.5D) * getWidth(), 0.0D, 0.0D, 0.0D);
+    if(isCharred() && level.isClientSide() && random.nextInt(5) == 0) {
+      level.addParticle(ParticleTypes.SMOKE, 
+          getX() + (random.nextDouble() - 0.5D) * getBbWidth(), 
+          getY() + getBbHeight(), 
+          getZ() + (random.nextDouble() - 0.5D) * getBbWidth(), 0.0D, 0.0D, 0.0D);
     }
     
     super.tick();
@@ -132,16 +132,16 @@ public class HydraHeadEntity extends MonsterEntity {
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
-    return ((isSevered() || isGrowing()) && !source.isFireDamage()) 
+    return ((isSevered() || isGrowing()) && !source.isFire()) 
         || isCharred() || source == DamageSource.IN_WALL || source == DamageSource.WITHER 
         || super.isInvulnerableTo(source);
   }
   
   @Override
-  public void onDeath(DamageSource cause) {
+  public void die(DamageSource cause) {
     // set state to "charred" or "severed" depending on fire timer
-    if(this.getFireTimer() > 0) {
-      setNoAI(true);
+    if(this.getRemainingFireTicks() > 0) {
+      setNoAi(true);
       setCharred();
     } else {
       // set this head to "severed"
@@ -149,49 +149,49 @@ public class HydraHeadEntity extends MonsterEntity {
       // create another head that is currently "severed"
       HydraHeadEntity head = getHydra().addHead(getHydra().getHeads());
       head.setSevered();
-      world.addEntity(head);
+      level.addFreshEntity(head);
     }
     // reset health to prevent removal
     this.setHealth(1.0F);
-    this.recalculateSize();
-    world.setEntityState(this, CHANGE_SIZE_CLIENT);
+    this.refreshDimensions();
+    level.broadcastEntityEvent(this, CHANGE_SIZE_CLIENT);
   }
   
   @Override
-  protected ActionResultType getEntityInteractionResult(final PlayerEntity player, final Hand hand) {
-    final ItemStack itemstack = player.getHeldItem(hand);
+  protected ActionResultType mobInteract(final PlayerEntity player, final Hand hand) {
+    final ItemStack itemstack = player.getItemInHand(hand);
     // light this head on fire when flint and steel is used
     if (!itemstack.isEmpty() && itemstack.getItem() == Items.FLINT_AND_STEEL) {
-      final Vector3d pos = this.getPositionVec();
-      this.world.playSound(player, pos.x, pos.y, pos.z, SoundEvents.ITEM_FLINTANDSTEEL_USE, this.getSoundCategory(), 1.0F,
-          this.rand.nextFloat() * 0.4F + 0.8F);
-      player.swingArm(hand);
+      final Vector3d pos = this.position();
+      this.level.playSound(player, pos.x, pos.y, pos.z, SoundEvents.FLINTANDSTEEL_USE, this.getSoundSource(), 1.0F,
+          this.random.nextFloat() * 0.4F + 0.8F);
+      player.swing(hand);
 
-      if (!this.world.isRemote()) {
-        this.setFire(4 + rand.nextInt(3));
-        itemstack.damageItem(1, player, c -> c.sendBreakAnimation(hand));
+      if (!this.level.isClientSide()) {
+        this.setSecondsOnFire(4 + random.nextInt(3));
+        itemstack.hurtAndBreak(1, player, c -> c.broadcastBreakEvent(hand));
       }
       return ActionResultType.SUCCESS;
     }
 
-    return super.getEntityInteractionResult(player, hand);
+    return super.mobInteract(player, hand);
   }
   
   @Override
-  public boolean canDespawn(double distanceToClosestPlayer) { return false; }
+  public boolean removeWhenFarAway(double distanceToClosestPlayer) { return false; }
 
   @Override
-  public boolean canBeCollidedWith() { return isNormal(); }
+  public boolean isPickable() { return isNormal(); }
   
   @Override
-  protected boolean canBeRidden(Entity entityIn) { return entityIn instanceof HydraEntity; }
+  protected boolean canRide(Entity entityIn) { return entityIn instanceof HydraEntity; }
 
   @Override
-  public boolean attackEntityFrom(DamageSource source, float amount) {
-    if(super.attackEntityFrom(source, amount) && hasHydra()) {
-      getHydra().attackEntityFrom(source, amount * 0.1F);
-      if(getAttackTarget() != null) {
-        getHydra().setAttackTarget(getAttackTarget());
+  public boolean hurt(DamageSource source, float amount) {
+    if(super.hurt(source, amount) && hasHydra()) {
+      getHydra().hurt(source, amount * 0.1F);
+      if(getTarget() != null) {
+        getHydra().setTarget(getTarget());
       }
     }
     return false;
@@ -199,49 +199,49 @@ public class HydraHeadEntity extends MonsterEntity {
 
   // Hydra body methods //
   
-  public void setPartId(final int id) { getDataManager().set(PART_ID, Byte.valueOf((byte)id)); }
+  public void setPartId(final int id) { getEntityData().set(PART_ID, Byte.valueOf((byte)id)); }
   
-  public int getPartId() { return getDataManager().get(PART_ID).intValue(); }
+  public int getPartId() { return getEntityData().get(PART_ID).intValue(); }
   
-  public boolean hasHydra() { return getRidingEntity() instanceof HydraEntity; }
+  public boolean hasHydra() { return getVehicle() instanceof HydraEntity; }
 
   /**
    * @return the Hydra this head belongs to, or null if it is not found
    */
   @Nullable
   public HydraEntity getHydra() {
-    if(getRidingEntity() instanceof HydraEntity) {
-      return (HydraEntity)getRidingEntity();
+    if(getVehicle() instanceof HydraEntity) {
+      return (HydraEntity)getVehicle();
     }    
     return null;
   }
   
   @Override
-  public void updateRidden() {
-    this.setMotion(Vector3d.ZERO);
+  public void rideTick() {
+    this.setDeltaMovement(Vector3d.ZERO);
     if (canUpdate()) {
       this.tick();
     }
     if (this.isPassenger() && hasHydra()) {
       HydraEntity hydra = getHydra();
-      hydra.updatePassenger(this, getPartId(), Entity::setPosition);
+      hydra.updatePassenger(this, getPartId(), Entity::setPos);
       // clamp rotation based on hydra rotation
-      if (this.rotationYawHead > hydra.rotationYaw + 80) {
-        this.rotationYawHead = hydra.rotationYaw + 80;
-      } else if(this.rotationYawHead < hydra.rotationYaw - 80) {
-        this.rotationYawHead = hydra.rotationYaw - 80;
+      if (this.yHeadRot > hydra.yRot + 80) {
+        this.yHeadRot = hydra.yRot + 80;
+      } else if(this.yHeadRot < hydra.yRot - 80) {
+        this.yHeadRot = hydra.yRot - 80;
       }
     }
   }
 
   //States //
 
-  public byte getHeadState() { return this.getDataManager().get(STATE).byteValue(); }
+  public byte getHeadState() { return this.getEntityData().get(STATE).byteValue(); }
   public void setHeadState(final byte state) { 
-    this.getDataManager().set(STATE, Byte.valueOf(state));
-    this.recalculateSize();
-    if(!world.isRemote()) {
-      world.setEntityState(this, CHANGE_SIZE_CLIENT);
+    this.getEntityData().set(STATE, Byte.valueOf(state));
+    this.refreshDimensions();
+    if(!level.isClientSide()) {
+      level.broadcastEntityEvent(this, CHANGE_SIZE_CLIENT);
     }
   }
 
@@ -260,24 +260,24 @@ public class HydraHeadEntity extends MonsterEntity {
   public void setGrowing() {
     setHeadState(GROWING);
     growTime = 1;
-    if (!this.world.isRemote()) {
-      this.world.setEntityState(this, GROWING_CLIENT);
+    if (!this.level.isClientSide()) {
+      this.level.broadcastEntityEvent(this, GROWING_CLIENT);
     }
   }
 
 
   @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
+  public void handleEntityEvent(byte id) {
     switch (id) {
     case GROWING_CLIENT:
       setGrowing();
-      recalculateSize();
+      refreshDimensions();
       break;
     case CHANGE_SIZE_CLIENT:
-      recalculateSize();
+      refreshDimensions();
       break;
     default:
-      super.handleStatusUpdate(id);
+      super.handleEntityEvent(id);
       break;
     }
   }
@@ -285,8 +285,8 @@ public class HydraHeadEntity extends MonsterEntity {
   // Size //
   
   @Override
-  public EntitySize getSize(Pose poseIn) {
-    return this.isNormal() ? super.getSize(poseIn) : severedSize;
+  public EntitySize getDimensions(Pose poseIn) {
+    return this.isNormal() ? super.getDimensions(poseIn) : severedSize;
   }
 
   @Override
@@ -297,15 +297,15 @@ public class HydraHeadEntity extends MonsterEntity {
   // NBT Methods //
 
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
     compound.putByte(KEY_ID, (byte)getPartId());
     compound.putByte(KEY_STATE, this.getHeadState());
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
     setPartId((int)compound.getByte(KEY_ID));
     setHeadState(compound.getByte(KEY_STATE));
   }
@@ -327,79 +327,79 @@ public class HydraHeadEntity extends MonsterEntity {
 
     public BiteAttackGoal() {
       super();
-      this.setMutexFlags(EnumSet.of(Goal.Flag.LOOK));
+      this.setFlags(EnumSet.of(Goal.Flag.LOOK));
     }
 
     @Override
-    public boolean shouldExecute() {
-      long i = HydraHeadEntity.this.world.getGameTime();
+    public boolean canUse() {
+      long i = HydraHeadEntity.this.level.getGameTime();
       // do not execute if timer is too recent or head is severed/charred
       if (i - this.lastCheckTime < attackInterval || !HydraHeadEntity.this.isNormal()) {
         return false;
       } else {
         this.lastCheckTime = i;
-        LivingEntity livingentity = HydraHeadEntity.this.getAttackTarget();
+        LivingEntity livingentity = HydraHeadEntity.this.getTarget();
         if (livingentity == null) {
           return false;
         } else if (!livingentity.isAlive()) {
           return false;
         } else {
-          return this.getAttackReachSqr(livingentity) >= HydraHeadEntity.this.getDistanceSq(livingentity.getPosX(),
-                livingentity.getPosY(), livingentity.getPosZ());
+          return this.getAttackReachSqr(livingentity) >= HydraHeadEntity.this.distanceToSqr(livingentity.getX(),
+                livingentity.getY(), livingentity.getZ());
         }
       }
     }
 
     @Override
-    public boolean shouldContinueExecuting() {
-      LivingEntity livingentity = HydraHeadEntity.this.getAttackTarget();
+    public boolean canContinueToUse() {
+      LivingEntity livingentity = HydraHeadEntity.this.getTarget();
       if (livingentity == null) {
         return false;
       } else if (!livingentity.isAlive()) {
         return false;
       } else {
-        return EntityPredicates.CAN_HOSTILE_AI_TARGET.test(livingentity);
+        return EntityPredicates.ATTACK_ALLOWED.test(livingentity);
       }
     }
 
     @Override
-    public void startExecuting() {
-      HydraHeadEntity.this.setAggroed(true);
+    public void start() {
+      HydraHeadEntity.this.setAggressive(true);
       this.swingCooldown = 0;
     }
 
     @Override
     public void tick() {
-      LivingEntity livingentity = HydraHeadEntity.this.getAttackTarget();
-      HydraHeadEntity.this.getLookController().setLookPositionWithEntity(livingentity, 30.0F, 30.0F);
-      double d0 = HydraHeadEntity.this.getDistanceSq(livingentity.getPosX(), livingentity.getPosY(), livingentity.getPosZ());
+      LivingEntity livingentity = HydraHeadEntity.this.getTarget();
+      HydraHeadEntity.this.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+      double d0 = HydraHeadEntity.this.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
       
       this.swingCooldown = Math.max(this.swingCooldown - 1, 0);
       this.checkAndPerformAttack(livingentity, d0);
     }
 
     @Override
-    public void resetTask() {
-      LivingEntity livingentity = HydraHeadEntity.this.getAttackTarget();
-      if (!EntityPredicates.CAN_AI_TARGET.test(livingentity)) {
-        HydraHeadEntity.this.setAttackTarget((LivingEntity) null);
+    public void stop() {
+      LivingEntity livingentity = HydraHeadEntity.this.getTarget();
+      if (!EntityPredicates.NO_CREATIVE_OR_SPECTATOR.test(livingentity)) {
+        HydraHeadEntity.this.setTarget((LivingEntity) null);
       }
 
-      HydraHeadEntity.this.setAggroed(false);
+      HydraHeadEntity.this.setAggressive(false);
     }
 
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
       double d0 = this.getAttackReachSqr(enemy);
       if (distToEnemySqr <= d0 && this.swingCooldown <= 0) {
         this.swingCooldown = attackInterval;
-        HydraHeadEntity.this.swingArm(Hand.MAIN_HAND);
-        HydraHeadEntity.this.attackEntityAsMob(enemy);
+        HydraHeadEntity.this.swing(Hand.MAIN_HAND);
+        HydraHeadEntity.this.doHurtTarget(enemy);
       }
 
     }
     
     protected double getAttackReachSqr(LivingEntity attackTarget) {
-      return (double) (HydraHeadEntity.this.getWidth() * 4.5F * HydraHeadEntity.this.getWidth() * 4.5F + attackTarget.getWidth());
+      return (double) (HydraHeadEntity.this.getBbWidth() * 4.5F * HydraHeadEntity.this.getBbWidth() * 4.5F + attackTarget.getBbWidth());
     }
 
   }

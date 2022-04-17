@@ -27,14 +27,14 @@ public class CentaurQuiverLayer<T extends CentaurEntity> extends LayerRenderer<T
   @Override
   public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entity,
       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-    final ItemStack bow = entity.getHeldItem(ProjectileHelper.getHandWith(entity, Items.BOW));
+    final ItemStack bow = entity.getItemInHand(ProjectileHelper.getWeaponHoldingHand(entity, Items.BOW));
     if (!entity.isInvisible() && bow.getItem() == Items.BOW) {
       // get packed light and a vertex builder bound to the correct texture
-      int packedOverlay = LivingRenderer.getPackedOverlay(entity, 0.0F);
-      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(TEXTURE));
+      int packedOverlay = LivingRenderer.getOverlayCoords(entity, 0.0F);
+      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
             
       // render quiver
-      this.getEntityModel().renderQuiver(entity, matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, limbSwing, limbSwingAmount);
+      this.getParentModel().renderQuiver(entity, matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, limbSwing, limbSwingAmount);
     }
   }
 }

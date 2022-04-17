@@ -39,7 +39,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   
-  private static final DataParameter<Byte> STATE = EntityDataManager.createKey(PythonEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Byte> STATE = EntityDataManager.defineId(PythonEntity.class, DataSerializers.BYTE);
   private static final String KEY_STATE = "PythonState";
   // bytes to use in STATE
   private static final byte NONE = (byte)0;
@@ -49,8 +49,8 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   private static final byte SPIT_CLIENT = 9;
   
   private static final Predicate<LivingEntity> CAN_TARGET = e -> {
-    if(e != null && e.canChangeDimension() && EntityPredicates.IS_LIVING_ALIVE.test(e) && EntityPredicates.CAN_HOSTILE_AI_TARGET.test(e)) {
-      final CreatureAttribute attr = ((LivingEntity)e).getCreatureAttribute();
+    if(e != null && e.canChangeDimensions() && EntityPredicates.LIVING_ENTITY_STILL_ALIVE.test(e) && EntityPredicates.ATTACK_ALLOWED.test(e)) {
+      final CreatureAttribute attr = ((LivingEntity)e).getMobType();
       return !(attr == CreatureAttribute.ARTHROPOD || attr == CreatureAttribute.UNDEAD || attr == CreatureAttribute.WATER);
     }
     return false;
@@ -67,24 +67,24 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   
   public PythonEntity(final EntityType<? extends PythonEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.stepHeight = 1.0F;
-    this.experienceValue = 50;
+    this.maxUpStep = 1.0F;
+    this.xpReward = 50;
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 70.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.31D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.5D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
-        .createMutableAttribute(Attributes.ARMOR, 1.5D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 70.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.31D)
+        .add(Attributes.ATTACK_DAMAGE, 4.5D)
+        .add(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
+        .add(Attributes.FOLLOW_RANGE, 32.0D)
+        .add(Attributes.ARMOR, 1.5D);
   }
   
   @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(STATE, Byte.valueOf(NONE));
+  public void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(STATE, Byte.valueOf(NONE));
   }
   
   @Override
@@ -102,8 +102,8 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
@@ -125,13 +125,13 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   // Misc //
   
   @Override
-  public boolean canChangeDimension() { return false; }
+  public boolean canChangeDimensions() { return false; }
   
   @Override
-  public boolean canDespawn(final double disToPlayer) { return false; }
+  public boolean removeWhenFarAway(final double disToPlayer) { return false; }
   
   @Override
-  protected boolean canBeRidden(Entity entityIn) { return false; }
+  protected boolean canRide(Entity entityIn) { return false; }
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
@@ -139,58 +139,58 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   }
   
   @Override
-  public boolean isOnLadder() { return false; }
+  public boolean onClimbable() { return false; }
   
   // Boss //
 
   @Override
-  public void addTrackingPlayer(ServerPlayerEntity player) {
-    super.addTrackingPlayer(player);
+  public void startSeenByPlayer(ServerPlayerEntity player) {
+    super.startSeenByPlayer(player);
     this.bossInfo.addPlayer(player);
   }
 
   @Override
-  public void removeTrackingPlayer(ServerPlayerEntity player) {
-    super.removeTrackingPlayer(player);
+  public void stopSeenByPlayer(ServerPlayerEntity player) {
+    super.stopSeenByPlayer(player);
     this.bossInfo.removePlayer(player);
   }
 
   // Sounds //
   
   @Override
-  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_SPIDER_AMBIENT; }
+  protected SoundEvent getAmbientSound() { return SoundEvents.SPIDER_AMBIENT; }
 
   @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_SPIDER_HURT; }
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.SPIDER_HURT; }
 
   @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_SPIDER_DEATH; }
+  protected SoundEvent getDeathSound() { return SoundEvents.SPIDER_DEATH; }
 
   @Override
   protected float getSoundVolume() { return 1.0F; }
   
   @Override
-  protected float getSoundPitch() { return 0.6F + rand.nextFloat() * 0.2F; }
+  protected float getVoicePitch() { return 0.6F + random.nextFloat() * 0.2F; }
   
   // NBT //
   
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-     super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+     super.addAdditionalSaveData(compound);
      compound.putByte(KEY_STATE, this.getPythonState());
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-     super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+     super.readAdditionalSaveData(compound);
      this.setPythonState(compound.getByte(KEY_STATE));
   }
   
   // States //
   
-  public byte getPythonState() { return this.getDataManager().get(STATE).byteValue(); }
+  public byte getPythonState() { return this.getEntityData().get(STATE).byteValue(); }
   
-  public void setPythonState(final byte state) { this.getDataManager().set(STATE, Byte.valueOf(state)); }
+  public void setPythonState(final byte state) { this.getEntityData().set(STATE, Byte.valueOf(state)); }
   
   public boolean isNoneState() { return getPythonState() == NONE; }
   
@@ -206,21 +206,21 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   }
   
   @Override
-  public void notifyDataManagerChange(final DataParameter<?> key) {
-    super.notifyDataManagerChange(key);
+  public void onSyncedDataUpdated(final DataParameter<?> key) {
+    super.onSyncedDataUpdated(key);
     if(key == STATE) {
       this.spawnTime = isSpawning() ? MAX_SPAWN_TIME : 0;
     }
   }
   
   @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
+  public void handleEntityEvent(byte id) {
     switch(id) {
     case SPIT_CLIENT:
       
       break;
     default:
-      super.handleStatusUpdate(id);
+      super.handleEntityEvent(id);
       break;
     }
   }
@@ -228,12 +228,12 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
   // Ranged Attack //
 
   @Override
-  public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
-    if(!world.isRemote()) {
-      PoisonSpitEntity healingSpell = PoisonSpitEntity.create(world, this);
-      world.addEntity(healingSpell);
+  public void performRangedAttack(LivingEntity target, float distanceFactor) {
+    if(!level.isClientSide()) {
+      PoisonSpitEntity healingSpell = PoisonSpitEntity.create(level, this);
+      level.addFreshEntity(healingSpell);
     }
-    this.playSound(SoundEvents.ENTITY_LLAMA_SPIT, 1.2F, 1.0F);
+    this.playSound(SoundEvents.LLAMA_SPIT, 1.2F, 1.0F);
   }
   
 
@@ -246,21 +246,21 @@ public class PythonEntity extends MonsterEntity implements IRangedAttackMob {
     }
 
     @Override
-    public boolean shouldExecute() {  
-      return super.shouldExecute() && PythonEntity.this.isNoneState();
+    public boolean canUse() {  
+      return super.canUse() && PythonEntity.this.isNoneState();
     }
     
     @Override
-    public void startExecuting() {
-      super.startExecuting();
+    public void start() {
+      super.start();
       PythonEntity.this.setSpitAttack(true);
-      PythonEntity.this.getEntityWorld().setEntityState(PythonEntity.this, SPIT_CLIENT);
-      PythonEntity.this.playSound(SoundEvents.ENTITY_CREEPER_PRIMED, 1.0F, 1.2F);
+      PythonEntity.this.getCommandSenderWorld().broadcastEntityEvent(PythonEntity.this, SPIT_CLIENT);
+      PythonEntity.this.playSound(SoundEvents.CREEPER_PRIMED, 1.0F, 1.2F);
     }
    
     @Override
-    public void resetTask() {
-      super.resetTask();
+    public void stop() {
+      super.stop();
       PythonEntity.this.setSpitAttack(false);
     }
   }

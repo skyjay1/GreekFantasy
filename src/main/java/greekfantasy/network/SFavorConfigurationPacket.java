@@ -35,7 +35,7 @@ public class SFavorConfigurationPacket {
    * @return a new instance of a SFavorConfigurationPacket based on the PacketBuffer
    */
   public static SFavorConfigurationPacket fromBytes(final PacketBuffer buf) {
-    final CompoundNBT sNBT = buf.readCompoundTag();
+    final CompoundNBT sNBT = buf.readNbt();
     final Optional<FavorConfiguration> sEffect = GreekFantasy.PROXY.FAVOR_CONFIGURATION.readObject(sNBT).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read FavorConfiguration from NBT for packet\n" + error));
     return new SFavorConfigurationPacket(sEffect.orElse(FavorConfiguration.EMPTY));
   }
@@ -48,7 +48,7 @@ public class SFavorConfigurationPacket {
   public static void toBytes(final SFavorConfigurationPacket msg, final PacketBuffer buf) {
     DataResult<INBT> nbtResult = GreekFantasy.PROXY.FAVOR_CONFIGURATION.writeObject(msg.favorConfig);
     INBT tag = nbtResult.resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to write FavorConfiguration to NBT for packet\n" + error)).get();
-    buf.writeCompoundTag((CompoundNBT)tag);
+    buf.writeNbt((CompoundNBT)tag);
   }
 
   /**

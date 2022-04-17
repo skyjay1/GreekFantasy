@@ -32,24 +32,24 @@ public class FollowGoal extends Goal {
 
   public FollowGoal(final MobEntity entityIn, final double speed, final float stopDistanceIn, final float areaSizeIn, 
       final Predicate<LivingEntity> followPredicateIn) {
-    setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+    setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     this.entity = entityIn;
     this.followPredicate = followPredicateIn;
     this.speedModifier = speed;
-    this.navigation = entityIn.getNavigator();
+    this.navigation = entityIn.getNavigation();
     this.stopDistance = stopDistanceIn;
     this.areaSize = areaSizeIn;
 
-    if (!(entityIn.getNavigator() instanceof net.minecraft.pathfinding.GroundPathNavigator)
-        && !(entityIn.getNavigator() instanceof net.minecraft.pathfinding.FlyingPathNavigator)) {
+    if (!(entityIn.getNavigation() instanceof net.minecraft.pathfinding.GroundPathNavigator)
+        && !(entityIn.getNavigation() instanceof net.minecraft.pathfinding.FlyingPathNavigator)) {
       throw new IllegalArgumentException("Unsupported mob type for FollowGoal");
     }
   }
 
   @Override
-  public boolean shouldExecute() {
-    List<LivingEntity> mobEntityList = this.entity.world.getEntitiesWithinAABB(LivingEntity.class,
-        this.entity.getBoundingBox().grow(this.areaSize), this.followPredicate);
+  public boolean canUse() {
+    List<LivingEntity> mobEntityList = this.entity.level.getEntitiesOfClass(LivingEntity.class,
+        this.entity.getBoundingBox().inflate(this.areaSize), this.followPredicate);
     if (!mobEntityList.isEmpty()) {
       for (LivingEntity mobEntity : mobEntityList) {
         if (mobEntity.isInvisible()) {
@@ -64,45 +64,45 @@ public class FollowGoal extends Goal {
   }
 
   @Override
-  public boolean shouldContinueExecuting() {
-    return (this.followingEntity != null && !this.navigation.noPath()
-        && this.entity.getDistanceSq(this.followingEntity) > (this.stopDistance * this.stopDistance));
+  public boolean canContinueToUse() {
+    return (this.followingEntity != null && !this.navigation.isDone()
+        && this.entity.distanceToSqr(this.followingEntity) > (this.stopDistance * this.stopDistance));
   }
 
   @Override
-  public void startExecuting() {
+  public void start() {
     this.timeToRecalcPath = 0;
-    this.oldWaterCost = this.entity.getPathPriority(PathNodeType.WATER);
-    this.entity.setPathPriority(PathNodeType.WATER, 0.0F);
+    this.oldWaterCost = this.entity.getPathfindingMalus(PathNodeType.WATER);
+    this.entity.setPathfindingMalus(PathNodeType.WATER, 0.0F);
   }
 
   @Override
-  public void resetTask() {
+  public void stop() {
     this.followingEntity = null;
-    this.navigation.clearPath();
-    this.entity.setPathPriority(PathNodeType.WATER, this.oldWaterCost);
+    this.navigation.stop();
+    this.entity.setPathfindingMalus(PathNodeType.WATER, this.oldWaterCost);
   }
 
   @Override
   public void tick() {
-    if (this.followingEntity == null || this.entity.getLeashed()) {
+    if (this.followingEntity == null || this.entity.isLeashed()) {
       return;
     }
 
-    this.entity.getLookController().setLookPositionWithEntity(this.followingEntity, 10.0F, this.entity.getVerticalFaceSpeed());
+    this.entity.getLookControl().setLookAt(this.followingEntity, 10.0F, this.entity.getMaxHeadXRot());
 
     if (--this.timeToRecalcPath > 0) {
       return;
     }
     this.timeToRecalcPath = 10;
 
-    double dX = this.entity.getPosX() - this.followingEntity.getPosX();
-    double dY = this.entity.getPosY() - this.followingEntity.getPosY();
-    double dZ = this.entity.getPosZ() - this.followingEntity.getPosZ();
+    double dX = this.entity.getX() - this.followingEntity.getX();
+    double dY = this.entity.getY() - this.followingEntity.getY();
+    double dZ = this.entity.getZ() - this.followingEntity.getZ();
 
     double distanceSq = dX * dX + dY * dY + dZ * dZ;
     if (distanceSq <= (this.stopDistance * this.stopDistance)) {
-      this.navigation.clearPath();
+      this.navigation.stop();
 
 //      if (distanceSq <= this.stopDistance) {
 //        double dX2 = this.followingEntity.getPosX() - this.entity.getPosX();
@@ -112,6 +112,6 @@ public class FollowGoal extends Goal {
 
       return;
     }
-    this.navigation.tryMoveToEntityLiving(this.followingEntity, this.speedModifier);
+    this.navigation.moveTo(this.followingEntity, this.speedModifier);
   }
 }

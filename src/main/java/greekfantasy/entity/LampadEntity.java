@@ -44,26 +44,26 @@ public class LampadEntity extends DryadEntity {
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.26D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 24.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.26D)
+        .add(Attributes.ATTACK_DAMAGE, 3.0D);
   }
   
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     final LampadEntity.Variant variant;
     if(reason == SpawnReason.COMMAND || reason == SpawnReason.SPAWN_EGG || reason == SpawnReason.SPAWNER || reason == SpawnReason.DISPENSER) {
       variant = LampadEntity.Variant.getRandom(worldIn.getRandom());
     } else {
-      variant = LampadEntity.Variant.getForBiome(worldIn.func_242406_i(this.getPosition()));
+      variant = LampadEntity.Variant.getForBiome(worldIn.getBiomeName(this.blockPosition()));
     }
     this.setVariant(variant);
     // sometimes carry soul torch
     if(worldIn.getRandom().nextFloat() < 0.2F) {
-      this.setHeldItem(Hand.OFF_HAND, new ItemStack(Items.SOUL_TORCH));
+      this.setItemInHand(Hand.OFF_HAND, new ItemStack(Items.SOUL_TORCH));
     }
     return data;
   }
@@ -80,7 +80,7 @@ public class LampadEntity extends DryadEntity {
     public static final Variant POMEGRANATE = new Variant(GreekFantasy.MODID, "pomegranate", "lampad", "logs", () -> GFRegistry.POMEGRANATE_SAPLING);
     
     public static ImmutableMap<String, Variant> NETHER = ImmutableMap.<String, Variant>builder()
-        .put(CRIMSON.getString(), CRIMSON).put(POMEGRANATE.getString(), POMEGRANATE).put(WARPED.getString(), WARPED)
+        .put(CRIMSON.getSerializedName(), CRIMSON).put(POMEGRANATE.getSerializedName(), POMEGRANATE).put(WARPED.getSerializedName(), WARPED)
         .build();
     
     protected Variant(final String nameIn, final Supplier<Block> saplingIn) {

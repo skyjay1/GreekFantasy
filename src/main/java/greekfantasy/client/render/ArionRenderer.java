@@ -18,7 +18,7 @@ public class ArionRenderer extends AbstractHorseRenderer<HorseEntity, HorseModel
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final HorseEntity entity) {
+  public ResourceLocation getTextureLocation(final HorseEntity entity) {
     return TEXTURE;
   }
 }

@@ -28,8 +28,8 @@ public class IvorySwordItem extends SwordItem {
   public IvorySwordItem(IItemTier tier, int attackDamageIn, float attackSpeedIn, Item.Properties properties) {
     super(tier, attackDamageIn, attackSpeedIn, properties);
     ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-    builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", attackDamageIn + tier.getAttackDamage(), AttributeModifier.Operation.ADDITION));
-    builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", attackSpeedIn, AttributeModifier.Operation.ADDITION));
+    builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", attackDamageIn + tier.getAttackDamageBonus(), AttributeModifier.Operation.ADDITION));
+    builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", attackSpeedIn, AttributeModifier.Operation.ADDITION));
     builder.put(Attributes.ATTACK_KNOCKBACK, new AttributeModifier(ATTACK_KNOCKBACK_MODIFIER, "Weapon modifier", ATTACK_KNOCKBACK_AMOUNT, AttributeModifier.Operation.ADDITION));
     this.attributeModifierMap = builder.build();
   }
@@ -39,16 +39,16 @@ public class IvorySwordItem extends SwordItem {
    * on the stack.
    */
   @Override
-  public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-    super.hitEntity(stack, target, attacker);
+  public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    super.hurtEnemy(stack, target, attacker);
     // apply knockback to the entity that was hit
-    if(attacker instanceof PlayerEntity && !((PlayerEntity)attacker).getCooldownTracker().hasCooldown(this)) {
+    if(attacker instanceof PlayerEntity && !((PlayerEntity)attacker).getCooldowns().isOnCooldown(this)) {
       // determine knockback amount
       float knockback = 0.0F;
       for(final AttributeModifier modifier : this.getAttributeModifiers(EquipmentSlotType.MAINHAND, stack).get(Attributes.ATTACK_KNOCKBACK)) {
         knockback += modifier.getAmount();
       }
-      target.applyKnockback(knockback * 0.75F, (double)MathHelper.sin(attacker.rotationYaw * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(attacker.rotationYaw * ((float)Math.PI / 180F))));
+      target.knockback(knockback * 0.75F, (double)MathHelper.sin(attacker.yRot * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(attacker.yRot * ((float)Math.PI / 180F))));
     }
     return true;
   }
@@ -65,7 +65,7 @@ public class IvorySwordItem extends SwordItem {
    * Return whether this item is repairable in an anvil.
    */
   @Override
-  public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+  public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
      return repair.getItem() == Items.BONE;
   }
 
@@ -73,7 +73,7 @@ public class IvorySwordItem extends SwordItem {
    * Return the enchantability factor of the item, most of the time is based on material.
    */
   @Override
-  public int getItemEnchantability() {
-     return ItemTier.STONE.getEnchantability();
+  public int getEnchantmentValue() {
+     return ItemTier.STONE.getEnchantmentValue();
   }
 }

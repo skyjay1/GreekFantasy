@@ -10,6 +10,8 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
+import net.minecraft.enchantment.Enchantment.Rarity;
+
 public class DeityEnchantment extends Enchantment {
   
   protected final Predicate<ItemStack> applicable;
@@ -25,20 +27,20 @@ public class DeityEnchantment extends Enchantment {
   }
   
   @Override
-  public ITextComponent getDisplayName(int level) {
-    return ((IFormattableTextComponent)super.getDisplayName(level)).mergeStyle(color);
+  public ITextComponent getFullname(int level) {
+    return ((IFormattableTextComponent)super.getFullname(level)).withStyle(color);
   }
   
   @Override 
-  public int getMinEnchantability(int level) { return 999; }
+  public int getMinCost(int level) { return 999; }
   @Override
-  public int getMaxEnchantability(int level) { return 999; }
+  public int getMaxCost(int level) { return 999; }
   @Override
-  public boolean isTreasureEnchantment() { return false; }
+  public boolean isTreasureOnly() { return false; }
   @Override
-  public boolean canVillagerTrade() { return false; }
+  public boolean isTradeable() { return false; }
   @Override
-  public boolean canGenerateInLoot() { return false; }
+  public boolean isDiscoverable() { return false; }
   @Override
   public int getMaxLevel() { return maxLevel; }
   @Override

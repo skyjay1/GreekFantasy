@@ -68,12 +68,12 @@ public class SSimpleParticlesPacket {
       context.enqueueWork(() -> {
         net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
         IParticleData particle = message.isHappy ? ParticleTypes.HAPPY_VILLAGER : ParticleTypes.ANGRY_VILLAGER;
-        final Random rand = mc.player.getRNG();
+        final Random rand = mc.player.getRandom();
         for (int i = 0; i < message.count; ++i) {
           double x2 = message.pos.getX() + rand.nextDouble();
           double y2 = message.pos.getY() + rand.nextDouble();
           double z2 = message.pos.getZ() + rand.nextDouble();
-          mc.world.addParticle(particle, x2, y2, z2, 0, 0, 0);
+          mc.level.addParticle(particle, x2, y2, z2, 0, 0, 0);
         }
       });
     }

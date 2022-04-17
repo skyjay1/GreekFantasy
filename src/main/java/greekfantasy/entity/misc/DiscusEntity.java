@@ -48,28 +48,28 @@ public class DiscusEntity extends ProjectileItemEntity {
   }
 
   @Override
-  protected void onEntityHit(EntityRayTraceResult raytrace) {
-    super.onEntityHit(raytrace);
+  protected void onHitEntity(EntityRayTraceResult raytrace) {
+    super.onHitEntity(raytrace);
     final float damage = 4.0F;
-    raytrace.getEntity().attackEntityFrom(DamageSource.causeThrownDamage(this, getShooter()), damage);
+    raytrace.getEntity().hurt(DamageSource.thrown(this, getOwner()), damage);
   }
 
   @Override
-  protected void onImpact(RayTraceResult raytrace) {
-    super.onImpact(raytrace);
-    if(rand.nextFloat() < 0.028F && !(getShooter() instanceof PlayerEntity && ((PlayerEntity)getShooter()).isCreative())) {
-      final Vector3d vec = raytrace.getHitVec();
-      final ItemEntity item = new ItemEntity(this.world, vec.x, vec.y + 0.25D, vec.z, new ItemStack(getDefaultItem()));
-      this.world.addEntity(item);
+  protected void onHit(RayTraceResult raytrace) {
+    super.onHit(raytrace);
+    if(random.nextFloat() < 0.028F && !(getOwner() instanceof PlayerEntity && ((PlayerEntity)getOwner()).isCreative())) {
+      final Vector3d vec = raytrace.getLocation();
+      final ItemEntity item = new ItemEntity(this.level, vec.x, vec.y + 0.25D, vec.z, new ItemStack(getDefaultItem()));
+      this.level.addFreshEntity(item);
     } else {
-      this.playSound(SoundEvents.ENTITY_ITEM_BREAK, 1.0F, 1.0F + rand.nextFloat() * 0.2F);
+      this.playSound(SoundEvents.ITEM_BREAK, 1.0F, 1.0F + random.nextFloat() * 0.2F);
     }
     this.remove();
   }
 
   @Override
   public void tick() {
-    Entity entity = getShooter();
+    Entity entity = getOwner();
     if (entity instanceof net.minecraft.entity.player.PlayerEntity && !entity.isAlive()) {
       remove();
     } else {
@@ -81,21 +81,21 @@ public class DiscusEntity extends ProjectileItemEntity {
    * Gets the amount of gravity to apply to the thrown entity with each tick.
    */
   @Override
-  protected float getGravityVelocity() {
+  protected float getGravity() {
      return 0.08F;
   }
 
   @Override
   public Entity changeDimension(ServerWorld serverWorld, ITeleporter iTeleporter) {
-    Entity entity = this.getShooter();
-    if (entity != null && entity.world.getDimensionKey() != serverWorld.getDimensionKey()) {
-      setShooter((Entity) null);
+    Entity entity = this.getOwner();
+    if (entity != null && entity.level.dimension() != serverWorld.dimension()) {
+      setOwner((Entity) null);
     }
     return super.changeDimension(serverWorld, iTeleporter);
   }
   
   @Override
-  public IPacket<?> createSpawnPacket() {
+  public IPacket<?> getAddEntityPacket() {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 

@@ -32,6 +32,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import net.minecraft.client.gui.widget.button.Button.IPressable;
+
 public class StatueScreen extends ContainerScreen<StatueContainer> {
   
   // CONSTANTS
@@ -78,10 +80,10 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
 
   public StatueScreen(final StatueContainer screenContainer, final PlayerInventory inv, final ITextComponent title) {
     super(screenContainer, inv, title);
-    this.xSize = SCREEN_WIDTH;
-    this.ySize = SCREEN_HEIGHT;
-    this.playerInventoryTitleX = this.guiLeft + StatueContainer.PLAYER_INV_X;
-    this.playerInventoryTitleY = this.guiTop + StatueContainer.PLAYER_INV_Y - 10;
+    this.imageWidth = SCREEN_WIDTH;
+    this.imageHeight = SCREEN_HEIGHT;
+    this.inventoryLabelX = this.leftPos + StatueContainer.PLAYER_INV_X;
+    this.inventoryLabelY = this.topPos + StatueContainer.PLAYER_INV_Y - 10;
     this.currentPose = screenContainer.getStatuePose();
     this.blockPos = screenContainer.getBlockPos();
     this.blockRotation = screenContainer.getBlockRotation();
@@ -95,8 +97,8 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     // add part buttons
     for(int i = 0, l = ModelPart.values().length; i < l; i++) {
       final ModelPart p = ModelPart.values()[i];
-      final ITextComponent title = new TranslationTextComponent("gui.statue." + p.getString());
-      this.addButton(new StatueScreen.PartButton(this, this.guiLeft + PARTS_X, this.guiTop + PARTS_Y + (BTN_HEIGHT * i), title, button -> { 
+      final ITextComponent title = new TranslationTextComponent("gui.statue." + p.getSerializedName());
+      this.addButton(new StatueScreen.PartButton(this, this.leftPos + PARTS_X, this.topPos + PARTS_Y + (BTN_HEIGHT * i), title, button -> { 
           this.selectedPart = p;
           StatueScreen.this.updateSliders();
         }) {
@@ -106,40 +108,40 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     }
     // add reset button
     final ITextComponent titleReset = new TranslationTextComponent("controls.reset");
-    this.addButton(new StatueScreen.IconButton(this, this.guiLeft + RESET_X, this.guiTop + RESET_Y, 0, 234, titleReset, button -> {
+    this.addButton(new StatueScreen.IconButton(this, this.leftPos + RESET_X, this.topPos + RESET_Y, 0, 234, titleReset, button -> {
       StatueScreen.this.currentPose.set(StatueScreen.this.selectedPart, 0, 0, 0);
       StatueScreen.this.updateSliders();
     }));
     // add gender button
     final ITextComponent titleGender = new TranslationTextComponent("gui.statue.gender");
-    this.addButton(new StatueScreen.IconButton(this, this.guiLeft + GENDER_X, this.guiTop + GENDER_Y, 16, 234, titleGender, button -> StatueScreen.this.isStatueFemale = !StatueScreen.this.isStatueFemale) {
+    this.addButton(new StatueScreen.IconButton(this, this.leftPos + GENDER_X, this.topPos + GENDER_Y, 16, 234, titleGender, button -> StatueScreen.this.isStatueFemale = !StatueScreen.this.isStatueFemale) {
       @Override
       public int getIconX() { return super.getIconX() + (StatueScreen.this.isStatueFemale ? 0 : this.width); }
     });
     // add preset button
     final ITextComponent titlePreset = new TranslationTextComponent("gui.statue.preset");
-    this.addButton(new StatueScreen.IconButton(this, this.guiLeft + PRESET_X, this.guiTop + PRESET_Y, 48, 234, titlePreset, button -> {
-      StatueScreen.this.currentPose = StatuePoses.getRandomPose(StatueScreen.this.minecraft.world.rand);
+    this.addButton(new StatueScreen.IconButton(this, this.leftPos + PRESET_X, this.topPos + PRESET_Y, 48, 234, titlePreset, button -> {
+      StatueScreen.this.currentPose = StatuePoses.getRandomPose(StatueScreen.this.minecraft.level.random);
       StatueScreen.this.updateSliders();
     }));
     // add sliders
-    this.sliderAngleX = (new StatueScreen.AngleSlider(this.guiLeft + SLIDER_X, this.guiTop + SLIDER_Y, "X") {
+    this.sliderAngleX = (new StatueScreen.AngleSlider(this.leftPos + SLIDER_X, this.topPos + SLIDER_Y, "X") {
       @Override
       void setAngleValue(double angRadians) { StatueScreen.this.currentPose.getAngles(StatueScreen.this.selectedPart).setX((float)angRadians); }
       @Override
-      double getAngleValue() { return Math.toDegrees(StatueScreen.this.currentPose.getAngles(StatueScreen.this.selectedPart).getX()); }
+      double getAngleValue() { return Math.toDegrees(StatueScreen.this.currentPose.getAngles(StatueScreen.this.selectedPart).x()); }
     });
-    this.sliderAngleY = (new StatueScreen.AngleSlider(this.guiLeft + SLIDER_X, this.guiTop + SLIDER_Y + (SLIDER_HEIGHT + SLIDER_SPACING), "Y") {
+    this.sliderAngleY = (new StatueScreen.AngleSlider(this.leftPos + SLIDER_X, this.topPos + SLIDER_Y + (SLIDER_HEIGHT + SLIDER_SPACING), "Y") {
       @Override
       void setAngleValue(double angRadians) { StatueScreen.this.currentPose.getAngles(StatueScreen.this.selectedPart).setY((float)angRadians); }
       @Override
-      double getAngleValue() { return Math.toDegrees(StatueScreen.this.currentPose.getAngles(StatueScreen.this.selectedPart).getY()); }
+      double getAngleValue() { return Math.toDegrees(StatueScreen.this.currentPose.getAngles(StatueScreen.this.selectedPart).y()); }
     });
-    this.sliderAngleZ = (new StatueScreen.AngleSlider(this.guiLeft + SLIDER_X, this.guiTop + SLIDER_Y + 2 * (SLIDER_HEIGHT + SLIDER_SPACING), "Z") {
+    this.sliderAngleZ = (new StatueScreen.AngleSlider(this.leftPos + SLIDER_X, this.topPos + SLIDER_Y + 2 * (SLIDER_HEIGHT + SLIDER_SPACING), "Z") {
       @Override
       void setAngleValue(double angRadians) { StatueScreen.this.currentPose.getAngles(StatueScreen.this.selectedPart).setZ((float)angRadians); }
       @Override
-      double getAngleValue() { return Math.toDegrees(StatueScreen.this.currentPose.getAngles(StatueScreen.this.selectedPart).getZ()); }
+      double getAngleValue() { return Math.toDegrees(StatueScreen.this.currentPose.getAngles(StatueScreen.this.selectedPart).z()); }
     });
     this.addButton(sliderAngleX);
     this.addButton(sliderAngleY);
@@ -148,31 +150,31 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
   }
 
   @Override
-  protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+  protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
     this.renderBackground(matrixStack);
-    RenderHelper.setupGuiFlatDiffuseLighting();
+    RenderHelper.setupForFlatItems();
     RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-    this.minecraft.getTextureManager().bindTexture(SCREEN_TEXTURE);
-    this.blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+    this.minecraft.getTextureManager().bind(SCREEN_TEXTURE);
+    this.blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
   }
   
   @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
     super.render(matrixStack, mouseX, mouseY, partialTicks);
     // draw tile entity preview
-    drawTileEntityOnScreen(matrixStack, this.guiLeft + PREVIEW_X, this.guiTop + PREVIEW_Y, mouseX, mouseY, partialTicks);
+    drawTileEntityOnScreen(matrixStack, this.leftPos + PREVIEW_X, this.topPos + PREVIEW_Y, mouseX, mouseY, partialTicks);
     // draw hovering text LAST
     for(final Widget b : this.buttons) {
       if(b.visible && b.isHovered()) {
         b.renderToolTip(matrixStack, mouseX, mouseY);
       }
     }
-    this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+    this.renderTooltip(matrixStack, mouseX, mouseY);
   }
   
   @Override
-  public void onClose() {
-    super.onClose();
+  public void removed() {
+    super.removed();
     // send update packet to server
     GreekFantasy.CHANNEL.sendToServer(new CUpdateStatuePosePacket(this.blockPos, this.currentPose, this.isStatueFemale, this.textureName));
   }
@@ -199,11 +201,11 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
       final float mouseX, final float mouseY, final float partialTicks) {
     float margin = 12;
     float scale = PREVIEW_WIDTH - margin * 2;
-    float rotX = (float)Math.atan((double)((mouseX - this.guiLeft) / 40.0F));
-    float rotY = (float)Math.atan((double)((mouseY - this.guiTop - PREVIEW_HEIGHT / 2) / 40.0F));
-    final TileEntity teMain = minecraft.world.getTileEntity(this.blockPos);
-    final boolean isUpper = teMain.getBlockState().get(StatueBlock.HALF) == DoubleBlockHalf.UPPER;
-    final TileEntity teOther = minecraft.world.getTileEntity(isUpper ? this.blockPos.down() : this.blockPos.up());
+    float rotX = (float)Math.atan((double)((mouseX - this.leftPos) / 40.0F));
+    float rotY = (float)Math.atan((double)((mouseY - this.topPos - PREVIEW_HEIGHT / 2) / 40.0F));
+    final TileEntity teMain = minecraft.level.getBlockEntity(this.blockPos);
+    final boolean isUpper = teMain.getBlockState().getValue(StatueBlock.HALF) == DoubleBlockHalf.UPPER;
+    final TileEntity teOther = minecraft.level.getBlockEntity(isUpper ? this.blockPos.below() : this.blockPos.above());
     // preview client-side tile entity information
     if(teMain instanceof StatueTileEntity && teOther instanceof StatueTileEntity) {
       final StatueTileEntity statueMain = (StatueTileEntity)teMain;
@@ -227,17 +229,17 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
       RenderSystem.rotatef(rotX * 15.0F, 0.0F, 1.0F, 0.0F);
       RenderSystem.rotatef(rotY * 15.0F, 1.0F, 0.0F, 0.0F);
       
-      RenderHelper.setupGuiFlatDiffuseLighting();
+      RenderHelper.setupForFlatItems();
   
-      IRenderTypeBuffer.Impl bufferType = minecraft.getRenderTypeBuffers().getBufferSource();
+      IRenderTypeBuffer.Impl bufferType = minecraft.renderBuffers().bufferSource();
       TileEntityRendererDispatcher.instance.getRenderer(statueMain).render(statueMain, partialTicks, matrixStackIn, bufferType, 15728880, OverlayTexture.NO_OVERLAY);
-      bufferType.finish();
+      bufferType.endBatch();
 
       RenderSystem.translatef(0.0F, 1.0F, 0.0F);
       TileEntityRendererDispatcher.instance.getRenderer(statueOther).render(statueOther, partialTicks, matrixStackIn, bufferType, 15728880, OverlayTexture.NO_OVERLAY);
-      bufferType.finish();
+      bufferType.endBatch();
       RenderSystem.enableDepthTest();
-      RenderHelper.setupGui3DDiffuseLighting();
+      RenderHelper.setupFor3DItems();
       RenderSystem.disableAlphaTest();
       RenderSystem.disableRescaleNormal();
       RenderSystem.popMatrix();
@@ -262,13 +264,13 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     }
 
     @Override
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
         final boolean selected = isSelected();
         final int xOffset = 0;
         final int yOffset = SCREEN_HEIGHT + (selected ? this.height : 0);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        StatueScreen.this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
+        StatueScreen.this.getMinecraft().getTextureManager().bind(SCREEN_TEXTURE);
         this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
         drawCenteredString(matrixStack, StatueScreen.this.font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor() | MathHelper.ceil(this.alpha * 255.0F) << 24);
       }
@@ -286,18 +288,18 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     
     public IconButton(final StatueScreen screenIn, final int x, final int y, final int tX, final int tY,
         final ITextComponent title, final IPressable pressedAction) {
-      super(x, y, BTN_HEIGHT, BTN_HEIGHT, StringTextComponent.EMPTY, pressedAction, (b, m, bx, by) -> screenIn.renderTooltip(m, screenIn.minecraft.fontRenderer.trimStringToWidth(title, Math.max(screenIn.width / 2 - 43, 170)), bx, by));
+      super(x, y, BTN_HEIGHT, BTN_HEIGHT, StringTextComponent.EMPTY, pressedAction, (b, m, bx, by) -> screenIn.renderTooltip(m, screenIn.minecraft.font.split(title, Math.max(screenIn.width / 2 - 43, 170)), bx, by));
       this.textureX = tX;
       this.textureY = tY;
     }
 
     @Override
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
         int xOffset = BTN_WIDTH;
         int yOffset = SCREEN_HEIGHT + (this.isHovered() ? this.width : 0);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        StatueScreen.this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
+        StatueScreen.this.getMinecraft().getTextureManager().bind(SCREEN_TEXTURE);
         // draw button background
         this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
         // draw button icon
@@ -321,26 +323,26 @@ public class StatueScreen extends ContainerScreen<StatueContainer> {
     public AngleSlider(final int x, final int y, final String rName) {
       super(x, y, BTN_WIDTH, SLIDER_HEIGHT, StringTextComponent.EMPTY, 0.5D);
       rotationName = rName;
-      this.func_230979_b_();
+      this.updateMessage();
     }
 
     // called when the value is changed
-    protected void func_230979_b_() {
+    protected void updateMessage() {
       this.setMessage(new TranslationTextComponent("gui.statue.rotation", rotationName, Math.round(getAngleValue())));
     }
 
     // called when the value is changed and is different from its previous value
-    protected void func_230972_a_() {
-      setAngleValue(Math.toRadians((this.sliderValue - 0.5D) * getAngleBounds()));
+    protected void applyValue() {
+      setAngleValue(Math.toRadians((this.value - 0.5D) * getAngleBounds()));
     }
 
     protected double getValueRadians() {
-      return Math.toRadians((this.sliderValue - 0.5D) * getAngleBounds());
+      return Math.toRadians((this.value - 0.5D) * getAngleBounds());
     }
     
     public void updateSlider() {
-      this.sliderValue = MathHelper.clamp((getAngleValue() / getAngleBounds()) + 0.5D, 0.0D, 1.0D);
-      this.func_230979_b_();
+      this.value = MathHelper.clamp((getAngleValue() / getAngleBounds()) + 0.5D, 0.0D, 1.0D);
+      this.updateMessage();
     }
     
     /** @return the range of angles that the slider outputs, in degrees **/

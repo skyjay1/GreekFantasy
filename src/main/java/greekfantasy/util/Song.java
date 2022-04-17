@@ -52,7 +52,7 @@ public class Song {
   }
   /** @return an translated text component for the name **/
   public IFormattableTextComponent getCredits() { 
-    return new TranslationTextComponent(getCreditsTranslationKey()).mergeStyle(TextFormatting.ITALIC); 
+    return new TranslationTextComponent(getCreditsTranslationKey()).withStyle(TextFormatting.ITALIC); 
   }
   /** @return the number of ticks between playing notes **/
   public int getInterval() { return interval; }

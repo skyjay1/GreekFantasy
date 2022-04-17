@@ -28,7 +28,7 @@ public class PomegranateTreeFeature extends TreeFeature {
   }
 
   @Override
-  public boolean place(IWorldGenerationReader reader, Random rand, BlockPos blockPosIn, Set<BlockPos> logPositions,
+  public boolean doPlace(IWorldGenerationReader reader, Random rand, BlockPos blockPosIn, Set<BlockPos> logPositions,
       Set<BlockPos> foliagePositions, MutableBoundingBox boundingBoxIn, BaseTreeFeatureConfig configIn) {
     // check dimension from config
     if (!SimpleTemplateFeature.isValidDimension((ISeedReader) reader)) {
@@ -39,20 +39,20 @@ public class PomegranateTreeFeature extends TreeFeature {
     if (!p.isPresent()) {
       return false;
     }
-    int i = configIn.trunkPlacer.getHeight(rand);
-    int j = configIn.foliagePlacer.func_230374_a_(rand, i, configIn);
+    int i = configIn.trunkPlacer.getTreeHeight(rand);
+    int j = configIn.foliagePlacer.foliageHeight(rand, i, configIn);
     int k = i - j;
-    int l = configIn.foliagePlacer.func_230376_a_(rand, k);
+    int l = configIn.foliagePlacer.foliageRadius(rand, k);
     BlockPos blockpos = p.get();
 
     if (blockpos.getY() >= 1 && blockpos.getY() + i + 1 <= 120) {
-      OptionalInt optionalint = configIn.minimumSize.func_236710_c_();
+      OptionalInt optionalint = configIn.minimumSize.minClippedHeight();
       int l1 = this.getMaxFreeTreeHeightAt(reader, i, blockpos, configIn);
       if (l1 >= i || optionalint.isPresent() && l1 >= optionalint.getAsInt()) {
-        List<FoliagePlacer.Foliage> list = configIn.trunkPlacer.getFoliages(reader, rand, l1, blockpos, logPositions,
+        List<FoliagePlacer.Foliage> list = configIn.trunkPlacer.placeTrunk(reader, rand, l1, blockpos, logPositions,
             boundingBoxIn, configIn);
         list.forEach((foliage) -> {
-          configIn.foliagePlacer.func_236752_a_(reader, rand, configIn, l1, foliage, j, l, foliagePositions, boundingBoxIn);
+          configIn.foliagePlacer.createFoliage(reader, rand, configIn, l1, foliage, j, l, foliagePositions, boundingBoxIn);
         });
         return true;
       } else {
@@ -68,12 +68,12 @@ public class PomegranateTreeFeature extends TreeFeature {
     BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
 
     for(int i = 0; i <= trunkHeight + 1; ++i) {
-       int j = config.minimumSize.func_230369_a_(trunkHeight, i);
+       int j = config.minimumSize.getSizeAtHeight(trunkHeight, i);
 
        for(int k = -j; k <= j; ++k) {
           for(int l = -j; l <= j; ++l) {
-             blockpos$mutable.setAndOffset(topPosition, k, i, l);
-             if (!isLogsAt(reader, blockpos$mutable) || !config.ignoreVines && reader.hasBlockState(blockpos$mutable, (state) -> state.matchesBlock(Blocks.VINE))) {
+             blockpos$mutable.setWithOffset(topPosition, k, i, l);
+             if (!isFree(reader, blockpos$mutable) || !config.ignoreVines && reader.isStateAtPosition(blockpos$mutable, (state) -> state.is(Blocks.VINE))) {
                 return i - 2;
              }
           }
@@ -99,6 +99,6 @@ public class PomegranateTreeFeature extends TreeFeature {
   }
   
   protected boolean isValidPosition(final ISeedReader reader, final BlockPos pos) {
-    return pos.getY() > 32 && GFRegistry.POMEGRANATE_SAPLING.getDefaultState().isValidPosition(reader, pos);
+    return pos.getY() > 32 && GFRegistry.POMEGRANATE_SAPLING.defaultBlockState().canSurvive(reader, pos);
   }
 }

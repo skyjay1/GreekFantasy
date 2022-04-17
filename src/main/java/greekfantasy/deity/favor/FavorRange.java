@@ -44,7 +44,7 @@ public class FavorRange {
    * @return true if this is a server world and the player matches this favor range
    */
   public boolean isInFavorRange(final PlayerEntity player) {
-    if(player.isServerWorld() && player.getCapability(GreekFantasy.FAVOR).isPresent() && this != FavorRange.EMPTY) {
+    if(player.isEffectiveAi() && player.getCapability(GreekFantasy.FAVOR).isPresent() && this != FavorRange.EMPTY) {
       return isInFavorRange(player, player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance()));
     }
     return false;

@@ -49,9 +49,9 @@ public class CUpdateStatuePosePacket {
    */
     public static CUpdateStatuePosePacket fromBytes(final PacketBuffer buf) {
     final BlockPos blockPos = buf.readBlockPos();
-    final CompoundNBT nbt = buf.readCompoundTag();
+    final CompoundNBT nbt = buf.readNbt();
     final boolean female = buf.readBoolean();
-    final String textureName = buf.readString(NAME_LEN);
+    final String textureName = buf.readUtf(NAME_LEN);
     return new CUpdateStatuePosePacket(blockPos, new StatuePose(nbt), female, textureName);
   }
 
@@ -62,13 +62,13 @@ public class CUpdateStatuePosePacket {
    */
     public static void toBytes(final CUpdateStatuePosePacket msg, final PacketBuffer buf) {
     buf.writeBlockPos(msg.blockPos);
-    buf.writeCompoundTag(msg.statuePose.serializeNBT());
+    buf.writeNbt(msg.statuePose.serializeNBT());
     buf.writeBoolean(msg.statueFemale);
     String name = msg.textureName;
     if(name.length() > NAME_LEN) {
       name = name.substring(0, NAME_LEN);
     }
-    buf.writeString(name, NAME_LEN);
+    buf.writeUtf(name, NAME_LEN);
   }
 
   /**
@@ -82,8 +82,8 @@ public class CUpdateStatuePosePacket {
       context.enqueueWork(() -> {
         final ServerPlayerEntity player = context.getSender();
         // make sure the player is in range of the given position
-        if (message.blockPos.distanceSq(player.getPosition()) < 100.0D) {
-          final TileEntity tileentity = context.getSender().getEntityWorld().getTileEntity(message.blockPos);
+        if (message.blockPos.distSqr(player.blockPosition()) < 100.0D) {
+          final TileEntity tileentity = context.getSender().getCommandSenderWorld().getBlockEntity(message.blockPos);
           if (tileentity instanceof StatueTileEntity) {
             // update the tile entity using info from this packet
             final StatueTileEntity statueTileEntity = (StatueTileEntity) tileentity;

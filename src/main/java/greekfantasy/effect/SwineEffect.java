@@ -26,23 +26,23 @@ public class SwineEffect extends Effect {
 
   public SwineEffect() {
     super(EffectType.HARMFUL, 0xF19E98);
-    this.addAttributesModifier(Attributes.MAX_HEALTH, UUID_HEALTH.toString(), -10.0D, AttributeModifier.Operation.ADDITION);
-    this.addAttributesModifier(Attributes.ATTACK_DAMAGE, UUID_ATTACK.toString(), -0.5D, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    this.addAttributesModifier(Attributes.ATTACK_KNOCKBACK, UUID_KNOCKBACK.toString(), -0.8D, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    this.addAttributeModifier(Attributes.MAX_HEALTH, UUID_HEALTH.toString(), -10.0D, AttributeModifier.Operation.ADDITION);
+    this.addAttributeModifier(Attributes.ATTACK_DAMAGE, UUID_ATTACK.toString(), -0.5D, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    this.addAttributeModifier(Attributes.ATTACK_KNOCKBACK, UUID_KNOCKBACK.toString(), -0.8D, AttributeModifier.Operation.MULTIPLY_TOTAL);
   }
   
-  public void removeAttributesModifiersFromEntity(LivingEntity entityLivingBaseIn, AttributeModifierManager attributeMapIn, int amplifier) {
-    super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
-    entityLivingBaseIn.playSound(SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, 1.0F,
-        0.9F + entityLivingBaseIn.getRNG().nextFloat() * 0.2F);
+  public void removeAttributeModifiers(LivingEntity entityLivingBaseIn, AttributeModifierManager attributeMapIn, int amplifier) {
+    super.removeAttributeModifiers(entityLivingBaseIn, attributeMapIn, amplifier);
+    entityLivingBaseIn.playSound(SoundEvents.CHORUS_FRUIT_TELEPORT, 1.0F,
+        0.9F + entityLivingBaseIn.getRandom().nextFloat() * 0.2F);
   }
 
-  public void applyAttributesModifiersToEntity(LivingEntity entityLivingBaseIn, AttributeModifierManager attributeMapIn, int amplifier) {
-    super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
-    entityLivingBaseIn.playSound(SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, 1.0F,
-        0.9F + entityLivingBaseIn.getRNG().nextFloat() * 0.2F);
+  public void addAttributeModifiers(LivingEntity entityLivingBaseIn, AttributeModifierManager attributeMapIn, int amplifier) {
+    super.addAttributeModifiers(entityLivingBaseIn, attributeMapIn, amplifier);
+    entityLivingBaseIn.playSound(SoundEvents.CHORUS_FRUIT_TELEPORT, 1.0F,
+        0.9F + entityLivingBaseIn.getRandom().nextFloat() * 0.2F);
     if(entityLivingBaseIn instanceof MobEntity) {
-      ((MobEntity)entityLivingBaseIn).enablePersistence();
+      ((MobEntity)entityLivingBaseIn).setPersistenceRequired();
     }
   }
 }

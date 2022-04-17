@@ -22,12 +22,12 @@ public class FuryHairLayer<T extends FuryEntity> extends LayerRenderer<T, FuryMo
       float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
     if (!entity.isInvisible() && entity.aggroTime > 0) {
       // get packed light and a vertex builder bound to the correct texture
-      int packedOverlay = LivingRenderer.getPackedOverlay(entity, 0.0F);
-      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(this.getEntityTexture(entity)));
+      int packedOverlay = LivingRenderer.getOverlayCoords(entity, 0.0F);
+      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(entity)));
       // render snake hair
-      matrixStackIn.push();
-      this.getEntityModel().renderSnakeHair(matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, entity.ticksExisted + partialTick, entity.getAggroPercent(partialTick % 1.0F));
-      matrixStackIn.pop();
+      matrixStackIn.pushPose();
+      this.getParentModel().renderSnakeHair(matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, entity.tickCount + partialTick, entity.getAggroPercent(partialTick % 1.0F));
+      matrixStackIn.popPose();
     }
   }
 }

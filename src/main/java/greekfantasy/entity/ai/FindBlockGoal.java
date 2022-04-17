@@ -25,7 +25,7 @@ public abstract class FindBlockGoal extends Goal {
   }
 
   public FindBlockGoal(final CreatureEntity entity, final int radiusXZ, final int radiusY, final int cooldownIn) {
-    setMutexFlags(EnumSet.noneOf(Goal.Flag.class));
+    setFlags(EnumSet.noneOf(Goal.Flag.class));
     this.creature = entity;
     this.searchRadiusXZ = radiusXZ;
     this.searchRadiusY = radiusY;
@@ -34,7 +34,7 @@ public abstract class FindBlockGoal extends Goal {
   }
 
   @Override
-  public boolean shouldExecute() {
+  public boolean canUse() {
     if(cooldown > 0) {
       cooldown--;
     } else {
@@ -50,14 +50,14 @@ public abstract class FindBlockGoal extends Goal {
   }
 
   @Override
-  public boolean shouldContinueExecuting() {
+  public boolean canContinueToUse() {
     return false;
   }
 
   @Override
-  public void startExecuting() {
+  public void start() {
     this.cooldown = maxCooldown;
-    onFoundBlock(this.creature.getEntityWorld(), this.targetPos.get());
+    onFoundBlock(this.creature.getCommandSenderWorld(), this.targetPos.get());
   }
   
   /**
@@ -77,7 +77,7 @@ public abstract class FindBlockGoal extends Goal {
   
   /** @return whether the entity is already at the target position **/
   protected boolean isOnBlock() {
-    return isTargetBlock(this.creature.getEntityWorld(), this.creature.getPosition());
+    return isTargetBlock(this.creature.getCommandSenderWorld(), this.creature.blockPosition());
   }
   
   /** 
@@ -85,7 +85,7 @@ public abstract class FindBlockGoal extends Goal {
    * @return whether the entity is within the given distance to the target 
    **/
   protected boolean isNearTarget(final double distance) {
-    return this.targetPos.isPresent() && Vector3d.copyCenteredHorizontally(targetPos.get()).isWithinDistanceOf(this.creature.getPositionVec(), distance);
+    return this.targetPos.isPresent() && Vector3d.atBottomCenterOf(targetPos.get()).closerThan(this.creature.position(), distance);
   }
  
   /**
@@ -94,14 +94,14 @@ public abstract class FindBlockGoal extends Goal {
    * @return an Optional containing a block pos if one is found, otherwise empty
    **/
   protected Optional<BlockPos> findNearbyBlock() {
-    Random rand = this.creature.getRNG();
-    BlockPos pos1 = this.creature.getPosition().down();
+    Random rand = this.creature.getRandom();
+    BlockPos pos1 = this.creature.blockPosition().below();
     // choose 20 random positions to check
     for (int i = 0; i < 20; i++) {
-      BlockPos pos2 = pos1.add(rand.nextInt(searchRadiusXZ * 2) - searchRadiusXZ, rand.nextInt(searchRadiusY * 2) - searchRadiusY,
+      BlockPos pos2 = pos1.offset(rand.nextInt(searchRadiusXZ * 2) - searchRadiusXZ, rand.nextInt(searchRadiusY * 2) - searchRadiusY,
           rand.nextInt(searchRadiusXZ * 2) - searchRadiusXZ);
       // check the block to see if creature should move here
-      if (this.isTargetBlock(this.creature.getEntityWorld(), pos2)) {
+      if (this.isTargetBlock(this.creature.getCommandSenderWorld(), pos2)) {
         return Optional.of(new BlockPos(pos2.getX(), pos2.getY(), pos2.getZ()));
       }
     }

@@ -37,12 +37,12 @@ public class CentaurHorseLayer<T extends CentaurEntity> extends LayerRenderer<T,
       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
     if (!entity.isInvisible()) {
       // get packed light and a vertex builder bound to the correct texture
-      int packedOverlay = LivingRenderer.getPackedOverlay(entity, 0.0F);
+      int packedOverlay = LivingRenderer.getOverlayCoords(entity, 0.0F);
       final ResourceLocation texture = TEXTURE_MAP.get(entity.getCoatColor());
-      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(texture));
+      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.entityCutoutNoCull(texture));
             
       // render horse body      
-      this.getEntityModel().renderHorseBody(entity, matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, limbSwing, limbSwingAmount);
+      this.getParentModel().renderHorseBody(entity, matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, limbSwing, limbSwingAmount);
     }
   }
 }

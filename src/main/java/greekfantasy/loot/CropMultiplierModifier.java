@@ -32,16 +32,16 @@ public class CropMultiplierModifier extends LootModifier {
   protected CropMultiplierModifier(final ILootCondition[] conditionsIn, final ResourceLocation cropsTagIn) {
     super(conditionsIn);
     cropsTag = cropsTagIn;
-    crops = BlockTags.makeWrapperTag(cropsTagIn.toString());
+    crops = BlockTags.bind(cropsTagIn.toString());
   }
 
   @Override
   public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
     // get the entity and favor configuration ready
-    Entity entity = context.has(LootParameters.THIS_ENTITY) ? context.get(LootParameters.THIS_ENTITY) : null;
+    Entity entity = context.hasParam(LootParameters.THIS_ENTITY) ? context.getParamOrNull(LootParameters.THIS_ENTITY) : null;
     FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     // make sure this crop is harvested by a non-creative player
-    if(entity instanceof PlayerEntity && context.has(LootParameters.BLOCK_STATE) && context.get(LootParameters.BLOCK_STATE).getBlock().isIn(crops)
+    if(entity instanceof PlayerEntity && context.hasParam(LootParameters.BLOCK_STATE) && context.getParamOrNull(LootParameters.BLOCK_STATE).getBlock().is(crops)
         && !entity.isSpectator() && !((PlayerEntity)entity).isCreative()) {
       // check favor levels and effects
       final PlayerEntity player = (PlayerEntity)entity;
@@ -55,7 +55,7 @@ public class CropMultiplierModifier extends LootModifier {
           // if the item should be multiplied, change the size of each item stack
           if(cropsMultiplier.canApply(player, favor)) {
             generatedLoot.forEach(i -> i.grow((int) Math.round(i.getCount() * cropsMultiplier.getEffect().getMultiplier().orElse(0.0F))));
-            cooldown = Math.max(cooldown, cropsMultiplier.getEffect().getRandomCooldown(player.getRNG()));
+            cooldown = Math.max(cooldown, cropsMultiplier.getEffect().getRandomCooldown(player.getRandom()));
           }
         }
         // set the triggered cooldown
@@ -73,7 +73,7 @@ public class CropMultiplierModifier extends LootModifier {
 
     @Override
     public CropMultiplierModifier read(ResourceLocation name, JsonObject object, ILootCondition[] conditionsIn) {
-      ResourceLocation cropsTag = new ResourceLocation(JSONUtils.getString(object, CROPS));
+      ResourceLocation cropsTag = new ResourceLocation(JSONUtils.getAsString(object, CROPS));
       return new CropMultiplierModifier(conditionsIn, cropsTag);
     }
 

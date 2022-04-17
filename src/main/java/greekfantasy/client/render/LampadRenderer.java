@@ -29,7 +29,7 @@ public class LampadRenderer<T extends LampadEntity> extends BipedRenderer<T, Nym
    * you call Render.bindEntityTexture.
    */
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE_MAP.get(entity.getVariant());
   }
 }

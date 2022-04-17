@@ -18,7 +18,7 @@ public class MakhaiRenderer<T extends MakhaiEntity> extends BipedRenderer<T, Mak
   }
   
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
 }

@@ -39,24 +39,24 @@ public class PegasusWingLayer<T extends PegasusEntity> extends LayerRenderer<T, 
       float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
     if (!entity.isInvisible()) {
       // get packed light and a vertex builder bound to the correct texture
-      int packedOverlay = LivingRenderer.getPackedOverlay(entity, 0.0F);
-      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(getEntityTexture(entity)));
+      int packedOverlay = LivingRenderer.getOverlayCoords(entity, 0.0F);
+      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
             
       // render wings
-      matrixStackIn.push();
-      if(entity.isChild()) {
+      matrixStackIn.pushPose();
+      if(entity.isBaby()) {
         float scale = 1.0F / 2.0F;
         float childBodyOffsetY = 20.0F;
         matrixStackIn.scale(scale, scale, scale);
         matrixStackIn.translate(0.0D, (childBodyOffsetY / 16.0F), 0.0D);
       }
-      this.getEntityModel().renderWings(entity, matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, limbSwing, limbSwingAmount, partialTick);
-      matrixStackIn.pop();
+      this.getParentModel().renderWings(entity, matrixStackIn, vertexBuilder, packedLightIn, packedOverlay, limbSwing, limbSwingAmount, partialTick);
+      matrixStackIn.popPose();
     }
   }
   
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return WING_TEXTURE_MAP.get(entity.getCoatColor());
   }
 }

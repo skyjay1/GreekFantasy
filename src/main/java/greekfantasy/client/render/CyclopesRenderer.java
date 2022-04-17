@@ -19,12 +19,12 @@ public class CyclopesRenderer<T extends CyclopesEntity> extends BipedRenderer<T,
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
   
   @Override
-  protected void preRenderCallback(final T entity, MatrixStack matrix, float ageInTicks) {
+  protected void scale(final T entity, MatrixStack matrix, float ageInTicks) {
     matrix.scale(SCALE, SCALE, SCALE);
   }
 }

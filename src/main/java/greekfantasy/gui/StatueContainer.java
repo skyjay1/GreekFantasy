@@ -57,8 +57,8 @@ public class StatueContainer extends Container {
   }
 
   @Override
-  public boolean canInteractWith(final PlayerEntity playerIn) {
-    return IWorldPosCallable.of(playerIn.getEntityWorld(), getBlockPos()).applyOrElse((world, pos) -> !(world.getBlockState(pos).getBlock() instanceof StatueBlock) ? false : playerIn.getDistanceSq((double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D) <= 64.0D, true);
+  public boolean stillValid(final PlayerEntity playerIn) {
+    return IWorldPosCallable.create(playerIn.getCommandSenderWorld(), getBlockPos()).evaluate((world, pos) -> !(world.getBlockState(pos).getBlock() instanceof StatueBlock) ? false : playerIn.distanceToSqr((double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D) <= 64.0D, true);
   }
 
   public BlockPos getBlockPos() {
@@ -82,11 +82,11 @@ public class StatueContainer extends Container {
   }
   
   public ItemStack getItemLeft() {
-    return this.leftSlot != null ? this.leftSlot.getStack() : ItemStack.EMPTY;
+    return this.leftSlot != null ? this.leftSlot.getItem() : ItemStack.EMPTY;
   }
   
   public ItemStack getItemRight() {
-    return this.rightSlot != null ? this.rightSlot.getStack() : ItemStack.EMPTY;
+    return this.rightSlot != null ? this.rightSlot.getItem() : ItemStack.EMPTY;
   }
   
   /**
@@ -94,24 +94,24 @@ public class StatueContainer extends Container {
    * inventory and the other inventory(s).
    */
   @Override
-  public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+  public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
      ItemStack itemstack = ItemStack.EMPTY;
-     Slot slot = this.inventorySlots.get(index);
-     if (slot != null && slot.getHasStack()) {
-        ItemStack itemstack1 = slot.getStack();
+     Slot slot = this.slots.get(index);
+     if (slot != null && slot.hasItem()) {
+        ItemStack itemstack1 = slot.getItem();
         itemstack = itemstack1.copy();
         if (index < 2) {
-           if (!this.mergeItemStack(itemstack1, 2, this.inventorySlots.size(), false)) {
+           if (!this.moveItemStackTo(itemstack1, 2, this.slots.size(), false)) {
               return ItemStack.EMPTY;
            }
-        } else if (!this.mergeItemStack(itemstack1, 0, 2, true)) {
+        } else if (!this.moveItemStackTo(itemstack1, 0, 2, true)) {
            return ItemStack.EMPTY;
         }
 
         if (itemstack1.isEmpty()) {
-           slot.putStack(ItemStack.EMPTY);
+           slot.set(ItemStack.EMPTY);
         } else {
-           slot.onSlotChanged();
+           slot.setChanged();
         }
      }
 

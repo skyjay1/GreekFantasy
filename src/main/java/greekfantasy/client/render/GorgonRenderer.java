@@ -22,14 +22,14 @@ public class GorgonRenderer<T extends GorgonEntity> extends BipedRenderer<T, Gor
   }
   
   @Override
-  protected void preRenderCallback(final T entity, MatrixStack matrix, float f) {
+  protected void scale(final T entity, MatrixStack matrix, float f) {
     if(entity.isMedusa()) {
       matrix.scale(MEDUSA_SCALE, MEDUSA_SCALE, MEDUSA_SCALE);
     }
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return entity.isMedusa() ? MEDUSA_TEXTURE : GORGON_TEXTURE;
   }
 }

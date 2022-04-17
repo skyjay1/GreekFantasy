@@ -33,33 +33,33 @@ public class UnicornHornItem extends Item {
   }
   
   @Override
-  public ItemStack onItemUseFinish(final ItemStack stack, final World worldIn, final LivingEntity entityLiving) {
+  public ItemStack finishUsingItem(final ItemStack stack, final World worldIn, final LivingEntity entityLiving) {
     if(entityLiving instanceof PlayerEntity) {
-      ((PlayerEntity)entityLiving).getCooldownTracker().setCooldown(this, useCooldown);
+      ((PlayerEntity)entityLiving).getCooldowns().addCooldown(this, useCooldown);
     }
     // remove negative potion effects
     if(GreekFantasy.CONFIG.UNICORN_HORN_CURES_EFFECTS.get()) {
-      final List<Effect> list = entityLiving.getActivePotionEffects().stream()
-        .filter(ei -> ei.getPotion().getEffectType() == EffectType.HARMFUL).map(ei -> ei.getPotion())
+      final List<Effect> list = entityLiving.getActiveEffects().stream()
+        .filter(ei -> ei.getEffect().getCategory() == EffectType.HARMFUL).map(ei -> ei.getEffect())
         .collect(Collectors.toList());
       // note: we do the for-each separately to avoid CME  
-      list.forEach(e -> entityLiving.removeActivePotionEffect(e));
+      list.forEach(e -> entityLiving.removeEffectNoUpdate(e));
     }
     // give brief regen effect
-    entityLiving.addPotionEffect(new EffectInstance(Effects.REGENERATION, 80, 0));
-    stack.damageItem(2, entityLiving, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+    entityLiving.addEffect(new EffectInstance(Effects.REGENERATION, 80, 0));
+    stack.hurtAndBreak(2, entityLiving, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
     return stack;
   }
   
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-    ItemStack itemstack = player.getHeldItem(hand);
-    player.setActiveHand(hand);
-    return ActionResult.resultConsume(itemstack);
+  public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    ItemStack itemstack = player.getItemInHand(hand);
+    player.startUsingItem(hand);
+    return ActionResult.consume(itemstack);
   }
   
   @Override
-  public UseAction getUseAction(final ItemStack stack) {
+  public UseAction getUseAnimation(final ItemStack stack) {
     return UseAction.BOW;
   }
   

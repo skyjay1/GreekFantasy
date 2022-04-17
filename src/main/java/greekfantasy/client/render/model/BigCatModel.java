@@ -18,101 +18,101 @@ public abstract class BigCatModel<T extends LivingEntity> extends QuadrupedModel
 
   public BigCatModel(int tWidth, int tHeight) {
     super(0, 0.0F, false, 10.0F, 4.0F, 2.0F, 2.0F, 24);
-    textureWidth = tWidth;
-    textureHeight = tHeight;
+    texWidth = tWidth;
+    texHeight = tHeight;
 
     body = new ModelRenderer(this);
-    body.setRotationPoint(0.0F, 12.0F, 0.0F);
-    body.rotateAngleX = 1.5708F;
-    body.setTextureOffset(29, 0).addBox(-4.0F, -9.0F, -3.0F, 8.0F, 11.0F, 7.0F, 0.0F, false);
-    body.setTextureOffset(35, 19).addBox(-3.0F, 2.0F, -3.0F, 6.0F, 8.0F, 6.0F, 0.0F, false);
+    body.setPos(0.0F, 12.0F, 0.0F);
+    body.xRot = 1.5708F;
+    body.texOffs(29, 0).addBox(-4.0F, -9.0F, -3.0F, 8.0F, 11.0F, 7.0F, 0.0F, false);
+    body.texOffs(35, 19).addBox(-3.0F, 2.0F, -3.0F, 6.0F, 8.0F, 6.0F, 0.0F, false);
 
     tail = new ModelRenderer(this);
-    tail.setRotationPoint(0.0F, 10.0F, 10.0F);
-    tail.rotateAngleX = 0.5236F;
-    tail.setTextureOffset(42, 35).addBox(-0.5F, 0.0F, -1.0F, 1.0F, 5.0F, 1.0F, 0.0F, false);
+    tail.setPos(0.0F, 10.0F, 10.0F);
+    tail.xRot = 0.5236F;
+    tail.texOffs(42, 35).addBox(-0.5F, 0.0F, -1.0F, 1.0F, 5.0F, 1.0F, 0.0F, false);
 
     tail2 = new ModelRenderer(this);
-    tail2.setRotationPoint(0.0F, 5.0F, -1.0F);
+    tail2.setPos(0.0F, 5.0F, -1.0F);
     tail.addChild(tail2);
-    tail2.rotateAngleX = 0.5236F;
-    tail2.setTextureOffset(47, 35).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 5.0F, 1.0F, 0.0F, false);
-    tail2.setTextureOffset(42, 42).addBox(-1.0F, 3.0F, -0.5F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+    tail2.xRot = 0.5236F;
+    tail2.texOffs(47, 35).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 5.0F, 1.0F, 0.0F, false);
+    tail2.texOffs(42, 42).addBox(-1.0F, 3.0F, -0.5F, 2.0F, 4.0F, 2.0F, 0.0F, false);
 
-    legFrontRight = new ModelRenderer(this);
-    legFrontRight.setRotationPoint(-3.0F, 14.0F, -5.0F);
-    legFrontRight.setTextureOffset(0, 19).addBox(-1.5F, 0.0F, -2.0F, 4.0F, 5.0F, 4.0F, 0.0F, false);
-    legFrontRight.setTextureOffset(18, 19).addBox(-1.0F, 5.0F, -1.5F, 3.0F, 5.0F, 3.0F, 0.0F, false);
-    legFrontRight.addChild(makeClawModel(-1.75F, 1.0F));
+    leg2 = new ModelRenderer(this);
+    leg2.setPos(-3.0F, 14.0F, -5.0F);
+    leg2.texOffs(0, 19).addBox(-1.5F, 0.0F, -2.0F, 4.0F, 5.0F, 4.0F, 0.0F, false);
+    leg2.texOffs(18, 19).addBox(-1.0F, 5.0F, -1.5F, 3.0F, 5.0F, 3.0F, 0.0F, false);
+    leg2.addChild(makeClawModel(-1.75F, 1.0F));
 
-    legBackRight = new ModelRenderer(this);
-    legBackRight.setRotationPoint(-3.0F, 14.0F, 7.0F);
-    legBackRight.setTextureOffset(0, 19).addBox(-0.5F, 0.0F, -2.0F, 3.0F, 5.0F, 4.0F, 0.0F, false);
-    legBackRight.setTextureOffset(18, 19).addBox(-0.5F, 5.0F, -1.5F, 3.0F, 5.0F, 3.0F, 0.0F, false);
-    legBackRight.addChild(makeClawModel(-1.25F, 1.0F));
+    leg0 = new ModelRenderer(this);
+    leg0.setPos(-3.0F, 14.0F, 7.0F);
+    leg0.texOffs(0, 19).addBox(-0.5F, 0.0F, -2.0F, 3.0F, 5.0F, 4.0F, 0.0F, false);
+    leg0.texOffs(18, 19).addBox(-0.5F, 5.0F, -1.5F, 3.0F, 5.0F, 3.0F, 0.0F, false);
+    leg0.addChild(makeClawModel(-1.25F, 1.0F));
 
-    legFrontLeft = new ModelRenderer(this);
-    legFrontLeft.setRotationPoint(3.0F, 14.0F, -5.0F);
-    legFrontLeft.setTextureOffset(0, 19).addBox(-2.5F, 0.0F, -2.0F, 4.0F, 5.0F, 4.0F, 0.0F, false);
-    legFrontLeft.setTextureOffset(18, 19).addBox(-2.0F, 5.0F, -1.5F, 3.0F, 5.0F, 3.0F, 0.0F, false);
-    legFrontLeft.addChild(makeClawModel(-1.75F, 0.0F));
+    leg3 = new ModelRenderer(this);
+    leg3.setPos(3.0F, 14.0F, -5.0F);
+    leg3.texOffs(0, 19).addBox(-2.5F, 0.0F, -2.0F, 4.0F, 5.0F, 4.0F, 0.0F, false);
+    leg3.texOffs(18, 19).addBox(-2.0F, 5.0F, -1.5F, 3.0F, 5.0F, 3.0F, 0.0F, false);
+    leg3.addChild(makeClawModel(-1.75F, 0.0F));
 
-    legBackLeft = new ModelRenderer(this);
-    legBackLeft.setRotationPoint(3.0F, 14.0F, 7.0F);
-    legBackLeft.setTextureOffset(18, 19).addBox(-2.5F, 5.0F, -1.5F, 3.0F, 5.0F, 3.0F, 0.0F, false);
-    legBackLeft.setTextureOffset(0, 19).addBox(-2.5F, 0.0F, -2.0F, 3.0F, 5.0F, 4.0F, 0.0F, false);
-    legBackLeft.addChild(makeClawModel(-1.25F, -1.0F));
+    leg1 = new ModelRenderer(this);
+    leg1.setPos(3.0F, 14.0F, 7.0F);
+    leg1.texOffs(18, 19).addBox(-2.5F, 5.0F, -1.5F, 3.0F, 5.0F, 3.0F, 0.0F, false);
+    leg1.texOffs(0, 19).addBox(-2.5F, 0.0F, -2.0F, 3.0F, 5.0F, 4.0F, 0.0F, false);
+    leg1.addChild(makeClawModel(-1.25F, -1.0F));
 
-    headModel = makeHeadModel();
-    headPoints = new Vector3f(headModel.rotationPointX, headModel.rotationPointY, headModel.rotationPointZ);
+    head = makeHeadModel();
+    headPoints = new Vector3f(head.x, head.y, head.z);
   }
 
   @Override
-  protected Iterable<ModelRenderer> getBodyParts() { return Iterables.concat(super.getBodyParts(), ImmutableList.of(tail)); }
+  protected Iterable<ModelRenderer> bodyParts() { return Iterables.concat(super.bodyParts(), ImmutableList.of(tail)); }
 
   @Override
-  public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-    super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+  public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     if(isSitting(entity)) {
       // reset rotation points
-      body.setRotationPoint(0.0F, 18.0F, 0.0F);
-      getHeadParts().forEach(m -> m.setRotationPoint(headPoints.getX(), headPoints.getY() + 2.0F, headPoints.getZ() + 2.0F));
-      legBackRight.setRotationPoint(-3.0F, 22.0F, 8.0F);
-      legBackLeft.setRotationPoint(3.0F, 22.0F, 8.0F);
-      tail.setRotationPoint(0.0F, 22.0F, 8.0F);
+      body.setPos(0.0F, 18.0F, 0.0F);
+      headParts().forEach(m -> m.setPos(headPoints.x(), headPoints.y() + 2.0F, headPoints.z() + 2.0F));
+      leg0.setPos(-3.0F, 22.0F, 8.0F);
+      leg1.setPos(3.0F, 22.0F, 8.0F);
+      tail.setPos(0.0F, 22.0F, 8.0F);
       // reset rotation angles
-      body.rotateAngleX = 1.0472F;
-      legBackRight.rotateAngleX = legBackLeft.rotateAngleX = -1.4708F;
-      legFrontRight.rotateAngleX = legFrontLeft.rotateAngleX = 0F;
-      legBackRight.rotateAngleY = 0.2F;
-      legBackLeft.rotateAngleY = -0.2F;
+      body.xRot = 1.0472F;
+      leg0.xRot = leg1.xRot = -1.4708F;
+      leg2.xRot = leg3.xRot = 0F;
+      leg0.yRot = 0.2F;
+      leg1.yRot = -0.2F;
     } else {
       // reset rotation points
-      body.setRotationPoint(0.0F, 12.0F, 0.0F);
-      getHeadParts().forEach(m -> m.setRotationPoint(headPoints.getX(), headPoints.getY(), headPoints.getZ()));
-      legBackRight.setRotationPoint(-3.0F, 14.0F, 7.0F);
-      legBackLeft.setRotationPoint(3.0F, 14.0F, 7.0F);
-      tail.setRotationPoint(0.0F, 10.0F, 10.0F);
+      body.setPos(0.0F, 12.0F, 0.0F);
+      headParts().forEach(m -> m.setPos(headPoints.x(), headPoints.y(), headPoints.z()));
+      leg0.setPos(-3.0F, 14.0F, 7.0F);
+      leg1.setPos(3.0F, 14.0F, 7.0F);
+      tail.setPos(0.0F, 10.0F, 10.0F);
       // reset rotation angles
-      body.rotateAngleX = 1.5708F;
-      legBackRight.rotateAngleY = legBackLeft.rotateAngleY = 0.0F;
+      body.xRot = 1.5708F;
+      leg0.yRot = leg1.yRot = 0.0F;
     }
   }
   
   @Override
-  public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
-    super.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTick);
+  public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
+    super.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTick);
     float limbSwingCos = MathHelper.cos(limbSwing) * limbSwingAmount;
-    float idleSwing = 0.1F * MathHelper.cos((entity.ticksExisted + partialTick) * 0.08F);
+    float idleSwing = 0.1F * MathHelper.cos((entity.tickCount + partialTick) * 0.08F);
     float tailSwing = 0.42F * limbSwingCos;
-    tail.rotateAngleX = 0.6854F + tailSwing;
-    tail2.rotateAngleX = 0.3491F + tailSwing * 0.6F;
-    tail.rotateAngleZ = idleSwing;
-    tail2.rotateAngleZ = idleSwing * 0.85F;
-    body.rotateAngleZ = limbSwingCos * 0.12F;
+    tail.xRot = 0.6854F + tailSwing;
+    tail2.xRot = 0.3491F + tailSwing * 0.6F;
+    tail.zRot = idleSwing;
+    tail2.zRot = idleSwing * 0.85F;
+    body.zRot = limbSwingCos * 0.12F;
     // reset angles when sitting
     if(isSitting(entity)) {
-      tail.rotateAngleX += 0.7F;
+      tail.xRot += 0.7F;
     }
   }
   
@@ -124,9 +124,9 @@ public abstract class BigCatModel<T extends LivingEntity> extends QuadrupedModel
    */
   protected ModelRenderer makeClawModel(final float startX, final float rotX) {
     final ModelRenderer claws = new ModelRenderer(this);
-    claws.setRotationPoint(rotX, 9.0F, -1.5F);
-    claws.rotateAngleX = -0.7854F;
-    claws.setTextureOffset(0, 29).addBox(startX, 0.0F, 0.0F, 3.0F, 1.0F, 1.0F, 0.0F, false);
+    claws.setPos(rotX, 9.0F, -1.5F);
+    claws.xRot = -0.7854F;
+    claws.texOffs(0, 29).addBox(startX, 0.0F, 0.0F, 3.0F, 1.0F, 1.0F, 0.0F, false);
     return claws;
   }
   

@@ -18,23 +18,23 @@ public class GiganteHeadModel extends Model implements IHasHead, IWallModel {
   }
 
   public GiganteHeadModel(final float modelSize, final float yOffset) {
-    super(RenderType::getEntityCutoutNoCull);
-    this.textureWidth = 128;
-    this.textureHeight = 64;
+    super(RenderType::entityCutoutNoCull);
+    this.texWidth = 128;
+    this.texHeight = 64;
     
     bipedHead = new ModelRenderer(this);
-    bipedHead.setRotationPoint(-5.0F, -10.0F, -5.0F);
-    bipedHead.setTextureOffset(0, 0).addBox(-5.0F, 0.0F, -5.0F, 10.0F, 10.0F, 10.0F, modelSize);
+    bipedHead.setPos(-5.0F, -10.0F, -5.0F);
+    bipedHead.texOffs(0, 0).addBox(-5.0F, 0.0F, -5.0F, 10.0F, 10.0F, 10.0F, modelSize);
   }
 
   @Override
-  public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
+  public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha) {
     bipedHead.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
   }
  
   @Override
-  public ModelRenderer getModelHead() {
+  public ModelRenderer getHead() {
     return this.bipedHead;
   }
 

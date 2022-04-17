@@ -28,28 +28,28 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
   }
 
   @Override
-  protected void onEntityHit(EntityRayTraceResult raytrace) {
-    super.onEntityHit(raytrace);
-    Entity thrower = getShooter();
+  protected void onHitEntity(EntityRayTraceResult raytrace) {
+    super.onHitEntity(raytrace);
+    Entity thrower = getOwner();
     if (raytrace.getEntity() != thrower && raytrace.getEntity() instanceof LivingEntity) {
       final LivingEntity entity = (LivingEntity)raytrace.getEntity();
       // add potion effects
       for(final EffectInstance effect : getPotionEffects(entity)) {
-        entity.addPotionEffect(effect);
+        entity.addEffect(effect);
       }
       // impact may inflict damage
       float damage = getImpactDamage(entity);
       if(damage > 0 && thrower instanceof LivingEntity) {
-        entity.attackEntityFrom(DamageSource.causeIndirectDamage(this, (LivingEntity)thrower), damage);
+        entity.hurt(DamageSource.indirectMobAttack(this, (LivingEntity)thrower), damage);
       }
       // add particle effect
-      addParticles(getImpactParticle(entity), 6 + rand.nextInt(6));
+      addParticles(getImpactParticle(entity), 6 + random.nextInt(6));
     }
   }
   
   @Override
-  protected void onImpact(RayTraceResult raytrace) {
-    super.onImpact(raytrace);
+  protected void onHit(RayTraceResult raytrace) {
+    super.onHit(raytrace);
     if (this.isAlive()) {
       remove();
     }
@@ -57,57 +57,57 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
 
   @Override
   public void tick() {
-    Entity thrower = getShooter();
+    Entity thrower = getOwner();
     if (thrower instanceof net.minecraft.entity.player.PlayerEntity && !thrower.isAlive()) {
       remove();
       return;
     }
     // remove if too old
-    if(this.ticksExisted > lifespan) {
+    if(this.tickCount > lifespan) {
       remove();
       return;
     }
     // check for impact
-    if(!this.getEntityWorld().isRemote()) {
-      RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
+    if(!this.getCommandSenderWorld().isClientSide()) {
+      RayTraceResult raytraceresult = ProjectileHelper.getHitResult(this, this::canHitEntity);
       if (raytraceresult != null && raytraceresult.getType() != RayTraceResult.Type.MISS
           && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
-        this.onImpact(raytraceresult);
+        this.onHit(raytraceresult);
       }
     }
     // particle trail
-    if(this.ticksExisted > 2) {
+    if(this.tickCount > 2) {
       addParticles(getTrailParticle(), 2);
     }
     // movement
-    Vector3d motion = this.getMotion();
-    double d0 = this.getPosX() + motion.x;
-    double d1 = this.getPosY() + motion.y;
-    double d2 = this.getPosZ() + motion.z;
+    Vector3d motion = this.getDeltaMovement();
+    double d0 = this.getX() + motion.x;
+    double d1 = this.getY() + motion.y;
+    double d2 = this.getZ() + motion.z;
     // lerp rotation and pitch
-    this.updatePitchAndYaw();
+    this.updateRotation();
     // actually move the entity
-    this.setPosition(d0, d1, d2);
+    this.setPos(d0, d1, d2);
     // super method
     super.tick();
   }
 
   @Override
   public Entity changeDimension(ServerWorld serverWorld, ITeleporter iTeleporter) {
-    Entity entity = getShooter();
-    if (entity != null && entity.world.getDimensionKey() != serverWorld.getDimensionKey()) {
-      setShooter((Entity) null);
+    Entity entity = getOwner();
+    if (entity != null && entity.level.dimension() != serverWorld.dimension()) {
+      setOwner((Entity) null);
     }
     return super.changeDimension(serverWorld, iTeleporter);
   }
   
   @Override
-  public IPacket<?> createSpawnPacket() {
+  public IPacket<?> getAddEntityPacket() {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 
   @Override
-  protected void registerData() {
+  protected void defineSynchedData() {
   }
   
   abstract List<EffectInstance> getPotionEffects(final LivingEntity entity);
@@ -119,21 +119,21 @@ public abstract class EffectProjectileEntity extends ProjectileEntity {
   abstract float getImpactDamage(final LivingEntity entity);
   
   protected void addParticles(final IParticleData type, final int count) {
-    if(this.getEntityWorld().isRemote()) {
-      final double x = getPosX();
-      final double y = getPosY() + 0.1D;
-      final double z = getPosZ();
+    if(this.getCommandSenderWorld().isClientSide()) {
+      final double x = getX();
+      final double y = getY() + 0.1D;
+      final double z = getZ();
       final double motion = 0.08D;
-      final double width = getWidth() / 2;
-      final double height = getHeight() / 2;
+      final double width = getBbWidth() / 2;
+      final double height = getBbHeight() / 2;
       for (int i = 0; i < count; i++) {
-        world.addParticle(type, 
-            x + (world.rand.nextDouble() - 0.5D) * width, 
+        level.addParticle(type, 
+            x + (level.random.nextDouble() - 0.5D) * width, 
             y + height, 
-            z + (world.rand.nextDouble() - 0.5D) * width,
-            (world.rand.nextDouble() - 0.5D) * motion, 
-            (world.rand.nextDouble() - 0.5D) * motion,
-            (world.rand.nextDouble() - 0.5D) * motion);
+            z + (level.random.nextDouble() - 0.5D) * width,
+            (level.random.nextDouble() - 0.5D) * motion, 
+            (level.random.nextDouble() - 0.5D) * motion,
+            (level.random.nextDouble() - 0.5D) * motion);
       }
     }
   }

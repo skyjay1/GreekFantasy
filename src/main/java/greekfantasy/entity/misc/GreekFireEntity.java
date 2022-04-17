@@ -58,16 +58,16 @@ public class GreekFireEntity extends ProjectileItemEntity {
   }
 
   @Override
-  protected void onEntityHit(EntityRayTraceResult raytrace) {
-    super.onEntityHit(raytrace);
-    causeExplosion(raytrace.getHitVec());
+  protected void onHitEntity(EntityRayTraceResult raytrace) {
+    super.onHitEntity(raytrace);
+    causeExplosion(raytrace.getLocation());
   }
 
   @Override
-  protected void onImpact(RayTraceResult raytrace) {
-    super.onImpact(raytrace);
-    if (!this.world.isRemote() && world instanceof IServerWorld && this.isAlive()) {
-      causeExplosion(raytrace.getHitVec());
+  protected void onHit(RayTraceResult raytrace) {
+    super.onHit(raytrace);
+    if (!this.level.isClientSide() && level instanceof IServerWorld && this.isAlive()) {
+      causeExplosion(raytrace.getLocation());
       remove();
     }
   }
@@ -76,23 +76,23 @@ public class GreekFireEntity extends ProjectileItemEntity {
     // cause explosion at this location
     final float size = 1.25F;
     final float size2 = size * 1.5F;
-    Explosion exp = this.world.createExplosion(this.getShooter(), DamageSource.ON_FIRE, null, vec.x, vec.y, vec.z, size, false, Explosion.Mode.NONE);
+    Explosion exp = this.level.explode(this.getOwner(), DamageSource.ON_FIRE, null, vec.x, vec.y, vec.z, size, false, Explosion.Mode.NONE);
     // place oil fire around the area
     BlockPos.Mutable pos = new BlockPos.Mutable(vec.x, vec.y, vec.z);
     BlockState state;
     for(double x = vec.x - size2; x < vec.x + size2; x++) {
       for(double y = vec.y - size2; y < vec.y + size2; y++) {
         for(double z = vec.z - size2; z < vec.z + size2; z++) {
-          pos.setPos(x, y, z);
-          state = world.getBlockState(pos);
-          if(world.rand.nextInt(3) > 0) {
-            if((state.getMaterial().isReplaceable() && world.getBlockState(pos.down()).isOpaqueCube(world, pos.down()))) {
+          pos.set(x, y, z);
+          state = level.getBlockState(pos);
+          if(level.random.nextInt(3) > 0) {
+            if((state.getMaterial().isReplaceable() && level.getBlockState(pos.below()).isSolidRender(level, pos.below()))) {
               // attempt to place lit oil
-              this.world.setBlockState(pos, GFRegistry.OIL.getDefaultState().with(OilBlock.LIT, true));
-            } else if(world.getBlockState(pos).getBlock() == Blocks.WATER && world.isAirBlock(pos.up())) {
+              this.level.setBlockAndUpdate(pos, GFRegistry.OIL.defaultBlockState().setValue(OilBlock.LIT, true));
+            } else if(level.getBlockState(pos).getBlock() == Blocks.WATER && level.isEmptyBlock(pos.above())) {
               // attempt to place waterlogged lit oil and soul fire
-              this.world.setBlockState(pos, GFRegistry.OIL.getDefaultState().with(OilBlock.WATERLOGGED, true).with(OilBlock.LIT, true));
-              this.world.setBlockState(pos.up(), Blocks.SOUL_FIRE.getDefaultState(), 2);
+              this.level.setBlockAndUpdate(pos, GFRegistry.OIL.defaultBlockState().setValue(OilBlock.WATERLOGGED, true).setValue(OilBlock.LIT, true));
+              this.level.setBlock(pos.above(), Blocks.SOUL_FIRE.defaultBlockState(), 2);
             }
           }
         }
@@ -104,11 +104,11 @@ public class GreekFireEntity extends ProjectileItemEntity {
   @Override
   public void tick() {
     // attempt to raytrace with fluids
-    RayTraceResult raytraceresult = world.rayTraceBlocks(new RayTraceContext(
-        this.getPositionVec().add(-0.1D, -0.1D, -0.1D), this.getPositionVec().add(0.1D, 0.1D, 0.1D),
+    RayTraceResult raytraceresult = level.clip(new RayTraceContext(
+        this.position().add(-0.1D, -0.1D, -0.1D), this.position().add(0.1D, 0.1D, 0.1D),
         RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.ANY, this));
     if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
-      onImpact(raytraceresult);
+      onHit(raytraceresult);
     } else {
       super.tick();
     }
@@ -118,21 +118,21 @@ public class GreekFireEntity extends ProjectileItemEntity {
    * Gets the amount of gravity to apply to the thrown entity with each tick.
    */
   @Override
-  protected float getGravityVelocity() {
+  protected float getGravity() {
      return 0.09F;
   }
 
   @Override
   public Entity changeDimension(ServerWorld serverWorld, ITeleporter iTeleporter) {
-    Entity entity = this.getShooter();
-    if (entity != null && entity.world.getDimensionKey() != serverWorld.getDimensionKey()) {
-      setShooter((Entity) null);
+    Entity entity = this.getOwner();
+    if (entity != null && entity.level.dimension() != serverWorld.dimension()) {
+      setOwner((Entity) null);
     }
     return super.changeDimension(serverWorld, iTeleporter);
   }
   
   @Override
-  public IPacket<?> createSpawnPacket() {
+  public IPacket<?> getAddEntityPacket() {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 

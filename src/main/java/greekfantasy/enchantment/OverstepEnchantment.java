@@ -13,15 +13,15 @@ public class OverstepEnchantment extends Enchantment {
   }
   
   @Override 
-  public int getMinEnchantability(int level) { return 10; }
+  public int getMinCost(int level) { return 10; }
   @Override
-  public int getMaxEnchantability(int level) { return 20; }
+  public int getMaxCost(int level) { return 20; }
   @Override
-  public boolean isTreasureEnchantment() { return GreekFantasy.CONFIG.isOverstepEnabled(); }
+  public boolean isTreasureOnly() { return GreekFantasy.CONFIG.isOverstepEnabled(); }
   @Override
-  public boolean canVillagerTrade() { return false; }
+  public boolean isTradeable() { return false; }
   @Override
-  public boolean canGenerateInLoot() { return GreekFantasy.CONFIG.isOverstepEnabled(); }
+  public boolean isDiscoverable() { return GreekFantasy.CONFIG.isOverstepEnabled(); }
   @Override
   public int getMaxLevel() { return 1; }
   @Override

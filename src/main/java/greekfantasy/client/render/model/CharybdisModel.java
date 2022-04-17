@@ -25,20 +25,20 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
   
   public CharybdisModel(float modelSize) {
     super();
-    textureWidth = 128;
-    textureHeight = 128;
+    texWidth = 128;
+    texHeight = 128;
     
     final float r90 = (float) Math.toRadians(90);
     final float r180 = (float) Math.toRadians(180);
     final float r270 = (float) Math.toRadians(270);
    
     body = new ModelRenderer(this);
-    body.setRotationPoint(0.0F, 24.0F, 0.0F);
+    body.setPos(0.0F, 24.0F, 0.0F);
 
     body1 = new ModelRenderer(this);
-    body1.setRotationPoint(0.0F, -30.0F, 0.0F);
+    body1.setPos(0.0F, -30.0F, 0.0F);
     body.addChild(body1);
-    body1.setTextureOffset(0, 0).addBox(-12.0F, -2.0F, -12.0F, 24.0F, 6.0F, 24.0F, 0.0F, false);
+    body1.texOffs(0, 0).addBox(-12.0F, -2.0F, -12.0F, 24.0F, 6.0F, 24.0F, 0.0F, false);
 
     body1.addChild(CharybdisModelHelper.makeBody1FringeModel(this, 0, body1Fringe, 0));
     body1.addChild(CharybdisModelHelper.makeBody1FringeModel(this, r90, body1Fringe, 1));
@@ -46,9 +46,9 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
     body1.addChild(CharybdisModelHelper.makeBody1FringeModel(this, r270, body1Fringe, 3));
    
     body2 = new ModelRenderer(this);
-    body2.setRotationPoint(0.0F, -26.0F, 0.0F);
+    body2.setPos(0.0F, -26.0F, 0.0F);
     body.addChild(body2);
-    body2.setTextureOffset(0, 57).addBox(-8.0F, 0.0F, -8.0F, 16.0F, 10.0F, 16.0F, 0.0F, false);
+    body2.texOffs(0, 57).addBox(-8.0F, 0.0F, -8.0F, 16.0F, 10.0F, 16.0F, 0.0F, false);
 
     body2.addChild(CharybdisModelHelper.makeBody2FringeModel(this, 0, body2Fringe, 0));
     body2.addChild(CharybdisModelHelper.makeBody2FringeModel(this, r90, body2Fringe, 3));
@@ -56,9 +56,9 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
     body2.addChild(CharybdisModelHelper.makeBody2FringeModel(this, r270, body2Fringe, 9));
 
     body3 = new ModelRenderer(this);
-    body3.setRotationPoint(0.0F, 0.0F, 0.0F);
+    body3.setPos(0.0F, 0.0F, 0.0F);
     body.addChild(body3);
-    body3.setTextureOffset(64, 57).addBox(-5.0F, -16.0F, -5.0F, 10.0F, 8.0F, 10.0F, 0.0F, false);
+    body3.texOffs(64, 57).addBox(-5.0F, -16.0F, -5.0F, 10.0F, 8.0F, 10.0F, 0.0F, false);
 
     body3.addChild(CharybdisModelHelper.makeBody3FringeModel(this, 0, body3Fringe, 0));
     body3.addChild(CharybdisModelHelper.makeBody3FringeModel(this, r90, body3Fringe, 3));
@@ -66,9 +66,9 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
     body3.addChild(CharybdisModelHelper.makeBody3FringeModel(this, r270, body3Fringe, 9));
 
     body4 = new ModelRenderer(this);
-    body4.setRotationPoint(0.0F, 0.0F, 0.0F);
+    body4.setPos(0.0F, 0.0F, 0.0F);
     body.addChild(body4);
-    body4.setTextureOffset(104, 57).addBox(-3.0F, -8.0F, -3.0F, 6.0F, 8.0F, 6.0F, 0.0F, false);
+    body4.texOffs(104, 57).addBox(-3.0F, -8.0F, -3.0F, 6.0F, 8.0F, 6.0F, 0.0F, false);
 
     body4.addChild(CharybdisModelHelper.makeBody4FringeModel(this, 0, body4Fringe, 0));
     body4.addChild(CharybdisModelHelper.makeBody4FringeModel(this, r90, body4Fringe, 1));
@@ -77,9 +77,9 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
 
     // head and mouth
     head = new ModelRenderer(this);
-    head.setRotationPoint(0.0F, 24.0F, 0.0F);
-    head.setTextureOffset(0, 30).addBox(-10.0F, -32.01F, -10.0F, 20.0F, 6.0F, 20.0F, 0.0F, false);
-    head.setTextureOffset(80, 40).addBox(-6.0F, -26.0F, -6.0F, 12.0F, 4.0F, 12.0F, 0.0F, false);
+    head.setPos(0.0F, 24.0F, 0.0F);
+    head.texOffs(0, 30).addBox(-10.0F, -32.01F, -10.0F, 20.0F, 6.0F, 20.0F, 0.0F, false);
+    head.texOffs(80, 40).addBox(-6.0F, -26.0F, -6.0F, 12.0F, 4.0F, 12.0F, 0.0F, false);
 
     // teeth
     head.addChild(CharybdisModelHelper.makeTeethModel(this, 0));
@@ -89,7 +89,7 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
 
     // arms
     arms = new ModelRenderer(this);
-    arms.setRotationPoint(0.0F, -31.0F, 0.0F);
+    arms.setPos(0.0F, -31.0F, 0.0F);
     arms.addChild(CharybdisModelHelper.makeArmsModel(this, 0, armsArray, 0));
     arms.addChild(CharybdisModelHelper.makeArmsModel(this, r90, armsArray, 3));
     arms.addChild(CharybdisModelHelper.makeArmsModel(this, r180, armsArray, 6));
@@ -97,13 +97,13 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
   }
   
   @Override
-  protected Iterable<ModelRenderer> getBodyParts() { return ImmutableList.of(this.body, this.arms); }
+  protected Iterable<ModelRenderer> bodyParts() { return ImmutableList.of(this.body, this.arms); }
   
   @Override
-  protected Iterable<ModelRenderer> getHeadParts() { return ImmutableList.of(this.head); }
+  protected Iterable<ModelRenderer> headParts() { return ImmutableList.of(this.head); }
   
   @Override
-  public void setRotationAngles(CharybdisEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch) {
+  public void setupAnim(CharybdisEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch) {
     // animate arms
     final float swirlingTime = entity.isSwirling() ? MathHelper.clamp(entity.getSwirlPercent(), 0.0F, 1.0F) : 0;
     final float throwingTime = entity.isThrowing() ? MathHelper.clamp(entity.getThrowPercent(), 0.0F, 1.0F) : 0;
@@ -118,22 +118,22 @@ public class CharybdisModel extends AgeableModel<CharybdisEntity> {
     final float idleCos = MathHelper.cos(ageInTicks * 0.064F);
     float cosX = idleCos * 0.44F;
     for(int i = 0, l = body1Fringe.length; i < l; i++) {
-      body1Fringe[i].rotateAngleX = cosX;
+      body1Fringe[i].xRot = cosX;
     }
     // body2
     cosX = idleCos * 0.62F;
     for(int i = 0, l = body2Fringe.length; i < l; i++) {
-      body2Fringe[i].rotateAngleY = cosX;
+      body2Fringe[i].yRot = cosX;
     }
     // body3
     cosX = idleCos * 0.58F;
     for(int i = 0, l = body3Fringe.length; i < l; i++) {
-      body3Fringe[i].rotateAngleY = cosX;
+      body3Fringe[i].yRot = cosX;
     }
     // body4
     cosX = idleCos * 0.54F;
     for(int i = 0, l = body4Fringe.length; i < l; i++) {
-      body4Fringe[i].rotateAngleY = cosX;
+      body4Fringe[i].yRot = cosX;
     }
   }
 }

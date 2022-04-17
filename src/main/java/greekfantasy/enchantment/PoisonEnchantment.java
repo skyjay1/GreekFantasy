@@ -24,30 +24,30 @@ public class PoisonEnchantment extends Enchantment {
   }
 
   @Override
-  public boolean canApply(ItemStack item) {
+  public boolean canEnchant(ItemStack item) {
     if (item.getItem() instanceof net.minecraft.item.ArmorItem) {
       return true;
     }
-    return super.canApply(item);
+    return super.canEnchant(item);
   }
   
   @Override
-  public ITextComponent getDisplayName(int level) {
-    return ((IFormattableTextComponent)super.getDisplayName(level)).mergeStyle(TextFormatting.GREEN);
+  public ITextComponent getFullname(int level) {
+    return ((IFormattableTextComponent)super.getFullname(level)).withStyle(TextFormatting.GREEN);
   }
 
   @Override
-  public void onUserHurt(LivingEntity user, Entity attacker, int level) {
-    Random rand = user.getRNG();
-    Map.Entry<EquipmentSlotType, ItemStack> enchants = EnchantmentHelper.getRandomItemWithEnchantment(GFRegistry.POISON_ENCHANTMENT, user);
+  public void doPostHurt(LivingEntity user, Entity attacker, int level) {
+    Random rand = user.getRandom();
+    Map.Entry<EquipmentSlotType, ItemStack> enchants = EnchantmentHelper.getRandomItemWith(GFRegistry.POISON_ENCHANTMENT, user);
     if (shouldHit(level, rand)) {
       if (attacker instanceof LivingEntity) {
         int duration = getDuration(level, rand);
-        ((LivingEntity)attacker).addPotionEffect(new EffectInstance(Effects.POISON, duration, level));
+        ((LivingEntity)attacker).addEffect(new EffectInstance(Effects.POISON, duration, level));
       }
       
       if (enchants != null) {
-        ((ItemStack)enchants.getValue()).damageItem(2, user, e -> e.sendBreakAnimation((EquipmentSlotType)enchants.getKey()));
+        ((ItemStack)enchants.getValue()).hurtAndBreak(2, user, e -> e.broadcastBreakEvent((EquipmentSlotType)enchants.getKey()));
       }
     } 
   }
@@ -67,15 +67,15 @@ public class PoisonEnchantment extends Enchantment {
   }
 
   @Override 
-  public int getMinEnchantability(int level) { return 10 + 20 * (level - 1); }
+  public int getMinCost(int level) { return 10 + 20 * (level - 1); }
   @Override
-  public int getMaxEnchantability(int level) { return 50 + super.getMaxEnchantability(level); }
+  public int getMaxCost(int level) { return 50 + super.getMaxCost(level); }
   @Override
-  public boolean isTreasureEnchantment() { return false; }
+  public boolean isTreasureOnly() { return false; }
   @Override
-  public boolean canVillagerTrade() { return false; }
+  public boolean isTradeable() { return false; }
   @Override
-  public boolean canGenerateInLoot() { return false; }
+  public boolean isDiscoverable() { return false; }
   @Override
   public int getMaxLevel() { return 3; }
   @Override

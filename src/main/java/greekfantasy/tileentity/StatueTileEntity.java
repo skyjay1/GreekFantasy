@@ -75,7 +75,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   
   public void setUpper(final boolean isUpper) {
     this.upper = isUpper;
-    this.markDirty();
+    this.setChanged();
   }
   
   public boolean isUpper() { return this.upper; }
@@ -86,9 +86,9 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   
   public void setStatuePose(final StatuePose poseIn, final boolean refresh) {
     this.statuePose = poseIn;
-    this.markDirty();
+    this.setChanged();
     if(refresh) {
-      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+      this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
     }
   }
 
@@ -114,9 +114,9 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
       return;
     }
     this.statueFemale = statueFemaleIn;
-    this.markDirty();
+    this.setChanged();
     if(refresh) {
-      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+      this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
     }
   }
   
@@ -134,9 +134,9 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
     final CompoundNBT profileNBT = new CompoundNBT();
     profileNBT.putString("Name", nameIn);
     setPlayerProfile(NBTUtil.readGameProfile(profileNBT));
-    this.markDirty();
+    this.setChanged();
     if(refresh) {
-      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+      this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
     }
   }
   
@@ -149,9 +149,9 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   public void setDeityName(final String deityIn, final boolean refresh) {
     this.deityName = deityIn;
     this.updateDeity();
-    this.markDirty();
+    this.setChanged();
     if(refresh) {
-      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+      this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
     }
   }
   
@@ -163,7 +163,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
 
   public void updateDeity() {
     this.deity = deityName.isEmpty() ? Deity.EMPTY : GreekFantasy.PROXY.DEITY.get(new ResourceLocation(deityName)).orElse(Deity.EMPTY);
-    this.markDirty();
+    this.setChanged();
   }
   
   public ItemStack handleItemInteraction(final PlayerEntity player, final IDeity deity, final IFavor favor, final ItemStack item) {
@@ -193,7 +193,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
         && deity.getName().equals(range.getDeity().getName())
         && range.isInFavorRange(player, favor)) {
       ItemStack bow = new ItemStack(GFRegistry.APOLLO_BOW);
-      bow.getItem().onCreated(bow, player.getEntityWorld(), player);
+      bow.getItem().onCraftedBy(bow, player.getCommandSenderWorld(), player);
       return bow;
     }
     // attempt to give the Artemis Bow item
@@ -202,7 +202,7 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
         && deity.getName().equals(range.getDeity().getName())
         && range.isInFavorRange(player, favor)) {
       ItemStack bow = new ItemStack(GFRegistry.ARTEMIS_BOW);
-      bow.getItem().onCreated(bow, player.getEntityWorld(), player);
+      bow.getItem().onCraftedBy(bow, player.getCommandSenderWorld(), player);
       return bow;
     }
     // attempt to handle apple of discord
@@ -249,19 +249,19 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   protected boolean tryEnchant(final PlayerEntity player, final IDeity deity, final IFavor favor, final ItemStack stack, 
       final String rangeKey, final Enchantment enchant) {
     final FavorRange range = GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(rangeKey);
-    if(enchant.canApply(stack) && deity != Deity.EMPTY && deity.getName().equals(range.getDeity().getName())
-        && range.isInFavorRange(player, favor) && EnchantmentHelper.getEnchantmentLevel(enchant, stack) < 1) {
+    if(enchant.canEnchant(stack) && deity != Deity.EMPTY && deity.getName().equals(range.getDeity().getName())
+        && range.isInFavorRange(player, favor) && EnchantmentHelper.getItemEnchantmentLevel(enchant, stack) < 1) {
       // if the item has size 1, enchant directly
       if(stack.getCount() == 1) {
-        stack.addEnchantment(enchant, 1);
-        stack.setDamage(0);
+        stack.enchant(enchant, 1);
+        stack.setDamageValue(0);
       } else {
         // drop one enchanted item from the itemstack
         final ItemStack enchantedItem = stack.split(1);
-        enchantedItem.addEnchantment(enchant, 1);
-        ItemEntity drop = player.dropItem(enchantedItem, false);
+        enchantedItem.enchant(enchant, 1);
+        ItemEntity drop = player.drop(enchantedItem, false);
         if(drop != null) {
-          drop.setNoPickupDelay();
+          drop.setNoPickUpDelay();
         }
       }
       return true;
@@ -280,8 +280,8 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   }
 
   private void updatePlayerProfile() {
-    this.playerProfile = SkullTileEntity.updateGameProfile(this.playerProfile);
-    this.markDirty();
+    this.playerProfile = SkullTileEntity.updateGameprofile(this.playerProfile);
+    this.setChanged();
   }
   
   // NBT AND SAVING STUFF //
@@ -299,23 +299,23 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
 
   @Override
   public SUpdateTileEntityPacket getUpdatePacket() {
-    return new SUpdateTileEntityPacket(getPos(), -1, buildUpdateTag(new CompoundNBT()));
+    return new SUpdateTileEntityPacket(getBlockPos(), -1, buildUpdateTag(new CompoundNBT()));
   }
 
   @Override
   public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket pkt) {
-    readUpdateTag(pkt.getNbtCompound());
+    readUpdateTag(pkt.getTag());
   }
 
   @Override
-  public void read(BlockState state, CompoundNBT nbt) {
-    super.read(state, nbt);
+  public void load(BlockState state, CompoundNBT nbt) {
+    super.load(state, nbt);
     readUpdateTag(nbt);
   }
 
   @Override
-  public CompoundNBT write(CompoundNBT compound) {
-    return buildUpdateTag(super.write(compound));
+  public CompoundNBT save(CompoundNBT compound) {
+    return buildUpdateTag(super.save(compound));
   }
 
   public CompoundNBT buildUpdateTag(final CompoundNBT nbt) {
@@ -355,16 +355,16 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   }
 
   private void inventoryChanged() {
-    this.markDirty();
-    if(this.world != null) {
-      this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+    this.setChanged();
+    if(this.level != null) {
+      this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
     }
   }
 
   public void dropAllItems() {
-    if (this.world != null) {
-      if (!this.world.isRemote()) {
-        InventoryHelper.dropItems(this.world, this.getPos(), this.getInventory());
+    if (this.level != null) {
+      if (!this.level.isClientSide()) {
+        InventoryHelper.dropContents(this.level, this.getBlockPos(), this.getInventory());
       }
       this.inventoryChanged();
     }
@@ -372,13 +372,13 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   }
   
   @Override
-  public void clear() {
+  public void clearContent() {
     this.inventory.clear();
     this.inventoryChanged();
   }
 
   @Override
-  public int getSizeInventory() {
+  public int getContainerSize() {
     return this.inventory.size();
   }
 
@@ -390,30 +390,30 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   /**
    * Returns the stack in the given slot.
    */
-  public ItemStack getStackInSlot(int index) {
+  public ItemStack getItem(int index) {
     return index >= 0 && index < this.inventory.size() ? this.inventory.get(index) : ItemStack.EMPTY;
   }
 
   /**
    * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
    */
-  public ItemStack decrStackSize(int index, int count) {
+  public ItemStack removeItem(int index, int count) {
     this.inventoryChanged();
-    return ItemStackHelper.getAndSplit(this.inventory, index, count);
+    return ItemStackHelper.removeItem(this.inventory, index, count);
   }
 
   /**
    * Removes a stack from the given slot and returns it.
    */
-  public ItemStack removeStackFromSlot(int index) {
+  public ItemStack removeItemNoUpdate(int index) {
     this.inventoryChanged();
-    return ItemStackHelper.getAndRemove(this.inventory, index);
+    return ItemStackHelper.takeItem(this.inventory, index);
   }
 
   /**
    * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
    */
-  public void setInventorySlotContents(int index, ItemStack stack) {
+  public void setItem(int index, ItemStack stack) {
     if (index >= 0 && index < this.inventory.size()) {
       this.inventory.set(index, stack);
       this.inventoryChanged();
@@ -421,19 +421,19 @@ public class StatueTileEntity extends TileEntity implements IClearable, IInvento
   }
 
   @Override
-  public boolean isUsableByPlayer(PlayerEntity player) {
-    if (this.world.getTileEntity(this.pos) != this) {
+  public boolean stillValid(PlayerEntity player) {
+    if (this.level.getBlockEntity(this.worldPosition) != this) {
       return false;
     } else {
-      return !(player.getDistanceSq((double) this.pos.getX() + 0.5D, (double) this.pos.getY() + 0.5D,
-          (double) this.pos.getZ() + 0.5D) > 64.0D);
+      return !(player.distanceToSqr((double) this.worldPosition.getX() + 0.5D, (double) this.worldPosition.getY() + 0.5D,
+          (double) this.worldPosition.getZ() + 0.5D) > 64.0D);
     }
   }
 
   // OTHER //
 
   @OnlyIn(Dist.CLIENT)
-  public double getMaxRenderDistanceSquared() {
+  public double getViewDistance() {
     return 256.0D;
   }
 }

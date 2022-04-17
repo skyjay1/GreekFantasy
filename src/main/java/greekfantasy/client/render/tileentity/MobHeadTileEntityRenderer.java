@@ -38,25 +38,25 @@ public class MobHeadTileEntityRenderer extends TileEntityRenderer<MobHeadTileEnt
       int packedLightIn, int packedOverlayIn) {    
     // determine texture, rotations, and style
     final MobHeadTileEntity.HeadType head = tileEntityIn.getHeadType();
-    final float rotation = tileEntityIn.getBlockState().get(StatueBlock.HORIZONTAL_FACING).getHorizontalAngle();
+    final float rotation = tileEntityIn.getBlockState().getValue(StatueBlock.FACING).toYRot();
     final ResourceLocation texture = head.getTexture();
     // determine which model to use
     final Model model = getModel(head);
     final float scale = ((IWallModel)model).getScale();
-    matrixStackIn.push();
+    matrixStackIn.pushPose();
     // prepare to render model
     
     matrixStackIn.translate(0.5D, 0D, 0.5D);
     matrixStackIn.scale(scale, scale, scale);
-    matrixStackIn.rotate(Vector3f.XP.rotationDegrees(180.0F));
-    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(rotation));
+    matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(180.0F));
+    matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(rotation));
     matrixStackIn.translate(.5D / scale, 0D, .5D / scale);
-    IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(texture));
+    IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.entityCutoutNoCull(texture));
     // render the correct model
     
     ((IWallModel)model).setWallRotations(tileEntityIn.onWall());    
-    model.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
-    matrixStackIn.pop();
+    model.renderToBuffer(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F);
+    matrixStackIn.popPose();
   }
  
   protected Model getModel(final MobHeadTileEntity.HeadType head) {
@@ -76,36 +76,36 @@ public class MobHeadTileEntityRenderer extends TileEntityRenderer<MobHeadTileEnt
   public static class OrthusItemStackRenderer extends ItemStackTileEntityRenderer {
     final OrthusHeadModel orthusHeadModel = new OrthusHeadModel();
     @Override
-    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
-      matrixStack.push();
+    public void renderByItem(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
+      matrixStack.pushPose();
       matrixStack.scale(-1.0F, -1.0F, 1.0F);
-      IVertexBuilder vertexBuilder = buffer.getBuffer(orthusHeadModel.getRenderType(MobHeadTileEntity.HeadType.ORTHUS.getTexture()));
-      orthusHeadModel.render(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-      matrixStack.pop();
+      IVertexBuilder vertexBuilder = buffer.getBuffer(orthusHeadModel.renderType(MobHeadTileEntity.HeadType.ORTHUS.getTexture()));
+      orthusHeadModel.renderToBuffer(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+      matrixStack.popPose();
     }
   }
   
   public static class GiganteItemStackRenderer extends ItemStackTileEntityRenderer {
     final GiganteHeadModel giganteHeadModel = new GiganteHeadModel();
     @Override
-    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
-      matrixStack.push();
+    public void renderByItem(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
+      matrixStack.pushPose();
       matrixStack.scale(-1.0F, -1.0F, 1.0F);
-      IVertexBuilder vertexBuilder = buffer.getBuffer(giganteHeadModel.getRenderType(MobHeadTileEntity.HeadType.GIGANTE.getTexture()));
-      giganteHeadModel.render(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-      matrixStack.pop();
+      IVertexBuilder vertexBuilder = buffer.getBuffer(giganteHeadModel.renderType(MobHeadTileEntity.HeadType.GIGANTE.getTexture()));
+      giganteHeadModel.renderToBuffer(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+      matrixStack.popPose();
     }
   }
   
   public static class CerberusItemStackRenderer extends ItemStackTileEntityRenderer {
     final CerberusHeadModel cerberusHeadModel = new CerberusHeadModel();
     @Override
-    public void func_239207_a_(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
-      matrixStack.push();
+    public void renderByItem(ItemStack item, TransformType transform, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn) {
+      matrixStack.pushPose();
       matrixStack.scale(-1.0F, -1.0F, 1.0F);
-      IVertexBuilder vertexBuilder = buffer.getBuffer(cerberusHeadModel.getRenderType(MobHeadTileEntity.HeadType.CERBERUS.getTexture()));
-      cerberusHeadModel.render(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-      matrixStack.pop();
+      IVertexBuilder vertexBuilder = buffer.getBuffer(cerberusHeadModel.renderType(MobHeadTileEntity.HeadType.CERBERUS.getTexture()));
+      cerberusHeadModel.renderToBuffer(matrixStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+      matrixStack.popPose();
     }
   }
 }

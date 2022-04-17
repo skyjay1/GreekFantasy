@@ -51,7 +51,7 @@ public class BiomeWhitelistConfig {
     // check each string in the whitelist
     for(final String whitelistName : spawnBiomes.get()) {
       // if the whitelistName is a biome registry name, compare against the given biome
-      if(whitelistName.length() > 1 && whitelistName.contains(":") && biome.getLocation().toString().equals(whitelistName)) {
+      if(whitelistName.length() > 1 && whitelistName.contains(":") && biome.location().toString().equals(whitelistName)) {
         return true;
       }
       // if the whitelistName is a biome type, check if the given biome contains that type

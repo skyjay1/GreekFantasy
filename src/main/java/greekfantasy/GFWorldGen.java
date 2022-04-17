@@ -76,7 +76,7 @@ public final class GFWorldGen {
   @ObjectHolder(MODID + ":olive_forest")
   public static final Biome OLIVE_FOREST_BIOME = null;
   
-  public static RegistryKey<Biome> OLIVE_FOREST = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, new ResourceLocation(MODID, "olive_forest"));
+  public static RegistryKey<Biome> OLIVE_FOREST = RegistryKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "olive_forest"));
 
   private static ConfiguredFeature<?, ?> MARBLE;
   private static ConfiguredFeature<?, ?> LIMESTONE;
@@ -153,65 +153,65 @@ public final class GFWorldGen {
   public static void registerConfiguredFeatures() {
     GreekFantasy.LOGGER.debug("registerConfiguredFeatures");
     MARBLE = registerFeature("marble", 
-        Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.MARBLE.getDefaultState(), 33))
+        Feature.ORE.configured(new OreFeatureConfig(ruleTestStone, GFRegistry.MARBLE.defaultBlockState(), 33))
         // unmapped methods copied from world.gen.feature.Features
         // 33 = vein size, 80 = maxY, square = spreadHorizontally, count = repeat
-        .range(80).square().count(10));
+        .range(80).squared().count(10));
     LIMESTONE = registerFeature("limestone", 
-        Feature.ORE.withConfiguration(new OreFeatureConfig(ruleTestStone, GFRegistry.LIMESTONE.getDefaultState(), 33))
-        .range(80).square().count(10));
+        Feature.ORE.configured(new OreFeatureConfig(ruleTestStone, GFRegistry.LIMESTONE.defaultBlockState(), 33))
+        .range(80).squared().count(10));
     HARPY_NEST = registerFeature("harpy_nest", 
-        HARPY_NEST_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG) // NoFeatureConfig.NO_FEATURE_CONFIG
-        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+        HARPY_NEST_FEATURE.configured(NoFeatureConfig.NONE) // NoFeatureConfig.NO_FEATURE_CONFIG
+        .decorated(Placements.HEIGHTMAP_SQUARE));
     SMALL_SHRINE = registerFeature("small_shrine", 
-        SMALL_SHRINE_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
-        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+        SMALL_SHRINE_FEATURE.configured(NoFeatureConfig.NONE)
+        .decorated(Placements.HEIGHTMAP_SQUARE));
     SMALL_NETHER_SHRINE = registerFeature("small_nether_shrine",
-        SMALL_NETHER_SHRINE_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
+        SMALL_NETHER_SHRINE_FEATURE.configured(NoFeatureConfig.NONE));
     CYCLOPES_CAVE = registerFeature("cyclopes_cave",
-        CYCLOPES_CAVE_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
-        .chance(3).withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+        CYCLOPES_CAVE_FEATURE.configured(NoFeatureConfig.NONE)
+        .chance(3).decorated(Placements.HEIGHTMAP_SQUARE));
     ARA_CAMP = registerFeature("ara_camp", 
-        ARA_CAMP_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG).chance(2)
-        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+        ARA_CAMP_FEATURE.configured(NoFeatureConfig.NONE).chance(2)
+        .decorated(Placements.HEIGHTMAP_SQUARE));
     SATYR_CAMP = registerFeature("satyr_camp",
-        SATYR_CAMP_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
-        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+        SATYR_CAMP_FEATURE.configured(NoFeatureConfig.NONE)
+        .decorated(Placements.HEIGHTMAP_SQUARE));
     LION_DEN = registerFeature("lion_den",
-        LION_DEN_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
-        .chance(2).withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+        LION_DEN_FEATURE.configured(NoFeatureConfig.NONE)
+        .chance(2).decorated(Placements.HEIGHTMAP_SQUARE));
     PYTHON_PIT = registerFeature("python_pit",
-        PYTHON_PIT_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
-        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+        PYTHON_PIT_FEATURE.configured(NoFeatureConfig.NONE)
+        .decorated(Placements.HEIGHTMAP_SQUARE));
     ARACHNE_PIT = registerFeature("arachne_pit",
-        ARACHNE_PIT_FEATURE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG).chance(3)
-        .withPlacement(Placements.HEIGHTMAP_PLACEMENT));
+        ARACHNE_PIT_FEATURE.configured(NoFeatureConfig.NONE).chance(3)
+        .decorated(Placements.HEIGHTMAP_SQUARE));
     OLIVE_TREE_SINGLE = registerFeature("olive_tree_single", 
-        OliveTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).count(20));
+        OliveTree.getConfiguredTree().decorated(Placements.ADD_32).count(20));
     OLIVE_TREE_FOREST = 
         Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, "olive_tree"), 
           OliveTree.getConfiguredTree()
-            .withPlacement(Placements.VEGETATION_PLACEMENT)
-            .withPlacement(Placements.HEIGHTMAP_PLACEMENT)
-            .withPlacement(Placement.COUNT_EXTRA.configure(new AtSurfaceWithExtraConfig(10, 0.1F, 1))));
+            .decorated(Placements.ADD_32)
+            .decorated(Placements.HEIGHTMAP_SQUARE)
+            .decorated(Placement.COUNT_EXTRA.configured(new AtSurfaceWithExtraConfig(10, 0.1F, 1))));
     POMEGRANATE_TREE = registerFeature("pomegranate_tree",
-        PomegranateTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT).count(20));
+        PomegranateTree.getConfiguredTree().decorated(Placements.ADD_32).count(20));
     REEDS = registerFeature("reeds",
-        REEDS_FEATURE.withConfiguration((new BlockClusterFeatureConfig.Builder(
-            new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
+        REEDS_FEATURE.configured((new BlockClusterFeatureConfig.Builder(
+            new SimpleBlockStateProvider(GFRegistry.REEDS.defaultBlockState()), 
             new DoublePlantBlockPlacer()))
-              .tries(48).replaceable()
-              .xSpread(4).zSpread(4)
+              .tries(48).canReplace()
+              .xspread(4).zspread(4)
               .build()).count(2));
     SWAMP_REEDS = registerFeature("reeds_swamp",
-        REEDS_FEATURE.withConfiguration((new BlockClusterFeatureConfig.Builder(
-            new SimpleBlockStateProvider(GFRegistry.REEDS.getDefaultState()), 
+        REEDS_FEATURE.configured((new BlockClusterFeatureConfig.Builder(
+            new SimpleBlockStateProvider(GFRegistry.REEDS.defaultBlockState()), 
             new DoublePlantBlockPlacer()))
-              .tries(32).replaceable()
-              .xSpread(3).ySpread(3).zSpread(3)
+              .tries(32).canReplace()
+              .xspread(3).yspread(3).zspread(3)
               .build()).count(2));
     GOLDEN_APPLE_TREE = Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(MODID, "golden_apple_tree"), 
-        GoldenAppleTree.getConfiguredTree().withPlacement(Placements.VEGETATION_PLACEMENT));
+        GoldenAppleTree.getConfiguredTree().decorated(Placements.ADD_32));
   }
   
   private static ConfiguredFeature<?, ?> registerFeature(final String name, ConfiguredFeature<?, ?> feature) {
@@ -247,8 +247,8 @@ public final class GFWorldGen {
       addFeature(event, "olive_tree_single", GenerationStage.Decoration.VEGETAL_DECORATION, OLIVE_TREE_SINGLE);    
       addFeature(event, "reeds_swamp", GenerationStage.Decoration.VEGETAL_DECORATION, SWAMP_REEDS);
       // add olive forest features
-      if(OLIVE_FOREST.getLocation().equals(event.getName())) {
-        event.getGeneration().withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, OLIVE_TREE_FOREST);
+      if(OLIVE_FOREST.location().equals(event.getName())) {
+        event.getGeneration().addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, OLIVE_TREE_FOREST);
       }
     }
   }
@@ -258,8 +258,8 @@ public final class GFWorldGen {
     final BiomeWhitelistConfig config = GreekFantasy.CONFIG.FEATURES.get(featureName);
     if(null == config) {
       GreekFantasy.LOGGER.error("Error registering features: config for '" + featureName + "' not found!");
-    } else if(config.chance() > 0 && config.canSpawnInBiome(RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName()))) {
-      event.getGeneration().withFeature(stage, feature);
+    } else if(config.chance() > 0 && config.canSpawnInBiome(RegistryKey.create(Registry.BIOME_REGISTRY, event.getName()))) {
+      event.getGeneration().addFeature(stage, feature);
     }
   }
   
@@ -295,58 +295,58 @@ public final class GFWorldGen {
   private static void addSpawns(final BiomeLoadingEvent event, final EntityType<?> entity, final int min, final int max) {
     final String name = entity.getRegistryName().getPath();
     final BiomeWhitelistConfig config = GreekFantasy.CONFIG.MOB_SPAWNS.get(name);
-    final RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
+    final RegistryKey<Biome> key = RegistryKey.create(Registry.BIOME_REGISTRY, event.getName());
     if(null == config) {
       GreekFantasy.LOGGER.error("Error registering spawns: config for '" + name + "' not found!");
     } else if(config.chance() > 0 && config.canSpawnInBiome(key)) {
-      event.getSpawns().withSpawner(entity.getClassification(), new MobSpawnInfo.Spawners(entity, config.chance(), min, max));
+      event.getSpawns().addSpawn(entity.getCategory(), new MobSpawnInfo.Spawners(entity, config.chance(), min, max));
     }
   }
   
   private static Biome makeOliveForest(float depth, float scale) {
     MobSpawnInfo.Builder builder = new MobSpawnInfo.Builder();
-    DefaultBiomeFeatures.withPassiveMobs(builder);
-    DefaultBiomeFeatures.withBatsAndHostiles(builder);
+    DefaultBiomeFeatures.farmAnimals(builder);
+    DefaultBiomeFeatures.commonSpawns(builder);
 
     BiomeGenerationSettings.Builder biomeGenBuilder = (new BiomeGenerationSettings.Builder())
-        .withSurfaceBuilder(ConfiguredSurfaceBuilders.GRASS);
-    DefaultBiomeFeatures.withStrongholdAndMineshaft(biomeGenBuilder);
-    biomeGenBuilder.withStructure(StructureFeatures.RUINED_PORTAL);
+        .surfaceBuilder(ConfiguredSurfaceBuilders.GRASS);
+    DefaultBiomeFeatures.addDefaultOverworldLandStructures(biomeGenBuilder);
+    biomeGenBuilder.addStructureStart(StructureFeatures.RUINED_PORTAL_STANDARD);
     
-    DefaultBiomeFeatures.withCavesAndCanyons(biomeGenBuilder);
+    DefaultBiomeFeatures.addDefaultCarvers(biomeGenBuilder);
     
-    DefaultBiomeFeatures.withLavaAndWaterLakes(biomeGenBuilder);
-    DefaultBiomeFeatures.withMonsterRoom(biomeGenBuilder);
-    DefaultBiomeFeatures.withAllForestFlowerGeneration(biomeGenBuilder);
-    DefaultBiomeFeatures.withCommonOverworldBlocks(biomeGenBuilder);
-    DefaultBiomeFeatures.withOverworldOres(biomeGenBuilder);
-    DefaultBiomeFeatures.withDisks(biomeGenBuilder);
+    DefaultBiomeFeatures.addDefaultLakes(biomeGenBuilder);
+    DefaultBiomeFeatures.addDefaultMonsterRoom(biomeGenBuilder);
+    DefaultBiomeFeatures.addForestFlowers(biomeGenBuilder);
+    DefaultBiomeFeatures.addDefaultUndergroundVariety(biomeGenBuilder);
+    DefaultBiomeFeatures.addDefaultOres(biomeGenBuilder);
+    DefaultBiomeFeatures.addDefaultSoftDisks(biomeGenBuilder);
     
-    DefaultBiomeFeatures.withDefaultFlowers(biomeGenBuilder);
-    DefaultBiomeFeatures.withForestGrass(biomeGenBuilder);
-    DefaultBiomeFeatures.withNormalMushroomGeneration(biomeGenBuilder);
-    DefaultBiomeFeatures.withSugarCaneAndPumpkins(biomeGenBuilder);
-    DefaultBiomeFeatures.withLavaAndWaterSprings(biomeGenBuilder);
-    DefaultBiomeFeatures.withFrozenTopLayer(biomeGenBuilder);
+    DefaultBiomeFeatures.addDefaultFlowers(biomeGenBuilder);
+    DefaultBiomeFeatures.addForestGrass(biomeGenBuilder);
+    DefaultBiomeFeatures.addDefaultMushrooms(biomeGenBuilder);
+    DefaultBiomeFeatures.addDefaultExtraVegetation(biomeGenBuilder);
+    DefaultBiomeFeatures.addDefaultSprings(biomeGenBuilder);
+    DefaultBiomeFeatures.addSurfaceFreezing(biomeGenBuilder);
     
     return (new Biome.Builder())
       .precipitation(Biome.RainType.RAIN)
-      .category(Biome.Category.FOREST)
+      .biomeCategory(Biome.Category.FOREST)
       .depth(depth)
       .scale(scale)
       .temperature(0.6F)
       .downfall(0.6F)
-      .setEffects((new BiomeAmbience.Builder())
-        .withFoliageColor(10729111)
-        .withGrassColor(8955507)
-        .setWaterColor(4159204)
-        .setWaterFogColor(329011)
-        .setFogColor(12638463)
-        .withSkyColor(getSkyColorWithTemperatureModifier(0.6F))
-        .setMoodSound(MoodSoundAmbience.DEFAULT_CAVE)
+      .specialEffects((new BiomeAmbience.Builder())
+        .foliageColorOverride(10729111)
+        .grassColorOverride(8955507)
+        .waterColor(4159204)
+        .waterFogColor(329011)
+        .fogColor(12638463)
+        .skyColor(getSkyColorWithTemperatureModifier(0.6F))
+        .ambientMoodSound(MoodSoundAmbience.LEGACY_CAVE_SETTINGS)
         .build())
-      .withMobSpawnSettings(builder.build())
-      .withGenerationSettings(biomeGenBuilder.build())
+      .mobSpawnSettings(builder.build())
+      .generationSettings(biomeGenBuilder.build())
       .build();
   }
   
@@ -354,6 +354,6 @@ public final class GFWorldGen {
     float f1 = t;
     f1 /= 3.0F;
     f1 = MathHelper.clamp(f1, -1.0F, 1.0F);
-    return MathHelper.hsvToRGB(0.62222224F - f1 * 0.05F, 0.5F + f1 * 0.1F, 1.0F);
+    return MathHelper.hsvToRgb(0.62222224F - f1 * 0.05F, 0.5F + f1 * 0.1F, 1.0F);
   }
 }

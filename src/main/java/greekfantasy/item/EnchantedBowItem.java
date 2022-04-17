@@ -17,6 +17,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
+import net.minecraft.item.Item.Properties;
+
 public abstract class EnchantedBowItem extends BowItem {
 
   public EnchantedBowItem(Properties builder) {
@@ -27,13 +29,13 @@ public abstract class EnchantedBowItem extends BowItem {
    * Called when the player stops using an Item (stops holding the right mouse button).
    */
   @Override
-  public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
+  public void releaseUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
     // Copied directly from BowItem with a few changes
     if (entityLiving instanceof PlayerEntity) {
       PlayerEntity playerentity = (PlayerEntity) entityLiving;
-      boolean flag = playerentity.abilities.isCreativeMode
-          || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
-      ItemStack itemstack = playerentity.findAmmo(stack);
+      boolean flag = playerentity.abilities.instabuild
+          || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0;
+      ItemStack itemstack = playerentity.getProjectile(stack);
 
       int i = this.getUseDuration(stack) - timeLeft;
       i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, playerentity, i, !itemstack.isEmpty() || flag);
@@ -45,61 +47,61 @@ public abstract class EnchantedBowItem extends BowItem {
           itemstack = new ItemStack(Items.ARROW);
         }
 
-        float f = getArrowVelocity(i) * getArrowVelocityMultiplier();
+        float f = getPowerForTime(i) * getArrowVelocityMultiplier();
         if (!((double) f < 0.1D)) {
-          boolean flag1 = playerentity.abilities.isCreativeMode || (itemstack.getItem() instanceof ArrowItem
+          boolean flag1 = playerentity.abilities.instabuild || (itemstack.getItem() instanceof ArrowItem
               && ((ArrowItem) itemstack.getItem()).isInfinite(itemstack, stack, playerentity));
-          if (!worldIn.isRemote()) {
+          if (!worldIn.isClientSide()) {
             // support multi-shot
             for(int arrows = 0, maxArrows = getArrowCount(stack); arrows < maxArrows; arrows++) {
               ArrowItem arrowitem = (ArrowItem) (itemstack.getItem() instanceof ArrowItem ? itemstack.getItem() : Items.ARROW);
               AbstractArrowEntity abstractarrowentity = arrowitem.createArrow(worldIn, itemstack, playerentity);
               abstractarrowentity = customArrow(abstractarrowentity);
               // params: thrower, rotationPitch, rotationYaw, ???, speed, inaccuracy
-              abstractarrowentity.setDirectionAndMovement(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, f * 3.0F,
+              abstractarrowentity.shootFromRotation(playerentity, playerentity.xRot, playerentity.yRot, 0.0F, f * 3.0F,
                   (arrows > 0 ? 8.0F : 1.0F));
               if (f == 1.0F) {
-                abstractarrowentity.setIsCritical(true);
+                abstractarrowentity.setCritArrow(true);
               }
 
-              int j = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
+              int j = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, stack);
               if (j > 0) {
-                abstractarrowentity.setDamage(abstractarrowentity.getDamage() + (double) j * 0.5D + 0.5D);
+                abstractarrowentity.setBaseDamage(abstractarrowentity.getBaseDamage() + (double) j * 0.5D + 0.5D);
               }
 
-              int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
+              int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, stack);
               if (k > 0) {
-                abstractarrowentity.setKnockbackStrength(k);
+                abstractarrowentity.setKnockback(k);
               }
 
-              if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) > 0) {
-                abstractarrowentity.setFire(100);
+              if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0) {
+                abstractarrowentity.setSecondsOnFire(100);
               }
               // set pickup status
-              if (arrows > 0 || flag1 || playerentity.abilities.isCreativeMode
+              if (arrows > 0 || flag1 || playerentity.abilities.instabuild
                   && (itemstack.getItem() == Items.SPECTRAL_ARROW || itemstack.getItem() == Items.TIPPED_ARROW)) {
-                abstractarrowentity.pickupStatus = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
+                abstractarrowentity.pickup = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
               }
               // actually add the arrow entity
-              worldIn.addEntity(abstractarrowentity);
+              worldIn.addFreshEntity(abstractarrowentity);
             }
             // attempt to damage item
-            stack.damageItem(1, playerentity, (e) -> {
-              e.sendBreakAnimation(playerentity.getActiveHand());
+            stack.hurtAndBreak(1, playerentity, (e) -> {
+              e.broadcastBreakEvent(playerentity.getUsedItemHand());
             });
             
           }
 
-          worldIn.playSound((PlayerEntity) null, playerentity.getPosX(), playerentity.getPosY(), playerentity.getPosZ(),
-              SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
-          if (!flag1 && !playerentity.abilities.isCreativeMode) {
+          worldIn.playSound((PlayerEntity) null, playerentity.getX(), playerentity.getY(), playerentity.getZ(),
+              SoundEvents.ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+          if (!flag1 && !playerentity.abilities.instabuild) {
             itemstack.shrink(1);
             if (itemstack.isEmpty()) {
-              playerentity.inventory.deleteStack(itemstack);
+              playerentity.inventory.removeItem(itemstack);
             }
           }
 
-          playerentity.addStat(Stats.ITEM_USED.get(this));
+          playerentity.awardStat(Stats.ITEM_USED.get(this));
         }
       }
     }
@@ -114,9 +116,9 @@ public abstract class EnchantedBowItem extends BowItem {
   protected int getArrowCount(final ItemStack stack) { return 1; }
   
   @Override
-  public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+  public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
     // add the item to the group with enchantment already applied
-    if (this.isInGroup(group)) {
+    if (this.allowdedIn(group)) {
       ItemStack stack = new ItemStack(this);
       addBaseEnchantments(stack);
       items.add(stack);
@@ -124,13 +126,13 @@ public abstract class EnchantedBowItem extends BowItem {
   }
   
   @Override
-  public void onCreated(ItemStack stack, World worldIn, PlayerEntity playerIn) {
+  public void onCraftedBy(ItemStack stack, World worldIn, PlayerEntity playerIn) {
     addBaseEnchantments(stack);
   }
 
   @Override
-  public boolean hasEffect(ItemStack stack) {
-    return stack.getEnchantmentTagList().size() > getNumBaseEnchantments();
+  public boolean isFoil(ItemStack stack) {
+    return stack.getEnchantmentTags().size() > getNumBaseEnchantments();
   }
 
   @Override
@@ -146,11 +148,11 @@ public abstract class EnchantedBowItem extends BowItem {
     
     @Override
     protected void addBaseEnchantments(final ItemStack stack) {
-      if(EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) < 1) {
-        stack.addEnchantment(Enchantments.FLAME, 1);
+      if(EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) < 1) {
+        stack.enchant(Enchantments.FLAMING_ARROWS, 1);
       }
-      if(EnchantmentHelper.getEnchantmentLevel(Enchantments.VANISHING_CURSE, stack) < 1) {
-        stack.addEnchantment(Enchantments.VANISHING_CURSE, 1);
+      if(EnchantmentHelper.getItemEnchantmentLevel(Enchantments.VANISHING_CURSE, stack) < 1) {
+        stack.enchant(Enchantments.VANISHING_CURSE, 1);
       }
     }
     
@@ -168,8 +170,8 @@ public abstract class EnchantedBowItem extends BowItem {
     
     @Override
     protected void addBaseEnchantments(final ItemStack stack) {
-      if(EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack) < 5) {
-        stack.addEnchantment(Enchantments.POWER, 5);
+      if(EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, stack) < 5) {
+        stack.enchant(Enchantments.POWER_ARROWS, 5);
       }
     }
     
@@ -184,7 +186,7 @@ public abstract class EnchantedBowItem extends BowItem {
     
     @Override
     public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
-      arrow.setDamage(arrow.getDamage() * 1.25D);
+      arrow.setBaseDamage(arrow.getBaseDamage() * 1.25D);
       return arrow;
     }
   }
@@ -196,8 +198,8 @@ public abstract class EnchantedBowItem extends BowItem {
     
     @Override
     protected void addBaseEnchantments(final ItemStack stack) {
-      if(EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) < 1) {
-        stack.addEnchantment(Enchantments.FLAME, 1);
+      if(EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) < 1) {
+        stack.enchant(Enchantments.FLAMING_ARROWS, 1);
       }
     }
 
@@ -212,7 +214,7 @@ public abstract class EnchantedBowItem extends BowItem {
     
     @Override
     public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
-      arrow.setDamage(arrow.getDamage() * 1.75D);
+      arrow.setBaseDamage(arrow.getBaseDamage() * 1.75D);
       return arrow;
     }
   }

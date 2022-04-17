@@ -23,25 +23,25 @@ public class ShadeRenderer<T extends ShadeEntity> extends BipedRenderer<T, Shade
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
   
   @Override
   public void render(final T entityIn, final float rotationYawIn, final float partialTick, 
       final MatrixStack matrixStackIn, final IRenderTypeBuffer bufferIn, final int packedLightIn) {
-    float ticks = entityIn.getEntityId() * 2 + entityIn.ticksExisted + partialTick;
+    float ticks = entityIn.getId() * 2 + entityIn.tickCount + partialTick;
     final float translateY = 0.15F * MathHelper.cos(ticks * 0.1F) - 0.25F;
-    matrixStackIn.push();
+    matrixStackIn.pushPose();
     matrixStackIn.translate(0.0D, translateY, 0.0D);
     super.render(entityIn, rotationYawIn, partialTick, matrixStackIn, bufferIn, packedLightIn);
-    matrixStackIn.pop();
+    matrixStackIn.popPose();
   }
   
   @Override
   @Nullable
-  protected RenderType func_230496_a_(final T entity, boolean isVisible, boolean isVisibleToPlayer, boolean isGlowing) {
-    ResourceLocation tex = this.getEntityTexture(entity);
-    return entity.isGlowing() ? RenderType.getOutline(tex) : RenderType.getEntityTranslucent(tex);
+  protected RenderType getRenderType(final T entity, boolean isVisible, boolean isVisibleToPlayer, boolean isGlowing) {
+    ResourceLocation tex = this.getTextureLocation(entity);
+    return entity.isGlowing() ? RenderType.outline(tex) : RenderType.entityTranslucent(tex);
   }
 }

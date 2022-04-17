@@ -46,14 +46,14 @@ public class AutosmeltOrCobbleModifier extends LootModifier {
   @Override
   public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
     // get the entity and favor configuration ready
-    Entity entity = context.has(LootParameters.THIS_ENTITY) ? context.get(LootParameters.THIS_ENTITY) : null;
+    Entity entity = context.hasParam(LootParameters.THIS_ENTITY) ? context.getParamOrNull(LootParameters.THIS_ENTITY) : null;
     FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
     // determine if either of the mining effects can activate
     final boolean canAutosmelt = true; // favorConfig.hasSpecials(SpecialFavorEffect.Type.MINING_AUTOSMELT);
     final boolean canCancel = true; // favorConfig.hasSpecials(SpecialFavorEffect.Type.MINING_CANCEL_ORES);
     // make sure this is an ore mined by a non-creative player
-    if(entity instanceof PlayerEntity && context.has(LootParameters.BLOCK_STATE) 
-        && context.get(LootParameters.BLOCK_STATE).getBlock().isIn(ores) 
+    if(entity instanceof PlayerEntity && context.hasParam(LootParameters.BLOCK_STATE) 
+        && context.getParamOrNull(LootParameters.BLOCK_STATE).getBlock().is(ores) 
         && !entity.isSpectator() && !((PlayerEntity)entity).isCreative()
         && (canAutosmelt || canCancel)) {
       final PlayerEntity player = (PlayerEntity)entity;
@@ -69,7 +69,7 @@ public class AutosmeltOrCobbleModifier extends LootModifier {
             // if the item should autosmelt, get the items to add to the list
             if(autosmelt.canApply(player, favor)) {
               generatedLoot.forEach((stack) -> replacement.add(smelt(stack, context)));
-              favor.setTriggeredTime(time, autosmelt.getEffect().getRandomCooldown(player.getRNG()));
+              favor.setTriggeredTime(time, autosmelt.getEffect().getRandomCooldown(player.getRandom()));
               return replacement;
             }
           }
@@ -80,7 +80,7 @@ public class AutosmeltOrCobbleModifier extends LootModifier {
             // if the item should unsmelt, get the item to add to the list
             if(unsmelt.canApply(player, favor)) {
               replacement.add(new ItemStack(stone));
-              favor.setTriggeredTime(time, unsmelt.getEffect().getRandomCooldown(player.getRNG()));
+              favor.setTriggeredTime(time, unsmelt.getEffect().getRandomCooldown(player.getRandom()));
               return replacement;
             }
           }
@@ -99,8 +99,8 @@ public class AutosmeltOrCobbleModifier extends LootModifier {
    * @return the item that would normally result from smelting the given item
    */
   private static ItemStack smelt(ItemStack stack, LootContext context) {
-    return context.getWorld().getRecipeManager().getRecipe(IRecipeType.SMELTING, new Inventory(stack), context.getWorld())
-        .map(FurnaceRecipe::getRecipeOutput)
+    return context.getLevel().getRecipeManager().getRecipeFor(IRecipeType.SMELTING, new Inventory(stack), context.getLevel())
+        .map(FurnaceRecipe::getResultItem)
         .filter(itemStack -> !itemStack.isEmpty())
         .map(itemStack -> ItemHandlerHelper.copyStackWithSize(itemStack, stack.getCount() * itemStack.getCount()))
         .orElse(stack);
@@ -113,8 +113,8 @@ public class AutosmeltOrCobbleModifier extends LootModifier {
 
     @Override
     public AutosmeltOrCobbleModifier read(ResourceLocation name, JsonObject object, ILootCondition[] conditionsIn) {
-      Block stone = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(JSONUtils.getString(object, STONE)));
-      ResourceLocation oresTag = new ResourceLocation(JSONUtils.getString(object, ORES));
+      Block stone = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(JSONUtils.getAsString(object, STONE)));
+      ResourceLocation oresTag = new ResourceLocation(JSONUtils.getAsString(object, ORES));
       return new AutosmeltOrCobbleModifier(conditionsIn, stone, oresTag);
     }
 

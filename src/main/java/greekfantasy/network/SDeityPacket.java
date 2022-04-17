@@ -40,7 +40,7 @@ public class SDeityPacket {
    */
   public static SDeityPacket fromBytes(final PacketBuffer buf) {
     final ResourceLocation sName = buf.readResourceLocation();
-    final CompoundNBT sNBT = buf.readCompoundTag();
+    final CompoundNBT sNBT = buf.readNbt();
     final Optional<Deity> sEffect = GreekFantasy.PROXY.DEITY.readObject(sNBT).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read IDeity from NBT for packet\n" + error));
     return new SDeityPacket(sName, sEffect.orElse(Deity.EMPTY));
   }
@@ -54,7 +54,7 @@ public class SDeityPacket {
     DataResult<INBT> nbtResult = GreekFantasy.PROXY.DEITY.writeObject(msg.deity);
     INBT tag = nbtResult.resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to write IDeity to NBT for packet\n" + error)).get();
     buf.writeResourceLocation(msg.deityName);
-    buf.writeCompoundTag((CompoundNBT)tag);
+    buf.writeNbt((CompoundNBT)tag);
   }
 
   /**

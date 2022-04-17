@@ -38,10 +38,10 @@ public class EmpusaEntity extends MonsterEntity {
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.21D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 24.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.21D)
+        .add(Attributes.ATTACK_DAMAGE, 3.0D);
   }
   
   @Override
@@ -60,12 +60,12 @@ public class EmpusaEntity extends MonsterEntity {
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     // hurt in daytime, then remove when at half health
-    if(this.isServerWorld() && this.getEntityWorld().getDayTime() % 24000L < 11000L && this.hurtTime == 0 && rand.nextInt(20) == 0) {
-      this.attackEntityFrom(DamageSource.STARVE, 1.0F);
-      if(this.getHealth() < this.getMaxHealth() / 2.0F && this.getAttackTarget() == null) {
+    if(this.isEffectiveAi() && this.getCommandSenderWorld().getDayTime() % 24000L < 11000L && this.hurtTime == 0 && random.nextInt(20) == 0) {
+      this.hurt(DamageSource.STARVE, 1.0F);
+      if(this.getHealth() < this.getMaxHealth() / 2.0F && this.getTarget() == null) {
         // remove the entity without dropping loot
         this.remove();
         return;
@@ -73,7 +73,7 @@ public class EmpusaEntity extends MonsterEntity {
     }
     
     // spawn particles
-    if (world.isRemote() && this.isDraining()) {
+    if (level.isClientSide() && this.isDraining()) {
       particleRay();
     }
   }
@@ -81,25 +81,25 @@ public class EmpusaEntity extends MonsterEntity {
  
   
   @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
+  public void handleEntityEvent(byte id) {
     switch(id) {
     case DRAINING_START:
       this.isDraining = true;
-      this.playSound(SoundEvents.ENTITY_ENDERMAN_SCREAM, this.getSoundVolume(), this.getSoundPitch());
+      this.playSound(SoundEvents.ENDERMAN_SCREAM, this.getSoundVolume(), this.getVoicePitch());
       break;
     case DRAINING_END:
       this.isDraining = false;
       break;
     default:
-      super.handleStatusUpdate(id);
+      super.handleEntityEvent(id);
       break;
     }
   }
   
   public void setDraining(final boolean draining) {
     this.isDraining = draining;
-    if(this.isServerWorld()) {
-      this.world.setEntityState(this, draining ? DRAINING_START : DRAINING_END);
+    if(this.isEffectiveAi()) {
+      this.level.broadcastEntityEvent(this, draining ? DRAINING_START : DRAINING_END);
     }
   }
 
@@ -108,8 +108,8 @@ public class EmpusaEntity extends MonsterEntity {
   }
   
   public void particleRay() {
-    Vector3d pos = this.getEyePosition(1.0F).add(0, -this.getHeight() * 0.25D, 0);
-    Vector3d lookVec = this.getLookVec();
+    Vector3d pos = this.getEyePosition(1.0F).add(0, -this.getBbHeight() * 0.25D, 0);
+    Vector3d lookVec = this.getLookAngle();
     Vector3d scaled;
     for(double i = 0, l = lookVec.scale(12.0D).length(), stepSize = 0.25F; i < l; i += stepSize) {
       scaled = lookVec.scale(i);
@@ -117,10 +117,10 @@ public class EmpusaEntity extends MonsterEntity {
       final double y = pos.y + scaled.y;
       final double z = pos.z + scaled.z;
       final AxisAlignedBB aabb = new AxisAlignedBB(x - 0.1D, y - 0.1D, z - 0.1D, x + 0.1D, y + 0.1D, z + 0.1D);
-      if(!this.getEntityWorld().getEntitiesWithinAABBExcludingEntity(this, aabb).isEmpty()) {
+      if(!this.getCommandSenderWorld().getEntities(this, aabb).isEmpty()) {
         return;
       }
-      this.getEntityWorld().addParticle(ParticleTypes.CRIT, x, y, z, 0, 0, 0);
+      this.getCommandSenderWorld().addParticle(ParticleTypes.CRIT, x, y, z, 0, 0, 0);
     }
   }
   
@@ -133,31 +133,31 @@ public class EmpusaEntity extends MonsterEntity {
     private int cooldown;
     
     protected DrainAttackGoal(final EmpusaEntity entityIn) {
-      this.setMutexFlags(EnumSet.allOf(Goal.Flag.class));
+      this.setFlags(EnumSet.allOf(Goal.Flag.class));
       this.entity = entityIn;
       this.cooldown = MAX_COOLDOWN / 2;
     }
 
     @Override
-    public boolean shouldExecute() {  
+    public boolean canUse() {  
       if(this.cooldown > 0) {
         cooldown--;
-      } else if (this.entity.getAttackTarget() != null
-          && entity.getDistanceSq(this.entity.getAttackTarget()) < 36.0D
-          && this.entity.canEntityBeSeen(this.entity.getAttackTarget())) {
+      } else if (this.entity.getTarget() != null
+          && entity.distanceToSqr(this.entity.getTarget()) < 36.0D
+          && this.entity.canSee(this.entity.getTarget())) {
         return true;
       }
       return false;
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
-      return this.entity.isDraining() && this.entity.getAttackTarget() != null
-          && this.entity.canEntityBeSeen(this.entity.getAttackTarget());
+    public boolean canContinueToUse() {
+      return this.entity.isDraining() && this.entity.getTarget() != null
+          && this.entity.canSee(this.entity.getTarget());
     }
    
     @Override
-    public void startExecuting() {
+    public void start() {
       this.drainingTime = 1;
       this.entity.setDraining(true);
     }
@@ -167,23 +167,23 @@ public class EmpusaEntity extends MonsterEntity {
       if(drainingTime > 0 && drainingTime < MAX_DRAIN_TIME) {
         drainingTime++;
         // stop the entity from moving, and adjust look vecs
-        this.entity.getNavigator().clearPath();
-        this.entity.faceEntity(this.entity.getAttackTarget(), 100.0F, 100.0F);
+        this.entity.getNavigation().stop();
+        this.entity.lookAt(this.entity.getTarget(), 100.0F, 100.0F);
         // drain health from targetPos
-        if(drainingTime > (MAX_DRAIN_TIME / 3) && this.entity.getAttackTarget().hurtTime == 0) {
-          final DamageSource src = DamageSource.causeIndirectMagicDamage(this.entity, this.entity);
+        if(drainingTime > (MAX_DRAIN_TIME / 3) && this.entity.getTarget().hurtTime == 0) {
+          final DamageSource src = DamageSource.indirectMagic(this.entity, this.entity);
           float amount = (float) this.entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue() * 0.5F;
-          if(this.entity.getAttackTarget().attackEntityFrom(src, amount)) {
+          if(this.entity.getTarget().hurt(src, amount)) {
             this.entity.heal(amount * 1.5F);
           }
         }
       } else {
-        resetTask();
+        stop();
       } 
     }
     
     @Override
-    public void resetTask() {
+    public void stop() {
       this.entity.setDraining(false);
       this.drainingTime = 0;
       this.cooldown = MAX_COOLDOWN;

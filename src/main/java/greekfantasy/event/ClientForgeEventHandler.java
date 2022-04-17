@@ -45,10 +45,10 @@ public class ClientForgeEventHandler {
       // render pig instead
       if(null == pigRenderer) {
         Minecraft mc = Minecraft.getInstance();
-        pigRenderer = new SwineRenderer<LivingEntity>(mc.getRenderManager());
+        pigRenderer = new SwineRenderer<LivingEntity>(mc.getEntityRenderDispatcher());
       }
-      pigRenderer.render(event.getEntity(), event.getEntity().rotationYaw, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), 
-          pigRenderer.getPackedLight(event.getEntity(), event.getPartialRenderTick()));
+      pigRenderer.render(event.getEntity(), event.getEntity().yRot, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), 
+          pigRenderer.getPackedLightCoords(event.getEntity(), event.getPartialRenderTick()));
     }
   }
     
@@ -73,7 +73,7 @@ public class ClientForgeEventHandler {
   public static void renderPlayerHand(final RenderHandEvent event) {
     final Minecraft mc = Minecraft.getInstance();
     if((GreekFantasy.CONFIG.doesHelmHideArmor() && hasHelmOfDarkness(mc.player)) 
-        || (isSwine(mc.player) && mc.player.getHeldItemMainhand().isEmpty())) {
+        || (isSwine(mc.player) && mc.player.getMainHandItem().isEmpty())) {
       event.setCanceled(true);
     }
   }
@@ -93,14 +93,14 @@ public class ClientForgeEventHandler {
       final Minecraft mc = Minecraft.getInstance();
       final boolean hasOverstep = hasOverstep(player);
       // apply step height changes      
-      if(hasOverstep && !player.isSneaking() && (player.stepHeight < 1.0F || player.isAutoJumpEnabled())) {
-        player.stepHeight = 1.25F;
+      if(hasOverstep && !player.isShiftKeyDown() && (player.maxUpStep < 1.0F || player.isAutoJumpEnabled())) {
+        player.maxUpStep = 1.25F;
         // use Access Transformers to use/modify this field directly
         player.autoJumpEnabled = false;
-      } else if(player.stepHeight > 1.2F) {
+      } else if(player.maxUpStep > 1.2F) {
         // restore defaults
-        player.stepHeight = 0.6F;
-        player.autoJumpEnabled = mc.gameSettings.autoJump;
+        player.maxUpStep = 0.6F;
+        player.autoJumpEnabled = mc.options.autoJump;
       }
     }
   }
@@ -113,15 +113,15 @@ public class ClientForgeEventHandler {
   public static void onClientTick(final ClientTickEvent event) {
     if(event.phase == TickEvent.Phase.END) {
       final Minecraft mc = Minecraft.getInstance();
-      if(mc.player != null && mc.player.isRidingHorse() && mc.player.getRidingEntity() instanceof PegasusEntity) {
-        mc.player.horseJumpPowerCounter = -10;
-        if(mc.player.movementInput.jump && !wasJumping) {
+      if(mc.player != null && mc.player.isRidingJumpable() && mc.player.getVehicle() instanceof PegasusEntity) {
+        mc.player.jumpRidingTicks = -10;
+        if(mc.player.input.jumping && !wasJumping) {
           // if starting to jump, set flag
           wasJumping = true;
-        } else if(!mc.player.movementInput.jump && wasJumping) {
+        } else if(!mc.player.input.jumping && wasJumping) {
           // if not jumping but was previously, send jump packet
           wasJumping = false;
-          ((PegasusEntity)mc.player.getRidingEntity()).flyingJump();
+          ((PegasusEntity)mc.player.getVehicle()).flyingJump();
         }
       }
     }
@@ -137,34 +137,34 @@ public class ClientForgeEventHandler {
     final Minecraft mc = Minecraft.getInstance();
     if(mc != null && GreekFantasy.CONFIG.isForceFOVReset()) {
       final PlayerEntity player = mc.player;
-      if(player.isAlive() && (isStunned(player) || player.getItemStackFromSlot(EquipmentSlotType.FEET).getItem() == GFRegistry.WINGED_SANDALS)) {
-        event.setFOV(mc.gameSettings.fov);
+      if(player.isAlive() && (isStunned(player) || player.getItemBySlot(EquipmentSlotType.FEET).getItem() == GFRegistry.WINGED_SANDALS)) {
+        event.setFOV(mc.options.fov);
       }
     }
   }
   
   /** @return whether the player is wearing the Helm of Darkness **/
   private static boolean hasHelmOfDarkness(final PlayerEntity player) {
-    return player.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.HELM_OF_DARKNESS;
+    return player.getItemBySlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.HELM_OF_DARKNESS;
   }
   
   /** @return whether the player should have the client-side overstep step-height logic applied **/
   private static boolean hasOverstep(final PlayerEntity player) {
-    return EnchantmentHelper.getEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
+    return EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, player.getItemBySlot(EquipmentSlotType.FEET)) > 0;
   }
   
   /** @return whether the player should have the client-side silkwalker step-height logic applied **/
   private static boolean hasSilkstep(final PlayerEntity player) {
-    return EnchantmentHelper.getEnchantmentLevel(GFRegistry.SILKSTEP_ENCHANTMENT, player.getItemStackFromSlot(EquipmentSlotType.FEET)) > 0;
+    return EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.SILKSTEP_ENCHANTMENT, player.getItemBySlot(EquipmentSlotType.FEET)) > 0;
   }
   
   /** @return whether the entity should have the client-side stun/petrify FOV or particle effects **/
   private static boolean isStunned(final LivingEntity livingEntity) {
-    return livingEntity.isPotionActive(GFRegistry.PETRIFIED_EFFECT) || livingEntity.isPotionActive(GFRegistry.STUNNED_EFFECT);
+    return livingEntity.hasEffect(GFRegistry.PETRIFIED_EFFECT) || livingEntity.hasEffect(GFRegistry.STUNNED_EFFECT);
   }
   
   /** @return whether the entity should have the Swine effect applied **/
   private static boolean isSwine(final LivingEntity livingEntity) {
-    return livingEntity.isPotionActive(GFRegistry.SWINE_EFFECT);
+    return livingEntity.hasEffect(GFRegistry.SWINE_EFFECT);
   }
 }

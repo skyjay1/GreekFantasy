@@ -12,22 +12,22 @@ public class EffectProjectileModel<T extends ProjectileEntity> extends EntityMod
   private final ModelRenderer cross;
   
   public EffectProjectileModel(final float modelSize) {
-    textureWidth = 16;
-    textureHeight = 16;
+    texWidth = 16;
+    texHeight = 16;
 
     cross = new ModelRenderer(this);
-    cross.setRotationPoint(0.0F, 0.0F, 0.0F);
-    cross.setTextureOffset(0, 0).addBox(0.0F, -8.0F, -4.0F, 0.0F, 8.0F, 8.0F, modelSize);
-    cross.setTextureOffset(0, 8).addBox(-4.0F, -8.0F, 0.0F, 8.0F, 8.0F, 0.0F, modelSize);
+    cross.setPos(0.0F, 0.0F, 0.0F);
+    cross.texOffs(0, 0).addBox(0.0F, -8.0F, -4.0F, 0.0F, 8.0F, 8.0F, modelSize);
+    cross.texOffs(0, 8).addBox(-4.0F, -8.0F, 0.0F, 8.0F, 8.0F, 0.0F, modelSize);
   }
 
   @Override
-  public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+  public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     // do nothing
   }
 
   @Override
-  public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
+  public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha) {
     cross.render(matrixStackIn, bufferIn, 15728880, packedOverlayIn);
   }

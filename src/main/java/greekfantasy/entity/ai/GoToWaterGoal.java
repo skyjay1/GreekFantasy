@@ -21,11 +21,11 @@ public class GoToWaterGoal extends Goal {
     this.entity = entityIn;
     this.detectWaterRadius = radius;
     this.speed = speed;
-    setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+    setFlags(EnumSet.of(Goal.Flag.MOVE));
   }
 
   @Override
-  public boolean shouldExecute() {
+  public boolean canUse() {
     if (this.entity.isInWater()) {
       return false;
     }
@@ -42,24 +42,24 @@ public class GoToWaterGoal extends Goal {
   }
 
   @Override
-  public boolean shouldContinueExecuting() {
-    return !this.entity.getNavigator().noPath();
+  public boolean canContinueToUse() {
+    return !this.entity.getNavigation().isDone();
   }
 
   @Override
-  public void startExecuting() {
-    this.entity.getNavigator().tryMoveToXYZ(this.targetX, this.targetY, this.targetZ, this.speed);
+  public void start() {
+    this.entity.getNavigation().moveTo(this.targetX, this.targetY, this.targetZ, this.speed);
   }
 
   private Vector3d getNearbyWater() {
-    Random rand = this.entity.getRNG();
-    BlockPos pos1 = this.entity.getPosition().down();
+    Random rand = this.entity.getRandom();
+    BlockPos pos1 = this.entity.blockPosition().below();
 
     for (int i = 0; i < 10; i++) {
-      BlockPos pos2 = pos1.add(rand.nextInt(detectWaterRadius * 2) - detectWaterRadius, 2 - rand.nextInt(8),
+      BlockPos pos2 = pos1.offset(rand.nextInt(detectWaterRadius * 2) - detectWaterRadius, 2 - rand.nextInt(8),
           rand.nextInt(detectWaterRadius * 2) - detectWaterRadius);
 
-      if (this.entity.getEntityWorld().getBlockState(pos2).getFluidState().getFluid().isIn(FluidTags.WATER)) {
+      if (this.entity.getCommandSenderWorld().getBlockState(pos2).getFluidState().getType().is(FluidTags.WATER)) {
         return new Vector3d(pos2.getX(), pos2.getY(), pos2.getZ());
       }
     }

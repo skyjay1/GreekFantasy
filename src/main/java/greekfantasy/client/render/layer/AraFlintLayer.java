@@ -30,20 +30,20 @@ public class AraFlintLayer<T extends AraEntity> extends LayerRenderer<T, AraMode
       final float tx = (4.0F / 16.0F) * scale;
       final float ty = (12.0F / 16.0F) * scale;
       final float tz = (-2.0F / 16.0F) * scale;
-      final float spin = 180.0F + (180.0F) * MathHelper.cos((entity.ticksExisted + entity.getEntityId() * 3) * 0.08F);
-      matrixStackIn.push();
+      final float spin = 180.0F + (180.0F) * MathHelper.cos((entity.tickCount + entity.getId() * 3) * 0.08F);
+      matrixStackIn.pushPose();
       // transforms
-      this.getEntityModel().getBodyModel().translateRotate(matrixStackIn);
+      this.getParentModel().getBodyModel().translateAndRotate(matrixStackIn);
       matrixStackIn.translate(tx, ty, tz);
-      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
+      matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
       matrixStackIn.scale(scale, -scale, -scale);
-      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(spin));
+      matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(spin));
       // render the item stack
       ItemStack stack = new ItemStack(Items.FLINT);
-      Minecraft.getInstance().getItemRenderer().renderItem(stack, ItemCameraTransforms.TransformType.FIXED, 
+      Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemCameraTransforms.TransformType.FIXED, 
           packedLightIn, OverlayTexture.NO_OVERLAY, matrixStackIn, bufferIn);
       // finish rendering
-      matrixStackIn.pop();
+      matrixStackIn.popPose();
     }
   }
 }

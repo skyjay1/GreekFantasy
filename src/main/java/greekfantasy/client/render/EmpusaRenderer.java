@@ -18,7 +18,7 @@ public class EmpusaRenderer<T extends EmpusaEntity> extends BipedRenderer<T, Emp
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
 }

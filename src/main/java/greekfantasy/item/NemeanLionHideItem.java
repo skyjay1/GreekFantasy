@@ -25,6 +25,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import net.minecraft.item.Item.Properties;
+
 public class NemeanLionHideItem extends ArmorItem {
   protected static final IArmorMaterial MATERIAL = new NemeanLionHideArmorMaterial();
    
@@ -50,8 +52,8 @@ public class NemeanLionHideItem extends ArmorItem {
   }
 
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    tooltip.add(new TranslationTextComponent("enchantment.minecraft.projectile_protection").mergeStyle(TextFormatting.GRAY));
+  public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    tooltip.add(new TranslationTextComponent("enchantment.minecraft.projectile_protection").withStyle(TextFormatting.GRAY));
   }
   
   public static float getProjectileImmunityChance() {
@@ -61,19 +63,19 @@ public class NemeanLionHideItem extends ArmorItem {
   public static class NemeanLionHideArmorMaterial implements IArmorMaterial {
     private static final String NAME = "nemean_lion_hide";
     @Override
-    public int getDamageReductionAmount(EquipmentSlotType arg0) { return 4; }
+    public int getDefenseForSlot(EquipmentSlotType arg0) { return 4; }
     @Override
-    public int getDurability(EquipmentSlotType arg0) { return 985; }
+    public int getDurabilityForSlot(EquipmentSlotType arg0) { return 985; }
     @Override
-    public int getEnchantability() { return 15; }
+    public int getEnchantmentValue() { return 15; }
     @Override
     public float getKnockbackResistance() { return 0.5F; }
     @Override
     public String getName() { return NAME; }
     @Override
-    public Ingredient getRepairMaterial() { return Ingredient.EMPTY; }
+    public Ingredient getRepairIngredient() { return Ingredient.EMPTY; }
     @Override
-    public SoundEvent getSoundEvent() { return SoundEvents.ITEM_ARMOR_EQUIP_LEATHER; }
+    public SoundEvent getEquipSound() { return SoundEvents.ARMOR_EQUIP_LEATHER; }
     @Override
     public float getToughness() { return 2.0F; }
   }

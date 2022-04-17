@@ -42,32 +42,34 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class OilBlock extends Block implements IWaterLoggable {
   
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
   public static final BooleanProperty LIT = BlockStateProperties.LIT;
   
   protected final float fireDamage;
-  protected static final VoxelShape shape = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
-  protected static final VoxelShape shapeWaterlogged = Block.makeCuboidShape(0.0D, 14.0D, 0.0D, 16.0D, 15.0D, 16.0D);
+  protected static final VoxelShape shape = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
+  protected static final VoxelShape shapeWaterlogged = Block.box(0.0D, 14.0D, 0.0D, 16.0D, 15.0D, 16.0D);
   
   public OilBlock(Properties properties) {
     super(properties);
-    this.setDefaultState(this.getStateContainer().getBaseState()
-        .with(LIT, false).with(WATERLOGGED, false));
+    this.registerDefaultState(this.getStateDefinition().any()
+        .setValue(LIT, false).setValue(WATERLOGGED, false));
     this.fireDamage = 2.5F;
   }
   
   @Override
-  protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+  protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
     builder.add(LIT, WATERLOGGED);
   }
   
   @Override
-  public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
+  public ActionResultType use(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
-    ItemStack heldItem = playerIn.getHeldItem(handIn);
-    if(!worldIn.isRemote() && !state.get(LIT) && !heldItem.isEmpty()) {
+    ItemStack heldItem = playerIn.getItemInHand(handIn);
+    if(!worldIn.isClientSide() && !state.getValue(LIT) && !heldItem.isEmpty()) {
       // use the item to interact with this block
       if(heldItem.getItem() == Items.GLASS_BOTTLE) {
         // remove this block
@@ -77,14 +79,14 @@ public class OilBlock extends Block implements IWaterLoggable {
           heldItem.shrink(1);
         }
         // spawn oil bottle
-        playerIn.addItemStackToInventory(new ItemStack(GFRegistry.OLIVE_OIL));
+        playerIn.addItem(new ItemStack(GFRegistry.OLIVE_OIL));
         return ActionResultType.CONSUME;
       } else if(heldItem.getItem() == Items.FLINT_AND_STEEL) {
         // replace this block with fire
         setFire(worldIn, state, pos);
         // play sound effect and damage item
-        playerIn.playSound(SoundEvents.ITEM_FLINTANDSTEEL_USE, 0.4F, 1.0F);
-        heldItem.damageItem(1, playerIn, i -> i.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+        playerIn.playSound(SoundEvents.FLINTANDSTEEL_USE, 0.4F, 1.0F);
+        heldItem.hurtAndBreak(1, playerIn, i -> i.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
         return ActionResultType.CONSUME;
       }
     }
@@ -94,22 +96,22 @@ public class OilBlock extends Block implements IWaterLoggable {
   @Override
   public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand) {
     // if invalid position, remove this block
-    if(!this.isValidPosition(state, worldIn, pos)) {
+    if(!this.canSurvive(state, worldIn, pos)) {
       worldIn.destroyBlock(pos, false);
     }
     // if waterlogged, attempt to "float" up
-    if(state.get(WATERLOGGED)) {
-      if(worldIn.getBlockState(pos.up()).getBlock() == Blocks.WATER) {
+    if(state.getValue(WATERLOGGED)) {
+      if(worldIn.getBlockState(pos.above()).getBlock() == Blocks.WATER) {
         // remove this block and set above block to this state
-        worldIn.setBlockState(pos.up(), state);
-        worldIn.setBlockState(pos, state.getFluidState().getBlockState(), 2);
+        worldIn.setBlockAndUpdate(pos.above(), state);
+        worldIn.setBlock(pos, state.getFluidState().createLegacyBlock(), 2);
         // schedule another tick to continue moving upward
-        worldIn.getPendingBlockTicks().scheduleTick(pos.up(), this, 40);
+        worldIn.getBlockTicks().scheduleTick(pos.above(), this, 40);
         return;
-      } else if(worldIn.getBlockState(pos.up()).getBlock() == this) {
+      } else if(worldIn.getBlockState(pos.above()).getBlock() == this) {
         // remove this block and "merge" with the one above it
-        worldIn.setBlockState(pos, state.getFluidState().getBlockState(), 2);
-        worldIn.getPendingBlockTicks().scheduleTick(pos.up(), this, 40);
+        worldIn.setBlock(pos, state.getFluidState().createLegacyBlock(), 2);
+        worldIn.getBlockTicks().scheduleTick(pos.above(), this, 40);
         return;
       }
     }
@@ -123,30 +125,30 @@ public class OilBlock extends Block implements IWaterLoggable {
         setFire(worldIn, state, pos);
       } else {
         // schedule another tick to replace self with fire
-        worldIn.getPendingBlockTicks().scheduleTick(pos, this, 2 + rand.nextInt(5));
+        worldIn.getBlockTicks().scheduleTick(pos, this, 2 + rand.nextInt(5));
       }
     }
   }
 
   @Override
-  public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
+  public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
       BlockPos currentPos, BlockPos facingPos) {
     // if invalid position, remove this block
-    if(!this.isValidPosition(stateIn, worldIn, currentPos)) {
-      return stateIn.getFluidState().getBlockState();
+    if(!this.canSurvive(stateIn, worldIn, currentPos)) {
+      return stateIn.getFluidState().createLegacyBlock();
     }
     // if a fire block is placed nearby, begin catching fire
     if (isFire(worldIn, facingState, facingPos)) {
-      worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, 5);
+      worldIn.getBlockTicks().scheduleTick(currentPos, this, 5);
     }
     // if waterlogged, schedule water ticks
-    if (stateIn.get(WATERLOGGED)) {
+    if (stateIn.getValue(WATERLOGGED)) {
       // if waterlogged AND lit, remove self if soul fire is not above this block
-      if(stateIn.get(LIT) && worldIn.getBlockState(currentPos.up()).getBlock() != Blocks.SOUL_FIRE) {
+      if(stateIn.getValue(LIT) && worldIn.getBlockState(currentPos.above()).getBlock() != Blocks.SOUL_FIRE) {
         worldIn.destroyBlock(currentPos, false);
       } else {
-        worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, 2);
-        worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+        worldIn.getBlockTicks().scheduleTick(currentPos, this, 2);
+        worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
       }
     }
     return stateIn;
@@ -155,73 +157,73 @@ public class OilBlock extends Block implements IWaterLoggable {
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
     // determine if block is waterlogged
-    FluidState fluid = context.getWorld().getFluidState(context.getPos());
-    boolean waterlogged = fluid.isTagged(FluidTags.WATER);
+    FluidState fluid = context.getLevel().getFluidState(context.getClickedPos());
+    boolean waterlogged = fluid.is(FluidTags.WATER);
     // if waterlogged OR next to fire, schedule an update tick
-    if(waterlogged || nextToFire(context.getWorld(), context.getPos())) {
-      context.getWorld().getPendingBlockTicks().scheduleTick(context.getPos(), this, 5);
+    if(waterlogged || nextToFire(context.getLevel(), context.getClickedPos())) {
+      context.getLevel().getBlockTicks().scheduleTick(context.getClickedPos(), this, 5);
     }
-    return super.getDefaultState().with(WATERLOGGED, waterlogged);
+    return super.defaultBlockState().setValue(WATERLOGGED, waterlogged);
   }
   
   @Override
   public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-    return !state.get(WATERLOGGED) ? shape : shapeWaterlogged;
+    return !state.getValue(WATERLOGGED) ? shape : shapeWaterlogged;
   }
   
   // Waterlogged methods
   
   @Override
   public FluidState getFluidState(BlockState state) {
-    return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : Fluids.EMPTY.getDefaultState();
+    return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
   }
   
   // Comparator methods
 
   @Override
-  public boolean hasComparatorInputOverride(BlockState state) {
+  public boolean hasAnalogOutputSignal(BlockState state) {
     return true;
   }
 
   @Override
-  public int getComparatorInputOverride(BlockState state, World worldIn, BlockPos pos) {
-    return state.get(LIT) ? 15 : 0;
+  public int getAnalogOutputSignal(BlockState state, World worldIn, BlockPos pos) {
+    return state.getValue(LIT) ? 15 : 0;
   }
   
   // Fire methods
   
   @Override
-  public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) { 
-    return worldIn.getBlockState(pos).getFluidState().getFluid() == Fluids.WATER || worldIn.getBlockState(pos.down()).isOpaqueCube(worldIn, pos.down()); 
+  public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos) { 
+    return worldIn.getBlockState(pos).getFluidState().getType() == Fluids.WATER || worldIn.getBlockState(pos.below()).isSolidRender(worldIn, pos.below()); 
   }
   
   @Override
-  public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
-    if (state.get(LIT) && !entityIn.isImmuneToFire()) {
-      entityIn.forceFireTicks(entityIn.getFireTimer() + 1);
-      if (entityIn.getFireTimer() == 0) {
-        entityIn.setFire(9);
+  public void entityInside(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+    if (state.getValue(LIT) && !entityIn.fireImmune()) {
+      entityIn.setRemainingFireTicks(entityIn.getRemainingFireTicks() + 1);
+      if (entityIn.getRemainingFireTicks() == 0) {
+        entityIn.setSecondsOnFire(9);
       }
 
-      entityIn.attackEntityFrom(DamageSource.IN_FIRE, this.fireDamage);
+      entityIn.hurt(DamageSource.IN_FIRE, this.fireDamage);
     }
 
-    super.onEntityCollision(state, worldIn, pos, entityIn);
+    super.entityInside(state, worldIn, pos, entityIn);
   }
 
   @Override
-  public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
-    if (!oldState.matchesBlock(state.getBlock())) {
-      if (state.get(LIT) && canLightPortal(worldIn)) {
-        Optional<PortalSize> optional = PortalSize.func_242964_a(worldIn, pos, Direction.Axis.X);
+  public void onPlace(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+    if (!oldState.is(state.getBlock())) {
+      if (state.getValue(LIT) && canLightPortal(worldIn)) {
+        Optional<PortalSize> optional = PortalSize.findEmptyPortalShape(worldIn, pos, Direction.Axis.X);
         optional = net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(worldIn, pos, optional);
         if (optional.isPresent()) {
-          optional.get().placePortalBlocks();
+          optional.get().createPortalBlocks();
           return;
         }
       }
 
-      if (!state.isValidPosition(worldIn, pos)) {
+      if (!state.canSurvive(worldIn, pos)) {
         worldIn.removeBlock(pos, false);
       }
 
@@ -232,23 +234,23 @@ public class OilBlock extends Block implements IWaterLoggable {
    * Called before the Block is set to air in the world. Called regardless of if the player's tool can actually collect this block
    */
   @Override
-  public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
-    if (state.get(LIT)) {
-      if (!worldIn.isRemote()) {
-        worldIn.playEvent((PlayerEntity) null, 1009, pos, 0);
+  public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
+    if (state.getValue(LIT)) {
+      if (!worldIn.isClientSide()) {
+        worldIn.levelEvent((PlayerEntity) null, 1009, pos, 0);
       }
     } else {
-      super.onBlockHarvested(worldIn, pos, state, player);
+      super.playerWillDestroy(worldIn, pos, state, player);
     }
   }
 
   @OnlyIn(Dist.CLIENT)
   public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
-    if (stateIn.get(LIT)) {
+    if (stateIn.getValue(LIT)) {
       // play fire sound
       if (rand.nextInt(24) == 0) {
-        worldIn.playSound((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
-            SoundEvents.BLOCK_FIRE_AMBIENT, SoundCategory.BLOCKS, 1.0F + rand.nextFloat(), rand.nextFloat() * 0.7F + 0.3F, false);
+        worldIn.playLocalSound((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
+            SoundEvents.FIRE_AMBIENT, SoundCategory.BLOCKS, 1.0F + rand.nextFloat(), rand.nextFloat() * 0.7F + 0.3F, false);
       }
       // add smoke particles
       for (int i = 0; i < 2; ++i) {
@@ -261,7 +263,7 @@ public class OilBlock extends Block implements IWaterLoggable {
   }
 
   private static boolean canLightPortal(World world) {
-    return world.getDimensionKey() == World.OVERWORLD || world.getDimensionKey() == World.THE_NETHER;
+    return world.dimension() == World.OVERWORLD || world.dimension() == World.NETHER;
   }
   
   /**
@@ -273,7 +275,7 @@ public class OilBlock extends Block implements IWaterLoggable {
     BlockPos p;
     BlockState s;
     for(final Direction d : Direction.values()) {
-      p = pos.offset(d);
+      p = pos.relative(d);
       s = world.getBlockState(p);
       if(isFire(world, s, p)) {
         return true;
@@ -283,15 +285,15 @@ public class OilBlock extends Block implements IWaterLoggable {
   }
   
   private static boolean isFire(IWorld world, BlockState state, BlockPos pos) {
-    return state.isIn(BlockTags.FIRE) || (state.getBlock() == GFRegistry.OIL && state.get(LIT));
+    return state.is(BlockTags.FIRE) || (state.getBlock() == GFRegistry.OIL && state.getValue(LIT));
   }
   
   public static void setFire(IWorld worldIn, BlockState state, BlockPos pos) {
-    worldIn.setBlockState(pos, state.with(LIT, true), 3); 
-    if(state.get(WATERLOGGED)) {
+    worldIn.setBlock(pos, state.setValue(LIT, true), 3); 
+    if(state.getValue(WATERLOGGED)) {
       // when waterlogged, place soul fire
-      if(worldIn.isAirBlock(pos.up())) {
-        worldIn.setBlockState(pos.up(), Blocks.SOUL_FIRE.getDefaultState(), 3);
+      if(worldIn.isEmptyBlock(pos.above())) {
+        worldIn.setBlock(pos.above(), Blocks.SOUL_FIRE.defaultBlockState(), 3);
       }
     }
   }

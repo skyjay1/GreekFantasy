@@ -373,8 +373,8 @@ public class GFConfig {
     // mob spawns
     builder.comment("mob spawn weights (higher number = more spawns)").push("mob_spawns");
     final List<String> dimensions = new ArrayList<>();
-    dimensions.add(Dimension.OVERWORLD.getLocation().toString());
-    dimensions.add(Dimension.THE_NETHER.getLocation().toString());
+    dimensions.add(Dimension.OVERWORLD.location().toString());
+    dimensions.add(Dimension.NETHER.location().toString());
     IS_SPAWNS_WHITELIST = builder.worldRestart().define("whitelist_dimensions", true);
     SPAWNS_DIMENSION_WHITELIST = builder.worldRestart().define("dimensions", dimensions);
     final String[] forest = { BiomeDictionary.Type.FOREST.toString(), BiomeDictionary.Type.CONIFEROUS.toString(), BiomeDictionary.Type.JUNGLE.toString()};
@@ -384,28 +384,28 @@ public class GFConfig {
         BiomeDictionary.Type.COLD.toString(), BiomeDictionary.Type.SNOWY.toString(), BiomeDictionary.Type.MUSHROOM.toString() };
     MOB_SPAWNS.put("ara", new BiomeWhitelistConfig(builder, "ara_spawn", 10, false, nonNetherHostileBlacklist));
     MOB_SPAWNS.put("centaur", new BiomeWhitelistConfig(builder, "centaur_spawn", 15, true, BiomeDictionary.Type.PLAINS.toString(), BiomeDictionary.Type.CONIFEROUS.toString()));
-    MOB_SPAWNS.put("cerastes", new BiomeWhitelistConfig(builder, "cerastes_spawn", 30, true, Biomes.DESERT.getLocation().toString(), Biomes.DESERT_LAKES.getLocation().toString(), Biomes.DESERT_HILLS.getLocation().toString()));
+    MOB_SPAWNS.put("cerastes", new BiomeWhitelistConfig(builder, "cerastes_spawn", 30, true, Biomes.DESERT.location().toString(), Biomes.DESERT_LAKES.location().toString(), Biomes.DESERT_HILLS.location().toString()));
     MOB_SPAWNS.put("cyclopes", new BiomeWhitelistConfig(builder, "cyclopes_spawn", 20, true, BiomeDictionary.Type.MOUNTAIN.toString(), BiomeDictionary.Type.PLATEAU.toString()));
     MOB_SPAWNS.put("cyprian", new BiomeWhitelistConfig(builder, "cyprian_spawn", 15, true, BiomeDictionary.Type.PLAINS.toString(), BiomeDictionary.Type.CONIFEROUS.toString()));
     MOB_SPAWNS.put("drakaina", new BiomeWhitelistConfig(builder, "drakaina_spawn", 45, false, hostileBlacklist));
     MOB_SPAWNS.put("dryad", new BiomeWhitelistConfig(builder, "dryad_spawn", 24, true, forest));
     MOB_SPAWNS.put("empusa", new BiomeWhitelistConfig(builder, "empusa_spawn", 30, false, nonNetherHostileBlacklist));
-    MOB_SPAWNS.put("fury", new BiomeWhitelistConfig(builder, "fury_spawn", 9, true, Biomes.NETHER_WASTES.getLocation().toString()));
-    MOB_SPAWNS.put("gigante", new BiomeWhitelistConfig(builder, "gigante_spawn", 10, true, BiomeDictionary.Type.MOUNTAIN.toString(), Biomes.SNOWY_TUNDRA.getLocation().toString()));
+    MOB_SPAWNS.put("fury", new BiomeWhitelistConfig(builder, "fury_spawn", 9, true, Biomes.NETHER_WASTES.location().toString()));
+    MOB_SPAWNS.put("gigante", new BiomeWhitelistConfig(builder, "gigante_spawn", 10, true, BiomeDictionary.Type.MOUNTAIN.toString(), Biomes.SNOWY_TUNDRA.location().toString()));
     MOB_SPAWNS.put("gorgon", new BiomeWhitelistConfig(builder, "gorgon_spawn", 30, false, nonNetherHostileBlacklist));
-    MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 24, true, Biomes.DESERT.getLocation().toString(), Biomes.WOODED_MOUNTAINS.getLocation().toString()));
+    MOB_SPAWNS.put("harpy", new BiomeWhitelistConfig(builder, "harpy_spawn", 24, true, Biomes.DESERT.location().toString(), Biomes.WOODED_MOUNTAINS.location().toString()));
     MOB_SPAWNS.put("hydra", new BiomeWhitelistConfig(builder, "hydra_spawn", 8, true, BiomeDictionary.Type.SAVANNA.toString(), BiomeDictionary.Type.SWAMP.toString()));
-    MOB_SPAWNS.put("lampad", new BiomeWhitelistConfig(builder, "lampad_spawn", 40, true, Biomes.CRIMSON_FOREST.getLocation().toString(), Biomes.WARPED_FOREST.getLocation().toString()));
+    MOB_SPAWNS.put("lampad", new BiomeWhitelistConfig(builder, "lampad_spawn", 40, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString()));
     MOB_SPAWNS.put("mad_cow", new BiomeWhitelistConfig(builder, "mad_cow_spawn", 2, false, nonNetherHostileBlacklist));
     MOB_SPAWNS.put("makhai", new BiomeWhitelistConfig(builder, "makhai_spawn", 25, false));
     MOB_SPAWNS.put("minotaur", new BiomeWhitelistConfig(builder, "minotaur_spawn", 60, false, nonNetherHostileBlacklist));
     MOB_SPAWNS.put("naiad", new BiomeWhitelistConfig(builder, "naiad_spawn", 12, true, BiomeDictionary.Type.WATER.toString()));
     MOB_SPAWNS.put("orthus", new BiomeWhitelistConfig(builder, "orthus_spawn", 20, true, BiomeDictionary.Type.NETHER.toString()));
-    MOB_SPAWNS.put("pegasus", new BiomeWhitelistConfig(builder, "pegasus_spawn", 11, true, BiomeDictionary.Type.MOUNTAIN.toString(), Biomes.SUNFLOWER_PLAINS.getLocation().toString(), Biomes.FLOWER_FOREST.getLocation().toString()));
+    MOB_SPAWNS.put("pegasus", new BiomeWhitelistConfig(builder, "pegasus_spawn", 11, true, BiomeDictionary.Type.MOUNTAIN.toString(), Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString()));
     MOB_SPAWNS.put("satyr", new BiomeWhitelistConfig(builder, "satyr_spawn", 22, true, forest));
     MOB_SPAWNS.put("shade", new BiomeWhitelistConfig(builder, "shade_spawn", 10, false));
-    MOB_SPAWNS.put("siren", new BiomeWhitelistConfig(builder, "siren_spawn", 10, true, Biomes.LUKEWARM_OCEAN.getLocation().toString(), Biomes.WARM_OCEAN.getLocation().toString()));
-    MOB_SPAWNS.put("unicorn", new BiomeWhitelistConfig(builder, "unicorn_spawn", 11, true, Biomes.SUNFLOWER_PLAINS.getLocation().toString(), Biomes.FLOWER_FOREST.getLocation().toString()));
+    MOB_SPAWNS.put("siren", new BiomeWhitelistConfig(builder, "siren_spawn", 10, true, Biomes.LUKEWARM_OCEAN.location().toString(), Biomes.WARM_OCEAN.location().toString()));
+    MOB_SPAWNS.put("unicorn", new BiomeWhitelistConfig(builder, "unicorn_spawn", 11, true, Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString()));
     MOB_SPAWNS.put("whirl", new BiomeWhitelistConfig(builder, "whirl_spawn", 6, true, BiomeDictionary.Type.OCEAN.toString()));
     builder.pop();
     // feature configs
@@ -417,7 +417,7 @@ public class GFConfig {
     FEATURES.put("marble", new BiomeWhitelistConfig(builder, "marble", 1000, true, BiomeDictionary.Type.OVERWORLD.toString()));
     FEATURES.put("harpy_nest", new BiomeWhitelistConfig(builder, "harpy_nest", 12, false, nonNetherHostileBlacklist));
     FEATURES.put("small_shrine", new BiomeWhitelistConfig(builder, "small_shrine", 17, false, nonNetherHostileBlacklist));
-    FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 30, true, Biomes.SOUL_SAND_VALLEY.getLocation().toString(), Biomes.NETHER_WASTES.getLocation().toString()));
+    FEATURES.put("small_nether_shrine", new BiomeWhitelistConfig(builder, "small_nether_shrine", 30, true, Biomes.SOUL_SAND_VALLEY.location().toString(), Biomes.NETHER_WASTES.location().toString()));
     FEATURES.put("cyclopes_cave", new BiomeWhitelistConfig(builder, "cyclopes_cave", 8, true, BiomeDictionary.Type.PLAINS.toString()));
     FEATURES.put("ara_camp", new BiomeWhitelistConfig(builder, "ara_camp", 8, false, nonNetherHostileBlacklist));
     FEATURES.put("satyr_camp", new BiomeWhitelistConfig(builder, "satyr_camp", 10, false, nonNetherHostileBlacklist));
@@ -425,8 +425,8 @@ public class GFConfig {
     FEATURES.put("reeds", new BiomeWhitelistConfig(builder, "reeds", 250, false, nonNetherHostileBlacklist));
     FEATURES.put("reeds_swamp", new BiomeWhitelistConfig(builder, "reeds_swamp", 900, true, BiomeDictionary.Type.SWAMP.toString()));
     FEATURES.put("olive_tree_single", new BiomeWhitelistConfig(builder, "olive_tree_single", 22, true, BiomeDictionary.Type.FOREST.toString()));
-    FEATURES.put("pomegranate_tree", new BiomeWhitelistConfig(builder, "pomegranate_tree", 40, true, Biomes.WARPED_FOREST.getLocation().toString()));
-    FEATURES.put("lion_den", new BiomeWhitelistConfig(builder, "lion_den", 9, true, Biomes.DESERT.getLocation().toString(), Biomes.DESERT_HILLS.getLocation().toString()));
+    FEATURES.put("pomegranate_tree", new BiomeWhitelistConfig(builder, "pomegranate_tree", 40, true, Biomes.WARPED_FOREST.location().toString()));
+    FEATURES.put("lion_den", new BiomeWhitelistConfig(builder, "lion_den", 9, true, Biomes.DESERT.location().toString(), Biomes.DESERT_HILLS.location().toString()));
     FEATURES.put("arachne_pit", new BiomeWhitelistConfig(builder, "arachne_pit", 82, false, nonNetherHostileBlacklist));
     builder.pop();
   }

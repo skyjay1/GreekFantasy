@@ -11,16 +11,16 @@ public class CyprianModel<T extends CyprianEntity> extends CentaurModel<T> {
     super(modelSize);
     
     // nose
-    this.bipedHead.setTextureOffset(24, 0).addBox(-3.0F, -3.0F, -5.0F, 6.0F, 3.0F, 1.0F, modelSize);
+    this.head.texOffs(24, 0).addBox(-3.0F, -3.0F, -5.0F, 6.0F, 3.0F, 1.0F, modelSize);
 
     // horns
-    this.bipedHead.addChild(MinotaurModel.makeBullHorns(this, modelSize, true));
-    this.bipedHead.addChild(MinotaurModel.makeBullHorns(this, modelSize, false));
+    this.head.addChild(MinotaurModel.makeBullHorns(this, modelSize, true));
+    this.head.addChild(MinotaurModel.makeBullHorns(this, modelSize, false));
     
     // hide headwear
-    this.bipedHeadwear.showModel = false;
+    this.hat.visible = false;
   }
   
   @Override
-  protected Iterable<ModelRenderer> getHeadParts() { return ImmutableList.of(); }  
+  protected Iterable<ModelRenderer> headParts() { return ImmutableList.of(); }  
 }

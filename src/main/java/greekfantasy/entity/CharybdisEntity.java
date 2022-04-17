@@ -50,7 +50,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
-  private static final DataParameter<Byte> STATE = EntityDataManager.createKey(CharybdisEntity.class, DataSerializers.BYTE);
+  private static final DataParameter<Byte> STATE = EntityDataManager.defineId(CharybdisEntity.class, DataSerializers.BYTE);
   private static final String KEY_STATE = "CharybdisState";
   // bytes to use in STATE
   private static final byte NONE = (byte)0;
@@ -79,47 +79,47 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
   public CharybdisEntity(final EntityType<? extends CharybdisEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.stepHeight = 1.0F;
-    this.experienceValue = 50;
-    this.navigator = new SwimmerPathNavigator(this, worldIn);
+    this.maxUpStep = 1.0F;
+    this.xpReward = 50;
+    this.navigation = new SwimmerPathNavigator(this, worldIn);
   }
 
   public static CharybdisEntity spawnCharybdis(final ServerWorld world, final WhirlEntity whirl) {
     CharybdisEntity entity = GFRegistry.CHARYBDIS_ENTITY.create(world);
-    entity.copyLocationAndAnglesFrom(whirl);
-    entity.onInitialSpawn(world, world.getDifficultyForLocation(whirl.getPosition()), SpawnReason.CONVERSION, (ILivingEntityData)null, (CompoundNBT)null);
+    entity.copyPosition(whirl);
+    entity.finalizeSpawn(world, world.getCurrentDifficultyAt(whirl.blockPosition()), SpawnReason.CONVERSION, (ILivingEntityData)null, (CompoundNBT)null);
     if(whirl.hasCustomName()) {
       entity.setCustomName(whirl.getCustomName());
       entity.setCustomNameVisible(whirl.isCustomNameVisible());
     }
-    entity.enablePersistence();
-    entity.renderYawOffset = whirl.renderYawOffset;
+    entity.setPersistenceRequired();
+    entity.yBodyRot = whirl.yBodyRot;
     entity.setPortalCooldown();
-    world.addEntity(entity);
+    world.addFreshEntity(entity);
     entity.setState(SPAWNING);
     // remove the old whirl
     whirl.remove();
     // trigger spawn for nearby players
-    for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(16.0D))) {
+    for (ServerPlayerEntity player : world.getEntitiesOfClass(ServerPlayerEntity.class, entity.getBoundingBox().inflate(16.0D))) {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
     }
     // play sound
-    world.playSound(entity.getPosX(), entity.getPosY(), entity.getPosZ(), SoundEvents.ENTITY_WITHER_SPAWN, entity.getSoundCategory(), 1.2F, 1.0F, false);
+    world.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
     return entity;
   }
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 160.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.5D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-        .createMutableAttribute(Attributes.FOLLOW_RANGE, 48.0D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 160.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.15D)
+        .add(Attributes.ATTACK_DAMAGE, 4.5D)
+        .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+        .add(Attributes.FOLLOW_RANGE, 48.0D);
   }
   
   @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(STATE, Byte.valueOf(NONE));
+  public void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(STATE, Byte.valueOf(NONE));
   }
   
   @Override
@@ -131,32 +131,32 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   }
   
   @Override
-  public void livingTick() {
+  public void aiStep() {
 
-    super.livingTick();
+    super.aiStep();
     
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
     
     // spawn particles
-    if(this.world.isRemote() && ticksExisted % 3 == 0 && this.isInWaterOrBubbleColumn()/* && isSwirling()*/) {
+    if(this.level.isClientSide() && tickCount % 3 == 0 && this.isInWaterOrBubble()/* && isSwirling()*/) {
       // spawn particles at targeted entities
-      getEntitiesInRange(RANGE).forEach(e -> bubbles(e.getPosX(), e.getPosY(), e.getPosZ(), e.getWidth(), 5));
+      getEntitiesInRange(RANGE).forEach(e -> bubbles(e.getX(), e.getY(), e.getZ(), e.getBbWidth(), 5));
       // spawn particles in spiral
-      float maxY = this.getHeight() * this.getSpawnPercent() * 1.65F;
+      float maxY = this.getBbHeight() * this.getSpawnPercent() * 1.65F;
       float y = 0;
       float nY = 120 * this.getSpawnPercent();
       float dY = maxY / nY;
-      double posX = this.getPosX();
-      double posY = this.getPosY();
-      double posZ = this.getPosZ();
+      double posX = this.getX();
+      double posY = this.getY();
+      double posZ = this.getZ();
       // for each y-position, increase the angle and spawn particle here
-      for(float a = 0, nA = 28 + rand.nextInt(4), dA = (2 * (float)Math.PI) / nA; y < maxY; a += dA) {
+      for(float a = 0, nA = 28 + random.nextInt(4), dA = (2 * (float)Math.PI) / nA; y < maxY; a += dA) {
         float radius = y * 0.5F;
         float cosA = MathHelper.cos(a) * radius;
         float sinA = MathHelper.sin(a) * radius;
         //bubbles(posX + cosA, posY + y, posZ + sinA, 0.125D, 1);
-        world.addParticle(ParticleTypes.BUBBLE, posX + cosA, posY + y - (maxY * 0.4), posZ + sinA, 0.0D, 0.085D, 0.0D);
+        level.addParticle(ParticleTypes.BUBBLE, posX + cosA, posY + y - (maxY * 0.4), posZ + sinA, 0.0D, 0.085D, 0.0D);
         y += dY;
       }
     }
@@ -172,7 +172,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     // update swirl attack
     if(isSwirling()) {
       swirlTime++;
-      this.setRotation(this.rotationYaw + 1, this.rotationPitch);
+      this.setRot(this.yRot + 1, this.xRot);
     } else if(swirlTime > 0) {
       swirlTime = 0;
     }
@@ -188,77 +188,77 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   // Misc //
   
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-     ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+     ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
      this.setState(SPAWNING);
      return data;
   }
   
   @Override
-  protected boolean isDespawnPeaceful() { return true; }
+  protected boolean shouldDespawnInPeaceful() { return true; }
   
   @Override
-  public boolean canChangeDimension() { return false; }
+  public boolean canChangeDimensions() { return false; }
   
   @Override
-  public boolean canDespawn(final double disToPlayer) { return false; }
+  public boolean removeWhenFarAway(final double disToPlayer) { return false; }
   
   @Override
-  protected boolean canBeRidden(Entity entityIn) { return false; }
+  protected boolean canRide(Entity entityIn) { return false; }
   
   @Override
   public boolean isInvulnerableTo(final DamageSource source) {
     return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER 
-        || source.getImmediateSource() instanceof AbstractArrowEntity || super.isInvulnerableTo(source);
+        || source.getDirectEntity() instanceof AbstractArrowEntity || super.isInvulnerableTo(source);
   }
   
   @Override
-  protected void updateAir(int air) { }
+  protected void handleAirSupply(int air) { }
   
   // Prevent entity collisions //
   
   @Override
-  public boolean canBePushed() { return false; }
+  public boolean isPushable() { return false; }
   
   @Override
-  protected void collideWithNearbyEntities() { }
+  protected void pushEntities() { }
   
   // Boss //
 
   @Override
-  public void addTrackingPlayer(ServerPlayerEntity player) {
-    super.addTrackingPlayer(player);
+  public void startSeenByPlayer(ServerPlayerEntity player) {
+    super.startSeenByPlayer(player);
     this.bossInfo.addPlayer(player);
   }
 
   @Override
-  public void removeTrackingPlayer(ServerPlayerEntity player) {
-    super.removeTrackingPlayer(player);
+  public void stopSeenByPlayer(ServerPlayerEntity player) {
+    super.stopSeenByPlayer(player);
     this.bossInfo.removePlayer(player);
   }
 
   // Sounds //
   
   @Override
-  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_HOSTILE_SPLASH; }
+  protected SoundEvent getAmbientSound() { return SoundEvents.HOSTILE_SPLASH; }
 
   @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_ELDER_GUARDIAN_HURT; }
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ELDER_GUARDIAN_HURT; }
 
   @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_ELDER_GUARDIAN_DEATH; }
+  protected SoundEvent getDeathSound() { return SoundEvents.ELDER_GUARDIAN_DEATH; }
 
   @Override
   protected float getSoundVolume() { return 1.0F; }
   
   @Override
-  protected float getSoundPitch() { return 0.6F + rand.nextFloat() * 0.2F; }
+  protected float getVoicePitch() { return 0.6F + random.nextFloat() * 0.2F; }
   
   // NBT //
   
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-     super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+     super.addAdditionalSaveData(compound);
      compound.putByte(KEY_STATE, this.getState());
      compound.putInt("SpawnTime", spawnTime);
      compound.putInt("SwirlTime", swirlTime);
@@ -266,8 +266,8 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-     super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+     super.readAdditionalSaveData(compound);
      this.setState(compound.getByte(KEY_STATE));
      spawnTime = compound.getInt("SpawnTime");
      swirlTime = compound.getInt("SwirlTime");
@@ -284,31 +284,31 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   
   @Override
   public void travel(final Vector3d vec) {
-    if (isServerWorld() && isInWater() && isSwimmingUpCalculated()) {
+    if (isEffectiveAi() && isInWater() && isSwimmingUpCalculated()) {
       moveRelative(0.01F, vec);
-      move(MoverType.SELF, getMotion());
-      setMotion(getMotion().scale(0.9D));
+      move(MoverType.SELF, getDeltaMovement());
+      setDeltaMovement(getDeltaMovement().scale(0.9D));
     } else {
       super.travel(vec);
     }
   }
 
   @Override
-  public boolean isPushedByWater() { return false; }
+  public boolean isPushedByFluid() { return false; }
 
   @Override
   public boolean isSwimmingUpCalculated() {
     if (this.swimmingUp) {
       return true;
     }
-    LivingEntity e = getAttackTarget();
+    LivingEntity e = getTarget();
     return e != null && e.isInWater();
   }
   
   // States //
   
   public void setState(final byte state) { 
-    this.getDataManager().set(STATE, Byte.valueOf(state));
+    this.getEntityData().set(STATE, Byte.valueOf(state));
     byte clientFlag = NONE_CLIENT;
     switch(state) {
     case NONE:
@@ -333,12 +333,12 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
       clientFlag = THROW_CLIENT;
       break;
     }
-    if(!world.isRemote()) {
-      world.setEntityState(this, clientFlag);
+    if(!level.isClientSide()) {
+      level.broadcastEntityEvent(this, clientFlag);
     }
   }
   
-  public byte getState() { return this.getDataManager().get(STATE).byteValue(); }
+  public byte getState() { return this.getEntityData().get(STATE).byteValue(); }
   
   public boolean isNoneState() { return getState() == NONE; }
   
@@ -355,7 +355,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   public float getThrowPercent() { return (float)throwTime / (float)THROW_TIME; }
   
   @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
+  public void handleEntityEvent(byte id) {
     switch(id) {
     case NONE:
       setState(NONE);
@@ -370,7 +370,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
       setState(THROWING);
       break;
     default:
-      super.handleStatusUpdate(id);
+      super.handleEntityEvent(id);
       break;
     }
   }
@@ -378,23 +378,23 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
   // Misc //
 
   public boolean isWithinDistance(final Entity e, final float dis) {
-    return this.getDistanceSq(e) < (dis * dis);
+    return this.distanceToSqr(e) < (dis * dis);
   }
   
   public List<Entity> getEntitiesInRange(final double range) {
-    return getEntityWorld().getEntitiesInAABBexcluding(this, getBoundingBox().grow(range, range / 2, range), EntityPredicates.CAN_AI_TARGET.and(e -> e.isInWaterOrBubbleColumn()));
+    return getCommandSenderWorld().getEntities(this, getBoundingBox().inflate(range, range / 2, range), EntityPredicates.NO_CREATIVE_OR_SPECTATOR.and(e -> e.isInWaterOrBubble()));
   }
   
   public void bubbles(final double posX, final double posY, final double posZ, final double radius, final int count) {
     final double motion = 0.08D;
     for (int i = 0; i < count; i++) {
-      world.addParticle(ParticleTypes.BUBBLE, 
-          posX + (world.rand.nextDouble() - 0.5D) * radius, 
+      level.addParticle(ParticleTypes.BUBBLE, 
+          posX + (level.random.nextDouble() - 0.5D) * radius, 
           posY, 
-          posZ + (world.rand.nextDouble() - 0.5D) * radius,
-          (world.rand.nextDouble() - 0.5D) * motion, 
+          posZ + (level.random.nextDouble() - 0.5D) * radius,
+          (level.random.nextDouble() - 0.5D) * motion, 
           0.5D,
-          (world.rand.nextDouble() - 0.5D) * motion);
+          (level.random.nextDouble() - 0.5D) * motion);
     }
   }
   
@@ -407,10 +407,10 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     }
     
     @Override
-    public boolean shouldExecute() {
-      BlockPos pos = CharybdisEntity.this.getPosition().up((int)Math.ceil(CharybdisEntity.this.getHeight()));
-      BlockState state = CharybdisEntity.this.world.getBlockState(pos);
-      return state.getBlock() == Blocks.WATER && super.shouldExecute();
+    public boolean canUse() {
+      BlockPos pos = CharybdisEntity.this.blockPosition().above((int)Math.ceil(CharybdisEntity.this.getBbHeight()));
+      BlockState state = CharybdisEntity.this.level.getBlockState(pos);
+      return state.getBlock() == Blocks.WATER && super.canUse();
     }
    
   }
@@ -422,25 +422,25 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     }
     
     @Override
-    public boolean shouldExecute() {
-      return super.shouldExecute() && (entity.isNoneState() || entity.isSwirling());
+    public boolean canUse() {
+      return super.canUse() && (entity.isNoneState() || entity.isSwirling());
     }
     
     @Override
-    public void startExecuting() {
-      super.startExecuting();
+    public void start() {
+      super.start();
       entity.setState(SWIRLING);
       entity.swirlTime = 1;
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
-      return super.shouldContinueExecuting() && entity.isSwirling();
+    public boolean canContinueToUse() {
+      return super.canContinueToUse() && entity.isSwirling();
     }
     
     @Override
-    public void resetTask() {
-      super.resetTask();
+    public void stop() {
+      super.stop();
       entity.setState(NONE);
       entity.swirlTime = 0;
     }
@@ -449,7 +449,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     protected void onCollideWith(Entity e) {
       // attack the entity and steal some health
       final float attack = (float)entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
-      if(e.attackEntityFrom(DamageSource.causeMobDamage(entity), attack)) {
+      if(e.hurt(DamageSource.mobAttack(entity), attack)) {
         entity.heal(Math.abs(attack * 0.25F));
       }
     }
@@ -477,7 +477,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
      * @param lRange the distance at which entities should be swirled
      **/
     public ThrowGoal(final int lDuration, final int lCooldown, final double lRange) {
-      this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+      this.setFlags(EnumSet.of(Goal.Flag.MOVE));
       entity = CharybdisEntity.this;
       duration = lDuration;
       cooldown = lCooldown;
@@ -486,7 +486,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     }
     
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
       if(cooldownTime > 0) {
         cooldownTime--;
       } else if(entity.isNoneState() || entity.isThrowing()) {
@@ -497,14 +497,14 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     }
     
     @Override
-    public void startExecuting() {
+    public void start() {
       entity.setState(THROWING);
       entity.throwTime = 1;
       progressTime = 1;
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
+    public boolean canContinueToUse() {
       return progressTime > 0 && entity.isThrowing();
     }
     
@@ -512,32 +512,32 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     public void tick() {
       // goal timer
       if(progressTime++ >= duration) {
-        final double widthSq = entity.getWidth() * entity.getWidth();
+        final double widthSq = entity.getBbWidth() * entity.getBbWidth();
         // move tracked entities
         trackedEntities = entity.getEntitiesInRange(range);
         for(final Entity target : trackedEntities) {
           // distance math
-          double dx = entity.getPosX() - target.getPositionVec().x;
-          double dz = entity.getPosZ() - target.getPositionVec().z;
+          double dx = entity.getX() - target.position().x;
+          double dz = entity.getZ() - target.position().z;
           final double horizDisSq = dx * dx + dz * dz;
           // throw the entity upward
           if(horizDisSq > widthSq) {
             // calculate the amount of motion to apply based on distance
             final double motion = 1.08D + 0.31D * (1.0D - (horizDisSq / (range * range)));
-            target.addVelocity(0, motion, 0);
-            target.velocityChanged = true;
+            target.push(0, motion, 0);
+            target.hurtMarked = true;
             // damage boats and other rideable entities
             if(target instanceof BoatEntity || !target.getPassengers().isEmpty()) {
-              target.attackEntityFrom(DamageSource.causeMobDamage(entity), 6.0F);
+              target.hurt(DamageSource.mobAttack(entity), 6.0F);
             }
           }
         }
-        resetTask();
+        stop();
       }
     }
     
     @Override
-    public void resetTask() {
+    public void stop() {
       entity.setState(NONE);
       entity.throwTime = 0;
       progressTime = 0;

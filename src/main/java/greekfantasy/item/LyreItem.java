@@ -14,6 +14,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import net.minecraft.item.Item.Properties;
+
 public class LyreItem extends InstrumentItem {
   
   protected SoundEvent sound;
@@ -24,8 +26,8 @@ public class LyreItem extends InstrumentItem {
   }
   
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    tooltip.add(new TranslationTextComponent(TOOLTIP).mergeStyle(TextFormatting.GRAY));
+  public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    tooltip.add(new TranslationTextComponent(TOOLTIP).withStyle(TextFormatting.GRAY));
   }
 
   // Instrument //

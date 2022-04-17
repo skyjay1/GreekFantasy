@@ -16,7 +16,7 @@ public class BabySpiderRenderer<T extends BabySpiderEntity> extends MobRenderer<
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
 }

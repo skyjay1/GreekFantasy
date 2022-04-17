@@ -23,21 +23,21 @@ public class AmbrosiaItem extends Item {
   public boolean hasContainerItem(ItemStack stack) { return true; }
   
   @Override
-  public ItemStack onItemUseFinish(ItemStack item, World world, LivingEntity entity) {
-    super.onItemUseFinish(item, world, entity);
+  public ItemStack finishUsingItem(ItemStack item, World world, LivingEntity entity) {
+    super.finishUsingItem(item, world, entity);
     if (entity instanceof ServerPlayerEntity) {
       ServerPlayerEntity serverPlayer = (ServerPlayerEntity)entity;
       CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, item);
-      serverPlayer.addStat(Stats.ITEM_USED.get(this));
+      serverPlayer.awardStat(Stats.ITEM_USED.get(this));
     }
     
     if (item.isEmpty())
       return this.getContainerItem(item); 
-    if (entity instanceof PlayerEntity && !((PlayerEntity)entity).abilities.isCreativeMode) {
+    if (entity instanceof PlayerEntity && !((PlayerEntity)entity).abilities.instabuild) {
       ItemStack containerStack = this.getContainerItem(item);
       PlayerEntity player = (PlayerEntity)entity;
-      if (!player.inventory.addItemStackToInventory(containerStack)) {
-        player.dropItem(containerStack, false);
+      if (!player.inventory.add(containerStack)) {
+        player.drop(containerStack, false);
       }
     } 
     

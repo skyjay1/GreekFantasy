@@ -8,6 +8,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
+import net.minecraft.item.Item.Properties;
+
 public class GreekFireItem extends Item {
 
   public GreekFireItem(final Properties properties) {
@@ -15,15 +17,15 @@ public class GreekFireItem extends Item {
   }
   
   @Override
-  public ActionResult<ItemStack> onItemRightClick(final World world, final PlayerEntity player, final Hand hand) {
-    ItemStack stack = player.getHeldItem(hand);
-    player.getCooldownTracker().setCooldown(this, 20);
+  public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
+    ItemStack stack = player.getItemInHand(hand);
+    player.getCooldowns().addCooldown(this, 20);
     // spawn a Greek Fire entity that will cause an explosion
-    if(!world.isRemote()) {
+    if(!world.isClientSide()) {
       GreekFireEntity dragonTooth = GreekFireEntity.create(world, player);
       // this unmapped method from ProjectileEntity does some math, then calls #shoot
-      dragonTooth.setDirectionAndMovement(player, player.rotationPitch, player.rotationYaw, 0.0F, 1.5F, 1.0F);
-      world.addEntity(dragonTooth);
+      dragonTooth.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 1.5F, 1.0F);
+      world.addFreshEntity(dragonTooth);
     }
     
     // shrink the item stack
@@ -31,6 +33,6 @@ public class GreekFireItem extends Item {
       stack.shrink(1);
     }
     
-    return ActionResult.func_233538_a_(stack, world.isRemote());
+    return ActionResult.sidedSuccess(stack, world.isClientSide());
   }
 }

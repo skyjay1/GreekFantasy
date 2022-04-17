@@ -26,18 +26,18 @@ public class SwineRenderer<T extends LivingEntity> extends LivingRenderer<T, Pig
   // This method is a copy of the super methods but without firing additional render events (to avoid recursion)
   @Override
   public void render(T entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-    matrixStackIn.push();
-    this.entityModel.swingProgress = this.getSwingProgress(entityIn, partialTicks);
+    matrixStackIn.pushPose();
+    this.model.attackTime = this.getAttackAnim(entityIn, partialTicks);
 
-    boolean shouldSit = entityIn.isPassenger() && (entityIn.getRidingEntity() != null && entityIn.getRidingEntity().shouldRiderSit());
-    this.entityModel.isSitting = shouldSit;
-    this.entityModel.isChild = entityIn.isChild();
-    float f = MathHelper.interpolateAngle(partialTicks, entityIn.prevRenderYawOffset, entityIn.renderYawOffset);
-    float f1 = MathHelper.interpolateAngle(partialTicks, entityIn.prevRotationYawHead, entityIn.rotationYawHead);
+    boolean shouldSit = entityIn.isPassenger() && (entityIn.getVehicle() != null && entityIn.getVehicle().shouldRiderSit());
+    this.model.riding = shouldSit;
+    this.model.young = entityIn.isBaby();
+    float f = MathHelper.rotLerp(partialTicks, entityIn.yBodyRotO, entityIn.yBodyRot);
+    float f1 = MathHelper.rotLerp(partialTicks, entityIn.yHeadRotO, entityIn.yHeadRot);
     float f2 = f1 - f;
-    if (shouldSit && entityIn.getRidingEntity() instanceof LivingEntity) {
-       LivingEntity livingentity = (LivingEntity)entityIn.getRidingEntity();
-       f = MathHelper.interpolateAngle(partialTicks, livingentity.prevRenderYawOffset, livingentity.renderYawOffset);
+    if (shouldSit && entityIn.getVehicle() instanceof LivingEntity) {
+       LivingEntity livingentity = (LivingEntity)entityIn.getVehicle();
+       f = MathHelper.rotLerp(partialTicks, livingentity.yBodyRotO, livingentity.yBodyRot);
        f2 = f1 - f;
        float f3 = MathHelper.wrapDegrees(f2);
        if (f3 < -85.0F) {
@@ -56,26 +56,26 @@ public class SwineRenderer<T extends LivingEntity> extends LivingRenderer<T, Pig
        f2 = f1 - f;
     }
 
-    float f6 = MathHelper.lerp(partialTicks, entityIn.prevRotationPitch, entityIn.rotationPitch);
+    float f6 = MathHelper.lerp(partialTicks, entityIn.xRotO, entityIn.xRot);
     if (entityIn.getPose() == Pose.SLEEPING) {
-       Direction direction = entityIn.getBedDirection();
+       Direction direction = entityIn.getBedOrientation();
        if (direction != null) {
           float f4 = entityIn.getEyeHeight(Pose.STANDING) - 0.1F;
-          matrixStackIn.translate((double)((float)(-direction.getXOffset()) * f4), 0.0D, (double)((float)(-direction.getZOffset()) * f4));
+          matrixStackIn.translate((double)((float)(-direction.getStepX()) * f4), 0.0D, (double)((float)(-direction.getStepZ()) * f4));
        }
     }
 
-    float f7 = this.handleRotationFloat(entityIn, partialTicks);
-    this.applyRotations(entityIn, matrixStackIn, f7, f, partialTicks);
+    float f7 = this.getBob(entityIn, partialTicks);
+    this.setupRotations(entityIn, matrixStackIn, f7, f, partialTicks);
     matrixStackIn.scale(-1.0F, -1.0F, 1.0F);
-    this.preRenderCallback(entityIn, matrixStackIn, partialTicks);
+    this.scale(entityIn, matrixStackIn, partialTicks);
     matrixStackIn.translate(0.0D, (double)-1.501F, 0.0D);
     float f8 = 0.0F;
     float f5 = 0.0F;
     if (!shouldSit && entityIn.isAlive()) {
-       f8 = MathHelper.lerp(partialTicks, entityIn.prevLimbSwingAmount, entityIn.limbSwingAmount);
-       f5 = entityIn.limbSwing - entityIn.limbSwingAmount * (1.0F - partialTicks);
-       if (entityIn.isChild()) {
+       f8 = MathHelper.lerp(partialTicks, entityIn.animationSpeedOld, entityIn.animationSpeed);
+       f5 = entityIn.animationPosition - entityIn.animationSpeed * (1.0F - partialTicks);
+       if (entityIn.isBaby()) {
           f5 *= 3.0F;
        }
 
@@ -84,17 +84,17 @@ public class SwineRenderer<T extends LivingEntity> extends LivingRenderer<T, Pig
        }
     }
 
-    this.entityModel.setLivingAnimations(entityIn, f5, f8, partialTicks);
-    this.entityModel.setRotationAngles(entityIn, f5, f8, f7, f2, f6);
+    this.model.prepareMobModel(entityIn, f5, f8, partialTicks);
+    this.model.setupAnim(entityIn, f5, f8, f7, f2, f6);
     Minecraft minecraft = Minecraft.getInstance();
-    boolean flag = this.isVisible(entityIn);
-    boolean flag1 = !flag && !entityIn.isInvisibleToPlayer(minecraft.player);
-    boolean flag2 = minecraft.isEntityGlowing(entityIn);
-    RenderType rendertype = this.func_230496_a_(entityIn, flag, flag1, flag2);
+    boolean flag = this.isBodyVisible(entityIn);
+    boolean flag1 = !flag && !entityIn.isInvisibleTo(minecraft.player);
+    boolean flag2 = minecraft.shouldEntityAppearGlowing(entityIn);
+    RenderType rendertype = this.getRenderType(entityIn, flag, flag1, flag2);
     if (rendertype != null) {
        IVertexBuilder ivertexbuilder = bufferIn.getBuffer(rendertype);
-       int i = getPackedOverlay(entityIn, this.getOverlayProgress(entityIn, partialTicks));
-       this.entityModel.render(matrixStackIn, ivertexbuilder, packedLightIn, i, 1.0F, 1.0F, 1.0F, flag1 ? 0.15F : 1.0F);
+       int i = getOverlayCoords(entityIn, this.getWhiteOverlayProgress(entityIn, partialTicks));
+       this.model.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, i, 1.0F, 1.0F, 1.0F, flag1 ? 0.15F : 1.0F);
     }
 
 //    if (!entityIn.isSpectator()) {
@@ -103,7 +103,7 @@ public class SwineRenderer<T extends LivingEntity> extends LivingRenderer<T, Pig
 //       }
 //    }
 
-    matrixStackIn.pop();
+    matrixStackIn.popPose();
     
     // render nameplate
 //    net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(entityIn, entityIn.getDisplayName(), this, matrixStackIn, bufferIn, packedLightIn, partialTicks);
@@ -114,7 +114,7 @@ public class SwineRenderer<T extends LivingEntity> extends LivingRenderer<T, Pig
  }
 
   @Override
-  public ResourceLocation getEntityTexture(T entity) {
+  public ResourceLocation getTextureLocation(T entity) {
      return PIG_TEXTURES;
   }
 }

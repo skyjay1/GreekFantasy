@@ -18,30 +18,30 @@ public class HealingRodItem extends Item {
   }
   
   @Override
-  public ActionResult<ItemStack> onItemRightClick(final World world, final PlayerEntity player, final Hand hand) {
-    ItemStack stack = player.getHeldItem(hand);
+  public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
+    ItemStack stack = player.getItemInHand(hand);
     // prevent the item from being used up all the way
-    if(stack.getMaxDamage() - stack.getDamage() <= 1) {
-      return ActionResult.resultFail(stack);
+    if(stack.getMaxDamage() - stack.getDamageValue() <= 1) {
+      return ActionResult.fail(stack);
     }
-    player.getCooldownTracker().setCooldown(this, GreekFantasy.CONFIG.getHealingRodCooldown());
+    player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.getHealingRodCooldown());
     // spawn a healing spell entity
-    if(!world.isRemote()) {
+    if(!world.isClientSide()) {
       HealingSpellEntity healingSpell = HealingSpellEntity.create(world, player);
-      world.addEntity(healingSpell);
+      world.addFreshEntity(healingSpell);
     }
     
     // damage the item stack
     if(!player.isCreative()) {
-      stack.damageItem(1, player, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+      stack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
     }
     
-    return ActionResult.func_233538_a_(stack, world.isRemote());
+    return ActionResult.sidedSuccess(stack, world.isClientSide());
   }
   
   @Override
-  public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-    return toRepair.getItem() == this && toRepair.getDamage() < toRepair.getMaxDamage() && isRepairItem(repair);
+  public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    return toRepair.getItem() == this && toRepair.getDamageValue() < toRepair.getMaxDamage() && isRepairItem(repair);
   }
   
   private boolean isRepairItem(final ItemStack repair) {

@@ -36,7 +36,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class GiantBoarEntity extends HoglinEntity {
   
-  private static final DataParameter<Boolean> SPAWNING = EntityDataManager.createKey(GiantBoarEntity.class, DataSerializers.BOOLEAN);
+  private static final DataParameter<Boolean> SPAWNING = EntityDataManager.defineId(GiantBoarEntity.class, DataSerializers.BOOLEAN);
   private static final String KEY_SPAWNING = "Spawning";
   private static final String KEY_SPAWN_TIME = "SpawnTime";
   // bytes to use in World#setEntityState
@@ -50,49 +50,49 @@ public class GiantBoarEntity extends HoglinEntity {
   
   public GiantBoarEntity(final EntityType<? extends GiantBoarEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.stepHeight = 1.0F;
-    this.experienceValue = 30;
+    this.maxUpStep = 1.0F;
+    this.xpReward = 30;
     
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MonsterEntity.func_234295_eP_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 80.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.31D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.82D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D)
-        .createMutableAttribute(Attributes.ARMOR, 6.0D);
+    return MonsterEntity.createMonsterAttributes()
+        .add(Attributes.MAX_HEALTH, 80.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.31D)
+        .add(Attributes.KNOCKBACK_RESISTANCE, 0.82D)
+        .add(Attributes.ATTACK_KNOCKBACK, 1.25D)
+        .add(Attributes.ATTACK_DAMAGE, 6.0D)
+        .add(Attributes.ARMOR, 6.0D);
   }
   
   public static GiantBoarEntity spawnGiantBoar(final ServerWorld world, final HoglinEntity hoglin) {
     GiantBoarEntity entity = GFRegistry.GIANT_BOAR_ENTITY.create(world);
-    entity.copyLocationAndAnglesFrom(hoglin);
-    entity.onInitialSpawn(world, world.getDifficultyForLocation(hoglin.getPosition()), SpawnReason.CONVERSION, (ILivingEntityData)null, (CompoundNBT)null);
+    entity.copyPosition(hoglin);
+    entity.finalizeSpawn(world, world.getCurrentDifficultyAt(hoglin.blockPosition()), SpawnReason.CONVERSION, (ILivingEntityData)null, (CompoundNBT)null);
     if(hoglin.hasCustomName()) {
       entity.setCustomName(hoglin.getCustomName());
       entity.setCustomNameVisible(hoglin.isCustomNameVisible());
     }
-    entity.enablePersistence();
-    entity.renderYawOffset = hoglin.renderYawOffset;
+    entity.setPersistenceRequired();
+    entity.yBodyRot = hoglin.yBodyRot;
     entity.setPortalCooldown();
-    world.addEntity(entity);
+    world.addFreshEntity(entity);
     entity.setSpawning(true);
     // remove the old hoglin
     hoglin.remove();
     // trigger spawn for nearby players
-    for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(25.0D))) {
+    for (ServerPlayerEntity player : world.getEntitiesOfClass(ServerPlayerEntity.class, entity.getBoundingBox().inflate(25.0D))) {
       CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
     }
     // play sound
-    world.playSound(entity.getPosX(), entity.getPosY(), entity.getPosZ(), SoundEvents.ENTITY_WITHER_SPAWN, entity.getSoundCategory(), 1.2F, 1.0F, false);
+    world.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
     return entity;
   }
   
   @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(SPAWNING, Boolean.valueOf(false));
+  public void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(SPAWNING, Boolean.valueOf(false));
   }
   
   @Override
@@ -102,21 +102,21 @@ public class GiantBoarEntity extends HoglinEntity {
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
 
     // boss info
     this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
     
     if(spawnTime > 0) {
       // reset attack target
-      this.setAttackTarget(null);
+      this.setTarget(null);
       // spawn particles
-      final double width = this.getWidth();
-      world.addParticle(ParticleTypes.ENTITY_EFFECT, 
-          this.getPosX() + (rand.nextDouble() - 0.5D) * width, 
-          this.getPosY() + rand.nextDouble(),
-          this.getPosZ() + (rand.nextDouble() - 0.5D) * width, 0.01D, 0.01D, 0.01D);
+      final double width = this.getBbWidth();
+      level.addParticle(ParticleTypes.ENTITY_EFFECT, 
+          this.getX() + (random.nextDouble() - 0.5D) * width, 
+          this.getY() + random.nextDouble(),
+          this.getZ() + (random.nextDouble() - 0.5D) * width, 0.01D, 0.01D, 0.01D);
       // reset spawning
       if(spawnTime++ >= MAX_SPAWN_TIME) {
         setSpawning(false);
@@ -127,7 +127,7 @@ public class GiantBoarEntity extends HoglinEntity {
   // Hoglin overrides //
 
   @Override
-  public boolean isBreedingItem(ItemStack stack) {
+  public boolean isFood(ItemStack stack) {
     return false;
   }
   
@@ -137,12 +137,12 @@ public class GiantBoarEntity extends HoglinEntity {
   }
   
   @Override
-  public boolean func_234365_eM_() { // canBeHunted
+  public boolean canBeHunted() { // canBeHunted
     return false;
   }
   
   @Override
-  public boolean func_234364_eK_() { // canBeZombified
+  public boolean isConverting() { // canBeZombified
     return false;
   }
   
@@ -152,40 +152,40 @@ public class GiantBoarEntity extends HoglinEntity {
   }
   
   @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-     ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-     this.func_234370_t_(true); // set IsImmuneToZombification
-     this.setChild(false);
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+     ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+     this.setImmuneToZombification(true); // set IsImmuneToZombification
+     this.setBaby(false);
      this.setSpawning(true);
      return data;
   }
   
   @Override
-  protected boolean isDespawnPeaceful() {
+  protected boolean shouldDespawnInPeaceful() {
     return true;
   }
   
   @Override
-  protected void onGrowingAdult() { }
+  protected void ageBoundaryReached() { }
   
   @Override
   protected float getSoundVolume() { return 1.5F; }
   
   @Override
-  protected float getSoundPitch() { return 0.62F + rand.nextFloat() * 0.24F; }
+  protected float getVoicePitch() { return 0.62F + random.nextFloat() * 0.24F; }
 
   // NBT methods //
   
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
     compound.putBoolean(KEY_SPAWNING, isSpawning());
     compound.putInt(KEY_SPAWN_TIME, spawnTime);
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
     setSpawning(compound.getBoolean(KEY_SPAWNING));
     spawnTime = compound.getInt(KEY_SPAWN_TIME);
   }
@@ -193,52 +193,52 @@ public class GiantBoarEntity extends HoglinEntity {
   // Prevent entity collisions //
   
   @Override
-  public boolean canBePushed() { return false; }
+  public boolean isPushable() { return false; }
   
   @Override
-  protected void collideWithNearbyEntities() { }
+  protected void pushEntities() { }
   
   // Boss //
   
   @Override
-  public boolean canChangeDimension() { return false; }
+  public boolean canChangeDimensions() { return false; }
   
   @Override
-  public boolean canDespawn(final double disToPlayer) { return false; }
+  public boolean removeWhenFarAway(final double disToPlayer) { return false; }
   
   @Override
-  protected boolean canBeRidden(Entity entityIn) { return false; }
+  protected boolean canRide(Entity entityIn) { return false; }
 
   @Override
-  public void addTrackingPlayer(ServerPlayerEntity player) {
-    super.addTrackingPlayer(player);
+  public void startSeenByPlayer(ServerPlayerEntity player) {
+    super.startSeenByPlayer(player);
     this.bossInfo.addPlayer(player);
   }
 
   @Override
-  public void removeTrackingPlayer(ServerPlayerEntity player) {
-    super.removeTrackingPlayer(player);
+  public void stopSeenByPlayer(ServerPlayerEntity player) {
+    super.stopSeenByPlayer(player);
     this.bossInfo.removePlayer(player);
   }
   
   // Spawning //
   
   @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
+  public void handleEntityEvent(byte id) {
     if(id == SPAWN_CLIENT) {
       setSpawning(true);
     } else {
-      super.handleStatusUpdate(id);
+      super.handleEntityEvent(id);
     }
   }
   
-  public boolean isSpawning() { return spawnTime > 0 || this.getDataManager().get(SPAWNING).booleanValue(); }
+  public boolean isSpawning() { return spawnTime > 0 || this.getEntityData().get(SPAWNING).booleanValue(); }
   
   public void setSpawning(final boolean spawning) {
     spawnTime = spawning ? 1 : 0;
-    this.getDataManager().set(SPAWNING, spawning);
-    if(spawning && !world.isRemote()) {
-      world.setEntityState(this, SPAWN_CLIENT);
+    this.getEntityData().set(SPAWNING, spawning);
+    if(spawning && !level.isClientSide()) {
+      level.broadcastEntityEvent(this, SPAWN_CLIENT);
     }
   }
   
@@ -255,13 +255,13 @@ public class GiantBoarEntity extends HoglinEntity {
   
   class SpawningGoal extends Goal {
     
-    public SpawningGoal() { setMutexFlags(EnumSet.allOf(Goal.Flag.class)); }
+    public SpawningGoal() { setFlags(EnumSet.allOf(Goal.Flag.class)); }
 
     @Override
-    public boolean shouldExecute() { return GiantBoarEntity.this.isSpawning(); }
+    public boolean canUse() { return GiantBoarEntity.this.isSpawning(); }
 
     @Override
-    public void tick() { GiantBoarEntity.this.getNavigator().clearPath(); }
+    public void tick() { GiantBoarEntity.this.getNavigation().stop(); }
   }
 
 }

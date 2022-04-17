@@ -36,7 +36,7 @@ public class PegasusRenderer<T extends PegasusEntity> extends AbstractHorseRende
   }
 
   @Override
-  public ResourceLocation getEntityTexture(T entity) {
+  public ResourceLocation getTextureLocation(T entity) {
     return BODY_TEXTURE_MAP.get(entity.getCoatColor());
   }
 }

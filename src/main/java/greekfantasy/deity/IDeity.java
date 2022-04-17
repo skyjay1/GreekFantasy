@@ -181,6 +181,6 @@ public interface IDeity {
     if(ForgeRegistries.BLOCKS.containsKey(getBase())) {
       b = ForgeRegistries.BLOCKS.getValue(getBase());
     }
-    return b.getDefaultState();
+    return b.defaultBlockState();
   }
 }

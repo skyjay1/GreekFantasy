@@ -30,15 +30,15 @@ public class EffectGoal<T extends LivingEntity> extends Goal {
   }
   
   @Override
-  public boolean shouldExecute() {
+  public boolean canUse() {
     return shouldApply.test(entity);
   }
   
   @Override
-  public void startExecuting() {
-    final int len = minLength != maxLength ? minLength + entity.getRNG().nextInt(maxLength - minLength + 1) : minLength;
-    final int amp = minAmplifier != maxAmplifier ? minAmplifier + entity.getRNG().nextInt(maxAmplifier - minAmplifier + 1) : minAmplifier;
-    entity.addPotionEffect(new EffectInstance(effect.get(), len, amp));
+  public void start() {
+    final int len = minLength != maxLength ? minLength + entity.getRandom().nextInt(maxLength - minLength + 1) : minLength;
+    final int amp = minAmplifier != maxAmplifier ? minAmplifier + entity.getRandom().nextInt(maxAmplifier - minAmplifier + 1) : minAmplifier;
+    entity.addEffect(new EffectInstance(effect.get(), len, amp));
   }
   
   /**
@@ -50,7 +50,7 @@ public class EffectGoal<T extends LivingEntity> extends Goal {
    */
   public static <E extends LivingEntity> Predicate<E> randomPredicate(final int chance) {
     final int c = Math.max(1, chance);
-    return e -> e.getRNG().nextInt(c) == 0;
+    return e -> e.getRandom().nextInt(c) == 0;
   }
   
   /**
@@ -61,6 +61,6 @@ public class EffectGoal<T extends LivingEntity> extends Goal {
    * @return a predicate that passes when the entity does not have the specified effect.
    */
   public static <E extends LivingEntity> Predicate<E> hasNoEffectPredicate(final Effect effect) {
-    return e -> e.getActivePotionEffect(effect) == null;
+    return e -> e.getEffect(effect) == null;
   }
 }

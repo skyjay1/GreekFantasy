@@ -33,7 +33,7 @@ public class DryadRenderer<T extends DryadEntity> extends BipedRenderer<T, Nymph
    * you call Render.bindEntityTexture.
    */
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE_MAP.get(entity.getVariant());
   }
 }

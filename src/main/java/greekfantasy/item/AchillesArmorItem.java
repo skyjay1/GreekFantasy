@@ -24,6 +24,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import net.minecraft.item.Item.Properties;
+
 public class AchillesArmorItem extends ArmorItem {
   protected static final IArmorMaterial MATERIAL = new AchillesArmorMaterial();
    
@@ -44,9 +46,9 @@ public class AchillesArmorItem extends ArmorItem {
   }
   
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    tooltip.add(new TranslationTextComponent("enchantment.minecraft.projectile_protection").appendString(" +" + IMMUNITY_BONUS).mergeStyle(TextFormatting.GRAY));
-    tooltip.add(new TranslationTextComponent("item.greekfantasy.achilles_armor.tooltip", ACHILLES_HEEL_BONUS).mergeStyle(TextFormatting.GRAY));
+  public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    tooltip.add(new TranslationTextComponent("enchantment.minecraft.projectile_protection").append(" +" + IMMUNITY_BONUS).withStyle(TextFormatting.GRAY));
+    tooltip.add(new TranslationTextComponent("item.greekfantasy.achilles_armor.tooltip", ACHILLES_HEEL_BONUS).withStyle(TextFormatting.GRAY));
   }
 
   /**
@@ -93,11 +95,11 @@ public class AchillesArmorItem extends ArmorItem {
     if (MODEL == null) {
       MODEL = new greekfantasy.client.render.model.armor.AchillesHelmetModel(1.0F);
     }
-    MODEL.isChild = _default.isChild;
-    MODEL.isSneak = _default.isSneak;
-    MODEL.isSitting = _default.isSitting;
-    MODEL.setRotationAngles(entityLiving, entityLiving.limbSwing, entityLiving.limbSwingAmount, (float) entityLiving.ticksExisted,
-        entityLiving.rotationYawHead, entityLiving.rotationPitch);
+    MODEL.young = _default.young;
+    MODEL.crouching = _default.crouching;
+    MODEL.riding = _default.riding;
+    MODEL.setupAnim(entityLiving, entityLiving.animationPosition, entityLiving.animationSpeed, (float) entityLiving.tickCount,
+        entityLiving.yHeadRot, entityLiving.xRot);
     return (A) MODEL;
   }
   
@@ -112,19 +114,19 @@ public class AchillesArmorItem extends ArmorItem {
   public static class AchillesArmorMaterial implements IArmorMaterial {
     private static final String NAME = "achilles";
     @Override
-    public int getDamageReductionAmount(EquipmentSlotType slot) { return ArmorMaterial.IRON.getDamageReductionAmount(slot); }
+    public int getDefenseForSlot(EquipmentSlotType slot) { return ArmorMaterial.IRON.getDefenseForSlot(slot); }
     @Override
-    public int getDurability(EquipmentSlotType slot) { return ArmorMaterial.IRON.getDurability(slot); }
+    public int getDurabilityForSlot(EquipmentSlotType slot) { return ArmorMaterial.IRON.getDurabilityForSlot(slot); }
     @Override
-    public int getEnchantability() { return ArmorMaterial.GOLD.getEnchantability(); }
+    public int getEnchantmentValue() { return ArmorMaterial.GOLD.getEnchantmentValue(); }
     @Override
     public float getKnockbackResistance() { return ArmorMaterial.NETHERITE.getKnockbackResistance(); }
     @Override
     public String getName() { return NAME; }
     @Override
-    public Ingredient getRepairMaterial() { return Ingredient.fromItems(GFRegistry.FIERY_GEAR); }
+    public Ingredient getRepairIngredient() { return Ingredient.of(GFRegistry.FIERY_GEAR); }
     @Override
-    public SoundEvent getSoundEvent() { return SoundEvents.ITEM_ARMOR_EQUIP_GOLD; }
+    public SoundEvent getEquipSound() { return SoundEvents.ARMOR_EQUIP_GOLD; }
     @Override
     public float getToughness() { return ArmorMaterial.NETHERITE.getToughness() + 1.0F; }
   }

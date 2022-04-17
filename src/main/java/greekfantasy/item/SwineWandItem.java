@@ -19,26 +19,26 @@ public class SwineWandItem extends Item {
   }
   
   @Override
-  public ActionResult<ItemStack> onItemRightClick(final World world, final PlayerEntity player, final Hand hand) {
-    ItemStack stack = player.getHeldItem(hand);
-    player.getCooldownTracker().setCooldown(this, GreekFantasy.CONFIG.getSwineWandCooldown());
+  public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
+    ItemStack stack = player.getItemInHand(hand);
+    player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.getSwineWandCooldown());
     // spawn a healing spell entity
-    if(!world.isRemote()) {
+    if(!world.isClientSide()) {
       SwineSpellEntity healingSpell = SwineSpellEntity.create(world, player);
-      world.addEntity(healingSpell);
+      world.addFreshEntity(healingSpell);
     }
-    player.playSound(SoundEvents.ENTITY_ILLUSIONER_CAST_SPELL, 0.5F, 1.0F);
+    player.playSound(SoundEvents.ILLUSIONER_CAST_SPELL, 0.5F, 1.0F);
     
     // damage the item stack
     if(!player.isCreative()) {
-      stack.damageItem(1, player, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+      stack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
     }
     
-    return ActionResult.func_233538_a_(stack, world.isRemote());
+    return ActionResult.sidedSuccess(stack, world.isClientSide());
   }
   
   @Override
-  public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+  public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
     return repair.getItem() == GFRegistry.BOAR_EAR;
   }
 }

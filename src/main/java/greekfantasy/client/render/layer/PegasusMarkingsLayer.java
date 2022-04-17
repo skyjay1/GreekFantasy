@@ -34,16 +34,16 @@ public class PegasusMarkingsLayer<T extends PegasusEntity> extends LayerRenderer
   @Override
   public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entity,
       float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-    final ResourceLocation texture = getEntityTexture(entity);
+    final ResourceLocation texture = getTextureLocation(entity);
     if(texture != null && !entity.isInvisible()) {
-      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(texture));
-      getEntityModel().render(matrixStackIn, vertexBuilder, packedLightIn, LivingRenderer.getPackedOverlay(entity, 0.0F), 1.0F, 1.0F, 1.0F, 1.0F);
+      IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.entityTranslucent(texture));
+      getParentModel().renderToBuffer(matrixStackIn, vertexBuilder, packedLightIn, LivingRenderer.getOverlayCoords(entity, 0.0F), 1.0F, 1.0F, 1.0F, 1.0F);
 //      renderCopyCutoutModel(this.getEntityModel(), this.getEntityModel(), texture, matrixStackIn, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTick, 1.0F, 1.0F, 1.0F);
     }
   }
   
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return COAT_TEXTURES.get(entity.getCoatType());
   }
 }

@@ -27,7 +27,7 @@ public class DeityContainer extends Container {
   }
 
   @Override
-  public boolean canInteractWith(final PlayerEntity playerIn) {
+  public boolean stillValid(final PlayerEntity playerIn) {
     return true;
   }
   

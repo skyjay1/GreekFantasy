@@ -20,9 +20,9 @@ public class GiantBoarModel<T extends GiantBoarEntity> extends BoarModel<T> {
   public void setColorAlpha(float alpha) { this.colorAlpha = alpha; }
   
   @Override
-  public void render(final MatrixStack matrixStackIn, final IVertexBuilder vertexBuilder, final int packedLightIn, final int packedOverlayIn, final float redIn,
+  public void renderToBuffer(final MatrixStack matrixStackIn, final IVertexBuilder vertexBuilder, final int packedLightIn, final int packedOverlayIn, final float redIn,
       final float greenIn, final float blueIn, final float alphaIn) {
     // render with custom alpha value
-    super.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, colorAlpha);
+    super.renderToBuffer(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, colorAlpha);
   }
 }

@@ -21,11 +21,11 @@ public class GoldenRamRenderer<T extends GoldenRamEntity> extends MobRenderer<T,
   }
   
   @Override
-  protected void preRenderCallback(final T entity, MatrixStack matrix, float f) {
+  protected void scale(final T entity, MatrixStack matrix, float f) {
     matrix.scale(SCALE, SCALE, SCALE);
   }
 
   @Override
-  public ResourceLocation getEntityTexture(T entity) { return TEXTURE; }
+  public ResourceLocation getTextureLocation(T entity) { return TEXTURE; }
 }
 

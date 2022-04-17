@@ -52,23 +52,23 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
       int packedLightIn, int packedOverlayIn) {
     // get the right TileEntity (always use the lower one)
     final Minecraft mc = Minecraft.getInstance();
-    final boolean gui = mc.currentScreen instanceof StatueScreen;
+    final boolean gui = mc.screen instanceof StatueScreen;
     final boolean upper = tileEntityIn.isUpper();
     StatueTileEntity te = tileEntityIn;
     if(upper) {
-      final TileEntity tmp = tileEntityIn.getWorld().getTileEntity(tileEntityIn.getPos().down());
+      final TileEntity tmp = tileEntityIn.getLevel().getBlockEntity(tileEntityIn.getBlockPos().below());
       if(tmp instanceof StatueTileEntity) {
         te = (StatueTileEntity)tmp;
       }
     }
     // determine texture, rotations, and style
-    final float rotation = te.getBlockState().get(StatueBlock.HORIZONTAL_FACING).getHorizontalAngle();
+    final float rotation = te.getBlockState().getValue(StatueBlock.FACING).toYRot();
     final boolean isFemaleModel = te.isStatueFemale();
     final float translateY = upper ? 0.95F : 1.95F;
     final StatueMaterial material = te.getStatueMaterial();
     final ResourceLocation textureStone = te.hasDeity() ? te.getDeity().getOverlay() : material.getStoneTexture();
     final ResourceLocation textureOverlay = getOverlayTexture(te);
-    matrixStackIn.push();
+    matrixStackIn.pushPose();
     // render nameplate
     if(!gui && canRenderName(tileEntityIn)) {
       renderName(tileEntityIn, matrixStackIn, bufferIn, packedLightIn);
@@ -76,26 +76,26 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     // render base
     if(!upper && !gui) {
       final BlockState base = te.hasDeity() ? te.getDeity().getBaseBlock() : material.getBase();
-      Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(base, 
+      Minecraft.getInstance().getBlockRenderer().renderBlock(base, 
           matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, EmptyModelData.INSTANCE);
     }
     // prepare to render player texture
     matrixStackIn.translate(0.5D, (double)translateY, 0.5D);
-    matrixStackIn.rotate(Vector3f.XP.rotationDegrees(180.0F));
+    matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(180.0F));
     if(!gui) {
-      matrixStackIn.rotate(Vector3f.YP.rotationDegrees(rotation));
+      matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(rotation));
     }
     // set rotation angles
     model.setRotationAngles(te, partialTicks);
     this.model.rotateAroundBody(te.getRotations(ModelPart.BODY), matrixStackIn, partialTicks);
-    IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureOverlay));  
+    IVertexBuilder vertexBuilder = bufferIn.getBuffer(RenderType.entityCutoutNoCull(textureOverlay));  
     if(material.hasSkin()) {
       // render player texture
       this.model.render(te, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, 1.0F, 1.0F, 1.0F, 1.0F, upper, isFemaleModel);
     }
     // prepare to render stone texture
     if(textureStone != null) {
-      vertexBuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(textureStone));
+      vertexBuilder = bufferIn.getBuffer(RenderType.entityTranslucent(textureStone));
       float alpha = 1.0F;
       if(material.hasSkin()) {
         alpha = 0.3F;
@@ -115,7 +115,7 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     }
     // render held items
     renderHeldItems(te, partialTicks, matrixStackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, upper);
-    matrixStackIn.pop();
+    matrixStackIn.popPose();
   }
   
   @Override
@@ -133,9 +133,9 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     }
     // the name exists, render here
     if(name != null) {
-      matrixStackIn.push();
+      matrixStackIn.pushPose();
       IHasName.renderNameplate(entityIn, name, 1.9F, matrixStackIn, bufferIn, packedLightIn);
-      matrixStackIn.pop();
+      matrixStackIn.popPose();
     }
   }
 
@@ -149,9 +149,9 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
     final boolean isFemale = te.isStatueFemale();
     if(gameProfile != null) {
       Minecraft minecraft = Minecraft.getInstance();
-      Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(gameProfile);
+      Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().getInsecureSkinInformation(gameProfile);
       if(map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
-        return minecraft.getSkinManager().loadSkin(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
+        return minecraft.getSkinManager().registerTexture(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
       }
     }
     // return default texture
@@ -164,25 +164,25 @@ public class StatueTileEntityRenderer extends TileEntityRenderer<StatueTileEntit
       ItemStack itemstackRight = tileEntityIn.getItem(HandSide.RIGHT);
       ItemStack itemstackLeft = tileEntityIn.getItem(HandSide.LEFT);
       if (!itemstackLeft.isEmpty() || !itemstackRight.isEmpty()) {
-         matrixStackIn.push();
+         matrixStackIn.pushPose();
          this.renderItem(tileEntityIn, itemstackRight, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, HandSide.RIGHT, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
          this.renderItem(tileEntityIn, itemstackLeft, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, HandSide.LEFT, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
-         matrixStackIn.pop();
+         matrixStackIn.popPose();
       }
     }
   }
 
   protected void renderItem(StatueTileEntity tileEntity, ItemStack stack, ItemCameraTransforms.TransformType transform,
       HandSide handSide, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, int packedOverlayIn) {
-    matrixStackIn.push();
-    this.model.translateHand(handSide, matrixStackIn);
-    matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-90.0F));
-    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
+    matrixStackIn.pushPose();
+    this.model.translateToHand(handSide, matrixStackIn);
+    matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
+    matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
     boolean flag = handSide == HandSide.LEFT;
     matrixStackIn.translate((double) ((float) (flag ? -1 : 1) / 16.0F), 0.125D, -0.625D);
-    Minecraft.getInstance().getItemRenderer().renderItem(null, stack, transform, flag, matrixStackIn, bufferIn,
-        tileEntity.getWorld(), packedLightIn, packedOverlayIn);
-    matrixStackIn.pop();
+    Minecraft.getInstance().getItemRenderer().renderStatic(null, stack, transform, flag, matrixStackIn, bufferIn,
+        tileEntity.getLevel(), packedLightIn, packedOverlayIn);
+    matrixStackIn.popPose();
   }
 
 }

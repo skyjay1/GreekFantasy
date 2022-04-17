@@ -42,7 +42,7 @@ import net.minecraftforge.common.ForgeMod;
 
 public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal {
   
-  private static final DataParameter<Integer> DATA_COLOR = EntityDataManager.createKey(PegasusEntity.class, DataSerializers.VARINT);
+  private static final DataParameter<Integer> DATA_COLOR = EntityDataManager.defineId(PegasusEntity.class, DataSerializers.INT);
   private static final String KEY_COLOR = "Color";
   
   private static final int FLYING_INTERVAL = 8;
@@ -62,16 +62,16 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return AbstractHorseEntity.func_234237_fg_()
-        .createMutableAttribute(Attributes.ARMOR, 1.0D)
-        .createMutableAttribute(ForgeMod.ENTITY_GRAVITY.get(), 0.04D)
-        .createMutableAttribute(Attributes.FLYING_SPEED, 1.32F);
+    return AbstractHorseEntity.createBaseHorseAttributes()
+        .add(Attributes.ARMOR, 1.0D)
+        .add(ForgeMod.ENTITY_GRAVITY.get(), 0.04D)
+        .add(Attributes.FLYING_SPEED, 1.32F);
   }
   
   @Override
-  protected void registerData() {
-    super.registerData();
-    this.getDataManager().register(DATA_COLOR, 0);
+  protected void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(DATA_COLOR, 0);
   }
   
   @Override
@@ -81,67 +81,67 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
   }
 
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     
     // update flying
     if(flyingTime > 0) {
       flyingTime--;
     }
-    if(!isBeingRidden()) {
+    if(!isVehicle()) {
       isFlying = false;
     }
     // setting this to true here allows smooth client-side motion
     this.onGround = true;
     // fall slowly when being ridden
-    if(isBeingRidden() && this.getMotion().y < -0.1D) {
-      this.setMotion(this.getMotion().mul(1.0, 0.95D, 1.0));
+    if(isVehicle() && this.getDeltaMovement().y < -0.1D) {
+      this.setDeltaMovement(this.getDeltaMovement().multiply(1.0, 0.95D, 1.0));
     }
     
     // take damage when too high
-    if(this.getPositionVec().y > 300) {
-      this.attackEntityFrom(DamageSource.OUT_OF_WORLD, 2.0F);
+    if(this.position().y > 300) {
+      this.hurt(DamageSource.OUT_OF_WORLD, 2.0F);
     }
   }
   
   // CALLED FROM ON INITIAL SPAWN //
   
   @Override
-  protected void func_230273_eI_() {
-    this.getAttribute(Attributes.MAX_HEALTH).setBaseValue((double)this.getModifiedMaxHealth());
-    this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.getModifiedMovementSpeed());
-    this.getAttribute(Attributes.HORSE_JUMP_STRENGTH).setBaseValue(this.getModifiedJumpStrength());
+  protected void randomizeAttributes() {
+    this.getAttribute(Attributes.MAX_HEALTH).setBaseValue((double)this.generateRandomMaxHealth());
+    this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.generateRandomSpeed());
+    this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(this.generateRandomJumpStrength());
     this.getAttribute(Attributes.FLYING_SPEED).setBaseValue(this.getAttributeValue(Attributes.MOVEMENT_SPEED) + 1.15D);
   }
   
   @Override
-  protected float getModifiedMaxHealth() {
-    return super.getModifiedMaxHealth() + 10.0F;
+  protected float generateRandomMaxHealth() {
+    return super.generateRandomMaxHealth() + 10.0F;
   }
 
   @Override
-  protected double getModifiedJumpStrength() {
-    return super.getModifiedJumpStrength() + 0.20F;
+  protected double generateRandomJumpStrength() {
+    return super.generateRandomJumpStrength() + 0.20F;
   }
 
   @Override
-  protected double getModifiedMovementSpeed() {
-    return super.getModifiedMovementSpeed();
+  protected double generateRandomSpeed() {
+    return super.generateRandomSpeed();
   }
   
   @Nullable
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
       @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
     CoatColors color;
     if (spawnDataIn instanceof HorseEntity.HorseData) {
        color = ((HorseEntity.HorseData)spawnDataIn).variant;
     } else {
-       color = Util.getRandomObject(CoatColors.values(), this.rand);
+       color = Util.getRandom(CoatColors.values(), this.random);
        spawnDataIn = new HorseEntity.HorseData(color);
     }
     // set color and type
-    this.setCoatColor(color, Util.getRandomObject(CoatTypes.values(), this.rand));
-    return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    this.setCoatColor(color, Util.getRandom(CoatTypes.values(), this.random));
+    return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
   }
   
   // FLYING //
@@ -152,7 +152,7 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
   }
 
   @OnlyIn(Dist.CLIENT)
-  public void setJumpPower(int jumpPowerIn) {
+  public void onPlayerJump(int jumpPowerIn) {
     // Do nothing
   }
   
@@ -160,9 +160,9 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
   public void flyingJump() {
     if(flyingTime <= 0 && canJump()) {
       // move upward
-      float jumpMotion = (float) this.getHorseJumpStrength() + 0.82F;
-      this.addVelocity(0, jumpMotion, 0);
-      this.markVelocityChanged();
+      float jumpMotion = (float) this.getCustomJump() + 0.82F;
+      this.push(0, jumpMotion, 0);
+      this.markHurt();
       this.onGround = true;
       // reset flying time
       flyingTime = FLYING_INTERVAL;
@@ -174,12 +174,12 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
   public void handleStartJump(int jumpPower) {
     //super.handleStartJump(jumpPower);
     if(!this.onGround) {
-      this.setRearing(false);
+      this.setStanding(false);
     }
   }
   
   @Override
-  public boolean isHorseJumping() { return false; }
+  public boolean isJumping() { return false; }
   
   @Override
   protected int calculateFallDamage(float distance, float damageMultiplier) {
@@ -194,91 +194,91 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
   // MISC //
   
   @Override
-  public double getMountedYOffset() { return super.getMountedYOffset() - 0.385D; }
+  public double getPassengersRidingOffset() { return super.getPassengersRidingOffset() - 0.385D; }
   
   @Override
   protected void playGallopSound(SoundType sound) {
     super.playGallopSound(sound);
-    if (this.rand.nextInt(10) == 0) {
-      this.playSound(SoundEvents.ENTITY_HORSE_BREATHE, sound.getVolume() * 0.6F, sound.getPitch());
+    if (this.random.nextInt(10) == 0) {
+      this.playSound(SoundEvents.HORSE_BREATHE, sound.getVolume() * 0.6F, sound.getPitch());
     }
   }
   
   @Override
   protected SoundEvent getAmbientSound() {
     super.getAmbientSound();
-    return SoundEvents.ENTITY_HORSE_AMBIENT;
+    return SoundEvents.HORSE_AMBIENT;
   }
 
   @Override
   protected SoundEvent getDeathSound() {
     super.getDeathSound();
-    return SoundEvents.ENTITY_HORSE_DEATH;
+    return SoundEvents.HORSE_DEATH;
   }
 
   @Override
-  protected SoundEvent func_230274_fe_() {
-    return SoundEvents.ENTITY_HORSE_EAT;
+  protected SoundEvent getEatingSound() {
+    return SoundEvents.HORSE_EAT;
   }
 
   @Override
   protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
     super.getHurtSound(damageSourceIn);
-    return SoundEvents.ENTITY_HORSE_HURT;
+    return SoundEvents.HORSE_HURT;
   }
 
   @Override
   protected SoundEvent getAngrySound() {
     super.getAngrySound();
-    return SoundEvents.ENTITY_HORSE_ANGRY;
+    return SoundEvents.HORSE_ANGRY;
   }
 
   @Override
-  public ActionResultType getEntityInteractionResult(PlayerEntity player, Hand hand) {
-    ItemStack itemstack = player.getHeldItem(hand);
-    if (!this.isChild()) {
-      if (this.isTame() && player.isSecondaryUseActive()) {
-        this.openGUI(player);
-        return ActionResultType.func_233537_a_(this.world.isRemote());
+  public ActionResultType mobInteract(PlayerEntity player, Hand hand) {
+    ItemStack itemstack = player.getItemInHand(hand);
+    if (!this.isBaby()) {
+      if (this.isTamed() && player.isSecondaryUseActive()) {
+        this.openInventory(player);
+        return ActionResultType.sidedSuccess(this.level.isClientSide());
       }
 
-      if (this.isBeingRidden()) {
-        return super.getEntityInteractionResult(player, hand);
+      if (this.isVehicle()) {
+        return super.mobInteract(player, hand);
       }
       
-      if((itemstack.isEmpty() && this.isTame()) || itemstack.getItem() == GFRegistry.GOLDEN_BRIDLE) {
-        this.mountTo(player);
-        return ActionResultType.func_233537_a_(this.world.isRemote());
+      if((itemstack.isEmpty() && this.isTamed()) || itemstack.getItem() == GFRegistry.GOLDEN_BRIDLE) {
+        this.doPlayerRide(player);
+        return ActionResultType.sidedSuccess(this.level.isClientSide());
       }
     }
 
     if (!itemstack.isEmpty()) {
-      if (this.isBreedingItem(itemstack)) {
-        return this.func_241395_b_(player, itemstack);
+      if (this.isFood(itemstack)) {
+        return this.fedFood(player, itemstack);
       }
 
-      ActionResultType actionresulttype = itemstack.interactWithEntity(player, this, hand);
-      if (actionresulttype.isSuccessOrConsume()) {
+      ActionResultType actionresulttype = itemstack.interactLivingEntity(player, this, hand);
+      if (actionresulttype.consumesAction()) {
         return actionresulttype;
       }
 
-      if (!this.isTame()) {
+      if (!this.isTamed()) {
         this.makeMad();
-        return ActionResultType.func_233537_a_(this.world.isRemote());
+        return ActionResultType.sidedSuccess(this.level.isClientSide());
       }
 
-      boolean flag = !this.isChild() && !this.isHorseSaddled() && itemstack.getItem() == Items.SADDLE;
+      boolean flag = !this.isBaby() && !this.isSaddled() && itemstack.getItem() == Items.SADDLE;
       if (this.isArmor(itemstack) || flag) {
-        this.openGUI(player);
-        return ActionResultType.func_233537_a_(this.world.isRemote());
+        this.openInventory(player);
+        return ActionResultType.sidedSuccess(this.level.isClientSide());
       }
     }
 
 //    if (this.isChild()) {
-      return super.getEntityInteractionResult(player, hand);
+      return super.mobInteract(player, hand);
 //    } else {
 //      this.mountTo(player);
-//      return ActionResultType.func_233537_a_(this.world.isRemote());
+//      return ActionResultType.sidedSuccess(this.world.isRemote());
 //    }
   }
 
@@ -290,37 +290,37 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
   // Mate 
 
   @Override
-  public boolean canMateWith(final AnimalEntity otherAnimal) {
+  public boolean canMate(final AnimalEntity otherAnimal) {
     if (otherAnimal == this) {
       return false;
     } else {
-      return otherAnimal instanceof PegasusEntity && this.canMate() && ((PegasusEntity)otherAnimal).canMate();
+      return otherAnimal instanceof PegasusEntity && this.canParent() && ((PegasusEntity)otherAnimal).canParent();
     }
   }
   
   @Override
-  public AgeableEntity createChild(ServerWorld world, AgeableEntity mate) {
+  public AgeableEntity getBreedOffspring(ServerWorld world, AgeableEntity mate) {
      PegasusEntity child;
      PegasusEntity pegasusMate = (PegasusEntity) mate;
      child = GFRegistry.PEGASUS_ENTITY.create(world);
-     int i = this.rand.nextInt(9);
+     int i = this.random.nextInt(9);
      CoatColors coatcolors;
      if (i < 4) {
        coatcolors = this.getCoatColor();
      } else if (i < 8) {
        coatcolors = pegasusMate.getCoatColor();
      } else {
-       coatcolors = Util.getRandomObject(CoatColors.values(), this.rand);
+       coatcolors = Util.getRandom(CoatColors.values(), this.random);
      }
 
-     int j = this.rand.nextInt(5);
+     int j = this.random.nextInt(5);
      CoatTypes coattypes;
      if (j < 2) {
        coattypes = this.getCoatType();
      } else if (j < 4) {
        coattypes = pegasusMate.getCoatType();
      } else {
-       coattypes = Util.getRandomObject(CoatTypes.values(), this.rand);
+       coattypes = Util.getRandom(CoatTypes.values(), this.random);
      }
 
      child.setCoatColor(coatcolors, coattypes);
@@ -331,27 +331,27 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
   
   // Color
   
-  public void setPackedCoatColor(int packedColorsTypes) { this.dataManager.set(DATA_COLOR, packedColorsTypes); }
+  public void setPackedCoatColor(int packedColorsTypes) { this.entityData.set(DATA_COLOR, packedColorsTypes); }
 
-  public int getPackedCoatColor() { return this.dataManager.get(DATA_COLOR); }
+  public int getPackedCoatColor() { return this.entityData.get(DATA_COLOR); }
 
   public void setCoatColor(CoatColors color, CoatTypes type) { this.setPackedCoatColor(color.getId() & 255 | type.getId() << 8 & '\uff00'); }
 
-  public CoatColors getCoatColor() { return CoatColors.func_234254_a_(this.getPackedCoatColor() & 255); }
+  public CoatColors getCoatColor() { return CoatColors.byId(this.getPackedCoatColor() & 255); }
 
-  public CoatTypes getCoatType() { return CoatTypes.func_234248_a_((this.getPackedCoatColor() & '\uff00') >> 8); }
+  public CoatTypes getCoatType() { return CoatTypes.byId((this.getPackedCoatColor() & '\uff00') >> 8); }
   
   // NBT
   
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
     compound.putInt(KEY_COLOR, this.getPackedCoatColor());
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
     this.setPackedCoatColor(compound.getInt(KEY_COLOR));
   }
 
@@ -359,15 +359,15 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
 
     public AvoidPlayersGoal(final PegasusEntity pegasus) {
       super(pegasus, PlayerEntity.class, 16.0F, 1.1D, 0.95D, (entity) -> {
-        return !entity.isDiscrete() && EntityPredicates.CAN_AI_TARGET.test(entity) && !pegasus.isBeingRidden()
-            && (!pegasus.isTame() || pegasus.getOwnerUniqueId() == null || !entity.getUniqueID().equals(pegasus.getOwnerUniqueId()));
+        return !entity.isDiscrete() && EntityPredicates.NO_CREATIVE_OR_SPECTATOR.test(entity) && !pegasus.isVehicle()
+            && (!pegasus.isTamed() || pegasus.getOwnerUUID() == null || !entity.getUUID().equals(pegasus.getOwnerUUID()));
       });
     }
     
     @Override
-    public boolean shouldExecute() {
-      this.navigation = this.entity.getNavigator();
-      return super.shouldExecute();
+    public boolean canUse() {
+      this.pathNav = this.mob.getNavigation();
+      return super.canUse();
     }    
   }  
 }

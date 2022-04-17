@@ -37,40 +37,40 @@ public class UnicornEntity extends AbstractHorseEntity {
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return AbstractHorseEntity.func_234237_fg_().createMutableAttribute(Attributes.ARMOR, 1.0D);
+    return AbstractHorseEntity.createBaseHorseAttributes().add(Attributes.ARMOR, 1.0D);
   }
   
   @Override
   public void registerGoals() {
     super.registerGoals();
     this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, PlayerEntity.class, 16.0F, 1.1D, 0.95D, (entity) -> {
-      return !entity.isDiscrete() && EntityPredicates.CAN_AI_TARGET.test(entity) && !this.isBeingRidden() &&
-          (!this.isTame() || this.getOwnerUniqueId() == null || !entity.getUniqueID().equals(this.getOwnerUniqueId()));
+      return !entity.isDiscrete() && EntityPredicates.NO_CREATIVE_OR_SPECTATOR.test(entity) && !this.isVehicle() &&
+          (!this.isTamed() || this.getOwnerUUID() == null || !entity.getUUID().equals(this.getOwnerUUID()));
    }));
   }
   
   // CALLED FROM ON INITIAL SPAWN //
   
   @Override
-  protected void func_230273_eI_() {
-    this.getAttribute(Attributes.MAX_HEALTH).setBaseValue((double)this.getModifiedMaxHealth());
-    this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.getModifiedMovementSpeed());
-    this.getAttribute(Attributes.HORSE_JUMP_STRENGTH).setBaseValue(this.getModifiedJumpStrength());
+  protected void randomizeAttributes() {
+    this.getAttribute(Attributes.MAX_HEALTH).setBaseValue((double)this.generateRandomMaxHealth());
+    this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.generateRandomSpeed());
+    this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(this.generateRandomJumpStrength());
   }
   
   @Override
-  protected float getModifiedMaxHealth() {
-    return super.getModifiedMaxHealth() + 28.0F;
+  protected float generateRandomMaxHealth() {
+    return super.generateRandomMaxHealth() + 28.0F;
   }
 
   @Override
-  protected double getModifiedJumpStrength() {
-    return super.getModifiedJumpStrength() + 0.22F;
+  protected double generateRandomJumpStrength() {
+    return super.generateRandomJumpStrength() + 0.22F;
   }
 
   @Override
-  protected double getModifiedMovementSpeed() {
-    return super.getModifiedMovementSpeed() + 0.16F;
+  protected double generateRandomSpeed() {
+    return super.generateRandomSpeed() + 0.16F;
   }
   
   // MISC //
@@ -78,120 +78,120 @@ public class UnicornEntity extends AbstractHorseEntity {
   /**
    * Called when the mob's health reaches 0.
    */
-  public void onDeath(DamageSource cause) {
-    super.onDeath(cause);
-    if(cause.getTrueSource() instanceof LivingEntity) {
-      LivingEntity killer = (LivingEntity)cause.getTrueSource();
-      killer.addPotionEffect(new EffectInstance(Effects.UNLUCK, 10_000, 0, false, false, true, new EffectInstance(Effects.BAD_OMEN, 10_000, 0)));
+  public void die(DamageSource cause) {
+    super.die(cause);
+    if(cause.getEntity() instanceof LivingEntity) {
+      LivingEntity killer = (LivingEntity)cause.getEntity();
+      killer.addEffect(new EffectInstance(Effects.UNLUCK, 10_000, 0, false, false, true, new EffectInstance(Effects.BAD_OMEN, 10_000, 0)));
     }
   }
   
   @Override
-  protected void damageEntity(final DamageSource source, final float amountIn) {
-    super.damageEntity(source, source.isDamageAbsolute() || source.isUnblockable() ? amountIn : amountIn * 0.5F);
+  protected void actuallyHurt(final DamageSource source, final float amountIn) {
+    super.actuallyHurt(source, source.isBypassMagic() || source.isBypassArmor() ? amountIn : amountIn * 0.5F);
   }
 
   @Override
-  public boolean isPotionApplicable(EffectInstance potioneffectIn) {
-    if (potioneffectIn.getPotion().getEffectType() == EffectType.HARMFUL) {
+  public boolean canBeAffected(EffectInstance potioneffectIn) {
+    if (potioneffectIn.getEffect().getCategory() == EffectType.HARMFUL) {
       PotionEvent.PotionApplicableEvent event = new PotionEvent.PotionApplicableEvent(this, potioneffectIn);
       event.setResult(Event.Result.DENY);
       MinecraftForge.EVENT_BUS.post(event);
       return event.getResult() == Event.Result.ALLOW;
     }
-    return super.isPotionApplicable(potioneffectIn);
+    return super.canBeAffected(potioneffectIn);
   }
   
   @Override
-  public double getMountedYOffset() { return super.getMountedYOffset() - 0.385D; }
+  public double getPassengersRidingOffset() { return super.getPassengersRidingOffset() - 0.385D; }
   
   @Override
   protected void playGallopSound(SoundType sound) {
     super.playGallopSound(sound);
-    if (this.rand.nextInt(10) == 0) {
-      this.playSound(SoundEvents.ENTITY_HORSE_BREATHE, sound.getVolume() * 0.6F, sound.getPitch());
+    if (this.random.nextInt(10) == 0) {
+      this.playSound(SoundEvents.HORSE_BREATHE, sound.getVolume() * 0.6F, sound.getPitch());
     }
 
-    ItemStack stack = this.horseChest.getStackInSlot(1);
+    ItemStack stack = this.inventory.getItem(1);
     if (isArmor(stack))
-      stack.onHorseArmorTick(world, this);
+      stack.onHorseArmorTick(level, this);
   }
   
   @Override
   protected SoundEvent getAmbientSound() {
     super.getAmbientSound();
-    return SoundEvents.ENTITY_HORSE_AMBIENT;
+    return SoundEvents.HORSE_AMBIENT;
   }
 
   @Override
   protected SoundEvent getDeathSound() {
     super.getDeathSound();
-    return SoundEvents.ENTITY_HORSE_DEATH;
+    return SoundEvents.HORSE_DEATH;
   }
 
   @Override
-  protected SoundEvent func_230274_fe_() {
-    return SoundEvents.ENTITY_HORSE_EAT;
+  protected SoundEvent getEatingSound() {
+    return SoundEvents.HORSE_EAT;
   }
 
   @Override
   protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
     super.getHurtSound(damageSourceIn);
-    return SoundEvents.ENTITY_HORSE_HURT;
+    return SoundEvents.HORSE_HURT;
   }
 
   @Override
   protected SoundEvent getAngrySound() {
     super.getAngrySound();
-    return SoundEvents.ENTITY_HORSE_ANGRY;
+    return SoundEvents.HORSE_ANGRY;
   }
 
   @Override
-  public ActionResultType getEntityInteractionResult(PlayerEntity player, Hand hand) {
-    ItemStack itemstack = player.getHeldItem(hand);
-    if (!this.isChild()) {
-      if (this.isTame() && player.isSecondaryUseActive()) {
-        this.openGUI(player);
-        return ActionResultType.func_233537_a_(this.world.isRemote());
+  public ActionResultType mobInteract(PlayerEntity player, Hand hand) {
+    ItemStack itemstack = player.getItemInHand(hand);
+    if (!this.isBaby()) {
+      if (this.isTamed() && player.isSecondaryUseActive()) {
+        this.openInventory(player);
+        return ActionResultType.sidedSuccess(this.level.isClientSide());
       }
 
-      if (this.isBeingRidden()) {
-        return super.getEntityInteractionResult(player, hand);
+      if (this.isVehicle()) {
+        return super.mobInteract(player, hand);
       }
       
-      if((itemstack.isEmpty() && this.isTame()) || itemstack.getItem() == GFRegistry.GOLDEN_BRIDLE) {
-        this.mountTo(player);
-        return ActionResultType.func_233537_a_(this.world.isRemote());
+      if((itemstack.isEmpty() && this.isTamed()) || itemstack.getItem() == GFRegistry.GOLDEN_BRIDLE) {
+        this.doPlayerRide(player);
+        return ActionResultType.sidedSuccess(this.level.isClientSide());
       }
     }
 
     if (!itemstack.isEmpty()) {
-      if (this.isBreedingItem(itemstack)) {
-        return this.func_241395_b_(player, itemstack);
+      if (this.isFood(itemstack)) {
+        return this.fedFood(player, itemstack);
       }
 
-      ActionResultType actionresulttype = itemstack.interactWithEntity(player, this, hand);
-      if (actionresulttype.isSuccessOrConsume()) {
+      ActionResultType actionresulttype = itemstack.interactLivingEntity(player, this, hand);
+      if (actionresulttype.consumesAction()) {
         return actionresulttype;
       }
 
-      if (!this.isTame()) {
+      if (!this.isTamed()) {
         this.makeMad();
-        return ActionResultType.func_233537_a_(this.world.isRemote());
+        return ActionResultType.sidedSuccess(this.level.isClientSide());
       }
 
-      boolean flag = !this.isChild() && !this.isHorseSaddled() && itemstack.getItem() == Items.SADDLE;
+      boolean flag = !this.isBaby() && !this.isSaddled() && itemstack.getItem() == Items.SADDLE;
       if (this.isArmor(itemstack) || flag) {
-        this.openGUI(player);
-        return ActionResultType.func_233537_a_(this.world.isRemote());
+        this.openInventory(player);
+        return ActionResultType.sidedSuccess(this.level.isClientSide());
       }
     }
 
 //    if (this.isChild()) {
-      return super.getEntityInteractionResult(player, hand);
+      return super.mobInteract(player, hand);
 //    } else {
 //      this.mountTo(player);
-//      return ActionResultType.func_233537_a_(this.world.isRemote());
+//      return ActionResultType.sidedSuccess(this.world.isRemote());
 //    }
   }
 
@@ -206,17 +206,17 @@ public class UnicornEntity extends AbstractHorseEntity {
   }
 
   @Override
-  public boolean canMateWith(final AnimalEntity otherAnimal) {
+  public boolean canMate(final AnimalEntity otherAnimal) {
     if (otherAnimal == this) {
       return false;
     } else {
-      return otherAnimal instanceof UnicornEntity && this.canMate() && ((UnicornEntity)otherAnimal).canMate();
+      return otherAnimal instanceof UnicornEntity && this.canParent() && ((UnicornEntity)otherAnimal).canParent();
     }
   }
   
   @Nullable
   @Override
-  public AgeableEntity createChild(ServerWorld world, AgeableEntity mate) {
+  public AgeableEntity getBreedOffspring(ServerWorld world, AgeableEntity mate) {
     UnicornEntity unicorn = GFRegistry.UNICORN_ENTITY.create(world);
     this.setOffspringAttributes(mate, unicorn);
     return unicorn;

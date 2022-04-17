@@ -15,48 +15,48 @@ public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T>
 
   public MinotaurModel(float modelSize) {
     super(modelSize, true, false);
-    textureWidth = 64;
-    textureHeight = 64;
+    texWidth = 64;
+    texHeight = 64;
         
     // nose
-    this.bipedHead.setTextureOffset(24, 0).addBox(-3.0F, -3.0F, -5.0F, 6.0F, 3.0F, 1.0F, modelSize);
+    this.head.texOffs(24, 0).addBox(-3.0F, -3.0F, -5.0F, 6.0F, 3.0F, 1.0F, modelSize);
 
     // horns
-    this.bipedHead.addChild(makeBullHorns(this, modelSize, true));
-    this.bipedHead.addChild(makeBullHorns(this, modelSize, false));
+    this.head.addChild(makeBullHorns(this, modelSize, true));
+    this.head.addChild(makeBullHorns(this, modelSize, false));
   }
   
   @Override
-  public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
-    super.setRotationAngles(entity, limbSwing, limbSwingAmount, partialTick, rotationYaw, rotationPitch);
+  public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
+    super.setupAnim(entity, limbSwing, limbSwingAmount, partialTick, rotationYaw, rotationPitch);
     if(entity.isCharging()) {
-      final float ticks = entity.ticksExisted + partialTick;
+      final float ticks = entity.tickCount + partialTick;
       final float stompSpeed = entity.getStompingSpeed();
       final float limbSwingSin = MathHelper.cos(ticks * stompSpeed + (float)Math.PI);
       final float limbSwingCos = MathHelper.cos(ticks * stompSpeed) * 0.75F;
       float rightLegSwing = 0.38F * limbSwingSin;
       float leftLegSwing = 0.38F * limbSwingCos;
       // legs
-      rightLegUpper.rotateAngleX = -0.2618F + limbSwingSin * 0.42F;
-      leftLegUpper.rotateAngleX = -0.2618F + limbSwingCos * 0.42F;
-      rightLegLower.rotateAngleX = 0.7854F + rightLegSwing;
-      rightHoof.rotateAngleX = -0.5236F - rightLegSwing;
-      leftLegLower.rotateAngleX = 0.7854F + leftLegSwing;
-      leftHoof.rotateAngleX = -0.5236F - leftLegSwing;
+      rightLegUpper.xRot = -0.2618F + limbSwingSin * 0.42F;
+      leftLegUpper.xRot = -0.2618F + limbSwingCos * 0.42F;
+      rightLegLower.xRot = 0.7854F + rightLegSwing;
+      rightHoof.xRot = -0.5236F - rightLegSwing;
+      leftLegLower.xRot = 0.7854F + leftLegSwing;
+      leftHoof.xRot = -0.5236F - leftLegSwing;
       // head
-      this.bipedHead.rotateAngleX = 0.558F;
+      this.head.xRot = 0.558F;
     }
   }
   
   @Override
-  public void render(final MatrixStack matrixStackIn, final IVertexBuilder vertexBuilder, final int packedLightIn, final int packedOverlayIn, 
+  public void renderToBuffer(final MatrixStack matrixStackIn, final IVertexBuilder vertexBuilder, final int packedLightIn, final int packedOverlayIn, 
       final float redIn, final float greenIn, final float blueIn, final float alphaIn) {
-    matrixStackIn.push();
+    matrixStackIn.pushPose();
     if(stomping) {
-      matrixStackIn.rotate(Vector3f.XP.rotationDegrees(9.0F));
+      matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(9.0F));
     }
-    super.render(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, redIn, greenIn, blueIn, alphaIn);
-    matrixStackIn.pop();
+    super.renderToBuffer(matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, redIn, greenIn, blueIn, alphaIn);
+    matrixStackIn.popPose();
   }
   
   public boolean isStomping() { return stomping; }
@@ -72,23 +72,23 @@ public class MinotaurModel<T extends MinotaurEntity> extends HoofedBipedModel<T>
     final float angleY = isLeft ? -1 : 1;
 
     final ModelRenderer horn3 = new ModelRenderer(model);
-    horn3.setRotationPoint(0.0F, -3.0F, 0.0F);
-    horn3.rotateAngleX = -0.5236F;
-    horn3.setTextureOffset(textureX, 59).addBox(-0.5F, -3.0F, 0.0F, 1.0F, 3.0F, 2.0F, modelSize);
+    horn3.setPos(0.0F, -3.0F, 0.0F);
+    horn3.xRot = -0.5236F;
+    horn3.texOffs(textureX, 59).addBox(-0.5F, -3.0F, 0.0F, 1.0F, 3.0F, 2.0F, modelSize);
     horn3.mirror = isLeft;
     
     final ModelRenderer horn2 = new ModelRenderer(model);
-    horn2.setRotationPoint(-1.0F, -4.0F, -2.0F);
-    horn2.rotateAngleX = -0.5236F;
-    horn2.setTextureOffset(textureX, 54).addBox(-0.51F, -3.0F, 0.0F, 1.0F, 3.0F, 2.0F, modelSize);
+    horn2.setPos(-1.0F, -4.0F, -2.0F);
+    horn2.xRot = -0.5236F;
+    horn2.texOffs(textureX, 54).addBox(-0.51F, -3.0F, 0.0F, 1.0F, 3.0F, 2.0F, modelSize);
     horn2.addChild(horn3);
     horn2.mirror = isLeft;
     
     final ModelRenderer horn1 = new ModelRenderer(model);
-    horn1.setRotationPoint(horn1X, -7.0F, horn1Z);
-    horn1.rotateAngleX = 1.3963F;
-    horn1.rotateAngleY = 1.0472F * angleY;
-    horn1.setTextureOffset(textureX, 48).addBox(-1.5F, -4.0F, -2.0F, 1.0F, 4.0F, 2.0F, modelSize);
+    horn1.setPos(horn1X, -7.0F, horn1Z);
+    horn1.xRot = 1.3963F;
+    horn1.yRot = 1.0472F * angleY;
+    horn1.texOffs(textureX, 48).addBox(-1.5F, -4.0F, -2.0F, 1.0F, 4.0F, 2.0F, modelSize);
     horn1.addChild(horn2);
     horn1.mirror = isLeft;
 

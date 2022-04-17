@@ -23,7 +23,7 @@ public class SummonMobGoal<T extends MobEntity> extends Goal {
   
   public SummonMobGoal(final MobEntity entity, final int summonProgressIn, final int summonCooldownIn,
       final EntityType<T> mob, final int mobCount) {
-    this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+    this.setFlags(EnumSet.of(Goal.Flag.MOVE));
     summoner = entity;
     maxProgress = summonProgressIn;
     maxCooldown = summonCooldownIn;
@@ -33,51 +33,51 @@ public class SummonMobGoal<T extends MobEntity> extends Goal {
   }
   
   @Override
-  public boolean shouldExecute() {
+  public boolean canUse() {
     if(cooldown > 0) {
       cooldown--;
     } else {
-      return summoner.getAttackTarget() != null;
+      return summoner.getTarget() != null;
     }
     return false;
   }
   
   @Override
-  public void startExecuting() {
+  public void start() {
     this.progress = 1;
   }
   
   @Override
-  public boolean shouldContinueExecuting() {
-    return this.progress > 0 && summoner.getAttackTarget() != null;
+  public boolean canContinueToUse() {
+    return this.progress > 0 && summoner.getTarget() != null;
   }
   
   @Override
   public void tick() {
     super.tick();
-    summoner.getNavigator().clearPath();
-    summoner.getLookController().setLookPositionWithEntity(summoner.getAttackTarget(), 100.0F, 100.0F);
+    summoner.getNavigation().stop();
+    summoner.getLookControl().setLookAt(summoner.getTarget(), 100.0F, 100.0F);
     if(progress++ > maxProgress) {
       // create entity
       for(int i = 0; i < count; i++) {
-        final T mobEntity = mobSupplier.create(summoner.getEntityWorld());
+        final T mobEntity = mobSupplier.create(summoner.getCommandSenderWorld());
         summonMob(mobEntity);
       }
-      resetTask();
+      stop();
     }
   }
   
   @Override
-  public void resetTask() {
+  public void stop() {
     this.progress = 0;
     this.cooldown = maxCooldown;
   }
   
   protected void summonMob(final T mobEntity) {
-    final float yaw = summoner.rotationYaw;
-    final float pitch = summoner.rotationPitch;
-    mobEntity.setLocationAndAngles(summoner.getPosX(), summoner.getPosY() + 0.5D, summoner.getPosZ(), yaw, pitch);
-    mobEntity.setAttackTarget(summoner.getAttackTarget());
-    summoner.getEntityWorld().addEntity(mobEntity);
+    final float yaw = summoner.yRot;
+    final float pitch = summoner.xRot;
+    mobEntity.moveTo(summoner.getX(), summoner.getY() + 0.5D, summoner.getZ(), yaw, pitch);
+    mobEntity.setTarget(summoner.getTarget());
+    summoner.getCommandSenderWorld().addFreshEntity(mobEntity);
   }
 }

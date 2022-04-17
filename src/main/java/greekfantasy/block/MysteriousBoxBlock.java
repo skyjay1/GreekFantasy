@@ -39,69 +39,69 @@ public class MysteriousBoxBlock extends HorizontalBlock implements IWaterLoggabl
   public static final BooleanProperty OPEN = BooleanProperty.create("open");
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-  protected static final VoxelShape SHAPE_CLOSED_Z = VoxelShapes.combine(
-      VoxelShapes.combine(
-          Block.makeCuboidShape(1.0D, 0.0D, 3.0D, 15.0D, 8.0D, 13.0D), 
-          Block.makeCuboidShape(3.0D, 0.0D, 3.0D, 13.0D, 2.0D, 13.0D), 
+  protected static final VoxelShape SHAPE_CLOSED_Z = VoxelShapes.joinUnoptimized(
+      VoxelShapes.joinUnoptimized(
+          Block.box(1.0D, 0.0D, 3.0D, 15.0D, 8.0D, 13.0D), 
+          Block.box(3.0D, 0.0D, 3.0D, 13.0D, 2.0D, 13.0D), 
           IBooleanFunction.ONLY_FIRST),
-      Block.makeCuboidShape(1.0D, 0.0D, 5.0D, 15.0D, 2.0D, 11.0D), 
+      Block.box(1.0D, 0.0D, 5.0D, 15.0D, 2.0D, 11.0D), 
       IBooleanFunction.ONLY_FIRST
   );
-  protected static final VoxelShape SHAPE_OPEN_Z = VoxelShapes.combine(SHAPE_CLOSED_Z, Block.makeCuboidShape(2.0D, 3.0D, 4.0D, 14.0D, 8.0D, 12.0D), IBooleanFunction.ONLY_FIRST);
+  protected static final VoxelShape SHAPE_OPEN_Z = VoxelShapes.joinUnoptimized(SHAPE_CLOSED_Z, Block.box(2.0D, 3.0D, 4.0D, 14.0D, 8.0D, 12.0D), IBooleanFunction.ONLY_FIRST);
   
-  protected static final VoxelShape SHAPE_CLOSED_X = VoxelShapes.combine(
-      VoxelShapes.combine(
-          Block.makeCuboidShape(3.0D, 0.0D, 1.0D, 13.0D, 8.0D, 15.0D), 
-          Block.makeCuboidShape(5.0D, 0.0D, 1.0D, 11.0D, 2.0D, 15.0D), 
+  protected static final VoxelShape SHAPE_CLOSED_X = VoxelShapes.joinUnoptimized(
+      VoxelShapes.joinUnoptimized(
+          Block.box(3.0D, 0.0D, 1.0D, 13.0D, 8.0D, 15.0D), 
+          Block.box(5.0D, 0.0D, 1.0D, 11.0D, 2.0D, 15.0D), 
           IBooleanFunction.ONLY_FIRST),
-      Block.makeCuboidShape(1.0D, 0.0D, 3.0D, 15.0D, 2.0D, 13.0D), 
+      Block.box(1.0D, 0.0D, 3.0D, 15.0D, 2.0D, 13.0D), 
       IBooleanFunction.ONLY_FIRST
   );
-  protected static final VoxelShape SHAPE_OPEN_X = VoxelShapes.combine(SHAPE_CLOSED_X, Block.makeCuboidShape(4.0D, 3.0D, 2.0D, 12.0D, 8.0D, 14.0D), IBooleanFunction.ONLY_FIRST);
+  protected static final VoxelShape SHAPE_OPEN_X = VoxelShapes.joinUnoptimized(SHAPE_CLOSED_X, Block.box(4.0D, 3.0D, 2.0D, 12.0D, 8.0D, 14.0D), IBooleanFunction.ONLY_FIRST);
   
   public MysteriousBoxBlock(final Block.Properties properties) {
     super(properties);
-    this.setDefaultState(this.getStateContainer().getBaseState()
-        .with(HORIZONTAL_FACING, Direction.NORTH)
-        .with(OPEN, Boolean.valueOf(false))
-        .with(WATERLOGGED, false));
+    this.registerDefaultState(this.getStateDefinition().any()
+        .setValue(FACING, Direction.NORTH)
+        .setValue(OPEN, Boolean.valueOf(false))
+        .setValue(WATERLOGGED, false));
   }
   
   @Override
-  protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-    builder.add(HORIZONTAL_FACING).add(OPEN).add(WATERLOGGED);
+  protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    builder.add(FACING).add(OPEN).add(WATERLOGGED);
   }
   
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
-    FluidState fluid = context.getWorld().getFluidState(context.getPos());
-    return super.getStateForPlacement(context).with(WATERLOGGED, fluid.isTagged(FluidTags.WATER)).with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+    FluidState fluid = context.getLevel().getFluidState(context.getClickedPos());
+    return super.getStateForPlacement(context).setValue(WATERLOGGED, fluid.is(FluidTags.WATER)).setValue(FACING, context.getHorizontalDirection().getOpposite());
   }
   
   @Override
-  public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
+  public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
       BlockPos currentPos, BlockPos facingPos) {
-    if (stateIn.get(WATERLOGGED)) {
-      worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+    if (stateIn.getValue(WATERLOGGED)) {
+      worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
     }
     return stateIn;
   }
   
   @Override
   public FluidState getFluidState(BlockState state) {
-    return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : Fluids.EMPTY.getDefaultState();
+    return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
   }
   
   @Override
-  public ActionResultType onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos,
+  public ActionResultType use(final BlockState state, final World worldIn, final BlockPos pos,
       final PlayerEntity playerIn, final Hand handIn, final BlockRayTraceResult hit) {
-    if(!state.get(OPEN).booleanValue()) {
-      addSmokeParticles(worldIn, pos, worldIn.rand, 32);
-      if(playerIn.isServerWorld()) {
+    if(!state.getValue(OPEN).booleanValue()) {
+      addSmokeParticles(worldIn, pos, worldIn.random, 32);
+      if(playerIn.isEffectiveAi()) {
         // open the box
         final boolean open = MysteriousBoxManager.onBoxOpened(worldIn, playerIn, state, pos);
         if(open) {
-          worldIn.setBlockState(pos, state.with(OPEN, Boolean.valueOf(true)), 2);
+          worldIn.setBlock(pos, state.setValue(OPEN, Boolean.valueOf(true)), 2);
         }
       }
       return ActionResultType.CONSUME;
@@ -112,8 +112,8 @@ public class MysteriousBoxBlock extends HorizontalBlock implements IWaterLoggabl
   
   @Override
   public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext cxt) {
-    final boolean axisX = state.get(HORIZONTAL_FACING).getAxis() == Direction.Axis.X;
-    final boolean open = state.get(OPEN).booleanValue();
+    final boolean axisX = state.getValue(FACING).getAxis() == Direction.Axis.X;
+    final boolean open = state.getValue(OPEN).booleanValue();
     if(axisX && open) return SHAPE_OPEN_X;
     else if(axisX && !open) return SHAPE_CLOSED_X;
     else if(!axisX && open) return SHAPE_OPEN_Z;
@@ -123,13 +123,13 @@ public class MysteriousBoxBlock extends HorizontalBlock implements IWaterLoggabl
   // Comparator methods
 
   @Override
-  public boolean hasComparatorInputOverride(BlockState state) {
+  public boolean hasAnalogOutputSignal(BlockState state) {
     return true;
   }
 
   @Override
-  public int getComparatorInputOverride(BlockState state, World worldIn, BlockPos pos) {
-    return state.get(OPEN) ? 1 : 0;
+  public int getAnalogOutputSignal(BlockState state, World worldIn, BlockPos pos) {
+    return state.getValue(OPEN) ? 1 : 0;
   }
 
   /**
@@ -139,7 +139,7 @@ public class MysteriousBoxBlock extends HorizontalBlock implements IWaterLoggabl
    */
   @OnlyIn(Dist.CLIENT)
   public void animateTick(BlockState stateIn, World world, BlockPos pos, Random rand) {
-    if(stateIn.get(OPEN).booleanValue()) {
+    if(stateIn.getValue(OPEN).booleanValue()) {
       addSmokeParticles(world, pos, rand, 3);
     }
   }
@@ -152,10 +152,10 @@ public class MysteriousBoxBlock extends HorizontalBlock implements IWaterLoggabl
     final double radius = 0.25D;
     for (int i = 0; i < count; i++) {
       world.addParticle(ParticleTypes.SMOKE, 
-          x + (world.rand.nextDouble() - 0.5D) * radius, y, z + (world.rand.nextDouble() - 0.5D) * radius,
-          (world.rand.nextDouble() - 0.5D) * motion, 
-          (world.rand.nextDouble() - 0.5D) * motion * 0.5D,
-          (world.rand.nextDouble() - 0.5D) * motion);
+          x + (world.random.nextDouble() - 0.5D) * radius, y, z + (world.random.nextDouble() - 0.5D) * radius,
+          (world.random.nextDouble() - 0.5D) * motion, 
+          (world.random.nextDouble() - 0.5D) * motion * 0.5D,
+          (world.random.nextDouble() - 0.5D) * motion);
     }
   }
 }

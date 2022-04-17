@@ -25,12 +25,12 @@ public class PoisonSpitEntity extends EffectProjectileEntity {
   protected PoisonSpitEntity(World worldIn, LivingEntity thrower) {
     this(GFRegistry.POISON_SPIT_ENTITY, worldIn);
     this.lifespan = 80;
-    super.setShooter(thrower);
-    this.setPosition(thrower.getPosX(), thrower.getPosYEye() - 0.1D, thrower.getPosZ());
+    super.setOwner(thrower);
+    this.setPos(thrower.getX(), thrower.getEyeY() - 0.1D, thrower.getZ());
     // this unmapped method from ProjectileEntity does some math, then calls #shoot
     // params: thrower, rotationPitch, rotationYaw, ???, speed, inaccuracy
-    setDirectionAndMovement(thrower, thrower.rotationPitch, thrower.rotationYaw, 0.0F, 0.78F, 0.85F);
-    markVelocityChanged();
+    shootFromRotation(thrower, thrower.xRot, thrower.yRot, 0.0F, 0.78F, 0.85F);
+    markHurt();
   }
   
   public static PoisonSpitEntity create(World worldIn, LivingEntity thrower) {
@@ -38,7 +38,7 @@ public class PoisonSpitEntity extends EffectProjectileEntity {
   }
   
   @Override
-  public IPacket<?> createSpawnPacket() {
+  public IPacket<?> getAddEntityPacket() {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 

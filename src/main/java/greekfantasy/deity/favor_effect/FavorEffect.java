@@ -122,7 +122,7 @@ public class FavorEffect {
   public boolean isInBiome(final World world, final BlockPos pos) {
     // if biome data is present for this effect, make sure the biome is correct
     if(biome.isPresent()) {
-      final Optional<RegistryKey<Biome>> curBiome = world.func_242406_i(pos);
+      final Optional<RegistryKey<Biome>> curBiome = world.getBiomeName(pos);
       if(biome.get().contains(":")) {
         // interpret as a ResourceLocation
         // if the biome name does not match, the effect cannot run

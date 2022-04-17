@@ -21,19 +21,19 @@ public class CerberusRenderer<T extends CerberusEntity> extends MobRenderer<T, C
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
   
   @Override
-  protected void preRenderCallback(final T entity, MatrixStack matrix, float f) {
+  protected void scale(final T entity, MatrixStack matrix, float f) {
     // if the entity is spawning, shift the entity down
     if(entity.isSpawning()) {
       final float height = 2.4F;
       final float translate = 0.039F;
       final float translateY = height * entity.getSpawnPercent(f) - height;
-      final float translateX = translate * (entity.getRNG().nextFloat() - 0.5F);
-      final float translateZ = translate * (entity.getRNG().nextFloat() - 0.5F);
+      final float translateX = translate * (entity.getRandom().nextFloat() - 0.5F);
+      final float translateZ = translate * (entity.getRandom().nextFloat() - 0.5F);
       matrix.translate(translateX, -translateY, translateZ);
     }
     matrix.scale(SCALE, SCALE, SCALE);

@@ -30,16 +30,16 @@ public class MobHeadItem extends BlockItem {
    * {@link #onItemUse}.
    */
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-     ItemStack itemstack = playerIn.getHeldItem(handIn);
-     EquipmentSlotType equipmentslottype = MobEntity.getSlotForItemStack(itemstack);
-     ItemStack itemstack1 = playerIn.getItemStackFromSlot(equipmentslottype);
+  public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+     ItemStack itemstack = playerIn.getItemInHand(handIn);
+     EquipmentSlotType equipmentslottype = MobEntity.getEquipmentSlotForItem(itemstack);
+     ItemStack itemstack1 = playerIn.getItemBySlot(equipmentslottype);
      if (itemstack1.isEmpty()) {
-        playerIn.setItemStackToSlot(equipmentslottype, itemstack.copy());
+        playerIn.setItemSlot(equipmentslottype, itemstack.copy());
         itemstack.setCount(0);
-        return ActionResult.func_233538_a_(itemstack, worldIn.isRemote());
+        return ActionResult.sidedSuccess(itemstack, worldIn.isClientSide());
      } else {
-        return ActionResult.resultFail(itemstack);
+        return ActionResult.fail(itemstack);
      }
   }
 

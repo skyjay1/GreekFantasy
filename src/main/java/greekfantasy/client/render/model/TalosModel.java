@@ -26,101 +26,101 @@ public class TalosModel<T extends TalosEntity> extends BipedModel<T> {
   public TalosModel(float modelSize) {
     super(modelSize, 0.0F, 128, 64);
     
-    bipedHead = new ModelRenderer(this);
-    bipedHead.setRotationPoint(0.0F, -1.0F, 0.0F);
-    bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -16.0F, -4.0F, 8.0F, 6.0F, 8.0F, modelSize);
+    head = new ModelRenderer(this);
+    head.setPos(0.0F, -1.0F, 0.0F);
+    head.texOffs(0, 0).addBox(-4.0F, -16.0F, -4.0F, 8.0F, 6.0F, 8.0F, modelSize);
     
-    bipedHeadwear.showModel = false;
+    hat.visible = false;
 
     // Right arm    
-    bipedRightArm = new ModelRenderer(this);
-    bipedRightArm.setRotationPoint(-9.0F, -10.0F, 0.0F);
-    bipedRightArm.setTextureOffset(66, 0).addBox(-5.5F, -5.0F, -3.0F, 8.0F, 4.0F, 6.0F, modelSize);
+    rightArm = new ModelRenderer(this);
+    rightArm.setPos(-9.0F, -10.0F, 0.0F);
+    rightArm.texOffs(66, 0).addBox(-5.5F, -5.0F, -3.0F, 8.0F, 4.0F, 6.0F, modelSize);
     
     bipedRightArmUpper = new ModelRenderer(this);
-    bipedRightArmUpper.setTextureOffset(66, 11).addBox(-4.0F, -1.0F, -2.5F, 4.0F, 6.0F, 5.0F, modelSize);
-    bipedRightArm.addChild(bipedRightArmUpper);
+    bipedRightArmUpper.texOffs(66, 11).addBox(-4.0F, -1.0F, -2.5F, 4.0F, 6.0F, 5.0F, modelSize);
+    rightArm.addChild(bipedRightArmUpper);
         
     bipedRightArmMiddle = new ModelRenderer(this);
-    bipedRightArmMiddle.setTextureOffset(66, 23).addBox(-5.0F, 5.0F, -3.5F, 5.0F, 6.0F, 7.0F, modelSize);
+    bipedRightArmMiddle.texOffs(66, 23).addBox(-5.0F, 5.0F, -3.5F, 5.0F, 6.0F, 7.0F, modelSize);
     bipedRightArmUpper.addChild(bipedRightArmMiddle);
     
     bipedRightArmLower = new ModelRenderer(this);
-    bipedRightArmLower.setTextureOffset(64, 37).addBox(-6.0F, 11.0F, -4.5F, 7.0F, 8.0F, 9.0F, modelSize);
+    bipedRightArmLower.texOffs(64, 37).addBox(-6.0F, 11.0F, -4.5F, 7.0F, 8.0F, 9.0F, modelSize);
     bipedRightArmMiddle.addChild(bipedRightArmLower);
 
     // Left arm
-    bipedLeftArm = new ModelRenderer(this);
-    bipedLeftArm.setRotationPoint(9.0F, -10.0F, 0.0F);
+    leftArm = new ModelRenderer(this);
+    leftArm.setPos(9.0F, -10.0F, 0.0F);
 //    bipedLeftArm.mirror = true;
-    bipedLeftArm.setTextureOffset(66, 0).addBox(-2.5F, -5.0F, -3.0F, 8.0F, 4.0F, 6.0F, modelSize);
+    leftArm.texOffs(66, 0).addBox(-2.5F, -5.0F, -3.0F, 8.0F, 4.0F, 6.0F, modelSize);
     
     bipedLeftArmUpper = new ModelRenderer(this);
-    bipedLeftArmUpper.setTextureOffset(66, 11).addBox(0.0F, -1.0F, -2.5F, 4.0F, 6.0F, 5.0F, modelSize);
+    bipedLeftArmUpper.texOffs(66, 11).addBox(0.0F, -1.0F, -2.5F, 4.0F, 6.0F, 5.0F, modelSize);
 //    bipedLeftArmUpper.mirror = true;
-    bipedLeftArm.addChild(bipedLeftArmUpper);
+    leftArm.addChild(bipedLeftArmUpper);
     
     bipedLeftArmMiddle = new ModelRenderer(this);
-    bipedLeftArmMiddle.setTextureOffset(66, 23).addBox(0.0F, 5.0F, -3.5F, 5.0F, 6.0F, 7.0F, modelSize);
+    bipedLeftArmMiddle.texOffs(66, 23).addBox(0.0F, 5.0F, -3.5F, 5.0F, 6.0F, 7.0F, modelSize);
 //    bipedLeftArmMiddle.mirror = true;
     bipedLeftArmUpper.addChild(bipedLeftArmMiddle);
     
     bipedLeftArmLower = new ModelRenderer(this);
-    bipedLeftArmLower.setTextureOffset(96, 37).addBox(-1.0F, 11.0F, -4.5F, 7.0F, 8.0F, 9.0F, modelSize);
+    bipedLeftArmLower.texOffs(96, 37).addBox(-1.0F, 11.0F, -4.5F, 7.0F, 8.0F, 9.0F, modelSize);
 //    bipedLeftArmLower.mirror = true;
     bipedLeftArmMiddle.addChild(bipedLeftArmLower);
     
     // Body
-    bipedBody = new ModelRenderer(this);
-    bipedBody.setRotationPoint(0.0F, 5.0F, 0.0F);
-    bipedBody.setTextureOffset(0, 15).addBox(-9.0F, -16.0F, -5.0F, 18.0F, 8.0F, 11.0F, modelSize);
+    body = new ModelRenderer(this);
+    body.setPos(0.0F, 5.0F, 0.0F);
+    body.texOffs(0, 15).addBox(-9.0F, -16.0F, -5.0F, 18.0F, 8.0F, 11.0F, modelSize);
     
     bipedBodyMiddle = new ModelRenderer(this);
-    bipedBodyMiddle.setTextureOffset(0, 35).addBox(-7.0F, -8.0F, -4.5F, 14.0F, 5.0F, 10.0F, modelSize);
-    bipedBody.addChild(bipedBodyMiddle);
+    bipedBodyMiddle.texOffs(0, 35).addBox(-7.0F, -8.0F, -4.5F, 14.0F, 5.0F, 10.0F, modelSize);
+    body.addChild(bipedBodyMiddle);
     
     bipedBodyLower = new ModelRenderer(this);
-    bipedBodyLower.setTextureOffset(0, 51).addBox(-5.0F, -3.0F, -4.0F, 10.0F, 4.0F, 9.0F, modelSize);
-    bipedBodyLower.setTextureOffset(39, 53).addBox(-3.01F, 1.0F, -2.5F, 6.0F, 5.0F, 6.0F, modelSize);
+    bipedBodyLower.texOffs(0, 51).addBox(-5.0F, -3.0F, -4.0F, 10.0F, 4.0F, 9.0F, modelSize);
+    bipedBodyLower.texOffs(39, 53).addBox(-3.01F, 1.0F, -2.5F, 6.0F, 5.0F, 6.0F, modelSize);
     bipedBodyMiddle.addChild(bipedBodyLower);
 
     // Right leg
-    bipedRightLeg = new ModelRenderer(this);
-    bipedRightLeg.setRotationPoint(-3.0F, 9.0F, 0.5F);
-    bipedRightLeg.setTextureOffset(103, 0).addBox(-4.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, modelSize);
+    rightLeg = new ModelRenderer(this);
+    rightLeg.setPos(-3.0F, 9.0F, 0.5F);
+    rightLeg.texOffs(103, 0).addBox(-4.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, modelSize);
     
     bipedRightLegMiddle = new ModelRenderer(this);
-    bipedRightLegMiddle.setTextureOffset(103, 11).addBox(-4.5F, 4.0F, -2.5F, 5.0F, 6.0F, 5.0F, modelSize);
-    bipedRightLeg.addChild(bipedRightLegMiddle);
+    bipedRightLegMiddle.texOffs(103, 11).addBox(-4.5F, 4.0F, -2.5F, 5.0F, 6.0F, 5.0F, modelSize);
+    rightLeg.addChild(bipedRightLegMiddle);
     
     bipedRightLegLower = new ModelRenderer(this);
-    bipedRightLegLower.setTextureOffset(103, 23).addBox(-5.0F, 10.0F, -3.0F, 6.0F, 5.0F, 6.0F, modelSize);
+    bipedRightLegLower.texOffs(103, 23).addBox(-5.0F, 10.0F, -3.0F, 6.0F, 5.0F, 6.0F, modelSize);
     bipedRightLegMiddle.addChild(bipedRightLegLower);
 
     // Left leg
-    bipedLeftLeg = new ModelRenderer(this);
-    bipedLeftLeg.setRotationPoint(3.0F, 9.0F, 0.5F);
-    bipedLeftLeg.mirror = true;
-    bipedLeftLeg.setTextureOffset(103, 0).addBox(0.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, modelSize);
+    leftLeg = new ModelRenderer(this);
+    leftLeg.setPos(3.0F, 9.0F, 0.5F);
+    leftLeg.mirror = true;
+    leftLeg.texOffs(103, 0).addBox(0.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, modelSize);
     
     bipedLeftLegMiddle = new ModelRenderer(this);
-    bipedLeftLegMiddle.setTextureOffset(103, 11).addBox(-0.5F, 4.0F, -2.5F, 5.0F, 6.0F, 5.0F, modelSize);
+    bipedLeftLegMiddle.texOffs(103, 11).addBox(-0.5F, 4.0F, -2.5F, 5.0F, 6.0F, 5.0F, modelSize);
     bipedLeftLegMiddle.mirror = true;
-    bipedLeftLeg.addChild(bipedLeftLegMiddle);
+    leftLeg.addChild(bipedLeftLegMiddle);
     
     bipedLeftLegLower = new ModelRenderer(this);
-    bipedLeftLegLower.setTextureOffset(103, 23).addBox(-1.0F, 10.0F, -3.0F, 6.0F, 5.0F, 6.0F, modelSize);
+    bipedLeftLegLower.texOffs(103, 23).addBox(-1.0F, 10.0F, -3.0F, 6.0F, 5.0F, 6.0F, modelSize);
     bipedLeftLegLower.mirror = true;
     bipedLeftLegMiddle.addChild(bipedLeftLegLower);
   }
   
   public ModelRenderer getBodyModel() {
-    return this.bipedBody;
+    return this.body;
   }
   
   @Override
-  public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-    super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+  public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     // these represent the percent of spawn time spent on just that body part
     final float armPercentAmount = 0.32F;
     final float bodyPercentAmount = 0.32F;
@@ -133,33 +133,33 @@ public class TalosModel<T extends TalosEntity> extends BipedModel<T> {
     final float legPercent = MathHelper.clamp(spawnPercent - armPercentAmount - bodyPercentAmount, 0.0F, legPercentAmount) * (1.0F / legPercentAmount);
     // rotation points and spawn animation
     // head
-    bipedHead.setRotationPoint(0, -1.0F + 16.01F * bodyPercent + 12F * legPercent, 0);
-    bipedHead.rotateAngleX = 0;
-    bipedHead.rotateAngleY *= spawnPercentRaw;
-    bipedHead.rotateAngleZ *= spawnPercentRaw;
+    head.setPos(0, -1.0F + 16.01F * bodyPercent + 12F * legPercent, 0);
+    head.xRot = 0;
+    head.yRot *= spawnPercentRaw;
+    head.zRot *= spawnPercentRaw;
     // body
-    bipedBody.setRotationPoint(0, 5 + 10 * bodyPercent + 12 * legPercent, 0);
-    bipedBodyMiddle.setRotationPoint(0, -5 * bodyPercent, 0);
-    bipedBodyLower.setRotationPoint(0, -4 * bodyPercent, 0);
+    body.setPos(0, 5 + 10 * bodyPercent + 12 * legPercent, 0);
+    bipedBodyMiddle.setPos(0, -5 * bodyPercent, 0);
+    bipedBodyLower.setPos(0, -4 * bodyPercent, 0);
     // arms
-    bipedRightArm.setRotationPoint(-9.0F, -10.0F + 14 * bodyPercent + 12 * legPercent, 0.0F);
-    bipedRightArmUpper.setRotationPoint(0, -3.99F * armPercent, 0);
-    bipedRightArmMiddle.setRotationPoint(0, -5.99F * armPercent, 0);
-    bipedRightArmLower.setRotationPoint(0, -5.99F * armPercent, 0);
-    bipedLeftArm.setRotationPoint(9.0F, -10.0F + 14 * bodyPercent + 12 * legPercent, 0.0F);
-    bipedLeftArmUpper.setRotationPoint(0, -3.99F * armPercent, 0);
-    bipedLeftArmMiddle.setRotationPoint(0, -5.99F * armPercent, 0);
-    bipedLeftArmLower.setRotationPoint(0, -5.99F * armPercent, 0);
+    rightArm.setPos(-9.0F, -10.0F + 14 * bodyPercent + 12 * legPercent, 0.0F);
+    bipedRightArmUpper.setPos(0, -3.99F * armPercent, 0);
+    bipedRightArmMiddle.setPos(0, -5.99F * armPercent, 0);
+    bipedRightArmLower.setPos(0, -5.99F * armPercent, 0);
+    leftArm.setPos(9.0F, -10.0F + 14 * bodyPercent + 12 * legPercent, 0.0F);
+    bipedLeftArmUpper.setPos(0, -3.99F * armPercent, 0);
+    bipedLeftArmMiddle.setPos(0, -5.99F * armPercent, 0);
+    bipedLeftArmLower.setPos(0, -5.99F * armPercent, 0);
     // legs
-    bipedLeftLeg.setRotationPoint(3.0F, 9.0F + 12 * legPercent, 0.5F);
-    bipedLeftLegMiddle.setRotationPoint(0, -6 * legPercent, 0);
-    bipedLeftLegLower.setRotationPoint(0, -6 * legPercent, 0);
-    bipedRightLeg.setRotationPoint(-3.0F, 9.0F + 12 * legPercent, 0.5F);
-    bipedRightLegMiddle.setRotationPoint(0, -6 * legPercent, 0);
-    bipedRightLegLower.setRotationPoint(0, -6 * legPercent, 0);
+    leftLeg.setPos(3.0F, 9.0F + 12 * legPercent, 0.5F);
+    bipedLeftLegMiddle.setPos(0, -6 * legPercent, 0);
+    bipedLeftLegLower.setPos(0, -6 * legPercent, 0);
+    rightLeg.setPos(-3.0F, 9.0F + 12 * legPercent, 0.5F);
+    bipedRightLegMiddle.setPos(0, -6 * legPercent, 0);
+    bipedRightLegLower.setPos(0, -6 * legPercent, 0);
     // shooting animation
     if(entity.isShooting()) {
-      bipedRightArm.rotateAngleX = -0.98F;
+      rightArm.xRot = -0.98F;
     }
   }
   

@@ -47,7 +47,7 @@ public class FavorEffectManager {
   private static List<ResourceLocation> functions = new ArrayList<>();
   
   private static void loadFunctions(final FunctionManager manager) {
-    manager.reloader.func_240931_a_().keySet().forEach(rl -> {
+    manager.library.getFunctions().keySet().forEach(rl -> {
       if(rl.getNamespace().equals(GreekFantasy.MODID) && rl.getPath().contains("favor_effect")) {
         functions.add(rl);
       }
@@ -69,7 +69,7 @@ public class FavorEffectManager {
       final PlayerEntity playerIn, final IDeity deity, final IFavor favor, final FavorLevel level) {
     final MinecraftServer server = worldIn.getServer();
     if(server != null) {
-      final TriggeredFavorEffect effect = deity.getTriggeredFavorEffect(playerIn.getRNG(), type, data, level.getLevel());
+      final TriggeredFavorEffect effect = deity.getTriggeredFavorEffect(playerIn.getRandom(), type, data, level.getLevel());
       return effect == TriggeredFavorEffect.EMPTY ? -1 : performFavorEffect(server, worldIn, playerIn, deity, effect.getEffect());
     }
     return -1;
@@ -87,7 +87,7 @@ public class FavorEffectManager {
   public static long onFavorEffect(final World worldIn, final PlayerEntity playerIn, final IDeity deity, final IFavor favor, final FavorLevel info) {
     final MinecraftServer server = worldIn.getServer();
     if(server != null) {
-      final FavorEffect effect = deity.getRandomEffect(playerIn.getRNG(), info.getLevel());
+      final FavorEffect effect = deity.getRandomEffect(playerIn.getRandom(), info.getLevel());
       return performFavorEffect(server, worldIn, playerIn, deity, effect);
     }
     return -1;
@@ -103,9 +103,9 @@ public class FavorEffectManager {
     if(GreekFantasy.CONFIG.isFavorNotifyEnabled()) {
       final String message = positive ? "positive" : "negative";
       final TextFormatting color = positive ? TextFormatting.GREEN : TextFormatting.RED;
-      final SoundEvent sound = positive ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_ITEM_BREAK;
-      playerIn.sendStatusMessage(new TranslationTextComponent("favor.effect." + message, deity.getText()).mergeStyle(color), !GreekFantasy.CONFIG.isFavorNotifyChat());
-      playerIn.getEntityWorld().playSound(playerIn.getPosX(), playerIn.getPosY(), playerIn.getPosZ(), sound, SoundCategory.PLAYERS, 0.4F, 0.9F + playerIn.getRNG().nextFloat() * 0.2F, false);
+      final SoundEvent sound = positive ? SoundEvents.PLAYER_LEVELUP : SoundEvents.ITEM_BREAK;
+      playerIn.displayClientMessage(new TranslationTextComponent("favor.effect." + message, deity.getText()).withStyle(color), !GreekFantasy.CONFIG.isFavorNotifyChat());
+      playerIn.getCommandSenderWorld().playLocalSound(playerIn.getX(), playerIn.getY(), playerIn.getZ(), sound, SoundCategory.PLAYERS, 0.4F, 0.9F + playerIn.getRandom().nextFloat() * 0.2F, false);
     }
   }
   
@@ -120,7 +120,7 @@ public class FavorEffectManager {
    */
   private static long performFavorEffect(final MinecraftServer server, final World worldIn, final PlayerEntity playerIn, final IDeity deity, final FavorEffect effect) {
     boolean flag = false;
-    if(effect != FavorEffect.EMPTY && effect.isInBiome(worldIn, playerIn.getPosition())) {
+    if(effect != FavorEffect.EMPTY && effect.isInBiome(worldIn, playerIn.blockPosition())) {
       // attempt to run the function, summon, item, potion, or add-favor effect (exclusively, in that order)
       if(functionFavorEffect(server, worldIn, playerIn, effect.getFunction())) {
         flag = true;
@@ -138,7 +138,7 @@ public class FavorEffectManager {
         if(!effect.getFavor().isPresent()) {
           sendStatusMessage(playerIn, deity, effect.isPositive());
         }
-        return Math.abs(effect.getMinCooldown()) + playerIn.getRNG().nextInt((int)Math.max(1, Math.abs(effect.getMinCooldown())));
+        return Math.abs(effect.getMinCooldown()) + playerIn.getRandom().nextInt((int)Math.max(1, Math.abs(effect.getMinCooldown())));
       }
     }
     return -1;
@@ -154,9 +154,9 @@ public class FavorEffectManager {
     if(potionTag.isPresent()) {
       final CompoundNBT nbt = potionTag.get().copy();
       nbt.putByte("Id", (byte) Effect.getId(ForgeRegistries.POTIONS.getValue(new ResourceLocation(potionTag.get().getString("Potion")))));
-      EffectInstance effect = EffectInstance.read(nbt);
+      EffectInstance effect = EffectInstance.load(nbt);
       if(effect != null) {
-        return playerIn.addPotionEffect(EffectInstance.read(nbt));
+        return playerIn.addEffect(EffectInstance.load(nbt));
       }
     }
     return false;
@@ -171,7 +171,7 @@ public class FavorEffectManager {
    */
   private static boolean itemFavorEffect(final PlayerEntity playerIn, final Optional<ItemStack> itemTag) {
     if(itemTag.isPresent()) {
-      return playerIn.addItemStackToInventory(itemTag.get());
+      return playerIn.addItem(itemTag.get());
     }
     return false;
   }
@@ -185,27 +185,27 @@ public class FavorEffectManager {
    */
   private static boolean summonFavorEffect(final World worldIn, final PlayerEntity playerIn, final Optional<CompoundNBT> entityTag) {
     if(entityTag.isPresent() && worldIn instanceof IServerWorld) {
-      final Optional<EntityType<?>> entityType = EntityType.readEntityType(entityTag.get());
+      final Optional<EntityType<?>> entityType = EntityType.by(entityTag.get());
       if(entityType.isPresent()) {
         Entity entity = entityType.get().create(worldIn);
         final boolean waterMob = entity instanceof WaterMobEntity || entity instanceof DrownedEntity || entity instanceof GuardianEntity
-            || (entity instanceof MobEntity && ((MobEntity)entity).getNavigator() instanceof SwimmerPathNavigator);
+            || (entity instanceof MobEntity && ((MobEntity)entity).getNavigation() instanceof SwimmerPathNavigator);
         // find a place to spawn the entity
-        Random rand = playerIn.getRNG();
+        Random rand = playerIn.getRandom();
         BlockPos spawnPos;        
         for(int attempts = 24, range = 9; attempts > 0; attempts--) {
-          spawnPos = playerIn.getPosition().add(rand.nextInt(range) - rand.nextInt(range), rand.nextInt(2) - rand.nextInt(2), rand.nextInt(range) - rand.nextInt(range));
+          spawnPos = playerIn.blockPosition().offset(rand.nextInt(range) - rand.nextInt(range), rand.nextInt(2) - rand.nextInt(2), rand.nextInt(range) - rand.nextInt(range));
           // check if this is a valid position
-          boolean isValidSpawn = EntitySpawnPlacementRegistry.canSpawnEntity(entityType.get(), (IServerWorld)worldIn, SpawnReason.MOB_SUMMONED, spawnPos, rand) 
-              || (waterMob && worldIn.getBlockState(spawnPos).matchesBlock(Blocks.WATER))
-              || (!waterMob && worldIn.getBlockState(spawnPos.down()).isSolid()
+          boolean isValidSpawn = EntitySpawnPlacementRegistry.checkSpawnRules(entityType.get(), (IServerWorld)worldIn, SpawnReason.MOB_SUMMONED, spawnPos, rand) 
+              || (waterMob && worldIn.getBlockState(spawnPos).is(Blocks.WATER))
+              || (!waterMob && worldIn.getBlockState(spawnPos.below()).canOcclude()
                   && worldIn.getBlockState(spawnPos).getMaterial() == Material.AIR
-                  && worldIn.getBlockState(spawnPos.up()).getMaterial() == Material.AIR);
+                  && worldIn.getBlockState(spawnPos.above()).getMaterial() == Material.AIR);
           if(isValidSpawn) {
             // spawn the entity at this position and finish
-            entity.read(entityTag.get());
-            entity.setPosition(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.01D, spawnPos.getZ() + 0.5D);
-            worldIn.addEntity(entity);
+            entity.load(entityTag.get());
+            entity.setPos(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.01D, spawnPos.getZ() + 0.5D);
+            worldIn.addFreshEntity(entity);
             return true;
           }
         }
@@ -227,7 +227,7 @@ public class FavorEffectManager {
   private static boolean functionFavorEffect(final MinecraftServer server, final World worldIn, final PlayerEntity playerIn, final Optional<ResourceLocation> function) {
     if(function.isPresent() && server != null) {
       // load the functions from the function manager
-      final FunctionManager manager = server.getFunctionManager();
+      final FunctionManager manager = server.getFunctions();
       if(functions.isEmpty()) {
         loadFunctions(manager);
         // if it's still empty, something went wrong
@@ -238,10 +238,10 @@ public class FavorEffectManager {
       }
       // prepare to execute the function
       final Optional<FunctionObject> mcfunction = manager.get(function.get());
-      final Vector3d vec = playerIn.getPositionVec().add(0.0D, 1.0D, 0.0D);
+      final Vector3d vec = playerIn.position().add(0.0D, 1.0D, 0.0D);
       if(mcfunction.isPresent()) {
         // make a command source at the player
-        final CommandSource commandSource = manager.getCommandSource().withEntity(playerIn).withPos(vec).withPermissionLevel(4).withFeedbackDisabled();
+        final CommandSource commandSource = manager.getGameLoopSender().withEntity(playerIn).withPosition(vec).withPermission(4).withSuppressedOutput();
         manager.execute(mcfunction.get(), commandSource);
         return true;
       }

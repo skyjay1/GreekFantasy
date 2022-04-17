@@ -16,6 +16,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
+import net.minecraft.item.Item.Properties;
+
 public abstract class InstrumentItem extends Item {
   
   public static final ResourceLocation DEFAULT_SONG = new ResourceLocation(GreekFantasy.MODID, "greensleeves");
@@ -27,9 +29,9 @@ public abstract class InstrumentItem extends Item {
   }
   
   @Override
-  public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+  public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
     // add the item to the group with enchantment already applied
-    if (this.isInGroup(group)) {
+    if (this.allowdedIn(group)) {
       final ItemStack stack = new ItemStack(this);
       writeSong(stack, DEFAULT_SONG);
       items.add(stack);
@@ -42,7 +44,7 @@ public abstract class InstrumentItem extends Item {
   }
   
   @Override
-  public UseAction getUseAction(final ItemStack stack) {
+  public UseAction getUseAnimation(final ItemStack stack) {
     return UseAction.CROSSBOW;
   }
 
@@ -53,26 +55,26 @@ public abstract class InstrumentItem extends Item {
   }
 
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-    ItemStack itemstack = playerIn.getHeldItem(handIn);
+  public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+    ItemStack itemstack = playerIn.getItemInHand(handIn);
     // check if player is sneaking and open GUI
-    if(playerIn.isSneaking()) {
-      if(worldIn.isRemote()) {
-        GuiLoader.openSongGui(playerIn, playerIn.inventory.currentItem, itemstack);
+    if(playerIn.isShiftKeyDown()) {
+      if(worldIn.isClientSide()) {
+        GuiLoader.openSongGui(playerIn, playerIn.inventory.selected, itemstack);
       }
     } else {
-      playerIn.setActiveHand(handIn);
+      playerIn.startUsingItem(handIn);
     }
-    return ActionResult.resultConsume(itemstack);
+    return ActionResult.consume(itemstack);
   }
   
   @Override
-  public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
+  public void releaseUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
     int timeUsed = getUseDuration(stack) - timeLeft;
     // Check if player stopped using the item very soon after starting - if so, open song selection GUI instead
-    if(timeUsed < 10 && stack.getItem() == this && worldIn.isRemote() && entityLiving instanceof PlayerEntity) {
+    if(timeUsed < 10 && stack.getItem() == this && worldIn.isClientSide() && entityLiving instanceof PlayerEntity) {
       PlayerEntity player = (PlayerEntity)entityLiving;
-      GuiLoader.openSongGui(player, player.inventory.currentItem, stack);
+      GuiLoader.openSongGui(player, player.inventory.selected, stack);
     }
   }
 

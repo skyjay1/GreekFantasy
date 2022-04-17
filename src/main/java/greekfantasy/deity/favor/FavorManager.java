@@ -101,37 +101,37 @@ public class FavorManager {
   public static void onAddPotion(final PlayerEntity player, final EffectInstance effect, final IFavor favor) {
     if(!favor.isEnabled()) return;
     // attempt to trigger EFFECTS_CHANGED favor effect
-    triggerFavorEffect(FavorEffectTrigger.Type.EFFECTS_CHANGED, effect.getPotion().getRegistryName(), player, favor);
+    triggerFavorEffect(FavorEffectTrigger.Type.EFFECTS_CHANGED, effect.getEffect().getRegistryName(), player, favor);
     // attempt to increase the duration
     final long time = IFavor.calculateTime(player);
     final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
-    if(player.ticksExisted > 10 && favor.hasNoTriggeredCooldown(time)) {
+    if(player.tickCount > 10 && favor.hasNoTriggeredCooldown(time)) {
       float lengthMultiplier = 0.0F;
       long cooldown = -1;
       // determine the length multiplier and max cooldown
       for(final ConfiguredSpecialFavorEffect favorEffect : favorConfig.getSpecials(SpecialFavorEffect.Type.POTION_BONUS_LENGTH)) {
         if(favorEffect.canApply(player, favor)) {
           lengthMultiplier += favorEffect.getEffect().getMultiplier().get();
-          cooldown = Math.max(cooldown, favorEffect.getEffect().getRandomCooldown(player.getRNG()));
+          cooldown = Math.max(cooldown, favorEffect.getEffect().getRandomCooldown(player.getRandom()));
         }
       }
       if(cooldown > 0) {
         // use the length multiplier amount to change the effect to one with a different duration
         // note: this does not work for negative modifiers
         final int length = effect.getDuration() + (int)Math.round(effect.getDuration() * lengthMultiplier);
-        effect.combine(new EffectInstance(effect.getPotion(), length, effect.getAmplifier()));
+        effect.update(new EffectInstance(effect.getEffect(), length, effect.getAmplifier()));
         // set effect time and cooldown
         favor.setTriggeredTime(time, cooldown);
       }
     }
     // attempt to add a bonus potion effect
-    if(player.ticksExisted > 10 && favor.hasNoTriggeredCooldown(time)) {
+    if(player.tickCount > 10 && favor.hasNoTriggeredCooldown(time)) {
       long cooldown = -1;
       // determine the length multiplier and max cooldown
       for(final ConfiguredSpecialFavorEffect favorEffect : favorConfig.getSpecials(SpecialFavorEffect.Type.POTION_BONUS_EFFECT)) {
         if(favorEffect.canApply(player, favor)) {
-          cooldown = Math.max(cooldown, favorEffect.getEffect().getRandomCooldown(player.getRNG()));
-          favorEffect.getEffect().getPotionEffect().ifPresent(e -> player.addPotionEffect(e));
+          cooldown = Math.max(cooldown, favorEffect.getEffect().getRandomCooldown(player.getRandom()));
+          favorEffect.getEffect().getPotionEffect().ifPresent(e -> player.addEffect(e));
         }
       }
       if(cooldown > 0) {
@@ -150,25 +150,25 @@ public class FavorManager {
     if(!favor.isEnabled()) return;
     final long time = IFavor.calculateTime(player);
     // decrease all favor 
-    if(player.ticksExisted > 10 && GreekFantasy.CONFIG.doesFavorDecrease() && time % GreekFantasy.CONFIG.getFavorDecreaseInterval() == 0) {
+    if(player.tickCount > 10 && GreekFantasy.CONFIG.doesFavorDecrease() && time % GreekFantasy.CONFIG.getFavorDecreaseInterval() == 0) {
       favor.forEach((d, f) -> f.depleteFavor(player, d, 1 + Math.abs(f.getLevel()), Source.PASSIVE), true);
     }
     // every few seconds, attempt to perform a favor effect
-    if(!player.isCreative() && !player.isSpectator() && player.ticksExisted > 10 && time % 45 == 0 && favor.hasNoEffectCooldown(time)) {
+    if(!player.isCreative() && !player.isSpectator() && player.tickCount > 10 && time % 45 == 0 && favor.hasNoEffectCooldown(time)) {
       Optional<Deity> deity;
       FavorLevel info;
       ArrayList<Entry<ResourceLocation, FavorLevel>> entryList = Lists.newArrayList(favor.getAllFavor().entrySet());
       // order by which deity has the most favor
       //// Collections.sort(entryList, (e1, e2) -> e1.getValue().compareToAbs(e2.getValue()));
       //  order randomly
-      Collections.shuffle(entryList, player.getRNG());
+      Collections.shuffle(entryList, player.getRandom());
       // loop through each deity until one of them can perform an effect
       for(final Entry<ResourceLocation, FavorLevel> entry : entryList) {
         deity = GreekFantasy.PROXY.DEITY.get(entry.getKey());
         info = entry.getValue();
-        if(deity.isPresent() && deity.get().isEnabled() && player.getRNG().nextDouble() * 0.7D < info.getPercentFavor()) {
+        if(deity.isPresent() && deity.get().isEnabled() && player.getRandom().nextDouble() * 0.7D < info.getPercentFavor()) {
           // perform an effect, set the timestamp and cooldown, and exit the loop
-          long cooldown = FavorEffectManager.onFavorEffect(player.getEntityWorld(), player, deity.get(), favor, info);
+          long cooldown = FavorEffectManager.onFavorEffect(player.getCommandSenderWorld(), player, deity.get(), favor, info);
           if(cooldown > 0) {
             favor.setEffectTime(time, cooldown);
             break;
@@ -177,16 +177,16 @@ public class FavorManager {
       }
     }
     // every few seconds, attempt to perform passive special effects
-    if(!player.isCreative() && !player.isSpectator() && player.ticksExisted > 10 && time % 50 == 0 && favor.hasNoTriggeredCooldown(time)) {
+    if(!player.isCreative() && !player.isSpectator() && player.tickCount > 10 && time % 50 == 0 && favor.hasNoTriggeredCooldown(time)) {
       long cooldown = onNearCrops(player, favor);
       if(cooldown > 0) {
         favor.setTriggeredTime(time, cooldown);
       }
     }
     // every few ticks, ensure that flying players can still fly
-    if(GreekFantasy.CONFIG.isFlyingEnabled() && player.getEntityWorld() instanceof ServerWorld && 
-        !player.isCreative() && !player.isSpectator() && player.ticksExisted > 10 && time % 11 == 0) {
-      final GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)player.getEntityWorld());
+    if(GreekFantasy.CONFIG.isFlyingEnabled() && player.getCommandSenderWorld() instanceof ServerWorld && 
+        !player.isCreative() && !player.isSpectator() && player.tickCount > 10 && time % 11 == 0) {
+      final GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)player.getCommandSenderWorld());
       if(data.hasFlyingPlayer(player) && !GFWorldSavedData.validatePlayer(player, favor)) {
         // remove the player as a flying player
         data.removeFlyingPlayer(player);
@@ -194,15 +194,15 @@ public class FavorManager {
     }
     
     // prevent players with a potion effect from using portals
-    if(GreekFantasy.CONFIG.isPrisonerEnabled() && player.getActivePotionEffect(GFRegistry.PRISONER_EFFECT) != null) {
+    if(GreekFantasy.CONFIG.isPrisonerEnabled() && player.getEffect(GFRegistry.PRISONER_EFFECT) != null) {
       // remove the effect if the player has Hades level 8+
       Optional<Deity> hades = GreekFantasy.PROXY.DEITY.get(new ResourceLocation(GreekFantasy.MODID, "hades"));
-      if(!Dimension.THE_NETHER.equals(player.getEntityWorld().getDimensionKey())) {
+      if(!Dimension.NETHER.equals(player.getCommandSenderWorld().dimension())) {
         // remove the potion effect when not in nether
-        player.removeActivePotionEffect(GFRegistry.PRISONER_EFFECT);
-      } else if (hades.isPresent() && favor.getFavor(hades.get()).getLevel() >= 8 && player.getRNG().nextInt(400) == 0) {
+        player.removeEffectNoUpdate(GFRegistry.PRISONER_EFFECT);
+      } else if (hades.isPresent() && favor.getFavor(hades.get()).getLevel() >= 8 && player.getRandom().nextInt(400) == 0) {
         // remove the potion effect and notify the player when high enough favor
-        player.removeActivePotionEffect(GFRegistry.PRISONER_EFFECT);
+        player.removeEffectNoUpdate(GFRegistry.PRISONER_EFFECT);
         FavorEffectManager.sendStatusMessage(player, hades.get(), true);
       } else {
         // every tick, reset the portal cooldown amount to ensure no portal travel
@@ -233,7 +233,7 @@ public class FavorManager {
       for(final IDeity deity : deityList) {
         level = favor.getFavor(deity);
         // perform an effect, set the timestamp and cooldown, and exit the loop
-        long lCooldown = FavorEffectManager.onTriggeredFavorEffect(type, data, playerIn.getEntityWorld(), playerIn, deity, favor, level);
+        long lCooldown = FavorEffectManager.onTriggeredFavorEffect(type, data, playerIn.getCommandSenderWorld(), playerIn, deity, favor, level);
         cooldown = Math.max(cooldown, lCooldown);
       }
       // set timestamp and cooldown if any of the triggers succeeded
@@ -259,8 +259,8 @@ public class FavorManager {
       long cooldown = -1;
       for(final ConfiguredSpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.COMBAT_START_EFFECT)) {
         if(effect.canApply(player, favor)) {
-          effect.getEffect().getPotionEffect().ifPresent(e -> player.addPotionEffect(e));
-          cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRNG()));
+          effect.getEffect().getPotionEffect().ifPresent(e -> player.addEffect(e));
+          cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRandom()));
         }
       }
       // set effect cooldown
@@ -270,7 +270,7 @@ public class FavorManager {
     }
     // combat start summon mahkai (does not trigger when favor level is 0 or combat_start_effect was triggered)
     BiomeWhitelistConfig makhaiConfig = GreekFantasy.CONFIG.MOB_SPAWNS.get("makhai_spawn");
-    RegistryKey<Biome> biome = player.getEntityWorld().func_242406_i(player.getPosition()).orElse(Biomes.PLAINS);
+    RegistryKey<Biome> biome = player.getCommandSenderWorld().getBiomeName(player.blockPosition()).orElse(Biomes.PLAINS);
     if(favor.hasNoTriggeredCooldown(time) && makhaiConfig != null && makhaiConfig.chance() > 0 && makhaiConfig.canSpawnInBiome(biome)) {
       long cooldown = -1;
       int level = 0;
@@ -281,7 +281,7 @@ public class FavorManager {
           final MakhaiEntity entity = summonMahkai(player, level >= 0);
           // set cooldown
           if(entity != null) {
-            cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRNG()));
+            cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRandom()));
             break;
           }
         }
@@ -373,19 +373,19 @@ public class FavorManager {
     // attempt to change the damage amount of the arrow
     final long time = IFavor.calculateTime(player);
     if(favor.hasNoTriggeredCooldown(time)) {
-      double damage = arrow.getDamage();
+      double damage = arrow.getBaseDamage();
       float multiplier = 0.0F;
       long cooldown = -1;
       for(final ConfiguredSpecialFavorEffect effect : GreekFantasy.PROXY.getFavorConfiguration().getSpecials(SpecialFavorEffect.Type.ARROW_DAMAGE_MULTIPLIER)) {
         if(effect.canApply(player, favor)) {
           multiplier += effect.getEffect().getMultiplier().orElse(0.0F);
-          cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRNG()));
+          cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRandom()));
         }
       }
       if(cooldown > 0 && multiplier != 0.0F) {
         favor.setTriggeredTime(time, cooldown);
-        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(true, arrow.getPosition(), 8));
-        arrow.setDamage(damage + (damage * multiplier));
+        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(true, arrow.blockPosition(), 8));
+        arrow.setBaseDamage(damage + (damage * multiplier));
       }
     }
   }
@@ -407,7 +407,7 @@ public class FavorManager {
       for(final ConfiguredSpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.XP_MULTIPLIER)) {
         if(effect.canApply(player, favor)) {
           xpMultiplier += effect.getEffect().getMultiplier().orElse(0.0F);
-          cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRNG()));
+          cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRandom()));
         }
       }
       if(cooldown > 0 && xpMultiplier != 0.0F) {
@@ -435,7 +435,7 @@ public class FavorManager {
     for(final ConfiguredSpecialFavorEffect effect : favorConfig.getSpecials(SpecialFavorEffect.Type.BREEDING_OFFSPRING_MULTIPLIER)) {
       if(effect.canApply(player, favor)) {
         breedingMultiplier += effect.getEffect().getMultiplier().get();
-        cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRNG()));
+        cooldown = Math.max(cooldown, effect.getEffect().getRandomCooldown(player.getRandom()));
       }
     }
     if(cooldown > 0 && breedingMultiplier != 0.0F) {
@@ -455,11 +455,11 @@ public class FavorManager {
    **/
   private static long onNearCrops(final PlayerEntity player, final IFavor favor) {
     final IntegerProperty[] AGES = new IntegerProperty[] {
-        BlockStateProperties.AGE_0_1, BlockStateProperties.AGE_0_15, BlockStateProperties.AGE_0_2,
-        BlockStateProperties.AGE_0_3, BlockStateProperties.AGE_0_5, BlockStateProperties.AGE_0_7
+        BlockStateProperties.AGE_1, BlockStateProperties.AGE_15, BlockStateProperties.AGE_2,
+        BlockStateProperties.AGE_3, BlockStateProperties.AGE_5, BlockStateProperties.AGE_7
     };
     final FavorConfiguration favorConfig = GreekFantasy.PROXY.getFavorConfiguration();
-    final Random rand = player.getEntityWorld().getRandom();
+    final Random rand = player.getCommandSenderWorld().getRandom();
     final int maxAttempts = 10;
     final int variationY = 2;
     int radius = 6;
@@ -483,19 +483,19 @@ public class FavorManager {
       final int x1 = rand.nextInt(radius * 2) - radius;
       final int y1 = rand.nextInt(variationY * 2) - variationY + 1;
       final int z1 = rand.nextInt(radius * 2) - radius;
-      final BlockPos blockpos = player.getPosition().add(x1, y1, z1);
-      final BlockState state = player.getEntityWorld().getBlockState(blockpos);
+      final BlockPos blockpos = player.blockPosition().offset(x1, y1, z1);
+      final BlockState state = player.getCommandSenderWorld().getBlockState(blockpos);
       // if the block can be grown, grow it and return
       if (state.getBlock() instanceof IGrowable) {
         // determine which age property applies to this state
         for(final IntegerProperty AGE : AGES) {
           if(state.hasProperty(AGE)) {
             // attempt to update the age (add or subtract)
-            int oldAge = state.get(AGE);
+            int oldAge = state.getValue(AGE);
             int newAge = Math.max(0, oldAge + growthToAdd);
-            if(AGE.getAllowedValues().contains(Integer.valueOf(newAge))) {
+            if(AGE.getPossibleValues().contains(Integer.valueOf(newAge))) {
               // update the blockstate's age
-              player.getEntityWorld().setBlockState(blockpos, state.with(AGE, newAge));
+              player.getCommandSenderWorld().setBlockAndUpdate(blockpos, state.setValue(AGE, newAge));
               // spawn particles
               GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(growthToAdd > 0, blockpos, 10));
               // return cooldown value
@@ -516,29 +516,29 @@ public class FavorManager {
    */
   private static MakhaiEntity summonMahkai(final PlayerEntity playerIn, final boolean tame) {
     // create a mahkai
-    final MakhaiEntity entity = GFRegistry.MAKHAI_ENTITY.create(playerIn.getEntityWorld());
-    final Random rand = playerIn.getRNG();
+    final MakhaiEntity entity = GFRegistry.MAKHAI_ENTITY.create(playerIn.getCommandSenderWorld());
+    final Random rand = playerIn.getRandom();
     // attempt to spawn the mahkai nearby
     BlockPos spawnPos;
     for(int attempts = 24, range = 6; attempts > 0; attempts--) {
-      spawnPos = playerIn.getPosition().add(rand.nextInt(range) - rand.nextInt(range), rand.nextInt(2) - rand.nextInt(2), rand.nextInt(range) - rand.nextInt(range));
+      spawnPos = playerIn.blockPosition().offset(rand.nextInt(range) - rand.nextInt(range), rand.nextInt(2) - rand.nextInt(2), rand.nextInt(range) - rand.nextInt(range));
       // check if this is a valid position
-      boolean isValidSpawn = playerIn.world.getBlockState(spawnPos.down()).isSolid()
-              && playerIn.world.getBlockState(spawnPos).getMaterial() == Material.AIR
-              && playerIn.world.getBlockState(spawnPos.up()).getMaterial() == Material.AIR;
+      boolean isValidSpawn = playerIn.level.getBlockState(spawnPos.below()).canOcclude()
+              && playerIn.level.getBlockState(spawnPos).getMaterial() == Material.AIR
+              && playerIn.level.getBlockState(spawnPos.above()).getMaterial() == Material.AIR;
       if(isValidSpawn) {
         // set entity position and data
-        entity.setPosition(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.01D, spawnPos.getZ() + 0.5D);
+        entity.setPos(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.01D, spawnPos.getZ() + 0.5D);
         if(tame) {
-          entity.setTamed(true);
-          entity.setOwnerId(playerIn.getUniqueID());
+          entity.setTame(true);
+          entity.setOwnerUUID(playerIn.getUUID());
         } else {
-          entity.setRevengeTarget(playerIn);
+          entity.setLastHurtByMob(playerIn);
         }
         // actually add the entity to the world
-        playerIn.world.addEntity(entity);
+        playerIn.level.addFreshEntity(entity);
         // set spawning
-        entity.onInitialSpawn((IServerWorld) playerIn.world, playerIn.world.getDifficultyForLocation(spawnPos), SpawnReason.MOB_SUMMONED, null, null);
+        entity.finalizeSpawn((IServerWorld) playerIn.level, playerIn.level.getCurrentDifficultyAt(spawnPos), SpawnReason.MOB_SUMMONED, null, null);
         entity.setSpawning(true);
         return entity;
       }

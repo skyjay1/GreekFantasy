@@ -68,7 +68,7 @@ public class SongScreen extends Screen {
       instrumentItem = (InstrumentItem)instrumentStack.getItem();
     } else {
       instrumentItem = null;
-      this.closeScreen();
+      this.onClose();
     }
     // populate songs list (alphabetically)
     if(songs.isEmpty()) {
@@ -88,7 +88,7 @@ public class SongScreen extends Screen {
     this.guiLeft = (this.width - SCREEN_WIDTH) / 2;
     this.guiTop = (this.height - SCREEN_HEIGHT) / 2 - 10;
     // add 'done' button
-    addButton(new Button(guiLeft, guiTop + SCREEN_HEIGHT + 4, SCREEN_WIDTH, 20, new TranslationTextComponent("gui.done"), c -> this.minecraft.displayGuiScreen(null)));
+    addButton(new Button(guiLeft, guiTop + SCREEN_HEIGHT + 4, SCREEN_WIDTH, 20, new TranslationTextComponent("gui.done"), c -> this.minecraft.setScreen(null)));
     // add scroll button
     scrollButton = addButton(new ScrollButton<>(this, guiLeft + SCROLL_LEFT, guiTop + SCROLL_TOP, SCROLL_WIDTH, SCROLL_HEIGHT, 
         0, SCREEN_HEIGHT + 2 * BTN_HEIGHT, SCREEN_TEXTURE, s -> s.scrollEnabled, 4, b -> updateScroll(b.getScrollAmount())));
@@ -107,7 +107,7 @@ public class SongScreen extends Screen {
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
     this.renderBackground(matrixStack);
     // draw background image
-    this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
+    this.getMinecraft().getTextureManager().bind(SCREEN_TEXTURE);
     this.blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // draw title
     drawCenteredString(matrixStack, this.font, this.getTitle(), this.width / 2, this.guiTop + 8, 0xFFFFFF);
@@ -127,12 +127,12 @@ public class SongScreen extends Screen {
   }
   
   @Override
-  public void onClose() {
+  public void removed() {
     // send update packet to server
     if(instrumentItem instanceof InstrumentItem) {
       GreekFantasy.CHANNEL.sendToServer(new CUpdateInstrumentPacket(this.itemSlot, this.selectedSong));
     }
-    super.onClose();
+    super.removed();
   }
   
   @Override
@@ -161,26 +161,26 @@ public class SongScreen extends Screen {
     }
 
     @Override
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
       if(this.visible) {
         final boolean selected = isSelected();
         final int xOffset = 0;
         final int yOffset = SCREEN_HEIGHT + (selected ? this.height : 0);
         // draw button background
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        SongScreen.this.getMinecraft().getTextureManager().bindTexture(SCREEN_TEXTURE);
+        SongScreen.this.getMinecraft().getTextureManager().bind(SCREEN_TEXTURE);
         this.blit(matrixStack, this.x, this.y, xOffset, yOffset, this.width, this.height);
         // style the name and credits
-        IFormattableTextComponent name = song.getName().deepCopy();
-        IFormattableTextComponent credits = song.getCredits().deepCopy();
+        IFormattableTextComponent name = song.getName().copy();
+        IFormattableTextComponent credits = song.getCredits().copy();
         if(selected) {
-          name.mergeStyle(TextFormatting.GRAY);
-          credits.mergeStyle(TextFormatting.GRAY);
+          name.withStyle(TextFormatting.GRAY);
+          credits.withStyle(TextFormatting.GRAY);
         }
         // draw deity name string
         drawStringToFit(matrixStack, name, this.x + 3, this.y + 4, this.width - 6);
         // draw credits string
-        drawStringToFit(matrixStack, credits, this.x + 3, this.y + SongScreen.this.font.FONT_HEIGHT + 5, this.width - 6);
+        drawStringToFit(matrixStack, credits, this.x + 3, this.y + SongScreen.this.font.lineHeight + 5, this.width - 6);
       }
     }
     
@@ -195,12 +195,12 @@ public class SongScreen extends Screen {
      **/
     protected void drawStringToFit(MatrixStack matrixStack, ITextComponent text, int x, int y, int maxWidth) {
       float scale = 1.0F;
-      while(SongScreen.this.font.getWordWrappedHeight(text.getString(), (int) (maxWidth / scale)) > SongScreen.this.font.FONT_HEIGHT && scale > 0.25F) {
+      while(SongScreen.this.font.wordWrapHeight(text.getString(), (int) (maxWidth / scale)) > SongScreen.this.font.lineHeight && scale > 0.25F) {
         scale -= 0.05F;
       }
       RenderSystem.pushMatrix();
       RenderSystem.scalef(scale, scale, scale);
-      SongScreen.this.font.drawText(matrixStack, text, x / scale, y / scale, 0);
+      SongScreen.this.font.draw(matrixStack, text, x / scale, y / scale, 0);
       RenderSystem.popMatrix();
     }
     

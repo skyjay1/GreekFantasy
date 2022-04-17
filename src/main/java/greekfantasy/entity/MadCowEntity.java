@@ -27,9 +27,9 @@ public class MadCowEntity extends CowEntity implements IMob {
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return CowEntity.registerAttributes()
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 0.25D);
+    return CowEntity.createAttributes()
+        .add(Attributes.ATTACK_DAMAGE, 1.0D)
+        .add(Attributes.ATTACK_KNOCKBACK, 0.25D);
   }
   
   @Override
@@ -44,21 +44,21 @@ public class MadCowEntity extends CowEntity implements IMob {
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     // slowly lose health
-    if(!this.isNoDespawnRequired() && this.rand.nextInt(400) == 0) {
-      this.attackEntityFrom(DamageSource.STARVE, 1.0F);
+    if(!this.isPersistenceRequired() && this.random.nextInt(400) == 0) {
+      this.hurt(DamageSource.STARVE, 1.0F);
     }
   }
   
   @Override
-  public SoundCategory getSoundCategory() {
+  public SoundCategory getSoundSource() {
     return SoundCategory.HOSTILE;
   }
   
   @Override
-  protected boolean isDespawnPeaceful() {
+  protected boolean shouldDespawnInPeaceful() {
     return true;
   }
 
@@ -74,24 +74,24 @@ public class MadCowEntity extends CowEntity implements IMob {
     }
     
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
       if(cooldown > 0) {
         cooldown--;
       } else {
-        return super.shouldExecute();
+        return super.canUse();
       }
       return false;
     }
     
     @Override
-    public void startExecuting() {
-      super.startExecuting();
+    public void start() {
+      super.start();
       MadCowEntity.this.isAttacking = true;
     }
     
     @Override
-    public void resetTask() {
-      super.resetTask();
+    public void stop() {
+      super.stop();
       cooldown = maxCooldown;
       MadCowEntity.this.isAttacking = false;
     }
@@ -105,7 +105,7 @@ public class MadCowEntity extends CowEntity implements IMob {
     }
     
     @Override
-    public boolean shouldExecute() {
+    public boolean canUse() {
       if(MadCowEntity.this.isAttacking) {
         return false;
       }
@@ -113,11 +113,11 @@ public class MadCowEntity extends CowEntity implements IMob {
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
+    public boolean canContinueToUse() {
       if(MadCowEntity.this.isAttacking) {
         return false;
       }
-      return super.shouldContinueExecuting();
+      return super.canContinueToUse();
     }
   }
 }

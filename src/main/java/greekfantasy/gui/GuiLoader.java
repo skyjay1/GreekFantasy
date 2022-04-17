@@ -11,10 +11,10 @@ public final class GuiLoader {
   
   public static void openSongGui(final PlayerEntity playerIn, final int itemSlot, final ItemStack itemstack) {
     // only load client-side, of course
-    if (!playerIn.getEntityWorld().isRemote()) {
+    if (!playerIn.getCommandSenderWorld().isClientSide()) {
       return;
     }
     // open the gui
-    Minecraft.getInstance().displayGuiScreen(new SongScreen(itemSlot, itemstack));
+    Minecraft.getInstance().setScreen(new SongScreen(itemSlot, itemstack));
   }
 }

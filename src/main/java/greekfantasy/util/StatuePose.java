@@ -62,10 +62,10 @@ public class StatuePose implements INBTSerializable<CompoundNBT> {
   public CompoundNBT serializeNBT(final CompoundNBT tag) {
     for(final Entry<ModelPart, Vector3f> e : angles.entrySet()) {
       final CompoundNBT eTag = new CompoundNBT();
-      eTag.put(KEY_ANGLES + ".x", FloatNBT.valueOf(e.getValue().getX()));
-      eTag.put(KEY_ANGLES + ".y", FloatNBT.valueOf(e.getValue().getY()));
-      eTag.put(KEY_ANGLES + ".z", FloatNBT.valueOf(e.getValue().getZ()));
-      tag.put(KEY_ANGLES + "_" + e.getKey().getString(), eTag);
+      eTag.put(KEY_ANGLES + ".x", FloatNBT.valueOf(e.getValue().x()));
+      eTag.put(KEY_ANGLES + ".y", FloatNBT.valueOf(e.getValue().y()));
+      eTag.put(KEY_ANGLES + ".z", FloatNBT.valueOf(e.getValue().z()));
+      tag.put(KEY_ANGLES + "_" + e.getKey().getSerializedName(), eTag);
     }
     return tag;
   }
@@ -78,7 +78,7 @@ public class StatuePose implements INBTSerializable<CompoundNBT> {
   @Override
   public void deserializeNBT(CompoundNBT nbt) {
     for (final ModelPart m : ModelPart.values()) {
-      final CompoundNBT eTag = nbt.getCompound(KEY_ANGLES + "_" + m.getString());
+      final CompoundNBT eTag = nbt.getCompound(KEY_ANGLES + "_" + m.getSerializedName());
       float x = 0.0F;
       float y = 0.0F;
       float z = 0.0F;
@@ -96,7 +96,7 @@ public class StatuePose implements INBTSerializable<CompoundNBT> {
     final StringBuilder builder = new StringBuilder("StatuePose{\n");
     for(final Entry<ModelPart, Vector3f> entry : angles.entrySet()) {
       builder.append("  ");
-      builder.append(entry.getKey().getString());
+      builder.append(entry.getKey().getSerializedName());
       builder.append(" : ");
       builder.append(entry.getValue().toString());
       builder.append("\n");

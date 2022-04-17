@@ -20,21 +20,21 @@ public class SpartiRenderer<T extends SpartiEntity> extends BipedRenderer<T, Spa
   }
   
   @Override
-  protected void preRenderCallback(final T entity, MatrixStack matrix, float ageInTicks) {
+  protected void scale(final T entity, MatrixStack matrix, float ageInTicks) {
     // if the entity is spawning, shift the entity down
     if(entity.isSpawning()) {
       final float height = 1.99F;
       final float translate = 0.035F;
       final float translateY = height * entity.getSpawnPercent() - height;
-      final float translateX = translate * (entity.getRNG().nextFloat() - 0.5F);
-      final float translateZ = translate * (entity.getRNG().nextFloat() - 0.5F);
+      final float translateX = translate * (entity.getRandom().nextFloat() - 0.5F);
+      final float translateZ = translate * (entity.getRandom().nextFloat() - 0.5F);
 //      GreekFantasy.LOGGER.debug("tY=" + translateY + "; spawn=" + entity.getSpawnPercent());
       matrix.translate(translateX, translateY, translateZ);
     }
   }
   
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
 }

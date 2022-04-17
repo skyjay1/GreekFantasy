@@ -19,12 +19,12 @@ public class NemeanLionRenderer<T extends NemeanLionEntity> extends MobRenderer<
   }
   
   @Override
-  protected void preRenderCallback(final T entity, MatrixStack matrix, float f) {
+  protected void scale(final T entity, MatrixStack matrix, float f) {
     matrix.scale(SCALE, SCALE, SCALE);
   }
 
   @Override
-  public ResourceLocation getEntityTexture(final T entity) {
+  public ResourceLocation getTextureLocation(final T entity) {
     return TEXTURE;
   }
 }

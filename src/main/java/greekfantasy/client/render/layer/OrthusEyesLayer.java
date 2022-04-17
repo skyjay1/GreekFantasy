@@ -10,14 +10,14 @@ import net.minecraft.util.ResourceLocation;
 
 public class OrthusEyesLayer<T extends OrthusEntity> extends AbstractEyesLayer<T, OrthusModel<T>> {
   
-  private static final RenderType RENDER_TYPE = RenderType.getEyes(new ResourceLocation(GreekFantasy.MODID, "textures/entity/orthus/orthus_eyes.png"));
+  private static final RenderType RENDER_TYPE = RenderType.eyes(new ResourceLocation(GreekFantasy.MODID, "textures/entity/orthus/orthus_eyes.png"));
 
   public OrthusEyesLayer(IEntityRenderer<T, OrthusModel<T>> ientityrenderer) {
     super(ientityrenderer);
   }
 
   @Override
-  public RenderType getRenderType() {
+  public RenderType renderType() {
     return RENDER_TYPE;
   }
 

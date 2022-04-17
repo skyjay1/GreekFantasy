@@ -15,6 +15,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import net.minecraft.item.Item.Properties;
+
 public class PanfluteItem extends InstrumentItem {
 
   public PanfluteItem(final Properties properties) {
@@ -22,12 +24,12 @@ public class PanfluteItem extends InstrumentItem {
   }
   
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    tooltip.add(new TranslationTextComponent(TOOLTIP).mergeStyle(TextFormatting.GRAY));
+  public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    tooltip.add(new TranslationTextComponent(TOOLTIP).withStyle(TextFormatting.GRAY));
   }
   
   // Instrument //
   
   @Override
-  public SoundEvent getSound() { return SoundEvents.BLOCK_NOTE_BLOCK_FLUTE; }
+  public SoundEvent getSound() { return SoundEvents.NOTE_BLOCK_FLUTE; }
 }

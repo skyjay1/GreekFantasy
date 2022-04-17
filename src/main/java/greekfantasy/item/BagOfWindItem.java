@@ -19,24 +19,24 @@ public class BagOfWindItem extends Item {
   }
   
   @Override
-  public ActionResult<ItemStack> onItemRightClick(final World world, final PlayerEntity player, final Hand hand) {
-    ItemStack stack = player.getHeldItem(hand);
+  public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
+    ItemStack stack = player.getItemInHand(hand);
     // prevent the item from being used up all the way
-    if(stack.getMaxDamage() - stack.getDamage() <= 1) {
-      return ActionResult.resultFail(stack);
+    if(stack.getMaxDamage() - stack.getDamageValue() <= 1) {
+      return ActionResult.fail(stack);
     }
     // give player potion effect
-    player.addPotionEffect(new EffectInstance(Effects.SPEED, GreekFantasy.CONFIG.getBagOfWindDuration(), 1));
-    player.addPotionEffect(new EffectInstance(Effects.DOLPHINS_GRACE, GreekFantasy.CONFIG.getBagOfWindDuration(), 0));
-    player.getCooldownTracker().setCooldown(this, GreekFantasy.CONFIG.getBagOfWindCooldown());
+    player.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, GreekFantasy.CONFIG.getBagOfWindDuration(), 1));
+    player.addEffect(new EffectInstance(Effects.DOLPHINS_GRACE, GreekFantasy.CONFIG.getBagOfWindDuration(), 0));
+    player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.getBagOfWindCooldown());
     if(!player.isCreative()) {
-      stack.damageItem(1, player, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+      stack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
     }
-    return ActionResult.func_233538_a_(stack, world.isRemote());
+    return ActionResult.sidedSuccess(stack, world.isClientSide());
   }
   
   @Override
-  public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-    return toRepair.getItem() == this && toRepair.getDamage() < toRepair.getMaxDamage() && repair.getItem() == GFRegistry.MAGIC_FEATHER;
+  public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    return toRepair.getItem() == this && toRepair.getDamageValue() < toRepair.getMaxDamage() && repair.getItem() == GFRegistry.MAGIC_FEATHER;
   }
 }

@@ -22,7 +22,7 @@ public class GoldenRamHornLayer<T extends GoldenRamEntity> extends LayerRenderer
   public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entityIn, float limbSwing,
       float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
     if (!entityIn.isInvisible()) {
-      this.getEntityModel().renderHorns(matrixStackIn, bufferIn.getBuffer(RenderType.getEntitySolid(TEXTURE)), packedLightIn, OverlayTexture.NO_OVERLAY);
+      this.getParentModel().renderHorns(matrixStackIn, bufferIn.getBuffer(RenderType.entitySolid(TEXTURE)), packedLightIn, OverlayTexture.NO_OVERLAY);
     }
   }
 }

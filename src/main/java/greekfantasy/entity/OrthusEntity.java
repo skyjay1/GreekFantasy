@@ -74,8 +74,8 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   
   protected static final IOptionalNamedTag<Item> FOOD = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "orthus_food"));
 
-  protected static final DataParameter<Boolean> FIRE = EntityDataManager.createKey(OrthusEntity.class, DataSerializers.BOOLEAN);
-  protected static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(OrthusEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+  protected static final DataParameter<Boolean> FIRE = EntityDataManager.defineId(OrthusEntity.class, DataSerializers.BOOLEAN);
+  protected static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.defineId(OrthusEntity.class, DataSerializers.OPTIONAL_UUID);
   protected static final String KEY_FIRE = "Firing";
   protected static final String KEY_LIFE_TICKS = "LifeTicks";
   
@@ -87,7 +87,7 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   protected static final int MAX_FIRE_TIME = 52;
   protected static final int FIRE_COOLDOWN = 165;
   
-  protected static final RangedInteger ANGER_RANGE = TickRangeConverter.convertRange(20, 39);
+  protected static final RangedInteger ANGER_RANGE = TickRangeConverter.rangeOfSeconds(20, 39);
   protected int angerTime;
   protected UUID angerTarget;
 
@@ -97,20 +97,20 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   
   public OrthusEntity(final EntityType<? extends OrthusEntity> type, final World worldIn) {
     super(type, worldIn);
-    this.setTamed(false);
+    this.setTame(false);
   }
   
   public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 24.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.29D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.5D);
+    return MobEntity.createMobAttributes()
+        .add(Attributes.MAX_HEALTH, 24.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.29D)
+        .add(Attributes.ATTACK_DAMAGE, 4.5D);
   }
   
   @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(FIRE, Boolean.valueOf(false));
+  public void defineSynchedData() {
+    super.defineSynchedData();
+    this.getEntityData().define(FIRE, Boolean.valueOf(false));
   }
   
   @Override
@@ -128,8 +128,8 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
     this.goalSelector.addGoal(10, new LookRandomlyGoal(this));
     this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-    this.targetSelector.addGoal(3, new HurtByTargetGoal(this).setCallsForHelp());
-    this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, e -> this.func_233680_b_(e) || this.canAttackPlayer(e)));
+    this.targetSelector.addGoal(3, new HurtByTargetGoal(this).setAlertOthers());
+    this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, e -> this.isAngryAt(e) || this.canAttackPlayer(e)));
     this.targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, AnimalEntity.class, false, TARGET_ENTITIES));
     this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, AbstractSkeletonEntity.class, false));
     this.targetSelector.addGoal(7, new ResetAngerGoal<>(this, true));
@@ -140,59 +140,59 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   }
   
   @Override
-  public void livingTick() {
-    super.livingTick();
+  public void aiStep() {
+    super.aiStep();
     
     // update target
-    if(this.ticksExisted % 5 == 0 && getAttackTarget() instanceof PlayerEntity && !canAttackPlayer(getAttackTarget())) {
+    if(this.tickCount % 5 == 0 && getTarget() instanceof PlayerEntity && !canAttackPlayer(getTarget())) {
       setFireAttack(false);
-      setAttackTarget(null);
-      setRevengeTarget(null);
-      func_241355_J__();
+      setTarget(null);
+      setLastHurtByMob(null);
+      forgetCurrentTargetAndRefreshUniversalAnger();
     }
     
     // lifespan
     if (this.limitedLifespan && --this.limitedLifeTicks <= 0) {
       this.limitedLifeTicks = 40;
-      attackEntityFrom(DamageSource.STARVE, 1.0F);
+      hurt(DamageSource.STARVE, 1.0F);
     }
     
     // update fire attack
-    if(this.isServerWorld() && this.isFireAttack() && this.getAttackTarget() == null) {
+    if(this.isEffectiveAi() && this.isFireAttack() && this.getTarget() == null) {
       this.setFireAttack(false);
     }
   
     // spawn particles
-    if (world.isRemote() && this.isFireAttack()) {
+    if (level.isClientSide() && this.isFireAttack()) {
       spawnFireParticles();
     }
   }
   
   public boolean canAttackPlayer(final LivingEntity e) {
-    return e != null && !this.isOwner(e) && !e.getHeldItemMainhand().getItem().isIn(FOOD) && !e.getHeldItemOffhand().getItem().isIn(FOOD);
+    return e != null && !this.isOwnedBy(e) && !e.getMainHandItem().getItem().is(FOOD) && !e.getOffhandItem().getItem().is(FOOD);
   }
   
   @Override
-  public boolean isPotionApplicable(EffectInstance potioneffectIn) {
-    return potioneffectIn.getPotion() != Effects.WITHER && super.isPotionApplicable(potioneffectIn);
+  public boolean canBeAffected(EffectInstance potioneffectIn) {
+    return potioneffectIn.getEffect() != Effects.WITHER && super.canBeAffected(potioneffectIn);
   }
 
   @Override
-  public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner) {
+  public boolean wantsToAttack(LivingEntity target, LivingEntity owner) {
     if (!(target instanceof CreeperEntity) && !(target instanceof GhastEntity)) {
       if (target instanceof TameableEntity) {
         TameableEntity tameable = (TameableEntity) target;
-        return !tameable.isTamed() || tameable.getOwner() != owner;
+        return !tameable.isTame() || tameable.getOwner() != owner;
       } else if (target instanceof IHasOwner<?>) {
         IHasOwner<?> tameable = (IHasOwner<?>) target;
         return !tameable.hasOwner() || tameable.getOwner() != owner;
       } else if (target instanceof PlayerEntity && owner instanceof PlayerEntity
-          && !((PlayerEntity) owner).canAttackPlayer((PlayerEntity) target)) {
+          && !((PlayerEntity) owner).canHarmPlayer((PlayerEntity) target)) {
         return false;
-      } else if (target instanceof AbstractHorseEntity && ((AbstractHorseEntity) target).isTame()) {
+      } else if (target instanceof AbstractHorseEntity && ((AbstractHorseEntity) target).isTamed()) {
         return false;
       } else {
-        return !(target instanceof TameableEntity) || !((TameableEntity) target).isTamed();
+        return !(target instanceof TameableEntity) || !((TameableEntity) target).isTame();
       }
     } else {
       return false;
@@ -200,22 +200,22 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   }
   
   @Override
-  public boolean canBeLeashedTo(PlayerEntity player) {
-    return !this.isAngry() && super.canBeLeashedTo(player);
+  public boolean canBeLeashed(PlayerEntity player) {
+    return !this.isAngry() && super.canBeLeashed(player);
   }
   
   // IAngerable methods
   
   @Override
-  public void func_230258_H__() { this.setAngerTime(ANGER_RANGE.getRandomWithinRange(this.rand)); }
+  public void startPersistentAngerTimer() { this.setRemainingPersistentAngerTime(ANGER_RANGE.randomValue(this.random)); }
   @Override
-  public void setAngerTime(int time) { this.angerTime = time; }
+  public void setRemainingPersistentAngerTime(int time) { this.angerTime = time; }
   @Override
-  public int getAngerTime() { return this.angerTime; }
+  public int getRemainingPersistentAngerTime() { return this.angerTime; }
   @Override
-  public void setAngerTarget(@Nullable UUID target) { this.angerTarget = target; }
+  public void setPersistentAngerTarget(@Nullable UUID target) { this.angerTarget = target; }
   @Override
-  public UUID getAngerTarget() { return this.angerTarget; }
+  public UUID getPersistentAngerTarget() { return this.angerTarget; }
   
   // Other
   
@@ -226,66 +226,66 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
 
   @Override
   protected SoundEvent getAmbientSound() {
-    if (this.rand.nextInt(3) == 0) {
-      return SoundEvents.ENTITY_WOLF_AMBIENT;
-    } else if (this.rand.nextInt(3) == 0) {
-      return SoundEvents.ENTITY_WOLF_PANT;
+    if (this.random.nextInt(3) == 0) {
+      return SoundEvents.WOLF_AMBIENT;
+    } else if (this.random.nextInt(3) == 0) {
+      return SoundEvents.WOLF_PANT;
     } else {
-      return SoundEvents.ENTITY_WOLF_GROWL;
+      return SoundEvents.WOLF_GROWL;
     }
   }
 
   @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_WOLF_HURT; }
+  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.WOLF_HURT; }
 
   @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_WOLF_DEATH; }
+  protected SoundEvent getDeathSound() { return SoundEvents.WOLF_DEATH; }
 
   @Override
   protected float getSoundVolume() { return 0.8F; }
   
   @Override
-  protected void playStepSound(BlockPos pos, BlockState blockIn) { this.playSound(SoundEvents.ENTITY_WOLF_STEP, 0.15F, 1.0F); }
+  protected void playStepSound(BlockPos pos, BlockState blockIn) { this.playSound(SoundEvents.WOLF_STEP, 0.15F, 1.0F); }
   
   @Override
-  public ResourceLocation getLootTable() {
-    return limitedLifespan ? LootTables.EMPTY : super.getLootTable();
+  public ResourceLocation getDefaultLootTable() {
+    return limitedLifespan ? LootTables.EMPTY : super.getDefaultLootTable();
   }
   
   @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
+  public void addAdditionalSaveData(CompoundNBT compound) {
+    super.addAdditionalSaveData(compound);
     compound.putBoolean(KEY_FIRE, isFireAttack());
     if (this.limitedLifespan) {
       compound.putInt(KEY_LIFE_TICKS, this.limitedLifeTicks);
     }
-    this.writeAngerNBT(compound);
+    this.addPersistentAngerSaveData(compound);
   }
 
   @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
+  public void readAdditionalSaveData(CompoundNBT compound) {
+    super.readAdditionalSaveData(compound);
     setFireAttack(compound.getBoolean(KEY_FIRE));
     if (compound.contains(KEY_LIFE_TICKS)) {
       setLimitedLife(compound.getInt(KEY_LIFE_TICKS));
     }
-    this.readAngerNBT((ServerWorld)this.world, compound);
+    this.readPersistentAngerSaveData((ServerWorld)this.level, compound);
   }
   
   public void spawnFireParticles() {
-    if(!world.isRemote()) {
+    if(!level.isClientSide()) {
       return;
     }
-    Vector3d lookVec = this.getLookVec();
+    Vector3d lookVec = this.getLookAngle();
     Vector3d pos = this.getEyePosition(1.0F);
     final double motion = 0.06D;
     final double radius = 0.75D;
     
     for (int i = 0; i < 5; i++) {
-      world.addParticle(ParticleTypes.FLAME, 
-          pos.x + (world.rand.nextDouble() - 0.5D) * radius, 
-          pos.y + (world.rand.nextDouble() - 0.5D) * radius, 
-          pos.z + (world.rand.nextDouble() - 0.5D) * radius,
+      level.addParticle(ParticleTypes.FLAME, 
+          pos.x + (level.random.nextDouble() - 0.5D) * radius, 
+          pos.y + (level.random.nextDouble() - 0.5D) * radius, 
+          pos.z + (level.random.nextDouble() - 0.5D) * radius,
           lookVec.x * motion * FIRE_RANGE, 
           lookVec.y * motion * 0.5D,
           lookVec.z * motion * FIRE_RANGE);
@@ -293,19 +293,19 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   }
 
   @Override
-  public AgeableEntity createChild(ServerWorld world, AgeableEntity parent) {
+  public AgeableEntity getBreedOffspring(ServerWorld world, AgeableEntity parent) {
     OrthusEntity baby = GFRegistry.ORTHUS_ENTITY.create(world);
-    UUID uuid = this.getOwnerId();
+    UUID uuid = this.getOwnerUUID();
     if (uuid != null) {
-      baby.setOwnerId(uuid);
-      baby.setTamed(true);
+      baby.setOwnerUUID(uuid);
+      baby.setTame(true);
     }
     return baby;
   }
 
   @Override
-  public void setTamed(boolean tamed) {
-    super.setTamed(tamed);
+  public void setTame(boolean tamed) {
+    super.setTame(tamed);
     if (tamed) {
       this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(36.0D);
       this.setHealth(36.0F);
@@ -315,23 +315,23 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   }
   
   @Override
-  public boolean isBreedingItem(ItemStack stack) {
-     return stack.getItem().isIn(FOOD);
+  public boolean isFood(ItemStack stack) {
+     return stack.getItem().is(FOOD);
   }
   
   @Override
-  public boolean canMateWith(AnimalEntity otherAnimal) {
+  public boolean canMate(AnimalEntity otherAnimal) {
     if (otherAnimal == this) {
       return false;
-    } else if (!this.isTamed()) {
+    } else if (!this.isTame()) {
       return false;
     } else if (!(otherAnimal instanceof OrthusEntity)) {
       return false;
     } else {
       OrthusEntity orthus = (OrthusEntity) otherAnimal;
-      if (!orthus.isTamed()) {
+      if (!orthus.isTame()) {
         return false;
-      } else if (orthus.isEntitySleeping()) {
+      } else if (orthus.isInSittingPose()) {
         return false;
       } else {
         return this.isInLove() && orthus.isInLove();
@@ -340,76 +340,76 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
   }
   
   @Override
-  public ActionResultType getEntityInteractionResult(PlayerEntity player, Hand hand) {
-    ItemStack itemstack = player.getHeldItem(hand);
+  public ActionResultType mobInteract(PlayerEntity player, Hand hand) {
+    ItemStack itemstack = player.getItemInHand(hand);
     Item item = itemstack.getItem();
-    if (this.world.isRemote()) {
-      boolean flag = this.isOwner(player) || this.isTamed()
-          || item.isIn(FOOD) && !this.isTamed();
+    if (this.level.isClientSide()) {
+      boolean flag = this.isOwnedBy(player) || this.isTame()
+          || item.is(FOOD) && !this.isTame();
       return flag ? ActionResultType.CONSUME : ActionResultType.PASS;
     } else {
-      if (this.isTamed()) {
+      if (this.isTame()) {
         // attempt to heal entity
-        if ((this.isBreedingItem(itemstack) || item == Items.BONE) && this.getHealth() < this.getMaxHealth()) {
-          if (!player.abilities.isCreativeMode) {
+        if ((this.isFood(itemstack) || item == Items.BONE) && this.getHealth() < this.getMaxHealth()) {
+          if (!player.abilities.instabuild) {
             itemstack.shrink(1);
           }
-          this.heal((float) item.getFood().getHealing());
+          this.heal((float) item.getFoodProperties().getNutrition());
           return ActionResultType.SUCCESS;
         }
 
         // attempt to udpate Sitting state
-        ActionResultType actionresulttype = super.getEntityInteractionResult(player, hand);
-        if ((!actionresulttype.isSuccessOrConsume() || this.isChild()) && this.isOwner(player)) {
-          this.setSitting(!this.isQueuedToSit());
-          this.isJumping = false;
-          this.navigator.clearPath();
+        ActionResultType actionresulttype = super.mobInteract(player, hand);
+        if ((!actionresulttype.consumesAction() || this.isBaby()) && this.isOwnedBy(player)) {
+          this.setOrderedToSit(!this.isOrderedToSit());
+          this.jumping = false;
+          this.navigation.stop();
           this.setFireAttack(false);
-          this.setAttackTarget(null);
-          this.setRevengeTarget(null);
-          this.func_241355_J__();
+          this.setTarget(null);
+          this.setLastHurtByMob(null);
+          this.forgetCurrentTargetAndRefreshUniversalAnger();
           return ActionResultType.SUCCESS;
         }
         return actionresulttype;
         
-      } else if (item.isIn(FOOD)) {
+      } else if (item.is(FOOD)) {
         // reset anger
         if(this.isAngry()) {
-          this.setAngerTarget(null);
+          this.setPersistentAngerTarget(null);
         }
         // consume the item
-        if (!player.abilities.isCreativeMode) {
+        if (!player.abilities.instabuild) {
           itemstack.shrink(1);
         }
         // attempt to tame the entity
-        if (this.rand.nextInt(4) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player)) {
-          this.setTamedBy(player);
+        if (this.random.nextInt(4) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player)) {
+          this.tame(player);
           this.setFireAttack(false);
-          this.setAttackTarget(null);
-          this.setRevengeTarget(null);
-          this.func_241355_J__();
-          this.navigator.clearPath();
-          this.setAttackTarget((LivingEntity) null);
-          this.setSitting(true);
-          this.world.setEntityState(this, (byte) 7);
+          this.setTarget(null);
+          this.setLastHurtByMob(null);
+          this.forgetCurrentTargetAndRefreshUniversalAnger();
+          this.navigation.stop();
+          this.setTarget((LivingEntity) null);
+          this.setOrderedToSit(true);
+          this.level.broadcastEntityEvent(this, (byte) 7);
         } else {
-          this.world.setEntityState(this, (byte) 6);
+          this.level.broadcastEntityEvent(this, (byte) 6);
         }
 
         return ActionResultType.SUCCESS;
       }
 
-      return super.getEntityInteractionResult(player, hand);
+      return super.mobInteract(player, hand);
     }
   }
   
-  public void setFireAttack(final boolean shooting) { this.dataManager.set(FIRE, shooting); }
+  public void setFireAttack(final boolean shooting) { this.entityData.set(FIRE, shooting); }
   
-  public boolean isFireAttack() { return this.getDataManager().get(FIRE).booleanValue(); }
+  public boolean isFireAttack() { return this.getEntityData().get(FIRE).booleanValue(); }
   
   static class BegGoal extends Goal {
     
-    protected static final Predicate<LivingEntity> CAUSE_BEG = e -> e.getHeldItemMainhand().getItem().isIn(FOOD) || e.getHeldItemOffhand().getItem().isIn(FOOD);
+    protected static final Predicate<LivingEntity> CAUSE_BEG = e -> e.getMainHandItem().getItem().is(FOOD) || e.getOffhandItem().getItem().is(FOOD);
 
     protected final CreatureEntity creature;
     protected final double range;
@@ -427,10 +427,10 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
     
     
     @Override
-    public boolean shouldExecute() {
-      if(creature.ticksExisted % interval == 0) {
+    public boolean canUse() {
+      if(creature.tickCount % interval == 0) {
         // find a player within range to cause begging
-        final List<LivingEntity> list = creature.getEntityWorld().getEntitiesWithinAABB(PlayerEntity.class, creature.getBoundingBox().grow(range));
+        final List<LivingEntity> list = creature.getCommandSenderWorld().getEntitiesOfClass(PlayerEntity.class, creature.getBoundingBox().inflate(range));
         if(!list.isEmpty()) {
           player = list.get(0);
         } else {
@@ -441,14 +441,14 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
-      return shouldExecute();
+    public boolean canContinueToUse() {
+      return canUse();
     }
     
     @Override
     public void tick() {
-      creature.getLookController().setLookPositionWithEntity(player, creature.getHorizontalFaceSpeed(), creature.getVerticalFaceSpeed());
-      creature.getNavigator().clearPath();
+      creature.getLookControl().setLookAt(player, creature.getMaxHeadYRot(), creature.getMaxHeadXRot());
+      creature.getNavigation().stop();
     }
     
   }
@@ -460,18 +460,18 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
     }
 
     @Override
-    public boolean shouldExecute() {  
-      return super.shouldExecute() && !OrthusEntity.this.isFireAttack() && !OrthusEntity.this.isQueuedToSit() && !OrthusEntity.this.isEntitySleeping();
+    public boolean canUse() {  
+      return super.canUse() && !OrthusEntity.this.isFireAttack() && !OrthusEntity.this.isOrderedToSit() && !OrthusEntity.this.isInSittingPose();
     }
     
     @Override
-    public boolean shouldContinueExecuting() {
-      return super.shouldContinueExecuting() && OrthusEntity.this.isFireAttack();
+    public boolean canContinueToUse() {
+      return super.canContinueToUse() && OrthusEntity.this.isFireAttack();
     }
    
     @Override
-    public void startExecuting() {
-      super.startExecuting();
+    public void start() {
+      super.start();
       OrthusEntity.this.setFireAttack(true);
     }
     
@@ -482,8 +482,8 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
     }
    
     @Override
-    public void resetTask() {
-      super.resetTask();
+    public void stop() {
+      super.stop();
       OrthusEntity.this.setFireAttack(false);
     }
   }

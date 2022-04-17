@@ -28,19 +28,19 @@ public class SmallNetherShrineFeature extends SimpleTemplateFeature {
   }
 
   @Override
-  public boolean generate(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
+  public boolean place(final ISeedReader reader, final ChunkGenerator chunkGenerator, final Random rand,
       final BlockPos blockPosIn, final NoFeatureConfig config) {
     // check dimension from config
     if(!SimpleTemplateFeature.isValidDimension(reader)) {
       return false;
     }
     // template loading
-    final TemplateManager manager = reader.getWorld().getStructureTemplateManager();
-    final Template template = manager.getTemplateDefaulted(STRUCTURE);
+    final TemplateManager manager = reader.getLevel().getStructureManager();
+    final Template template = manager.getOrCreate(STRUCTURE);
     
     // rotation / mirror
     Mirror mirror = Mirror.NONE;
-    Rotation rotation = Rotation.randomRotation(rand);
+    Rotation rotation = Rotation.getRandom(rand);
     
     // position for generation
     Optional<BlockPos> optionalPos = getRandomPositionInChunk(reader, blockPosIn, template.getSize(), 2, rand, rotation);
@@ -58,7 +58,7 @@ public class SmallNetherShrineFeature extends SimpleTemplateFeature {
         .addProcessor(BlockIgnoreStructureProcessor.STRUCTURE_BLOCK);
 
     // actually generate the structure
-    if(template.func_237146_a_(reader, pos, pos, placement, rand, 2)) {
+    if(template.placeInWorld(reader, pos, pos, placement, rand, 2)) {
       return true;
     }
     return false;

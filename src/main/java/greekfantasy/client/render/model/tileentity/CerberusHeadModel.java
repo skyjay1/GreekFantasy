@@ -21,36 +21,36 @@ public class CerberusHeadModel extends Model implements IHasHead, IWallModel {
   }
 
   public CerberusHeadModel(final float modelSize, final float yOffset) {
-    super(RenderType::getEntityCutoutNoCull);
-    this.textureWidth = 64;
-    this.textureHeight = 64;
+    super(RenderType::entityCutoutNoCull);
+    this.texWidth = 64;
+    this.texHeight = 64;
     
     cerberusHead = new ModelRenderer(this);
     cerberusMouth = new ModelRenderer(this);
     CerberusModel.initCerberusHead(this, cerberusHead, cerberusMouth, -4.5F, -4.0F, 0.0F);
-    cerberusMouth.rotateAngleX = 0.19F;
+    cerberusMouth.xRot = 0.19F;
   }
 
   @Override
-  public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
+  public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red,
       float green, float blue, float alpha) {
     //matrixStackIn.translate(0.04125D, 0, 0);
     cerberusHead.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
   }
  
   @Override
-  public ModelRenderer getModelHead() {
+  public ModelRenderer getHead() {
     return this.cerberusHead;
   }
 
   @Override
   public void setWallRotations(boolean onWall) {
     if(onWall) {
-      cerberusHead.rotationPointY = -4.5F;
-      cerberusMouth.rotateAngleX = 0.19F;
+      cerberusHead.y = -4.5F;
+      cerberusMouth.xRot = 0.19F;
     } else {
-      cerberusHead.rotationPointY = -4.0F;
-      cerberusMouth.rotateAngleX = 0.0F;
+      cerberusHead.y = -4.0F;
+      cerberusMouth.xRot = 0.0F;
     }
   }
   
