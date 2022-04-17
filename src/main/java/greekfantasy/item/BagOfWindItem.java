@@ -14,29 +14,29 @@ import net.minecraft.world.World;
 
 public class BagOfWindItem extends Item {
 
-  public BagOfWindItem(final Item.Properties properties) {
-    super(properties);
-  }
-  
-  @Override
-  public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
-    ItemStack stack = player.getItemInHand(hand);
-    // prevent the item from being used up all the way
-    if(stack.getMaxDamage() - stack.getDamageValue() <= 1) {
-      return ActionResult.fail(stack);
+    public BagOfWindItem(final Item.Properties properties) {
+        super(properties);
     }
-    // give player potion effect
-    player.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, GreekFantasy.CONFIG.getBagOfWindDuration(), 1));
-    player.addEffect(new EffectInstance(Effects.DOLPHINS_GRACE, GreekFantasy.CONFIG.getBagOfWindDuration(), 0));
-    player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.getBagOfWindCooldown());
-    if(!player.isCreative()) {
-      stack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+
+    @Override
+    public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        // prevent the item from being used up all the way
+        if (stack.getMaxDamage() - stack.getDamageValue() <= 1) {
+            return ActionResult.fail(stack);
+        }
+        // give player potion effect
+        player.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, GreekFantasy.CONFIG.getBagOfWindDuration(), 1));
+        player.addEffect(new EffectInstance(Effects.DOLPHINS_GRACE, GreekFantasy.CONFIG.getBagOfWindDuration(), 0));
+        player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.getBagOfWindCooldown());
+        if (!player.isCreative()) {
+            stack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+        }
+        return ActionResult.sidedSuccess(stack, world.isClientSide());
     }
-    return ActionResult.sidedSuccess(stack, world.isClientSide());
-  }
-  
-  @Override
-  public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-    return toRepair.getItem() == this && toRepair.getDamageValue() < toRepair.getMaxDamage() && repair.getItem() == GFRegistry.MAGIC_FEATHER;
-  }
+
+    @Override
+    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+        return toRepair.getItem() == this && toRepair.getDamageValue() < toRepair.getMaxDamage() && repair.getItem() == GFRegistry.MAGIC_FEATHER;
+    }
 }

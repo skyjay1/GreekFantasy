@@ -1,9 +1,6 @@
 package greekfantasy.entity.misc;
 
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
-
 import greekfantasy.GFRegistry;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.EntityType;
@@ -17,39 +14,47 @@ import net.minecraft.potion.Effects;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
+import java.util.List;
+
 public class HealingSpellEntity extends EffectProjectileEntity {
-  
-  public HealingSpellEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
-    super(entityType, world);
-  }
-  
-  protected HealingSpellEntity(World worldIn, LivingEntity thrower) {
-    this(GFRegistry.HEALING_SPELL_ENTITY, worldIn);
-    super.setOwner(thrower);
-    this.setPos(thrower.getX(), thrower.getEyeY() - 0.1D, thrower.getZ());
-    // this unmapped method from ProjectileEntity does some math, then calls #shoot
-    // params: thrower, rotationPitch, rotationYaw, ???, speed, inaccuracy
-    shootFromRotation(thrower, thrower.xRot, thrower.yRot, 0.0F, 0.75F, 0.5F);
-    markHurt();
-  }
-  
-  public static HealingSpellEntity create(World worldIn, LivingEntity thrower) {
-    return new HealingSpellEntity(worldIn, thrower);
-  }
 
-  @Override
-  public IPacket<?> getAddEntityPacket() {
-    return NetworkHooks.getEntitySpawningPacket(this);
-  }
+    public HealingSpellEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
+        super(entityType, world);
+    }
 
-  @Override
-  protected List<EffectInstance> getPotionEffects(final LivingEntity entity) { 
-    return ImmutableList.of(new EffectInstance(Effects.HEAL, 1, 1)); 
-  }
-  
-  protected IParticleData getImpactParticle(final LivingEntity entity) { return entity.getMobType() == CreatureAttribute.UNDEAD ? ParticleTypes.DAMAGE_INDICATOR : ParticleTypes.HEART; }
-  
-  protected IParticleData getTrailParticle() { return ParticleTypes.HAPPY_VILLAGER; }
-  
-  protected float getImpactDamage(final LivingEntity entity) { return 0.0F; }
+    protected HealingSpellEntity(World worldIn, LivingEntity thrower) {
+        this(GFRegistry.HEALING_SPELL_ENTITY, worldIn);
+        super.setOwner(thrower);
+        this.setPos(thrower.getX(), thrower.getEyeY() - 0.1D, thrower.getZ());
+        // this unmapped method from ProjectileEntity does some math, then calls #shoot
+        // params: thrower, rotationPitch, rotationYaw, ???, speed, inaccuracy
+        shootFromRotation(thrower, thrower.xRot, thrower.yRot, 0.0F, 0.75F, 0.5F);
+        markHurt();
+    }
+
+    public static HealingSpellEntity create(World worldIn, LivingEntity thrower) {
+        return new HealingSpellEntity(worldIn, thrower);
+    }
+
+    @Override
+    public IPacket<?> getAddEntityPacket() {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    @Override
+    protected List<EffectInstance> getPotionEffects(final LivingEntity entity) {
+        return ImmutableList.of(new EffectInstance(Effects.HEAL, 1, 1));
+    }
+
+    protected IParticleData getImpactParticle(final LivingEntity entity) {
+        return entity.getMobType() == CreatureAttribute.UNDEAD ? ParticleTypes.DAMAGE_INDICATOR : ParticleTypes.HEART;
+    }
+
+    protected IParticleData getTrailParticle() {
+        return ParticleTypes.HAPPY_VILLAGER;
+    }
+
+    protected float getImpactDamage(final LivingEntity entity) {
+        return 0.0F;
+    }
 }

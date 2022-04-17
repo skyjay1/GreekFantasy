@@ -1,9 +1,5 @@
 package greekfantasy.item;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
@@ -14,24 +10,27 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import net.minecraft.item.Item.Properties;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class LyreItem extends InstrumentItem {
-  
-  protected SoundEvent sound;
 
-  public LyreItem(final SoundEvent soundIn, final Properties properties) {
-    super(properties);
-    sound = soundIn;
-  }
-  
-  @OnlyIn(Dist.CLIENT)
-  public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    tooltip.add(new TranslationTextComponent(TOOLTIP).withStyle(TextFormatting.GRAY));
-  }
+    protected SoundEvent sound;
 
-  // Instrument //
-  
-  @Override
-  public SoundEvent getSound() { return sound; }
+    public LyreItem(final SoundEvent soundIn, final Properties properties) {
+        super(properties);
+        sound = soundIn;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        tooltip.add(new TranslationTextComponent(TOOLTIP).withStyle(TextFormatting.GRAY));
+    }
+
+    // Instrument //
+
+    @Override
+    public SoundEvent getSound() {
+        return sound;
+    }
 }

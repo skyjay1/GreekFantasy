@@ -14,31 +14,31 @@ import net.minecraft.world.World;
 
 public class SwineWandItem extends Item {
 
-  public SwineWandItem(final Item.Properties properties) {
-    super(properties);
-  }
-  
-  @Override
-  public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
-    ItemStack stack = player.getItemInHand(hand);
-    player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.getSwineWandCooldown());
-    // spawn a healing spell entity
-    if(!world.isClientSide()) {
-      SwineSpellEntity healingSpell = SwineSpellEntity.create(world, player);
-      world.addFreshEntity(healingSpell);
+    public SwineWandItem(final Item.Properties properties) {
+        super(properties);
     }
-    player.playSound(SoundEvents.ILLUSIONER_CAST_SPELL, 0.5F, 1.0F);
-    
-    // damage the item stack
-    if(!player.isCreative()) {
-      stack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+
+    @Override
+    public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.getSwineWandCooldown());
+        // spawn a healing spell entity
+        if (!world.isClientSide()) {
+            SwineSpellEntity healingSpell = SwineSpellEntity.create(world, player);
+            world.addFreshEntity(healingSpell);
+        }
+        player.playSound(SoundEvents.ILLUSIONER_CAST_SPELL, 0.5F, 1.0F);
+
+        // damage the item stack
+        if (!player.isCreative()) {
+            stack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+        }
+
+        return ActionResult.sidedSuccess(stack, world.isClientSide());
     }
-    
-    return ActionResult.sidedSuccess(stack, world.isClientSide());
-  }
-  
-  @Override
-  public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-    return repair.getItem() == GFRegistry.BOAR_EAR;
-  }
+
+    @Override
+    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+        return repair.getItem() == GFRegistry.BOAR_EAR;
+    }
 }

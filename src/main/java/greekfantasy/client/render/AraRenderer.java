@@ -9,16 +9,16 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
 public class AraRenderer<T extends AraEntity> extends BipedRenderer<T, AraModel<T>> {
-  
-  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/ara.png");
 
-  public AraRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new AraModel<T>(0.0F), 0.5F);
-    this.addLayer(new AraFlintLayer<>(this));
-  }
+    private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/ara.png");
 
-  @Override
-  public ResourceLocation getTextureLocation(final T entity) {
-    return TEXTURE;
-  }
+    public AraRenderer(final EntityRendererManager renderManagerIn) {
+        super(renderManagerIn, new AraModel<T>(0.0F), 0.5F);
+        this.addLayer(new AraFlintLayer<>(this));
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(final T entity) {
+        return TEXTURE;
+    }
 }

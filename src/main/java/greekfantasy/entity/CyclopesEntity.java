@@ -1,9 +1,5 @@
 package greekfantasy.entity;
 
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
 import greekfantasy.GFRegistry;
 import greekfantasy.item.ClubItem;
 import net.minecraft.entity.EntityType;
@@ -30,56 +26,59 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+import java.util.Random;
+
 public class CyclopesEntity extends MonsterEntity {
-  
-  public CyclopesEntity(final EntityType<? extends CyclopesEntity> type, final World worldIn) {
-    super(type, worldIn);
-    this.maxUpStep = 1.0F;
-  }
 
-  public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.createMobAttributes()
-        .add(Attributes.MAX_HEALTH, 36.0D)
-        .add(Attributes.MOVEMENT_SPEED, 0.24D)
-        .add(Attributes.FOLLOW_RANGE, 24.0D)
-        .add(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
-        .add(Attributes.ATTACK_DAMAGE, 6.0D)
-        .add(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.5D)
-        .add(Attributes.ARMOR, 3.0D);
-  }
-  
-  public static boolean canCyclopesSpawnOn(final EntityType<? extends MonsterEntity> entity, final IServerWorld world, final SpawnReason reason, 
-      final BlockPos pos, final Random rand) {
-    return MonsterEntity.checkMonsterSpawnRules(entity, world, reason, pos, rand);
-  }
-
-  @Override
-  protected void registerGoals() {
-    super.registerGoals();
-    this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, MobEntity.class, 24.0F, 1.2D, 1.1D, (entity) -> {
-      return !entity.isSpectator() && entity.hasCustomName() && "Nobody".equals(entity.getCustomName().getContents());
-    }));
-    this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
-    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
-    this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
-    this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, IronGolemEntity.class, true));
-  }
-  
-  @Nullable
-  public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
-      @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    if(this.random.nextBoolean()) {
-      final ItemStack club = new ItemStack(random.nextBoolean() ? GFRegistry.STONE_CLUB : GFRegistry.WOODEN_CLUB);
-      this.setItemInHand(Hand.MAIN_HAND, club);
+    public CyclopesEntity(final EntityType<? extends CyclopesEntity> type, final World worldIn) {
+        super(type, worldIn);
+        this.maxUpStep = 1.0F;
     }
-    return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-  }
-  
-  @Override
-  protected float getJumpPower() {
-    return 0.52F * this.getBlockJumpFactor();
-  }
+
+    public static AttributeModifierMap.MutableAttribute createAttributes() {
+        return MobEntity.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 36.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.24D)
+                .add(Attributes.FOLLOW_RANGE, 24.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
+                .add(Attributes.ATTACK_DAMAGE, 6.0D)
+                .add(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.5D)
+                .add(Attributes.ARMOR, 3.0D);
+    }
+
+    public static boolean canCyclopesSpawnOn(final EntityType<? extends MonsterEntity> entity, final IServerWorld world, final SpawnReason reason,
+                                             final BlockPos pos, final Random rand) {
+        return MonsterEntity.checkMonsterSpawnRules(entity, world, reason, pos, rand);
+    }
+
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, MobEntity.class, 24.0F, 1.2D, 1.1D, (entity) -> {
+            return !entity.isSpectator() && entity.hasCustomName() && "Nobody".equals(entity.getCustomName().getContents());
+        }));
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+        this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+        this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, IronGolemEntity.class, true));
+    }
+
+    @Nullable
+    public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+                                           @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+        if (this.random.nextBoolean()) {
+            final ItemStack club = new ItemStack(random.nextBoolean() ? GFRegistry.STONE_CLUB : GFRegistry.WOODEN_CLUB);
+            this.setItemInHand(Hand.MAIN_HAND, club);
+        }
+        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    }
+
+    @Override
+    protected float getJumpPower() {
+        return 0.52F * this.getBlockJumpFactor();
+    }
 }

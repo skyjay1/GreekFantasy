@@ -9,16 +9,16 @@ import net.minecraft.client.renderer.entity.layers.AbstractEyesLayer;
 import net.minecraft.util.ResourceLocation;
 
 public class OrthusEyesLayer<T extends OrthusEntity> extends AbstractEyesLayer<T, OrthusModel<T>> {
-  
-  private static final RenderType RENDER_TYPE = RenderType.eyes(new ResourceLocation(GreekFantasy.MODID, "textures/entity/orthus/orthus_eyes.png"));
 
-  public OrthusEyesLayer(IEntityRenderer<T, OrthusModel<T>> ientityrenderer) {
-    super(ientityrenderer);
-  }
+    private static final RenderType RENDER_TYPE = RenderType.eyes(new ResourceLocation(GreekFantasy.MODID, "textures/entity/orthus/orthus_eyes.png"));
 
-  @Override
-  public RenderType renderType() {
-    return RENDER_TYPE;
-  }
+    public OrthusEyesLayer(IEntityRenderer<T, OrthusModel<T>> ientityrenderer) {
+        super(ientityrenderer);
+    }
+
+    @Override
+    public RenderType renderType() {
+        return RENDER_TYPE;
+    }
 
 }

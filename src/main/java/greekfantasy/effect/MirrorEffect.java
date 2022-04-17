@@ -5,11 +5,10 @@ import net.minecraft.potion.EffectType;
 
 /**
  * This effect does nothing except indicate to the Gorgon that the player cannot be petrified.
- * @see greekfantasy.entity.GorgonEntity#isImmuneToStareAttack(LivingEntity)
  */
 public class MirrorEffect extends Effect {
 
-  public MirrorEffect() {
-    super(EffectType.BENEFICIAL, 0xD0D0D0);
-  }
+    public MirrorEffect() {
+        super(EffectType.BENEFICIAL, 0xD0D0D0);
+    }
 }

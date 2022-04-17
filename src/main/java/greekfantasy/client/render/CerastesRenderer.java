@@ -8,15 +8,15 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
 
 public class CerastesRenderer<T extends CerastesEntity> extends MobRenderer<T, CerastesModel<T>> {
-  
-  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/cerastes.png");
 
-  public CerastesRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new CerastesModel<T>(0.0F), 0.0F);
-  }
+    private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/cerastes.png");
 
-  @Override
-  public ResourceLocation getTextureLocation(final T entity) {
-    return TEXTURE;
-  }
+    public CerastesRenderer(final EntityRendererManager renderManagerIn) {
+        super(renderManagerIn, new CerastesModel<T>(0.0F), 0.0F);
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(final T entity) {
+        return TEXTURE;
+    }
 }

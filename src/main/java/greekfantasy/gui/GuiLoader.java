@@ -7,14 +7,15 @@ import net.minecraft.item.ItemStack;
 
 public final class GuiLoader {
 
-  private GuiLoader() { }
-  
-  public static void openSongGui(final PlayerEntity playerIn, final int itemSlot, final ItemStack itemstack) {
-    // only load client-side, of course
-    if (!playerIn.getCommandSenderWorld().isClientSide()) {
-      return;
+    private GuiLoader() {
     }
-    // open the gui
-    Minecraft.getInstance().setScreen(new SongScreen(itemSlot, itemstack));
-  }
+
+    public static void openSongGui(final PlayerEntity playerIn, final int itemSlot, final ItemStack itemstack) {
+        // only load client-side, of course
+        if (!playerIn.getCommandSenderWorld().isClientSide()) {
+            return;
+        }
+        // open the gui
+        Minecraft.getInstance().setScreen(new SongScreen(itemSlot, itemstack));
+    }
 }
