@@ -18,14 +18,14 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.util.List;
 
-public class SwineSpellEntity extends EffectProjectileEntity {
+public class PigSpellEntity extends EffectProjectileEntity {
 
-    public SwineSpellEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
+    public PigSpellEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
         super(entityType, world);
     }
 
-    protected SwineSpellEntity(World worldIn, LivingEntity thrower) {
-        this(GFRegistry.SWINE_SPELL_ENTITY, worldIn);
+    protected PigSpellEntity(World worldIn, LivingEntity thrower) {
+        this(GFRegistry.PIG_SPELL_ENTITY, worldIn);
         super.setOwner(thrower);
         this.setPos(thrower.getX(), thrower.getEyeY() - 0.1D, thrower.getZ());
         // this unmapped method from ProjectileEntity does some math, then calls #shoot
@@ -34,8 +34,8 @@ public class SwineSpellEntity extends EffectProjectileEntity {
         markHurt();
     }
 
-    public static SwineSpellEntity create(World worldIn, LivingEntity thrower) {
-        return new SwineSpellEntity(worldIn, thrower);
+    public static PigSpellEntity create(World worldIn, LivingEntity thrower) {
+        return new PigSpellEntity(worldIn, thrower);
     }
 
     @Override
@@ -46,11 +46,11 @@ public class SwineSpellEntity extends EffectProjectileEntity {
     protected List<EffectInstance> getPotionEffects(final LivingEntity entity) {
         Effect effect = Effects.MOVEMENT_SLOWDOWN;
         int amp = 1;
-        if (GreekFantasy.CONFIG.isSwineEnabled() && GreekFantasy.CONFIG.canSwineApply(entity.getType().getRegistryName().toString())) {
-            effect = GFRegistry.SWINE_EFFECT;
+        if (GreekFantasy.CONFIG.isPigEnabled() && GreekFantasy.CONFIG.canPigApply(entity.getType().getRegistryName().toString())) {
+            effect = GFRegistry.PIG_EFFECT;
             amp = 0;
         }
-        final int duration = GreekFantasy.CONFIG.getSwineWandDuration();
+        final int duration = GreekFantasy.CONFIG.getPigWandDuration();
         final int slowness = entity instanceof PlayerEntity ? 1 : duration;
         return ImmutableList.of(
                 new EffectInstance(effect, duration, amp, false, true),

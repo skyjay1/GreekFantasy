@@ -62,7 +62,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -178,11 +177,11 @@ public class CommonForgeEventHandler {
             }
 
             // update Swine pose and armor
-            if (GreekFantasy.CONFIG.isSwineEnabled()) {
+            if (GreekFantasy.CONFIG.isPigEnabled()) {
                 final boolean isSwine = isSwine(event.player);
                 final Pose forcedPose = event.player.getForcedPose();
                 // drop armor
-                if (isSwine && GreekFantasy.CONFIG.doesSwineDropArmor() && event.player.getRandom().nextInt(20) == 0) {
+                if (isSwine && GreekFantasy.CONFIG.doesPigDropArmor() && event.player.getRandom().nextInt(20) == 0) {
                     final Iterable<ItemStack> armor = ImmutableList.copyOf(event.player.getArmorSlots());
                     event.player.setItemSlot(EquipmentSlotType.HEAD, ItemStack.EMPTY);
                     event.player.setItemSlot(EquipmentSlotType.CHEST, ItemStack.EMPTY);
@@ -261,9 +260,9 @@ public class CommonForgeEventHandler {
     @SubscribeEvent
     public static void onAddPotion(final PotionEvent.PotionAddedEvent event) {
         // send swine effect packet
-        if (!event.getEntityLiving().getCommandSenderWorld().isClientSide() && GreekFantasy.CONFIG.isSwineEnabled()
-                && event.getPotionEffect().getEffect() == GFRegistry.SWINE_EFFECT
-                && GreekFantasy.CONFIG.canSwineApply(event.getEntityLiving().getType().getRegistryName().toString())) {
+        if (!event.getEntityLiving().getCommandSenderWorld().isClientSide() && GreekFantasy.CONFIG.isPigEnabled()
+                && event.getPotionEffect().getEffect() == GFRegistry.PIG_EFFECT
+                && GreekFantasy.CONFIG.canPigApply(event.getEntityLiving().getType().getRegistryName().toString())) {
             final int id = event.getEntityLiving().getId();
             GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSwineEffectPacket(id, event.getPotionEffect().getDuration()));
         }
@@ -538,7 +537,7 @@ public class CommonForgeEventHandler {
     public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
         if (!event.getEntityLiving().getCommandSenderWorld().isClientSide() && event.getEntityLiving() instanceof MobEntity
                 && event.getTarget() instanceof LivingEntity
-                && GreekFantasy.CONFIG.isSwineEnabled() && GreekFantasy.CONFIG.doesSwinePreventTarget()
+                && GreekFantasy.CONFIG.isPigEnabled() && GreekFantasy.CONFIG.doesPigPreventTarget()
                 && (isSwine(event.getEntityLiving()) || isSwine(event.getTarget()))) {
             ((MobEntity) event.getEntityLiving()).setTarget(null);
         }
@@ -611,7 +610,7 @@ public class CommonForgeEventHandler {
      * @return whether the entity should have the Swine effect applied
      **/
     private static boolean isSwine(final LivingEntity livingEntity) {
-        return livingEntity.hasEffect(GFRegistry.SWINE_EFFECT);
+        return livingEntity.hasEffect(GFRegistry.PIG_EFFECT);
     }
 
     /**

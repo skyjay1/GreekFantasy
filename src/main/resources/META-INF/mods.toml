@@ -10,9 +10,17 @@ issueTrackerURL="https://github.com/skyjay1/GreekFantasy/issues"
     credits=""
     authors="skyjay1"
     description='''Get your Greek on!'''
-[[dependencies.greekfantasy]]
-    modId="forge"
-    mandatory=true
-    versionRange="[36.2,)"
-    ordering="NONE"
-    side="BOTH"
+
+    [[dependencies.greekfantasy]]
+        modId="forge"
+        mandatory=true
+        versionRange="[36.2,)"
+        ordering="NONE"
+        side="BOTH"
+
+    [[dependencies.greekfantasy]]
+        modId="rpggods"
+        mandatory=false
+        versionRange="[16.5.2,)"
+        ordering="AFTER"
+        side="BOTH"

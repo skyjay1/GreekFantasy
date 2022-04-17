@@ -2,7 +2,7 @@ package greekfantasy.event;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.render.SwineRenderer;
+import greekfantasy.client.render.EntityAsPigRenderer;
 import greekfantasy.entity.PegasusEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -23,7 +23,7 @@ import net.minecraftforge.fml.LogicalSide;
 
 public class ClientForgeEventHandler {
 
-    private static SwineRenderer<LivingEntity> pigRenderer;
+    private static EntityAsPigRenderer<LivingEntity> pigRenderer;
 
     private static boolean wasJumping;
 
@@ -40,7 +40,7 @@ public class ClientForgeEventHandler {
             // render pig instead
             if (null == pigRenderer) {
                 Minecraft mc = Minecraft.getInstance();
-                pigRenderer = new SwineRenderer<LivingEntity>(mc.getEntityRenderDispatcher());
+                pigRenderer = new EntityAsPigRenderer<LivingEntity>(mc.getEntityRenderDispatcher());
             }
             pigRenderer.render(event.getEntity(), event.getEntity().yRot, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(),
                     pigRenderer.getPackedLightCoords(event.getEntity(), event.getPartialRenderTick()));
@@ -175,6 +175,6 @@ public class ClientForgeEventHandler {
      * @return whether the entity should have the Swine effect applied
      **/
     private static boolean isSwine(final LivingEntity livingEntity) {
-        return livingEntity.hasEffect(GFRegistry.SWINE_EFFECT);
+        return livingEntity.hasEffect(GFRegistry.PIG_EFFECT);
     }
 }

@@ -3,7 +3,7 @@ package greekfantasy.entity;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.IntervalRangedAttackGoal;
-import greekfantasy.entity.misc.SwineSpellEntity;
+import greekfantasy.entity.misc.PigSpellEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.IRangedAttackMob;
@@ -45,7 +45,7 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
 
     private final ServerBossInfo bossInfo = new ServerBossInfo(this.getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
 
-    protected static final Predicate<LivingEntity> NOT_SWINE = e -> (e != null && null == e.getEffect(GFRegistry.SWINE_EFFECT));
+    protected static final Predicate<LivingEntity> NOT_SWINE = e -> (e != null && null == e.getEffect(GFRegistry.PIG_EFFECT));
 
     public CirceEntity(final EntityType<? extends CirceEntity> type, final World worldIn) {
         super(type, worldIn);
@@ -63,7 +63,7 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new SwimGoal(this));
-        this.goalSelector.addGoal(1, new IntervalRangedAttackGoal(this, 90, 1, GreekFantasy.CONFIG.getSwineWandCooldown() * 4));
+        this.goalSelector.addGoal(1, new IntervalRangedAttackGoal(this, 90, 1, GreekFantasy.CONFIG.getPigWandCooldown() * 4));
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class, 6.0F, 1.4D, 1.2D, e -> NOT_SWINE.test(e) && e == CirceEntity.this.getTarget()));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D) {
             @Override
@@ -75,7 +75,7 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
         this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, WitchEntity.class, CirceEntity.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, NOT_SWINE.and(e -> GreekFantasy.CONFIG.canSwineApply(e.getType().getRegistryName().toString())).and(EntityPredicates.ATTACK_ALLOWED)));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, NOT_SWINE.and(e -> GreekFantasy.CONFIG.canPigApply(e.getType().getRegistryName().toString())).and(EntityPredicates.ATTACK_ALLOWED)));
         this.targetSelector.addGoal(4, new ResetTargetGoal());
     }
 
@@ -100,7 +100,7 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
     public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
                                            @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
         ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-        this.setItemInHand(Hand.MAIN_HAND, new ItemStack(GFRegistry.SWINE_WAND));
+        this.setItemInHand(Hand.MAIN_HAND, new ItemStack(GFRegistry.PIG_WAND));
         return data;
     }
 
@@ -109,7 +109,7 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
     @Override
     public void performRangedAttack(LivingEntity arg0, float arg1) {
         if (!level.isClientSide()) {
-            SwineSpellEntity spell = SwineSpellEntity.create(level, this);
+            PigSpellEntity spell = PigSpellEntity.create(level, this);
             level.addFreshEntity(spell);
         }
         this.playSound(SoundEvents.ILLUSIONER_CAST_SPELL, 1.2F, 1.0F);
@@ -179,7 +179,7 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
         public boolean canUse() {
             return CirceEntity.this.tickCount % interval == 0 && CirceEntity.this.isAlive()
                     && CirceEntity.this.getTarget() instanceof LivingEntity
-                    && CirceEntity.this.getTarget().getEffect(GFRegistry.SWINE_EFFECT) != null;
+                    && CirceEntity.this.getTarget().getEffect(GFRegistry.PIG_EFFECT) != null;
         }
 
         @Override

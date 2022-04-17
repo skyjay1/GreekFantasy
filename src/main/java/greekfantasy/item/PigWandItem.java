@@ -2,7 +2,7 @@ package greekfantasy.item;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.misc.SwineSpellEntity;
+import greekfantasy.entity.misc.PigSpellEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
@@ -12,19 +12,19 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
-public class SwineWandItem extends Item {
+public class PigWandItem extends Item {
 
-    public SwineWandItem(final Item.Properties properties) {
+    public PigWandItem(final Item.Properties properties) {
         super(properties);
     }
 
     @Override
     public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.getSwineWandCooldown());
+        player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.getPigWandCooldown());
         // spawn a healing spell entity
         if (!world.isClientSide()) {
-            SwineSpellEntity healingSpell = SwineSpellEntity.create(world, player);
+            PigSpellEntity healingSpell = PigSpellEntity.create(world, player);
             world.addFreshEntity(healingSpell);
         }
         player.playSound(SoundEvents.ILLUSIONER_CAST_SPELL, 0.5F, 1.0F);

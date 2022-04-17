@@ -14,11 +14,11 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
-public class SwineRenderer<T extends LivingEntity> extends LivingRenderer<T, PigModel<T>> {
+public class EntityAsPigRenderer<T extends LivingEntity> extends LivingRenderer<T, PigModel<T>> {
 
     private static final ResourceLocation PIG_TEXTURES = new ResourceLocation("textures/entity/pig/pig.png");
 
-    public SwineRenderer(EntityRendererManager renderManagerIn) {
+    public EntityAsPigRenderer(EntityRendererManager renderManagerIn) {
         super(renderManagerIn, new PigModel<>(), 0.7F);
     }
 

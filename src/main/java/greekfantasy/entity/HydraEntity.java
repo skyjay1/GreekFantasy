@@ -127,6 +127,11 @@ public class HydraEntity extends MonsterEntity {
         return super.canBeAffected(potioneffectIn);
     }
 
+    @Override
+    public boolean requiresCustomPersistence() {
+        return this.getHeads() != 3 || super.requiresCustomPersistence();
+    }
+
     // Heads //
 
     public int getHeads() {

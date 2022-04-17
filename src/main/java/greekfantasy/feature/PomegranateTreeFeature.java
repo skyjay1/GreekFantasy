@@ -32,8 +32,12 @@ public class PomegranateTreeFeature extends TreeFeature {
         if (!SimpleTemplateFeature.isValidDimension((ISeedReader) reader)) {
             return false;
         }
-        Optional<BlockPos> p = getRandomPositionInChunk((ISeedReader) reader, blockPosIn, new BlockPos(3, 5, 3), 0, rand,
-                Rotation.NONE);
+        Optional<BlockPos> p;
+        if(configIn.fromSapling) {
+            p = Optional.of(blockPosIn);
+        } else {
+            p = getRandomPositionInChunk((ISeedReader) reader, blockPosIn, new BlockPos(3, 5, 3), 0, rand, Rotation.NONE);
+        }
         if (!p.isPresent()) {
             return false;
         }

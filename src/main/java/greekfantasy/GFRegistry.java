@@ -17,7 +17,7 @@ import greekfantasy.crafting.SalveRecipe;
 import greekfantasy.effect.MirrorEffect;
 import greekfantasy.effect.PrisonerEffect;
 import greekfantasy.effect.StunnedEffect;
-import greekfantasy.effect.SwineEffect;
+import greekfantasy.effect.PigEffect;
 import greekfantasy.enchantment.DeityEnchantment;
 import greekfantasy.enchantment.HuntingEnchantment;
 import greekfantasy.enchantment.MirrorEnchantment;
@@ -75,7 +75,7 @@ import greekfantasy.entity.misc.HealingSpellEntity;
 import greekfantasy.entity.misc.OrthusHeadItemEntity;
 import greekfantasy.entity.misc.PoisonSpitEntity;
 import greekfantasy.entity.misc.SpearEntity;
-import greekfantasy.entity.misc.SwineSpellEntity;
+import greekfantasy.entity.misc.PigSpellEntity;
 import greekfantasy.entity.misc.WebBallEntity;
 import greekfantasy.feature.GoldenAppleTree;
 import greekfantasy.feature.OliveTree;
@@ -90,7 +90,6 @@ import greekfantasy.item.DiscusItem;
 import greekfantasy.item.DragonToothItem;
 import greekfantasy.item.EnchantedBowItem;
 import greekfantasy.item.FlintKnifeItem;
-import greekfantasy.item.GoldenAppleOfDiscordItem;
 import greekfantasy.item.GorgonBloodItem;
 import greekfantasy.item.GreekFireItem;
 import greekfantasy.item.HealingRodItem;
@@ -108,7 +107,7 @@ import greekfantasy.item.PomegranateSeedsItem;
 import greekfantasy.item.SalveItem;
 import greekfantasy.item.SnakeskinArmorItem;
 import greekfantasy.item.SpearItem;
-import greekfantasy.item.SwineWandItem;
+import greekfantasy.item.PigWandItem;
 import greekfantasy.item.ThunderboltItem;
 import greekfantasy.item.UnicornHornItem;
 import greekfantasy.item.WebBallItem;
@@ -181,7 +180,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -200,80 +198,58 @@ public final class GFRegistry {
 
     // ENTITY TYPES //
 
-    public static EntityType<AraEntity> ARA_ENTITY = buildEntityType(AraEntity::new, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {
-    });
-    public static EntityType<ArachneEntity> ARACHNE_ENTITY = buildEntityType(ArachneEntity::new, "arachne", 0.94F, 1.9F, EntityClassification.MONSTER, b -> {
-    });
+    public static EntityType<AraEntity> ARA_ENTITY = buildEntityType(AraEntity::new, "ara", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
+    public static EntityType<ArachneEntity> ARACHNE_ENTITY = buildEntityType(ArachneEntity::new, "arachne", 0.94F, 1.9F, EntityClassification.MONSTER, b -> {});
     public static EntityType<ArionEntity> ARION_ENTITY = buildEntityType(ArionEntity::new, "arion", 1.39F, 1.98F, EntityClassification.CREATURE, b -> b.fireImmune());
-    public static EntityType<BabySpiderEntity> BABY_SPIDER_ENTITY = buildEntityType(BabySpiderEntity::new, "baby_spider", 0.5F, 0.65F, EntityClassification.MONSTER, b -> {
-    });
+    public static EntityType<BabySpiderEntity> BABY_SPIDER_ENTITY = buildEntityType(BabySpiderEntity::new, "baby_spider", 0.5F, 0.65F, EntityClassification.MONSTER, b -> {});
     public static EntityType<BronzeBullEntity> BRONZE_BULL_ENTITY = buildEntityType(BronzeBullEntity::new, "bronze_bull", 1.95F, 2.98F, EntityClassification.MONSTER, b -> b.fireImmune());
-    public static EntityType<CentaurEntity> CENTAUR_ENTITY = buildEntityType(CentaurEntity::new, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {
-    });
-    public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {
-    });
+    public static EntityType<CentaurEntity> CENTAUR_ENTITY = buildEntityType(CentaurEntity::new, "centaur", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
+    public static EntityType<CerastesEntity> CERASTES_ENTITY = buildEntityType(CerastesEntity::new, "cerastes", 0.98F, 0.94F, EntityClassification.CREATURE, b -> {});
     public static EntityType<CerberusEntity> CERBERUS_ENTITY = buildEntityType(CerberusEntity::new, "cerberus", 1.98F, 1.9F, EntityClassification.MONSTER, b -> b.fireImmune());
     public static EntityType<CharybdisEntity> CHARYBDIS_ENTITY = buildEntityType(CharybdisEntity::new, "charybdis", 5.9F, 7.9F, EntityClassification.WATER_CREATURE, b -> b.fireImmune());
     public static EntityType<CirceEntity> CIRCE_ENTITY = buildEntityType(CirceEntity::new, "circe", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.fireImmune());
     public static EntityType<CretanMinotaurEntity> CRETAN_MINOTAUR_ENTITY = buildEntityType(CretanMinotaurEntity::new, "cretan_minotaur", 0.98F, 3.395F, EntityClassification.MONSTER, b -> b.fireImmune());
     public static EntityType<CurseEntity> CURSE_ENTITY = buildEntityType(CurseEntity::new, "curse", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
-    public static EntityType<CyclopesEntity> CYCLOPES_ENTITY = buildEntityType(CyclopesEntity::new, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, b -> {
-    });
-    public static EntityType<CyprianEntity> CYPRIAN_ENTITY = buildEntityType(CyprianEntity::new, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {
-    });
+    public static EntityType<CyclopesEntity> CYCLOPES_ENTITY = buildEntityType(CyclopesEntity::new, "cyclopes", 0.99F, 2.92F, EntityClassification.MONSTER, b -> {});
+    public static EntityType<CyprianEntity> CYPRIAN_ENTITY = buildEntityType(CyprianEntity::new, "cyprian", 1.39F, 2.49F, EntityClassification.CREATURE, b -> {});
     public static EntityType<DiscusEntity> DISCUS_ENTITY = buildEntityType(DiscusEntity::new, "discus", 0.45F, 0.45F, EntityClassification.MISC, b -> b.noSummon().clientTrackingRange(4).updateInterval(10));
     public static EntityType<DragonToothEntity> DRAGON_TOOTH_ENTITY = buildEntityType(DragonToothEntity::new, "dragon_tooth", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
-    public static EntityType<DrakainaEntity> DRAKAINA_ENTITY = buildEntityType(DrakainaEntity::new, "drakaina", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {
-    });
-    public static EntityType<DryadEntity> DRYAD_ENTITY = buildEntityType(DryadEntity::new, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> {
-    });
+    public static EntityType<DrakainaEntity> DRAKAINA_ENTITY = buildEntityType(DrakainaEntity::new, "drakaina", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
+    public static EntityType<DryadEntity> DRYAD_ENTITY = buildEntityType(DryadEntity::new, "dryad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> {});
     public static EntityType<ElpisEntity> ELPIS_ENTITY = buildEntityType(ElpisEntity::new, "elpis", 0.4F, 0.8F, EntityClassification.CREATURE, b -> b.fireImmune());
     public static EntityType<EmpusaEntity> EMPUSA_ENTITY = buildEntityType(EmpusaEntity::new, "empusa", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.fireImmune());
     public static EntityType<FuryEntity> FURY_ENTITY = buildEntityType(FuryEntity::new, "fury", 0.67F, 1.4F, EntityClassification.MONSTER, b -> b.fireImmune());
     public static EntityType<GeryonEntity> GERYON_ENTITY = buildEntityType(GeryonEntity::new, "geryon", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.fireImmune());
-    public static EntityType<GiantBoarEntity> GIANT_BOAR_ENTITY = buildEntityType(GiantBoarEntity::new, "giant_boar", 2.653F, 2.66F, EntityClassification.CREATURE, b -> b.fireImmune());
-    public static EntityType<GiganteEntity> GIGANTE_ENTITY = buildEntityType(GiganteEntity::new, "gigante", 1.98F, 4.79F, EntityClassification.CREATURE, b -> {
-    });
+    public static EntityType<GiantBoarEntity> GIANT_BOAR_ENTITY = buildEntityType(GiantBoarEntity::new, "giant_boar", 2.653F, 2.66F, EntityClassification.MONSTER, b -> b.fireImmune());
+    public static EntityType<GiganteEntity> GIGANTE_ENTITY = buildEntityType(GiganteEntity::new, "gigante", 1.98F, 4.79F, EntityClassification.MONSTER, b -> {});
     public static EntityType<GoldenRamEntity> GOLDEN_RAM_ENTITY = buildEntityType(GoldenRamEntity::new, "golden_ram", 0.96F, 1.56F, EntityClassification.CREATURE, b -> b.fireImmune());
-    public static EntityType<GorgonEntity> GORGON_ENTITY = buildEntityType(GorgonEntity::new, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {
-    });
+    public static EntityType<GorgonEntity> GORGON_ENTITY = buildEntityType(GorgonEntity::new, "gorgon", 0.9F, 1.9F, EntityClassification.MONSTER, b -> {});
     public static EntityType<GreekFireEntity> GREEK_FIRE_ENTITY = buildEntityType(GreekFireEntity::new, "greek_fire", 0.45F, 0.45F, EntityClassification.MISC, b -> b.noSummon().clientTrackingRange(4).updateInterval(10));
-    public static EntityType<HarpyEntity> HARPY_ENTITY = buildEntityType(HarpyEntity::new, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, b -> {
-    });
+    public static EntityType<HarpyEntity> HARPY_ENTITY = buildEntityType(HarpyEntity::new, "harpy", 0.7F, 1.8F, EntityClassification.MONSTER, b -> {});
     public static EntityType<HealingSpellEntity> HEALING_SPELL_ENTITY = buildEntityType(HealingSpellEntity::new, "healing_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
     public static EntityType<HydraEntity> HYDRA_ENTITY = buildEntityType(HydraEntity::new, "hydra", 2.4F, 2.24F, EntityClassification.MONSTER, b -> b.fireImmune());
     public static EntityType<HydraHeadEntity> HYDRA_HEAD_ENTITY = buildEntityType(HydraHeadEntity::new, "hydra_head", 0.68F, 1.88F, EntityClassification.MISC, b -> b.noSummon());
     public static EntityType<LampadEntity> LAMPAD_ENTITY = buildEntityType(LampadEntity::new, "lampad", 0.48F, 1.8F, EntityClassification.CREATURE, b -> b.fireImmune());
-    public static EntityType<MadCowEntity> MAD_COW_ENTITY = buildEntityType(MadCowEntity::new, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, b -> {
-    });
-    public static EntityType<MakhaiEntity> MAKHAI_ENTITY = buildEntityType(MakhaiEntity::new, "makhai", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {
-    });
-    public static EntityType<MinotaurEntity> MINOTAUR_ENTITY = buildEntityType(MinotaurEntity::new, "minotaur", 0.7F, 1.94F, EntityClassification.MONSTER, b -> {
-    });
+    public static EntityType<MadCowEntity> MAD_COW_ENTITY = buildEntityType(MadCowEntity::new, "mad_cow", 0.9F, 1.4F, EntityClassification.CREATURE, b -> {});
+    public static EntityType<MakhaiEntity> MAKHAI_ENTITY = buildEntityType(MakhaiEntity::new, "makhai", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
+    public static EntityType<MinotaurEntity> MINOTAUR_ENTITY = buildEntityType(MinotaurEntity::new, "minotaur", 0.7F, 1.94F, EntityClassification.MONSTER, b -> {});
     public static EntityType<NemeanLionEntity> NEMEAN_LION_ENTITY = buildEntityType(NemeanLionEntity::new, "nemean_lion", 1.92F, 2.28F, EntityClassification.MONSTER, b -> b.fireImmune());
-    public static EntityType<NaiadEntity> NAIAD_ENTITY = buildEntityType(NaiadEntity::new, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, b -> {
-    });
+    public static EntityType<NaiadEntity> NAIAD_ENTITY = buildEntityType(NaiadEntity::new, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, b -> {});
     public static EntityType<OrthusEntity> ORTHUS_ENTITY = buildEntityType(OrthusEntity::new, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, b -> b.fireImmune());
     public static EntityType<OrthusHeadItemEntity> ORTHUS_HEAD_ITEM_ENTITY = buildEntityType(OrthusHeadItemEntity::new, "orthus_head_item", 0.25F, 0.25F, EntityClassification.MISC, b -> b.noSummon().clientTrackingRange(6).updateInterval(20));
-    public static EntityType<PegasusEntity> PEGASUS_ENTITY = buildEntityType(PegasusEntity::new, "pegasus", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {
-    });
+    public static EntityType<PegasusEntity> PEGASUS_ENTITY = buildEntityType(PegasusEntity::new, "pegasus", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
     public static EntityType<PoisonSpitEntity> POISON_SPIT_ENTITY = buildEntityType(PoisonSpitEntity::new, "poison_spit", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
     public static EntityType<PythonEntity> PYTHON_ENTITY = buildEntityType(PythonEntity::new, "python", 1.4F, 1.9F, EntityClassification.MONSTER, b -> b.fireImmune());
-    public static EntityType<SatyrEntity> SATYR_ENTITY = buildEntityType(SatyrEntity::new, "satyr", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {
-    });
+    public static EntityType<SatyrEntity> SATYR_ENTITY = buildEntityType(SatyrEntity::new, "satyr", 0.67F, 1.8F, EntityClassification.CREATURE, b -> {});
     public static EntityType<ShadeEntity> SHADE_ENTITY = buildEntityType(ShadeEntity::new, "shade", 0.67F, 1.8F, EntityClassification.MONSTER, b -> b.fireImmune());
-    public static EntityType<SirenEntity> SIREN_ENTITY = buildEntityType(SirenEntity::new, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, b -> {
-    });
-    public static EntityType<SpartiEntity> SPARTI_ENTITY = buildEntityType(SpartiEntity::new, "sparti", 0.6F, 1.98F, EntityClassification.CREATURE, b -> {
-    });
+    public static EntityType<SirenEntity> SIREN_ENTITY = buildEntityType(SirenEntity::new, "siren", 0.6F, 1.9F, EntityClassification.WATER_CREATURE, b -> {});
+    public static EntityType<SpartiEntity> SPARTI_ENTITY = buildEntityType(SpartiEntity::new, "sparti", 0.6F, 1.98F, EntityClassification.CREATURE, b -> {});
     public static EntityType<SpearEntity> SPEAR_ENTITY = buildEntityType(SpearEntity::new, "spear", 0.5F, 0.5F, EntityClassification.MISC, b -> b.noSummon().clientTrackingRange(4).updateInterval(20));
-    public static EntityType<SwineSpellEntity> SWINE_SPELL_ENTITY = buildEntityType(SwineSpellEntity::new, "swine_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
+    public static EntityType<PigSpellEntity> PIG_SPELL_ENTITY = buildEntityType(PigSpellEntity::new, "pig_spell", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
     public static EntityType<TalosEntity> TALOS_ENTITY = buildEntityType(TalosEntity::new, "talos", 1.98F, 4.96F, EntityClassification.MONSTER, b -> b.fireImmune());
-    public static EntityType<UnicornEntity> UNICORN_ENTITY = buildEntityType(UnicornEntity::new, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {
-    });
+    public static EntityType<UnicornEntity> UNICORN_ENTITY = buildEntityType(UnicornEntity::new, "unicorn", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
     public static EntityType<WebBallEntity> WEB_BALL_ENTITY = buildEntityType(WebBallEntity::new, "web_ball", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
-    public static EntityType<WhirlEntity> WHIRL_ENTITY = buildEntityType(WhirlEntity::new, "whirl", 2.9F, 5.0F, EntityClassification.WATER_CREATURE, b -> {
-    });
+    public static EntityType<WhirlEntity> WHIRL_ENTITY = buildEntityType(WhirlEntity::new, "whirl", 2.9F, 5.0F, EntityClassification.WATER_CREATURE, b -> {});
 
     // OBJECT HOLDERS //
 
@@ -318,8 +294,8 @@ public final class GFRegistry {
     public static final Item STYXIAN_SHARD = null;
     @ObjectHolder("boar_ear")
     public static final Item BOAR_EAR = null;
-    @ObjectHolder("swine_wand")
-    public static final Item SWINE_WAND = null;
+    @ObjectHolder("pig_wand")
+    public static final Item PIG_WAND = null;
     @ObjectHolder("golden_ball")
     public static final Item GOLDEN_BALL = null;
     @ObjectHolder("golden_string")
@@ -346,8 +322,6 @@ public final class GFRegistry {
     public static final Item GOLDEN_FLEECE = null;
     @ObjectHolder("fiery_gear")
     public static final Item FIERY_GEAR = null;
-    @ObjectHolder("golden_apple_of_discord")
-    public static final Item GOLDEN_APPLE_OF_DISCORD = null;
     @ObjectHolder("spider_banner_pattern")
     public static final Item SPIDER_PATTERN = null;
     @ObjectHolder("web_ball")
@@ -456,12 +430,6 @@ public final class GFRegistry {
     public static final Block POLISHED_CRETAN_STONE = null;
     @ObjectHolder("cracked_polished_cretan_stone")
     public static final Block CRACKED_POLISHED_CRETAN_STONE = null;
-    @ObjectHolder("limestone_statue")
-    public static final Block LIMESTONE_STATUE = null;
-    @ObjectHolder("marble_statue")
-    public static final Block MARBLE_STATUE = null;
-    @ObjectHolder("palladium")
-    public static final Block PALLADIUM = null;
     @ObjectHolder("mysterious_box")
     public static final Block MYSTERIOUS_BOX = null;
     @ObjectHolder("gigante_head")
@@ -515,40 +483,6 @@ public final class GFRegistry {
     @ObjectHolder("black_terracotta_vase")
     public static final Block BLACK_TERRACOTTA_VASE = null;
 
-    // Altar //
-    @ObjectHolder("altar_aphrodite")
-    public static final Block ALTAR_APHRODITE = null;
-    @ObjectHolder("altar_apollo")
-    public static final Block ALTAR_APOLLO = null;
-    @ObjectHolder("altar_ares")
-    public static final Block ALTAR_ARES = null;
-    @ObjectHolder("altar_artemis")
-    public static final Block ALTAR_ARTEMIS = null;
-    @ObjectHolder("altar_athena")
-    public static final Block ALTAR_ATHENA = null;
-    @ObjectHolder("altar_demeter")
-    public static final Block ALTAR_DEMETER = null;
-    @ObjectHolder("altar_dionysus")
-    public static final Block ALTAR_DIONYSUS = null;
-    @ObjectHolder("altar_hades")
-    public static final Block ALTAR_HADES = null;
-    @ObjectHolder("altar_hecate")
-    public static final Block ALTAR_HECATE = null;
-    @ObjectHolder("altar_hephaestus")
-    public static final Block ALTAR_HEPHAESTUS = null;
-    @ObjectHolder("altar_hera")
-    public static final Block ALTAR_HERA = null;
-    @ObjectHolder("altar_hermes")
-    public static final Block ALTAR_HERMES = null;
-    @ObjectHolder("altar_hestia")
-    public static final Block ALTAR_HESTIA = null;
-    @ObjectHolder("altar_persephone")
-    public static final Block ALTAR_PERSEPHONE = null;
-    @ObjectHolder("altar_poseidon")
-    public static final Block ALTAR_POSEIDON = null;
-    @ObjectHolder("altar_zeus")
-    public static final Block ALTAR_ZEUS = null;
-
     // Tile Entity //
     @ObjectHolder("vase_te")
     public static final TileEntityType<VaseTileEntity> VASE_TE = null;
@@ -562,8 +496,8 @@ public final class GFRegistry {
     public static final Effect PETRIFIED_EFFECT = null;
     @ObjectHolder("mirror")
     public static final Effect MIRROR_EFFECT = null;
-    @ObjectHolder("swine")
-    public static final Effect SWINE_EFFECT = null;
+    @ObjectHolder("pig")
+    public static final Effect PIG_EFFECT = null;
     @ObjectHolder("prisoner")
     public static final Effect PRISONER_EFFECT = null;
 
@@ -594,10 +528,10 @@ public final class GFRegistry {
     public static final Potion MIRROR_POTION = null;
     @ObjectHolder("long_mirror")
     public static final Potion LONG_MIRROR_POTION = null;
-    @ObjectHolder("swine")
-    public static final Potion SWINE_POTION = null;
-    @ObjectHolder("long_swine")
-    public static final Potion LONG_SWINE_POTION = null;
+    @ObjectHolder("pig")
+    public static final Potion PIG_POTION = null;
+    @ObjectHolder("long_pig")
+    public static final Potion LONG_PIG_POTION = null;
 
     // Particle Type //
     @ObjectHolder("gorgon_face")
@@ -641,14 +575,14 @@ public final class GFRegistry {
         registerEntityType(event, DRYAD_ENTITY, "dryad", DryadEntity::checkMobSpawnRules);
         registerEntityType(event, ELPIS_ENTITY, "elpis", null);
         registerEntityType(event, EMPUSA_ENTITY, "empusa", EmpusaEntity::checkMonsterSpawnRules);
-        registerEntityType(event, FURY_ENTITY, "fury", FuryEntity::checkMobSpawnRules);
+        registerEntityType(event, FURY_ENTITY, "fury", FuryEntity::checkAnyLightMonsterSpawnRules);
         registerEntityType(event, GERYON_ENTITY, "geryon", null);
         registerEntityType(event, GIANT_BOAR_ENTITY, "giant_boar", null);
         registerEntityType(event, GIGANTE_ENTITY, "gigante", GiganteEntity::checkMobSpawnRules);
         registerEntityType(event, GOLDEN_RAM_ENTITY, "golden_ram", null);
         registerEntityType(event, GORGON_ENTITY, "gorgon", GorgonEntity::checkMonsterSpawnRules);
         registerEntityType(event, HARPY_ENTITY, "harpy", HarpyEntity::checkAnyLightMonsterSpawnRules);
-        registerEntityType(event, HYDRA_ENTITY, "hydra", null);
+        registerEntityType(event, HYDRA_ENTITY, "hydra", HydraEntity::checkMonsterSpawnRules);
         registerEntityType(event, HYDRA_HEAD_ENTITY, "hydra_head", null);
         registerEntityType(event, LAMPAD_ENTITY, "lampad", LampadEntity::checkMobSpawnRules);
         registerEntityType(event, MAD_COW_ENTITY, "mad_cow", MadCowEntity::checkMobSpawnRules);
@@ -674,7 +608,7 @@ public final class GFRegistry {
         event.getRegistry().register(HEALING_SPELL_ENTITY.setRegistryName(MODID, "healing_spell"));
         event.getRegistry().register(ORTHUS_HEAD_ITEM_ENTITY.setRegistryName(MODID, "orthus_head_item"));
         event.getRegistry().register(POISON_SPIT_ENTITY.setRegistryName(MODID, "poison_spit"));
-        event.getRegistry().register(SWINE_SPELL_ENTITY.setRegistryName(MODID, "swine_spell"));
+        event.getRegistry().register(PIG_SPELL_ENTITY.setRegistryName(MODID, "pig_spell"));
         event.getRegistry().register(WEB_BALL_ENTITY.setRegistryName(MODID, "web_ball"));
     }
 
@@ -849,9 +783,9 @@ public final class GFRegistry {
                         .setRegistryName(MODID, "healing_rod"),
                 new DragonToothItem(new Item.Properties().rarity(Rarity.UNCOMMON).tab(GREEK_GROUP))
                         .setRegistryName(MODID, "dragon_tooth"),
-                new SwineWandItem(new Item.Properties().rarity(Rarity.RARE).tab(GREEK_GROUP)
-                        .durability(GreekFantasy.CONFIG.SWINE_WAND_DURABILITY.get()))
-                        .setRegistryName(MODID, "swine_wand"),
+                new PigWandItem(new Item.Properties().rarity(Rarity.RARE).tab(GREEK_GROUP)
+                        .durability(GreekFantasy.CONFIG.PIG_WAND_DURABILITY.get()))
+                        .setRegistryName(MODID, "pig_wand"),
                 new EnchantedBowItem.CursedBowItem(new Item.Properties().durability(384).tab(GREEK_GROUP))
                         .setRegistryName(MODID, "cursed_bow"),
                 new EnchantedBowItem.ApolloBowItem(new Item.Properties().durability(620).tab(GREEK_GROUP))
@@ -956,8 +890,6 @@ public final class GFRegistry {
                         .setRegistryName(MODID, "golden_ball"),
                 new Item(new Item.Properties().tab(GREEK_GROUP))
                         .setRegistryName(MODID, "golden_fleece"),
-                new GoldenAppleOfDiscordItem(new Item.Properties().tab(GREEK_GROUP).food(GoldenAppleOfDiscordItem.GOLDEN_APPLE_OF_DISCORD))
-                        .setRegistryName(MODID, "golden_apple_of_discord"),
                 new DiscusItem(new Item.Properties().stacksTo(16).tab(GREEK_GROUP))
                         .setRegistryName(MODID, "discus"),
                 new WebBallItem(new Item.Properties().stacksTo(16).tab(GREEK_GROUP))
@@ -974,14 +906,11 @@ public final class GFRegistry {
                 POMEGRANATE_SAPLING, POMEGRANATE_LOG, STRIPPED_POMEGRANATE_LOG, POMEGRANATE_WOOD, STRIPPED_POMEGRANATE_WOOD,
                 POMEGRANATE_PLANKS, POMEGRANATE_SLAB, POMEGRANATE_STAIRS, POMEGRANATE_TRAPDOOR, POMEGRANATE_LEAVES,
                 MARBLE, MARBLE_SLAB, MARBLE_STAIRS, POLISHED_MARBLE, POLISHED_MARBLE_SLAB,
-                POLISHED_MARBLE_STAIRS, MARBLE_PILLAR, MARBLE_STATUE, PALLADIUM,
+                POLISHED_MARBLE_STAIRS, MARBLE_PILLAR,
                 CRETAN_STONE, CHISELED_CRETAN_STONE, CRETAN_STONE_BRICK, CHISELED_CRETAN_STONE_BRICK,
                 CRACKED_CRETAN_STONE_BRICK, POLISHED_CRETAN_STONE, CRACKED_POLISHED_CRETAN_STONE,
-                ALTAR_APHRODITE, ALTAR_APOLLO, ALTAR_ARES, ALTAR_ARTEMIS, ALTAR_ATHENA, ALTAR_DEMETER,
-                ALTAR_DIONYSUS, ALTAR_HADES, ALTAR_HECATE, ALTAR_HEPHAESTUS, ALTAR_HERA, ALTAR_HERMES,
-                ALTAR_HESTIA, ALTAR_PERSEPHONE, ALTAR_POSEIDON, ALTAR_ZEUS,
                 LIMESTONE, LIMESTONE_SLAB, LIMESTONE_STAIRS, POLISHED_LIMESTONE, POLISHED_LIMESTONE_SLAB,
-                POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, LIMESTONE_STATUE, ICHOR_INFUSED_BLOCK,
+                POLISHED_LIMESTONE_STAIRS, LIMESTONE_PILLAR, ICHOR_INFUSED_BLOCK,
                 TERRACOTTA_VASE, WHITE_TERRACOTTA_VASE, ORANGE_TERRACOTTA_VASE, MAGENTA_TERRACOTTA_VASE,
                 LIGHT_BLUE_TERRACOTTA_VASE, YELLOW_TERRACOTTA_VASE, LIME_TERRACOTTA_VASE,
                 PINK_TERRACOTTA_VASE, GRAY_TERRACOTTA_VASE, LIGHT_GRAY_TERRACOTTA_VASE,
@@ -1060,7 +989,7 @@ public final class GFRegistry {
                 new StunnedEffect().setRegistryName(MODID, "stunned"),
                 new StunnedEffect().setRegistryName(MODID, "petrified"),
                 new MirrorEffect().setRegistryName(MODID, "mirror"),
-                new SwineEffect().setRegistryName(MODID, "swine"),
+                new PigEffect().setRegistryName(MODID, "pig"),
                 new PrisonerEffect().setRegistryName(MODID, "prisoner")
         );
     }
@@ -1071,8 +1000,8 @@ public final class GFRegistry {
         event.getRegistry().registerAll(
                 new Potion(new EffectInstance(MIRROR_EFFECT, 3600)).setRegistryName(MODID, "mirror"),
                 new Potion("mirror", new EffectInstance(MIRROR_EFFECT, 9600)).setRegistryName(MODID, "long_mirror"),
-                new Potion(new EffectInstance(SWINE_EFFECT, 3600)).setRegistryName(MODID, "swine"),
-                new Potion("swine", new EffectInstance(SWINE_EFFECT, 9600)).setRegistryName(MODID, "long_swine")
+                new Potion(new EffectInstance(PIG_EFFECT, 3600)).setRegistryName(MODID, "pig"),
+                new Potion("pig", new EffectInstance(PIG_EFFECT, 9600)).setRegistryName(MODID, "long_pig")
         );
     }
 
@@ -1142,23 +1071,23 @@ public final class GFRegistry {
             BrewingRecipeRegistry.addRecipe(Ingredient.of(lingeringMirror), Ingredient.of(new ItemStack(Items.REDSTONE)),
                     PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), LONG_MIRROR_POTION));
         }
-        // Swine potion recipes
-        if (GreekFantasy.CONFIG.isSwinePotionEnabled()) {
-            final ItemStack swine = PotionUtils.setPotion(new ItemStack(Items.POTION), SWINE_POTION);
-            final ItemStack splashSwine = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), SWINE_POTION);
-            final ItemStack lingeringSwine = PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), SWINE_POTION);
-            // Add brewing recipes for Swine potion
+        // Pig potion recipes
+        if (GreekFantasy.CONFIG.isPigPotionEnabled()) {
+            final ItemStack pig = PotionUtils.setPotion(new ItemStack(Items.POTION), PIG_POTION);
+            final ItemStack splashPig = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), PIG_POTION);
+            final ItemStack lingeringPig = PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), PIG_POTION);
+            // Add brewing recipes for Pig potion
             BrewingRecipeRegistry.addRecipe(
                     Ingredient.of(awkward),
-                    Ingredient.of(new ItemStack(BOAR_EAR)), swine);
-            BrewingRecipeRegistry.addRecipe(Ingredient.of(swine), Ingredient.of(new ItemStack(Items.REDSTONE)),
-                    PotionUtils.setPotion(new ItemStack(Items.POTION), LONG_SWINE_POTION));
-            BrewingRecipeRegistry.addRecipe(Ingredient.of(swine), Ingredient.of(new ItemStack(Items.GUNPOWDER)), splashSwine);
-            BrewingRecipeRegistry.addRecipe(Ingredient.of(swine), Ingredient.of(new ItemStack(Items.DRAGON_BREATH)), lingeringSwine);
-            BrewingRecipeRegistry.addRecipe(Ingredient.of(splashSwine), Ingredient.of(new ItemStack(Items.REDSTONE)),
-                    PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), LONG_SWINE_POTION));
-            BrewingRecipeRegistry.addRecipe(Ingredient.of(lingeringSwine), Ingredient.of(new ItemStack(Items.REDSTONE)),
-                    PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), LONG_SWINE_POTION));
+                    Ingredient.of(new ItemStack(BOAR_EAR)), pig);
+            BrewingRecipeRegistry.addRecipe(Ingredient.of(pig), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                    PotionUtils.setPotion(new ItemStack(Items.POTION), LONG_PIG_POTION));
+            BrewingRecipeRegistry.addRecipe(Ingredient.of(pig), Ingredient.of(new ItemStack(Items.GUNPOWDER)), splashPig);
+            BrewingRecipeRegistry.addRecipe(Ingredient.of(pig), Ingredient.of(new ItemStack(Items.DRAGON_BREATH)), lingeringPig);
+            BrewingRecipeRegistry.addRecipe(Ingredient.of(splashPig), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                    PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), LONG_PIG_POTION));
+            BrewingRecipeRegistry.addRecipe(Ingredient.of(lingeringPig), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                    PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), LONG_PIG_POTION));
         }
     }
 

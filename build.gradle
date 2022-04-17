@@ -1,14 +1,17 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         jcenter()
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7.32'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
@@ -80,10 +83,8 @@ repositories {
 }
 
 dependencies {
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-	
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
     minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
     // RPG Gods
@@ -99,24 +100,39 @@ dependencies {
 	runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
 }
+// This block of code expands all the gradle properties in the specified resource targets.
+// It copies them into the targets and expands all the defined properties.
+def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
+def intoTargets = ["$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/"]
+def replaceProperties = [mod_id: mod_id, mod_name: mod_name, mod_version: mod_version,
+                         mod_authors: mod_authors, mod_description: mod_description,
+                         minecraft_version_range: minecraft_version_range, forge_version_range: forge_version_range,
+                         loader_version_range: loader_version_range]
 processResources {
-    inputs.property "version", project.version
+    inputs.properties replaceProperties
+    replaceProperties.put 'project', project
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "META-INF/mods.toml"
-        expand "mod_version": project.version
-        expand "forge_version": project.forge_version
+    filesMatching(resourceTargets) {
+        expand replaceProperties
     }
 
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "META-INF/mods.toml"
+    intoTargets.each { target ->
+        if (file(target).exists()) {
+            copy {
+                from(sourceSets.main.resources) {
+                    include resourceTargets
+                    expand replaceProperties
+                }
+                into target
+            }
+        }
     }
 }
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
     manifest {
         attributes([
-                "Specification-Title": "Greek Fantasy",
+                "Specification-Title": "${mod_name}",
                 "Specification-Vendor": "${mod_authors}",
                 "Specification-Version": "1", // We are version 1 of ourselves
                 "Implementation-Title": project.name,

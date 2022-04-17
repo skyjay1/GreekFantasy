@@ -25,7 +25,7 @@ public class GFConfig {
     public final ForgeConfigSpec.IntValue HEALING_ROD_DURABILITY;
     public final ForgeConfigSpec.IntValue THUNDERBOLT_DURABILITY;
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURABILITY;
-    public final ForgeConfigSpec.IntValue SWINE_WAND_DURABILITY;
+    public final ForgeConfigSpec.IntValue PIG_WAND_DURABILITY;
     private final ForgeConfigSpec.BooleanValue HELM_HIDES_ARMOR;
     private final ForgeConfigSpec.BooleanValue DRAGON_TOOTH_SPAWNS_SPARTI;
     private final ForgeConfigSpec.BooleanValue SWORD_OF_HUNT_BYPASSES_ARMOR;
@@ -36,8 +36,8 @@ public class GFConfig {
     private final ForgeConfigSpec.IntValue CONCH_COOLDOWN;
     private final ForgeConfigSpec.IntValue BAG_OF_WIND_COOLDOWN;
     private final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
-    private final ForgeConfigSpec.IntValue SWINE_WAND_COOLDOWN;
-    private final ForgeConfigSpec.IntValue SWINE_WAND_DURATION;
+    private final ForgeConfigSpec.IntValue PIG_WAND_COOLDOWN;
+    private final ForgeConfigSpec.IntValue PIG_WAND_DURATION;
     private final ForgeConfigSpec.BooleanValue WINGED_SANDALS_DEPLETE;
     private boolean helmHidesArmor;
     private boolean dragonToothSpawnsSparti;
@@ -49,8 +49,8 @@ public class GFConfig {
     private int conchCooldown;
     private int bagOfWindCooldown;
     private int bagOfWindDuration;
-    private int swineWandCooldown;
-    private int swineWandDuration;
+    private int pigWandCooldown;
+    private int pigWandDuration;
     private boolean wingedSandalsDeplete;
 
     // effect configs
@@ -71,11 +71,11 @@ public class GFConfig {
     private final ForgeConfigSpec.BooleanValue RAISING_ENABLED;
     private final ForgeConfigSpec.BooleanValue PRISONER_ENABLED;
     private final ForgeConfigSpec.IntValue PRISONER_DURATION;
-    private final ForgeConfigSpec.BooleanValue SWINE_ENABLED;
-    private final ForgeConfigSpec.BooleanValue SWINE_DROPS_ARMOR;
-    private final ForgeConfigSpec.BooleanValue SWINE_PREVENTS_TARGET;
-    private final ForgeConfigSpec.BooleanValue IS_SWINE_ENTITY_WHITELIST;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> SWINE_ENTITY_WHITELIST;
+    private final ForgeConfigSpec.BooleanValue PIG_ENABLED;
+    private final ForgeConfigSpec.BooleanValue PIG_DROPS_ARMOR;
+    private final ForgeConfigSpec.BooleanValue PIG_PREVENTS_TARGET;
+    private final ForgeConfigSpec.BooleanValue IS_PIG_ENTITY_WHITELIST;
+    private final ForgeConfigSpec.ConfigValue<List<? extends String>> PIG_ENTITY_WHITELIST;
     private boolean forceFOVReset;
     private boolean stunPreventsJump;
     private boolean stunPreventsUse;
@@ -93,15 +93,15 @@ public class GFConfig {
     private boolean fireflashDestroysBlocks;
     private boolean prisonerEnabled;
     private int prisonerDuration;
-    private boolean swineEnabled;
-    private boolean swineDropsArmor;
-    private boolean swinePreventsTarget;
+    private boolean pigEnabled;
+    private boolean pigDropsArmor;
+    private boolean pigPreventsTarget;
 
     // potion configs
     private final ForgeConfigSpec.BooleanValue MIRROR_POTION;
-    private final ForgeConfigSpec.BooleanValue SWINE_POTION;
+    private final ForgeConfigSpec.BooleanValue PIG_POTION;
     private boolean mirrorPotion;
-    private boolean swinePotion;
+    private boolean pigPotion;
 
     // special attack configs
     public final ForgeConfigSpec.BooleanValue DRAKAINA_ATTACK;
@@ -214,9 +214,9 @@ public class GFConfig {
         BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
         BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 100);
         BAG_OF_WIND_DURABILITY = builder.defineInRange("bag_of_wind_durability", 24, 1, 4000);
-        SWINE_WAND_DURATION = builder.defineInRange("swine_wand_duration", 2450, 1, 24000);
-        SWINE_WAND_COOLDOWN = builder.defineInRange("swine_wand_cooldown", 50, 0, 100);
-        SWINE_WAND_DURABILITY = builder.defineInRange("swine_wand_durability", 104, 1, 4000);
+        PIG_WAND_DURATION = builder.defineInRange("pig_wand_duration", 2450, 1, 24000);
+        PIG_WAND_COOLDOWN = builder.defineInRange("pig_wand_cooldown", 50, 0, 100);
+        PIG_WAND_DURABILITY = builder.defineInRange("pig_wand_durability", 104, 1, 4000);
         builder.pop();
         // mob attacks
         builder.push("effects");
@@ -240,18 +240,18 @@ public class GFConfig {
         RAISING_ENABLED = builder.define("enable_raising_enchantment", true);
         PRISONER_ENABLED = builder.define("enable_prisoner_effect", true);
         PRISONER_DURATION = builder.defineInRange("prisoner_effect_duration", 1200, 0, 24000);
-        SWINE_ENABLED = builder.define("enable_swine_effect", true);
-        SWINE_DROPS_ARMOR = builder.comment("Whether players under the swine effect drop their armor")
-                .define("swine_drops_armor", true);
-        SWINE_PREVENTS_TARGET = builder.comment("Whether some monsters ignore players under the swine effect")
-                .define("swine_prevents_target", true);
-        IS_SWINE_ENTITY_WHITELIST = builder.define("is_swine_entity_whitelist", true);
-        final List<String> swineWhitelist = entitiesAsList(EntityType.PLAYER, EntityType.VILLAGER, EntityType.ZOMBIE,
+        PIG_ENABLED = builder.define("enable_pig_effect", true);
+        PIG_DROPS_ARMOR = builder.comment("Whether players under the pig effect drop their armor")
+                .define("pig_drops_armor", true);
+        PIG_PREVENTS_TARGET = builder.comment("Whether some monsters ignore players under the pig effect")
+                .define("pig_prevents_target", true);
+        IS_PIG_ENTITY_WHITELIST = builder.define("is_pig_entity_whitelist", true);
+        final List<String> pigWhitelist = entitiesAsList(EntityType.PLAYER, EntityType.VILLAGER, EntityType.ZOMBIE,
                 EntityType.ZOMBIE_VILLAGER, EntityType.HUSK, EntityType.VINDICATOR, EntityType.WANDERING_TRADER,
                 EntityType.ILLUSIONER, EntityType.PILLAGER);
-        Collections.addAll(swineWhitelist, GreekFantasy.MODID + ":ara", GreekFantasy.MODID + ":dryad",
+        Collections.addAll(pigWhitelist, GreekFantasy.MODID + ":ara", GreekFantasy.MODID + ":dryad",
                 GreekFantasy.MODID + ":naiad", GreekFantasy.MODID + ":satyr");
-        SWINE_ENTITY_WHITELIST = builder.defineList("swine_entity_whitelist", swineWhitelist, o -> o instanceof String);
+        PIG_ENTITY_WHITELIST = builder.defineList("pig_entity_whitelist", pigWhitelist, o -> o instanceof String);
         NERF_STUNNING = builder.comment("When true, replaces stunning with Slowness I and Weakness I")
                 .define("nerf_stunning", false);
         NERF_PARALYSIS = builder.comment("When true, replaces paralysis with Slowness II and Weakness II")
@@ -261,8 +261,8 @@ public class GFConfig {
         builder.push("potions");
         MIRROR_POTION = builder.comment("Whether the Potion of Mirroring can prevent paralysis")
                 .define("enable_mirror_potion", true);
-        SWINE_POTION = builder.comment("Whether the Potion of Swine can turn players into pigs")
-                .define("enable_swine_potion", true);
+        PIG_POTION = builder.comment("Whether the Potion of Pig can turn players into pigs")
+                .define("enable_pig_potion", true);
         builder.pop();
         // mob abilities
         builder.push("mob_abilities");
@@ -423,8 +423,8 @@ public class GFConfig {
         conchCooldown = CONCH_COOLDOWN.get();
         bagOfWindDuration = BAG_OF_WIND_DURATION.get();
         bagOfWindCooldown = BAG_OF_WIND_COOLDOWN.get();
-        swineWandDuration = SWINE_WAND_DURATION.get();
-        swineWandCooldown = SWINE_WAND_COOLDOWN.get();
+        pigWandDuration = PIG_WAND_DURATION.get();
+        pigWandCooldown = PIG_WAND_COOLDOWN.get();
         wingedSandalsDeplete = WINGED_SANDALS_DEPLETE.get();
         // effect configurations
         forceFOVReset = FORCE_FOV_RESET.get();
@@ -444,12 +444,12 @@ public class GFConfig {
         raisingEnabled = RAISING_ENABLED.get();
         prisonerEnabled = PRISONER_ENABLED.get();
         prisonerDuration = PRISONER_DURATION.get();
-        swineEnabled = SWINE_ENABLED.get();
-        swineDropsArmor = SWINE_DROPS_ARMOR.get();
-        swinePreventsTarget = SWINE_PREVENTS_TARGET.get();
+        pigEnabled = PIG_ENABLED.get();
+        pigDropsArmor = PIG_DROPS_ARMOR.get();
+        pigPreventsTarget = PIG_PREVENTS_TARGET.get();
         // potions
         mirrorPotion = MIRROR_POTION.get();
-        swinePotion = SWINE_POTION.get();
+        pigPotion = PIG_POTION.get();
         // other mob spawn specials
         shadeSpawnOnDeath = SHADE_SPAWN_ON_DEATH.get();
         satyrShamanChance = SATYR_SHAMAN_CHANCE.get();
@@ -527,12 +527,12 @@ public class GFConfig {
         return bagOfWindCooldown;
     }
 
-    public int getSwineWandDuration() {
-        return swineWandDuration;
+    public int getPigWandDuration() {
+        return pigWandDuration;
     }
 
-    public int getSwineWandCooldown() {
-        return swineWandCooldown;
+    public int getPigWandCooldown() {
+        return pigWandCooldown;
     }
 
     public boolean doesStunPreventJump() {
@@ -579,16 +579,16 @@ public class GFConfig {
         return prisonerDuration;
     }
 
-    public boolean isSwineEnabled() {
-        return swineEnabled;
+    public boolean isPigEnabled() {
+        return pigEnabled;
     }
 
-    public boolean doesSwineDropArmor() {
-        return swineDropsArmor;
+    public boolean doesPigDropArmor() {
+        return pigDropsArmor;
     }
 
-    public boolean doesSwinePreventTarget() {
-        return swinePreventsTarget;
+    public boolean doesPigPreventTarget() {
+        return pigPreventsTarget;
     }
 
     public boolean isFlyingEnabled() {
@@ -619,8 +619,8 @@ public class GFConfig {
         return mirrorPotion;
     }
 
-    public boolean isSwinePotionEnabled() {
-        return swinePotion;
+    public boolean isPigPotionEnabled() {
+        return pigPotion;
     }
 
     public boolean doesShadeSpawnOnDeath() {
@@ -731,8 +731,8 @@ public class GFConfig {
         return palladiumYRange;
     }
 
-    public boolean canSwineApply(final String entityName) {
-        return IS_SWINE_ENTITY_WHITELIST.get() == SWINE_ENTITY_WHITELIST.get().contains(entityName);
+    public boolean canPigApply(final String entityName) {
+        return IS_PIG_ENTITY_WHITELIST.get() == PIG_ENTITY_WHITELIST.get().contains(entityName);
     }
 
     private static List<String> entitiesAsList(final EntityType<?>... types) {

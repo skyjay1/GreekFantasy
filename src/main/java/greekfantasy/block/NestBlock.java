@@ -92,4 +92,14 @@ public class NestBlock extends Block implements IWaterLoggable {
         SHAPE_MAP.put(state, shape);
         return shape;
     }
+
+    @Override
+    public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+        return 10;
+    }
+
+    @Override
+    public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+        return 10;
+    }
 }

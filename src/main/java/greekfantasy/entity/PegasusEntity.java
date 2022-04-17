@@ -103,6 +103,11 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
             this.hurt(DamageSource.OUT_OF_WORLD, 2.0F);
         }
     }
+    @Override
+    public boolean requiresCustomPersistence() {
+        return this.isTamed() || super.requiresCustomPersistence();
+    }
+
 
     // CALLED FROM ON INITIAL SPAWN //
 
