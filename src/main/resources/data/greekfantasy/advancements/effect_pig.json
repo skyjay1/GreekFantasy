@@ -5,10 +5,10 @@
       "item": "minecraft:porkchop"
     },
     "title": {
-      "translate": "advancements.greekfantasy.effect_swine.title"
+      "translate": "advancements.greekfantasy.effect_pig.title"
     },
     "description": {
-      "translate": "advancements.greekfantasy.effect_swine.description"
+      "translate": "advancements.greekfantasy.effect_pig.description"
     },
     "frame": "task",
     "show_toast": true,
@@ -16,18 +16,18 @@
     "hidden": true
   },
   "criteria": {
-    "swine_effect": {
+    "pig_effect": {
       "trigger": "minecraft:effects_changed",
       "conditions": {
         "effects": {
-          "greekfantasy:swine": {}
+          "greekfantasy:pig": {}
 		}
       }
     }
   },
   "requirements": [
     [
-      "swine_effect"
+      "pig_effect"
     ]
   ]
 }

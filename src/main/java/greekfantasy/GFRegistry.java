@@ -1,6 +1,7 @@
 package greekfantasy;
 
 import greekfantasy.block.CappedPillarBlock;
+import greekfantasy.block.GlowBlock;
 import greekfantasy.block.GoldenStringBlock;
 import greekfantasy.block.IchorInfusedBlock;
 import greekfantasy.block.MobHeadBlock;
@@ -58,6 +59,7 @@ import greekfantasy.entity.MinotaurEntity;
 import greekfantasy.entity.NaiadEntity;
 import greekfantasy.entity.NemeanLionEntity;
 import greekfantasy.entity.OrthusEntity;
+import greekfantasy.entity.misc.PalladiumEntity;
 import greekfantasy.entity.PegasusEntity;
 import greekfantasy.entity.PythonEntity;
 import greekfantasy.entity.SatyrEntity;
@@ -102,6 +104,7 @@ import greekfantasy.item.MobHeadItem;
 import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.item.OliveOilItem;
 import greekfantasy.item.OrthusHeadItem;
+import greekfantasy.item.PalladiumItem;
 import greekfantasy.item.PanfluteItem;
 import greekfantasy.item.PomegranateSeedsItem;
 import greekfantasy.item.SalveItem;
@@ -237,6 +240,7 @@ public final class GFRegistry {
     public static EntityType<NaiadEntity> NAIAD_ENTITY = buildEntityType(NaiadEntity::new, "naiad", 0.48F, 1.8F, EntityClassification.WATER_CREATURE, b -> {});
     public static EntityType<OrthusEntity> ORTHUS_ENTITY = buildEntityType(OrthusEntity::new, "orthus", 0.6F, 0.85F, EntityClassification.MONSTER, b -> b.fireImmune());
     public static EntityType<OrthusHeadItemEntity> ORTHUS_HEAD_ITEM_ENTITY = buildEntityType(OrthusHeadItemEntity::new, "orthus_head_item", 0.25F, 0.25F, EntityClassification.MISC, b -> b.noSummon().clientTrackingRange(6).updateInterval(20));
+    public static EntityType<PalladiumEntity> PALLADIUM_ENTITY = buildEntityType(PalladiumEntity::new, "palladium", 0.98F, 2.24F, EntityClassification.MISC, b -> b.fireImmune());
     public static EntityType<PegasusEntity> PEGASUS_ENTITY = buildEntityType(PegasusEntity::new, "pegasus", 1.39F, 1.98F, EntityClassification.CREATURE, b -> {});
     public static EntityType<PoisonSpitEntity> POISON_SPIT_ENTITY = buildEntityType(PoisonSpitEntity::new, "poison_spit", 0.25F, 0.25F, EntityClassification.MISC, b -> b.fireImmune().noSummon().clientTrackingRange(4).updateInterval(10));
     public static EntityType<PythonEntity> PYTHON_ENTITY = buildEntityType(PythonEntity::new, "python", 1.4F, 1.9F, EntityClassification.MONSTER, b -> b.fireImmune());
@@ -328,8 +332,12 @@ public final class GFRegistry {
     public static final Item WEB_BALL = null;
     @ObjectHolder("olive_oil")
     public static final Item OLIVE_OIL = null;
+    @ObjectHolder("salve")
+    public static final Item SALVE = null;
     @ObjectHolder("greek_fire")
     public static final Item GREEK_FIRE = null;
+    @ObjectHolder("palladium")
+    public static final Item PALLADIUM = null;
 
     // Block //
     @ObjectHolder("reeds")
@@ -446,6 +454,8 @@ public final class GFRegistry {
     public static final Block OIL = null;
     @ObjectHolder("oil_lamp")
     public static final Block OIL_LAMP = null;
+    @ObjectHolder("glow")
+    public static final Block GLOW = null;
 
     // Vase //
     @ObjectHolder("terracotta_vase")
@@ -607,6 +617,7 @@ public final class GFRegistry {
         event.getRegistry().register(GREEK_FIRE_ENTITY.setRegistryName(MODID, "greek_fire"));
         event.getRegistry().register(HEALING_SPELL_ENTITY.setRegistryName(MODID, "healing_spell"));
         event.getRegistry().register(ORTHUS_HEAD_ITEM_ENTITY.setRegistryName(MODID, "orthus_head_item"));
+        event.getRegistry().register(PALLADIUM_ENTITY.setRegistryName(MODID, "palladium"));
         event.getRegistry().register(POISON_SPIT_ENTITY.setRegistryName(MODID, "poison_spit"));
         event.getRegistry().register(PIG_SPELL_ENTITY.setRegistryName(MODID, "pig_spell"));
         event.getRegistry().register(WEB_BALL_ENTITY.setRegistryName(MODID, "web_ball"));
@@ -649,6 +660,7 @@ public final class GFRegistry {
         event.put(NAIAD_ENTITY, NaiadEntity.createAttributes().build());
         event.put(NEMEAN_LION_ENTITY, NemeanLionEntity.createAttributes().build());
         event.put(ORTHUS_ENTITY, OrthusEntity.createAttributes().build());
+        event.put(PALLADIUM_ENTITY, PalladiumEntity.createAttributes().build());
         event.put(PEGASUS_ENTITY, PegasusEntity.createAttributes().build());
         event.put(PYTHON_ENTITY, PythonEntity.createAttributes().build());
         event.put(SATYR_ENTITY, SatyrEntity.createAttributes().build());
@@ -731,7 +743,9 @@ public final class GFRegistry {
                         .randomTicks().lightLevel((state) -> 11).sound(SoundType.WET_GRASS))
                         .setRegistryName(MODID, "oil"),
                 new OilLampBlock(AbstractBlock.Properties.of(Material.STONE).noOcclusion().lightLevel(b -> b.getValue(OilLampBlock.LIT) ? 11 : 0).strength(0.2F, 0.1F))
-                        .setRegistryName(MODID, "oil_lamp")
+                        .setRegistryName(MODID, "oil_lamp"),
+                new GlowBlock(AbstractBlock.Properties.of(Material.AIR).strength(-1F).noCollission().lightLevel(b -> 11).randomTicks())
+                        .setRegistryName(MODID, "glow")
         );
 
         // Vase blocks
@@ -804,6 +818,8 @@ public final class GFRegistry {
                 new SpearItem(ItemTier.IRON, new Item.Properties().tab(GREEK_GROUP)
                         .setISTER(() -> () -> greekfantasy.client.render.tileentity.ClientISTERProvider.bakeSpearISTER("iron_spear")))
                         .setRegistryName(MODID, "iron_spear"),
+                new PalladiumItem(new Item.Properties().tab(GREEK_GROUP))
+                        .setRegistryName(MODID, "palladium"),
                 new MirrorItem(new Item.Properties().tab(GREEK_GROUP))
                         .setRegistryName(MODID, "mirror"),
                 new SnakeskinArmorItem(EquipmentSlotType.HEAD, new Item.Properties().tab(GREEK_GROUP))

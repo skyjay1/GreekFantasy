@@ -14,6 +14,7 @@ import greekfantasy.entity.GiantBoarEntity;
 import greekfantasy.entity.GoldenRamEntity;
 import greekfantasy.entity.NemeanLionEntity;
 import greekfantasy.entity.ShadeEntity;
+import greekfantasy.entity.misc.PalladiumEntity;
 import greekfantasy.item.AchillesArmorItem;
 import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.network.SPanfluteSongPacket;
@@ -47,6 +48,7 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -83,6 +85,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class CommonForgeEventHandler {
@@ -497,30 +500,39 @@ public class CommonForgeEventHandler {
     public static void onLivingCheckSpawn(final LivingSpawnEvent.CheckSpawn event) {
         final int cRadius = GreekFantasy.CONFIG.getPalladiumChunkRange();
         final int cVertical = GreekFantasy.CONFIG.getPalladiumYRange() / 2; // divide by 2 to center on block
-        if (GreekFantasy.CONFIG.isPalladiumEnabled() && !event.getEntityLiving().getCommandSenderWorld().isClientSide()
-                && event.getWorld() instanceof ServerWorld && event.getEntityLiving() instanceof IMob && event.getEntityLiving().canChangeDimensions()) {
-            // check for nearby Statue Tile Entity
+        if (GreekFantasy.CONFIG.isPalladiumEnabled() && !event.getEntityLiving().level.isClientSide()
+                && event.getWorld() instanceof ServerWorld
+                && event.getEntityLiving() instanceof IMob && event.getEntityLiving().canChangeDimensions()) {
+            // determine spawn area
             final ServerWorld world = (ServerWorld) event.getWorld();
             final BlockPos blockPos = new BlockPos(event.getX(), event.getY(), event.getZ());
-            final ChunkPos chunkPos = new ChunkPos(blockPos);
-            final GFWorldSavedData data = GFWorldSavedData.getOrCreate(world);
-            ChunkPos cPos;
-            // search each chunk in a square radius centered on this chunk
+            final ChunkPos chunkCenter = new ChunkPos(blockPos);
+
+            // search each chunk in range for a palladium
+            int chunkX;
+            int chunkZ;
+            search:
             for (int cX = -cRadius; cX <= cRadius; cX++) {
                 for (int cZ = -cRadius; cZ <= cRadius; cZ++) {
-                    cPos = new ChunkPos(chunkPos.x + cX, chunkPos.z + cZ);
-                    if (event.getWorld().hasChunk(cPos.x, cPos.z)) {
-                        // check each position to see if it's valid and within range
-                        for (final BlockPos p : data.getPalladium(world, cPos)) {
-                            if (!GFWorldSavedData.validatePalladium(world, p)) {
-                                data.removePalladium(cPos, p);
-                            } else if (Math.abs(p.getY() - blockPos.getY()) < cVertical) {
-                                // the position is preventing spawn, set result to DENY
-                                event.setResult(Result.DENY);
-                                return;
+                    chunkX = chunkCenter.x + cX;
+                    chunkZ = chunkCenter.z + cZ;
+                    if (event.getWorld().hasChunk(chunkX, chunkZ)) {
+                        // check each entity section map in the chunk
+                        for(ClassInheritanceMultiMap<?> map : world.getChunk(chunkX, chunkZ).getEntitySections()) {
+                            // if the chunk contains palladium, deny spawn event
+                            Collection<PalladiumEntity> collection = map.find(PalladiumEntity.class);
+                            if(collection.isEmpty()) {
+                                continue;
+                            }
+                            // check each entry
+                            for(PalladiumEntity e : collection) {
+                                if(Math.abs(e.getY() - event.getY()) < cVertical) {
+                                    // palladium is in range, cancel the event
+                                    event.setResult(Result.DENY);
+                                    break search;
+                                }
                             }
                         }
-                        // return;
                     }
                 }
             }

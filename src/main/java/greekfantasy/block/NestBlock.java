@@ -95,11 +95,17 @@ public class NestBlock extends Block implements IWaterLoggable {
 
     @Override
     public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+        if(face == Direction.UP) {
+            return 0;
+        }
         return 10;
     }
 
     @Override
     public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+        if(face == Direction.UP) {
+            return 0;
+        }
         return 10;
     }
 }

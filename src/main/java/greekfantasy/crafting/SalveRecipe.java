@@ -23,8 +23,8 @@ public class SalveRecipe extends ShapelessRecipe {
 
     private final CompoundNBT resultTag;
 
-    public SalveRecipe(ResourceLocation idIn, ItemStack resultIn, CompoundNBT resultTagIn, NonNullList<Ingredient> recipeItemsIn) {
-        super(idIn, CATEGORY, resultIn, recipeItemsIn);
+    public SalveRecipe(ResourceLocation idIn, CompoundNBT resultTagIn, NonNullList<Ingredient> recipeItemsIn) {
+        super(idIn, CATEGORY, new ItemStack(GFRegistry.SALVE), recipeItemsIn);
         resultTag = resultTagIn;
     }
 
@@ -66,14 +66,14 @@ public class SalveRecipe extends ShapelessRecipe {
                 tag = new CompoundNBT();
             }
 
-            return new SalveRecipe(recipeId, recipe.getResultItem(), tag, recipe.getIngredients());
+            return new SalveRecipe(recipeId, tag, recipe.getIngredients());
         }
 
         @Override
         public ShapelessRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
             final ShapelessRecipe recipe = super.fromNetwork(recipeId, buffer);
             CompoundNBT tag = buffer.readNbt();
-            return new SalveRecipe(recipeId, recipe.getResultItem(), tag, recipe.getIngredients());
+            return new SalveRecipe(recipeId, tag, recipe.getIngredients());
         }
 
         @Override
