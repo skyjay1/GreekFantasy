@@ -56,6 +56,7 @@ import java.util.EnumSet;
 public class MakhaiEntity extends TameableEntity {
     protected static final DataParameter<Byte> STATE = EntityDataManager.defineId(MakhaiEntity.class, DataSerializers.BYTE);
     protected static final String KEY_STATE = "MakhaiState";
+    protected static final String KEY_TAME = "MakhaiTame";
     // bytes to use in STATE
     private static final byte NONE = (byte) 0;
     private static final byte SPAWNING = (byte) 1;
@@ -299,19 +300,26 @@ public class MakhaiEntity extends TameableEntity {
     public void addAdditionalSaveData(CompoundNBT compound) {
         super.addAdditionalSaveData(compound);
         compound.putByte(KEY_STATE, getState());
+        compound.putBoolean(KEY_TAME, isTame());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundNBT compound) {
         super.readAdditionalSaveData(compound);
         setState(compound.getByte(KEY_STATE));
+        setTame(compound.getBoolean(KEY_TAME));
     }
 
     // Attack predicate methods //
 
     @Override
     public boolean canAttack(LivingEntity entity) {
+        // do not attack owner
         if (isOwnedBy(entity)) {
+            return false;
+        }
+        // do not attack players while tame
+        if(this.isTame() && entity instanceof PlayerEntity) {
             return false;
         }
         return super.canAttack(entity);
@@ -320,7 +328,9 @@ public class MakhaiEntity extends TameableEntity {
     @Override
     public boolean wantsToAttack(LivingEntity target, LivingEntity owner) {
         if (!(target instanceof CreeperEntity) && !(target instanceof GhastEntity)) {
-            if (target instanceof TameableEntity) {
+            if(target instanceof PlayerEntity && this.isTame()) {
+                return false;
+            } else if (target instanceof TameableEntity) {
                 TameableEntity tameable = (TameableEntity) target;
                 return !tameable.isTame() || tameable.getOwner() != owner;
             } else if (target instanceof PlayerEntity && owner instanceof PlayerEntity

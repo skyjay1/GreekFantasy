@@ -22,6 +22,11 @@ archivesBaseName = project.archives_base_name
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
+mixin {
+    disableAnnotationProcessorCheck()
+}
+
+
 minecraft {
    
    mappings channel: "${project.mappings_channel}", version: "${project.mappings_version}"

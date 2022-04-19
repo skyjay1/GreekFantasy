@@ -70,6 +70,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -208,6 +209,17 @@ public class CommonForgeEventHandler {
                 }
             }
 
+            // every few ticks, ensure that flying players can still fly
+            if(GreekFantasy.CONFIG.isFlyingEnabled() && event.player.level instanceof ServerWorld &&
+                    !event.player.isCreative() && !event.player.isSpectator() && event.player.tickCount > 10
+                    && event.player.level.getGameTime() % 11 == 0) {
+                final GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)event.player.level);
+                if(data.hasFlyingPlayer(event.player) && !GFWorldSavedData.validatePlayer(event.player)) {
+                    // remove the player as a flying player
+                    data.removeFlyingPlayer(event.player);
+                }
+            }
+
             // update silkwalker enchantment
             if (GreekFantasy.CONFIG.isSilkwalkerEnabled()
                     && hasSilkstep(event.player) && !event.player.abilities.flying
@@ -253,6 +265,24 @@ public class CommonForgeEventHandler {
             }
         }
     }
+    /**
+     * Used to enable flying players when they equip enchanted winged sandals.
+     * @param event the equipment change event
+     */
+    @SubscribeEvent
+    public static void onChangeEquipment(final LivingEquipmentChangeEvent event) {
+        // Check which equipment was changed and if it is a player
+        if(GreekFantasy.CONFIG.isFlyingEnabled() && event.getEntityLiving() instanceof PlayerEntity && event.getEntityLiving().level instanceof ServerWorld
+                && event.getSlot() == EquipmentSlotType.FEET && event.getTo().getItem() == GFRegistry.WINGED_SANDALS) {
+            final PlayerEntity player = (PlayerEntity)event.getEntityLiving();
+            GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)player.level);
+            // Check the player's favor level before enabling flight
+            if(GFWorldSavedData.validatePlayer(player)) {
+                data.addFlyingPlayer(player);
+            }
+        }
+    }
+
 
     /**
      * Used to notify the client when a server-side entity receives the Swine effect,

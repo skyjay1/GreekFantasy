@@ -5,7 +5,6 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.EffectGoal;
 import greekfantasy.entity.ai.FindBlockGoal;
-import greekfantasy.network.SSimpleParticlesPacket;
 import greekfantasy.util.BiomeHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -42,6 +41,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
@@ -66,7 +66,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -289,7 +288,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
     protected ActionResultType mobInteract(final PlayerEntity player, final Hand hand) {
         ItemStack stack = player.getItemInHand(hand);
         // check if the tradingPlayer is holding a trade item and the entity is not already trading
-        if (!this.level.isClientSide() && !this.isAggressive() && !this.tradingPlayer.isPresent()
+        if (!this.level.isClientSide() && this.level instanceof ServerWorld && !this.isAggressive() && !this.tradingPlayer.isPresent()
                 && this.getMainHandItem().isEmpty() && !stack.isEmpty() && getTradeTag().contains(stack.getItem())) {
             // check if the tradingPlayer is eligible to trade
             if (canPlayerTrade(player)) {
@@ -304,7 +303,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
                 return ActionResultType.CONSUME;
             } else {
                 // spawn particles
-                GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(false, this.blockPosition().above(1), 4));
+                ((ServerWorld)this.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, this.getX(), this.getEyeY(), this.getZ(), 4, 0, 0, 0, 0);
             }
         }
 
@@ -316,22 +315,8 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
      * @return true if the given player is allowed to trade with this entity
      */
     public boolean canPlayerTrade(final PlayerEntity player) {
-        if (player != null) {
-            // TODO
-            /*IFavor favor = player.getCapability(GreekFantasy.FAVOR).orElse(GreekFantasy.FAVOR.getDefaultInstance());
-            if (favor.isEnabled()) {
-                // deny trade if special favor effect is denied
-                for (final ConfiguredSpecialFavorEffect effect : GreekFantasy.PROXY.getFavorConfiguration().getSpecials(SpecialFavorEffect.Type.TRADING_CANCEL)) {
-                    if (effect.canApply(player, favor)) {
-                        return false;
-                    }
-                }
-                // deny trade if player is in hostile range
-                if (GreekFantasy.PROXY.getFavorConfiguration().hasEntity(getType())) {
-                    ConfiguredFavorRange range = GreekFantasy.PROXY.getFavorConfiguration().getEntity(getType());
-                    return !(range.hasHostileRange() && range.getHostileRange().isInFavorRange(player, favor));
-                }
-            }*/
+        if (player != null && player != this.getTarget()) {
+            return false;
         }
         // allow trading if above cases do not apply
         return true;
@@ -382,7 +367,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
             this.level.addFreshEntity(new ExperienceOrbEntity(this.level, this.getX(), this.getY(), this.getZ(), 1 + random.nextInt(2)));
         }
         // send packet to spawn particles
-        GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSimpleParticlesPacket(true, this.blockPosition().above(1), 6));
+        ((ServerWorld)this.level).sendParticles(ParticleTypes.HAPPY_VILLAGER, this.getX(), this.getEyeY(), this.getZ(), 4, 0, 0, 0, 0);
     }
 
     // Variant methods

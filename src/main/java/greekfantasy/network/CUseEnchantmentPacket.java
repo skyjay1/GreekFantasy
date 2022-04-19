@@ -3,6 +3,7 @@ package greekfantasy.network;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.WhirlEntity;
+import greekfantasy.integration.RGCompat;
 import greekfantasy.item.ThunderboltItem;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
@@ -79,8 +80,7 @@ public class CUseEnchantmentPacket {
                         && GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == Items.TRIDENT
                         && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) > 0
                         && !player.getCooldowns().isOnCooldown(Items.TRIDENT)
-                        // TODO
-                        /*&& GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.LORD_OF_THE_SEA_RANGE).isInFavorRange(player)*/) {
+                        && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseLordOfTheSea(player))) {
                     // The player has used an enchanted item and has the correct favor range, so the effect should be applied
                     useLordOfTheSea(player, item);
                 }
@@ -90,8 +90,7 @@ public class CUseEnchantmentPacket {
                         && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.DAYBREAK_ENCHANTMENT, item) > 0
                         && player.getCommandSenderWorld().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)
                         && player.getCommandSenderWorld().getDayTime() % 24000L > 13000L
-                        // TODO
-                        /*&& GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.DAYBREAK_RANGE).isInFavorRange(player)*/) {
+                        && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseDaybreak(player))) {
                     // The player has used an enchanted item and has the correct favor range, so the effect should be applied
                     useDaybreak(player, item);
                 }

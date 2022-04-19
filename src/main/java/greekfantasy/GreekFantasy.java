@@ -3,19 +3,19 @@ package greekfantasy;
 import greekfantasy.network.CUpdateInstrumentPacket;
 import greekfantasy.network.CUseEnchantmentPacket;
 import greekfantasy.network.SPanfluteSongPacket;
-import greekfantasy.network.SSimpleParticlesPacket;
 import greekfantasy.network.SSwineEffectPacket;
 import greekfantasy.proxy.ClientProxy;
 import greekfantasy.proxy.Proxy;
 import greekfantasy.proxy.ServerProxy;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -41,11 +41,14 @@ public class GreekFantasy {
 
     public static final Logger LOGGER = LogManager.getFormatterLogger(GreekFantasy.MODID);
 
+    private static boolean rgLoaded;
+
     public GreekFantasy() {
         // register mod event listeners
         FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.class);
         FMLJavaModLoadingContext.get().getModEventBus().register(GFWorldGen.class);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::intermodEnqueue);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::loadConfig);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::reloadConfig);
         // register config
@@ -61,7 +64,6 @@ public class GreekFantasy {
         CHANNEL.registerMessage(messageId++, CUpdateInstrumentPacket.class, CUpdateInstrumentPacket::toBytes, CUpdateInstrumentPacket::fromBytes, CUpdateInstrumentPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(messageId++, SPanfluteSongPacket.class, SPanfluteSongPacket::toBytes, SPanfluteSongPacket::fromBytes, SPanfluteSongPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(messageId++, SSwineEffectPacket.class, SSwineEffectPacket::toBytes, SSwineEffectPacket::fromBytes, SSwineEffectPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-        CHANNEL.registerMessage(messageId++, SSimpleParticlesPacket.class, SSimpleParticlesPacket::toBytes, SSimpleParticlesPacket::fromBytes, SSimpleParticlesPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(messageId++, CUseEnchantmentPacket.class, CUseEnchantmentPacket::toBytes, CUseEnchantmentPacket::fromBytes, CUseEnchantmentPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 
@@ -72,11 +74,19 @@ public class GreekFantasy {
         event.enqueueWork(() -> GFRegistry.finishBrewingRecipes());
     }
 
+    public static void intermodEnqueue(final InterModEnqueueEvent event) {
+        rgLoaded = ModList.get().isLoaded("rpggods");
+    }
+
     public static void loadConfig(final ModConfig.Loading event) {
         CONFIG.bake();
     }
 
     public static void reloadConfig(final ModConfig.Reloading event) {
         CONFIG.bake();
+    }
+
+    public static boolean isRGLoaded() {
+        return rgLoaded;
     }
 }

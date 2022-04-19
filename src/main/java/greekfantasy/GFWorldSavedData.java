@@ -1,6 +1,7 @@
 package greekfantasy;
 
 import com.google.common.collect.ImmutableSet;
+import greekfantasy.integration.RGCompat;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -105,7 +106,6 @@ public class GFWorldSavedData extends WorldSavedData {
         final ItemStack feet = player.getItemBySlot(EquipmentSlotType.FEET);
         return (feet.getItem() == GFRegistry.WINGED_SANDALS
                 && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, feet) > 0
-                // TODO
-                /*&& GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.FLYING_RANGE).isInFavorRange(player, favor)*/);
+                && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseFlying(player)));
     }
 }

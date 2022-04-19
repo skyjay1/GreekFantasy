@@ -2,6 +2,7 @@ package greekfantasy.item;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.integration.RGCompat;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -51,8 +52,7 @@ public class ThunderboltItem extends Item {
                 int damageAmount = 15;
                 final int fireflashLevel = EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.FIREFLASH_ENCHANTMENT, stack);
                 final boolean fireflash = GreekFantasy.CONFIG.isFireflashEnabled() && fireflashLevel > 0
-                        // TODO
-                        /*&& GreekFantasy.PROXY.getFavorConfiguration().getEnchantmentRange(FavorConfiguration.FIREFLASH_RANGE).isInFavorRange(player)*/;
+                        && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseFireflash(player));
                 // if enchanted with fireflash, cause an explosion
                 if (fireflash) {
                     damageAmount = 25;

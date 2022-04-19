@@ -1,0 +1,30 @@
+{
+    "icon": {
+        "item": "minecraft:pufferfish",
+        "color": 65535
+    },
+    "range": {
+        "deity": "greek:poseidon",
+        "minlevel": -5,
+        "maxlevel": -10
+    },
+    "condition": [
+        {
+            "type": "random_tick"
+        },
+        {
+            "type": "biome",
+            "data": "WATER"
+        }
+    ],
+    "action": [
+        {
+            "type": "summon",
+            "tag": {
+                "id": "greekfantasy:siren"
+            }
+        }
+    ],
+    "chance": 0.05,
+    "cooldown": 12000
+}
