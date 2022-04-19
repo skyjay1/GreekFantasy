@@ -1,9 +1,5 @@
 package greekfantasy.entity;
 
-import java.util.EnumSet;
-
-import javax.annotation.Nullable;
-
 import greekfantasy.GFRegistry;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.entity.Entity;
@@ -34,234 +30,259 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nullable;
+import java.util.EnumSet;
+
 public class GiantBoarEntity extends HoglinEntity {
-  
-  private static final DataParameter<Boolean> SPAWNING = EntityDataManager.createKey(GiantBoarEntity.class, DataSerializers.BOOLEAN);
-  private static final String KEY_SPAWNING = "Spawning";
-  private static final String KEY_SPAWN_TIME = "SpawnTime";
-  // bytes to use in World#setEntityState
-  private static final byte SPAWN_CLIENT = 9;
-  
-  private static final int MAX_SPAWN_TIME = 90;
 
-  private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.RED, BossInfo.Overlay.PROGRESS));
-  
-  private int spawnTime;
-  
-  public GiantBoarEntity(final EntityType<? extends GiantBoarEntity> type, final World worldIn) {
-    super(type, worldIn);
-    this.stepHeight = 1.0F;
-    this.experienceValue = 30;
-    
-  }
-  
-  public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MonsterEntity.func_234295_eP_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 80.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.31D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.82D)
-        .createMutableAttribute(Attributes.ATTACK_KNOCKBACK, 1.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6.0D)
-        .createMutableAttribute(Attributes.ARMOR, 6.0D);
-  }
-  
-  public static GiantBoarEntity spawnGiantBoar(final ServerWorld world, final HoglinEntity hoglin) {
-    GiantBoarEntity entity = GFRegistry.GIANT_BOAR_ENTITY.create(world);
-    entity.copyLocationAndAnglesFrom(hoglin);
-    entity.onInitialSpawn(world, world.getDifficultyForLocation(hoglin.getPosition()), SpawnReason.CONVERSION, (ILivingEntityData)null, (CompoundNBT)null);
-    if(hoglin.hasCustomName()) {
-      entity.setCustomName(hoglin.getCustomName());
-      entity.setCustomNameVisible(hoglin.isCustomNameVisible());
+    private static final DataParameter<Boolean> SPAWNING = EntityDataManager.defineId(GiantBoarEntity.class, DataSerializers.BOOLEAN);
+    private static final String KEY_SPAWNING = "Spawning";
+    private static final String KEY_SPAWN_TIME = "SpawnTime";
+    // bytes to use in World#setEntityState
+    private static final byte SPAWN_CLIENT = 9;
+
+    private static final int MAX_SPAWN_TIME = 90;
+
+    private final ServerBossInfo bossInfo = new ServerBossInfo(this.getDisplayName(), BossInfo.Color.RED, BossInfo.Overlay.PROGRESS);
+
+    private int spawnTime;
+
+    public GiantBoarEntity(final EntityType<? extends GiantBoarEntity> type, final World worldIn) {
+        super(type, worldIn);
+        this.maxUpStep = 1.0F;
+        this.xpReward = 30;
+
     }
-    entity.enablePersistence();
-    entity.renderYawOffset = hoglin.renderYawOffset;
-    entity.setPortalCooldown();
-    world.addEntity(entity);
-    entity.setSpawning(true);
-    // remove the old hoglin
-    hoglin.remove();
-    // trigger spawn for nearby players
-    for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, entity.getBoundingBox().grow(25.0D))) {
-      CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+
+    public static AttributeModifierMap.MutableAttribute createAttributes() {
+        return MonsterEntity.createMonsterAttributes()
+                .add(Attributes.MAX_HEALTH, 80.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.31D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.82D)
+                .add(Attributes.ATTACK_KNOCKBACK, 1.25D)
+                .add(Attributes.ATTACK_DAMAGE, 6.0D)
+                .add(Attributes.ARMOR, 6.0D);
     }
-    // play sound
-    world.playSound(entity.getPosX(), entity.getPosY(), entity.getPosZ(), SoundEvents.ENTITY_WITHER_SPAWN, entity.getSoundCategory(), 1.2F, 1.0F, false);
-    return entity;
-  }
-  
-  @Override
-  public void registerData() {
-    super.registerData();
-    this.getDataManager().register(SPAWNING, Boolean.valueOf(false));
-  }
-  
-  @Override
-  protected void registerGoals() {
-    super.registerGoals();
-    this.goalSelector.addGoal(0, new GiantBoarEntity.SpawningGoal());
-  }
-  
-  @Override
-  public void livingTick() {
-    super.livingTick();
 
-    // boss info
-    this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
-    
-    if(spawnTime > 0) {
-      // reset attack target
-      this.setAttackTarget(null);
-      // spawn particles
-      final double width = this.getWidth();
-      world.addParticle(ParticleTypes.ENTITY_EFFECT, 
-          this.getPosX() + (rand.nextDouble() - 0.5D) * width, 
-          this.getPosY() + rand.nextDouble(),
-          this.getPosZ() + (rand.nextDouble() - 0.5D) * width, 0.01D, 0.01D, 0.01D);
-      // reset spawning
-      if(spawnTime++ >= MAX_SPAWN_TIME) {
-        setSpawning(false);
-      }
+    public static GiantBoarEntity spawnGiantBoar(final ServerWorld world, final HoglinEntity hoglin) {
+        GiantBoarEntity entity = GFRegistry.GIANT_BOAR_ENTITY.create(world);
+        entity.copyPosition(hoglin);
+        entity.finalizeSpawn(world, world.getCurrentDifficultyAt(hoglin.blockPosition()), SpawnReason.CONVERSION, null, null);
+        if (hoglin.hasCustomName()) {
+            entity.setCustomName(hoglin.getCustomName());
+            entity.setCustomNameVisible(hoglin.isCustomNameVisible());
+        }
+        entity.setPersistenceRequired();
+        entity.yBodyRot = hoglin.yBodyRot;
+        entity.setPortalCooldown();
+        world.addFreshEntity(entity);
+        entity.setSpawning(true);
+        // remove the old hoglin
+        hoglin.remove();
+        // trigger spawn for nearby players
+        for (ServerPlayerEntity player : world.getEntitiesOfClass(ServerPlayerEntity.class, entity.getBoundingBox().inflate(25.0D))) {
+            CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+        }
+        // play sound
+        world.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
+        return entity;
     }
-  }
-  
-  // Hoglin overrides //
-
-  @Override
-  public boolean isBreedingItem(ItemStack stack) {
-    return false;
-  }
-  
-  @Override
-  public boolean canFallInLove() {
-    return false;
-  }
-  
-  @Override
-  public boolean func_234365_eM_() { // canBeHunted
-    return false;
-  }
-  
-  @Override
-  public boolean func_234364_eK_() { // canBeZombified
-    return false;
-  }
-  
-  @Override
-  public boolean isInvulnerableTo(final DamageSource source) {
-    return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER || super.isInvulnerableTo(source);
-  }
-  
-  @Override
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-     ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-     this.func_234370_t_(true); // set IsImmuneToZombification
-     this.setChild(false);
-     this.setSpawning(true);
-     return data;
-  }
-  
-  @Override
-  protected boolean isDespawnPeaceful() {
-    return true;
-  }
-  
-  @Override
-  protected void onGrowingAdult() { }
-  
-  @Override
-  protected float getSoundVolume() { return 1.5F; }
-  
-  @Override
-  protected float getSoundPitch() { return 0.62F + rand.nextFloat() * 0.24F; }
-
-  // NBT methods //
-  
-  @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
-    compound.putBoolean(KEY_SPAWNING, isSpawning());
-    compound.putInt(KEY_SPAWN_TIME, spawnTime);
-  }
-
-  @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
-    setSpawning(compound.getBoolean(KEY_SPAWNING));
-    spawnTime = compound.getInt(KEY_SPAWN_TIME);
-  }
-  
-  // Prevent entity collisions //
-  
-  @Override
-  public boolean canBePushed() { return false; }
-  
-  @Override
-  protected void collideWithNearbyEntities() { }
-  
-  // Boss //
-  
-  @Override
-  public boolean canChangeDimension() { return false; }
-  
-  @Override
-  public boolean canDespawn(final double disToPlayer) { return false; }
-  
-  @Override
-  protected boolean canBeRidden(Entity entityIn) { return false; }
-
-  @Override
-  public void addTrackingPlayer(ServerPlayerEntity player) {
-    super.addTrackingPlayer(player);
-    this.bossInfo.addPlayer(player);
-  }
-
-  @Override
-  public void removeTrackingPlayer(ServerPlayerEntity player) {
-    super.removeTrackingPlayer(player);
-    this.bossInfo.removePlayer(player);
-  }
-  
-  // Spawning //
-  
-  @OnlyIn(Dist.CLIENT)
-  public void handleStatusUpdate(byte id) {
-    if(id == SPAWN_CLIENT) {
-      setSpawning(true);
-    } else {
-      super.handleStatusUpdate(id);
-    }
-  }
-  
-  public boolean isSpawning() { return spawnTime > 0 || this.getDataManager().get(SPAWNING).booleanValue(); }
-  
-  public void setSpawning(final boolean spawning) {
-    spawnTime = spawning ? 1 : 0;
-    this.getDataManager().set(SPAWNING, spawning);
-    if(spawning && !world.isRemote()) {
-      world.setEntityState(this, SPAWN_CLIENT);
-    }
-  }
-  
-  public float getSpawnPercent(final float partialTick) { 
-    if(spawnTime <= 0) {
-      return 1.0F;
-    }
-    final float prevSpawnPercent = Math.max((float)spawnTime - partialTick, 0.0F) / (float)MAX_SPAWN_TIME;
-    final float spawnPercent = (float)spawnTime / (float)MAX_SPAWN_TIME;
-    return MathHelper.lerp(partialTick / 8, prevSpawnPercent, spawnPercent); 
-  }
-  
-  // Goals //
-  
-  class SpawningGoal extends Goal {
-    
-    public SpawningGoal() { setMutexFlags(EnumSet.allOf(Goal.Flag.class)); }
 
     @Override
-    public boolean shouldExecute() { return GiantBoarEntity.this.isSpawning(); }
+    public void defineSynchedData() {
+        super.defineSynchedData();
+        this.getEntityData().define(SPAWNING, Boolean.valueOf(false));
+    }
 
     @Override
-    public void tick() { GiantBoarEntity.this.getNavigator().clearPath(); }
-  }
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(0, new GiantBoarEntity.SpawningGoal());
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+
+        // boss info
+        this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
+
+        if (spawnTime > 0) {
+            // reset attack target
+            this.setTarget(null);
+            // spawn particles
+            final double width = this.getBbWidth();
+            level.addParticle(ParticleTypes.ENTITY_EFFECT,
+                    this.getX() + (random.nextDouble() - 0.5D) * width,
+                    this.getY() + random.nextDouble(),
+                    this.getZ() + (random.nextDouble() - 0.5D) * width, 0.01D, 0.01D, 0.01D);
+            // reset spawning
+            if (spawnTime++ >= MAX_SPAWN_TIME) {
+                setSpawning(false);
+            }
+        }
+    }
+
+    // Hoglin overrides //
+
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public boolean canFallInLove() {
+        return false;
+    }
+
+    @Override
+    public boolean canBeHunted() { // canBeHunted
+        return false;
+    }
+
+    @Override
+    public boolean isConverting() { // canBeZombified
+        return false;
+    }
+
+    @Override
+    public boolean isInvulnerableTo(final DamageSource source) {
+        return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER || super.isInvulnerableTo(source);
+    }
+
+    @Override
+    public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+        ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        this.setImmuneToZombification(true); // set IsImmuneToZombification
+        this.setBaby(false);
+        this.setSpawning(true);
+        return data;
+    }
+
+    @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return true;
+    }
+
+    @Override
+    protected void ageBoundaryReached() {
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 1.5F;
+    }
+
+    @Override
+    protected float getVoicePitch() {
+        return 0.62F + random.nextFloat() * 0.24F;
+    }
+
+    // NBT methods //
+
+    @Override
+    public void addAdditionalSaveData(CompoundNBT compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putBoolean(KEY_SPAWNING, isSpawning());
+        compound.putInt(KEY_SPAWN_TIME, spawnTime);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundNBT compound) {
+        super.readAdditionalSaveData(compound);
+        setSpawning(compound.getBoolean(KEY_SPAWNING));
+        spawnTime = compound.getInt(KEY_SPAWN_TIME);
+    }
+
+    // Prevent entity collisions //
+
+    @Override
+    public boolean isPushable() {
+        return false;
+    }
+
+    @Override
+    protected void pushEntities() {
+    }
+
+    // Boss //
+
+    @Override
+    public boolean canChangeDimensions() {
+        return false;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(final double disToPlayer) {
+        return false;
+    }
+
+    @Override
+    protected boolean canRide(Entity entityIn) {
+        return false;
+    }
+
+    @Override
+    public void startSeenByPlayer(ServerPlayerEntity player) {
+        super.startSeenByPlayer(player);
+        this.bossInfo.addPlayer(player);
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayerEntity player) {
+        super.stopSeenByPlayer(player);
+        this.bossInfo.removePlayer(player);
+    }
+
+    // Spawning //
+
+    @OnlyIn(Dist.CLIENT)
+    public void handleEntityEvent(byte id) {
+        if (id == SPAWN_CLIENT) {
+            setSpawning(true);
+        } else {
+            super.handleEntityEvent(id);
+        }
+    }
+
+    public boolean isSpawning() {
+        return spawnTime > 0 || this.getEntityData().get(SPAWNING).booleanValue();
+    }
+
+    public void setSpawning(final boolean spawning) {
+        spawnTime = spawning ? 1 : 0;
+        this.getEntityData().set(SPAWNING, spawning);
+        if (spawning && !level.isClientSide()) {
+            level.broadcastEntityEvent(this, SPAWN_CLIENT);
+        }
+    }
+
+    public float getSpawnPercent(final float partialTick) {
+        if (spawnTime <= 0) {
+            return 1.0F;
+        }
+        final float prevSpawnPercent = Math.max((float) spawnTime - partialTick, 0.0F) / (float) MAX_SPAWN_TIME;
+        final float spawnPercent = (float) spawnTime / (float) MAX_SPAWN_TIME;
+        return MathHelper.lerp(partialTick / 8, prevSpawnPercent, spawnPercent);
+    }
+
+    // Goals //
+
+    class SpawningGoal extends Goal {
+
+        public SpawningGoal() {
+            setFlags(EnumSet.allOf(Goal.Flag.class));
+        }
+
+        @Override
+        public boolean canUse() {
+            return GiantBoarEntity.this.isSpawning();
+        }
+
+        @Override
+        public void tick() {
+            GiantBoarEntity.this.getNavigation().stop();
+        }
+    }
 
 }

@@ -1,0 +1,31 @@
+{
+    "icon": {
+        "item": "minecraft:wither_skeleton_skull",
+        "color": 65535
+    },
+    "range": {
+        "deity": "greek:hades",
+        "minlevel": -3,
+        "maxlevel": -10
+    },
+    "condition": [
+        {
+            "type": "random_tick"
+        },
+        {
+            "type": "dimension",
+            "data": "minecraft:the_nether"
+        }
+    ],
+    "action": [
+        {
+            "type": "summon",
+            "tag": {
+                "id": "greekfantasy:shade",
+                "StoredXP": 50
+            }
+        }
+    ],
+    "chance": 0.02,
+    "cooldown": 6000
+}

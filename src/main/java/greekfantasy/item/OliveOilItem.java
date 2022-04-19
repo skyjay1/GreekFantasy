@@ -19,31 +19,31 @@ import net.minecraft.world.World;
 
 public class OliveOilItem extends BlockNamedItem {
 
-  public OliveOilItem(final Item.Properties properties) {
-    super(GFRegistry.OIL, properties);
-  }
-  
-  @Override
-  public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-    if (this.isInGroup(group)) {
-      items.add(new ItemStack(this));
+    public OliveOilItem(final Item.Properties properties) {
+        super(GFRegistry.OIL, properties);
     }
-  }
-  
-  @Override
-  public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-    BlockRayTraceResult result = rayTrace(world, player, RayTraceContext.FluidMode.SOURCE_ONLY);
-    BlockRayTraceResult result2 = result.withPosition(result.getPos().up());
-    ActionResultType actionresult = super.onItemUse(new ItemUseContext(player, hand, result2));
-    return new ActionResult<>(actionresult, player.getHeldItem(hand));
-  }
 
-  @Override
-  public ActionResultType tryPlace(BlockItemUseContext context) {
-    ActionResultType result = super.tryPlace(context);
-    if((result == ActionResultType.SUCCESS || result == ActionResultType.CONSUME) && !context.getPlayer().isCreative()) {
-      context.getPlayer().addItemStackToInventory(new ItemStack(Items.GLASS_BOTTLE));
+    @Override
+    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+        if (this.allowdedIn(group)) {
+            items.add(new ItemStack(this));
+        }
     }
-    return result;
-  }
+
+    @Override
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        BlockRayTraceResult result = getPlayerPOVHitResult(world, player, RayTraceContext.FluidMode.SOURCE_ONLY);
+        BlockRayTraceResult result2 = result.withPosition(result.getBlockPos().above());
+        ActionResultType actionresult = super.useOn(new ItemUseContext(player, hand, result2));
+        return new ActionResult<>(actionresult, player.getItemInHand(hand));
+    }
+
+    @Override
+    public ActionResultType place(BlockItemUseContext context) {
+        ActionResultType result = super.place(context);
+        if ((result == ActionResultType.SUCCESS || result == ActionResultType.CONSUME) && !context.getPlayer().isCreative()) {
+            context.getPlayer().addItem(new ItemStack(Items.GLASS_BOTTLE));
+        }
+        return result;
+    }
 }

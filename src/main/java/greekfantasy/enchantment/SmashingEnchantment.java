@@ -18,72 +18,95 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
 
 public class SmashingEnchantment extends Enchantment {
-  
-  private static final double BASE_RANGE = 2.0D;
 
-  public SmashingEnchantment(final Enchantment.Rarity rarity) {
-    super(rarity, EnchantmentType.WEAPON, new EquipmentSlotType[] { EquipmentSlotType.MAINHAND });
-  }
-  
-  /**
-   * @param entity the entity to check
-   * @return whether the given entity should not be affected by smash attack
-   **/
-  private boolean isExemptFromSmashAttack(final Entity entity) {
-    return !entity.canChangeDimension() || entity.hasNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY
-        || entity.isSpectator()
-        || (entity instanceof PlayerEntity && ((PlayerEntity)entity).isCreative());
-  }
-  
-  private void useSmashAttack(final LivingEntity user, final Entity target, final int level) {
-    // if entitiy is touching the ground, knock it into the air and apply stun
-    if(target.isOnGround() && !isExemptFromSmashAttack(target)) {
-      target.addVelocity(0.0D, 0.35D + (0.05D * level), 0.0D);
-      target.attackEntityFrom(DamageSource.causeMobDamage(user), 0.25F);
-      // stun effect (for living entities)
-      if(target instanceof LivingEntity) {
-        final LivingEntity entity = (LivingEntity)target;
-        final int STUN_DURATION = 40 + level * 20;
-        if(GreekFantasy.CONFIG.isStunningNerf()) {
-          entity.addPotionEffect(new EffectInstance(Effects.SLOWNESS, STUN_DURATION, 0));
-          entity.addPotionEffect(new EffectInstance(Effects.WEAKNESS, STUN_DURATION, 0));
-        } else {
-          entity.addPotionEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, STUN_DURATION, 0));
+    private static final double BASE_RANGE = 2.0D;
+
+    public SmashingEnchantment(final Enchantment.Rarity rarity) {
+        super(rarity, EnchantmentType.WEAPON, new EquipmentSlotType[]{EquipmentSlotType.MAINHAND});
+    }
+
+    /**
+     * @param entity the entity to check
+     * @return whether the given entity should not be affected by smash attack
+     **/
+    private boolean isExemptFromSmashAttack(final Entity entity) {
+        return !entity.canChangeDimensions() || entity.isNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY
+                || entity.isSpectator()
+                || (entity instanceof PlayerEntity && ((PlayerEntity) entity).isCreative());
+    }
+
+    private void useSmashAttack(final LivingEntity user, final Entity target, final int level) {
+        // if entitiy is touching the ground, knock it into the air and apply stun
+        if (target.isOnGround() && !isExemptFromSmashAttack(target)) {
+            target.push(0.0D, 0.35D + (0.05D * level), 0.0D);
+            target.hurt(DamageSource.mobAttack(user), 0.25F);
+            // stun effect (for living entities)
+            if (target instanceof LivingEntity) {
+                final LivingEntity entity = (LivingEntity) target;
+                final int STUN_DURATION = 40 + level * 20;
+                if (GreekFantasy.CONFIG.isStunningNerf()) {
+                    entity.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, STUN_DURATION, 0));
+                    entity.addEffect(new EffectInstance(Effects.WEAKNESS, STUN_DURATION, 0));
+                } else {
+                    entity.addEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, STUN_DURATION, 0));
+                }
+            }
         }
-      }
     }
-  }
-  
-  @Override
-  public void onEntityDamaged(LivingEntity user, Entity target, int level) {
-    // check for cooldown
-    final ItemStack item = user.getHeldItem(Hand.MAIN_HAND);
-    if(!(item.getItem() instanceof ClubItem)) {
-      return;
+
+    @Override
+    public void doPostAttack(LivingEntity user, Entity target, int level) {
+        // check for cooldown
+        final ItemStack item = user.getItemInHand(Hand.MAIN_HAND);
+        if (!(item.getItem() instanceof ClubItem)) {
+            return;
+        }
+        // get a bounding box of an area to affect
+        final double range = BASE_RANGE + 1.5D * level;
+        final Vector3d facing = Vector3d.directionFromRotation(user.getRotationVector()).normalize();
+        final AxisAlignedBB aabb = new AxisAlignedBB(target.blockPosition().above()).inflate(range, BASE_RANGE, range).move(facing.scale(range));
+        // smash attack entities within range
+        user.getCommandSenderWorld().getEntities(user, aabb)
+                .forEach(e -> useSmashAttack(user, e, level));
     }
-    // get a bounding box of an area to affect
-    final double range = BASE_RANGE + 1.5D * level;
-    final Vector3d facing = Vector3d.fromPitchYaw(user.getPitchYaw()).normalize();
-    final AxisAlignedBB aabb = new AxisAlignedBB(target.getPosition().up()).grow(range, BASE_RANGE, range).offset(facing.scale(range));
-    // smash attack entities within range
-    user.getEntityWorld().getEntitiesWithinAABBExcludingEntity(user, aabb)
-      .forEach(e -> useSmashAttack(user, e, level));
-  }
-  
-  @Override 
-  public int getMinEnchantability(int level) { return 999; }
-  @Override
-  public int getMaxEnchantability(int level) { return 999; }
-  @Override
-  public boolean isTreasureEnchantment() { return false; }
-  @Override
-  public boolean canVillagerTrade() { return false; }
-  @Override
-  public boolean canGenerateInLoot() { return false; }
-  @Override
-  public int getMaxLevel() { return 3; }
-  @Override
-  public boolean canApplyAtEnchantingTable(ItemStack stack) { return false; }
-  @Override
-  public boolean isAllowedOnBooks() { return false; }
+
+    @Override
+    public int getMinCost(int level) {
+        return 999;
+    }
+
+    @Override
+    public int getMaxCost(int level) {
+        return 999;
+    }
+
+    @Override
+    public boolean isTreasureOnly() {
+        return false;
+    }
+
+    @Override
+    public boolean isTradeable() {
+        return false;
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        return false;
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return 3;
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public boolean isAllowedOnBooks() {
+        return false;
+    }
 }

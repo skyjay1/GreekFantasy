@@ -1,0 +1,50 @@
+{
+	"textures": {
+		"wand": "greekfantasy:item/pig_wand"
+	},
+	"elements": [
+		{
+			"from": [7.5, 4, 7.5],
+			"to": [8.5, 14, 8.5],
+			"faces": {
+				"north": {"uv": [0, 0, 1, 10], "texture": "#wand"},
+				"east": {"uv": [1, 0, 2, 10], "texture": "#wand"},
+				"south": {"uv": [2, 0, 3, 10], "texture": "#wand"},
+				"west": {"uv": [3, 0, 4, 10], "texture": "#wand"},
+				"up": {"uv": [1, 0, 2, 1], "texture": "#wand"},
+				"down": {"uv": [2, 0, 3, 1], "texture": "#wand"}
+			}
+		},
+		{
+			"from": [7, 14, 7],
+			"to": [9, 16, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 23, 8]},
+			"faces": {
+				"north": {"uv": [4, 2, 6, 4], "texture": "#wand"},
+				"east": {"uv": [6, 2, 8, 4], "texture": "#wand"},
+				"south": {"uv": [8, 2, 10, 4], "texture": "#wand"},
+				"west": {"uv": [10, 2, 12, 4], "texture": "#wand"},
+				"up": {"uv": [6, 0, 8, 2], "texture": "#wand"},
+				"down": {"uv": [8, 0, 10, 2], "texture": "#wand"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [0, -45, 0],
+			"translation": [0, 0.5, 0.75],
+			"scale": [0.75, 0.75, 0.75]
+		},
+		"firstperson_righthand": {
+			"rotation": [-30, 0, 0]
+		},
+		"gui": {
+			"rotation": [0, 15, -45],
+			"translation": [-1.5, -1.5, 0]
+		},
+		"fixed": {
+			"rotation": [0, 0, 45],
+			"translation": [1, -1, -1]
+		}
+	}
+}

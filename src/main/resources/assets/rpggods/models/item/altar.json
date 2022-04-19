@@ -1,0 +1,64 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "rpggods:item/altar"
+  },
+  "overrides": [
+    {
+      "predicate": { "index": 0.07 },
+      "model": "greek:item/altar_aphrodite"
+    },
+    {
+      "predicate": { "index": 0.14 },
+      "model": "greek:item/altar_apollo"
+    },
+    {
+      "predicate": { "index": 0.21 },
+      "model": "greek:item/altar_ares"
+    },
+    {
+      "predicate": { "index": 0.28 },
+      "model": "greek:item/altar_artemis"
+    },
+    {
+      "predicate": { "index": 0.35 },
+      "model": "greek:item/altar_athena"
+    },
+    {
+      "predicate": { "index": 0.42 },
+      "model": "greek:item/altar_hades"
+    },
+    {
+      "predicate": { "index": 0.5 },
+      "model": "greek:item/altar_hecate"
+    },
+    {
+      "predicate": { "index": 0.57 },
+      "model": "greek:item/altar_hephaestus"
+    },
+    {
+      "predicate": { "index": 0.64 },
+      "model": "greek:item/altar_hera"
+    },
+    {
+      "predicate": { "index": 0.71 },
+      "model": "greek:item/altar_hermes"
+    },
+    {
+      "predicate": { "index": 0.78 },
+      "model": "greek:item/altar_persephone"
+    },
+    {
+      "predicate": { "index": 0.85 },
+      "model": "greek:item/altar_poseidon"
+    },
+    {
+      "predicate": { "index": 0.92 },
+      "model": "greek:item/altar_zeus"
+    },
+    {
+      "predicate": { "index": 1 },
+      "model": "rpggods:item/altar_steve"
+    }
+  ]
+}

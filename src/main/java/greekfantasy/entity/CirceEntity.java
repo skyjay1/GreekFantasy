@@ -1,14 +1,9 @@
 package greekfantasy.entity;
 
-import java.util.EnumSet;
-import java.util.function.Predicate;
-
-import javax.annotation.Nullable;
-
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.IntervalRangedAttackGoal;
-import greekfantasy.entity.misc.SwineSpellEntity;
+import greekfantasy.entity.misc.PigSpellEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.IRangedAttackMob;
@@ -42,142 +37,160 @@ import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
 
+import javax.annotation.Nullable;
+import java.util.EnumSet;
+import java.util.function.Predicate;
+
 public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
-  
-  private final ServerBossInfo bossInfo = (ServerBossInfo)(new ServerBossInfo(this.getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS));
-  
-  protected static final Predicate<LivingEntity> NOT_SWINE = e -> (e != null && null == e.getActivePotionEffect(GFRegistry.SWINE_EFFECT));
-  
-  public CirceEntity(final EntityType<? extends CirceEntity> type, final World worldIn) {
-    super(type, worldIn);
-  }
-  
-  public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 60.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
-        .createMutableAttribute(Attributes.ARMOR, 1.5D);
-  }
-  
-  @Override
-  protected void registerGoals() {
-    super.registerGoals();
-    this.goalSelector.addGoal(0, new SwimGoal(this));
-    this.goalSelector.addGoal(1, new IntervalRangedAttackGoal(this, 90, 1, GreekFantasy.CONFIG.getSwineWandCooldown() * 4));
-    this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class, 6.0F, 1.4D, 1.2D, e -> NOT_SWINE.test(e) && e == CirceEntity.this.getAttackTarget()));
-    this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D){
-      @Override
-      public boolean shouldExecute() {
-        return null == CirceEntity.this.getAttackTarget() && CirceEntity.this.rand.nextInt(90) == 0 && super.shouldExecute();
-      }
-    });
-    this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-    this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
-    this.targetSelector.addGoal(1, new HurtByTargetGoal(this, WitchEntity.class, CirceEntity.class));
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
-    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, NOT_SWINE.and(e -> GreekFantasy.CONFIG.canSwineApply(e.getType().getRegistryName().toString())).and(EntityPredicates.CAN_HOSTILE_AI_TARGET)));
-    this.targetSelector.addGoal(4, new ResetTargetGoal());
-  }
-  
-  @Override
-  public void livingTick() {
-    super.livingTick();
-    // boss info
-    this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());    
-  }
-  
-  @Override
-  public void writeAdditional(CompoundNBT compound) {
-    super.writeAdditional(compound);
-  }
 
-  @Override
-  public void readAdditional(CompoundNBT compound) {
-    super.readAdditional(compound);
-  }
-  
-  @Nullable
-  public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
-      @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-    ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-    this.setHeldItem(Hand.MAIN_HAND, new ItemStack(GFRegistry.SWINE_WAND));
-    return data;
-  }
-  
-  // Attack //
+    private final ServerBossInfo bossInfo = new ServerBossInfo(this.getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
 
-  @Override
-  public void attackEntityWithRangedAttack(LivingEntity arg0, float arg1) {
-    if (!world.isRemote()) {
-      SwineSpellEntity spell = SwineSpellEntity.create(world, this);
-      world.addEntity(spell);
+    protected static final Predicate<LivingEntity> NOT_SWINE = e -> (e != null && null == e.getEffect(GFRegistry.PIG_EFFECT));
+
+    public CirceEntity(final EntityType<? extends CirceEntity> type, final World worldIn) {
+        super(type, worldIn);
     }
-    this.playSound(SoundEvents.ENTITY_ILLUSIONER_CAST_SPELL, 1.2F, 1.0F);
-    // swing arm
-    this.swingArm(Hand.MAIN_HAND);
-  }
-  
-  // Sounds //
-  
-  @Override
-  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_WITCH_AMBIENT; }
 
-  @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_WITCH_HURT; }
-
-  @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_WITCH_DEATH; }
-
-  @Override
-  protected float getSoundVolume() { return 0.8F; }
-
-  //Boss //
-
-  @Override
-  public boolean canChangeDimension() { return false; }
-
-  @Override
-  public void addTrackingPlayer(ServerPlayerEntity player) {
-    super.addTrackingPlayer(player);
-    this.bossInfo.addPlayer(player);
-    this.bossInfo.setName(this.hasCustomName() ? this.getCustomName() : this.getDisplayName());
-    this.bossInfo.setVisible(GreekFantasy.CONFIG.showCirceBossBar());
-  }
-
-  @Override
-  public void removeTrackingPlayer(ServerPlayerEntity player) {
-    super.removeTrackingPlayer(player);
-    this.bossInfo.removePlayer(player);
-  }
-  
-  // Goals //
-  
-  class ResetTargetGoal extends Goal {
-    
-    protected int interval;
-    
-    public ResetTargetGoal() { this(10); }
-        
-    public ResetTargetGoal(int intervalIn) {
-      this.setMutexFlags(EnumSet.of(Goal.Flag.TARGET));
-      interval = Math.max(1, intervalIn);
+    public static AttributeModifierMap.MutableAttribute createAttributes() {
+        return MobEntity.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 60.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D)
+                .add(Attributes.ATTACK_DAMAGE, 1.0D)
+                .add(Attributes.ARMOR, 1.5D);
     }
 
     @Override
-    public boolean shouldExecute() {
-      return CirceEntity.this.ticksExisted % interval == 0 && CirceEntity.this.isAlive() 
-          && CirceEntity.this.getAttackTarget() instanceof LivingEntity
-          && ((LivingEntity)CirceEntity.this.getAttackTarget()).getActivePotionEffect(GFRegistry.SWINE_EFFECT) != null;
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(0, new SwimGoal(this));
+        this.goalSelector.addGoal(1, new IntervalRangedAttackGoal(this, 90, 1, GreekFantasy.CONFIG.getPigWandCooldown() * 4));
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class, 6.0F, 1.4D, 1.2D, e -> NOT_SWINE.test(e) && e == CirceEntity.this.getTarget()));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.8D) {
+            @Override
+            public boolean canUse() {
+                return null == CirceEntity.this.getTarget() && CirceEntity.this.random.nextInt(90) == 0 && super.canUse();
+            }
+        });
+        this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+        this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, WitchEntity.class, CirceEntity.class));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, NOT_SWINE.and(e -> GreekFantasy.CONFIG.canPigApply(e.getType().getRegistryName().toString())).and(EntityPredicates.ATTACK_ALLOWED)));
+        this.targetSelector.addGoal(4, new ResetTargetGoal());
     }
-    
+
     @Override
-    public boolean shouldContinueExecuting() { return false; }
-    
-    @Override
-    public void startExecuting() {
-      CirceEntity.this.setAttackTarget(null);
+    public void aiStep() {
+        super.aiStep();
+        // boss info
+        this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
     }
-  }
+
+    @Override
+    public void addAdditionalSaveData(CompoundNBT compound) {
+        super.addAdditionalSaveData(compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundNBT compound) {
+        super.readAdditionalSaveData(compound);
+    }
+
+    @Nullable
+    public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+                                           @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+        ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        this.setItemInHand(Hand.MAIN_HAND, new ItemStack(GFRegistry.PIG_WAND));
+        return data;
+    }
+
+    // Attack //
+
+    @Override
+    public void performRangedAttack(LivingEntity arg0, float arg1) {
+        if (!level.isClientSide()) {
+            PigSpellEntity spell = PigSpellEntity.create(level, this);
+            level.addFreshEntity(spell);
+        }
+        this.playSound(SoundEvents.ILLUSIONER_CAST_SPELL, 1.2F, 1.0F);
+        // swing arm
+        this.swing(Hand.MAIN_HAND);
+    }
+
+    // Sounds //
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return SoundEvents.WITCH_AMBIENT;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+        return SoundEvents.WITCH_HURT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundEvents.WITCH_DEATH;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 0.8F;
+    }
+
+    //Boss //
+
+    @Override
+    public boolean canChangeDimensions() {
+        return false;
+    }
+
+    @Override
+    public void startSeenByPlayer(ServerPlayerEntity player) {
+        super.startSeenByPlayer(player);
+        this.bossInfo.addPlayer(player);
+        this.bossInfo.setName(this.hasCustomName() ? this.getCustomName() : this.getDisplayName());
+        this.bossInfo.setVisible(GreekFantasy.CONFIG.showCirceBossBar());
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayerEntity player) {
+        super.stopSeenByPlayer(player);
+        this.bossInfo.removePlayer(player);
+    }
+
+    // Goals //
+
+    class ResetTargetGoal extends Goal {
+
+        protected int interval;
+
+        public ResetTargetGoal() {
+            this(10);
+        }
+
+        public ResetTargetGoal(int intervalIn) {
+            this.setFlags(EnumSet.of(Goal.Flag.TARGET));
+            interval = Math.max(1, intervalIn);
+        }
+
+        @Override
+        public boolean canUse() {
+            return CirceEntity.this.tickCount % interval == 0 && CirceEntity.this.isAlive()
+                    && CirceEntity.this.getTarget() instanceof LivingEntity
+                    && CirceEntity.this.getTarget().getEffect(GFRegistry.PIG_EFFECT) != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return false;
+        }
+
+        @Override
+        public void start() {
+            CirceEntity.this.setTarget(null);
+        }
+    }
 
 }

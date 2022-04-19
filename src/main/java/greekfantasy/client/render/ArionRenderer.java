@@ -9,16 +9,16 @@ import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class ArionRenderer extends AbstractHorseRenderer<HorseEntity, HorseModel<HorseEntity>> {
-  
-  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/arion.png");
- 
-  public ArionRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new HorseModel<>(0.0F), 1.1F);
-    this.addLayer(new LeatherHorseArmorLayer(this));
-  }
 
-  @Override
-  public ResourceLocation getEntityTexture(final HorseEntity entity) {
-    return TEXTURE;
-  }
+    private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/arion.png");
+
+    public ArionRenderer(final EntityRendererManager renderManagerIn) {
+        super(renderManagerIn, new HorseModel<>(0.0F), 1.1F);
+        this.addLayer(new LeatherHorseArmorLayer(this));
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(final HorseEntity entity) {
+        return TEXTURE;
+    }
 }

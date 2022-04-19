@@ -8,15 +8,15 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
 public class HarpyRenderer<T extends HarpyEntity> extends BipedRenderer<T, HarpyModel<T>> {
-  
-  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/harpy.png");
 
-  public HarpyRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new HarpyModel<T>(0.0F), 0.5F);
-  }
+    private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/harpy.png");
 
-  @Override
-  public ResourceLocation getEntityTexture(final T entity) {
-    return TEXTURE;
-  }
+    public HarpyRenderer(final EntityRendererManager renderManagerIn) {
+        super(renderManagerIn, new HarpyModel<T>(0.0F), 0.5F);
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(final T entity) {
+        return TEXTURE;
+    }
 }

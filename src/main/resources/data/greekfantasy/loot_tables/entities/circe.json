@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "greekfantasy:swine_wand",
+          "name": "greekfantasy:pig_wand",
           "conditions": [
             {
               "condition": "minecraft:random_chance_with_looting",

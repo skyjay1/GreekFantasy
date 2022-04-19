@@ -9,16 +9,16 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
 public class MakhaiRenderer<T extends MakhaiEntity> extends BipedRenderer<T, MakhaiModel<T>> {
-  
-  private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/makhai.png");
-  
-  public MakhaiRenderer(final EntityRendererManager renderManagerIn) {
-    super(renderManagerIn, new MakhaiModel<T>(0.0F), 0.5F);
-    addLayer(new MakhaiHeldItemLayer<>(this));
-  }
-  
-  @Override
-  public ResourceLocation getEntityTexture(final T entity) {
-    return TEXTURE;
-  }
+
+    private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/makhai.png");
+
+    public MakhaiRenderer(final EntityRendererManager renderManagerIn) {
+        super(renderManagerIn, new MakhaiModel<T>(0.0F), 0.5F);
+        addLayer(new MakhaiHeldItemLayer<>(this));
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(final T entity) {
+        return TEXTURE;
+    }
 }

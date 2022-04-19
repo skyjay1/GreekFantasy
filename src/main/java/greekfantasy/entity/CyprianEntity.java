@@ -15,48 +15,59 @@ import net.minecraft.world.World;
 
 public class CyprianEntity extends CentaurEntity implements IMob {
 
-  public CyprianEntity(final EntityType<? extends CyprianEntity> type, final World worldIn) {
-    super(type, worldIn);
-  }
+    public CyprianEntity(final EntityType<? extends CyprianEntity> type, final World worldIn) {
+        super(type, worldIn);
+    }
 
-  public static AttributeModifierMap.MutableAttribute getAttributes() {
-    return MobEntity.func_233666_p_()
-        .createMutableAttribute(Attributes.MAX_HEALTH, 22.0D)
-        .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
-        .createMutableAttribute(Attributes.ATTACK_DAMAGE, 4.0D)
-        .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0.5D);
-  }
+    public static AttributeModifierMap.MutableAttribute createAttributes() {
+        return MobEntity.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 22.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D)
+                .add(Attributes.ATTACK_DAMAGE, 4.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.5D)
+                .add(Attributes.ARMOR, 0.0D);
+    }
 
-  @Override
-  protected void registerGoals() {
-    super.registerGoals();
-    this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
-    // this goal has a custom predicate to make sure the centaur entity is not also a cyprian entity (don't attack teammates)
-    this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, CentaurEntity.class, 10, true, false, e -> e.getClass() == CentaurEntity.class));
-  }
-  
-  @Override
-  protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_COW_AMBIENT; }
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+        // this goal has a custom predicate to make sure the centaur entity is not also a cyprian entity (don't attack teammates)
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, CentaurEntity.class, 10, true, false, e -> e.getClass() == CentaurEntity.class));
+    }
 
-  @Override
-  protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_COW_HURT; }
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return SoundEvents.COW_AMBIENT;
+    }
 
-  @Override
-  protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_COW_DEATH; }
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+        return SoundEvents.COW_HURT;
+    }
 
-  @Override
-  protected float getSoundVolume() { return 0.8F; }
-  
-  @Override
-  public SoundCategory getSoundCategory() { return SoundCategory.HOSTILE; }
-  
-  @Override
-  protected boolean isDespawnPeaceful() {
-    return true;
-  }
-  
-  @Override
-  public boolean hasBullHead() {
-    return true;
-  }
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundEvents.COW_DEATH;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 0.8F;
+    }
+
+    @Override
+    public SoundCategory getSoundSource() {
+        return SoundCategory.HOSTILE;
+    }
+
+    @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return true;
+    }
+
+    @Override
+    public boolean hasBullHead() {
+        return true;
+    }
 }

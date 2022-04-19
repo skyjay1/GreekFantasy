@@ -13,38 +13,38 @@ import net.minecraft.world.World;
 
 public class HealingRodItem extends Item {
 
-  public HealingRodItem(final Item.Properties properties) {
-    super(properties);
-  }
-  
-  @Override
-  public ActionResult<ItemStack> onItemRightClick(final World world, final PlayerEntity player, final Hand hand) {
-    ItemStack stack = player.getHeldItem(hand);
-    // prevent the item from being used up all the way
-    if(stack.getMaxDamage() - stack.getDamage() <= 1) {
-      return ActionResult.resultFail(stack);
+    public HealingRodItem(final Item.Properties properties) {
+        super(properties);
     }
-    player.getCooldownTracker().setCooldown(this, GreekFantasy.CONFIG.getHealingRodCooldown());
-    // spawn a healing spell entity
-    if(!world.isRemote()) {
-      HealingSpellEntity healingSpell = HealingSpellEntity.create(world, player);
-      world.addEntity(healingSpell);
+
+    @Override
+    public ActionResult<ItemStack> use(final World world, final PlayerEntity player, final Hand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        // prevent the item from being used up all the way
+        if (stack.getMaxDamage() - stack.getDamageValue() <= 1) {
+            return ActionResult.fail(stack);
+        }
+        player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.getHealingRodCooldown());
+        // spawn a healing spell entity
+        if (!world.isClientSide()) {
+            HealingSpellEntity healingSpell = HealingSpellEntity.create(world, player);
+            world.addFreshEntity(healingSpell);
+        }
+
+        // damage the item stack
+        if (!player.isCreative()) {
+            stack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+        }
+
+        return ActionResult.sidedSuccess(stack, world.isClientSide());
     }
-    
-    // damage the item stack
-    if(!player.isCreative()) {
-      stack.damageItem(1, player, (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+
+    @Override
+    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+        return toRepair.getItem() == this && toRepair.getDamageValue() < toRepair.getMaxDamage() && isRepairItem(repair);
     }
-    
-    return ActionResult.func_233538_a_(stack, world.isRemote());
-  }
-  
-  @Override
-  public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-    return toRepair.getItem() == this && toRepair.getDamage() < toRepair.getMaxDamage() && isRepairItem(repair);
-  }
-  
-  private boolean isRepairItem(final ItemStack repair) {
-    return repair.getItem() == GFRegistry.PURIFIED_SNAKESKIN;
-  }
+
+    private boolean isRepairItem(final ItemStack repair) {
+        return repair.getItem() == GFRegistry.PURIFIED_SNAKESKIN;
+    }
 }
