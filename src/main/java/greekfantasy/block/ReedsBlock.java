@@ -113,7 +113,7 @@ public class ReedsBlock extends DoublePlantBlock implements IWaterLoggable, IGro
 
     @Override
     public ItemStack getCloneItemStack(IBlockReader worldIn, BlockPos pos, BlockState state) {
-        return new ItemStack(GFRegistry.REEDS);
+        return new ItemStack(GFRegistry.BlockReg.REEDS);
     }
 
     @Override

@@ -67,7 +67,7 @@ public class SSwineEffectPacket {
                 net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
                 Entity e = mc.level.getEntity(message.entity);
                 if (e instanceof LivingEntity) {
-                    ((LivingEntity) e).addEffect(new EffectInstance(GFRegistry.PIG_EFFECT, message.duration));
+                    ((LivingEntity) e).addEffect(new EffectInstance(GFRegistry.MobEffectReg.PIG_EFFECT, message.duration));
                 }
             });
         }

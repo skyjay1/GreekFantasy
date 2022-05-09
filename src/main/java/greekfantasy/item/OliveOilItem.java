@@ -20,7 +20,7 @@ import net.minecraft.world.World;
 public class OliveOilItem extends BlockNamedItem {
 
     public OliveOilItem(final Item.Properties properties) {
-        super(GFRegistry.OIL, properties);
+        super(GFRegistry.BlockReg.OIL, properties);
     }
 
     @Override

@@ -71,7 +71,7 @@ public class CyclopesEntity extends MonsterEntity {
     public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
                                            @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
         if (this.random.nextBoolean()) {
-            final ItemStack club = new ItemStack(random.nextBoolean() ? GFRegistry.STONE_CLUB : GFRegistry.WOODEN_CLUB);
+            final ItemStack club = new ItemStack(random.nextBoolean() ? GFRegistry.ItemReg.STONE_CLUB : GFRegistry.ItemReg.WOODEN_CLUB);
             this.setItemInHand(Hand.MAIN_HAND, club);
         }
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);

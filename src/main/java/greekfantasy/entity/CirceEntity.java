@@ -45,7 +45,7 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
 
     private final ServerBossInfo bossInfo = new ServerBossInfo(this.getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
 
-    protected static final Predicate<LivingEntity> NOT_SWINE = e -> (e != null && null == e.getEffect(GFRegistry.PIG_EFFECT));
+    protected static final Predicate<LivingEntity> NOT_SWINE = e -> (e != null && null == e.getEffect(GFRegistry.MobEffectReg.PIG_EFFECT));
 
     public CirceEntity(final EntityType<? extends CirceEntity> type, final World worldIn) {
         super(type, worldIn);
@@ -100,7 +100,7 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
     public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
                                            @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
         ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-        this.setItemInHand(Hand.MAIN_HAND, new ItemStack(GFRegistry.PIG_WAND));
+        this.setItemInHand(Hand.MAIN_HAND, new ItemStack(GFRegistry.ItemReg.PIG_WAND));
         return data;
     }
 
@@ -179,7 +179,7 @@ public class CirceEntity extends MonsterEntity implements IRangedAttackMob {
         public boolean canUse() {
             return CirceEntity.this.tickCount % interval == 0 && CirceEntity.this.isAlive()
                     && CirceEntity.this.getTarget() instanceof LivingEntity
-                    && CirceEntity.this.getTarget().getEffect(GFRegistry.PIG_EFFECT) != null;
+                    && CirceEntity.this.getTarget().getEffect(GFRegistry.MobEffectReg.PIG_EFFECT) != null;
         }
 
         @Override

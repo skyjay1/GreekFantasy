@@ -17,7 +17,7 @@ public class VaseTileEntity extends TileEntity implements IClearable, IInventory
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 
     public VaseTileEntity() {
-        super(GFRegistry.VASE_TE);
+        super(GFRegistry.BlockEntityReg.VASE_TE);
     }
 
     // CLIENT-SERVER SYNC

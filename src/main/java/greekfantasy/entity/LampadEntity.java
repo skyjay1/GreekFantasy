@@ -77,7 +77,7 @@ public class LampadEntity extends DryadEntity {
     public static class Variant extends DryadEntity.Variant {
         public static final Variant CRIMSON = new LampadEntity.Variant("crimson", () -> Blocks.CRIMSON_FUNGUS);
         public static final Variant WARPED = new Variant("warped", () -> Blocks.WARPED_FUNGUS);
-        public static final Variant POMEGRANATE = new Variant(GreekFantasy.MODID, "pomegranate", "lampad", "logs", () -> GFRegistry.POMEGRANATE_SAPLING);
+        public static final Variant POMEGRANATE = new Variant(GreekFantasy.MODID, "pomegranate", "lampad", "logs", () -> GFRegistry.BlockReg.POMEGRANATE_SAPLING);
 
         public static ImmutableMap<String, Variant> NETHER = ImmutableMap.<String, Variant>builder()
                 .put(CRIMSON.getSerializedName(), CRIMSON).put(POMEGRANATE.getSerializedName(), POMEGRANATE).put(WARPED.getSerializedName(), WARPED)

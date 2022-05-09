@@ -100,7 +100,7 @@ public class HelmOfDarknessItem extends ArmorItem {
 
         @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(GFRegistry.STYXIAN_SHARD);
+            return Ingredient.of(GFRegistry.ItemReg.STYXIAN_SHARD);
         }
 
         @Override

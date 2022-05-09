@@ -19,7 +19,7 @@ public class NemeanLionHideLayer<T extends LivingEntity, M extends BipedModel<T>
 
     @Override
     public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (entitylivingbaseIn != null && entitylivingbaseIn.getItemBySlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.NEMEAN_LION_HIDE) {
+        if (entitylivingbaseIn != null && entitylivingbaseIn.getItemBySlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.ItemReg.NEMEAN_LION_HIDE) {
             super.render(matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch);
         }
     }

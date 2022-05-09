@@ -65,7 +65,7 @@ public class GiantBoarEntity extends HoglinEntity {
     }
 
     public static GiantBoarEntity spawnGiantBoar(final ServerWorld world, final HoglinEntity hoglin) {
-        GiantBoarEntity entity = GFRegistry.GIANT_BOAR_ENTITY.create(world);
+        GiantBoarEntity entity = GFRegistry.EntityReg.GIANT_BOAR_ENTITY.create(world);
         entity.copyPosition(hoglin);
         entity.finalizeSpawn(world, world.getCurrentDifficultyAt(hoglin.blockPosition()), SpawnReason.CONVERSION, null, null);
         if (hoglin.hasCustomName()) {

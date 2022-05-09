@@ -255,7 +255,7 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
                 return super.mobInteract(player, hand);
             }
 
-            if ((itemstack.isEmpty() && this.isTamed()) || itemstack.getItem() == GFRegistry.GOLDEN_BRIDLE) {
+            if ((itemstack.isEmpty() && this.isTamed()) || itemstack.getItem() == GFRegistry.ItemReg.GOLDEN_BRIDLE) {
                 this.doPlayerRide(player);
                 return ActionResultType.sidedSuccess(this.level.isClientSide());
             }
@@ -311,7 +311,7 @@ public class PegasusEntity extends AbstractHorseEntity implements IFlyingAnimal 
     public AgeableEntity getBreedOffspring(ServerWorld world, AgeableEntity mate) {
         PegasusEntity child;
         PegasusEntity pegasusMate = (PegasusEntity) mate;
-        child = GFRegistry.PEGASUS_ENTITY.create(world);
+        child = GFRegistry.EntityReg.PEGASUS_ENTITY.create(world);
         int i = this.random.nextInt(9);
         CoatColors coatcolors;
         if (i < 4) {

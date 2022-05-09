@@ -76,7 +76,7 @@ public class OilBlock extends Block implements IWaterLoggable {
                     heldItem.shrink(1);
                 }
                 // spawn oil bottle
-                playerIn.addItem(new ItemStack(GFRegistry.OLIVE_OIL));
+                playerIn.addItem(new ItemStack(GFRegistry.ItemReg.OLIVE_OIL));
                 return ActionResultType.CONSUME;
             } else if (heldItem.getItem() == Items.FLINT_AND_STEEL) {
                 // replace this block with fire
@@ -282,7 +282,7 @@ public class OilBlock extends Block implements IWaterLoggable {
     }
 
     private static boolean isFire(IWorld world, BlockState state, BlockPos pos) {
-        return state.is(BlockTags.FIRE) || (state.getBlock() == GFRegistry.OIL && state.getValue(LIT));
+        return state.is(BlockTags.FIRE) || (state.getBlock() == GFRegistry.BlockReg.OIL && state.getValue(LIT));
     }
 
     public static void setFire(IWorld worldIn, BlockState state, BlockPos pos) {

@@ -30,11 +30,11 @@ public class GreekFireEntity extends ProjectileItemEntity {
     }
 
     private GreekFireEntity(World worldIn, LivingEntity thrower) {
-        super(GFRegistry.GREEK_FIRE_ENTITY, thrower, worldIn);
+        super(GFRegistry.EntityReg.GREEK_FIRE_ENTITY, thrower, worldIn);
     }
 
     private GreekFireEntity(World worldIn, double x, double y, double z) {
-        super(GFRegistry.GREEK_FIRE_ENTITY, x, y, z, worldIn);
+        super(GFRegistry.EntityReg.GREEK_FIRE_ENTITY, x, y, z, worldIn);
     }
 
     public static GreekFireEntity create(World worldIn, double x, double y, double z) {
@@ -47,7 +47,7 @@ public class GreekFireEntity extends ProjectileItemEntity {
 
     @Override
     protected Item getDefaultItem() {
-        return GFRegistry.GREEK_FIRE;
+        return GFRegistry.ItemReg.GREEK_FIRE;
     }
 
     @Override
@@ -81,10 +81,10 @@ public class GreekFireEntity extends ProjectileItemEntity {
                     if (level.random.nextInt(3) > 0) {
                         if ((state.getMaterial().isReplaceable() && level.getBlockState(pos.below()).isSolidRender(level, pos.below()))) {
                             // attempt to place lit oil
-                            this.level.setBlockAndUpdate(pos, GFRegistry.OIL.defaultBlockState().setValue(OilBlock.LIT, true));
+                            this.level.setBlockAndUpdate(pos, GFRegistry.BlockReg.OIL.defaultBlockState().setValue(OilBlock.LIT, true));
                         } else if (level.getBlockState(pos).getBlock() == Blocks.WATER && level.isEmptyBlock(pos.above())) {
                             // attempt to place waterlogged lit oil and soul fire
-                            this.level.setBlockAndUpdate(pos, GFRegistry.OIL.defaultBlockState().setValue(OilBlock.WATERLOGGED, true).setValue(OilBlock.LIT, true));
+                            this.level.setBlockAndUpdate(pos, GFRegistry.BlockReg.OIL.defaultBlockState().setValue(OilBlock.WATERLOGGED, true).setValue(OilBlock.LIT, true));
                             this.level.setBlock(pos.above(), Blocks.SOUL_FIRE.defaultBlockState(), 2);
                         }
                     }

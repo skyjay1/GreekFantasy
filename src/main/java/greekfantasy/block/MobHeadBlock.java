@@ -77,7 +77,7 @@ public class MobHeadBlock extends HorizontalBlock implements IWaterLoggable {
 
     @Override
     public TileEntity createTileEntity(final BlockState state, final IBlockReader world) {
-        final MobHeadTileEntity te = GFRegistry.BOSS_HEAD_TE.create();
+        final MobHeadTileEntity te = GFRegistry.BlockEntityReg.BOSS_HEAD_TE.create();
         te.setHeadType(headType);
         te.setWall(state.getValue(WALL));
         return te;

@@ -151,7 +151,7 @@ public class HydraEntity extends MonsterEntity {
     public HydraHeadEntity addHead(final int id) {
         // GreekFantasy.LOGGER.debug("Adding head with id " + id);
         if (!level.isClientSide()) {
-            HydraHeadEntity head = GFRegistry.HYDRA_HEAD_ENTITY.create(level);
+            HydraHeadEntity head = GFRegistry.EntityReg.HYDRA_HEAD_ENTITY.create(level);
             head.moveTo(getX(), getY(), getZ(), 0, 0);
             // add the entity to the world (commented out bc of errors: "trying to add entity with duplicated UUID ...")
             // world.addEntity(head);
@@ -184,7 +184,7 @@ public class HydraEntity extends MonsterEntity {
     public void remove() {
         super.remove();
         for (final Entity e : getPassengers()) {
-            if (e.getType() == GFRegistry.HYDRA_HEAD_ENTITY) {
+            if (e.getType() == GFRegistry.EntityReg.HYDRA_HEAD_ENTITY) {
                 e.remove();
             }
         }

@@ -201,7 +201,7 @@ public class ArachneEntity extends MonsterEntity implements IRangedAttackMob {
     }
 
     private static boolean hasSilkstep(final LivingEntity player) {
-        return player != null && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.SILKSTEP_ENCHANTMENT, player.getItemBySlot(EquipmentSlotType.FEET)) > 0;
+        return player != null && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.SILKSTEP_ENCHANTMENT, player.getItemBySlot(EquipmentSlotType.FEET)) > 0;
     }
 
     //Boss //

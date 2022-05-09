@@ -15,7 +15,7 @@ public class PomegranateSeedsItem extends BlockNamedItem {
     public static final Food POMEGRANATE_SEEDS = new Food.Builder().fast().alwaysEat().nutrition(2).saturationMod(0.1F).build();
 
     public PomegranateSeedsItem(final Item.Properties properties) {
-        super(GFRegistry.POMEGRANATE_SAPLING, properties);
+        super(GFRegistry.BlockReg.POMEGRANATE_SAPLING, properties);
     }
 
     @Override

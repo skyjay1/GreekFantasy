@@ -1,14 +1,16 @@
 package greekfantasy;
 
+import greekfantasy.event.CommonEventHandler;
 import greekfantasy.network.CUpdateInstrumentPacket;
 import greekfantasy.network.CUseEnchantmentPacket;
 import greekfantasy.network.SPanfluteSongPacket;
 import greekfantasy.network.SSwineEffectPacket;
-import greekfantasy.proxy.ClientProxy;
-import greekfantasy.proxy.Proxy;
-import greekfantasy.proxy.ServerProxy;
+import greekfantasy.util.GenericJsonReloadListener;
+import greekfantasy.util.Song;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -19,6 +21,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,8 +32,6 @@ import java.util.Optional;
 public class GreekFantasy {
 
     public static final String MODID = "greekfantasy";
-
-    public static final Proxy PROXY = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
 
     private static final ForgeConfigSpec.Builder CONFIG_BUILDER = new ForgeConfigSpec.Builder();
     public static GFConfig CONFIG = new GFConfig(CONFIG_BUILDER);
@@ -43,10 +44,33 @@ public class GreekFantasy {
 
     private static boolean rgLoaded;
 
+    // TODO use this instead of proxy
+    public static final GenericJsonReloadListener<Song> PANFLUTE_SONGS = new GenericJsonReloadListener<>("songs", Song.class, Song.CODEC,
+            l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SPanfluteSongPacket(e.getKey(), e.getValue().get()))));
+
+
     public GreekFantasy() {
-        // register mod event listeners
-        FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.class);
+        // registry event listeners
+        FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.BlockReg.class);
+        FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.BlockEntityReg.class);
+        FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.EnchantmentReg.class);
+        FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.EntityReg.class);
+        FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.ItemReg.class);
+        FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.MenuReg.class);
+        FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.MobEffectReg.class);
+        FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.ParticleReg.class);
+        FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.PotionReg.class);
+        FMLJavaModLoadingContext.get().getModEventBus().register(GFRegistry.RecipeReg.class);
+        // world event listeners
         FMLJavaModLoadingContext.get().getModEventBus().register(GFWorldGen.class);
+        // forge event listeners
+        MinecraftForge.EVENT_BUS.register(CommonEventHandler.class);
+        // client-only listeners
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            FMLJavaModLoadingContext.get().getModEventBus().register(greekfantasy.event.ClientEventHandler.ModEvents.class);
+            MinecraftForge.EVENT_BUS.register(greekfantasy.event.ClientEventHandler.ForgeEvents.class);
+        });
+        // other listeners
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::intermodEnqueue);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::loadConfig);
@@ -54,10 +78,6 @@ public class GreekFantasy {
         // register config
         GreekFantasy.LOGGER.debug("registerConfig");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC);
-        // register side-specific or common event handlers
-        PROXY.registerEventHandlers();
-        // register reload listeners (not currently used)
-        PROXY.registerReloadListeners();
         // register messages
         GreekFantasy.LOGGER.debug("registerNetwork");
         int messageId = 0;
@@ -71,7 +91,6 @@ public class GreekFantasy {
         // register capability
         event.enqueueWork(() -> GFWorldGen.registerConfiguredFeatures());
         event.enqueueWork(() -> GFWorldGen.finishBiomeSetup());
-        event.enqueueWork(() -> GFRegistry.finishBrewingRecipes());
     }
 
     public static void intermodEnqueue(final InterModEnqueueEvent event) {

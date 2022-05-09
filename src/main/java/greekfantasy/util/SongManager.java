@@ -28,7 +28,7 @@ public final class SongManager {
      **/
     public static boolean playMusic(final LivingEntity entity, final InstrumentItem instrument, final ResourceLocation songName,
                                     final long worldTime, final float volume, final float volumeBass) {
-        final Optional<Song> song = GreekFantasy.PROXY.PANFLUTE_SONGS.get(songName);
+        final Optional<Song> song = GreekFantasy.PANFLUTE_SONGS.get(songName);
         if (song.isPresent() && song.get().shouldPlayNote(worldTime)) {
             final List<Integer> treble = song.get().getTrebleNotes(worldTime);
             final List<Integer> bass = song.get().getBassNotes(worldTime);

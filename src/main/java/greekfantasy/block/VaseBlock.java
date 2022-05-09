@@ -156,7 +156,7 @@ public class VaseBlock extends HorizontalBlock implements IWaterLoggable {
 
     @Override
     public TileEntity createTileEntity(final BlockState state, final IBlockReader world) {
-        final VaseTileEntity te = GFRegistry.VASE_TE.create();
+        final VaseTileEntity te = GFRegistry.BlockEntityReg.VASE_TE.create();
         return te;
     }
 

@@ -39,7 +39,7 @@ public class PoisonEnchantment extends Enchantment {
     @Override
     public void doPostHurt(LivingEntity user, Entity attacker, int level) {
         Random rand = user.getRandom();
-        Map.Entry<EquipmentSlotType, ItemStack> enchants = EnchantmentHelper.getRandomItemWith(GFRegistry.POISON_ENCHANTMENT, user);
+        Map.Entry<EquipmentSlotType, ItemStack> enchants = EnchantmentHelper.getRandomItemWith(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, user);
         if (shouldHit(level, rand)) {
             if (attacker instanceof LivingEntity) {
                 int duration = getDuration(level, rand);

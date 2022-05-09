@@ -24,7 +24,7 @@ public class SalveRecipe extends ShapelessRecipe {
     private final CompoundNBT resultTag;
 
     public SalveRecipe(ResourceLocation idIn, CompoundNBT resultTagIn, NonNullList<Ingredient> recipeItemsIn) {
-        super(idIn, CATEGORY, new ItemStack(GFRegistry.SALVE), recipeItemsIn);
+        super(idIn, CATEGORY, new ItemStack(GFRegistry.ItemReg.SALVE), recipeItemsIn);
         resultTag = resultTagIn;
     }
 
@@ -43,7 +43,7 @@ public class SalveRecipe extends ShapelessRecipe {
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return GFRegistry.SALVE_RECIPE_SERIALIZER;
+        return GFRegistry.RecipeReg.SALVE_RECIPE_SERIALIZER;
     }
 
     public CompoundNBT getResultTag() {

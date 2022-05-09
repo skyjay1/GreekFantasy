@@ -121,7 +121,7 @@ public class SatyrCampFeature extends SimpleTemplateFeature {
     protected static void addSatyr(final ISeedReader world, final Random rand, final BlockPos pos, final ILivingEntityData data, final int count) {
         for (int i = 0; i < count; i++) {
             // spawn a satyr
-            final SatyrEntity entity = GFRegistry.SATYR_ENTITY.create(world.getLevel());
+            final SatyrEntity entity = GFRegistry.EntityReg.SATYR_ENTITY.create(world.getLevel());
             entity.moveTo(pos.getX() + rand.nextDouble(), pos.getY() + 0.5D, pos.getZ() + rand.nextDouble(), 0, 0);
             entity.setPersistenceRequired();
             // random shaman chance

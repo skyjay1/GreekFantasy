@@ -122,10 +122,10 @@ public class GeryonEntity extends MonsterEntity {
     }
 
     public static GeryonEntity spawnGeryon(final World world, final BlockPos pos, final float yaw) {
-        GeryonEntity entity = GFRegistry.GERYON_ENTITY.create(world);
+        GeryonEntity entity = GFRegistry.EntityReg.GERYON_ENTITY.create(world);
         entity.moveTo(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
         entity.yBodyRot = yaw;
-        entity.setItemInHand(Hand.MAIN_HAND, new ItemStack(GFRegistry.IRON_CLUB));
+        entity.setItemInHand(Hand.MAIN_HAND, new ItemStack(GFRegistry.ItemReg.IRON_CLUB));
         world.addFreshEntity(entity);
         entity.setSpawning(true);
         // trigger spawn for nearby players
@@ -191,11 +191,11 @@ public class GeryonEntity extends MonsterEntity {
         if (this.isSummoning()) {
             summonTime++;
             if (this.getItemInHand(Hand.OFF_HAND).isEmpty()) {
-                this.setItemInHand(Hand.OFF_HAND, new ItemStack(GFRegistry.HORN));
+                this.setItemInHand(Hand.OFF_HAND, new ItemStack(GFRegistry.ItemReg.HORN));
             }
         } else if (summonTime > 0) {
             summonTime = 0;
-            if (this.getItemInHand(Hand.OFF_HAND).getItem() == GFRegistry.HORN) {
+            if (this.getItemInHand(Hand.OFF_HAND).getItem() == GFRegistry.ItemReg.HORN) {
                 this.setItemInHand(Hand.OFF_HAND, ItemStack.EMPTY);
             }
         }
@@ -270,7 +270,7 @@ public class GeryonEntity extends MonsterEntity {
     public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
                                            @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
         final ILivingEntityData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-        this.setItemInHand(Hand.MAIN_HAND, new ItemStack(GFRegistry.IRON_CLUB));
+        this.setItemInHand(Hand.MAIN_HAND, new ItemStack(GFRegistry.ItemReg.IRON_CLUB));
         this.setSpawning(true);
         return data;
     }
@@ -478,8 +478,8 @@ public class GeryonEntity extends MonsterEntity {
      * @return whether the given entity should not be affected by smash attack
      **/
     private boolean isExemptFromSmashAttack(final Entity entity) {
-        return !entity.canChangeDimensions() || entity.isNoGravity() || entity.getType() == GFRegistry.GIGANTE_ENTITY
-                || entity.getType() == GFRegistry.MAD_COW_ENTITY || entity.isSpectator()
+        return !entity.canChangeDimensions() || entity.isNoGravity() || entity.getType() == GFRegistry.EntityReg.GIGANTE_ENTITY
+                || entity.getType() == GFRegistry.EntityReg.MAD_COW_ENTITY || entity.isSpectator()
                 || (entity instanceof PlayerEntity && ((PlayerEntity) entity).isCreative());
     }
 
@@ -500,7 +500,7 @@ public class GeryonEntity extends MonsterEntity {
                     target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, STUN_DURATION, 0));
                     target.addEffect(new EffectInstance(Effects.WEAKNESS, STUN_DURATION, 0));
                 } else {
-                    target.addEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, STUN_DURATION, 0));
+                    target.addEffect(new EffectInstance(GFRegistry.MobEffectReg.STUNNED_EFFECT, STUN_DURATION, 0));
                 }
             }
         }
@@ -641,7 +641,7 @@ public class GeryonEntity extends MonsterEntity {
     class SummonCowGoal extends SummonMobGoal<MadCowEntity> {
 
         public SummonCowGoal(final int summonProgressIn, final int summonCooldownIn) {
-            super(GeryonEntity.this, summonProgressIn, summonCooldownIn, GFRegistry.MAD_COW_ENTITY);
+            super(GeryonEntity.this, summonProgressIn, summonCooldownIn, GFRegistry.EntityReg.MAD_COW_ENTITY);
         }
 
         @Override

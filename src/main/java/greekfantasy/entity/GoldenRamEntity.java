@@ -84,9 +84,9 @@ public class GoldenRamEntity extends SheepEntity implements IAngerable {
             this.setSheared(true);
             // create a list of items to return
             List<ItemStack> items = new ArrayList<>();
-            items.add(new ItemStack(GFRegistry.GOLDEN_FLEECE));
+            items.add(new ItemStack(GFRegistry.ItemReg.GOLDEN_FLEECE));
             if (random.nextBoolean() || fortune > 0) {
-                items.add(new ItemStack(GFRegistry.HORN));
+                items.add(new ItemStack(GFRegistry.ItemReg.HORN));
             }
             return items;
         }

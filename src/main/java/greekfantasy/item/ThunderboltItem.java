@@ -50,7 +50,7 @@ public class ThunderboltItem extends Item {
                 world.addFreshEntity(bolt);
                 // check for fireflash enchantment
                 int damageAmount = 15;
-                final int fireflashLevel = EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.FIREFLASH_ENCHANTMENT, stack);
+                final int fireflashLevel = EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.FIREFLASH_ENCHANTMENT, stack);
                 final boolean fireflash = GreekFantasy.CONFIG.isFireflashEnabled() && fireflashLevel > 0
                         && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseFireflash(player));
                 // if enchanted with fireflash, cause an explosion
@@ -76,7 +76,7 @@ public class ThunderboltItem extends Item {
     }
 
     private boolean isRepairItem(final ItemStack repair) {
-        return repair.getItem() == GFRegistry.ICHOR;
+        return repair.getItem() == GFRegistry.ItemReg.ICHOR;
     }
 
     public static RayTraceResult raytraceFromEntity(final World world, final LivingEntity player, final float range) {

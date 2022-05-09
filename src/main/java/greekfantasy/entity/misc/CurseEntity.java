@@ -28,7 +28,7 @@ public class CurseEntity extends EffectProjectileEntity {
     }
 
     protected CurseEntity(World worldIn, LivingEntity thrower) {
-        this(GFRegistry.CURSE_ENTITY, worldIn);
+        this(GFRegistry.EntityReg.CURSE_ENTITY, worldIn);
         this.lifespan = 90;
         super.setOwner(thrower);
         this.setPos(thrower.getX(), thrower.getEyeY() - 0.1D, thrower.getZ());

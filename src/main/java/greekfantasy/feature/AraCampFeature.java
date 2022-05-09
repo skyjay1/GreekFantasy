@@ -97,7 +97,7 @@ public class AraCampFeature extends SimpleTemplateFeature {
     protected static void addAra(final ISeedReader world, final Random rand, final BlockPos pos, final int count) {
         for (int i = 0; i < count; i++) {
             // spawn an ara
-            final AraEntity entity = GFRegistry.ARA_ENTITY.create(world.getLevel());
+            final AraEntity entity = GFRegistry.EntityReg.ARA_ENTITY.create(world.getLevel());
             entity.moveTo(pos.getX() + rand.nextDouble(), pos.getY() + 0.5D, pos.getZ() + rand.nextDouble(), 0, 0);
             entity.setPersistenceRequired();
             world.addFreshEntity(entity);

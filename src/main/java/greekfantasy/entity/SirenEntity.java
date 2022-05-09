@@ -197,7 +197,7 @@ public class SirenEntity extends WaterMobEntity implements ISwimmingMob {
             target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, STUN_DURATION, 0));
             target.addEffect(new EffectInstance(Effects.WEAKNESS, STUN_DURATION, 0));
         } else {
-            target.addEffect(new EffectInstance(GFRegistry.STUNNED_EFFECT, STUN_DURATION, 0));
+            target.addEffect(new EffectInstance(GFRegistry.MobEffectReg.STUNNED_EFFECT, STUN_DURATION, 0));
         }
     }
 

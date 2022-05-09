@@ -86,7 +86,7 @@ public class CerberusEntity extends CreatureEntity {
     }
 
     public static CerberusEntity spawnCerberus(final World world, final Vector3d pos) {
-        CerberusEntity entity = GFRegistry.CERBERUS_ENTITY.create(world);
+        CerberusEntity entity = GFRegistry.EntityReg.CERBERUS_ENTITY.create(world);
         entity.moveTo(pos.x(), pos.y(), pos.z(), 0.0F, 0.0F);
         entity.yBodyRot = 0.0F;
         world.addFreshEntity(entity);
@@ -409,7 +409,7 @@ public class CerberusEntity extends CreatureEntity {
         private final int lifespan;
 
         public SummonOrthusGoal(int summonProgressIn, int summonCooldownIn, int lifespanIn) {
-            super(CerberusEntity.this, summonProgressIn, summonCooldownIn, GFRegistry.ORTHUS_ENTITY);
+            super(CerberusEntity.this, summonProgressIn, summonCooldownIn, GFRegistry.EntityReg.ORTHUS_ENTITY);
             lifespan = lifespanIn;
         }
 

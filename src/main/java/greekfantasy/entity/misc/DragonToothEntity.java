@@ -29,11 +29,11 @@ public class DragonToothEntity extends ProjectileItemEntity {
     }
 
     private DragonToothEntity(World worldIn, LivingEntity thrower) {
-        super(GFRegistry.DRAGON_TOOTH_ENTITY, thrower, worldIn);
+        super(GFRegistry.EntityReg.DRAGON_TOOTH_ENTITY, thrower, worldIn);
     }
 
     private DragonToothEntity(World worldIn, double x, double y, double z) {
-        super(GFRegistry.DRAGON_TOOTH_ENTITY, x, y, z, worldIn);
+        super(GFRegistry.EntityReg.DRAGON_TOOTH_ENTITY, x, y, z, worldIn);
     }
 
     public static DragonToothEntity create(World worldIn, double x, double y, double z) {
@@ -46,7 +46,7 @@ public class DragonToothEntity extends ProjectileItemEntity {
 
     @Override
     protected Item getDefaultItem() {
-        return GFRegistry.DRAGON_TOOTH;
+        return GFRegistry.ItemReg.DRAGON_TOOTH;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class DragonToothEntity extends ProjectileItemEntity {
             Entity thrower = getOwner();
             // spawn a configurable number of sparti
             for (int i = 0, n = GreekFantasy.CONFIG.getNumSpartiSpawned(), life = 20 * GreekFantasy.CONFIG.getSpartiLifespan(); i < n; i++) {
-                final SpartiEntity sparti = GFRegistry.SPARTI_ENTITY.create(level);
+                final SpartiEntity sparti = GFRegistry.EntityReg.SPARTI_ENTITY.create(level);
                 sparti.moveTo(raytrace.getLocation().x, raytrace.getLocation().y, raytrace.getLocation().z, 0, 0);
                 level.addFreshEntity(sparti);
                 if (thrower instanceof PlayerEntity) {

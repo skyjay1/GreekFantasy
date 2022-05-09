@@ -23,7 +23,7 @@ public class HealingSpellEntity extends EffectProjectileEntity {
     }
 
     protected HealingSpellEntity(World worldIn, LivingEntity thrower) {
-        this(GFRegistry.HEALING_SPELL_ENTITY, worldIn);
+        this(GFRegistry.EntityReg.HEALING_SPELL_ENTITY, worldIn);
         super.setOwner(thrower);
         this.setPos(thrower.getX(), thrower.getEyeY() - 0.1D, thrower.getZ());
         // this unmapped method from ProjectileEntity does some math, then calls #shoot

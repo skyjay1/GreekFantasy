@@ -67,7 +67,7 @@ public class MysteriousBoxManager {
     }
 
     public static void addElpis(final World worldIn, final BlockPos pos) {
-        final ElpisEntity entity = GFRegistry.ELPIS_ENTITY.create(worldIn);
+        final ElpisEntity entity = GFRegistry.EntityReg.ELPIS_ENTITY.create(worldIn);
         entity.moveTo(pos.getX() + 0.5D, pos.getY() + 0.85D, pos.getZ() + 0.5D, 0, 0);
         entity.restrictTo(pos.above(), ElpisEntity.wanderDistance);
         worldIn.addFreshEntity(entity);

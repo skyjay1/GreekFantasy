@@ -44,11 +44,11 @@ public class WebBallEntity extends ProjectileItemEntity {
     }
 
     private WebBallEntity(World worldIn, LivingEntity thrower) {
-        super(GFRegistry.WEB_BALL_ENTITY, thrower, worldIn);
+        super(GFRegistry.EntityReg.WEB_BALL_ENTITY, thrower, worldIn);
     }
 
     private WebBallEntity(World worldIn, double x, double y, double z) {
-        super(GFRegistry.WEB_BALL_ENTITY, x, y, z, worldIn);
+        super(GFRegistry.EntityReg.WEB_BALL_ENTITY, x, y, z, worldIn);
     }
 
     public static WebBallEntity create(World worldIn, double x, double y, double z) {
@@ -67,7 +67,7 @@ public class WebBallEntity extends ProjectileItemEntity {
 
     @Override
     protected Item getDefaultItem() {
-        return GFRegistry.WEB_BALL;
+        return GFRegistry.ItemReg.WEB_BALL;
     }
 
     @Override
@@ -142,7 +142,7 @@ public class WebBallEntity extends ProjectileItemEntity {
         }
         // spider
         if (hasSpider(type)) {
-            BabySpiderEntity spider = GFRegistry.BABY_SPIDER_ENTITY.create(level);
+            BabySpiderEntity spider = GFRegistry.EntityReg.BABY_SPIDER_ENTITY.create(level);
             spider.copyPosition(this);
             spider.restrictTo(webPos, 12);
             level.addFreshEntity(spider);

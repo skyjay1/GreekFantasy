@@ -219,7 +219,7 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
         } else if (log.is(BlockTags.JUNGLE_LOGS)) {
             return Blocks.JUNGLE_LEAVES.defaultBlockState();
         } else if (log.is(BiomeHelper.getOliveLogs())) {
-            return GFRegistry.OLIVE_LEAVES.defaultBlockState();
+            return GFRegistry.BlockReg.OLIVE_LEAVES.defaultBlockState();
         } else {
             return Blocks.OAK_LEAVES.defaultBlockState();
         }
@@ -243,7 +243,7 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
                 if (forceReplace || isAirOrLeavesAt(world, p)) {
                     set(world, p.above(2), Blocks.AIR.defaultBlockState());
                     set(world, p.above(1), Blocks.AIR.defaultBlockState());
-                    set(world, p, GFRegistry.NEST_BLOCK.defaultBlockState(), 3);
+                    set(world, p, GFRegistry.BlockReg.NEST_BLOCK.defaultBlockState(), 3);
                 }
             }
         }
@@ -251,7 +251,7 @@ public class HarpyNestFeature extends Feature<NoFeatureConfig> {
 
     protected static void addHarpy(final ISeedReader world, final Random rand, final BlockPos pos) {
         // spawn a harpy
-        final HarpyEntity entity = GFRegistry.HARPY_ENTITY.create(world.getLevel());
+        final HarpyEntity entity = GFRegistry.EntityReg.HARPY_ENTITY.create(world.getLevel());
         entity.moveTo(pos.getX() + rand.nextDouble(), pos.getY() + 0.5D, pos.getZ() + rand.nextDouble(), 0, 0);
         entity.setPersistenceRequired();
         world.addFreshEntity(entity);

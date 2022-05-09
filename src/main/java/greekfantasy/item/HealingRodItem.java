@@ -45,6 +45,6 @@ public class HealingRodItem extends Item {
     }
 
     private boolean isRepairItem(final ItemStack repair) {
-        return repair.getItem() == GFRegistry.PURIFIED_SNAKESKIN;
+        return repair.getItem() == GFRegistry.ItemReg.PURIFIED_SNAKESKIN;
     }
 }

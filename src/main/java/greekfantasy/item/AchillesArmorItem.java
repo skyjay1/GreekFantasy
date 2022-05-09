@@ -138,7 +138,7 @@ public class AchillesArmorItem extends ArmorItem {
 
         @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(GFRegistry.FIERY_GEAR);
+            return Ingredient.of(GFRegistry.ItemReg.FIERY_GEAR);
         }
 
         @Override

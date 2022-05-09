@@ -101,6 +101,6 @@ public class PomegranateTreeFeature extends TreeFeature {
     }
 
     protected boolean isValidPosition(final ISeedReader reader, final BlockPos pos) {
-        return pos.getY() > 32 && GFRegistry.POMEGRANATE_SAPLING.defaultBlockState().canSurvive(reader, pos);
+        return pos.getY() > 32 && GFRegistry.BlockReg.POMEGRANATE_SAPLING.defaultBlockState().canSurvive(reader, pos);
     }
 }

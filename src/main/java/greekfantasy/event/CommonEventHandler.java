@@ -89,7 +89,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class CommonForgeEventHandler {
+public class CommonEventHandler {
     // items that can convert hoglins to giant boars
     protected static final IOptionalNamedTag<Item> GIANT_BOAR_TRIGGER = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "giant_boar_trigger"));
     protected static final IOptionalNamedTag<Item> ARION_TRIGGER = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "arion_trigger"));
@@ -110,7 +110,7 @@ public class CommonForgeEventHandler {
                 // remove XP from player
                 player.giveExperienceLevels(-(player.experienceLevel + 1));
                 // give XP to shade and spawn into world
-                final ShadeEntity shade = GFRegistry.SHADE_ENTITY.create(player.getCommandSenderWorld());
+                final ShadeEntity shade = GFRegistry.EntityReg.SHADE_ENTITY.create(player.getCommandSenderWorld());
                 shade.moveTo(player.getX(), player.getY(), player.getZ(), player.yRot, player.xRot);
                 shade.setStoredXP((int) (xp * (0.4F + player.getRandom().nextFloat() * 0.2F)));
                 shade.setOwnerUniqueId(PlayerEntity.createPlayerUUID(player.getDisplayName().getContents()));
@@ -140,7 +140,7 @@ public class CommonForgeEventHandler {
                     for (int y = -2; y <= 2; y++) {
                         for (int z = -r; z <= r; z++) {
                             pos = deathPos.offset(x, y, z);
-                            if (event.getEntityLiving().getCommandSenderWorld().getBlockState(pos).is(GFRegistry.GIGANTE_HEAD)) {
+                            if (event.getEntityLiving().getCommandSenderWorld().getBlockState(pos).is(GFRegistry.BlockReg.GIGANTE_HEAD)) {
                                 heads.add(pos);
                             }
                             if (heads.size() >= 3) break countHeads;
@@ -253,12 +253,12 @@ public class CommonForgeEventHandler {
 
             // place golden string if player is holding golden string
             // TODO also check if player is in a maze structure
-            if (event.player.tickCount % 4 == 0 && (event.player.getMainHandItem().getItem() == GFRegistry.GOLDEN_BALL || event.player.getOffhandItem().getItem() == GFRegistry.GOLDEN_BALL)) {
+            if (event.player.tickCount % 4 == 0 && (event.player.getMainHandItem().getItem() == GFRegistry.ItemReg.GOLDEN_BALL || event.player.getOffhandItem().getItem() == GFRegistry.ItemReg.GOLDEN_BALL)) {
                 BlockPos pos = event.player.blockPosition();
                 BlockState current = event.player.getCommandSenderWorld().getBlockState(pos);
-                BlockState string = GFRegistry.GOLDEN_STRING_BLOCK.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, current.getFluidState().getType().is(FluidTags.WATER));
+                BlockState string = GFRegistry.BlockReg.GOLDEN_STRING_BLOCK.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, current.getFluidState().getType().is(FluidTags.WATER));
                 boolean replaceable = current.getMaterial() == Material.AIR || current.getMaterial() == Material.WATER;
-                if (replaceable && current.getBlock() != GFRegistry.GOLDEN_STRING_BLOCK
+                if (replaceable && current.getBlock() != GFRegistry.BlockReg.GOLDEN_STRING_BLOCK
                         && string.canSurvive(event.player.getCommandSenderWorld(), pos)) {
                     event.player.getCommandSenderWorld().setBlock(pos, string, 3);
                 }
@@ -273,7 +273,7 @@ public class CommonForgeEventHandler {
     public static void onChangeEquipment(final LivingEquipmentChangeEvent event) {
         // Check which equipment was changed and if it is a player
         if(GreekFantasy.CONFIG.isFlyingEnabled() && event.getEntityLiving() instanceof PlayerEntity && event.getEntityLiving().level instanceof ServerWorld
-                && event.getSlot() == EquipmentSlotType.FEET && event.getTo().getItem() == GFRegistry.WINGED_SANDALS) {
+                && event.getSlot() == EquipmentSlotType.FEET && event.getTo().getItem() == GFRegistry.ItemReg.WINGED_SANDALS) {
             final PlayerEntity player = (PlayerEntity)event.getEntityLiving();
             GFWorldSavedData data = GFWorldSavedData.getOrCreate((ServerWorld)player.level);
             // Check the player's favor level before enabling flight
@@ -294,7 +294,7 @@ public class CommonForgeEventHandler {
     public static void onAddPotion(final PotionEvent.PotionAddedEvent event) {
         // send swine effect packet
         if (!event.getEntityLiving().getCommandSenderWorld().isClientSide() && GreekFantasy.CONFIG.isPigEnabled()
-                && event.getPotionEffect().getEffect() == GFRegistry.PIG_EFFECT
+                && event.getPotionEffect().getEffect() == GFRegistry.MobEffectReg.PIG_EFFECT
                 && GreekFantasy.CONFIG.canPigApply(event.getEntityLiving().getType().getRegistryName().toString())) {
             final int id = event.getEntityLiving().getId();
             GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSwineEffectPacket(id, event.getPotionEffect().getDuration()));
@@ -478,7 +478,7 @@ public class CommonForgeEventHandler {
                 && event.getWorld() instanceof World) {
             event.setCanceled(true);
             // spawn Circe instead of witch
-            final CirceEntity circe = GFRegistry.CIRCE_ENTITY.create((World) event.getWorld());
+            final CirceEntity circe = GFRegistry.EntityReg.CIRCE_ENTITY.create((World) event.getWorld());
             circe.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
             event.getWorld().addFreshEntity(circe);
         }
@@ -489,7 +489,7 @@ public class CommonForgeEventHandler {
             if (sheep.getColor() == DyeColor.YELLOW && (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.getGoldenRamChance()) {
                 // spawn Golden Ram instead of sheep
                 event.setCanceled(true);
-                final GoldenRamEntity ram = GFRegistry.GOLDEN_RAM_ENTITY.create((World) event.getWorld());
+                final GoldenRamEntity ram = GFRegistry.EntityReg.GOLDEN_RAM_ENTITY.create((World) event.getWorld());
                 ram.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
                 event.getWorld().addFreshEntity(ram);
             }
@@ -509,7 +509,7 @@ public class CommonForgeEventHandler {
                 && event.getEntity().level.getDifficulty() != Difficulty.PEACEFUL
                 && event.getEntity().level.random.nextInt(100) < GreekFantasy.CONFIG.getLightningLionChance()) {
             // remove the entity and spawn a nemean lion
-            NemeanLionEntity lion = GFRegistry.NEMEAN_LION_ENTITY.create(event.getEntity().level);
+            NemeanLionEntity lion = GFRegistry.EntityReg.NEMEAN_LION_ENTITY.create(event.getEntity().level);
             lion.copyPosition(event.getEntity());
             if (event.getEntity().hasCustomName()) {
                 lion.setCustomName(event.getEntity().getCustomName());
@@ -606,7 +606,7 @@ public class CommonForgeEventHandler {
         PlayerEntity player = event.getPlayer();
         if (player instanceof ServerPlayerEntity) {
             // sync panflute songs
-            GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SPanfluteSongPacket(e.getKey(), e.getValue().get())));
+            GreekFantasy.PANFLUTE_SONGS.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SPanfluteSongPacket(e.getKey(), e.getValue().get())));
         }
     }
 
@@ -618,20 +618,20 @@ public class CommonForgeEventHandler {
     @SubscribeEvent
     public static void onAddReloadListeners(final AddReloadListenerEvent event) {
         GreekFantasy.LOGGER.debug("onAddReloadListeners");
-        event.addListener(GreekFantasy.PROXY.PANFLUTE_SONGS);
+        event.addListener(GreekFantasy.PANFLUTE_SONGS);
     }
 
     /**
      * @return whether the living entity is wearing the Nemean Hide
      **/
-    private static boolean isWearingNemeanHide(final LivingEntity livingEntity) {
-        return livingEntity.getItemBySlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.NEMEAN_LION_HIDE;
+    public static boolean isWearingNemeanHide(final LivingEntity livingEntity) {
+        return livingEntity.getItemBySlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.ItemReg.NEMEAN_LION_HIDE;
     }
 
     /**
      * @return whether the living entity is wearing Achilles Armor
      **/
-    private static int countAchillesArmor(final LivingEntity livingEntity) {
+    public static int countAchillesArmor(final LivingEntity livingEntity) {
         int count = 0;
         for (final ItemStack stack : livingEntity.getArmorSlots()) {
             if (stack.getItem() instanceof AchillesArmorItem) {
@@ -644,21 +644,35 @@ public class CommonForgeEventHandler {
     /**
      * @return whether the entity should have the Stunned or Petrified effect applied
      **/
-    private static boolean isStunned(final LivingEntity entity) {
-        return entity.hasEffect(GFRegistry.STUNNED_EFFECT) || entity.hasEffect(GFRegistry.PETRIFIED_EFFECT);
+    public static boolean isStunned(final LivingEntity entity) {
+        return entity.hasEffect(GFRegistry.MobEffectReg.STUNNED_EFFECT) || entity.hasEffect(GFRegistry.MobEffectReg.PETRIFIED_EFFECT);
     }
 
     /**
      * @return whether the entity should have the Swine effect applied
      **/
-    private static boolean isSwine(final LivingEntity livingEntity) {
-        return livingEntity.hasEffect(GFRegistry.PIG_EFFECT);
+    public static boolean isSwine(final LivingEntity livingEntity) {
+        return livingEntity.hasEffect(GFRegistry.MobEffectReg.PIG_EFFECT);
     }
 
     /**
      * @return whether the player should have the client-side silkwalker step-height logic applied
      **/
-    private static boolean hasSilkstep(final PlayerEntity player) {
-        return EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.SILKSTEP_ENCHANTMENT, player.getItemBySlot(EquipmentSlotType.FEET)) > 0;
+    public static boolean hasSilkstep(final PlayerEntity player) {
+        return EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.SILKSTEP_ENCHANTMENT, player.getItemBySlot(EquipmentSlotType.FEET)) > 0;
+    }
+
+    /**
+     * @return whether the player should have the client-side overstep step-height logic applied
+     **/
+    public static boolean hasOverstep(final PlayerEntity player) {
+        return EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.OVERSTEP_ENCHANTMENT, player.getItemBySlot(EquipmentSlotType.FEET)) > 0;
+    }
+
+    /**
+     * @return whether the player is wearing the Helm of Darkness
+     **/
+    public static boolean hasHelmOfDarkness(final PlayerEntity player) {
+        return player.getItemBySlot(EquipmentSlotType.HEAD).getItem() == GFRegistry.ItemReg.HELM_OF_DARKNESS;
     }
 }

@@ -84,7 +84,7 @@ public class CharybdisEntity extends WaterMobEntity implements ISwimmingMob {
     }
 
     public static CharybdisEntity spawnCharybdis(final ServerWorld world, final WhirlEntity whirl) {
-        CharybdisEntity entity = GFRegistry.CHARYBDIS_ENTITY.create(world);
+        CharybdisEntity entity = GFRegistry.EntityReg.CHARYBDIS_ENTITY.create(world);
         entity.copyPosition(whirl);
         entity.finalizeSpawn(world, world.getCurrentDifficultyAt(whirl.blockPosition()), SpawnReason.CONVERSION, null, null);
         if (whirl.hasCustomName()) {

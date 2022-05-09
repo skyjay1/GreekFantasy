@@ -73,7 +73,7 @@ public class IchorInfusedBlock extends Block {
         if (this.talosPattern == null) {
             this.talosPattern = BlockPatternBuilder.start()
                     .aisle("~^~", "###", "###")
-                    .where('^', CachedBlockInfo.hasState(BlockStateMatcher.forBlock(GFRegistry.ICHOR_INFUSED_BLOCK)))
+                    .where('^', CachedBlockInfo.hasState(BlockStateMatcher.forBlock(GFRegistry.BlockReg.ICHOR_INFUSED_BLOCK)))
                     .where('#', CachedBlockInfo.hasState(IS_BODY_BLOCK))
                     .where('~', CachedBlockInfo.hasState(BlockMaterialMatcher.forMaterial(Material.AIR))).build();
         }
@@ -85,7 +85,7 @@ public class IchorInfusedBlock extends Block {
             this.bronzeBullPattern = BlockPatternBuilder.start()
                     .aisle("^##^", "~##~")
                     .aisle("~##~", "~##~")
-                    .where('^', CachedBlockInfo.hasState(BlockStateMatcher.forBlock(GFRegistry.ICHOR_INFUSED_BLOCK)))
+                    .where('^', CachedBlockInfo.hasState(BlockStateMatcher.forBlock(GFRegistry.BlockReg.ICHOR_INFUSED_BLOCK)))
                     .where('#', CachedBlockInfo.hasState(IS_BODY_BLOCK))
                     .where('~', CachedBlockInfo.hasState(BlockMaterialMatcher.forMaterial(Material.AIR))).build();
         }

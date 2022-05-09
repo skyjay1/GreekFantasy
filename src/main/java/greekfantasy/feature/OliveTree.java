@@ -29,8 +29,8 @@ public class OliveTree extends Tree {
 
     public static ConfiguredFeature<BaseTreeFeatureConfig, ?> getConfiguredTree() {
         return GFWorldGen.OLIVE_TREE_FEATURE.configured(new BaseTreeFeatureConfig.Builder(
-                new SimpleBlockStateProvider(GFRegistry.OLIVE_LOG.defaultBlockState()),
-                new SimpleBlockStateProvider(GFRegistry.OLIVE_LEAVES.defaultBlockState()),
+                new SimpleBlockStateProvider(GFRegistry.BlockReg.OLIVE_LOG.defaultBlockState()),
+                new SimpleBlockStateProvider(GFRegistry.BlockReg.OLIVE_LEAVES.defaultBlockState()),
                 new FancyFoliagePlacer(FeatureSpread.fixed(2), FeatureSpread.fixed(4), 4),
                 new FancyTrunkPlacer(3, 11, 0), new TwoLayerFeature(0, 0, 0, OptionalInt.of(4)))
                 .ignoreVines().heightmap(Heightmap.Type.MOTION_BLOCKING).build());

@@ -35,7 +35,7 @@ public class PalladiumItem extends Item {
             BlockPos blockpos = blockitemusecontext.getClickedPos();
             ItemStack itemstack = context.getItemInHand();
             Vector3d vector3d = Vector3d.atBottomCenterOf(blockpos);
-            AxisAlignedBB axisalignedbb = GFRegistry.PALLADIUM_ENTITY.getDimensions().makeBoundingBox(vector3d.x(), vector3d.y(), vector3d.z());
+            AxisAlignedBB axisalignedbb = GFRegistry.EntityReg.PALLADIUM_ENTITY.getDimensions().makeBoundingBox(vector3d.x(), vector3d.y(), vector3d.z());
             if (world.noCollision((Entity)null, axisalignedbb, (entity) -> true)
                     && world.getEntities((Entity)null, axisalignedbb).isEmpty()) {
                 if (world instanceof ServerWorld) {

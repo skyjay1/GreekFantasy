@@ -108,11 +108,11 @@ public class GoldenStringBlock extends Block implements IWaterLoggable {
      */
     @Override
     public String getDescriptionId() {
-        return GFRegistry.GOLDEN_STRING.getDescriptionId();
+        return GFRegistry.ItemReg.GOLDEN_STRING.getDescriptionId();
     }
 
     @Override
     public Item asItem() {
-        return GFRegistry.GOLDEN_STRING;
+        return GFRegistry.ItemReg.GOLDEN_STRING;
     }
 }

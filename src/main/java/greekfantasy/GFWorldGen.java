@@ -167,12 +167,12 @@ public final class GFWorldGen {
     public static void registerConfiguredFeatures() {
         GreekFantasy.LOGGER.debug("registerConfiguredFeatures");
         MARBLE = registerFeature("marble",
-                Feature.ORE.configured(new OreFeatureConfig(ruleTestStone, GFRegistry.MARBLE.defaultBlockState(), 33))
+                Feature.ORE.configured(new OreFeatureConfig(ruleTestStone, GFRegistry.BlockReg.MARBLE.defaultBlockState(), 33))
                         // unmapped methods copied from world.gen.feature.Features
                         // 33 = vein size, 80 = maxY, square = spreadHorizontally, count = repeat
                         .range(80).squared().count(10));
         LIMESTONE = registerFeature("limestone",
-                Feature.ORE.configured(new OreFeatureConfig(ruleTestStone, GFRegistry.LIMESTONE.defaultBlockState(), 33))
+                Feature.ORE.configured(new OreFeatureConfig(ruleTestStone, GFRegistry.BlockReg.LIMESTONE.defaultBlockState(), 33))
                         .range(80).squared().count(10));
         HARPY_NEST = registerFeature("harpy_nest",
                 HARPY_NEST_FEATURE.configured(NoFeatureConfig.NONE) // NoFeatureConfig.NO_FEATURE_CONFIG
@@ -212,14 +212,14 @@ public final class GFWorldGen {
                 PomegranateTree.getConfiguredTree().decorated(Placements.ADD_32).count(20));
         REEDS = registerFeature("reeds",
                 REEDS_FEATURE.configured((new BlockClusterFeatureConfig.Builder(
-                        new SimpleBlockStateProvider(GFRegistry.REEDS.defaultBlockState()),
+                        new SimpleBlockStateProvider(GFRegistry.BlockReg.REEDS.defaultBlockState()),
                         new DoublePlantBlockPlacer()))
                         .tries(48).canReplace()
                         .xspread(4).zspread(4)
                         .build()).count(2));
         SWAMP_REEDS = registerFeature("reeds_swamp",
                 REEDS_FEATURE.configured((new BlockClusterFeatureConfig.Builder(
-                        new SimpleBlockStateProvider(GFRegistry.REEDS.defaultBlockState()),
+                        new SimpleBlockStateProvider(GFRegistry.BlockReg.REEDS.defaultBlockState()),
                         new DoublePlantBlockPlacer()))
                         .tries(32).canReplace()
                         .xspread(3).yspread(3).zspread(3)
@@ -279,31 +279,31 @@ public final class GFWorldGen {
 
     public static void addBiomeSpawns(final BiomeLoadingEvent event) {
         // nether spawns
-        addSpawns(event, GFRegistry.FURY_ENTITY, 3, 3);
-        addSpawns(event, GFRegistry.LAMPAD_ENTITY, 3, 6);
-        addSpawns(event, GFRegistry.ORTHUS_ENTITY, 1, 4);
+        addSpawns(event, GFRegistry.EntityReg.FURY_ENTITY, 3, 3);
+        addSpawns(event, GFRegistry.EntityReg.LAMPAD_ENTITY, 3, 6);
+        addSpawns(event, GFRegistry.EntityReg.ORTHUS_ENTITY, 1, 4);
         // overworld spawns
-        addSpawns(event, GFRegistry.ARA_ENTITY, 2, 5);
-        addSpawns(event, GFRegistry.CENTAUR_ENTITY, 2, 4);
-        addSpawns(event, GFRegistry.CERASTES_ENTITY, 1, 2);
-        addSpawns(event, GFRegistry.CYCLOPES_ENTITY, 1, 3);
-        addSpawns(event, GFRegistry.CYPRIAN_ENTITY, 1, 3);
-        addSpawns(event, GFRegistry.DRAKAINA_ENTITY, 1, 2);
-        addSpawns(event, GFRegistry.DRYAD_ENTITY, 1, 3);
-        addSpawns(event, GFRegistry.EMPUSA_ENTITY, 1, 2);
-        addSpawns(event, GFRegistry.GIGANTE_ENTITY, 1, 4);
-        addSpawns(event, GFRegistry.GORGON_ENTITY, 1, 2);
-        addSpawns(event, GFRegistry.HARPY_ENTITY, 1, 3);
-        addSpawns(event, GFRegistry.HYDRA_ENTITY, 1, 1);
-        addSpawns(event, GFRegistry.MAD_COW_ENTITY, 1, 1);
-        addSpawns(event, GFRegistry.MINOTAUR_ENTITY, 3, 5);
-        addSpawns(event, GFRegistry.NAIAD_ENTITY, 2, 5);
-        addSpawns(event, GFRegistry.PEGASUS_ENTITY, 2, 5);
-        addSpawns(event, GFRegistry.SATYR_ENTITY, 2, 5);
-        addSpawns(event, GFRegistry.SHADE_ENTITY, 1, 1);
-        addSpawns(event, GFRegistry.SIREN_ENTITY, 2, 4);
-        addSpawns(event, GFRegistry.UNICORN_ENTITY, 2, 5);
-        addSpawns(event, GFRegistry.WHIRL_ENTITY, 1, 1);
+        addSpawns(event, GFRegistry.EntityReg.ARA_ENTITY, 2, 5);
+        addSpawns(event, GFRegistry.EntityReg.CENTAUR_ENTITY, 2, 4);
+        addSpawns(event, GFRegistry.EntityReg.CERASTES_ENTITY, 1, 2);
+        addSpawns(event, GFRegistry.EntityReg.CYCLOPES_ENTITY, 1, 3);
+        addSpawns(event, GFRegistry.EntityReg.CYPRIAN_ENTITY, 1, 3);
+        addSpawns(event, GFRegistry.EntityReg.DRAKAINA_ENTITY, 1, 2);
+        addSpawns(event, GFRegistry.EntityReg.DRYAD_ENTITY, 1, 3);
+        addSpawns(event, GFRegistry.EntityReg.EMPUSA_ENTITY, 1, 2);
+        addSpawns(event, GFRegistry.EntityReg.GIGANTE_ENTITY, 1, 4);
+        addSpawns(event, GFRegistry.EntityReg.GORGON_ENTITY, 1, 2);
+        addSpawns(event, GFRegistry.EntityReg.HARPY_ENTITY, 1, 3);
+        addSpawns(event, GFRegistry.EntityReg.HYDRA_ENTITY, 1, 1);
+        addSpawns(event, GFRegistry.EntityReg.MAD_COW_ENTITY, 1, 1);
+        addSpawns(event, GFRegistry.EntityReg.MINOTAUR_ENTITY, 3, 5);
+        addSpawns(event, GFRegistry.EntityReg.NAIAD_ENTITY, 2, 5);
+        addSpawns(event, GFRegistry.EntityReg.PEGASUS_ENTITY, 2, 5);
+        addSpawns(event, GFRegistry.EntityReg.SATYR_ENTITY, 2, 5);
+        addSpawns(event, GFRegistry.EntityReg.SHADE_ENTITY, 1, 1);
+        addSpawns(event, GFRegistry.EntityReg.SIREN_ENTITY, 2, 4);
+        addSpawns(event, GFRegistry.EntityReg.UNICORN_ENTITY, 2, 5);
+        addSpawns(event, GFRegistry.EntityReg.WHIRL_ENTITY, 1, 1);
     }
 
     private static void addSpawns(final BiomeLoadingEvent event, final EntityType<?> entity, final int min, final int max) {

@@ -1,6 +1,5 @@
 package greekfantasy;
 
-import com.google.common.collect.ImmutableSet;
 import greekfantasy.integration.RGCompat;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
@@ -9,21 +8,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -104,8 +94,8 @@ public class GFWorldSavedData extends WorldSavedData {
      */
     public static boolean validatePlayer(final PlayerEntity player) {
         final ItemStack feet = player.getItemBySlot(EquipmentSlotType.FEET);
-        return (feet.getItem() == GFRegistry.WINGED_SANDALS
-                && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.FLYING_ENCHANTMENT, feet) > 0
+        return (feet.getItem() == GFRegistry.ItemReg.WINGED_SANDALS
+                && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.FLYING_ENCHANTMENT, feet) > 0
                 && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseFlying(player)));
     }
 }

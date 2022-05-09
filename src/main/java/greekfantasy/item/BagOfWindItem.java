@@ -37,6 +37,6 @@ public class BagOfWindItem extends Item {
 
     @Override
     public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return toRepair.getItem() == this && toRepair.getDamageValue() < toRepair.getMaxDamage() && repair.getItem() == GFRegistry.MAGIC_FEATHER;
+        return toRepair.getItem() == this && toRepair.getDamageValue() < toRepair.getMaxDamage() && repair.getItem() == GFRegistry.ItemReg.MAGIC_FEATHER;
     }
 }

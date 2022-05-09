@@ -77,7 +77,7 @@ public class SongScreen extends Screen {
         }
         // populate songs list (alphabetically)
         if (songs.isEmpty()) {
-            songs.addAll(GreekFantasy.PROXY.PANFLUTE_SONGS.getEntries());
+            songs.addAll(GreekFantasy.PANFLUTE_SONGS.getEntries());
             songs.sort((e1, e2) -> e1.getValue().orElse(Song.EMPTY).getName().getString()
                     .compareTo(e2.getValue().orElse(Song.EMPTY).getName().getString()));
         }

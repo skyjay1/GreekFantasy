@@ -148,9 +148,9 @@ public class SatyrEntity extends CreatureEntity implements IAngerable {
         if (this.level.isClientSide()) {
             // play music
             if (isSummoning()) {
-                SongManager.playMusic(this, (InstrumentItem) GFRegistry.PANFLUTE, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
+                SongManager.playMusic(this, (InstrumentItem) GFRegistry.ItemReg.PANFLUTE, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
             } else if (isDancing()) {
-                SongManager.playMusic(this, (InstrumentItem) GFRegistry.PANFLUTE, GreekFantasy.CONFIG.getSatyrSong(), level.getGameTime(), 0.84F, 0.28F);
+                SongManager.playMusic(this, (InstrumentItem) GFRegistry.ItemReg.PANFLUTE, GreekFantasy.CONFIG.getSatyrSong(), level.getGameTime(), 0.84F, 0.28F);
             }
         } else {
             // anger timer

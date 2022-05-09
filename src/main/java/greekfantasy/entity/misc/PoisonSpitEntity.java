@@ -22,7 +22,7 @@ public class PoisonSpitEntity extends EffectProjectileEntity {
     }
 
     protected PoisonSpitEntity(World worldIn, LivingEntity thrower) {
-        this(GFRegistry.POISON_SPIT_ENTITY, worldIn);
+        this(GFRegistry.EntityReg.POISON_SPIT_ENTITY, worldIn);
         this.lifespan = 80;
         super.setOwner(thrower);
         this.setPos(thrower.getX(), thrower.getEyeY() - 0.1D, thrower.getZ());

@@ -168,7 +168,7 @@ public class NaiadEntity extends WaterMobEntity implements ISwimmingMob, IAngera
     @Override
     public boolean isInvulnerableTo(final DamageSource source) {
         // immune to damage from other naiads
-        if (source.getEntity() != null && source.getEntity().getType() == GFRegistry.NAIAD_ENTITY) {
+        if (source.getEntity() != null && source.getEntity().getType() == GFRegistry.EntityReg.NAIAD_ENTITY) {
             return true;
         }
         return super.isInvulnerableTo(source);

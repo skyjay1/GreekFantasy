@@ -39,6 +39,6 @@ public class PigWandItem extends Item {
 
     @Override
     public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return repair.getItem() == GFRegistry.BOAR_EAR;
+        return repair.getItem() == GFRegistry.ItemReg.BOAR_EAR;
     }
 }

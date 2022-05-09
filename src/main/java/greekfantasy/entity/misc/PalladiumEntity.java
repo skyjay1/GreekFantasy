@@ -36,7 +36,7 @@ public class PalladiumEntity extends LivingEntity {
     }
 
     public static PalladiumEntity createPalladium(final World world, final BlockPos pos, Direction facing) {
-        PalladiumEntity entity = new PalladiumEntity(GFRegistry.PALLADIUM_ENTITY, world);
+        PalladiumEntity entity = new PalladiumEntity(GFRegistry.EntityReg.PALLADIUM_ENTITY, world);
         float f = facing.toYRot();
         entity.absMoveTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, f, 0);
         entity.yHeadRot = f;
@@ -83,8 +83,8 @@ public class PalladiumEntity extends LivingEntity {
         // attempt to place glow block
         BlockPos posIn = getOnPos().above();
         BlockState block = level.getBlockState(posIn);
-        if((block.getMaterial() == Material.AIR || block.getMaterial().isLiquid()) && !GFRegistry.GLOW.is(block.getBlock())) {
-            level.setBlock(posIn, GFRegistry.GLOW.defaultBlockState(), Constants.BlockFlags.DEFAULT);
+        if((block.getMaterial() == Material.AIR || block.getMaterial().isLiquid()) && !GFRegistry.BlockReg.GLOW.is(block.getBlock())) {
+            level.setBlock(posIn, GFRegistry.BlockReg.GLOW.defaultBlockState(), Constants.BlockFlags.DEFAULT);
         }
     }
 
@@ -179,7 +179,7 @@ public class PalladiumEntity extends LivingEntity {
 
     private void brokenByPlayer(DamageSource p_213815_1_) {
         // drop altar
-        final ItemStack altarItem = new ItemStack(GFRegistry.PALLADIUM);
+        final ItemStack altarItem = new ItemStack(GFRegistry.ItemReg.PALLADIUM);
         Block.popResource(level, blockPosition().above(), altarItem);
         // drop other
         this.brokenByAnything(p_213815_1_);

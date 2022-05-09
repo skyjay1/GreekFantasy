@@ -34,7 +34,7 @@ public class SnakeskinArmorItem extends ArmorItem {
         if (this.allowdedIn(group)) {
             final ItemStack stack = new ItemStack(this);
             if (GreekFantasy.CONFIG.isPoisonEnabled()) {
-                stack.enchant(GFRegistry.POISON_ENCHANTMENT, 1);
+                stack.enchant(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, 1);
             }
             items.add(stack);
         }
@@ -43,8 +43,8 @@ public class SnakeskinArmorItem extends ArmorItem {
     @Override
     public void onCraftedBy(ItemStack stack, World worldIn, PlayerEntity playerIn) {
         // add Poison enchantment if not present
-        if (GreekFantasy.CONFIG.isPoisonEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.POISON_ENCHANTMENT, stack) < 1) {
-            stack.enchant(GFRegistry.POISON_ENCHANTMENT, 1);
+        if (GreekFantasy.CONFIG.isPoisonEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, stack) < 1) {
+            stack.enchant(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, 1);
         }
     }
 
@@ -61,8 +61,8 @@ public class SnakeskinArmorItem extends ArmorItem {
     public void inventoryTick(final ItemStack stack, final World worldIn, final Entity entityIn,
                               final int itemSlot, final boolean isSelected) {
         // add Poison enchantment if not present
-        if (GreekFantasy.CONFIG.isPoisonEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.POISON_ENCHANTMENT, stack) < 1) {
-            stack.enchant(GFRegistry.POISON_ENCHANTMENT, 1);
+        if (GreekFantasy.CONFIG.isPoisonEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, stack) < 1) {
+            stack.enchant(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, 1);
         }
     }
 
@@ -114,7 +114,7 @@ public class SnakeskinArmorItem extends ArmorItem {
 
         @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(GFRegistry.TOUGH_SNAKESKIN);
+            return Ingredient.of(GFRegistry.ItemReg.TOUGH_SNAKESKIN);
         }
 
         @Override

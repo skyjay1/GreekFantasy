@@ -114,8 +114,8 @@ public class CappedPillarBlock extends Block implements IWaterLoggable {
     }
 
     private boolean isPillarBlock(final BlockState state) {
-        return state.getBlock() == GFRegistry.MARBLE_PILLAR
-                || state.getBlock() == GFRegistry.LIMESTONE_PILLAR
+        return state.getBlock() == GFRegistry.BlockReg.MARBLE_PILLAR
+                || state.getBlock() == GFRegistry.BlockReg.LIMESTONE_PILLAR
                 || state.getBlock() instanceof CappedPillarBlock;
     }
 }

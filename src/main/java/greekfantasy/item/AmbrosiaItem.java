@@ -18,7 +18,7 @@ public class AmbrosiaItem extends Item {
 
     @Override
     public ItemStack getContainerItem(ItemStack itemStack) {
-        return new ItemStack(GFRegistry.HORN);
+        return new ItemStack(GFRegistry.ItemReg.HORN);
     }
 
     @Override

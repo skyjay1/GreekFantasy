@@ -61,7 +61,7 @@ public class WingedSandalsItem extends ArmorItem {
         if (this.allowdedIn(group)) {
             final ItemStack stack = new ItemStack(this);
             if (GreekFantasy.CONFIG.isOverstepEnabled()) {
-                stack.enchant(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
+                stack.enchant(GFRegistry.EnchantmentReg.OVERSTEP_ENCHANTMENT, 1);
             }
             items.add(stack);
         }
@@ -70,8 +70,8 @@ public class WingedSandalsItem extends ArmorItem {
     @Override
     public void onCraftedBy(ItemStack stack, World worldIn, PlayerEntity playerIn) {
         // add Overstep enchantment if not present
-        if (GreekFantasy.CONFIG.isOverstepEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, stack) < 1) {
-            stack.enchant(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
+        if (GreekFantasy.CONFIG.isOverstepEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.OVERSTEP_ENCHANTMENT, stack) < 1) {
+            stack.enchant(GFRegistry.EnchantmentReg.OVERSTEP_ENCHANTMENT, 1);
         }
     }
 
@@ -88,8 +88,8 @@ public class WingedSandalsItem extends ArmorItem {
     public void inventoryTick(final ItemStack stack, final World worldIn, final Entity entityIn,
                               final int itemSlot, final boolean isSelected) {
         // add Overstep enchantment if not present
-        if (GreekFantasy.CONFIG.isOverstepEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.OVERSTEP_ENCHANTMENT, stack) < 1) {
-            stack.enchant(GFRegistry.OVERSTEP_ENCHANTMENT, 1);
+        if (GreekFantasy.CONFIG.isOverstepEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.OVERSTEP_ENCHANTMENT, stack) < 1) {
+            stack.enchant(GFRegistry.EnchantmentReg.OVERSTEP_ENCHANTMENT, 1);
         }
         // add Jump Boost effect
         if (itemSlot == EquipmentSlotType.FEET.getIndex() && stack.getMaxDamage() - stack.getDamageValue() > 10 && entityIn instanceof LivingEntity) {
@@ -200,7 +200,7 @@ public class WingedSandalsItem extends ArmorItem {
 
         @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(GFRegistry.MAGIC_FEATHER);
+            return Ingredient.of(GFRegistry.ItemReg.MAGIC_FEATHER);
         }
 
         @Override

@@ -161,7 +161,7 @@ public class UnicornEntity extends AbstractHorseEntity {
                 return super.mobInteract(player, hand);
             }
 
-            if ((itemstack.isEmpty() && this.isTamed()) || itemstack.getItem() == GFRegistry.GOLDEN_BRIDLE) {
+            if ((itemstack.isEmpty() && this.isTamed()) || itemstack.getItem() == GFRegistry.ItemReg.GOLDEN_BRIDLE) {
                 this.doPlayerRide(player);
                 return ActionResultType.sidedSuccess(this.level.isClientSide());
             }
@@ -219,7 +219,7 @@ public class UnicornEntity extends AbstractHorseEntity {
     @Nullable
     @Override
     public AgeableEntity getBreedOffspring(ServerWorld world, AgeableEntity mate) {
-        UnicornEntity unicorn = GFRegistry.UNICORN_ENTITY.create(world);
+        UnicornEntity unicorn = GFRegistry.EntityReg.UNICORN_ENTITY.create(world);
         this.setOffspringAttributes(mate, unicorn);
         return unicorn;
     }

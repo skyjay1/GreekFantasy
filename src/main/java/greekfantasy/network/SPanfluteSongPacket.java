@@ -44,7 +44,7 @@ public class SPanfluteSongPacket {
     public static SPanfluteSongPacket fromBytes(final PacketBuffer buf) {
         final ResourceLocation sName = buf.readResourceLocation();
         final CompoundNBT sNBT = buf.readNbt();
-        final Optional<Song> sSong = GreekFantasy.PROXY.PANFLUTE_SONGS.readObject(sNBT).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read deity from NBT for packet\n" + error));
+        final Optional<Song> sSong = GreekFantasy.PANFLUTE_SONGS.readObject(sNBT).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read deity from NBT for packet\n" + error));
         return new SPanfluteSongPacket(sName, sSong.orElse(Song.EMPTY));
     }
 
@@ -55,7 +55,7 @@ public class SPanfluteSongPacket {
      * @param buf the PacketBuffer
      */
     public static void toBytes(final SPanfluteSongPacket msg, final PacketBuffer buf) {
-        DataResult<INBT> nbtResult = GreekFantasy.PROXY.PANFLUTE_SONGS.writeObject(msg.song);
+        DataResult<INBT> nbtResult = GreekFantasy.PANFLUTE_SONGS.writeObject(msg.song);
         INBT tag = nbtResult.resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to write deity to NBT for packet\n" + error)).get();
         buf.writeResourceLocation(msg.songName);
         buf.writeNbt((CompoundNBT) tag);
@@ -71,7 +71,7 @@ public class SPanfluteSongPacket {
         NetworkEvent.Context context = contextSupplier.get();
         if (context.getDirection().getReceptionSide() == LogicalSide.CLIENT) {
             context.enqueueWork(() -> {
-                GreekFantasy.PROXY.PANFLUTE_SONGS.put(message.songName, message.song);
+                GreekFantasy.PANFLUTE_SONGS.put(message.songName, message.song);
             });
         }
         context.setPacketHandled(true);

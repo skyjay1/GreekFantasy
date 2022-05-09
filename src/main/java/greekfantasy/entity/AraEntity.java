@@ -56,7 +56,7 @@ public class AraEntity extends CreatureEntity implements IAngerable {
 
     public AraEntity(final EntityType<? extends AraEntity> type, final World worldIn) {
         super(type, worldIn);
-        weapon = GFRegistry.FLINT_KNIFE;
+        weapon = GFRegistry.ItemReg.FLINT_KNIFE;
     }
 
     public static AttributeModifierMap.MutableAttribute createAttributes() {

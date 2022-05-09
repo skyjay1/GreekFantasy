@@ -76,18 +76,18 @@ public class CUseEnchantmentPacket {
                 final ServerPlayerEntity player = context.getSender();
                 final ItemStack item = player.getMainHandItem();
                 // make sure the player is holding an enchanted trident and in correct favor range
-                if (GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT.getRegistryName().equals(message.enchantment)
+                if (GFRegistry.EnchantmentReg.LORD_OF_THE_SEA_ENCHANTMENT.getRegistryName().equals(message.enchantment)
                         && GreekFantasy.CONFIG.isLordOfTheSeaEnabled() && item.getItem() == Items.TRIDENT
-                        && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.LORD_OF_THE_SEA_ENCHANTMENT, item) > 0
+                        && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.LORD_OF_THE_SEA_ENCHANTMENT, item) > 0
                         && !player.getCooldowns().isOnCooldown(Items.TRIDENT)
                         && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseLordOfTheSea(player))) {
                     // The player has used an enchanted item and has the correct favor range, so the effect should be applied
                     useLordOfTheSea(player, item);
                 }
                 // make sure the player is holding an enchanted clock and in correct favor range
-                if (GFRegistry.DAYBREAK_ENCHANTMENT.getRegistryName().equals(message.enchantment)
+                if (GFRegistry.EnchantmentReg.DAYBREAK_ENCHANTMENT.getRegistryName().equals(message.enchantment)
                         && GreekFantasy.CONFIG.isDaybreakEnabled() && item.getItem() == Items.CLOCK
-                        && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.DAYBREAK_ENCHANTMENT, item) > 0
+                        && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.DAYBREAK_ENCHANTMENT, item) > 0
                         && player.getCommandSenderWorld().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)
                         && player.getCommandSenderWorld().getDayTime() % 24000L > 13000L
                         && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseDaybreak(player))) {
@@ -103,7 +103,7 @@ public class CUseEnchantmentPacket {
         final RayTraceResult raytrace = ThunderboltItem.raytraceFromEntity(player.getCommandSenderWorld(), player, 48.0F);
         // add a lightning bolt at the resulting position
         if (raytrace.getType() != RayTraceResult.Type.MISS) {
-            final WhirlEntity whirl = GFRegistry.WHIRL_ENTITY.create(player.getCommandSenderWorld());
+            final WhirlEntity whirl = GFRegistry.EntityReg.WHIRL_ENTITY.create(player.getCommandSenderWorld());
             final BlockPos pos = new BlockPos(raytrace.getLocation());
             // make sure there is enough water here
             if (player.getCommandSenderWorld().getFluidState(pos).is(FluidTags.WATER)

@@ -648,7 +648,7 @@ public class DryadEntity extends CreatureEntity implements IAngerable {
         public static final Variant JUNGLE = new Variant("jungle", () -> Blocks.JUNGLE_SAPLING);
         public static final Variant OAK = new Variant("oak", () -> Blocks.OAK_SAPLING);
         public static final Variant SPRUCE = new Variant("spruce", () -> Blocks.SPRUCE_SAPLING);
-        public static final Variant OLIVE = new Variant(GreekFantasy.MODID, "olive", "dryad", "logs", () -> GFRegistry.OLIVE_SAPLING);
+        public static final Variant OLIVE = new Variant(GreekFantasy.MODID, "olive", "dryad", "logs", () -> GFRegistry.BlockReg.OLIVE_SAPLING);
 
         public static ImmutableMap<String, Variant> OVERWORLD = ImmutableMap.<String, Variant>builder()
                 .put(ACACIA.name, ACACIA).put(BIRCH.name, BIRCH).put(DARK_OAK.name, DARK_OAK)

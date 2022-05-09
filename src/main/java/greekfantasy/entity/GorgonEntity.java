@@ -125,7 +125,7 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
     @Override
     public boolean isInvulnerableTo(final DamageSource source) {
         // immune to damage from other gorgons
-        if (source.getEntity() != null && source.getEntity().getType() == GFRegistry.GORGON_ENTITY) {
+        if (source.getEntity() != null && source.getEntity().getType() == GFRegistry.EntityReg.GORGON_ENTITY) {
             return true;
         }
         return super.isInvulnerableTo(source);
@@ -167,9 +167,9 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
             }
             // get list of all nearby players who have been petrified
             final List<PlayerEntity> list = this.getCommandSenderWorld().getEntitiesOfClass(PlayerEntity.class, this.getBoundingBox().inflate(16.0D, 16.0D, 16.0D),
-                    e -> e.getEffect(GFRegistry.PETRIFIED_EFFECT) != null);
+                    e -> e.getEffect(GFRegistry.MobEffectReg.PETRIFIED_EFFECT) != null);
             for (final PlayerEntity p : list) {
-                level.addParticle(GFRegistry.GORGON_PARTICLE, true, p.getX(), p.getY(), p.getZ(), 0D, 0D, 0D);
+                level.addParticle(GFRegistry.ParticleReg.GORGON_PARTICLE, true, p.getX(), p.getY(), p.getZ(), 0D, 0D, 0D);
             }
         }
     }
@@ -236,12 +236,12 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
      */
     public boolean isImmuneToStareAttack(final LivingEntity target) {
         // check for mirror potion effect
-        if ((GreekFantasy.CONFIG.isMirrorPotionEnabled() && target.getEffect(GFRegistry.MIRROR_EFFECT) != null)
+        if ((GreekFantasy.CONFIG.isMirrorPotionEnabled() && target.getEffect(GFRegistry.MobEffectReg.MIRROR_EFFECT) != null)
                 || target.isSpectator() || !target.canChangeDimensions() || (target instanceof PlayerEntity && ((PlayerEntity) target).isCreative())) {
             return true;
         }
         // check for mirror enchantment
-        return GreekFantasy.CONFIG.isMirrorEnabled() && EnchantmentHelper.getEnchantments(target.getItemInHand(Hand.OFF_HAND)).containsKey(GFRegistry.MIRROR_ENCHANTMENT);
+        return GreekFantasy.CONFIG.isMirrorEnabled() && EnchantmentHelper.getEnchantments(target.getItemInHand(Hand.OFF_HAND)).containsKey(GFRegistry.EnchantmentReg.MIRROR_ENCHANTMENT);
     }
 
     /**
@@ -255,7 +255,7 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
             target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, PETRIFY_DURATION, 1, false, false, true));
             target.addEffect(new EffectInstance(Effects.WEAKNESS, PETRIFY_DURATION, 1, false, false, true));
         } else {
-            target.addEffect(new EffectInstance(GFRegistry.PETRIFIED_EFFECT, PETRIFY_DURATION, 0, false, false, true));
+            target.addEffect(new EffectInstance(GFRegistry.MobEffectReg.PETRIFIED_EFFECT, PETRIFY_DURATION, 0, false, false, true));
         }
         // apply medusa effect
         if (this.isMedusa()) {
@@ -268,7 +268,7 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
     }
 
     public static boolean isMirrorShield(final ItemStack stack) {
-        return EnchantmentHelper.getEnchantments(stack).containsKey(GFRegistry.MIRROR_ENCHANTMENT);
+        return EnchantmentHelper.getEnchantments(stack).containsKey(GFRegistry.EnchantmentReg.MIRROR_ENCHANTMENT);
     }
 
     // States //

@@ -4,7 +4,6 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -17,7 +16,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -46,7 +44,7 @@ public class ArionEntity extends HorseEntity {
     }
 
     public static ArionEntity spawnArion(final ServerWorld world, final PlayerEntity player, final HorseEntity horse) {
-        ArionEntity entity = GFRegistry.ARION_ENTITY.create(world);
+        ArionEntity entity = GFRegistry.EntityReg.ARION_ENTITY.create(world);
         entity.copyPosition(horse);
         entity.finalizeSpawn(world, world.getCurrentDifficultyAt(horse.blockPosition()), SpawnReason.CONVERSION, null, null);
         if (horse.hasCustomName()) {

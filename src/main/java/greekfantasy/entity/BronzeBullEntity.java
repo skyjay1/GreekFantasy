@@ -91,7 +91,7 @@ public class BronzeBullEntity extends MonsterEntity {
     }
 
     public static BronzeBullEntity spawnBronzeBull(final World world, final BlockPos pos, final float yaw) {
-        BronzeBullEntity entity = GFRegistry.BRONZE_BULL_ENTITY.create(world);
+        BronzeBullEntity entity = GFRegistry.EntityReg.BRONZE_BULL_ENTITY.create(world);
         entity.moveTo(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
         entity.yBodyRot = yaw;
         world.addFreshEntity(entity);

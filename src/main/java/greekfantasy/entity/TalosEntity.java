@@ -93,7 +93,7 @@ public class TalosEntity extends MonsterEntity implements IRangedAttackMob {
     }
 
     public static TalosEntity spawnTalos(final World world, final BlockPos pos, final float yaw) {
-        TalosEntity entity = GFRegistry.TALOS_ENTITY.create(world);
+        TalosEntity entity = GFRegistry.EntityReg.TALOS_ENTITY.create(world);
         entity.moveTo(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
         entity.yBodyRot = yaw;
         world.addFreshEntity(entity);

@@ -143,7 +143,7 @@ public class CentaurEntity extends CreatureEntity implements IAngerable, IRanged
     @Override
     public boolean isInvulnerableTo(final DamageSource source) {
         // immune to damage from other centaurs
-        if (source.getEntity() != null && source.getEntity().getType() == GFRegistry.CENTAUR_ENTITY) {
+        if (source.getEntity() != null && source.getEntity().getType() == GFRegistry.EntityReg.CENTAUR_ENTITY) {
             return true;
         }
         return super.isInvulnerableTo(source);

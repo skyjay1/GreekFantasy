@@ -18,7 +18,7 @@ public class MobHeadTileEntity extends TileEntity {
     private boolean wall = false;
 
     public MobHeadTileEntity() {
-        super(GFRegistry.BOSS_HEAD_TE);
+        super(GFRegistry.BlockEntityReg.BOSS_HEAD_TE);
     }
 
     public HeadType getHeadType() {

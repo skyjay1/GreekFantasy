@@ -27,11 +27,11 @@ public class DiscusEntity extends ProjectileItemEntity {
     }
 
     private DiscusEntity(World worldIn, LivingEntity thrower) {
-        super(GFRegistry.DISCUS_ENTITY, thrower, worldIn);
+        super(GFRegistry.EntityReg.DISCUS_ENTITY, thrower, worldIn);
     }
 
     private DiscusEntity(World worldIn, double x, double y, double z) {
-        super(GFRegistry.DISCUS_ENTITY, x, y, z, worldIn);
+        super(GFRegistry.EntityReg.DISCUS_ENTITY, x, y, z, worldIn);
     }
 
     public static DiscusEntity create(World worldIn, double x, double y, double z) {
@@ -44,7 +44,7 @@ public class DiscusEntity extends ProjectileItemEntity {
 
     @Override
     protected Item getDefaultItem() {
-        return GFRegistry.DISCUS;
+        return GFRegistry.ItemReg.DISCUS;
     }
 
     @Override

@@ -60,7 +60,7 @@ public class ElpisEntity extends CreatureEntity implements IFlyingAnimal {
     protected static final IOptionalNamedTag<Item> ELPIS_TRADE = ItemTags.createOptional(new ResourceLocation(GreekFantasy.MODID, "elpis_trade"));
 
     private static final Predicate<Item> TRADE_ITEM = i -> ELPIS_TRADE.contains(i);
-    private static final Supplier<ItemStack> TRADE_RESULT = () -> new ItemStack(GFRegistry.ICHOR);
+    private static final Supplier<ItemStack> TRADE_RESULT = () -> new ItemStack(GFRegistry.ItemReg.ICHOR);
     public static final int wanderDistance = 8;
     private static final int maxAge = 4800;
     private static final int maxDespawnTime = 40;

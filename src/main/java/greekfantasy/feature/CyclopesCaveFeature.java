@@ -67,7 +67,7 @@ public class CyclopesCaveFeature extends SimpleTemplateFeature {
 
         // spawn a cyclopes
         final BlockPos entityPos = heightPos.subtract((offset.offset(2, 0, 2).rotate(rotation))).above();
-        final CyclopesEntity entity = GFRegistry.CYCLOPES_ENTITY.create(reader.getLevel());
+        final CyclopesEntity entity = GFRegistry.EntityReg.CYCLOPES_ENTITY.create(reader.getLevel());
         entity.moveTo(entityPos.getX() + rand.nextDouble(), entityPos.getY() + 0.5D, entityPos.getZ() + rand.nextDouble(), 0, 0);
         entity.setPersistenceRequired();
         reader.addFreshEntity(entity);

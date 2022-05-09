@@ -317,7 +317,7 @@ public class OrthusEntity extends TameableEntity implements IMob, IAngerable {
 
     @Override
     public AgeableEntity getBreedOffspring(ServerWorld world, AgeableEntity parent) {
-        OrthusEntity baby = GFRegistry.ORTHUS_ENTITY.create(world);
+        OrthusEntity baby = GFRegistry.EntityReg.ORTHUS_ENTITY.create(world);
         UUID uuid = this.getOwnerUUID();
         if (uuid != null) {
             baby.setOwnerUUID(uuid);

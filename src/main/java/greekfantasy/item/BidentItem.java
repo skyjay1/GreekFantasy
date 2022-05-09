@@ -26,13 +26,13 @@ public class BidentItem extends SpearItem {
     @Override
     protected void throwSpear(final World world, final PlayerEntity thrower, final ItemStack stack) {
         // Special behavior when enchanted
-        if (EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.RAISING_ENCHANTMENT, stack) > 0) {
+        if (EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.RAISING_ENCHANTMENT, stack) > 0) {
             // Attempt to spawn a Sparti where the player is looking
             final RayTraceResult raytrace = ThunderboltItem.raytraceFromEntity(world, thrower, (float) thrower.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue());
             if (raytrace.getType() != RayTraceResult.Type.MISS) {
                 stack.hurtAndBreak(25, thrower, e -> e.broadcastBreakEvent(thrower.getUsedItemHand()));
                 // spawn a sparti and set location
-                final SpartiEntity sparti = GFRegistry.SPARTI_ENTITY.create(world);
+                final SpartiEntity sparti = GFRegistry.EntityReg.SPARTI_ENTITY.create(world);
                 sparti.setPos(raytrace.getLocation().x(), raytrace.getLocation().y(), raytrace.getLocation().z());
                 sparti.xRot = MathHelper.wrapDegrees(thrower.yRot + 180.0F);
                 sparti.setTame(true);

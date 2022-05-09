@@ -25,7 +25,7 @@ public class PigSpellEntity extends EffectProjectileEntity {
     }
 
     protected PigSpellEntity(World worldIn, LivingEntity thrower) {
-        this(GFRegistry.PIG_SPELL_ENTITY, worldIn);
+        this(GFRegistry.EntityReg.PIG_SPELL_ENTITY, worldIn);
         super.setOwner(thrower);
         this.setPos(thrower.getX(), thrower.getEyeY() - 0.1D, thrower.getZ());
         // this unmapped method from ProjectileEntity does some math, then calls #shoot
@@ -47,7 +47,7 @@ public class PigSpellEntity extends EffectProjectileEntity {
         Effect effect = Effects.MOVEMENT_SLOWDOWN;
         int amp = 1;
         if (GreekFantasy.CONFIG.isPigEnabled() && GreekFantasy.CONFIG.canPigApply(entity.getType().getRegistryName().toString())) {
-            effect = GFRegistry.PIG_EFFECT;
+            effect = GFRegistry.MobEffectReg.PIG_EFFECT;
             amp = 0;
         }
         final int duration = GreekFantasy.CONFIG.getPigWandDuration();

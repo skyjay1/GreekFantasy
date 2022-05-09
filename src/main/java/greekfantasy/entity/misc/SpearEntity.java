@@ -53,7 +53,7 @@ public class SpearEntity extends AbstractArrowEntity {
     }
 
     public SpearEntity(World world, LivingEntity thrower, ItemStack item, Consumer<Entity> hitEntity) {
-        super(GFRegistry.SPEAR_ENTITY, thrower, world);
+        super(GFRegistry.EntityReg.SPEAR_ENTITY, thrower, world);
         setArrowStack(item);
         onHitEntity = hitEntity;
     }
