@@ -36,19 +36,19 @@ public class GreekFantasy {
 
     private static boolean isRpgGodsLoaded;
 
-
     public GreekFantasy() {
         // register config
         GreekFantasy.LOGGER.debug("registerConfig");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC);
-        // registry event listeners
+        // registry listeners
         GFRegistry.register();
-        // forge event listeners
-        //MinecraftForge.EVENT_BUS.register(CommonEventHandler.class);
-        // client-only listeners
+        // event listeners
+        MinecraftForge.EVENT_BUS.register(GFEvents.ForgeHandler.class);
+        FMLJavaModLoadingContext.get().getModEventBus().register(GFEvents.ModHandler.class);
+        // client-only event listeners
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            //FMLJavaModLoadingContext.get().getModEventBus().register(greekfantasy.event.ClientEventHandler.ModEvents.class);
-            //MinecraftForge.EVENT_BUS.register(greekfantasy.event.ClientEventHandler.ForgeEvents.class);
+            MinecraftForge.EVENT_BUS.register(greekfantasy.client.GFClientEvents.ForgeHandler.class);
+            FMLJavaModLoadingContext.get().getModEventBus().register(greekfantasy.client.GFClientEvents.ModHandler.class);
         });
         // other listeners
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::setup);

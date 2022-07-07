@@ -1,139 +1,211 @@
-# TO DO (Planned Features)
+# TO DO
 
-List of features that could be added to the mod at some point.
+List of planned features to add to Greek Fantasy.
 
 __Key:__
+
 `X Complete` `~ In Progress` `_ Incomplete`
 
 ## Bugs and urgent updates
 
-- Pomegranate trees and Nether shrines not generating
-- Summoning animations not playing on dedicated server
+- Everything ;^D
 
-  X Geryon  _ Charybdis  _ Cerberus  X Giant Boar  _ Sparti  X Talos
-
-## Entity basics
+## Entities
 
 __Key:__
+
 `[Model] [AI] [Sounds] [Loot table] [Spawning]`
 
-- X X _ X X Naiad
-- X X _ X X Dryad
-- X X _ X X Lampad
-- X X _ X X Satyr
-- X X _ X X Centaur
-- X X X X X Cyprian Centaur (bull-head, hostile)
-- X X X X X Minotaur
-- X X ~ X X Gorgon
-- X X X X X Harpy
-- X X _ X X Empusa
-- X X X X X Shade
-- X X ~ X X Siren (hostile)
-- X X ~ X X Cerastes (ram-horned serpent)
-- X X _ X X Ara (Propoetide)
-- X X _ X X Cyclopes
-- X X X X X Gigante
-- X X X X X Unicorn
-- X X X X X Orthus (2-headed dog)
-- X X X X X Elpis (hope)
-- X X X X X Sparti
-- X X X X X Mad Cow (summoned by Geryon)
-- X X X X X Boss: Cerberus
-- X X X X X Boss: Geryon (3-headed Gigante)
-- X X X X X Boss: Charybdis
-- X X X X X Boss: Talos
-- X X _ X ~ Boss: Nemean Lion
-- X X _ X X Boss: Bronze Bull
-- X X ~ X X Miniboss: Python
-- X X X X X Miniboss: Giant Boar
-- X X ~ X X Miniboss: Medusa
-- X X X _ _ Miniboss: Cretan Minotaur
-- X X X ~ X Miniboss: Circe
-- X X ~ X X Miniboss: Hydra
-- X X X X X Fury
-- X X ~ X X Drakaina
-- X X X X X Arion
-- X X X X X Whirl
-- X X X X X Pegasus
-- X X X X X Golden Ram (becomes regular sheep when sheared)
-- X X _ X X Makhai
-- X X X X X Arachne (spider/woman)
-- X X X X X Baby Spider
-- ~ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
+- _ _ _ _ _ Naiad
+- _ _ _ _ _ Dryad
+- _ _ _ _ _ Lampad
+- _ _ _ _ _ Satyr
+- _ _ _ _ _ Centaur
+- _ _ _ _ _ Cyprian Centaur
+- _ _ _ _ _ Minotaur
+- _ _ _ _ _ Gorgon
+- _ _ _ _ _ Harpy
+- _ _ _ _ _ Empusa
+- _ _ _ _ _ Shade
+- _ _ _ _ _ Siren
+- _ _ _ _ _ Cerastes
+- _ _ _ _ _ Ara
+- _ _ _ _ _ Cyclopes
+- _ _ _ _ _ Gigante
+- _ _ _ _ _ Unicorn
+- _ _ _ _ _ Orthus
+- _ _ _ _ _ Elpis
+- _ _ _ _ _ Sparti
+- _ _ _ _ _ Mad Cow (summoned by Geryon)
+- _ _ _ _ _ Boss: Cerberus
+- _ _ _ _ _ Boss: Geryon (3-headed Gigante)
+- _ _ _ _ _ Boss: Charybdis
+- _ _ _ _ _ Boss: Talos
+- _ _ _ _ _ Boss: Nemean Lion
+- _ _ _ _ _ Boss: Bronze Bull
+- _ _ _ _ _ Miniboss: Python
+- _ _ _ _ _ Miniboss: Giant Boar
+- _ _ _ _ _ Miniboss: Medusa
+- _ _ _ _ _ Miniboss: Cretan Minotaur
+- _ _ _ _ _ Miniboss: Circe
+- _ _ _ _ _ Miniboss: Hydra
+- _ _ _ _ _ Miniboss: Arachne
+- _ _ _ _ _ Fury
+- _ _ _ _ _ Drakaina
+- _ _ _ _ _ Arion
+- _ _ _ _ _ Whirl
+- _ _ _ _ _ Pegasus
+- _ _ _ _ _ Golden Ram
+- _ _ _ _ _ Makhai
+- _ _ _ _ _ Baby Spider
+- _ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 
-## Entity AI
-
-- X Dryads trade with player
-- _ Satyrs trade with player
-- X More Satyr variants
-- ~ Centaurs / Cyprians shoot arrows (TODO run around while shooting)
-
-## Favor
-
-__Key:__
-`[Altar] [Deity]`
-
-- X _ Aphrodite
-- X X Ares
-- X X Athena
-- X _ Demeter
-- X _ Dionysus
-- X _ Hecate
-- X _ Hephaestus
-- X _ Hestia
-- X ~ Persephone
-
-- ~ Special abilities ideas:
-  - _ Neutral mobs targetting player become neutral after a few seconds (Aphrodite)
 
 ## Structures
 
 __Key:__
+
 `[Design] [Worldgen] [Loot]`
 
-- X X X Arachne Pit
-- ~ _ _ Labyrinth
-- _ _ _ Centaur Camps
-- _ _ _ Ruined Temple
+- _ _ _ Limestone veins
+- _ _ _ Marble veins
+- _ _ _ Olive Forest?
+- _ _ _ Satyr Camp
+- _ _ _ Ara Camp
+- _ _ _ Small Shrines
+- _ _ _ Harpy Nest
+- _ _ _ Python Pit
+- _ _ _ Lion Den
+- _ _ _ Cyclopes Cave
+- _ _ _ Olive Trees
+- _ _ _ Pomegranate Trees
+- _ _ _ Golden Tree
+- _ _ _ Arachne Pit
+
 
 ## Blocks
 
 __Key:__
+
 `[In-game] [Use] [Obtainable]`
 
-- _ _ _ Other heads: Minotaur, Python, Medusa
-- _ _ _ Olive blocks: button, fence, boat, pressure plate, sign
-- _ _ _ Pomegranate blocks: button, fence, boat, pressure plate, sign
-- _ _ _ Grapes / grapevines?
+- _ _ _ Limestone, variants, and Pillar
+- _ _ _ Marble, variants, and Pillar
+- _ _ _ Olive Log, leaves, planks, and variants
+- _ _ _ Pomegranate Log, leaves, planks, and variants
+- _ _ _ Mysterious Box
+- _ _ _ Palladium
+- _ _ _ Ichor-Infused Block
+- _ _ _ Terracotta Vase and variants
+- _ _ _ Mob Heads (Orthus, Gigante, Cerberus)
+- _ _ _ Oil Lamp
+- _ _ _ Oil
+- _ _ _ Pomegranate Sapling
+- _ _ _ Golden Sapling
+- _ _ _ Nest
+- _ _ _ Wild Rose
+- _ _ _ Cretan Stone and variants
+- _ _ _ Reeds
+- _ _ _ Golden String
 
 
 ## Items
 
 __Key:__
+
 `[In-game] [Use] [Obtainable]`
 
+- _ _ _ Spawn Eggs
+- _ _ _ Ichor
+- _ _ _ Horn
+- _ _ _ Snakeskin
+- _ _ _ Purified Snakeskin
+- _ _ _ Tough Snakeskin
+- _ _ _ Snake Fang
+- _ _ _ Styxian Shard
+- _ _ _ Talos Heart
+- _ _ _ Dog Claw
+- _ _ _ Fiery Hide
+- _ _ _ Fiery Bat Wing
+- _ _ _ Fiery Gear
+- _ _ _ Cursed Hair
+- _ _ _ Boar Ear
+- _ _ _ Magic Feather
+- _ _ _ Olives
+- _ _ _ Golden Fleece
+- _ _ _ Spider Banner Pattern
+- _ _ _ Ambrosia
+- _ _ _ Horn of Plenty
+- _ _ _ Dragon Tooth
+- _ _ _ Healing Rod
+- _ _ _ Helm of Darkness
+- _ _ _ Conch
+- _ _ _ Bag of Wind
+- _ _ _ Winged Sandals
+- _ _ _ Golden Tree Sapling
+- _ _ _ Thunderbolt
+- _ _ _ Wand of Circe
+- _ _ _ Bident
+- _ _ _ Cursed Bow
+- _ _ _ Bow of Apollo
+- _ _ _ Bow of Artemis
+- _ _ _ Club (wood, stone, iron)
+- _ _ _ Spear (wood, stone, iron)
+- _ _ _ Greek Fire
+- _ _ _ Flint Knife
+- _ _ _ Ivory Sword
+- _ _ _ Gorgon Blood
+- _ _ _ Discus
+- _ _ _ Mirror
+- _ _ _ Golden Bridle
+- _ _ _ Unicorn Horn
+- _ _ _ Panflute
+- _ _ _ Lyre (normal, golden)
+- _ _ _ Web Ball
+- _ _ _ Olive Oil
+- _ _ _ Salve
+- _ _ _ Pomegranate Seeds
+- _ _ _ Achilles Armor
+- _ _ _ Snakeskin Armor
+- _ _ _ Nemean Lion Hide
 
 
-## Achievements
+## Advancements
 
-- _ Kill a Cretan Minotaur
-- _ Kill a Bronze Bull
-- _ Kill a Nemean Lion
-- _ Anger Dryads by chopping logs
-- _ Kill all minibosses: Python, Giant Boar, Circe, Medusa, Nemean Lion
-- _ Use a unicorn horn
+- _ Recipe Advancements (data gen?)
+
+## Potions
+
+- _ Curse of Circe
+- _ Mirroring
+- _ Stunned
+- _ Petrified
+- _ Prisoner of Hades
+
+
+## Enchantments
+
+- _ Overstep
+- _ Hunting
+- _ Smashing
+- _ Mirroring
+- _ Flying
+- _ Fireflash
+- _ Lord of the Sea
+- _ Raising
+- _ Daybreak
+- _ Silkstep
 
 
 ## Other
 
-- _ Crafting recipes for marble/limestone (renewable)
-- ~ Block and Item tags (wooden_doors, etc.)
 
 
 ## Misc Ideas and Inspirations
 
-_Can I do something with these?_
+Can I do something with these?
 
+- Sphinx
 - Muses: Calliope, Clio, Erato, Euterpe, Melpomene, Polyhymnia, Terpsichore, Thalia, Urania
 - Amazons (fight like players w/ sword and shield, can be hired) (queen is Hippolyta)
 - Amazonian Girdle (Hippolyta)

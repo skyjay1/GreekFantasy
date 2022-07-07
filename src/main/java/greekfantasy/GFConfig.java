@@ -124,7 +124,7 @@ public class GFConfig {
     private boolean nerfParalysis;
 
     // spawn configs
-    public final Map<String, BiomeWhitelistConfig> MOB_SPAWNS = new HashMap<>();
+    //public final Map<String, BiomeWhitelistConfig> MOB_SPAWNS = new HashMap<>();
     // special spawn configs
     /*private final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
     private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
