@@ -915,6 +915,8 @@ public final class GFRegistry {
         public static final Item GREEK_FIRE = null;
         @ObjectHolder("palladium")
         public static final Item PALLADIUM = null;
+        @ObjectHolder("mirror")
+        public static final Item MIRROR = null;
 
         @SubscribeEvent
         public static void registerItems(final RegistryEvent.Register<Item> event) {

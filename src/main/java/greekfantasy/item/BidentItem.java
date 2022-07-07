@@ -3,6 +3,7 @@ package greekfantasy.item;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.SpartiEntity;
+import greekfantasy.integration.RGCompat;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,7 +27,8 @@ public class BidentItem extends SpearItem {
     @Override
     protected void throwSpear(final World world, final PlayerEntity thrower, final ItemStack stack) {
         // Special behavior when enchanted
-        if (EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.RAISING_ENCHANTMENT, stack) > 0) {
+        if (EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.RAISING_ENCHANTMENT, stack) > 0
+            && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseRaising(thrower))) {
             // Attempt to spawn a Sparti where the player is looking
             final RayTraceResult raytrace = ThunderboltItem.raytraceFromEntity(world, thrower, (float) thrower.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue());
             if (raytrace.getType() != RayTraceResult.Type.MISS) {

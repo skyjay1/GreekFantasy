@@ -232,16 +232,29 @@ public class GorgonEntity extends MonsterEntity implements IRangedAttackMob {
     /**
      * @param target the entity that may or may not be immune to stare attack
      * @return true if the target entity cannot be affected by stare attack
-     * (the player has an enchanted mirror shield of the mirror potion effect)
+     * (the player has a mirror, enchanted mirror shield, or mirror potion effect)
      */
     public boolean isImmuneToStareAttack(final LivingEntity target) {
+        // check for applicable target
+        if (target.isSpectator() || !target.canChangeDimensions() || (target instanceof PlayerEntity && ((PlayerEntity) target).isCreative())) {
+            return true;
+        }
+        // check for mirror item
+        if(target.getMainHandItem().getItem() == GFRegistry.ItemReg.MIRROR || target.getOffhandItem().getItem() == GFRegistry.ItemReg.MIRROR) {
+            return true;
+        }
         // check for mirror potion effect
-        if ((GreekFantasy.CONFIG.isMirrorPotionEnabled() && target.getEffect(GFRegistry.MobEffectReg.MIRROR_EFFECT) != null)
-                || target.isSpectator() || !target.canChangeDimensions() || (target instanceof PlayerEntity && ((PlayerEntity) target).isCreative())) {
+        if ((GreekFantasy.CONFIG.isMirrorPotionEnabled() && target.getEffect(GFRegistry.MobEffectReg.MIRROR_EFFECT) != null)) {
             return true;
         }
         // check for mirror enchantment
-        return GreekFantasy.CONFIG.isMirrorEnabled() && EnchantmentHelper.getEnchantments(target.getItemInHand(Hand.OFF_HAND)).containsKey(GFRegistry.EnchantmentReg.MIRROR_ENCHANTMENT);
+        if(GreekFantasy.CONFIG.isMirrorEnabled() &&
+                (EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.MIRROR_ENCHANTMENT, target.getMainHandItem()) > 0)
+                    || EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.MIRROR_ENCHANTMENT, target.getOffhandItem()) > 0) {
+            return true;
+        }
+        // target is not immune
+        return false;
     }
 
     /**

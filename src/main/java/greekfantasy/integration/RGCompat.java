@@ -25,9 +25,6 @@ public final class RGCompat {
     }
 
     public boolean canUseRaising(final PlayerEntity player) {
-        if(!GreekFantasy.isRGLoaded()) {
-            return false;
-        }
         return hasFavorRange(player, HADES, 9, 10) || hasPatron(player, HADES);
     }
 
@@ -45,6 +42,10 @@ public final class RGCompat {
 
     public boolean canUseDaybreak(final PlayerEntity player) {
         return hasFavorRange(player, APOLLO, 9, 10) || hasPatron(player, APOLLO);
+    }
+
+    public boolean canRemovePrisonerEffect(final PlayerEntity player) {
+        return hasFavorRange(player, HADES, 4, 10) || hasPatron(player, HADES);
     }
 
     private boolean hasFavorRange(final PlayerEntity player, final ResourceLocation deity, final int min, final int max) {
