@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7.32'
     }
 }
@@ -20,12 +20,13 @@ version = project.mod_version
 group = project.maven_group // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = project.archives_base_name
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
 mixin {
     disableAnnotationProcessorCheck()
 }
-
 
 minecraft {
    
@@ -41,10 +42,7 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -57,11 +55,24 @@ minecraft {
         server {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+
+            mods {
+                greekfantasy {
+                    source sourceSets.main
+                }
+            }
+        }
+		
+		data {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            args '--mod', 'greekfantasy', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
                 greekfantasy {
@@ -73,10 +84,6 @@ minecraft {
 }
 
 repositories {
-    maven { // HWYLA
-        name 'tehnut'
-        url 'https://maven.tehnut.info'
-    }
     maven { // JEI
         name 'mezz'
         url 'https://dvs1.progwml6.com/files/maven'
@@ -96,12 +103,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:rpggods-${project.rpggods_project}:${project.rpggods_file}")
     runtimeOnly fg.deobf("curse.maven:rpggods-${project.rpggods_project}:${project.rpggods_file}")
 
-    // HWYLA
-	compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}:api")
-	runtimeOnly fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
-
     // JEI
-	compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
+	compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 	runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
 }
@@ -188,4 +191,8 @@ task javadocJar(type: Jar, dependsOn: 'javadoc') {
 }
 artifacts {
     archives javadocJar
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }

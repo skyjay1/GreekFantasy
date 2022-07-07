@@ -5,15 +5,15 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import greekfantasy.GreekFantasy;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.NBTDynamicOps;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.LogicalSidedProvider;
+import rpggods.RPGGods;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class GenericJsonReloadListener<T> extends JsonReloadListener {
+public class GenericJsonReloadListener<T> extends SimpleJsonResourceReloadListener {
 
     private final Codec<T> codec;
     private final Consumer<GenericJsonReloadListener<T>> syncOnReload;
@@ -79,9 +79,9 @@ public class GenericJsonReloadListener<T> extends JsonReloadListener {
         return OBJECTS.entrySet();
     }
 
-    public DataResult<INBT> writeObject(final T obj) {
+    public DataResult<Tag> writeObject(final T obj) {
         // write Object T to NBT
-        return codec.encodeStart(NBTDynamicOps.INSTANCE, obj);
+        return codec.encodeStart(NbtOps.INSTANCE, obj);
     }
 
     public DataResult<T> jsonToObject(final JsonElement json) {
@@ -89,28 +89,33 @@ public class GenericJsonReloadListener<T> extends JsonReloadListener {
         return codec.parse(JsonOps.INSTANCE, json);
     }
 
-    public DataResult<T> readObject(final INBT nbt) {
+    public DataResult<T> readObject(final Tag nbt) {
         // read Object T from nbt
-        return codec.parse(NBTDynamicOps.INSTANCE, nbt);
+        return codec.parse(NbtOps.INSTANCE, nbt);
+    }
+
+    public void syncOnReload() {
+        syncOnReload.accept(this);
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> jsons, IResourceManager manager, IProfiler profile) {
+    protected void apply(Map<ResourceLocation, JsonElement> jsons, ResourceManager manager, ProfilerFiller profile) {
         // build the maps
         OBJECTS.clear();
-        GreekFantasy.LOGGER.debug("Parsing Reloadable JSON map of type " + objClass.getName());
-        jsons.forEach((key, input) -> OBJECTS.put(key, jsonToObject(input).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read JSON object for type" + objClass.getName() + "\n" + error))));
+        RPGGods.LOGGER.debug("Parsing Reloadable JSON map of type " + objClass.getName());
+        jsons.forEach((key, input) -> OBJECTS.put(key, jsonToObject(input).resultOrPartial(
+                error -> RPGGods.LOGGER.error("Failed to read JSON object for type" + objClass.getName() + "\n" + error))));
         // print size of the map for debugging purposes
-        GreekFantasy.LOGGER.debug("Found " + OBJECTS.size() + " entries");
+        RPGGods.LOGGER.debug("Found " + OBJECTS.size() + " entries");
         boolean isServer = true;
         try {
-            LogicalSidedProvider.INSTANCE.get(LogicalSide.SERVER);
+            LogicalSidedProvider.WORKQUEUE.get(LogicalSide.SERVER);
         } catch (Exception e) {
             isServer = false;
         }
         // if we're on the server, send syncing packets
         if (isServer == true) {
-            syncOnReload.accept(this);
+            syncOnReload();
         }
     }
 }

@@ -1,24 +1,15 @@
 package greekfantasy;
 
-import greekfantasy.util.BiomeWhitelistConfig;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.Dimension;
-import net.minecraft.world.biome.Biomes;
-import net.minecraftforge.common.BiomeDictionary;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GFConfig {
 
     // item configs
-    public final ForgeConfigSpec.DoubleValue SANDALS_SPEED_BONUS;
+    /*public final ForgeConfigSpec.DoubleValue SANDALS_SPEED_BONUS;
     public final ForgeConfigSpec.BooleanValue NERF_AMBROSIA;
     public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
     public final ForgeConfigSpec.IntValue UNICORN_HORN_DURABILITY;
@@ -38,7 +29,7 @@ public class GFConfig {
     private final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
     private final ForgeConfigSpec.IntValue PIG_WAND_COOLDOWN;
     private final ForgeConfigSpec.IntValue PIG_WAND_DURATION;
-    private final ForgeConfigSpec.BooleanValue WINGED_SANDALS_DEPLETE;
+    private final ForgeConfigSpec.BooleanValue WINGED_SANDALS_DEPLETE;*/
     private boolean helmHidesArmor;
     private boolean dragonToothSpawnsSparti;
     private boolean swordOfHuntBypassesArmor;
@@ -54,7 +45,7 @@ public class GFConfig {
     private boolean wingedSandalsDeplete;
 
     // effect configs
-    private final ForgeConfigSpec.BooleanValue FORCE_FOV_RESET;
+   /* private final ForgeConfigSpec.BooleanValue FORCE_FOV_RESET;
     private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_JUMP;
     private final ForgeConfigSpec.BooleanValue STUN_PREVENTS_USE;
     private final ForgeConfigSpec.BooleanValue OVERSTEP_ENABLED;
@@ -75,7 +66,7 @@ public class GFConfig {
     private final ForgeConfigSpec.BooleanValue PIG_DROPS_ARMOR;
     private final ForgeConfigSpec.BooleanValue PIG_PREVENTS_TARGET;
     private final ForgeConfigSpec.BooleanValue IS_PIG_ENTITY_WHITELIST;
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> PIG_ENTITY_WHITELIST;
+    private final ForgeConfigSpec.ConfigValue<List<? extends String>> PIG_ENTITY_WHITELIST;*/
     private boolean forceFOVReset;
     private boolean stunPreventsJump;
     private boolean stunPreventsUse;
@@ -98,13 +89,13 @@ public class GFConfig {
     private boolean pigPreventsTarget;
 
     // potion configs
-    private final ForgeConfigSpec.BooleanValue MIRROR_POTION;
-    private final ForgeConfigSpec.BooleanValue PIG_POTION;
+   /* private final ForgeConfigSpec.BooleanValue MIRROR_POTION;
+    private final ForgeConfigSpec.BooleanValue PIG_POTION;*/
     private boolean mirrorPotion;
     private boolean pigPotion;
 
     // special attack configs
-    public final ForgeConfigSpec.BooleanValue DRAKAINA_ATTACK;
+ /*   public final ForgeConfigSpec.BooleanValue DRAKAINA_ATTACK;
     public final ForgeConfigSpec.BooleanValue EMPUSA_ATTACK;
     public final ForgeConfigSpec.BooleanValue FURY_ATTACK;
     public final ForgeConfigSpec.BooleanValue GORGON_ATTACK;
@@ -122,7 +113,7 @@ public class GFConfig {
     private final ForgeConfigSpec.IntValue SPARTI_LIFESPAN;
     private final ForgeConfigSpec.IntValue WHIRL_LIFESPAN;
     private final ForgeConfigSpec.BooleanValue NERF_STUNNING;
-    private final ForgeConfigSpec.BooleanValue NERF_PARALYSIS;
+    private final ForgeConfigSpec.BooleanValue NERF_PARALYSIS;*/
     private boolean whirlInvulnerable;
     private boolean dryadAngryOnHarvest;
     private int dryadAngryRange;
@@ -135,7 +126,7 @@ public class GFConfig {
     // spawn configs
     public final Map<String, BiomeWhitelistConfig> MOB_SPAWNS = new HashMap<>();
     // special spawn configs
-    private final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
+    /*private final ForgeConfigSpec.BooleanValue SHADE_SPAWN_ON_DEATH;
     private final ForgeConfigSpec.IntValue SATYR_SHAMAN_CHANCE;
     private final ForgeConfigSpec.DoubleValue GORGON_MEDUSA_CHANCE;
     private final ForgeConfigSpec.DoubleValue LIGHTNING_MEDUSA_CHANCE;
@@ -149,7 +140,7 @@ public class GFConfig {
     private final ForgeConfigSpec.BooleanValue NEMEAN_LION_BOSS_BAR;
     private final ForgeConfigSpec.IntValue ELPIS_SPAWN_CHANCE;
     public final ForgeConfigSpec.IntValue NUM_SPARTI_SPAWNED;
-    private final ForgeConfigSpec.BooleanValue GIANT_BOAR_NON_NETHER;
+    private final ForgeConfigSpec.BooleanValue GIANT_BOAR_NON_NETHER;*/
     private boolean shadeSpawnOnDeath;
     private int satyrShamanChance;
     private double gorgonMedusaChance;
@@ -167,18 +158,18 @@ public class GFConfig {
     private boolean giantBoarNonNether;
 
     // feature configs
-    public final ForgeConfigSpec.IntValue OLIVE_FOREST_BIOME_WEIGHT;
+    /*public final ForgeConfigSpec.IntValue OLIVE_FOREST_BIOME_WEIGHT;
     public final Map<String, BiomeWhitelistConfig> FEATURES = new HashMap<>();
     public final ForgeConfigSpec.BooleanValue IS_SPAWNS_WHITELIST;
     public final ConfigValue<List<? extends String>> SPAWNS_DIMENSION_WHITELIST;
     public final ForgeConfigSpec.BooleanValue IS_FEATURES_WHITELIST;
-    public final ConfigValue<List<? extends String>> FEATURES_DIMENSION_WHITELIST;
+    public final ConfigValue<List<? extends String>> FEATURES_DIMENSION_WHITELIST;*/
 
     // palladium
-    private final ForgeConfigSpec.BooleanValue PALLADIUM_ENABLED;
+   /* private final ForgeConfigSpec.BooleanValue PALLADIUM_ENABLED;
     private final ForgeConfigSpec.IntValue PALLADIUM_REFRESH_INTERVAL;
     private final ForgeConfigSpec.IntValue PALLADIUM_CHUNK_RANGE;
-    private final ForgeConfigSpec.IntValue PALLADIUM_Y_RANGE;
+    private final ForgeConfigSpec.IntValue PALLADIUM_Y_RANGE;*/
     private boolean palladiumEnabled;
     private int palladiumRefreshInterval;
     private int palladiumChunkRange;
@@ -187,7 +178,7 @@ public class GFConfig {
     public GFConfig(final ForgeConfigSpec.Builder builder) {
         // items
         builder.push("items");
-        SANDALS_SPEED_BONUS = builder.comment("Winged Sandals speed bonus (1.0 = +100%)").worldRestart()
+       /* SANDALS_SPEED_BONUS = builder.comment("Winged Sandals speed bonus (1.0 = +100%)").worldRestart()
                 .defineInRange("sandals_speed_bonus", 1.5D, 0.0D, 2.0D);
         NERF_AMBROSIA = builder.comment("When true, ambrosia gives effects of Golden Apple instead of Enchanted Golden Apple")
                 .define("nerf_ambrosia", false);
@@ -216,11 +207,11 @@ public class GFConfig {
         BAG_OF_WIND_DURABILITY = builder.defineInRange("bag_of_wind_durability", 24, 1, 4000);
         PIG_WAND_DURATION = builder.defineInRange("pig_wand_duration", 2450, 1, 24000);
         PIG_WAND_COOLDOWN = builder.defineInRange("pig_wand_cooldown", 50, 0, 100);
-        PIG_WAND_DURABILITY = builder.defineInRange("pig_wand_durability", 104, 1, 4000);
+        PIG_WAND_DURABILITY = builder.defineInRange("pig_wand_durability", 104, 1, 4000);*/
         builder.pop();
         // mob attacks
         builder.push("effects");
-        FORCE_FOV_RESET = builder.comment("When true, prevents FOV modifiers when stunned or wearing winged sandals")
+        /*FORCE_FOV_RESET = builder.comment("When true, prevents FOV modifiers when stunned or wearing winged sandals")
                 .define("force_fov_reset", true);
         STUN_PREVENTS_JUMP = builder.comment("When stunned, players are prevented from jumping")
                 .define("stun_prevents_jump", true);
@@ -255,11 +246,11 @@ public class GFConfig {
         NERF_STUNNING = builder.comment("When true, replaces stunning with Slowness I and Weakness I")
                 .define("nerf_stunning", false);
         NERF_PARALYSIS = builder.comment("When true, replaces paralysis with Slowness II and Weakness II")
-                .define("nerf_paralysis", false);
+                .define("nerf_paralysis", false);*/
         builder.pop();
         // potion effects
         builder.push("potions");
-        MIRROR_POTION = builder.comment("Whether the Potion of Mirroring can prevent paralysis")
+       /* MIRROR_POTION = builder.comment("Whether the Potion of Mirroring can prevent paralysis")
                 .define("enable_mirror_potion", true);
         PIG_POTION = builder.comment("Whether the Potion of Pig can turn players into pigs")
                 .define("enable_pig_potion", true);
@@ -299,11 +290,11 @@ public class GFConfig {
         SPARTI_LIFESPAN = builder.comment("Number of seconds until the Sparti begins taking damage")
                 .defineInRange("sparti_lifespan", 300, 1, 8000);
         WHIRL_LIFESPAN = builder.comment("Number of seconds until a summoned Whirl begins taking damage")
-                .defineInRange("whirl_lifespan", 60, 1, 8000);
+                .defineInRange("whirl_lifespan", 60, 1, 8000);*/
         builder.pop();
         // mob spawn specials
         builder.push("mob_spawn_specials");
-        SHADE_SPAWN_ON_DEATH = builder.comment("Whether a shade can spawn when players die")
+        /*SHADE_SPAWN_ON_DEATH = builder.comment("Whether a shade can spawn when players die")
                 .define("shade_spawn_on_death", true);
         SATYR_SHAMAN_CHANCE = builder.comment("Percent chance that a satyr will be a shaman")
                 .defineInRange("satyr_shaman_chance", 24, 0, 100);
@@ -332,22 +323,22 @@ public class GFConfig {
         NUM_SPARTI_SPAWNED = builder.comment("Number of Sparti spawned by using a hydra tooth")
                 .defineInRange("num_sparti_spawned", 1, 1, 8);
         GIANT_BOAR_NON_NETHER = builder.comment("Whether a hoglin must be outside of the nether to be turned to a Giant Boar")
-                .define("giant_boar_non_nether", true);
+                .define("giant_boar_non_nether", true);*/
         builder.pop();
         // palladium
         builder.push("palladium");
-        PALLADIUM_ENABLED = builder.comment("Whether the Palladium can prevent monster spawns")
+        /*PALLADIUM_ENABLED = builder.comment("Whether the Palladium can prevent monster spawns")
                 .define("palladium_enabled", true);
         PALLADIUM_REFRESH_INTERVAL = builder.comment("The number of server ticks between Palladium updates (increase to reduce lag)")
                 .defineInRange("palladium_refresh_interval", 110, 2, 1000);
         PALLADIUM_CHUNK_RANGE = builder.comment("The radius (in chunks) of the area protected by Palladium blocks (0=same chunk only)")
                 .defineInRange("palladium_chunk_range", 2, 0, 3);
         PALLADIUM_Y_RANGE = builder.comment("The vertical area (in blocks) protected by Palladium blocks")
-                .defineInRange("palladium_y_range", 128, 0, 255);
+                .defineInRange("palladium_y_range", 128, 0, 255);*/
         builder.pop();
         // mob spawns
         builder.comment("mob spawn weights (higher number = more spawns)").push("mob_spawns");
-        final List<String> dimensions = new ArrayList<>();
+        /*final List<String> dimensions = new ArrayList<>();
         dimensions.add(Dimension.OVERWORLD.location().toString());
         dimensions.add(Dimension.NETHER.location().toString());
         IS_SPAWNS_WHITELIST = builder.worldRestart().define("whitelist_dimensions", true);
@@ -382,10 +373,11 @@ public class GFConfig {
         MOB_SPAWNS.put("siren", new BiomeWhitelistConfig(builder, "siren_spawn", 10, true, Biomes.LUKEWARM_OCEAN.location().toString(), Biomes.WARM_OCEAN.location().toString()));
         MOB_SPAWNS.put("unicorn", new BiomeWhitelistConfig(builder, "unicorn_spawn", 11, true, Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString()));
         MOB_SPAWNS.put("whirl", new BiomeWhitelistConfig(builder, "whirl_spawn", 6, true, BiomeDictionary.Type.OCEAN.toString()));
+        */
         builder.pop();
         // feature configs
         builder.comment("feature generation chances (higher number = more features)").push("features");
-        IS_FEATURES_WHITELIST = builder.worldRestart().define("whitelist_dimensions", true);
+        /*IS_FEATURES_WHITELIST = builder.worldRestart().define("whitelist_dimensions", true);
         FEATURES_DIMENSION_WHITELIST = builder.worldRestart().define("dimensions", dimensions);
         OLIVE_FOREST_BIOME_WEIGHT = builder.defineInRange("olive_forest_weight", 9, 0, 1000);
         FEATURES.put("limestone", new BiomeWhitelistConfig(builder, "limestone", 1000, true, BiomeDictionary.Type.OVERWORLD.toString()));
@@ -403,6 +395,7 @@ public class GFConfig {
         FEATURES.put("pomegranate_tree", new BiomeWhitelistConfig(builder, "pomegranate_tree", 40, true, Biomes.WARPED_FOREST.location().toString()));
         FEATURES.put("lion_den", new BiomeWhitelistConfig(builder, "lion_den", 9, true, Biomes.DESERT.location().toString(), Biomes.DESERT_HILLS.location().toString()));
         FEATURES.put("arachne_pit", new BiomeWhitelistConfig(builder, "arachne_pit", 82, false, nonNetherHostileBlacklist));
+       */
         builder.pop();
     }
 
@@ -413,7 +406,7 @@ public class GFConfig {
      * once-per-load or once-per-entity
      **/
     public void bake() {
-        helmHidesArmor = HELM_HIDES_ARMOR.get();
+        /*helmHidesArmor = HELM_HIDES_ARMOR.get();
         dragonToothSpawnsSparti = DRAGON_TOOTH_SPAWNS_SPARTI.get();
         swordOfHuntBypassesArmor = SWORD_OF_HUNT_BYPASSES_ARMOR.get();
         healingRodCooldown = HEALING_ROD_COOLDOWN.get();
@@ -480,7 +473,7 @@ public class GFConfig {
         palladiumEnabled = PALLADIUM_ENABLED.get();
         palladiumRefreshInterval = PALLADIUM_REFRESH_INTERVAL.get();
         palladiumChunkRange = PALLADIUM_CHUNK_RANGE.get();
-        palladiumYRange = PALLADIUM_Y_RANGE.get();
+        palladiumYRange = PALLADIUM_Y_RANGE.get();*/
     }
 
     public boolean doesHelmHideArmor() {
@@ -731,7 +724,7 @@ public class GFConfig {
         return palladiumYRange;
     }
 
-    public boolean canPigApply(final String entityName) {
+    /*public boolean canPigApply(final String entityName) {
         return IS_PIG_ENTITY_WHITELIST.get() == PIG_ENTITY_WHITELIST.get().contains(entityName);
     }
 
@@ -741,5 +734,5 @@ public class GFConfig {
             list.add(t.getRegistryName().toString());
         }
         return list;
-    }
+    }*/
 }

@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "greekfantasy:marble"
-  },
-  "result": "greekfantasy:polished_marble",
-  "count": 1
-}

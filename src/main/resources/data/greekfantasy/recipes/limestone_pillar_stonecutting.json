@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "greekfantasy:polished_limestone"
-  },
-  "result": "greekfantasy:limestone_pillar",
-  "count": 1
-}
