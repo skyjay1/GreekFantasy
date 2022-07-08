@@ -23,7 +23,7 @@ public class GFArmorMaterials {
     public static final GFArmorMaterial SNAKESKIN = new GFArmorMaterial("snakeskin", 15, new int[]{1, 4, 5, 2}, 15,
             SoundEvents.ARMOR_EQUIP_LEATHER, 0.0F, 0.0F, () -> Ingredient.of(GFRegistry.ItemReg.TOUGH_SNAKESKIN.get()));
 
-    public static final GFArmorMaterial STYXIAN = new GFArmorMaterial("styxian", 15, new int[]{2, 5, 6, 2}, 11,
+    public static final GFArmorMaterial AVERNAL = new GFArmorMaterial("avernal", 15, new int[]{2, 5, 6, 2}, 11,
             SoundEvents.ARMOR_EQUIP_IRON, 1.0F, 0.0F, () -> Ingredient.of(GFRegistry.ItemReg.AVERNAL_SHARD.get()));
 
     public static final GFArmorMaterial NEMEAN = new GFArmorMaterial("nemean", 15, new int[]{2, 5, 6, 3}, 9,

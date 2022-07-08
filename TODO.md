@@ -77,6 +77,7 @@ __Key:__
 - _ _ Web Ball
 - _ _ Spear
 - _ _ Orthus Head
+- _ _ Palladium
 
 ## Structures
 
@@ -106,25 +107,25 @@ __Key:__
 
 `[In-game] [Use] [Obtainable]`
 
-- _ _ _ Limestone, variants, and Pillar
-- _ _ _ Marble, variants, and Pillar
-- _ _ _ Olive Log, leaves, planks, and variants
-- _ _ _ Pomegranate Log, leaves, planks, and variants
-- _ _ _ Mysterious Box
-- _ _ _ Palladium
-- _ _ _ Ichor-Infused Block
-- _ _ _ Block of Bronze
-- _ _ _ Terracotta Vase and variants
-- _ _ _ Mob Heads (Orthus, Gigante, Cerberus)
-- _ _ _ Oil Lamp
-- _ _ _ Oil
-- _ _ _ Pomegranate Sapling
-- _ _ _ Golden Sapling
-- _ _ _ Nest
-- _ _ _ Wild Rose
+- X X _ Limestone, variants, and Pillar
+- X X _ Marble, variants, and Pillar
+- X X _ Olive Log, leaves, planks, and variants
+- X X _ Pomegranate Log, leaves, planks, and variants
+- X _ _ Mysterious Box
+- X _ _ Ichor-Infused Block
+- ~ _ _ Block of Bronze
+- ~ _ _ Terracotta Vase and variants
+- ~ _ _ Mob Heads (Orthus, Gigante, Cerberus)
+- X _ _ Oil Lamp
+- X _ _ Oil
+- X _ _ Olive Sapling
+- X _ _ Pomegranate Sapling
+- X _ _ Golden Sapling
+- X _ _ Nest
+- X ~ _ Wild Rose
 - _ _ _ Cretan Stone and variants
-- _ _ _ Reeds
-- _ _ _ Golden String
+- ~ _ _ Reeds
+- ~ _ _ Golden String
 
 
 ## Items
@@ -134,7 +135,8 @@ __Key:__
 `[In-game] [Use] [Obtainable]`
 
 - _ _ _ Spawn Eggs
-- _ _ _ Bronze Ingot
+- ~ _ _ Bronze Ingot
+- ~ _ _ Bronze Nugget
 - X _ _ Ichor
 - X _ _ Horn
 - X _ _ Snakeskin
@@ -149,8 +151,8 @@ __Key:__
 - X _ _ Avernal Claw
 - X _ _ Avernal Shard
 - X _ _ Boar Ear
-- X _ _ Olives
 - X _ _ Golden Fleece
+- X _ _ Ball of Golden String
 - X X _ Spider Banner Pattern
 - X _ _ Ambrosia
 - X _ _ Horn of Plenty
@@ -180,7 +182,10 @@ __Key:__
 - X _ _ Web Ball
 - X _ _ Olive Oil
 - X _ _ Olive Salve
+- X _ _ Olives
+- X _ _ Olive Sapling
 - X _ _ Pomegranate
+- X _ _ Pomegranate Sapling
 
 ### Armor
 
