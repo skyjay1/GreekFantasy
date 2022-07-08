@@ -1,0 +1,15 @@
+{
+  "parent":"forge:item/default",
+  "loader":"forge:separate-perspective",
+  "base": {
+    "parent": "greekfantasy:item/staff_of_healing_base"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "minecraft:item/generated",
+	  "textures": {
+		"layer0": "greekfantasy:item/staff_of_healing"
+	  }
+    }
+  }
+}

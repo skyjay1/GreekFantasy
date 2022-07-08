@@ -1,0 +1,14 @@
+{
+  "parent": "item/generated",
+  "textures": {
+	"layer0": "greekfantasy:item/golden_lyre"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "playing": 1
+      },
+      "model": "greekfantasy:item/golden_lyre_playing"
+    }
+  ]
+}

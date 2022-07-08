@@ -1,0 +1,6 @@
+{
+    "parent": "greekfantasy:item/avernal_bow",
+    "textures": {
+        "layer0": "greekfantasy:item/avernal_bow_pulling_1"
+    }
+}

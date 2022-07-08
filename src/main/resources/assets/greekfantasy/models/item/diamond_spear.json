@@ -1,0 +1,35 @@
+{
+  "parent":"forge:item/default",
+  "loader":"forge:separate-perspective",
+  "base": {
+    "parent": "greekfantasy:item/spear_in_hand",
+    "textures": {
+      "spear": "greekfantasy:item/diamond_spear"
+    }
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "minecraft:item/generated",
+	  "textures": {
+		"layer0": "greekfantasy:item/diamond_spear"
+	  }
+    },
+    "ground": {
+      "parent": "minecraft:item/generated",
+	  "textures": {
+		"layer0": "greekfantasy:item/diamond_spear"
+	  }
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "minecraft:throwing": 1
+      },
+      "model": "greekfantasy:item/spear_throwing",
+      "textures": {
+        "spear": "greekfantasy:item/diamond_spear"
+      }
+    }
+  ]
+}

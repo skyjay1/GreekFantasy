@@ -1,0 +1,13 @@
+{
+  "parent": "item/generated",
+  "textures": {
+	"layer0": "greekfantasy:item/golden_lyre"
+  },
+  "display": {
+    "firstperson_righthand": {
+        "rotation": [ -5, 0, 0  ],
+        "translation": [ 1.13, -6, -7 ],
+        "scale": [ 0.68, 0.68, 0.68 ]
+    }
+  }
+}

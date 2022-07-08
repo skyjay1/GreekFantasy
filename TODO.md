@@ -61,6 +61,23 @@ __Key:__
 - _ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 
 
+### Other
+
+__Key:__
+
+`[Model] [Behavior]`
+
+- X ~ Spear (and bident)
+- _ _ Healing Spell
+- _ _ Curse
+- _ _ Curse of Circe
+- _ _ Poison Spit
+- _ _ Greek Fire
+- _ _ Discus
+- _ _ Web Ball
+- _ _ Spear
+- _ _ Orthus Head
+
 ## Structures
 
 __Key:__
@@ -96,6 +113,7 @@ __Key:__
 - _ _ _ Mysterious Box
 - _ _ _ Palladium
 - _ _ _ Ichor-Infused Block
+- _ _ _ Block of Bronze
 - _ _ _ Terracotta Vase and variants
 - _ _ _ Mob Heads (Orthus, Gigante, Cerberus)
 - _ _ _ Oil Lamp
@@ -116,59 +134,65 @@ __Key:__
 `[In-game] [Use] [Obtainable]`
 
 - _ _ _ Spawn Eggs
-- _ _ _ Ichor
-- _ _ _ Horn
-- _ _ _ Snakeskin
-- _ _ _ Purified Snakeskin
-- _ _ _ Tough Snakeskin
-- _ _ _ Snake Fang
-- _ _ _ Styxian Shard
-- _ _ _ Talos Heart
-- _ _ _ Dog Claw
-- _ _ _ Fiery Hide
-- _ _ _ Fiery Bat Wing
-- _ _ _ Fiery Gear
-- _ _ _ Cursed Hair
-- _ _ _ Boar Ear
-- _ _ _ Magic Feather
-- _ _ _ Olives
-- _ _ _ Golden Fleece
-- _ _ _ Spider Banner Pattern
-- _ _ _ Ambrosia
-- _ _ _ Horn of Plenty
-- _ _ _ Dragon Tooth
-- _ _ _ Healing Rod
-- _ _ _ Helm of Darkness
-- _ _ _ Conch
-- _ _ _ Bag of Wind
-- _ _ _ Winged Sandals
-- _ _ _ Golden Tree Sapling
-- _ _ _ Thunderbolt
-- _ _ _ Wand of Circe
-- _ _ _ Bident
-- _ _ _ Cursed Bow
-- _ _ _ Bow of Apollo
-- _ _ _ Bow of Artemis
-- _ _ _ Club (wood, stone, iron)
-- _ _ _ Spear (wood, stone, iron)
-- _ _ _ Greek Fire
-- _ _ _ Flint Knife
-- _ _ _ Ivory Sword
-- _ _ _ Gorgon Blood
-- _ _ _ Discus
-- _ _ _ Mirror
-- _ _ _ Golden Bridle
-- _ _ _ Unicorn Horn
-- _ _ _ Panflute
-- _ _ _ Lyre (normal, golden)
-- _ _ _ Web Ball
-- _ _ _ Olive Oil
-- _ _ _ Salve
-- _ _ _ Pomegranate Seeds
-- _ _ _ Achilles Armor
-- _ _ _ Snakeskin Armor
-- _ _ _ Nemean Lion Hide
+- _ _ _ Bronze Ingot
+- X _ _ Ichor
+- X _ _ Horn
+- X _ _ Snakeskin
+- X _ _ Tough Snakeskin
+- X _ _ Deadly Fang
+- X _ _ Heart of Talos
+- X _ _ Ichor-Infused Gear
+- X _ _ Avernal Feather
+- X _ _ Avernal Hide
+- X _ _ Avernal Wing
+- X _ _ Avernal Hair
+- X _ _ Avernal Claw
+- X _ _ Avernal Shard
+- X _ _ Boar Ear
+- X _ _ Olives
+- X _ _ Golden Fleece
+- X X _ Spider Banner Pattern
+- X _ _ Ambrosia
+- X _ _ Horn of Plenty
+- X _ _ Dragon Tooth (also: use to make golden sapling)
+- X _ _ Staff of Healing
+- X _ _ Conch
+- X _ _ Bag of Wind
+- X _ _ Golden Tree Sapling
+- X _ _ Thunderbolt
+- X _ _ Wand of Circe
+- X _ _ Avernal Bow
+- X _ _ Bow of Apollo
+- X _ _ Bow of Artemis
+- X _ _ Club (wood, stone, iron)
+- X X _ Spear (wood, stone, iron, gold, diamond, netherite, flint)
+- X ~ _ Bident
+- X X _ Flint Knife
+- X X _ Ivory Sword
+- X _ _ Greek Fire
+- X _ _ Gorgon Blood
+- X _ _ Discus
+- X _ _ Mirror
+- X _ _ Golden Bridle
+- X _ _ Unicorn Horn
+- X _ _ Panflute
+- X _ _ Lyre (normal, golden)
+- X _ _ Web Ball
+- X _ _ Olive Oil
+- X _ _ Olive Salve
+- X _ _ Pomegranate
 
+### Armor
+
+__Key:__
+
+`[In-game] [Model] [Use] [Obtainable]`
+
+- X _ _ _ Helm of Darkness
+- X _ _ _ Winged Sandals
+- X _ _ _ Achilles Armor (Hellenic armor? Bronze armor?)
+- X X _ _ Snakeskin Armor
+- X _ _ _ Nemean Lion Hide
 
 ## Advancements
 
@@ -189,16 +213,13 @@ __Key:__
 - _ Hunting
 - _ Smashing
 - _ Mirroring
+- _ Poisoning
 - _ Flying
 - _ Fireflash
 - _ Lord of the Sea
 - _ Raising
 - _ Daybreak
 - _ Silkstep
-
-
-## Other
-
 
 
 ## Misc Ideas and Inspirations
