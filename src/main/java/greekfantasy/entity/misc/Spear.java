@@ -31,8 +31,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
-public class SpearEntity extends AbstractArrow {
-    protected static final EntityDataAccessor<ItemStack> ITEM = SynchedEntityData.defineId(SpearEntity.class, EntityDataSerializers.ITEM_STACK);
+public class Spear extends AbstractArrow {
+    protected static final EntityDataAccessor<ItemStack> ITEM = SynchedEntityData.defineId(Spear.class, EntityDataSerializers.ITEM_STACK);
     protected static final String KEY_ITEM = "Item";
     protected static final String KEY_DAMAGE = "DealtDamage";
     protected static final String KEY_SET_FIRE = "SetFire";
@@ -44,11 +44,11 @@ public class SpearEntity extends AbstractArrow {
 
     protected ResourceLocation texture = new ResourceLocation(GreekFantasy.MODID, "textures/entity/spear/wooden_spear.png");
 
-    public SpearEntity(final EntityType<? extends SpearEntity> type, final Level world) {
+    public Spear(final EntityType<? extends Spear> type, final Level world) {
         super(type, world);
     }
 
-    public SpearEntity(Level world, LivingEntity thrower, ItemStack item, int setFire) {
+    public Spear(Level world, LivingEntity thrower, ItemStack item, int setFire) {
         super(GFRegistry.EntityReg.SPEAR.get(), thrower, world);
         setArrowStack(item);
         this.setFire = setFire;

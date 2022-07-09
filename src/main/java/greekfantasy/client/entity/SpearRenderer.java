@@ -5,13 +5,11 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.entity.model.SpearModel;
-import greekfantasy.entity.misc.SpearEntity;
-import net.minecraft.client.model.TridentModel;
+import greekfantasy.entity.misc.Spear;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -23,7 +21,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
-public class SpearRenderer<T extends SpearEntity> extends EntityRenderer<T> {
+public class SpearRenderer<T extends Spear> extends EntityRenderer<T> {
 
     public static final ModelLayerLocation SPEAR_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "spear"), "spear");;
     private final SpearModel model;

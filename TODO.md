@@ -137,7 +137,7 @@ __Key:__
 - _ _ _ Spawn Eggs
 - ~ _ _ Bronze Ingot
 - ~ _ _ Bronze Nugget
-- _ _ _ Bronze artifacts (goblet, bowl, coins, nail, ruined helmet/greaves/cuirass, figurine, scrap)
+- X _ _ Bronze artifacts (goblet, bowl, pile of coins, vase, ruined helmet, ruined cuirass, broken shield, figurine)
 - X _ _ Ichor
 - X _ _ Horn
 - X _ _ Snakeskin
@@ -157,10 +157,10 @@ __Key:__
 - X X _ Spider Banner Pattern
 - X _ _ Ambrosia
 - X _ _ Horn of Plenty
-- X _ _ Dragon Tooth (also: use to make golden sapling)
+- X ~ _ Dragon Tooth (also: use to make golden sapling)
 - X _ _ Staff of Healing
 - X _ _ Conch
-- X _ _ Bag of Wind
+- X X _ Bag of Wind
 - X _ _ Golden Tree Sapling
 - X _ _ Thunderbolt
 - X _ _ Wand of Circe
@@ -180,7 +180,7 @@ __Key:__
 - X _ _ Unicorn Horn
 - X _ _ Panflute
 - X _ _ Lyre (normal, golden)
-- X _ _ Web Ball
+- X ~ _ Web Ball
 - X _ _ Olive Oil
 - X _ _ Olive Salve
 - X _ _ Olives
@@ -232,6 +232,11 @@ __Key:__
 - X ~ _ Smashing
 
 ## Other
+
+### Global Loot Modifiers
+
+- _ Dragon Tooth from Bone blocks
+- _ Web Ball from Cobweb
 
 ### Uses for bronze
 

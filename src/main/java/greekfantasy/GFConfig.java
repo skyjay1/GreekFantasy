@@ -9,8 +9,11 @@ import java.util.Map;
 public class GFConfig {
 
     // items
+    public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
+    public final ForgeConfigSpec.IntValue BAG_OF_WIND_COOLDOWN;
+    public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_COUNT;
+    public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_LIFESPAN;
     public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
-    public final ForgeConfigSpec.BooleanValue DRAGON_TOOTH_SPAWNS_SPARTI;
 
     private final ForgeConfigSpec.BooleanValue HELM_HIDES_ARMOR;
     private boolean helmHidesArmor;
@@ -43,9 +46,12 @@ public class GFConfig {
     public GFConfig(final ForgeConfigSpec.Builder builder) {
 
         builder.push("items");
-        UNICORN_HORN_CURES_EFFECTS = builder.define("unicorn_horn_cures_effects", true);
+        BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
+        BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 12000);
         HELM_HIDES_ARMOR = builder.define("helm_hides_armor", true);
-        DRAGON_TOOTH_SPAWNS_SPARTI = builder.define("dragon_tooth_spawns_sparti", true);
+        DRAGON_TOOTH_SPARTI_COUNT = builder.defineInRange("dragon_tooth_sparti_count", 1, 0, 8);
+        DRAGON_TOOTH_SPARTI_LIFESPAN = builder.defineInRange("dragon_tooth_sparti_lifespan", 300, 1, 24000);
+        UNICORN_HORN_CURES_EFFECTS = builder.define("unicorn_horn_cures_effects", true);
         builder.pop();
 
         builder.push("enchantments");
@@ -53,12 +59,14 @@ public class GFConfig {
         IS_MIRRORING_ENABLED = builder.define("mirroring_enabled", true);
         IS_OVERSTEP_ENABLED = builder.define("overstep_enabled", true);
         IS_POISONING_ENABLED = builder.define("poisoning_enabled", true);
-        NERF_SMASHING = builder.comment("When true, Smashing applies slowness instead of stunning")
+        NERF_SMASHING = builder
+                .comment("When true, Smashing applies slowness instead of stunning")
                 .define("nerf_smashing", false);
         builder.pop();
 
         builder.push("entity");
-        ELPIS_SPAWN_CHANCE = builder.comment("Percent chance that opening a mysterious box spawns an Elpis")
+        ELPIS_SPAWN_CHANCE = builder
+                .comment("Percent chance that opening a mysterious box spawns an Elpis")
                 .defineInRange("elpis_spawn_chance", 0.6F, 0.0F, 1.0F);
         builder.pop();
 

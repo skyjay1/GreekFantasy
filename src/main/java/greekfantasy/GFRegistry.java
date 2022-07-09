@@ -1,6 +1,8 @@
 package greekfantasy;
 
+import greekfantasy.block.GoldenStringBlock;
 import greekfantasy.block.MysteriousBoxBlock;
+import greekfantasy.block.NestBlock;
 import greekfantasy.block.OilLampBlock;
 import greekfantasy.block.PillarBlock;
 import greekfantasy.block.VaseBlock;
@@ -13,15 +15,24 @@ import greekfantasy.enchantment.OverstepEnchantment;
 import greekfantasy.enchantment.PoisoningEnchantment;
 import greekfantasy.enchantment.SilkstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
-import greekfantasy.entity.misc.SpearEntity;
-import greekfantasy.entity.monster.DrakainaEntity;
+import greekfantasy.entity.misc.Discus;
+import greekfantasy.entity.misc.DragonTooth;
+import greekfantasy.entity.misc.Spear;
+import greekfantasy.entity.misc.WebBall;
+import greekfantasy.entity.monster.BabySpider;
+import greekfantasy.entity.monster.Drakaina;
+import greekfantasy.item.BagOfWindItem;
 import greekfantasy.item.BidentItem;
+import greekfantasy.item.BronzeScrapItem;
 import greekfantasy.item.ClubItem;
+import greekfantasy.item.DiscusItem;
+import greekfantasy.item.DragonToothItem;
 import greekfantasy.item.GFArmorMaterials;
 import greekfantasy.item.GFTiers;
 import greekfantasy.item.KnifeItem;
 import greekfantasy.item.SnakeskinArmorItem;
 import greekfantasy.item.SpearItem;
+import greekfantasy.item.WebBallItem;
 import greekfantasy.mob_effect.CurseOfCirceEffect;
 import greekfantasy.mob_effect.MirroringEffect;
 import greekfantasy.mob_effect.PrisonerOfHadesEffect;
@@ -34,7 +45,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.MenuType;
@@ -158,7 +168,7 @@ public final class GFRegistry {
                         .noOcclusion().noCollission().instabreak()
                         .randomTicks().lightLevel((state) -> 11).sound(SoundType.WET_GRASS)));
         public static final RegistryObject<Block> GOLDEN_STRING = BLOCKS.register("golden_string", () ->
-                new Block(BlockBehaviour.Properties.of(Material.DECORATION)
+                new GoldenStringBlock(BlockBehaviour.Properties.of(Material.DECORATION)
                         .lightLevel(b -> 8).instabreak().noCollission().noOcclusion()));
         // TODO sapling trees
         public static final RegistryObject<Block> OLIVE_SAPLING = BLOCKS.register("olive_sapling", () ->
@@ -171,7 +181,7 @@ public final class GFRegistry {
                 new SaplingBlock(new OakTreeGrower(), BlockBehaviour.Properties.of(Material.PLANT)
                         .noCollission().randomTicks().instabreak().sound(SoundType.GRASS)));
         public static final RegistryObject<Block> NEST = BLOCKS.register("nest", () ->
-                new Block(Block.Properties.of(Material.GRASS, MaterialColor.COLOR_BROWN)
+                new NestBlock(Block.Properties.of(Material.GRASS, MaterialColor.COLOR_BROWN)
                         .strength(0.5F).sound(SoundType.GRASS)
                         .hasPostProcess((s, r, p) -> true).noOcclusion()));
         public static final RegistryObject<Block> WILD_ROSE = BLOCKS.register("wild_rose", () ->
@@ -407,35 +417,35 @@ public final class GFRegistry {
                 new ClubItem(Tiers.IRON, new Item.Properties().tab(GF_TAB).stacksTo(1)));
         // TODO custom tier for bident? for repair material
         public static final RegistryObject<Item> BIDENT = ITEMS.register("bident", () ->
-                new BidentItem(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.UNCOMMON).tab(GF_TAB).stacksTo(1)));
+                new BidentItem(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.UNCOMMON).tab(GF_TAB)));
         public static final RegistryObject<Item> WOODEN_SPEAR = ITEMS.register("wooden_spear", () ->
-                new SpearItem(Tiers.WOOD, new Item.Properties().tab(GF_TAB).stacksTo(1)));
+                new SpearItem(Tiers.WOOD, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> FLINT_SPEAR = ITEMS.register("flint_spear", () ->
-                new SpearItem(GFTiers.FLINT, new Item.Properties().tab(GF_TAB).stacksTo(1)));
+                new SpearItem(GFTiers.FLINT, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> STONE_SPEAR = ITEMS.register("stone_spear", () ->
-                new SpearItem(Tiers.STONE, new Item.Properties().tab(GF_TAB).stacksTo(1)));
+                new SpearItem(Tiers.STONE, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> IRON_SPEAR = ITEMS.register("iron_spear", () ->
-                new SpearItem(Tiers.IRON, new Item.Properties().tab(GF_TAB).stacksTo(1)));
+                new SpearItem(Tiers.IRON, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> GOLDEN_SPEAR = ITEMS.register("golden_spear", () ->
-                new SpearItem(Tiers.GOLD, new Item.Properties().tab(GF_TAB).stacksTo(1)));
+                new SpearItem(Tiers.GOLD, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> DIAMOND_SPEAR = ITEMS.register("diamond_spear", () ->
-                new SpearItem(Tiers.DIAMOND, new Item.Properties().tab(GF_TAB).stacksTo(1)));
+                new SpearItem(Tiers.DIAMOND, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> NETHERITE_SPEAR = ITEMS.register("netherite_spear", () ->
-                new SpearItem(Tiers.NETHERITE, new Item.Properties().tab(GF_TAB).stacksTo(1)));
+                new SpearItem(Tiers.NETHERITE, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> FLINT_KNIFE = ITEMS.register("flint_knife", () ->
                 new KnifeItem(GFTiers.FLINT, 3, -1.7F, -1.0F, new Item.Properties().tab(GF_TAB).stacksTo(1)));
         public static final RegistryObject<Item> IVORY_SWORD = ITEMS.register("ivory_sword", () ->
                 new SwordItem(GFTiers.IVORY, 3, -2.2F, new Item.Properties().tab(GF_TAB).stacksTo(1)));
         public static final RegistryObject<Item> DISCUS = ITEMS.register("discus", () ->
-                new Item(new Item.Properties().tab(GF_TAB).stacksTo(16))); // TODO ability
+                new DiscusItem(new Item.Properties().tab(GF_TAB).stacksTo(16)));
         public static final RegistryObject<Item> GREEK_FIRE = ITEMS.register("greek_fire", () ->
                 new Item(new Item.Properties().tab(GF_TAB).stacksTo(16))); // TODO ability
         public static final RegistryObject<Item> WEB_BALL = ITEMS.register("web_ball", () ->
-                new Item(new Item.Properties().tab(GF_TAB).stacksTo(16))); // TODO ability
+                new WebBallItem(new Item.Properties().tab(GF_TAB).stacksTo(16)));
 
         //// LEGENDARY TOOLS AND ITEMS ////
         public static final RegistryObject<Item> DRAGON_TOOTH = ITEMS.register("dragon_tooth", () ->
-                new Item(new Item.Properties().tab(GF_TAB).durability(24).rarity(Rarity.RARE))); // TODO ability
+                new DragonToothItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)));
         public static final RegistryObject<Item> MIRROR = ITEMS.register("mirror", () ->
                 new Item(new Item.Properties().tab(GF_TAB).stacksTo(1)));
         public static final RegistryObject<Item> CONCH = ITEMS.register("conch", () ->
@@ -445,7 +455,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> HEART_OF_TALOS = ITEMS.register("heart_of_talos", () ->
                 new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(16)));
         public static final RegistryObject<Item> BAG_OF_WIND = ITEMS.register("bag_of_wind", () ->
-                new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(1))); // TODO ability
+                new BagOfWindItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).durability(24)));
         public static final RegistryObject<Item> STAFF_OF_HEALING = ITEMS.register("staff_of_healing", () ->
                 new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(1))); // TODO ability
         public static final RegistryObject<Item> AMBROSIA = ITEMS.register("ambrosia", () ->
@@ -457,7 +467,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> GOLDEN_BALL = ITEMS.register("golden_ball", () ->
                 new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> ICHOR = ITEMS.register("ichor", () ->
-                new Item(new Item.Properties().tab(GF_TAB)) {
+                new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)) {
                     @Override
                     public boolean isFoil(ItemStack stack) { return true; }
                 });
@@ -505,49 +515,39 @@ public final class GFRegistry {
         public static final RegistryObject<Item> OLIVES = ITEMS.register("olives", () ->
                 new Item(new Item.Properties().tab(GF_TAB).food(OLIVES_FOOD)));
         public static final RegistryObject<Item> OLIVE_OIL = ITEMS.register("olive_oil", () ->
-                new BlockItem(BlockReg.OIL.get(), new Item.Properties().tab(GF_TAB).stacksTo(16)));
+                new BlockItem(BlockReg.OIL.get(), new Item.Properties().tab(GF_TAB).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
         public static final RegistryObject<Item> OLIVE_SALVE = ITEMS.register("olive_salve", () ->
                 new Item(new Item.Properties().tab(GF_TAB).stacksTo(1))); // TODO salve
         public static final RegistryObject<Item> POMEGRANATE = ITEMS.register("pomegranate", () ->
                 new Item(new Item.Properties().tab(GF_TAB).food(POMEGRANATE_FOOD))); // TODO Prisoner effect
 
         //// CRAFTING MATERIALS ////
-        public static final RegistryObject<Item> BRONZE_INGOT = ITEMS.register("bronze_ingot", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-            public static final RegistryObject<Item> BRONZE_NUGGET = ITEMS.register("bronze_nugget", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> HORN = ITEMS.register("horn", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> AVERNAL_FEATHER = ITEMS.register("avernal_feather", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> AVERNAL_HAIR = ITEMS.register("avernal_hair", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> AVERNAL_WING = ITEMS.register("avernal_wing", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> AVERNAL_HIDE = ITEMS.register("avernal_hide", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> AVERNAL_CLAW = ITEMS.register("avernal_claw", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> AVERNAL_SHARD = ITEMS.register("avernal_shard", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> ICHOR_INFUSED_GEAR = ITEMS.register("ichor_infused_gear", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> GOLDEN_STRING = ITEMS.register("golden_string", () ->
-                new BlockItem(BlockReg.GOLDEN_STRING.get(), new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> GORGON_BLOOD = ITEMS.register("gorgon_blood", () ->
-                new Item(new Item.Properties().tab(GF_TAB).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
-        public static final RegistryObject<Item> BOAR_EAR = ITEMS.register("boar_ear", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> BOAR_TUSK = ITEMS.register("boar_tusk", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> GOLDEN_BRIDLE = ITEMS.register("golden_bridle", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> SNAKESKIN = ITEMS.register("snakeskin", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> TOUGH_SNAKESKIN = ITEMS.register("tough_snakeskin", () ->
-                new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
-        public static final RegistryObject<Item> DEADLY_FANG = ITEMS.register("deadly_fang", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_INGOT = ITEMS.register("bronze_ingot", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_NUGGET = ITEMS.register("bronze_nugget", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_BOWL = ITEMS.register("bronze_bowl", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_COINS = ITEMS.register("bronze_coins", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_CUIRASS = ITEMS.register("bronze_cuirass", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_FIGURINE = ITEMS.register("bronze_figurine", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_GOBLET = ITEMS.register("bronze_goblet", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_HELMET = ITEMS.register("bronze_helmet", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_SHIELD = ITEMS.register("bronze_shield", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_VASE = ITEMS.register("bronze_vase", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> HORN = ITEMS.register("horn", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> AVERNAL_FEATHER = ITEMS.register("avernal_feather", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> AVERNAL_HAIR = ITEMS.register("avernal_hair", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> AVERNAL_WING = ITEMS.register("avernal_wing", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> AVERNAL_HIDE = ITEMS.register("avernal_hide", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> AVERNAL_CLAW = ITEMS.register("avernal_claw", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> AVERNAL_SHARD = ITEMS.register("avernal_shard", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> ICHOR_INFUSED_GEAR = ITEMS.register("ichor_infused_gear", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> GOLDEN_STRING = ITEMS.register("golden_string", () -> new BlockItem(BlockReg.GOLDEN_STRING.get(), new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> GORGON_BLOOD = ITEMS.register("gorgon_blood", () -> new Item(new Item.Properties().tab(GF_TAB).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+        public static final RegistryObject<Item> BOAR_EAR = ITEMS.register("boar_ear", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BOAR_TUSK = ITEMS.register("boar_tusk", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> GOLDEN_BRIDLE = ITEMS.register("golden_bridle", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> SNAKESKIN = ITEMS.register("snakeskin", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> TOUGH_SNAKESKIN = ITEMS.register("tough_snakeskin", () -> new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
+        public static final RegistryObject<Item> DEADLY_FANG = ITEMS.register("deadly_fang", () -> new Item(new Item.Properties().tab(GF_TAB)));
 
         //// LEGENDARY ITEM BLOCKS ////
         public static final RegistryObject<Item> PALLADIUM = ITEMS.register("palladium", () ->
@@ -596,19 +596,36 @@ public final class GFRegistry {
         }
 
         private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
-            event.put(DRAKAINA.get(), DrakainaEntity.createAttributes().build());
+            event.put(BABY_SPIDER.get(), BabySpider.createAttributes().build());
+            event.put(DRAKAINA.get(), Drakaina.createAttributes().build());
         }
 
         // creature
-        public static final RegistryObject<EntityType<? extends DrakainaEntity>> DRAKAINA = ENTITY_TYPES.register("drakaina", () ->
-                EntityType.Builder.of(DrakainaEntity::new, MobCategory.MONSTER)
+        public static final RegistryObject<EntityType<? extends BabySpider>> BABY_SPIDER = ENTITY_TYPES.register("baby_spider", () ->
+                EntityType.Builder.of(BabySpider::new, MobCategory.MONSTER)
+                        .sized(0.5F, 0.65F).clientTrackingRange(8)
+                        .build("baby_spider"));
+        public static final RegistryObject<EntityType<? extends Drakaina>> DRAKAINA = ENTITY_TYPES.register("drakaina", () ->
+                EntityType.Builder.of(Drakaina::new, MobCategory.MONSTER)
                         .sized(0.9F, 1.9F).clientTrackingRange(8)
                         .build("drakaina"));
         // other
-        public static final RegistryObject<EntityType<? extends SpearEntity>> SPEAR = ENTITY_TYPES.register("spear", () ->
-                EntityType.Builder.<SpearEntity>of(SpearEntity::new, MobCategory.MISC)
+        public static final RegistryObject<EntityType<? extends Discus>> DISCUS = ENTITY_TYPES.register("discus", () ->
+                EntityType.Builder.<Discus>of(Discus::new, MobCategory.MISC)
+                        .sized(0.45F, 0.45F).noSummon().clientTrackingRange(4).updateInterval(10)
+                        .build("discus"));
+        public static final RegistryObject<EntityType<? extends DragonTooth>> DRAGON_TOOTH = ENTITY_TYPES.register("dragon_tooth", () ->
+                EntityType.Builder.<DragonTooth>of(DragonTooth::new, MobCategory.MISC)
+                        .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
+                        .build("dragon_tooth"));
+        public static final RegistryObject<EntityType<? extends Spear>> SPEAR = ENTITY_TYPES.register("spear", () ->
+                EntityType.Builder.<Spear>of(Spear::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F).noSummon().clientTrackingRange(4).updateInterval(20)
                     .build("spear"));
+        public static final RegistryObject<EntityType<? extends WebBall>> WEB_BALL = ENTITY_TYPES.register("web_ball", () ->
+                EntityType.Builder.<WebBall>of(WebBall::new, MobCategory.MISC)
+                        .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
+                        .build("web_ball"));
     }
 
     public static final class BlockEntityReg {

@@ -45,13 +45,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class DrakainaEntity extends Monster {
+public class Drakaina extends Monster {
 
-    private static final EntityDataAccessor<Byte> DATA_VARIANT = SynchedEntityData.defineId(DrakainaEntity.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Byte> DATA_VARIANT = SynchedEntityData.defineId(Drakaina.class, EntityDataSerializers.BYTE);
     private static final String KEY_VARIANT = "Variant";
     private static final String KEY_BVARIANT = "BVariant";
 
-    public DrakainaEntity(final EntityType<? extends DrakainaEntity> type, final Level worldIn) {
+    public Drakaina(final EntityType<? extends Drakaina> type, final Level worldIn) {
         super(type, worldIn);
         this.xpReward = 10;
     }

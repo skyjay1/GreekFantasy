@@ -3,25 +3,25 @@ package greekfantasy.client;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.blockentity.VaseBlockEntityRenderer;
+import greekfantasy.client.entity.BabySpiderRenderer;
 import greekfantasy.client.entity.DrakainaRenderer;
 import greekfantasy.client.entity.SpearRenderer;
+import greekfantasy.client.entity.model.BabySpiderModel;
 import greekfantasy.client.entity.model.DrakainaModel;
-import greekfantasy.entity.misc.SpearEntity;
-import greekfantasy.entity.monster.DrakainaEntity;
 import net.minecraft.client.model.TridentModel;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -48,6 +48,7 @@ public final class GFClientEvents {
         public static void registerEntityLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             // register layer definitions
             // creature
+            event.registerLayerDefinition(BabySpiderRenderer.BABY_SPIDER_MODEL_RESOURCE, BabySpiderModel::createBodyLayer);
             event.registerLayerDefinition(DrakainaRenderer.DRAKAINA_MODEL_RESOURCE, DrakainaModel::createBodyLayer);
             // other
             event.registerLayerDefinition(SpearRenderer.SPEAR_MODEL_RESOURCE, TridentModel::createLayer);
@@ -57,9 +58,13 @@ public final class GFClientEvents {
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
             // register entities
             // creature
+            event.registerEntityRenderer(GFRegistry.EntityReg.BABY_SPIDER.get(), BabySpiderRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DRAKAINA.get(), DrakainaRenderer::new);
             // other
+            event.registerEntityRenderer(GFRegistry.EntityReg.DISCUS.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.DRAGON_TOOTH.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPEAR.get(), SpearRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.WEB_BALL.get(), ThrownItemRenderer::new);
             // register block entities
             event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.VASE.get(), VaseBlockEntityRenderer::new);
         }

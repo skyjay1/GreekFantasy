@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "name": "main",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "greekfantasy:mysterious_box",
+              "properties": {
+                "open": "false"
+              }
+            }
+          ],
+          "name": "greekfantasy:mysterious_box"
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 package greekfantasy.item;
 
 import com.google.common.collect.ImmutableMultimap;
-import greekfantasy.entity.misc.SpearEntity;
+import greekfantasy.entity.misc.Spear;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
@@ -15,7 +15,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -42,7 +41,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class SpearItem extends TieredItem implements Vanishable {
 
@@ -109,7 +107,7 @@ public class SpearItem extends TieredItem implements Vanishable {
 
     protected void throwSpear(final Level world, final Player thrower, final ItemStack stack) {
         stack.hurtAndBreak(1, thrower, e -> e.broadcastBreakEvent(thrower.getUsedItemHand()));
-        SpearEntity spear = new SpearEntity(world, thrower, stack, setFire);
+        Spear spear = new Spear(world, thrower, stack, setFire);
         spear.shootFromRotation(thrower, thrower.getXRot(), thrower.getYRot(), 0.0F, 2.25F, 1.0F);
         // set pickup status and remove the itemstack
         if (thrower.getAbilities().instabuild) {
