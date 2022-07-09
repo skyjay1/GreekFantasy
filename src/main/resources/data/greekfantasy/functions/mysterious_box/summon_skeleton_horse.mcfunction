@@ -1,0 +1,3 @@
+# summon a skeleton riding a skeleton horse
+summon minecraft:skeleton_horse ~ ~ ~ {Passengers:[{id:"minecraft:skeleton",HandItems:[{Count:1,id:"minecraft:bow",tag:{Enchantments:[{id:flame,lvl:1}]}},{}],ArmorItems:[{},{},{},{Count:1,id:chainmail_helmet}],HandDropChances:[0.7f,0.0f]}]}
+summon minecraft:skeleton ~ ~ ~ {id:"minecraft:skeleton",HandItems:[{Count:1,id:"minecraft:bow",tag:{Enchantments:[{id:flame,lvl:1}]}},{}],ArmorItems:[{},{},{},{Count:1,id:chainmail_helmet}],HandDropChances:[0.7f,0.0f]}

@@ -1,7 +1,7 @@
 {
 	"textures": {
-		"all": "greekfantasy:block/oil_lamp",
-		"particle": "greekfantasy:block/oil_lamp"
+		"all": "greekfantasy:block/oil_lamp_unlit",
+		"particle": "#all"
 	},
 	"elements": [
 		{

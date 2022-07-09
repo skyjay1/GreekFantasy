@@ -49,7 +49,7 @@ public class SpearEntity extends AbstractArrow {
     }
 
     public SpearEntity(Level world, LivingEntity thrower, ItemStack item, int setFire) {
-        super((EntityType<? extends SpearEntity>) GFRegistry.EntityReg.SPEAR.get(), thrower, world);
+        super(GFRegistry.EntityReg.SPEAR.get(), thrower, world);
         setArrowStack(item);
         this.setFire = setFire;
     }

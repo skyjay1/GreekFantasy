@@ -1,9 +1,20 @@
 package greekfantasy;
 
+import greekfantasy.block.MysteriousBoxBlock;
 import greekfantasy.block.OilLampBlock;
 import greekfantasy.block.PillarBlock;
+import greekfantasy.block.VaseBlock;
 import greekfantasy.block.WildRoseBlock;
+import greekfantasy.blockentity.VaseBlockEntity;
+import greekfantasy.enchantment.DeityEnchantment;
+import greekfantasy.enchantment.HuntingEnchantment;
+import greekfantasy.enchantment.MirroringEnchantment;
+import greekfantasy.enchantment.OverstepEnchantment;
+import greekfantasy.enchantment.PoisoningEnchantment;
+import greekfantasy.enchantment.SilkstepEnchantment;
+import greekfantasy.enchantment.SmashingEnchantment;
 import greekfantasy.entity.misc.SpearEntity;
+import greekfantasy.entity.monster.DrakainaEntity;
 import greekfantasy.item.BidentItem;
 import greekfantasy.item.ClubItem;
 import greekfantasy.item.GFArmorMaterials;
@@ -11,13 +22,19 @@ import greekfantasy.item.GFTiers;
 import greekfantasy.item.KnifeItem;
 import greekfantasy.item.SnakeskinArmorItem;
 import greekfantasy.item.SpearItem;
+import greekfantasy.mob_effect.CurseOfCirceEffect;
+import greekfantasy.mob_effect.MirroringEffect;
+import greekfantasy.mob_effect.PrisonerOfHadesEffect;
+import greekfantasy.mob_effect.StunnedEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.MenuType;
@@ -37,6 +54,7 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoorBlock;
@@ -48,6 +66,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.grower.OakTreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,6 +80,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public final class GFRegistry {
@@ -73,6 +94,7 @@ public final class GFRegistry {
     private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, MODID);
     private static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MODID);
     private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, MODID);
     private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, MODID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
 
@@ -83,6 +105,7 @@ public final class GFRegistry {
         MobEffectReg.register();
         EnchantmentReg.register();
         EntityReg.register();
+        BlockEntityReg.register();
         MenuReg.register();
         RecipeReg.register();
     }
@@ -105,7 +128,7 @@ public final class GFRegistry {
             // register terracotta vases
             for(DyeColor dyeColor : DyeColor.values()) {
                 RegistryObject<Block> VASE = BLOCKS.register(dyeColor.getSerializedName() + "_terracotta_vase", () ->
-                        new Block(BlockBehaviour.Properties.of(Material.STONE, dyeColor.getMaterialColor())
+                        new VaseBlock(BlockBehaviour.Properties.of(Material.STONE, dyeColor.getMaterialColor())
                                 .strength(0.5F, 1.0F).noOcclusion()));
                 GFRegistry.ItemReg.registerItemBlock(VASE);
             }
@@ -120,7 +143,7 @@ public final class GFRegistry {
                         .requiresCorrectToolForDrops().strength(3.0F, 6.0F)
                         .sound(SoundType.METAL)));
         public static final RegistryObject<Block> MYSTERIOUS_BOX = BLOCKS.register("mysterious_box", () ->
-                new Block(BlockBehaviour.Properties.of(Material.WOOD).strength(0.8F, 3.0F).sound(SoundType.WOOD).noOcclusion()));
+                new MysteriousBoxBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(0.8F, 3.0F).sound(SoundType.WOOD).noOcclusion()));
         public static final RegistryObject<Block> GIGANTE_HEAD = BLOCKS.register("gigante_head", () ->
                 new Block(BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
         public static final RegistryObject<Block> ORTHUS_HEAD = BLOCKS.register("orthus_head", () ->
@@ -351,7 +374,8 @@ public final class GFRegistry {
         };
 
         private static final FoodProperties OLIVES_FOOD = new FoodProperties.Builder().nutrition(2).saturationMod(0.2F).build();
-        private static final FoodProperties POMEGRANATE_FOOD = new FoodProperties.Builder().nutrition(4).saturationMod(0.3F).build();
+        private static final FoodProperties POMEGRANATE_FOOD = new FoodProperties.Builder().nutrition(4).saturationMod(0.3F)
+                .effect(() -> new MobEffectInstance(MobEffectReg.PRISONER_OF_HADES.get(), 6000), 1.0F).build();
         private static final FoodProperties AMBROSIA_FOOD = new FoodProperties.Builder().nutrition(4).saturationMod(1.2F).alwaysEat()
                 .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 400, 1), 1.0F)
                 .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 800, 0), 1.0F)
@@ -462,13 +486,13 @@ public final class GFRegistry {
         public static final RegistryObject<Item> HELLENIC_BOOTS = ITEMS.register("hellenic_boots", () ->
                 new ArmorItem(GFArmorMaterials.HELLENIC, EquipmentSlot.FEET, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> SNAKESKIN_HELMET = ITEMS.register("snakeskin_helmet", () ->
-                new SnakeskinArmorItem(GFArmorMaterials.SNAKESKIN, EquipmentSlot.HEAD, new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)));
+                new SnakeskinArmorItem(GFArmorMaterials.SNAKESKIN, EquipmentSlot.HEAD, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> SNAKESKIN_CHESTPLATE = ITEMS.register("snakeskin_chestplate", () ->
-                new SnakeskinArmorItem(GFArmorMaterials.SNAKESKIN, EquipmentSlot.CHEST, new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)));
+                new SnakeskinArmorItem(GFArmorMaterials.SNAKESKIN, EquipmentSlot.CHEST, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> SNAKESKIN_LEGGINGS = ITEMS.register("snakeskin_leggings", () ->
-                new SnakeskinArmorItem(GFArmorMaterials.SNAKESKIN, EquipmentSlot.LEGS, new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)));
+                new SnakeskinArmorItem(GFArmorMaterials.SNAKESKIN, EquipmentSlot.LEGS, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> SNAKESKIN_BOOTS = ITEMS.register("snakeskin_boots", () ->
-                new SnakeskinArmorItem(GFArmorMaterials.SNAKESKIN, EquipmentSlot.FEET, new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)));
+                new SnakeskinArmorItem(GFArmorMaterials.SNAKESKIN, EquipmentSlot.FEET, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
 
         //// MISC ITEMS ////
         // TODO instruments
@@ -571,16 +595,40 @@ public final class GFRegistry {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(GFRegistry.EntityReg::registerEntityAttributes);
         }
 
-
         private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
-
+            event.put(DRAKAINA.get(), DrakainaEntity.createAttributes().build());
         }
 
-        public static final RegistryObject<EntityType<?>> SPEAR = ENTITY_TYPES.register("spear", () ->
+        // creature
+        public static final RegistryObject<EntityType<? extends DrakainaEntity>> DRAKAINA = ENTITY_TYPES.register("drakaina", () ->
+                EntityType.Builder.of(DrakainaEntity::new, MobCategory.MONSTER)
+                        .sized(0.9F, 1.9F).clientTrackingRange(8)
+                        .build("drakaina"));
+        // other
+        public static final RegistryObject<EntityType<? extends SpearEntity>> SPEAR = ENTITY_TYPES.register("spear", () ->
                 EntityType.Builder.<SpearEntity>of(SpearEntity::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F).noSummon().clientTrackingRange(4).updateInterval(20)
                     .build("spear"));
     }
+
+    public static final class BlockEntityReg {
+
+        public static void register() {
+            BLOCK_ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
+        }
+
+        public static final RegistryObject<BlockEntityType<VaseBlockEntity>> VASE = BLOCK_ENTITY_TYPES.register("vase", () -> {
+            // create set of vase blocks using registry objects
+            Set<Block> vaseBlocks = new HashSet<>();
+            for(final DyeColor dyeColor : DyeColor.values()) {
+                vaseBlocks.add(RegistryObject.create(new ResourceLocation(MODID, dyeColor.getSerializedName() + "_terracotta_vase"), ForgeRegistries.BLOCKS).get());
+            }
+            // create block entity type
+            return BlockEntityType.Builder.of(VaseBlockEntity::new, vaseBlocks.toArray(new Block[0]))
+                    .build(null);
+        });
+    }
+
 
     public static final class PotionReg {
 
@@ -596,6 +644,13 @@ public final class GFRegistry {
             MOB_EFFECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
 
+        public static final RegistryObject<MobEffect> CURSE_OF_CIRCE = MOB_EFFECTS.register("curse_of_circe", () -> new CurseOfCirceEffect());
+        public static final RegistryObject<MobEffect> MIRRORING = MOB_EFFECTS.register("mirroring", () -> new MirroringEffect());
+        public static final RegistryObject<MobEffect> PETRIFIED = MOB_EFFECTS.register("petrified", () -> new StunnedEffect());
+        public static final RegistryObject<MobEffect> PRISONER_OF_HADES = MOB_EFFECTS.register("prisoner_of_hades", () -> new PrisonerOfHadesEffect());
+        public static final RegistryObject<MobEffect> STUNNED = MOB_EFFECTS.register("stunned", () -> new StunnedEffect());
+
+
     }
 
 
@@ -604,6 +659,30 @@ public final class GFRegistry {
         public static void register() {
             ENCHANTMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
+
+        public static final RegistryObject<Enchantment> DAYBREAK = ENCHANTMENTS.register("daybreak", () ->
+                new DeityEnchantment(Enchantment.Rarity.RARE, EnchantmentCategory.BREAKABLE, EquipmentSlot.MAINHAND, 1, i -> i.is(Items.CLOCK)));
+        public static final RegistryObject<Enchantment> FLYING = ENCHANTMENTS.register("flying", () ->
+                new DeityEnchantment(Enchantment.Rarity.VERY_RARE, EnchantmentCategory.ARMOR_FEET, EquipmentSlot.FEET, 1, i -> i.is(ItemReg.WINGED_SANDALS.get())));
+        public static final RegistryObject<Enchantment> FIREFLASH = ENCHANTMENTS.register("fireflash", () ->
+                new DeityEnchantment(Enchantment.Rarity.VERY_RARE, EnchantmentCategory.WEAPON, EquipmentSlot.MAINHAND, 1, i -> i.is(ItemReg.THUNDERBOLT.get())));
+        public static final RegistryObject<Enchantment> HUNTING = ENCHANTMENTS.register("hunting", () ->
+                new HuntingEnchantment(Enchantment.Rarity.COMMON));
+        public static final RegistryObject<Enchantment> LORD_OF_THE_SEA = ENCHANTMENTS.register("lord_of_the_sea", () ->
+                new DeityEnchantment(Enchantment.Rarity.VERY_RARE, EnchantmentCategory.TRIDENT, EquipmentSlot.MAINHAND, 1, i -> i.is(Items.TRIDENT)));
+        public static final RegistryObject<Enchantment> MIRRORING = ENCHANTMENTS.register("mirroring", () ->
+                new MirroringEnchantment(Enchantment.Rarity.UNCOMMON));
+        public static final RegistryObject<Enchantment> OVERSTEP = ENCHANTMENTS.register("overstep", () ->
+                new OverstepEnchantment(Enchantment.Rarity.UNCOMMON));
+        public static final RegistryObject<Enchantment> POISONING = ENCHANTMENTS.register("poisoning", () ->
+                new PoisoningEnchantment(Enchantment.Rarity.VERY_RARE));
+        public static final RegistryObject<Enchantment> RAISING = ENCHANTMENTS.register("raising", () ->
+                new DeityEnchantment(Enchantment.Rarity.VERY_RARE, EnchantmentCategory.WEAPON, EquipmentSlot.MAINHAND, 1, i -> i.is(ItemReg.BIDENT.get())));
+        public static final RegistryObject<Enchantment> SILKSTEP = ENCHANTMENTS.register("silkstep", () ->
+                new SilkstepEnchantment(Enchantment.Rarity.RARE));
+        public static final RegistryObject<Enchantment> SMASHING = ENCHANTMENTS.register("smashing", () ->
+                new SmashingEnchantment(Enchantment.Rarity.VERY_RARE));
+
 
     }
 

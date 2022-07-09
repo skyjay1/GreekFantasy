@@ -29,7 +29,7 @@ public class SnakeskinArmorItem extends ArmorItem {
         // add the item to the group with enchantment already applied
         if (this.allowdedIn(group)) {
             final ItemStack stack = new ItemStack(this);
-            if (GreekFantasy.CONFIG.isPoisonEnabled()) {
+            if (GreekFantasy.CONFIG.isPoisoningEnabled()) {
                 // TODO poison enchantment
                 //stack.enchant(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, 1);
             }
@@ -47,7 +47,7 @@ public class SnakeskinArmorItem extends ArmorItem {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return GreekFantasy.CONFIG.isPoisonEnabled() ? stack.getEnchantmentTags().size() > 1 : super.isFoil(stack);
+        return GreekFantasy.CONFIG.isPoisoningEnabled() ? stack.getEnchantmentTags().size() > 1 : super.isFoil(stack);
     }
 
     /**

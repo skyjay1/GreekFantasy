@@ -2,15 +2,25 @@ package greekfantasy.client;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.blockentity.VaseBlockEntityRenderer;
+import greekfantasy.client.entity.DrakainaRenderer;
 import greekfantasy.client.entity.SpearRenderer;
+import greekfantasy.client.entity.model.DrakainaModel;
 import greekfantasy.entity.misc.SpearEntity;
+import greekfantasy.entity.monster.DrakainaEntity;
 import net.minecraft.client.model.TridentModel;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -34,19 +44,55 @@ public final class GFClientEvents {
             event.enqueueWork(ModHandler::registerModelProperties);
         }
 
-
-
         @SubscribeEvent
         public static void registerEntityLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             // register layer definitions
+            // creature
+            event.registerLayerDefinition(DrakainaRenderer.DRAKAINA_MODEL_RESOURCE, DrakainaModel::createBodyLayer);
+            // other
             event.registerLayerDefinition(SpearRenderer.SPEAR_MODEL_RESOURCE, TridentModel::createLayer);
         }
 
         @SubscribeEvent
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer((EntityType<? extends SpearEntity>) GFRegistry.EntityReg.SPEAR.get(), SpearRenderer::new);
+            // register entities
+            // creature
+            event.registerEntityRenderer(GFRegistry.EntityReg.DRAKAINA.get(), DrakainaRenderer::new);
+            // other
+            event.registerEntityRenderer(GFRegistry.EntityReg.SPEAR.get(), SpearRenderer::new);
+            // register block entities
+            event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.VASE.get(), VaseBlockEntityRenderer::new);
         }
 
+        /**
+         * Used to register block color handlers.
+         * Currently used to color leaves.
+         *
+         * @param event the ColorHandlerEvent (Block)
+         **/
+        @SubscribeEvent
+        public static void registerBlockColors(final ColorHandlerEvent.Block event) {
+            event.getBlockColors().register(
+                    (BlockState stateIn, BlockAndTintGetter level, BlockPos pos, int color) -> 0xD8E3D0,
+                    RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "olive_leaves"), ForgeRegistries.BLOCKS).get());
+            event.getBlockColors().register(
+                    (BlockState stateIn, BlockAndTintGetter level, BlockPos pos, int color) -> 0x80f66b,
+                    RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "golden_leaves"), ForgeRegistries.BLOCKS).get());
+        }
+
+        /**
+         * Used to register item color handlers.
+         * Currently used to color leaves.
+         *
+         * @param event the ColorHandlerEvent (Item)
+         **/
+        @SubscribeEvent
+        public static void registerItemColors(final ColorHandlerEvent.Item event) {
+            event.getItemColors().register((ItemStack item, int i) -> 0xD8E3D0,
+                    RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "olive_leaves"), ForgeRegistries.ITEMS).get());
+            event.getItemColors().register((ItemStack item, int i) -> 0x80f66b,
+                    RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "golden_leaves"), ForgeRegistries.ITEMS).get());
+        }
 
         private static void registerRenderLayers() {
             // cutout mipped
@@ -62,6 +108,8 @@ public final class GFClientEvents {
             registerCutout("pomegranate_trapdoor");
             registerCutout("golden_sapling");
             registerCutout("olive_oil");
+            registerCutout("golden_string");
+            registerCutout("wild_rose");
         }
 
         private static void registerCutout(final String blockName) {

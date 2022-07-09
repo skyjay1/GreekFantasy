@@ -1,12 +1,6 @@
 {
 	"screens" : [
 		{
-			"class" : "greekfantasy.client.gui.StatueScreen", 
-			"texture" : "greekfantasy:textures/gui/statue.png",
-			"size" : [224, 202], 
-			"texSize" : [256, 256]
-		},
-		{
 			"class" : "greekfantasy.client.gui.PanfluteScreen", 
 			"texture" : "greekfantasy:textures/gui/panflute.png",
 			"size" : [154, 150], 

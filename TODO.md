@@ -51,7 +51,7 @@ __Key:__
 - _ _ _ _ _ Miniboss: Hydra
 - _ _ _ _ _ Miniboss: Arachne
 - _ _ _ _ _ Fury
-- _ _ _ _ _ Drakaina
+- X X X X _ Drakaina
 - _ _ _ _ _ Arion
 - _ _ _ _ _ Whirl
 - _ _ _ _ _ Pegasus
@@ -111,12 +111,12 @@ __Key:__
 - X X _ Marble, variants, and Pillar
 - X X _ Olive Log, leaves, planks, and variants
 - X X _ Pomegranate Log, leaves, planks, and variants
-- X _ _ Mysterious Box
+- X X _ Mysterious Box
 - X _ _ Ichor-Infused Block
 - ~ _ _ Block of Bronze
-- ~ _ _ Terracotta Vase and variants
+- X X _ Terracotta Vase and variants
 - ~ _ _ Mob Heads (Orthus, Gigante, Cerberus)
-- X _ _ Oil Lamp
+- X X _ Oil Lamp
 - X _ _ Oil
 - X _ _ Olive Sapling
 - X _ _ Pomegranate Sapling
@@ -137,6 +137,7 @@ __Key:__
 - _ _ _ Spawn Eggs
 - ~ _ _ Bronze Ingot
 - ~ _ _ Bronze Nugget
+- _ _ _ Bronze artifacts (goblet, bowl, coins, nail, ruined helmet/greaves/cuirass, figurine, scrap)
 - X _ _ Ichor
 - X _ _ Horn
 - X _ _ Snakeskin
@@ -196,7 +197,7 @@ __Key:__
 - X _ _ _ Helm of Darkness
 - X _ _ _ Winged Sandals
 - X _ _ _ Achilles Armor (Hellenic armor? Bronze armor?)
-- X X _ _ Snakeskin Armor
+- X X X _ Snakeskin Armor
 - X _ _ _ Nemean Lion Hide
 
 ## Advancements
@@ -205,26 +206,41 @@ __Key:__
 
 ## Potions
 
-- _ Curse of Circe
-- _ Mirroring
-- _ Stunned
-- _ Petrified
-- _ Prisoner of Hades
+- ~ Curse of Circe
+- ~ Mirroring
+- X Stunned
+- X Petrified
+- X Prisoner of Hades
 
 
 ## Enchantments
 
-- _ Overstep
-- _ Hunting
-- _ Smashing
-- _ Mirroring
-- _ Poisoning
-- _ Flying
-- _ Fireflash
-- _ Lord of the Sea
-- _ Raising
-- _ Daybreak
-- _ Silkstep
+__Key:__
+
+`[In-game] [Use] [Obtainable]`
+
+- X _ _ Daybreak
+- X _ _ Flying
+- X _ _ Fireflash
+- X X _ Hunting
+- X _ _ Lord of the Sea
+- X _ _ Mirroring
+- X _ _ Overstep
+- X X _ Poisoning
+- X _ _ Raising
+- X _ _ Silkstep
+- X ~ _ Smashing
+
+## Other
+
+### Uses for bronze
+
+- Hellenic Armor Set
+- Mirror
+- Discus
+- Decoration block
+- Summon Talos
+- Summon Bronze Bull
 
 
 ## Misc Ideas and Inspirations

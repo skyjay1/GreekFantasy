@@ -1,0 +1,76 @@
+package greekfantasy.enchantment;
+
+import greekfantasy.GreekFantasy;
+import greekfantasy.item.KnifeItem;
+import greekfantasy.item.SpearItem;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+
+public class HuntingEnchantment extends Enchantment {
+
+    public HuntingEnchantment(final Enchantment.Rarity rarity) {
+        super(rarity, EnchantmentCategory.WEAPON, new EquipmentSlot[]{EquipmentSlot.MAINHAND});
+    }
+
+    @Override
+    public void doPostAttack(LivingEntity user, Entity target, int level) {
+        // check for cooldown
+        final ItemStack item = user.getItemInHand(InteractionHand.MAIN_HAND);
+        // if it's an animal, use high attack damage
+        if (target.canChangeDimensions() && target instanceof Animal animal
+                && user.getRandom().nextFloat() < 0.30F + 0.15F * level) {
+            // determine damage amount
+            float amount = Math.min(99.0F, (animal.getMaxHealth() + animal.getArmorValue()) * 1.25F);
+            // apply damage
+            DamageSource source = DamageSource.mobAttack(user).bypassArmor().bypassMagic();
+            target.hurt(source, amount);
+        }
+    }
+
+    @Override
+    public int getMinCost(int level) {
+        return 5 + super.getMinCost(level);
+    }
+
+    @Override
+    public int getMaxCost(int level) {
+        return 5 + super.getMaxCost(level);
+    }
+
+    @Override
+    public boolean isTreasureOnly() {
+        return GreekFantasy.CONFIG.isHuntingEnabled();
+    }
+
+    @Override
+    public boolean isTradeable() {
+        return GreekFantasy.CONFIG.isHuntingEnabled();
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        return GreekFantasy.CONFIG.isHuntingEnabled();
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return 3;
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack) {
+        return GreekFantasy.CONFIG.isHuntingEnabled()
+                && (stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem
+                    || stack.getItem() instanceof KnifeItem || stack.getItem() instanceof SpearItem)
+                && super.canApplyAtEnchantingTable(stack);
+    }
+}
