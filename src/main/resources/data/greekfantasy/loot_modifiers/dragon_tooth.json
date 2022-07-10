@@ -1,0 +1,25 @@
+{
+  "type": "greekfantasy:replace_drops",
+  "conditions": [
+    {
+      "condition": "minecraft:block_state_property",
+      "block": "minecraft:bone_block"
+    },
+    {
+      "condition": "minecraft:entity_properties",
+      "entity": "this",
+      "predicate": {
+        "type": "minecraft:player"
+      }
+    },
+    {
+      "condition": "minecraft:random_chance_with_looting",
+      "chance": 0.08,
+      "looting_multiplier": 0.1
+    }
+  ],
+  "replacement": {
+    "id": "greekfantasy:dragon_tooth",
+    "Count": 1
+  }
+}

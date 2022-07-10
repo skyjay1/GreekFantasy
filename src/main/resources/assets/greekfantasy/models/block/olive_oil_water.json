@@ -1,7 +1,7 @@
 {
 	"textures": {
-		"all": "greekfantasy:block/oil",
-		"particle": "greekfantasy:block/oil"
+		"all": "greekfantasy:block/olive_oil",
+		"particle": "greekfantasy:block/olive_oil"
 	},
 	"elements": [
 		{

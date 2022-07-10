@@ -3,6 +3,7 @@ package greekfantasy.item;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -16,8 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class SnakeskinArmorItem extends ArmorItem {
 
-    private static final String TEXTURE_1 = GreekFantasy.MODID + ":textures/models/armor/snakeskin_layer_1.png";
-    private static final String TEXTURE_2 = GreekFantasy.MODID + ":textures/models/armor/snakeskin_layer_2.png";
+    private static final String TEXTURE_1 = new ResourceLocation(GreekFantasy.MODID, "textures/models/armor/snakeskin_layer_1.png").toString();
+    private static final String TEXTURE_2 = new ResourceLocation(GreekFantasy.MODID, "textures/models/armor/snakeskin_layer_2.png").toString();
 
 
     public SnakeskinArmorItem(final ArmorMaterial armorMaterial, final EquipmentSlot slot, Properties builderIn) {
@@ -30,8 +31,7 @@ public class SnakeskinArmorItem extends ArmorItem {
         if (this.allowdedIn(group)) {
             final ItemStack stack = new ItemStack(this);
             if (GreekFantasy.CONFIG.isPoisoningEnabled()) {
-                // TODO poison enchantment
-                //stack.enchant(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, 1);
+                stack.enchant(GFRegistry.EnchantmentReg.POISONING.get(), 1);
             }
             items.add(stack);
         }
@@ -40,9 +40,9 @@ public class SnakeskinArmorItem extends ArmorItem {
     @Override
     public void onCraftedBy(ItemStack stack, Level worldIn, Player playerIn) {
         // add Poison enchantment if not present
-        /*if (GreekFantasy.CONFIG.isPoisonEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, stack) < 1) {
-            stack.enchant(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, 1);
-        }*/
+        if (GreekFantasy.CONFIG.isPoisoningEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.POISONING.get(), stack) < 1) {
+            stack.enchant(GFRegistry.EnchantmentReg.POISONING.get(), 1);
+        }
     }
 
     @Override
@@ -58,10 +58,9 @@ public class SnakeskinArmorItem extends ArmorItem {
     public void inventoryTick(final ItemStack stack, final Level worldIn, final Entity entityIn,
                               final int itemSlot, final boolean isSelected) {
         // add Poison enchantment if not present
-        // TODO
-        /*if (GreekFantasy.CONFIG.isPoisonEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, stack) < 1) {
-            stack.enchant(GFRegistry.EnchantmentReg.POISON_ENCHANTMENT, 1);
-        }*/
+        if (GreekFantasy.CONFIG.isPoisoningEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.POISONING.get(), stack) < 1) {
+            stack.enchant(GFRegistry.EnchantmentReg.POISONING.get(), 1);
+        }
     }
 
     @Nullable

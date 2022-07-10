@@ -7,7 +7,7 @@
       },
       "apply": [
         {
-          "model": "greekfantasy:block/oil"
+          "model": "greekfantasy:block/olive_oil"
         }
       ]
     },
@@ -18,7 +18,7 @@
       },
       "apply": [
         {
-          "model": "greekfantasy:block/oil_water"
+          "model": "greekfantasy:block/olive_oil_water"
         }
       ]
     },

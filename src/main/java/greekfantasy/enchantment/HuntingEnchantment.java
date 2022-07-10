@@ -48,17 +48,17 @@ public class HuntingEnchantment extends Enchantment {
 
     @Override
     public boolean isTreasureOnly() {
-        return GreekFantasy.CONFIG.isHuntingEnabled();
+        return GreekFantasy.CONFIG.HUNTING_ENABLED.get();
     }
 
     @Override
     public boolean isTradeable() {
-        return GreekFantasy.CONFIG.isHuntingEnabled();
+        return GreekFantasy.CONFIG.HUNTING_ENABLED.get();
     }
 
     @Override
     public boolean isDiscoverable() {
-        return GreekFantasy.CONFIG.isHuntingEnabled();
+        return GreekFantasy.CONFIG.HUNTING_ENABLED.get();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class HuntingEnchantment extends Enchantment {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack) {
-        return GreekFantasy.CONFIG.isHuntingEnabled()
+        return GreekFantasy.CONFIG.HUNTING_ENABLED.get()
                 && (stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem
                     || stack.getItem() instanceof KnifeItem || stack.getItem() instanceof SpearItem)
                 && super.canApplyAtEnchantingTable(stack);

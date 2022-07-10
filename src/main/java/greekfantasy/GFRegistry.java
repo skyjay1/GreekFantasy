@@ -4,6 +4,7 @@ import greekfantasy.block.GoldenStringBlock;
 import greekfantasy.block.MysteriousBoxBlock;
 import greekfantasy.block.NestBlock;
 import greekfantasy.block.OilLampBlock;
+import greekfantasy.block.OliveOilBlock;
 import greekfantasy.block.PillarBlock;
 import greekfantasy.block.VaseBlock;
 import greekfantasy.block.WildRoseBlock;
@@ -15,8 +16,13 @@ import greekfantasy.enchantment.OverstepEnchantment;
 import greekfantasy.enchantment.PoisoningEnchantment;
 import greekfantasy.enchantment.SilkstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
+import greekfantasy.entity.Sparti;
+import greekfantasy.entity.misc.Curse;
+import greekfantasy.entity.misc.CurseOfCirce;
 import greekfantasy.entity.misc.Discus;
 import greekfantasy.entity.misc.DragonTooth;
+import greekfantasy.entity.misc.HealingSpell;
+import greekfantasy.entity.misc.PoisonSpit;
 import greekfantasy.entity.misc.Spear;
 import greekfantasy.entity.misc.WebBall;
 import greekfantasy.entity.monster.BabySpider;
@@ -29,14 +35,21 @@ import greekfantasy.item.DiscusItem;
 import greekfantasy.item.DragonToothItem;
 import greekfantasy.item.GFArmorMaterials;
 import greekfantasy.item.GFTiers;
+import greekfantasy.item.GoldenBallItem;
+import greekfantasy.item.HelmOfDarknessItem;
 import greekfantasy.item.KnifeItem;
+import greekfantasy.item.OliveOilItem;
 import greekfantasy.item.SnakeskinArmorItem;
 import greekfantasy.item.SpearItem;
+import greekfantasy.item.StaffOfHealingItem;
+import greekfantasy.item.ThunderboltItem;
+import greekfantasy.item.WandOfCirceItem;
 import greekfantasy.item.WebBallItem;
 import greekfantasy.mob_effect.CurseOfCirceEffect;
 import greekfantasy.mob_effect.MirroringEffect;
 import greekfantasy.mob_effect.PrisonerOfHadesEffect;
 import greekfantasy.mob_effect.StunnedEffect;
+import greekfantasy.util.ReplaceDropsLootModifier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -84,6 +97,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -102,6 +116,7 @@ public final class GFRegistry {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     private static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(ForgeRegistries.POTIONS, MODID);
     private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, MODID);
+    private static final DeferredRegister<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS, MODID);
     private static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MODID);
     private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, MODID);
@@ -112,6 +127,7 @@ public final class GFRegistry {
         BlockReg.register();
         ItemReg.register();
         PotionReg.register();
+        LootModifierReg.register();
         MobEffectReg.register();
         EnchantmentReg.register();
         EntityReg.register();
@@ -135,8 +151,13 @@ public final class GFRegistry {
             registerLeaves("olive", 30, 60);
             registerLeaves("pomegranate", 0, 0);
             registerLeaves("golden", 30, 60);
-            // register terracotta vases
-            for(DyeColor dyeColor : DyeColor.values()) {
+            // register terracotta vase
+            RegistryObject<Block> COLORLESS_VASE = BLOCKS.register("terracotta_vase", () ->
+                    new VaseBlock(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_ORANGE)
+                            .strength(0.5F, 1.0F).noOcclusion()));
+            GFRegistry.ItemReg.registerItemBlock(COLORLESS_VASE);
+            // register colored terracotta vases
+            for (DyeColor dyeColor : DyeColor.values()) {
                 RegistryObject<Block> VASE = BLOCKS.register(dyeColor.getSerializedName() + "_terracotta_vase", () ->
                         new VaseBlock(BlockBehaviour.Properties.of(Material.STONE, dyeColor.getMaterialColor())
                                 .strength(0.5F, 1.0F).noOcclusion()));
@@ -163,10 +184,10 @@ public final class GFRegistry {
         public static final RegistryObject<Block> OIL_LAMP = BLOCKS.register("oil_lamp", () ->
                 new OilLampBlock(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_BROWN)
                         .noOcclusion().lightLevel(b -> b.getValue(OilLampBlock.LIT) ? 11 : 0).strength(0.2F, 0.1F)));
-        public static final RegistryObject<Block> OIL = BLOCKS.register("olive_oil", () ->
-                new Block(BlockBehaviour.Properties.of(Material.FIRE)
+        public static final RegistryObject<Block> OLIVE_OIL = BLOCKS.register("olive_oil", () ->
+                new OliveOilBlock(BlockBehaviour.Properties.of(Material.FIRE)
                         .noOcclusion().noCollission().instabreak()
-                        .randomTicks().lightLevel((state) -> 11).sound(SoundType.WET_GRASS)));
+                        .randomTicks().lightLevel(b -> b.getValue(OliveOilBlock.LIT) ? 11 : 0).sound(SoundType.WET_GRASS)));
         public static final RegistryObject<Block> GOLDEN_STRING = BLOCKS.register("golden_string", () ->
                 new GoldenStringBlock(BlockBehaviour.Properties.of(Material.DECORATION)
                         .lightLevel(b -> 8).instabreak().noCollission().noOcclusion()));
@@ -190,16 +211,16 @@ public final class GFRegistry {
                 new Block(Block.Properties.of(Material.WATER_PLANT).noCollission().instabreak().randomTicks().sound(SoundType.CROP)));
 
 
-
         /**
          * Registers all of the following: log, stripped log, wood, stripped wood, planks, stairs, slab, door, trapdoor
-         * @param registryName the base registry name
-         * @param strength the destroy time
-         * @param hardness the explosion resistance
-         * @param side the material color of the side
-         * @param top the material color of the top
-         * @param fireSpread the fire spread chance. The higher the number returned, the faster fire will spread around this block.
-         * @param logFlammability Chance that fire will spread and consume the log. 300 being a 100% chance, 0, being a 0% chance.
+         *
+         * @param registryName       the base registry name
+         * @param strength           the destroy time
+         * @param hardness           the explosion resistance
+         * @param side               the material color of the side
+         * @param top                the material color of the top
+         * @param fireSpread         the fire spread chance. The higher the number returned, the faster fire will spread around this block.
+         * @param logFlammability    Chance that fire will spread and consume the log. 300 being a 100% chance, 0, being a 0% chance.
          * @param planksFlammability Chance that fire will spread and consume the plank. 300 being a 100% chance, 0, being a 0% chance.
          */
         private static void registerLogsPlanksEtc(final String registryName, final float strength, final float hardness,
@@ -221,42 +242,64 @@ public final class GFRegistry {
 
             // register blocks
             final RegistryObject<Block> strippedLog = BLOCKS.register("stripped_" + registryName + "_log", () ->
-                new RotatedPillarBlock(woodProperties) {
-                    @Override
-                    public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return fireSpread; }
-                    @Override
-                    public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return logFlammability; }
-                }
+                    new RotatedPillarBlock(woodProperties) {
+                        @Override
+                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return fireSpread;
+                        }
+
+                        @Override
+                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return logFlammability;
+                        }
+                    }
             );
             final RegistryObject<Block> strippedWood = BLOCKS.register("stripped_" + registryName + "_wood", () ->
-                new RotatedPillarBlock(woodProperties) {
-                    @Override
-                    public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return fireSpread; }
-                    @Override
-                    public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return logFlammability; }
-                }
+                    new RotatedPillarBlock(woodProperties) {
+                        @Override
+                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return fireSpread;
+                        }
+
+                        @Override
+                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return logFlammability;
+                        }
+                    }
             );
             final RegistryObject<Block> log = BLOCKS.register(registryName + "_log", () ->
-                new RotatedPillarBlock(logProperties) {
-                    @Override
-                    public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return fireSpread; }
-                    @Override
-                    public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return logFlammability; }
-                    @Override
-                    public BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate) {
-                        if (toolAction == ToolActions.AXE_STRIP) {
-                            return strippedLog.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS));
+                    new RotatedPillarBlock(logProperties) {
+                        @Override
+                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return fireSpread;
                         }
-                        return super.getToolModifiedState(state, context, toolAction, simulate);
+
+                        @Override
+                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return logFlammability;
+                        }
+
+                        @Override
+                        public BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate) {
+                            if (toolAction == ToolActions.AXE_STRIP) {
+                                return strippedLog.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS));
+                            }
+                            return super.getToolModifiedState(state, context, toolAction, simulate);
+                        }
                     }
-                }
             );
             final RegistryObject<Block> wood = BLOCKS.register(registryName + "_wood", () ->
                     new RotatedPillarBlock(woodProperties) {
                         @Override
-                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return fireSpread; }
+                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return fireSpread;
+                        }
+
                         @Override
-                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return logFlammability; }
+                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return logFlammability;
+                        }
+
                         @Override
                         public BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate) {
                             if (toolAction == ToolActions.AXE_STRIP) {
@@ -269,25 +312,40 @@ public final class GFRegistry {
             final RegistryObject<Block> planks = BLOCKS.register(registryName + "_planks", () ->
                     new Block(woodProperties) {
                         @Override
-                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return fireSpread; }
+                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return fireSpread;
+                        }
+
                         @Override
-                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return planksFlammability; }
+                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return planksFlammability;
+                        }
                     }
             );
             final RegistryObject<Block> slab = BLOCKS.register(registryName + "_slab", () ->
                     new SlabBlock(woodProperties) {
                         @Override
-                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return fireSpread; }
+                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return fireSpread;
+                        }
+
                         @Override
-                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return planksFlammability; }
+                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return planksFlammability;
+                        }
                     }
             );
             final RegistryObject<Block> stairs = BLOCKS.register(registryName + "_stairs", () ->
                     new StairBlock(() -> planks.get().defaultBlockState(), woodProperties) {
                         @Override
-                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return fireSpread; }
+                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return fireSpread;
+                        }
+
                         @Override
-                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return planksFlammability; }
+                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return planksFlammability;
+                        }
                     }
             );
             final RegistryObject<Block> door = BLOCKS.register(registryName + "_door", () -> new DoorBlock(doorProperties));
@@ -306,21 +364,27 @@ public final class GFRegistry {
 
         /**
          * Registers a leaves block.
+         *
          * @param registryName the base registry name
-         * @param fireSpread the fire spread chance. The higher the number returned, the faster fire will spread around this block.
+         * @param fireSpread   the fire spread chance. The higher the number returned, the faster fire will spread around this block.
          * @param flammability Chance that fire will spread and consume the block. 300 being a 100% chance, 0, being a 0% chance.
          */
         private static void registerLeaves(final String registryName, final int fireSpread, final int flammability) {
             final RegistryObject<Block> leaves = BLOCKS.register(registryName + "_leaves", () ->
-                new LeavesBlock(Block.Properties
-                        .of(Material.LEAVES).strength(0.2F).randomTicks().sound(SoundType.GRASS)
-                        .noOcclusion().isValidSpawn(GFRegistry.BlockReg::allowsSpawnOnLeaves).isSuffocating((s, r, p) -> false)
-                        .isViewBlocking((s, r, p) -> false)) {
-                    @Override
-                    public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return fireSpread; }
-                    @Override
-                    public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) { return flammability; }
-                }
+                    new LeavesBlock(Block.Properties
+                            .of(Material.LEAVES).strength(0.2F).randomTicks().sound(SoundType.GRASS)
+                            .noOcclusion().isValidSpawn(GFRegistry.BlockReg::allowsSpawnOnLeaves).isSuffocating((s, r, p) -> false)
+                            .isViewBlocking((s, r, p) -> false)) {
+                        @Override
+                        public int getFireSpreadSpeed(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return fireSpread;
+                        }
+
+                        @Override
+                        public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
+                            return flammability;
+                        }
+                    }
             );
             // block items
             GFRegistry.ItemReg.registerItemBlock(leaves);
@@ -328,8 +392,9 @@ public final class GFRegistry {
 
         /**
          * Registers the following: block, slab, stairs, pillar, polished block, polished slab, polished stairs
+         *
          * @param registryName the base registry name.
-         * @param properties the block properties
+         * @param properties   the block properties
          */
         private static void registerBlockPolishedEtc(final String registryName, final Block.Properties properties) {
             // raw, slab, and stairs
@@ -354,8 +419,9 @@ public final class GFRegistry {
 
         /**
          * Registers the following: block, chiseled, polished, cracked polished, brick, chiseled brick, cracked brick
+         *
          * @param registryName the base registry name
-         * @param properties the block properties
+         * @param properties   the block properties
          */
         private static void registerBlockPolishedChiseledAndBricks(final String registryName, final Block.Properties properties) {
             // raw, polished, chiseled, brick, and chiseled_brick
@@ -398,9 +464,9 @@ public final class GFRegistry {
 
         //// LEGENDARY WEAPONS ////
         public static final RegistryObject<Item> THUNDERBOLT = ITEMS.register("thunderbolt", () ->
-                new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).stacksTo(1)));
+                new ThunderboltItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).durability(170)));
         public static final RegistryObject<Item> WAND_OF_CIRCE = ITEMS.register("wand_of_circe", () ->
-                new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(1)));
+                new WandOfCirceItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).durability(54)));
         public static final RegistryObject<Item> AVERNAL_BOW = ITEMS.register("avernal_bow", () ->
                 new BowItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).stacksTo(1)));
         public static final RegistryObject<Item> APOLLO_BOW = ITEMS.register("apollo_bow", () ->
@@ -417,7 +483,7 @@ public final class GFRegistry {
                 new ClubItem(Tiers.IRON, new Item.Properties().tab(GF_TAB).stacksTo(1)));
         // TODO custom tier for bident? for repair material
         public static final RegistryObject<Item> BIDENT = ITEMS.register("bident", () ->
-                new BidentItem(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.UNCOMMON).tab(GF_TAB)));
+                new BidentItem(Tiers.DIAMOND, new Item.Properties().rarity(Rarity.UNCOMMON).tab(GF_TAB).setNoRepair()));
         public static final RegistryObject<Item> WOODEN_SPEAR = ITEMS.register("wooden_spear", () ->
                 new SpearItem(Tiers.WOOD, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> FLINT_SPEAR = ITEMS.register("flint_spear", () ->
@@ -457,7 +523,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> BAG_OF_WIND = ITEMS.register("bag_of_wind", () ->
                 new BagOfWindItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).durability(24)));
         public static final RegistryObject<Item> STAFF_OF_HEALING = ITEMS.register("staff_of_healing", () ->
-                new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(1))); // TODO ability
+                new StaffOfHealingItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).durability(384)));
         public static final RegistryObject<Item> AMBROSIA = ITEMS.register("ambrosia", () ->
                 new Item(new Item.Properties().tab(GF_TAB).food(AMBROSIA_FOOD).rarity(Rarity.EPIC)));
         public static final RegistryObject<Item> HORN_OF_PLENTY = ITEMS.register("horn_of_plenty", () ->
@@ -465,11 +531,13 @@ public final class GFRegistry {
         public static final RegistryObject<Item> GOLDEN_FLEECE = ITEMS.register("golden_fleece", () ->
                 new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> GOLDEN_BALL = ITEMS.register("golden_ball", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
+                new GoldenBallItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).defaultDurability(480)));
         public static final RegistryObject<Item> ICHOR = ITEMS.register("ichor", () ->
                 new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)) {
                     @Override
-                    public boolean isFoil(ItemStack stack) { return true; }
+                    public boolean isFoil(ItemStack stack) {
+                        return true;
+                    }
                 });
         private static final BannerPattern SPIDER_PATTERN = BannerPattern.create("greekfantasy_spider", "greekfantasy_spider", "greekfantasy_spider", true);
         public static final RegistryObject<Item> SPIDER_BANNER_PATTERN = ITEMS.register("spider_banner_pattern", () ->
@@ -477,8 +545,7 @@ public final class GFRegistry {
 
         //// LEGENDARY ARMOR ////
         public static final RegistryObject<Item> HELM_OF_DARKNESS = ITEMS.register("helm_of_darkness", () ->
-                new ArmorItem(GFArmorMaterials.AVERNAL, EquipmentSlot.HEAD,
-                        new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC))); // TODO ability
+                new HelmOfDarknessItem(GFArmorMaterials.AVERNAL, new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC)));
         public static final RegistryObject<Item> WINGED_SANDALS = ITEMS.register("winged_sandals", () ->
                 new ArmorItem(GFArmorMaterials.WINGED, EquipmentSlot.FEET,
                         new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC))); // TODO ability
@@ -515,11 +582,11 @@ public final class GFRegistry {
         public static final RegistryObject<Item> OLIVES = ITEMS.register("olives", () ->
                 new Item(new Item.Properties().tab(GF_TAB).food(OLIVES_FOOD)));
         public static final RegistryObject<Item> OLIVE_OIL = ITEMS.register("olive_oil", () ->
-                new BlockItem(BlockReg.OIL.get(), new Item.Properties().tab(GF_TAB).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+                new OliveOilItem(BlockReg.OLIVE_OIL.get(), new Item.Properties().tab(GF_TAB).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
         public static final RegistryObject<Item> OLIVE_SALVE = ITEMS.register("olive_salve", () ->
                 new Item(new Item.Properties().tab(GF_TAB).stacksTo(1))); // TODO salve
         public static final RegistryObject<Item> POMEGRANATE = ITEMS.register("pomegranate", () ->
-                new Item(new Item.Properties().tab(GF_TAB).food(POMEGRANATE_FOOD))); // TODO Prisoner effect
+                new Item(new Item.Properties().tab(GF_TAB).food(POMEGRANATE_FOOD)));
 
         //// CRAFTING MATERIALS ////
         public static final RegistryObject<Item> BRONZE_INGOT = ITEMS.register("bronze_ingot", () -> new Item(new Item.Properties().tab(GF_TAB)));
@@ -540,7 +607,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> AVERNAL_CLAW = ITEMS.register("avernal_claw", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> AVERNAL_SHARD = ITEMS.register("avernal_shard", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> ICHOR_INFUSED_GEAR = ITEMS.register("ichor_infused_gear", () -> new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> GOLDEN_STRING = ITEMS.register("golden_string", () -> new BlockItem(BlockReg.GOLDEN_STRING.get(), new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> GOLDEN_STRING = ITEMS.register("golden_string", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> GORGON_BLOOD = ITEMS.register("gorgon_blood", () -> new Item(new Item.Properties().tab(GF_TAB).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
         public static final RegistryObject<Item> BOAR_EAR = ITEMS.register("boar_ear", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> BOAR_TUSK = ITEMS.register("boar_tusk", () -> new Item(new Item.Properties().tab(GF_TAB)));
@@ -570,6 +637,7 @@ public final class GFRegistry {
 
         /**
          * Registers an item for the given block
+         *
          * @param blockSupplier the block supplier
          * @return the BlockItem registry object
          */
@@ -579,6 +647,7 @@ public final class GFRegistry {
 
         /**
          * Creates a block item supplier for the given block
+         *
          * @param blockSupplier the block supplier
          * @return a supplier for the block item
          */
@@ -598,6 +667,7 @@ public final class GFRegistry {
         private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
             event.put(BABY_SPIDER.get(), BabySpider.createAttributes().build());
             event.put(DRAKAINA.get(), Drakaina.createAttributes().build());
+            event.put(SPARTI.get(), Sparti.createAttributes().build());
         }
 
         // creature
@@ -609,7 +679,19 @@ public final class GFRegistry {
                 EntityType.Builder.of(Drakaina::new, MobCategory.MONSTER)
                         .sized(0.9F, 1.9F).clientTrackingRange(8)
                         .build("drakaina"));
+        public static final RegistryObject<EntityType<? extends Sparti>> SPARTI = ENTITY_TYPES.register("sparti", () ->
+                EntityType.Builder.of(Sparti::new, MobCategory.CREATURE)
+                        .sized(0.6F, 1.98F).clientTrackingRange(8)
+                        .build("sparti"));
         // other
+        public static final RegistryObject<EntityType<? extends Curse>> CURSE = ENTITY_TYPES.register("curse", () ->
+                EntityType.Builder.<Curse>of(Curse::new, MobCategory.MISC)
+                        .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
+                        .build("curse"));
+        public static final RegistryObject<EntityType<? extends CurseOfCirce>> CURSE_OF_CIRCE = ENTITY_TYPES.register("curse_of_circe", () ->
+                EntityType.Builder.<CurseOfCirce>of(CurseOfCirce::new, MobCategory.MISC)
+                        .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
+                        .build("curse_of_circe"));
         public static final RegistryObject<EntityType<? extends Discus>> DISCUS = ENTITY_TYPES.register("discus", () ->
                 EntityType.Builder.<Discus>of(Discus::new, MobCategory.MISC)
                         .sized(0.45F, 0.45F).noSummon().clientTrackingRange(4).updateInterval(10)
@@ -618,10 +700,18 @@ public final class GFRegistry {
                 EntityType.Builder.<DragonTooth>of(DragonTooth::new, MobCategory.MISC)
                         .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
                         .build("dragon_tooth"));
+        public static final RegistryObject<EntityType<? extends HealingSpell>> HEALING_SPELL = ENTITY_TYPES.register("healing_spell", () ->
+                EntityType.Builder.<HealingSpell>of(HealingSpell::new, MobCategory.MISC)
+                        .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
+                        .build("healing_spell"));
+        public static final RegistryObject<EntityType<? extends PoisonSpit>> POISON_SPIT = ENTITY_TYPES.register("poison_spit", () ->
+                EntityType.Builder.<PoisonSpit>of(PoisonSpit::new, MobCategory.MISC)
+                        .sized(0.25F, 0.25F).fireImmune().clientTrackingRange(4).updateInterval(10)
+                        .build("poison_spit"));
         public static final RegistryObject<EntityType<? extends Spear>> SPEAR = ENTITY_TYPES.register("spear", () ->
                 EntityType.Builder.<Spear>of(Spear::new, MobCategory.MISC)
-                    .sized(0.5F, 0.5F).noSummon().clientTrackingRange(4).updateInterval(20)
-                    .build("spear"));
+                        .sized(0.5F, 0.5F).noSummon().clientTrackingRange(4).updateInterval(20)
+                        .build("spear"));
         public static final RegistryObject<EntityType<? extends WebBall>> WEB_BALL = ENTITY_TYPES.register("web_ball", () ->
                 EntityType.Builder.<WebBall>of(WebBall::new, MobCategory.MISC)
                         .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
@@ -637,7 +727,8 @@ public final class GFRegistry {
         public static final RegistryObject<BlockEntityType<VaseBlockEntity>> VASE = BLOCK_ENTITY_TYPES.register("vase", () -> {
             // create set of vase blocks using registry objects
             Set<Block> vaseBlocks = new HashSet<>();
-            for(final DyeColor dyeColor : DyeColor.values()) {
+            vaseBlocks.add(RegistryObject.create(new ResourceLocation(MODID, "terracotta_vase"), ForgeRegistries.BLOCKS).get());
+            for (final DyeColor dyeColor : DyeColor.values()) {
                 vaseBlocks.add(RegistryObject.create(new ResourceLocation(MODID, dyeColor.getSerializedName() + "_terracotta_vase"), ForgeRegistries.BLOCKS).get());
             }
             // create block entity type
@@ -700,6 +791,17 @@ public final class GFRegistry {
         public static final RegistryObject<Enchantment> SMASHING = ENCHANTMENTS.register("smashing", () ->
                 new SmashingEnchantment(Enchantment.Rarity.VERY_RARE));
 
+
+    }
+
+    public static final class LootModifierReg {
+
+        public static void register() {
+            LOOT_MODIFIER_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        }
+
+        public static final RegistryObject<ReplaceDropsLootModifier.Serializer> REPLACE_DROPS_MODIFIER = LOOT_MODIFIER_SERIALIZERS.register(
+                "replace_drops", () -> new ReplaceDropsLootModifier.Serializer());
 
     }
 

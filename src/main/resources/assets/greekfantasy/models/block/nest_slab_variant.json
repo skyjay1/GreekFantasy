@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+	  "side": "greekfantasy:block/nest",
+	  "bottom": "greekfantasy:block/nest",
+      "top": "greekfantasy:block/nest_variant"
+    }
+}

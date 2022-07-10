@@ -102,14 +102,6 @@ public class GoldenStringBlock extends Block implements SimpleWaterloggedBlock {
         return shape;
     }
 
-    /**
-     * Returns the translation key of the item form of this block
-     */
-    @Override
-    public String getDescriptionId() {
-        return GFRegistry.ItemReg.GOLDEN_STRING.get().getDescriptionId();
-    }
-
     @Override
     public Item asItem() {
         return GFRegistry.ItemReg.GOLDEN_STRING.get();

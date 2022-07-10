@@ -31,7 +31,7 @@
               "children": [
                 {
                   "type": "minecraft:item",
-                  "name": "greekfantasy:magic_feather",
+                  "name": "greekfantasy:avernal_feather",
                   "conditions": [
                     {
                       "condition": "minecraft:table_bonus",

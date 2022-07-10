@@ -1,10 +1,22 @@
 package greekfantasy.item;
 
+import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
+import greekfantasy.entity.Sparti;
+import greekfantasy.integration.RGCompat;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.common.ForgeMod;
 
 public class BidentItem extends SpearItem {
 
@@ -13,40 +25,30 @@ public class BidentItem extends SpearItem {
     }
 
     @Override
-    protected void throwSpear(final Level world, final Player thrower, final ItemStack stack) {
+    protected void throwSpear(final Level level, final Player thrower, final ItemStack stack) {
         // Special behavior when enchanted
-        /*if (EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.RAISING_ENCHANTMENT, stack) > 0
+        if (EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.RAISING.get(), stack) > 0
+                && level instanceof ServerLevel
                 && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseRaising(thrower))) {
             // Attempt to spawn a Sparti where the player is looking
-            final RayTraceResult raytrace = ThunderboltItem.raytraceFromEntity(world, thrower, (float) thrower.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue());
-            if (raytrace.getType() != RayTraceResult.Type.MISS) {
+            final HitResult raytrace = ThunderboltItem.raytraceFromEntity(thrower, (float) thrower.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue());
+            if (raytrace.getType() != HitResult.Type.MISS) {
                 stack.hurtAndBreak(25, thrower, e -> e.broadcastBreakEvent(thrower.getUsedItemHand()));
                 // spawn a sparti and set location
-                final SpartiEntity sparti = GFRegistry.EntityReg.SPARTI_ENTITY.create(world);
+                final Sparti sparti = GFRegistry.EntityReg.SPARTI.get().create(level);
                 sparti.setPos(raytrace.getLocation().x(), raytrace.getLocation().y(), raytrace.getLocation().z());
-                sparti.xRot = MathHelper.wrapDegrees(thrower.yRot + 180.0F);
-                sparti.setTame(true);
-                sparti.setOwnerUUID(thrower.getUUID());
-                // Lifespan is 1/3 the usual amount
-                sparti.setLimitedLife(GreekFantasy.CONFIG.getSpartiLifespan() * 20 / 3);
-                sparti.setEquipmentOnSpawn();
+                sparti.yBodyRot = Mth.wrapDegrees(thrower.getYRot() + 180.0F);
+                sparti.setLimitedLife(GreekFantasy.CONFIG.RAISING_SPARTI_LIFESPAN.get() * 20);
                 thrower.playSound(SoundEvents.LAVA_EXTINGUISH, 0.8F, 0.9F + thrower.getRandom().nextFloat() * 0.2F);
-                world.addFreshEntity(sparti);
+                level.addFreshEntity(sparti);
                 // entity data on spawn
-                sparti.finalizeSpawn((IServerLevel) world, world.getCurrentDifficultyAt(new BlockPos(raytrace.getLocation())), SpawnReason.MOB_SUMMONED, null, null);
+                sparti.tame(thrower);
+                sparti.setSpawning();
+                sparti.finalizeSpawn((ServerLevel) level, level.getCurrentDifficultyAt(new BlockPos(raytrace.getLocation())), MobSpawnType.MOB_SUMMONED, null, null);
             }
-        } else*/
-        {
+        } else {
             // Default behavior when not enchanted
-            super.throwSpear(world, thrower, stack);
+            super.throwSpear(level, thrower, stack);
         }
-    }
-
-    /**
-     * Return whether this item is repairable in an anvil.
-     */
-    @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return false;
     }
 }

@@ -2,16 +2,21 @@ package greekfantasy.entity.misc;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.Sparti;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.util.ITeleporter;
@@ -58,17 +63,16 @@ public class DragonTooth extends ThrowableItemProjectile {
             Entity thrower = getOwner();
             // spawn a configurable number of sparti
             for (int i = 0, n = GreekFantasy.CONFIG.DRAGON_TOOTH_SPARTI_COUNT.get(), life = 20 * GreekFantasy.CONFIG.DRAGON_TOOTH_SPARTI_LIFESPAN.get(); i < n; i++) {
-                // TODO
-                /*final SpartiEntity sparti = GFRegistry.EntityReg.SPARTI_ENTITY.create(level);
+                final Sparti sparti = GFRegistry.EntityReg.SPARTI.get().create(level);
                 sparti.moveTo(raytrace.getLocation().x, raytrace.getLocation().y, raytrace.getLocation().z, 0, 0);
                 level.addFreshEntity(sparti);
-                if (thrower instanceof PlayerEntity) {
-                    sparti.xRot = MathHelper.wrapDegrees(thrower.yRot + 180.0F);
-                    sparti.setTame(true);
-                    sparti.setOwnerUUID(thrower.getUUID());
+                if (thrower instanceof Player player) {
+                    sparti.yBodyRot = Mth.wrapDegrees(thrower.getYRot() + 180.0F);
+                    sparti.tame(player);
                 }
+                sparti.setSpawning();
                 sparti.setLimitedLife(life);
-                sparti.finalizeSpawn((IServerWorld) level, level.getCurrentDifficultyAt(new BlockPos(raytrace.getLocation())), SpawnReason.MOB_SUMMONED, null, null);*/
+                sparti.finalizeSpawn((ServerLevelAccessor) level, level.getCurrentDifficultyAt(new BlockPos(raytrace.getLocation())), MobSpawnType.MOB_SUMMONED, null, null);
             }
             discard();
         }

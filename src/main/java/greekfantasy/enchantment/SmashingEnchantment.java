@@ -48,7 +48,7 @@ public class SmashingEnchantment extends Enchantment {
             if (target instanceof LivingEntity) {
                 final LivingEntity entity = (LivingEntity) target;
                 final int duration = 40 + level * 20;
-                if (GreekFantasy.CONFIG.nerfSmashing()) {
+                if (GreekFantasy.CONFIG.SMASHING_NERF.get()) {
                     entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 0));
                     entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, 0));
                 } else {

@@ -57,7 +57,7 @@ __Key:__
 - _ _ _ _ _ Pegasus
 - _ _ _ _ _ Golden Ram
 - _ _ _ _ _ Makhai
-- _ _ _ _ _ Baby Spider
+- X X X X _ Baby Spider
 - _ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 
 
@@ -67,15 +67,14 @@ __Key:__
 
 `[Model] [Behavior]`
 
-- X ~ Spear (and bident)
-- _ _ Healing Spell
-- _ _ Curse
-- _ _ Curse of Circe
-- _ _ Poison Spit
+- X X Healing Spell
+- X X Curse
+- X X Curse of Circe
+- X X Poison Spit
 - _ _ Greek Fire
-- _ _ Discus
-- _ _ Web Ball
-- _ _ Spear
+- X X Discus
+- X X Web Ball
+- X ~ Spear (and Bident)
 - _ _ Orthus Head
 - _ _ Palladium
 
@@ -117,11 +116,11 @@ __Key:__
 - X X _ Terracotta Vase and variants
 - ~ _ _ Mob Heads (Orthus, Gigante, Cerberus)
 - X X _ Oil Lamp
-- X _ _ Oil
+- X X _ Olive Oil
 - X _ _ Olive Sapling
 - X _ _ Pomegranate Sapling
 - X _ _ Golden Sapling
-- X _ _ Nest
+- X X _ Nest
 - X ~ _ Wild Rose
 - _ _ _ Cretan Stone and variants
 - ~ _ _ Reeds
@@ -153,37 +152,37 @@ __Key:__
 - X _ _ Avernal Shard
 - X _ _ Boar Ear
 - X _ _ Golden Fleece
-- X _ _ Ball of Golden String
+- X X _ Ball of Golden String
 - X X _ Spider Banner Pattern
-- X _ _ Ambrosia
+- X X _ Ambrosia
 - X _ _ Horn of Plenty
 - X ~ _ Dragon Tooth (also: use to make golden sapling)
-- X _ _ Staff of Healing
+- X X _ Staff of Healing
 - X _ _ Conch
 - X X _ Bag of Wind
 - X _ _ Golden Tree Sapling
-- X _ _ Thunderbolt
-- X _ _ Wand of Circe
+- X X _ Thunderbolt
+- X X _ Wand of Circe
 - X _ _ Avernal Bow
 - X _ _ Bow of Apollo
 - X _ _ Bow of Artemis
-- X _ _ Club (wood, stone, iron)
+- X X _ Club (wood, stone, iron)
 - X X _ Spear (wood, stone, iron, gold, diamond, netherite, flint)
 - X ~ _ Bident
 - X X _ Flint Knife
 - X X _ Ivory Sword
 - X _ _ Greek Fire
 - X _ _ Gorgon Blood
-- X _ _ Discus
+- X X _ Discus
 - X _ _ Mirror
 - X _ _ Golden Bridle
 - X _ _ Unicorn Horn
 - X _ _ Panflute
 - X _ _ Lyre (normal, golden)
-- X ~ _ Web Ball
-- X _ _ Olive Oil
+- X X _ Web Ball
+- X X _ Olive Oil
 - X _ _ Olive Salve
-- X _ _ Olives
+- X ~ _ Olives
 - X _ _ Olive Sapling
 - X _ _ Pomegranate
 - X _ _ Pomegranate Sapling
@@ -194,7 +193,7 @@ __Key:__
 
 `[In-game] [Model] [Use] [Obtainable]`
 
-- X _ _ _ Helm of Darkness
+- X X X _ Helm of Darkness
 - X _ _ _ Winged Sandals
 - X _ _ _ Achilles Armor (Hellenic armor? Bronze armor?)
 - X X X _ Snakeskin Armor
@@ -227,7 +226,7 @@ __Key:__
 - X _ _ Mirroring
 - X _ _ Overstep
 - X X _ Poisoning
-- X _ _ Raising
+- X X _ Raising
 - X _ _ Silkstep
 - X ~ _ Smashing
 
