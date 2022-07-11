@@ -194,7 +194,7 @@ __Key:__
 `[In-game] [Model] [Use] [Obtainable]`
 
 - X X X _ Helm of Darkness
-- X _ _ _ Winged Sandals
+- X X _ _ Winged Sandals
 - X _ _ _ Achilles Armor (Hellenic armor? Bronze armor?)
 - X X X _ Snakeskin Armor
 - X _ _ _ Nemean Lion Hide

@@ -27,7 +27,7 @@ public class SpartiRenderer extends HumanoidMobRenderer<Sparti, SkeletonModel<Sp
     }
 
     @Override
-    protected void scale(final Sparti entity, PoseStack poseStack, float ageInTicks) {
+    protected void scale(final Sparti entity, PoseStack poseStack, float partialTick) {
         // if the entity is spawning, shift the entity down
         if (entity.isSpawning()) {
             final float height = 1.99F;

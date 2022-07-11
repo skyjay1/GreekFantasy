@@ -1,43 +1,57 @@
 package greekfantasy;
 
-import greekfantasy.enchantment.SmashingEnchantment;
+import greekfantasy.entity.monster.Shade;
 import greekfantasy.integration.RGCompat;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 
 public final class GFEvents {
 
     public static final class ForgeHandler {
 
-        @SubscribeEvent
-        public static void onAttackEntity(final AttackEntityEvent event) {
-            // only handle event on server
-            if(event.getEntityLiving().level.isClientSide()) {
-                return;
+        /**
+         * Used to spawn a shade with the player's XP when they die.
+         *
+         * @param event the death event
+         **/
+        @SubscribeEvent(priority = EventPriority.HIGHEST)
+        public static void onPlayerDeath(final LivingDeathEvent event) {
+            if (!event.isCanceled() && !event.getEntityLiving().level.isClientSide() && event.getEntityLiving() instanceof Player player) {
+                // attempt to spawn a shade
+                if (!player.isSpectator() && player.experienceLevel > 3 && !player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && player.getRandom().nextFloat() < GreekFantasy.CONFIG.SHADE_SPAWN_CHANCE.get()) {
+                    // save XP value
+                    int xp = player.totalExperience;
+                    // remove XP from player
+                    player.giveExperienceLevels(-(player.experienceLevel + 1));
+                    // give XP to shade and spawn into world
+                    final Shade shade = GFRegistry.EntityReg.SHADE.get().create(player.level);
+                    shade.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
+                    shade.setStoredXP(Mth.floor(xp * 0.9F));
+                    shade.setOwnerUUID(player.getUUID());
+                    shade.setPersistenceRequired();
+                    player.level.addFreshEntity(shade);
+                }
             }
-            // check if held item has Smashing enchantment
-            ItemStack itemStack = event.getPlayer().getMainHandItem();
-            int smashing = EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.SMASHING.get(), itemStack);
-            if(smashing > 0) {
-                // apply Smashing enchantment
-                //SmashingEnchantment.apply(event.getPlayer(), event.getTarget(), smashing, event.getPlayer().getAttackStrengthScale(0.0F));
-            }
-
         }
 
+        /**
+         * Used to handle Prisoner of Hades effect
+         * (updating portal cooldown and removing when out of the nether)
+         * @param event
+         */
         @SubscribeEvent
         public static void onLivingTick(final LivingEvent.LivingUpdateEvent event) {
             // only handle event on server
@@ -51,7 +65,6 @@ public final class GFEvents {
                 if (event.getEntityLiving().level.dimension() != Level.NETHER
                         || (GreekFantasy.isRGLoaded() && event.getEntityLiving() instanceof Player player
                             && RGCompat.getInstance().canRemovePrisonerEffect(player))) {
-                    GreekFantasy.LOGGER.debug("Removing effect from " + event.getEntityLiving());
                     event.getEntityLiving().removeEffect(prisonerOfHades);
                 } else {
                     // set portal cooldown
@@ -60,6 +73,10 @@ public final class GFEvents {
             }
         }
 
+        /**
+         * Used to change player pose when under Curse of Circe.
+         * @param event
+         */
         @SubscribeEvent
         public static void onPlayerTick(final TickEvent.PlayerTickEvent event) {
             if(event.phase != TickEvent.Phase.START || !event.player.isAlive()) {
@@ -123,6 +140,7 @@ public final class GFEvents {
         public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
             if (!event.getEntityLiving().level.isClientSide()
                     && event.getEntityLiving() instanceof Mob mob
+                    && event.getTarget() != null
                     && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
                     && (mob.hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get())
                         || event.getTarget().hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get()))) {

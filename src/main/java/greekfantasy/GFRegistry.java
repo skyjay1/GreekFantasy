@@ -6,6 +6,7 @@ import greekfantasy.block.NestBlock;
 import greekfantasy.block.OilLampBlock;
 import greekfantasy.block.OliveOilBlock;
 import greekfantasy.block.PillarBlock;
+import greekfantasy.block.PomegranateSaplingBlock;
 import greekfantasy.block.VaseBlock;
 import greekfantasy.block.WildRoseBlock;
 import greekfantasy.blockentity.VaseBlockEntity;
@@ -27,6 +28,7 @@ import greekfantasy.entity.misc.Spear;
 import greekfantasy.entity.misc.WebBall;
 import greekfantasy.entity.monster.BabySpider;
 import greekfantasy.entity.monster.Drakaina;
+import greekfantasy.entity.monster.Shade;
 import greekfantasy.item.BagOfWindItem;
 import greekfantasy.item.BidentItem;
 import greekfantasy.item.BronzeScrapItem;
@@ -45,20 +47,38 @@ import greekfantasy.item.StaffOfHealingItem;
 import greekfantasy.item.ThunderboltItem;
 import greekfantasy.item.WandOfCirceItem;
 import greekfantasy.item.WebBallItem;
+import greekfantasy.item.WingedSandalsItem;
 import greekfantasy.mob_effect.CurseOfCirceEffect;
 import greekfantasy.mob_effect.MirroringEffect;
 import greekfantasy.mob_effect.PrisonerOfHadesEffect;
 import greekfantasy.mob_effect.StunnedEffect;
 import greekfantasy.util.ReplaceDropsLootModifier;
+import greekfantasy.worldgen.BiomeListConfigSpec;
+import greekfantasy.worldgen.DimensionFilter;
+import greekfantasy.worldgen.PomegranateTreeGrower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.data.worldgen.features.FeatureUtils;
+import net.minecraft.data.worldgen.placement.PlacementUtils;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ArmorItem;
@@ -79,7 +99,11 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -93,21 +117,41 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.grower.OakTreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.TreeFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
+import net.minecraft.world.level.levelgen.feature.featuresize.TwoLayersFeatureSize;
+import net.minecraft.world.level.levelgen.feature.foliageplacers.BlobFoliagePlacer;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlacer;
+import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.CountOnEveryLayerPlacement;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
+import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
+@SuppressWarnings({"unused", "RedundantTypeArguments"})
 public final class GFRegistry {
 
     private static final String MODID = GreekFantasy.MODID;
@@ -122,6 +166,7 @@ public final class GFRegistry {
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, MODID);
     private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, MODID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
+    private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
 
     public static void register() {
         BlockReg.register();
@@ -134,6 +179,9 @@ public final class GFRegistry {
         BlockEntityReg.register();
         MenuReg.register();
         RecipeReg.register();
+        FeatureReg.register();
+        PlacementTypeReg.register();
+        PlacementReg.register();
     }
 
 
@@ -196,7 +244,7 @@ public final class GFRegistry {
                 new SaplingBlock(new OakTreeGrower(), BlockBehaviour.Properties.of(Material.PLANT)
                         .noCollission().randomTicks().instabreak().sound(SoundType.GRASS)));
         public static final RegistryObject<Block> POMEGRANATE_SAPLING = BLOCKS.register("pomegranate_sapling", () ->
-                new SaplingBlock(new OakTreeGrower(), BlockBehaviour.Properties.of(Material.PLANT)
+                new PomegranateSaplingBlock(new PomegranateTreeGrower(), BlockBehaviour.Properties.of(Material.PLANT)
                         .noCollission().randomTicks().instabreak().sound(SoundType.GRASS)));
         public static final RegistryObject<Block> GOLDEN_SAPLING = BLOCKS.register("golden_sapling", () ->
                 new SaplingBlock(new OakTreeGrower(), BlockBehaviour.Properties.of(Material.PLANT)
@@ -547,8 +595,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> HELM_OF_DARKNESS = ITEMS.register("helm_of_darkness", () ->
                 new HelmOfDarknessItem(GFArmorMaterials.AVERNAL, new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC)));
         public static final RegistryObject<Item> WINGED_SANDALS = ITEMS.register("winged_sandals", () ->
-                new ArmorItem(GFArmorMaterials.WINGED, EquipmentSlot.FEET,
-                        new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC))); // TODO ability
+                new WingedSandalsItem(GFArmorMaterials.WINGED, new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC)));
         public static final RegistryObject<Item> NEMEAN_LION_HIDE = ITEMS.register("nemean_lion_hide", () ->
                 new ArmorItem(GFArmorMaterials.NEMEAN, EquipmentSlot.HEAD,
                         new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).setNoRepair())); // TODO ability
@@ -662,12 +709,57 @@ public final class GFRegistry {
             ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
             // event listeners
             FMLJavaModLoadingContext.get().getModEventBus().addListener(GFRegistry.EntityReg::registerEntityAttributes);
+            MinecraftForge.EVENT_BUS.addListener(EntityReg::onBiomeLoading);
         }
 
         private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
-            event.put(BABY_SPIDER.get(), BabySpider.createAttributes().build());
-            event.put(DRAKAINA.get(), Drakaina.createAttributes().build());
-            event.put(SPARTI.get(), Sparti.createAttributes().build());
+            register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
+            register(event, DRAKAINA.get(), Drakaina::createAttributes, Monster::checkMonsterSpawnRules);
+            register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
+            register(event, SPARTI.get(), Sparti::createAttributes, null);
+        }
+
+        private static <T extends Mob> void register(final EntityAttributeCreationEvent event, final EntityType<T> entityType,
+                                                     Supplier<AttributeSupplier.Builder> attributeSupplier,
+                                                     @Nullable final SpawnPlacements.SpawnPredicate<T> placementPredicate) {
+            // register attributes
+            event.put(entityType, attributeSupplier.get().build());
+            // register placement
+            if (placementPredicate != null) {
+                final SpawnPlacements.Type placementType = entityType.getCategory() == MobCategory.WATER_CREATURE ? SpawnPlacements.Type.IN_WATER : SpawnPlacements.Type.ON_GROUND;
+                // wrap the spawn predicate in one that also checks dimension predicate
+                final SpawnPlacements.SpawnPredicate<T> placement = (entity, level, reason, pos, rand) ->
+                        GreekFantasy.CONFIG.spawnMatchesDimension(level.getLevel()) && placementPredicate.test(entity, level, reason, pos, rand);
+                // actually register the placement
+                SpawnPlacements.register(entityType, placementType, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, placement);
+            }
+        }
+
+        /**
+         * Called from the event bus during the BiomeLoadingEvent.
+         * Adds creature spawns to biomes.
+         * @param event the biome loading event
+         */
+        private static void onBiomeLoading(BiomeLoadingEvent event) {
+            if(null == event.getName()) {
+                GreekFantasy.LOGGER.warn("Biome name was null during entity BiomeLoadingEvent, skipping.");
+                return;
+            }
+            if(event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
+                addSpawns(event, DRAKAINA.get(), 1, 2);
+                addSpawns(event, SHADE.get(), 1, 1);
+            }
+        }
+
+        private static void addSpawns(final BiomeLoadingEvent event, final EntityType<?> entity, final int min, final int max) {
+            final String name = entity.getRegistryName().getPath();
+            final BiomeListConfigSpec config = GreekFantasy.CONFIG.getSpawnConfigSpec(name);
+            final ResourceKey<Biome> key = ResourceKey.create(Registry.BIOME_REGISTRY, event.getName());
+            if (null == config) {
+                GreekFantasy.LOGGER.error("Error registering spawns: config for '" + name + "' not found!");
+            } else if (config.weight() > 0 && config.canSpawnInBiome(key)) {
+                event.getSpawns().addSpawn(entity.getCategory(), new MobSpawnSettings.SpawnerData(entity, config.weight(), min, max));
+            }
         }
 
         // creature
@@ -679,6 +771,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Drakaina::new, MobCategory.MONSTER)
                         .sized(0.9F, 1.9F).clientTrackingRange(8)
                         .build("drakaina"));
+        public static final RegistryObject<EntityType<? extends Shade>> SHADE = ENTITY_TYPES.register("shade", () ->
+                EntityType.Builder.of(Shade::new, MobCategory.MONSTER)
+                        .sized(0.67F, 1.8F).clientTrackingRange(8).fireImmune()
+                        .build("shade"));
         public static final RegistryObject<EntityType<? extends Sparti>> SPARTI = ENTITY_TYPES.register("sparti", () ->
                 EntityType.Builder.of(Sparti::new, MobCategory.CREATURE)
                         .sized(0.6F, 1.98F).clientTrackingRange(8)
@@ -706,7 +802,7 @@ public final class GFRegistry {
                         .build("healing_spell"));
         public static final RegistryObject<EntityType<? extends PoisonSpit>> POISON_SPIT = ENTITY_TYPES.register("poison_spit", () ->
                 EntityType.Builder.<PoisonSpit>of(PoisonSpit::new, MobCategory.MISC)
-                        .sized(0.25F, 0.25F).fireImmune().clientTrackingRange(4).updateInterval(10)
+                        .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
                         .build("poison_spit"));
         public static final RegistryObject<EntityType<? extends Spear>> SPEAR = ENTITY_TYPES.register("spear", () ->
                 EntityType.Builder.<Spear>of(Spear::new, MobCategory.MISC)
@@ -819,6 +915,118 @@ public final class GFRegistry {
             MENU_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
 
+    }
+
+    public static final class FeatureReg {
+
+        public static void register() {
+            FEATURES.register(FMLJavaModLoadingContext.get().getModEventBus());
+            // register event listeners
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(FeatureReg::registerConfiguredFeatures);
+        }
+
+
+        public static final RegistryObject<TreeFeature> POMEGRANATE_TREE = FEATURES.register("pomegranate_tree", () ->
+                new TreeFeature(TreeConfiguration.CODEC));
+        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> POMEGRANATE_TREE_FEATURE = null;
+
+        /**
+         * Registers configured features
+         * @param event the common setup event
+         * @see net.minecraft.data.worldgen.features.TreeFeatures
+         * @see net.minecraft.data.worldgen.features.OreFeatures
+         */
+        public static void registerConfiguredFeatures(final FMLCommonSetupEvent event) {
+            event.enqueueWork(() -> {
+                POMEGRANATE_TREE_FEATURE = FeatureUtils.register("pomegranate_tree",
+                        POMEGRANATE_TREE.get(), createPomegranate().build());
+            });
+        }
+
+
+        private static TreeConfiguration.TreeConfigurationBuilder createStraightBlobTree(Block trunk, Block leaves, int trunkHeight, int trunkHeightRandA, int trunkHeightRandB, int foliageRadius) {
+            return new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(trunk), new StraightTrunkPlacer(trunkHeight, trunkHeightRandA, trunkHeightRandB), BlockStateProvider.simple(leaves), new BlobFoliagePlacer(ConstantInt.of(foliageRadius), ConstantInt.of(0), 3), new TwoLayersFeatureSize(1, 0, 1));
+        }
+
+        private static TreeConfiguration.TreeConfigurationBuilder createPomegranate() {
+            final RegistryObject<Block> log = RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "pomegranate_log"), ForgeRegistries.BLOCKS);
+            final RegistryObject<Block> leaves = RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "pomegranate_leaves"), ForgeRegistries.BLOCKS);
+            return createStraightBlobTree(log.get(), leaves.get(), 4, 2, 0, 2)
+                    .ignoreVines().dirt(BlockStateProvider.simple(Blocks.NETHERRACK));
+        }
+    }
+
+    public static final class PlacementTypeReg {
+
+        public static void register() {
+            // register event listeners
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(PlacementTypeReg::registerPlacementTypes);
+        }
+
+        public static PlacementModifierType<DimensionFilter> DIMENSION_FILTER;
+
+        private static void registerPlacementTypes(final FMLCommonSetupEvent event) {
+            event.enqueueWork(() -> {
+                DIMENSION_FILTER = Registry.register(Registry.PLACEMENT_MODIFIERS, new ResourceLocation(MODID, "dimension"), () -> DimensionFilter.CODEC);
+            });
+        }
+
+    }
+
+
+    public static final class PlacementReg {
+
+        public static void register() {
+            // register event listeners
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(PlacementReg::registerPlacedFeatures);
+            MinecraftForge.EVENT_BUS.addListener(PlacementReg::onBiomeLoading);
+        }
+
+        public static Holder<PlacedFeature> POMEGRANATE_TREE;
+
+        /**
+         * Registers feature placements
+         * @param event the common setup event
+         * @see net.minecraft.data.worldgen.placement.TreePlacements
+         * @see net.minecraft.data.worldgen.placement.OrePlacements
+         */
+        private static void registerPlacedFeatures(final FMLCommonSetupEvent event) {
+            event.enqueueWork(() -> {
+                BiomeListConfigSpec pomegranateSpec = GreekFantasy.CONFIG.getFeatureConfigSpec("pomegranate_tree");
+                POMEGRANATE_TREE = PlacementUtils.register("pomegranate_tree", FeatureReg.POMEGRANATE_TREE_FEATURE,
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, pomegranateSpec.weight()))),
+                        CountOnEveryLayerPlacement.of(4), BiomeFilter.biome(), DimensionFilter.dimension(),
+                        PlacementUtils.filteredByBlockSurvival(BlockReg.POMEGRANATE_SAPLING.get()));
+            });
+        }
+
+        /**
+         * Called from the event bus during the BiomeLoadingEvent.
+         * Adds features to biomes.
+         * @param event the biome loading event
+         */
+        private static void onBiomeLoading(BiomeLoadingEvent event) {
+            if(null == event.getName()) {
+                GreekFantasy.LOGGER.warn("Biome name was null during feature BiomeLoadingEvent, skipping.");
+                return;
+            }
+            if(event.getCategory() == Biome.BiomeCategory.NETHER) {
+                addFeature(event, "pomegranate_tree", GenerationStep.Decoration.VEGETAL_DECORATION, POMEGRANATE_TREE);
+            }
+            if(event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
+                // TODO
+            }
+        }
+
+        private static void addFeature(final BiomeLoadingEvent event, final String featureName,
+                                       final GenerationStep.Decoration stage, final Holder<PlacedFeature> feature) {
+            final BiomeListConfigSpec config = GreekFantasy.CONFIG.getFeatureConfigSpec(featureName);
+            if (null == config) {
+                GreekFantasy.LOGGER.error("Error registering features: config for '" + featureName + "' not found!");
+            } else if (config.weight() > 0 && config.canSpawnInBiome(ResourceKey.create(Registry.BIOME_REGISTRY, event.getName()))) {
+                event.getGeneration().getFeatures(stage).add(feature);
+            }
+        }
     }
 
 }

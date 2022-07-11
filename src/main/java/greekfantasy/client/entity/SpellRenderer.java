@@ -18,8 +18,6 @@ import net.minecraft.world.entity.projectile.Projectile;
 
 public abstract class SpellRenderer<T extends Projectile> extends EntityRenderer<T> {
 
-    public static final ModelLayerLocation SPELL_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "spell"), "spell");;
-
     protected SpellModel<T> entityModel;
     protected boolean usePackedLight;
 
@@ -29,14 +27,14 @@ public abstract class SpellRenderer<T extends Projectile> extends EntityRenderer
 
     public SpellRenderer(final EntityRendererProvider.Context context, boolean usePackedLight) {
         super(context);
-        this.entityModel = new SpellModel<T>(context.bakeLayer(SPELL_MODEL_RESOURCE));
+        this.entityModel = new SpellModel<T>(context.bakeLayer(SpellModel.SPELL_MODEL_RESOURCE));
         this.usePackedLight = usePackedLight;
     }
 
     @Override
-    public void render(T entity, float rotationYaw, float ageInTicks, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        this.entityModel.prepareMobModel(entity, 0.0F, 0.0F, ageInTicks);
-        this.entityModel.setupAnim(entity, 0.0F, 0.0F, entity.tickCount + ageInTicks, 0.0F, 0.0F);
+    public void render(T entity, float rotationYaw, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+        this.entityModel.prepareMobModel(entity, 0.0F, 0.0F, partialTick);
+        this.entityModel.setupAnim(entity, 0.0F, 0.0F, entity.tickCount + partialTick, 0.0F, 0.0F);
         final VertexConsumer vertexConsumer = multiBufferSource.getBuffer(entityModel.renderType(getTextureLocation(entity)));
         final int light = usePackedLight ? packedLight : 15728880;
         this.entityModel.renderToBuffer(poseStack, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);

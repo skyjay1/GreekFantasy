@@ -23,14 +23,14 @@ import net.minecraft.world.item.ItemStack;
 
 public class SpearRenderer<T extends Spear> extends EntityRenderer<T> {
 
-    public static final ModelLayerLocation SPEAR_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "spear"), "spear");;
     private final SpearModel model;
 
     public SpearRenderer(EntityRendererProvider.Context context) {
         super(context);
-        model = new SpearModel(context.bakeLayer(SPEAR_MODEL_RESOURCE));
+        model = new SpearModel(context.bakeLayer(SpearModel.SPEAR_MODEL_RESOURCE));
     }
 
+    @Override
     public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
 
@@ -58,13 +58,13 @@ public class SpearRenderer<T extends Spear> extends EntityRenderer<T> {
         public SpearItemStackRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet entityModelSet, final ResourceLocation name) {
             super(dispatcher, entityModelSet);
             this.entityModelSet = entityModelSet;
-            this.spearModel = new SpearModel(this.entityModelSet.bakeLayer(SPEAR_MODEL_RESOURCE));
+            this.spearModel = new SpearModel(this.entityModelSet.bakeLayer(SpearModel.SPEAR_MODEL_RESOURCE));
             this.texture = new ResourceLocation(name.getNamespace(), "textures/entity/spear/" + name.getPath() + ".png");
         }
 
         @Override
         public void onResourceManagerReload(ResourceManager resourceManager) {
-            this.spearModel = new SpearModel(this.entityModelSet.bakeLayer(SPEAR_MODEL_RESOURCE));
+            this.spearModel = new SpearModel(this.entityModelSet.bakeLayer(SpearModel.SPEAR_MODEL_RESOURCE));
         }
 
         @Override

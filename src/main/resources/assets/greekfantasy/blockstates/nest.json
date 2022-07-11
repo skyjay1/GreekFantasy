@@ -1,18 +1,16 @@
 {
   "multipart": [
     {
-      "apply": {
-        "model": [
-          {
-            "model": "greekfantasy:block/nest_slab",
-            "weight": 2
-          },
-          {
-            "model": "greekfantasy:block/nest_slab_variant",
-            "weight": 1
-          }
-        ]
-      }
+      "apply": [
+        {
+          "model": "greekfantasy:block/nest_slab",
+          "weight": 2
+        },
+        {
+          "model": "greekfantasy:block/nest_slab_variant",
+          "weight": 1
+        }
+      ]
     },
     {
       "when": {

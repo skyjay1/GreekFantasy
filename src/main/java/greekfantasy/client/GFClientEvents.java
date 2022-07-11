@@ -2,14 +2,18 @@ package greekfantasy.client;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.armor.WingedSandalsModel;
 import greekfantasy.client.blockentity.VaseBlockEntityRenderer;
 import greekfantasy.client.entity.BabySpiderRenderer;
 import greekfantasy.client.entity.DrakainaRenderer;
+import greekfantasy.client.entity.ShadeRenderer;
 import greekfantasy.client.entity.SpartiRenderer;
 import greekfantasy.client.entity.SpearRenderer;
 import greekfantasy.client.entity.SpellRenderer;
 import greekfantasy.client.entity.model.BabySpiderModel;
 import greekfantasy.client.entity.model.DrakainaModel;
+import greekfantasy.client.entity.model.ShadeModel;
+import greekfantasy.client.entity.model.SpearModel;
 import greekfantasy.client.entity.model.SpellModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.TridentModel;
@@ -20,7 +24,6 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -29,7 +32,6 @@ import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -96,12 +98,15 @@ public final class GFClientEvents {
         @SubscribeEvent
         public static void registerEntityLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             // register layer definitions
+            // armor
+            event.registerLayerDefinition(WingedSandalsModel.WINGED_SANDALS_MODEL_RESOURCE, WingedSandalsModel::createBodyLayer);
             // creature
-            event.registerLayerDefinition(BabySpiderRenderer.BABY_SPIDER_MODEL_RESOURCE, BabySpiderModel::createBodyLayer);
-            event.registerLayerDefinition(DrakainaRenderer.DRAKAINA_MODEL_RESOURCE, DrakainaModel::createBodyLayer);
+            event.registerLayerDefinition(BabySpiderModel.BABY_SPIDER_MODEL_RESOURCE, BabySpiderModel::createBodyLayer);
+            event.registerLayerDefinition(DrakainaModel.DRAKAINA_MODEL_RESOURCE, DrakainaModel::createBodyLayer);
+            event.registerLayerDefinition(ShadeModel.SHADE_MODEL_RESOURCE, ShadeModel::createBodyLayer);
             // other
-            event.registerLayerDefinition(SpearRenderer.SPEAR_MODEL_RESOURCE, TridentModel::createLayer);
-            event.registerLayerDefinition(SpellRenderer.SPELL_MODEL_RESOURCE, SpellModel::createLayer);
+            event.registerLayerDefinition(SpearModel.SPEAR_MODEL_RESOURCE, TridentModel::createLayer);
+            event.registerLayerDefinition(SpellModel.SPELL_MODEL_RESOURCE, SpellModel::createLayer);
         }
 
         @SubscribeEvent
@@ -111,6 +116,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.BABY_SPIDER.get(), BabySpiderRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DRAKAINA.get(), DrakainaRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPARTI.get(), SpartiRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.SHADE.get(), ShadeRenderer::new);
             // other
             event.registerEntityRenderer(GFRegistry.EntityReg.CURSE.get(), SpellRenderer.CurseRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CURSE_OF_CIRCE.get(), SpellRenderer.CurseOfCirceRenderer::new);

@@ -12,8 +12,6 @@ import java.util.EnumMap;
 
 public class DrakainaRenderer<T extends Drakaina> extends MobRenderer<T, DrakainaModel<T>> {
 
-    public static final ModelLayerLocation DRAKAINA_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "drakaina"), "drakaina");
-
     protected static final EnumMap<Drakaina.Variant, ResourceLocation> TEXTURE_MAP = new EnumMap<>(Drakaina.Variant.class);
 
     static {
@@ -23,7 +21,7 @@ public class DrakainaRenderer<T extends Drakaina> extends MobRenderer<T, Drakain
     }
 
     public DrakainaRenderer(EntityRendererProvider.Context context) {
-        super(context, new DrakainaModel<>(context.bakeLayer(DRAKAINA_MODEL_RESOURCE)), 0.5F);
+        super(context, new DrakainaModel<>(context.bakeLayer(DrakainaModel.DRAKAINA_MODEL_RESOURCE)), 0.5F);
     }
 
     @Override

@@ -1,15 +1,24 @@
 package greekfantasy;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import greekfantasy.worldgen.BiomeListConfigSpec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GFConfig {
 
@@ -21,6 +30,8 @@ public class GFConfig {
     public final ForgeConfigSpec.IntValue STAFF_OF_HEALING_COOLDOWN;
     public final ForgeConfigSpec.IntValue THUNDERBOLT_COOLDOWN;
     public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
+    private final ForgeConfigSpec.DoubleValue WINGED_SANDALS_DURABILITY_CHANCE;
+    private double wingedSandalsDurabilityChance;
     public final ForgeConfigSpec.IntValue WAND_OF_CIRCE_DURATION;
     public final ForgeConfigSpec.IntValue WAND_OF_CIRCE_COOLDOWN;
 
@@ -30,6 +41,8 @@ public class GFConfig {
     // enchantments
     public final ForgeConfigSpec.BooleanValue FIREFLASH_ENABLED;
     public final ForgeConfigSpec.BooleanValue FIREFLASH_DESTROYS_BLOCKS;
+    private final ForgeConfigSpec.BooleanValue FLYING_ENABLED;
+    private boolean isFlyingEnabled;
     public final ForgeConfigSpec.BooleanValue HUNTING_ENABLED;
     private final ForgeConfigSpec.BooleanValue MIRRORING_ENABLED;
     private boolean isMirroringEnabled;
@@ -43,6 +56,8 @@ public class GFConfig {
 
     // entity
     public final ForgeConfigSpec.DoubleValue ELPIS_SPAWN_CHANCE;
+    public final ForgeConfigSpec.DoubleValue SHADE_SPAWN_CHANCE;
+    public final ForgeConfigSpec.BooleanValue SHADE_IMMUNE_TO_NONOWNER;
 
     // mob effect
     private final ForgeConfigSpec.BooleanValue CURSE_OF_CIRCE_ENABLED;
@@ -60,6 +75,20 @@ public class GFConfig {
     private int palladiumChunkRange;
     private final ForgeConfigSpec.IntValue PALLADIUM_Y_RANGE;
     private int palladiumYRange;
+
+    private static final String WILDCARD = "*";
+
+    // spawns
+    private final ForgeConfigSpec.ConfigValue<List<? extends String>> SPAWN_DIMENSION_WHITELIST;
+    private final ForgeConfigSpec.BooleanValue IS_SPAWN_DIMENSION_WHITELIST;
+    private boolean isSpawnDimensionWhitelist;
+    private final Map<String, BiomeListConfigSpec> SPAWN_CONFIG_SPECS = new HashMap<>();
+
+    // features
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> FEATURE_DIMENSION_WHITELIST;
+    private final ForgeConfigSpec.BooleanValue IS_FEATURE_DIMENSION_WHITELIST;
+    private boolean isFeatureDimensionWhitelist;
+    private final Map<String, BiomeListConfigSpec> FEATURE_CONFIG_SPECS = new HashMap<>();
 
     private static final String[] curseOfCirceWhitelistDefault = {
             ForgeRegistries.ENTITIES.getKey(EntityType.PLAYER).toString(),
@@ -87,11 +116,15 @@ public class GFConfig {
         UNICORN_HORN_CURES_EFFECTS = builder.define("unicorn_horn_cures_effects", true);
         WAND_OF_CIRCE_DURATION = builder.defineInRange("wand_of_circe_duration", 900, 1, 24000);
         WAND_OF_CIRCE_COOLDOWN = builder.defineInRange("wand_of_circe_cooldown", 50, 0, 24000);
+        WINGED_SANDALS_DURABILITY_CHANCE = builder
+                .comment("Percent chance of winged sandals losing durability each tick")
+                .defineInRange("winged_sandals_durability_chance", 0.0F, 0.0F, 1.0);
         builder.pop();
 
         builder.push("enchantments");
         FIREFLASH_ENABLED = builder.define("fireflash_enabled", true);
         FIREFLASH_DESTROYS_BLOCKS = builder.define("fireflash_destroys_blocks", true);
+        FLYING_ENABLED = builder.define("flying_enabled", true);
         HUNTING_ENABLED = builder.define("hunting_enabled", true);
         MIRRORING_ENABLED = builder.define("mirroring_enabled", true);
         SMASHING_NERF = builder
@@ -107,6 +140,8 @@ public class GFConfig {
         ELPIS_SPAWN_CHANCE = builder
                 .comment("Percent chance that opening a mysterious box spawns an Elpis")
                 .defineInRange("elpis_spawn_chance", 0.6F, 0.0F, 1.0F);
+        SHADE_SPAWN_CHANCE = builder.defineInRange("shade_spawn_chance", 1.0F, 0.0F, 1.0F);
+        SHADE_IMMUNE_TO_NONOWNER = builder.define("shade_immune_to_nonowner", true);
         builder.pop();
 
         builder.push("mob_effects");
@@ -125,6 +160,36 @@ public class GFConfig {
         PALLADIUM_Y_RANGE = builder.comment("The vertical area (in blocks) protected by Palladium blocks")
                 .defineInRange("palladium_y_range", 128, 0, 255);
         builder.pop();
+
+        // helpers for spawn and feature configs
+        final String[] forest = {BiomeDictionary.Type.FOREST.toString(), BiomeDictionary.Type.CONIFEROUS.toString(), BiomeDictionary.Type.JUNGLE.toString()};
+        final String[] hostileBlacklist = {BiomeDictionary.Type.END.toString(), BiomeDictionary.Type.WATER.toString(), BiomeDictionary.Type.COLD.toString(),
+                BiomeDictionary.Type.SNOWY.toString(), BiomeDictionary.Type.MUSHROOM.toString()};
+        final String[] nonNetherHostileBlacklist = {BiomeDictionary.Type.NETHER.toString(), BiomeDictionary.Type.END.toString(), BiomeDictionary.Type.WATER.toString(),
+                BiomeDictionary.Type.COLD.toString(), BiomeDictionary.Type.SNOWY.toString(), BiomeDictionary.Type.MUSHROOM.toString()};
+
+
+        builder.comment("Mob spawn weights (higher number = more spawns)").push("mob_spawns");
+        SPAWN_DIMENSION_WHITELIST = builder.comment("Dimensions in which mobs can spawn.",
+                        "Accepts dimension id or mod id with wildcard.",
+                        "Example: [\"minecraft:the_nether\", \"rftoolsdim:" + WILDCARD + "\"]")
+                .define("spawn_dimensions", Lists.newArrayList("minecraft:" + WILDCARD));
+        IS_SPAWN_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
+                .define("is_whitelist", true);
+        putSpawnConfigSpec(builder, "drakaina",40, false, hostileBlacklist);
+        putSpawnConfigSpec(builder, "shade", 10, false);
+        builder.pop();
+
+        builder.comment("Feature generation chances (higher number = more features)").push("features");
+        FEATURE_DIMENSION_WHITELIST = builder.comment("Dimensions in which mobs can spawn.",
+                        "Accepts dimension id or mod id with wildcard.",
+                        "Example: [\"minecraft:the_nether\", \"rftoolsdim:" + WILDCARD + "\"]")
+                .define("spawn_dimensions", Lists.newArrayList("minecraft:" + WILDCARD));
+        IS_FEATURE_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
+                .define("is_whitelist", true);
+        this.FEATURE_CONFIG_SPECS.clear();
+        putFeatureConfigSpec(builder, "pomegranate_tree", 400, true, Biomes.WARPED_FOREST.location().toString(), Biomes.CRIMSON_FOREST.location().toString());
+        builder.pop();
     }
 
     /**
@@ -136,7 +201,9 @@ public class GFConfig {
     public void bake() {
         // items
         helmHidesArmor = HELM_HIDES_ARMOR.get();
+        wingedSandalsDurabilityChance = WINGED_SANDALS_DURABILITY_CHANCE.get();
         // enchantments
+        isFlyingEnabled = FLYING_ENABLED.get();
         isMirroringEnabled = MIRRORING_ENABLED.get();
         isOverstepEnabled = OVERSTEP_ENABLED.get();
         isPoisoningEnabled = POISONING_ENABLED.get();
@@ -156,7 +223,15 @@ public class GFConfig {
         return helmHidesArmor;
     }
 
+    public double getWingedSandalsDurabilityChance() {
+        return wingedSandalsDurabilityChance;
+    }
+
     // enchantments
+
+    public boolean isFlyingEnabled() {
+        return isFlyingEnabled;
+    }
 
     public boolean isPoisoningEnabled() {
         return isPoisoningEnabled;
@@ -197,6 +272,46 @@ public class GFConfig {
     public int getPalladiumYRange() {
         return palladiumYRange;
     }
+
+    public BiomeListConfigSpec getSpawnConfigSpec(final String name) {
+        return SPAWN_CONFIG_SPECS.get(name);
+    }
+
+    public BiomeListConfigSpec getFeatureConfigSpec(final String name) {
+        return FEATURE_CONFIG_SPECS.get(name);
+    }
+
+    private void putSpawnConfigSpec(final ForgeConfigSpec.Builder builder, final String name, final int weight,
+                                    final boolean isWhitelist, final String... biomes) {
+        SPAWN_CONFIG_SPECS.put(name, new BiomeListConfigSpec(builder, name, weight, isWhitelist, biomes));
+    }
+
+    private void putFeatureConfigSpec(final ForgeConfigSpec.Builder builder, final String name, final int weight,
+                                    final boolean isWhitelist, final String... biomes) {
+        FEATURE_CONFIG_SPECS.put(name, new BiomeListConfigSpec(builder, name, weight, isWhitelist, biomes));
+    }
+
+    /**
+     * @param level the level
+     * @return true if features can be placed in the given dimension
+     **/
+    public boolean featureMatchesDimension(final Level level) {
+        return matchesBiomeListConfigSpec(FEATURE_DIMENSION_WHITELIST.get(), IS_FEATURE_DIMENSION_WHITELIST.get(), level.dimension().location());
+    }
+
+    /**
+     * @param level the level
+     * @return true if mobs can spawn in the given dimension
+     **/
+    public boolean spawnMatchesDimension(final ServerLevel level) {
+        return matchesBiomeListConfigSpec(SPAWN_DIMENSION_WHITELIST.get(), IS_SPAWN_DIMENSION_WHITELIST.get(), level.dimension().location());
+    }
+
+    private static boolean matchesBiomeListConfigSpec(final List<? extends String> list, final boolean isWhitelist, final ResourceLocation dimensionId) {
+        // check dimension id or mod id
+        return isWhitelist == (list.contains(dimensionId.toString()) || list.contains(dimensionId.getNamespace() + ":" + WILDCARD));
+    }
+
 
     private static List<ResourceLocation> createEntityWhitelist(final Collection<? extends String> stringList) {
         ImmutableList.Builder<ResourceLocation> builder = new ImmutableList.Builder<>();

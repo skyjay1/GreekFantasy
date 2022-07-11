@@ -1,7 +1,9 @@
 package greekfantasy.client.entity.model;
 
+import greekfantasy.GreekFantasy;
 import greekfantasy.entity.monster.BabySpider;
 import net.minecraft.client.model.SpiderModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -9,33 +11,13 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.resources.ResourceLocation;
 
 public class BabySpiderModel<T extends BabySpider> extends SpiderModel<T> {
-/*	private final ModelPart head;
-	private final ModelPart body0;
-	private final ModelPart body1;
-	private final ModelPart right_hind_leg;
-	private final ModelPart left_hind_leg;
-	private final ModelPart right_middle_hind_leg;
-	private final ModelPart left_middle_hind_leg;
-	private final ModelPart right_middle_front_leg;
-	private final ModelPart left_middle_front_leg;
-	private final ModelPart right_front_leg;
-	private final ModelPart left_front_leg;*/
+	public static final ModelLayerLocation BABY_SPIDER_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "baby_spider"), "baby_spider");
 
 	public BabySpiderModel(ModelPart root) {
 		super(root);
-/*		this.head = root.getChild("head");
-		this.body0 = root.getChild("body0");
-		this.body1 = root.getChild("body1");
-		this.right_hind_leg = root.getChild("right_hind_leg");
-		this.left_hind_leg = root.getChild("left_hind_leg");
-		this.right_middle_hind_leg = root.getChild("right_middle_hind_leg");
-		this.left_middle_hind_leg = root.getChild("left_middle_hind_leg");
-		this.right_middle_front_leg = root.getChild("right_middle_front_leg");
-		this.left_middle_front_leg = root.getChild("left_middle_front_leg");
-		this.right_front_leg = root.getChild("right_front_leg");
-		this.left_front_leg = root.getChild("left_front_leg");*/
 	}
 
 	public static LayerDefinition createBodyLayer() {
