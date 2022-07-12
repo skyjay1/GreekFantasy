@@ -25,7 +25,7 @@ __Key:__
 - _ _ _ _ _ Minotaur
 - _ _ _ _ _ Gorgon
 - _ _ _ _ _ Harpy
-- _ _ _ _ _ Empusa
+- X X X X X Empusa
 - _ _ _ _ _ Shade
 - _ _ _ _ _ Siren
 - _ _ _ _ _ Cerastes
@@ -35,7 +35,7 @@ __Key:__
 - _ _ _ _ _ Unicorn
 - _ _ _ _ _ Orthus
 - _ _ _ _ _ Elpis
-- _ _ _ _ _ Sparti
+- X X X X X Sparti
 - _ _ _ _ _ Mad Cow (summoned by Geryon)
 - _ _ _ _ _ Boss: Cerberus
 - _ _ _ _ _ Boss: Geryon (3-headed Gigante)
@@ -51,13 +51,13 @@ __Key:__
 - _ _ _ _ _ Miniboss: Hydra
 - _ _ _ _ _ Miniboss: Arachne
 - _ _ _ _ _ Fury
-- X X X X _ Drakaina
+- X X X X X Drakaina
 - _ _ _ _ _ Arion
 - _ _ _ _ _ Whirl
 - _ _ _ _ _ Pegasus
 - _ _ _ _ _ Golden Ram
 - _ _ _ _ _ Makhai
-- X X X X _ Baby Spider
+- X X X X X Baby Spider
 - _ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 
 
@@ -74,7 +74,7 @@ __Key:__
 - _ _ Greek Fire
 - X X Discus
 - X X Web Ball
-- X ~ Spear (and Bident)
+- X X Spear (and Bident)
 - _ _ Orthus Head
 - _ _ Palladium
 
@@ -84,8 +84,9 @@ __Key:__
 
 `[Design] [Worldgen] [Loot]`
 
-- _ _ _ Limestone veins
-- _ _ _ Marble veins
+- X X X Limestone veins
+- X X X Marble veins
+- X X X Reeds
 - _ _ _ Olive Forest?
 - _ _ _ Satyr Camp
 - _ _ _ Ara Camp
@@ -95,7 +96,7 @@ __Key:__
 - _ _ _ Lion Den
 - _ _ _ Cyclopes Cave
 - _ _ _ Olive Trees
-- _ _ _ Pomegranate Trees
+- X X X Pomegranate Trees
 - _ _ _ Golden Tree
 - _ _ _ Arachne Pit
 
@@ -118,13 +119,13 @@ __Key:__
 - X X _ Oil Lamp
 - X X _ Olive Oil
 - X _ _ Olive Sapling
-- X _ _ Pomegranate Sapling
+- X X X Pomegranate Sapling
 - X _ _ Golden Sapling
 - X X _ Nest
 - X ~ _ Wild Rose
 - _ _ _ Cretan Stone and variants
-- ~ _ _ Reeds
-- ~ _ _ Golden String
+- X _ X Reeds
+- X _ _ Golden String
 
 
 ## Items
@@ -139,15 +140,15 @@ __Key:__
 - X _ _ Bronze artifacts (goblet, bowl, pile of coins, vase, ruined helmet, ruined cuirass, broken shield, figurine)
 - X _ _ Ichor
 - X _ _ Horn
-- X _ _ Snakeskin
+- X _ X Snakeskin
 - X _ _ Tough Snakeskin
-- X _ _ Deadly Fang
+- X _ X Deadly Fang
 - X _ _ Heart of Talos
 - X _ _ Ichor-Infused Gear
 - X _ _ Avernal Feather
 - X _ _ Avernal Hide
-- X _ _ Avernal Wing
-- X _ _ Avernal Hair
+- X _ X Avernal Wing
+- X _ X Avernal Hair
 - X _ _ Avernal Claw
 - X _ _ Avernal Shard
 - X _ _ Boar Ear
@@ -156,7 +157,7 @@ __Key:__
 - X X _ Spider Banner Pattern
 - X X _ Ambrosia
 - X _ _ Horn of Plenty
-- X ~ _ Dragon Tooth (also: use to make golden sapling)
+- X X X Dragon Tooth (also: use to make golden sapling)
 - X X _ Staff of Healing
 - X _ _ Conch
 - X X _ Bag of Wind
@@ -168,7 +169,7 @@ __Key:__
 - X _ _ Bow of Artemis
 - X X _ Club (wood, stone, iron)
 - X X _ Spear (wood, stone, iron, gold, diamond, netherite, flint)
-- X ~ _ Bident
+- X X _ Bident
 - X X _ Flint Knife
 - X X _ Ivory Sword
 - X _ _ Greek Fire
@@ -179,13 +180,13 @@ __Key:__
 - X _ _ Unicorn Horn
 - X _ _ Panflute
 - X _ _ Lyre (normal, golden)
-- X X _ Web Ball
+- X X X Web Ball
 - X X _ Olive Oil
 - X _ _ Olive Salve
 - X ~ _ Olives
 - X _ _ Olive Sapling
-- X _ _ Pomegranate
-- X _ _ Pomegranate Sapling
+- X X X Pomegranate
+- X X X Pomegranate Sapling
 
 ### Armor
 
@@ -194,7 +195,7 @@ __Key:__
 `[In-game] [Model] [Use] [Obtainable]`
 
 - X X X _ Helm of Darkness
-- X X _ _ Winged Sandals
+- X X X _ Winged Sandals
 - X _ _ _ Achilles Armor (Hellenic armor? Bronze armor?)
 - X X X _ Snakeskin Armor
 - X _ _ _ Nemean Lion Hide
@@ -220,7 +221,7 @@ __Key:__
 
 - X _ _ Daybreak
 - X _ _ Flying
-- X _ _ Fireflash
+- X X _ Fireflash
 - X X _ Hunting
 - X _ _ Lord of the Sea
 - X _ _ Mirroring
@@ -228,14 +229,14 @@ __Key:__
 - X X _ Poisoning
 - X X _ Raising
 - X _ _ Silkstep
-- X ~ _ Smashing
+- X X _ Smashing
 
 ## Other
 
 ### Global Loot Modifiers
 
-- _ Dragon Tooth from Bone blocks
-- _ Web Ball from Cobweb
+- X Dragon Tooth from Bone blocks
+- X Web Ball from Cobweb
 
 ### Uses for bronze
 

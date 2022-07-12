@@ -80,16 +80,19 @@ public class GFConfig {
 
     // spawns
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> SPAWN_DIMENSION_WHITELIST;
+    private List<? extends String> spawnDimensionWhitelist;
     private final ForgeConfigSpec.BooleanValue IS_SPAWN_DIMENSION_WHITELIST;
     private boolean isSpawnDimensionWhitelist;
     private final Map<String, BiomeListConfigSpec> SPAWN_CONFIG_SPECS = new HashMap<>();
 
     // features
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> FEATURE_DIMENSION_WHITELIST;
+    private final ForgeConfigSpec.ConfigValue<List<? extends String>> FEATURE_DIMENSION_WHITELIST;
+    private List<? extends String> featureDimensionWhitelist;
     private final ForgeConfigSpec.BooleanValue IS_FEATURE_DIMENSION_WHITELIST;
     private boolean isFeatureDimensionWhitelist;
     private final Map<String, BiomeListConfigSpec> FEATURE_CONFIG_SPECS = new HashMap<>();
 
+    @SuppressWarnings("ConstantConditions")
     private static final String[] curseOfCirceWhitelistDefault = {
             ForgeRegistries.ENTITIES.getKey(EntityType.PLAYER).toString(),
             ForgeRegistries.ENTITIES.getKey(EntityType.VILLAGER).toString(),
@@ -177,6 +180,7 @@ public class GFConfig {
         IS_SPAWN_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
                 .define("is_whitelist", true);
         putSpawnConfigSpec(builder, "drakaina",40, false, hostileBlacklist);
+        putSpawnConfigSpec(builder, "empusa",30, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "shade", 10, false);
         builder.pop();
 
@@ -188,7 +192,13 @@ public class GFConfig {
         IS_FEATURE_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
                 .define("is_whitelist", true);
         this.FEATURE_CONFIG_SPECS.clear();
-        putFeatureConfigSpec(builder, "pomegranate_tree", 400, true, Biomes.WARPED_FOREST.location().toString(), Biomes.CRIMSON_FOREST.location().toString());
+        putFeatureConfigSpec(builder, "limestone_upper", 190, true, BiomeDictionary.Type.OVERWORLD.getName());
+        putFeatureConfigSpec(builder, "limestone_lower", 1000, true, BiomeDictionary.Type.OVERWORLD.getName());
+        putFeatureConfigSpec(builder, "marble_upper", 190, true, BiomeDictionary.Type.OVERWORLD.getName());
+        putFeatureConfigSpec(builder, "marble_lower", 1000, true, BiomeDictionary.Type.OVERWORLD.getName());
+        putFeatureConfigSpec(builder, "patch_reeds", 250, true, BiomeDictionary.Type.OVERWORLD.getName());
+        putFeatureConfigSpec(builder, "patch_reeds_swamp", 900, true, BiomeDictionary.Type.SWAMP.getName());
+        putFeatureConfigSpec(builder, "pomegranate_tree", 500, true, Biomes.WARPED_FOREST.location().toString(), Biomes.CRIMSON_FOREST.location().toString());
         builder.pop();
     }
 
@@ -215,6 +225,14 @@ public class GFConfig {
         palladiumRefreshInterval = PALLADIUM_REFRESH_INTERVAL.get();
         palladiumChunkRange = PALLADIUM_CHUNK_RANGE.get();
         palladiumYRange = PALLADIUM_Y_RANGE.get();
+        // mob spawns
+        spawnDimensionWhitelist = SPAWN_DIMENSION_WHITELIST.get();
+        isSpawnDimensionWhitelist = IS_SPAWN_DIMENSION_WHITELIST.get();
+        SPAWN_CONFIG_SPECS.values().forEach(c -> c.bake());
+        // feature spawns
+        featureDimensionWhitelist = FEATURE_DIMENSION_WHITELIST.get();
+        isFeatureDimensionWhitelist = IS_FEATURE_DIMENSION_WHITELIST.get();
+        FEATURE_CONFIG_SPECS.values().forEach(c -> c.bake());
     }
 
     // items
@@ -296,7 +314,7 @@ public class GFConfig {
      * @return true if features can be placed in the given dimension
      **/
     public boolean featureMatchesDimension(final Level level) {
-        return matchesBiomeListConfigSpec(FEATURE_DIMENSION_WHITELIST.get(), IS_FEATURE_DIMENSION_WHITELIST.get(), level.dimension().location());
+        return matchesBiomeListConfigSpec(featureDimensionWhitelist, isFeatureDimensionWhitelist, level.dimension().location());
     }
 
     /**
@@ -304,7 +322,7 @@ public class GFConfig {
      * @return true if mobs can spawn in the given dimension
      **/
     public boolean spawnMatchesDimension(final ServerLevel level) {
-        return matchesBiomeListConfigSpec(SPAWN_DIMENSION_WHITELIST.get(), IS_SPAWN_DIMENSION_WHITELIST.get(), level.dimension().location());
+        return matchesBiomeListConfigSpec(spawnDimensionWhitelist, isSpawnDimensionWhitelist, level.dimension().location());
     }
 
     private static boolean matchesBiomeListConfigSpec(final List<? extends String> list, final boolean isWhitelist, final ResourceLocation dimensionId) {
@@ -323,18 +341,4 @@ public class GFConfig {
         }
         return builder.build();
     }
-
-
-
-    /*public boolean canPigApply(final String entityName) {
-        return IS_PIG_ENTITY_WHITELIST.get() == PIG_ENTITY_WHITELIST.get().contains(entityName);
-    }
-
-    private static List<String> entitiesAsList(final EntityType<?>... types) {
-        final List<String> list = new ArrayList<>();
-        for (final EntityType<?> t : types) {
-            list.add(t.getRegistryName().toString());
-        }
-        return list;
-    }*/
 }

@@ -13,9 +13,12 @@ import java.util.stream.Collectors;
 
 public class BiomeListConfigSpec {
     protected final String name;
-    protected final ForgeConfigSpec.IntValue weight;
-    protected final ForgeConfigSpec.BooleanValue isWhitelist;
-    protected final ConfigValue<List<? extends String>> listSpec;
+    protected final ForgeConfigSpec.IntValue WEIGHT;
+    protected int weight;
+    protected final ForgeConfigSpec.BooleanValue IS_WHITELIST;
+    protected boolean isWhitelist;
+    protected final ConfigValue<List<? extends String>> LIST_SPEC;
+    protected List<? extends String > list;
 
     /**
      * @param builder     the config spec builder
@@ -28,22 +31,28 @@ public class BiomeListConfigSpec {
                                final boolean isWhitelist, final String... biomes) {
         name = nameIn;
         builder.push(nameIn);
-        this.weight = builder.worldRestart().defineInRange("weight", weight, 0, 1000);
-        this.isWhitelist = builder.worldRestart().define("is_whitelist", isWhitelist);
-        this.listSpec = builder.worldRestart().defineList("biomes", Lists.newArrayList(biomes), o -> o instanceof String);
+        this.WEIGHT = builder.worldRestart().defineInRange("weight", weight, 0, 1000);
+        this.IS_WHITELIST = builder.worldRestart().define("is_whitelist", isWhitelist);
+        this.LIST_SPEC = builder.worldRestart().defineList("biomes", Lists.newArrayList(biomes), o -> o instanceof String);
         builder.pop();
     }
 
+    public void bake() {
+        this.weight = WEIGHT.get();
+        this.isWhitelist = IS_WHITELIST.get();
+        this.list = LIST_SPEC.get();
+    }
+
     public int weight() {
-        return weight.get();
+        return this.weight;
     }
 
     public boolean getIsWhitelist() {
-        return isWhitelist.get();
+        return this.isWhitelist;
     }
 
-    public List<? extends String> biomeTypes() {
-        return listSpec.get();
+    public List<? extends String> list() {
+        return this.list;
     }
 
     public boolean canSpawnInBiome(final ResourceKey<Biome> biomeKey) {
@@ -54,7 +63,7 @@ public class BiomeListConfigSpec {
     public boolean hasBiome(final ResourceKey<Biome> biome) {
         final Set<String> types = BiomeDictionary.getTypes(biome).stream().map(t -> t.getName()).collect(Collectors.toSet());
         // check each string in the whitelist
-        for (final String whitelistName : listSpec.get()) {
+        for (final String whitelistName : list()) {
             // if the whitelistName is a biome registry name, compare against the given biome
             if (!whitelistName.isEmpty() && whitelistName.contains(":") && biome.location().toString().equals(whitelistName)) {
                 return true;

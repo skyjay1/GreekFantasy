@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:flowers",
+    "#minecraft:leaves",
+    "#minecraft:saplings",
+    "#forge:crops/beetroot",
+    "#forge:crops/carrot",
+    "#forge:crops/potato",
+    "#forge:crops/wheat",
+    "#forge:seeds/cocoa",
+    "minecraft:sweet_berries",
+    "minecraft:apple",
+    "minecraft:melon_slice",
+    "minecraft:pumpkin",
+    "minecraft:sugar_cane",
+    "greekfantasy:reeds",
+    "greekfantasy:olives",
+    "greekfantasy:pomegranate"
+  ]
+}

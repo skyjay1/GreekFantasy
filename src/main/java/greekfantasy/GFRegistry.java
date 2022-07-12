@@ -7,6 +7,7 @@ import greekfantasy.block.OilLampBlock;
 import greekfantasy.block.OliveOilBlock;
 import greekfantasy.block.PillarBlock;
 import greekfantasy.block.PomegranateSaplingBlock;
+import greekfantasy.block.ReedsBlock;
 import greekfantasy.block.VaseBlock;
 import greekfantasy.block.WildRoseBlock;
 import greekfantasy.blockentity.VaseBlockEntity;
@@ -28,6 +29,7 @@ import greekfantasy.entity.misc.Spear;
 import greekfantasy.entity.misc.WebBall;
 import greekfantasy.entity.monster.BabySpider;
 import greekfantasy.entity.monster.Drakaina;
+import greekfantasy.entity.monster.Empusa;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.item.BagOfWindItem;
 import greekfantasy.item.BidentItem;
@@ -60,12 +62,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.worldgen.features.FeatureUtils;
+import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.effect.MobEffect;
@@ -73,7 +74,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacements;
@@ -99,7 +99,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Block;
@@ -119,19 +118,29 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.TreeFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.BlockColumnConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.featuresize.TwoLayersFeatureSize;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.BlobFoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlacer;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
 import net.minecraft.world.level.levelgen.placement.CountOnEveryLayerPlacement;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
+import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
+import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.common.MinecraftForge;
@@ -140,7 +149,7 @@ import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -148,6 +157,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -167,6 +177,9 @@ public final class GFRegistry {
     private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, MODID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
+//    private static final DeferredRegister<ConfiguredFeature<?, ?>> CONFIGURED_FEATURES = DeferredRegister.create(BuiltinRegistries.CONFIGURED_FEATURE.key(), MODID);
+    private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registry.PLACEMENT_MODIFIERS.key(), MODID);
+//    private static final DeferredRegister<PlacedFeature> PLACED_FEATURES = DeferredRegister.create(BuiltinRegistries.PLACED_FEATURE.key(), MODID);
 
     public static void register() {
         BlockReg.register();
@@ -189,13 +202,11 @@ public final class GFRegistry {
 
         public static void register() {
             BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-            // register marble and limestone
-            registerBlockPolishedEtc("marble", Block.Properties.of(Material.STONE, MaterialColor.QUARTZ).requiresCorrectToolForDrops().strength(1.5F, 6.0F));
+            // register blocks and items together
             registerBlockPolishedEtc("limestone", Block.Properties.of(Material.STONE, MaterialColor.STONE).requiresCorrectToolForDrops().strength(1.5F, 6.0F));
-            // register olive and pomegranate blocks
+            registerBlockPolishedEtc("marble", Block.Properties.of(Material.STONE, MaterialColor.QUARTZ).requiresCorrectToolForDrops().strength(1.5F, 6.0F));
             registerLogsPlanksEtc("olive", 2.0F, 3.0F, MaterialColor.WOOD, MaterialColor.SAND, 5, 5, 20);
             registerLogsPlanksEtc("pomegranate", 2.2F, 3.0F, MaterialColor.TERRACOTTA_PURPLE, MaterialColor.CRIMSON_STEM, 0, 0, 0);
-            // register leaves
             registerLeaves("olive", 30, 60);
             registerLeaves("pomegranate", 0, 0);
             registerLeaves("golden", 30, 60);
@@ -213,6 +224,13 @@ public final class GFRegistry {
             }
         }
 
+        public static final RegistryObject<Block> LIMESTONE = RegistryObject.create(new ResourceLocation(MODID, "limestone"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> MARBLE = RegistryObject.create(new ResourceLocation(MODID, "marble"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> OLIVE_LOG = RegistryObject.create(new ResourceLocation(MODID, "olive_log"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> POMEGRANATE_LOG = RegistryObject.create(new ResourceLocation(MODID, "pomegranate_log"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> OLIVE_LEAVES = RegistryObject.create(new ResourceLocation(MODID, "olive_leaves"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> POMEGRANATE_LEAVES = RegistryObject.create(new ResourceLocation(MODID, "pomegranate_leaves"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> GOLDEN_LEAVES = RegistryObject.create(new ResourceLocation(MODID, "golden_leaves"), ForgeRegistries.BLOCKS);
         public static final RegistryObject<Block> BRONZE_BLOCK = BLOCKS.register("bronze_block", () ->
                 new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_ORANGE)
                         .requiresCorrectToolForDrops().strength(3.0F, 6.0F)
@@ -256,7 +274,7 @@ public final class GFRegistry {
         public static final RegistryObject<Block> WILD_ROSE = BLOCKS.register("wild_rose", () ->
                 new WildRoseBlock(MobEffects.SATURATION, 9, Block.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS)));
         public static final RegistryObject<Block> REEDS = BLOCKS.register("reeds", () ->
-                new Block(Block.Properties.of(Material.WATER_PLANT).noCollission().instabreak().randomTicks().sound(SoundType.CROP)));
+                new ReedsBlock(Block.Properties.of(Material.REPLACEABLE_WATER_PLANT).noCollission().instabreak().randomTicks().sound(SoundType.CROP)));
 
 
         /**
@@ -646,6 +664,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> BRONZE_HELMET = ITEMS.register("bronze_helmet", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> BRONZE_SHIELD = ITEMS.register("bronze_shield", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> BRONZE_VASE = ITEMS.register("bronze_vase", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> REEDS = ITEMS.register("reeds", () -> new BlockItem(BlockReg.REEDS.get(), new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> HORN = ITEMS.register("horn", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> AVERNAL_FEATHER = ITEMS.register("avernal_feather", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> AVERNAL_HAIR = ITEMS.register("avernal_hair", () -> new Item(new Item.Properties().tab(GF_TAB)));
@@ -714,6 +733,7 @@ public final class GFRegistry {
 
         private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
             register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
+            register(event, EMPUSA.get(), Empusa::createAttributes, Empusa::checkEmpusaSpawnRules);
             register(event, DRAKAINA.get(), Drakaina::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, SPARTI.get(), Sparti::createAttributes, null);
@@ -747,6 +767,7 @@ public final class GFRegistry {
             }
             if(event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
                 addSpawns(event, DRAKAINA.get(), 1, 2);
+                addSpawns(event, EMPUSA.get(), 1, 2);
                 addSpawns(event, SHADE.get(), 1, 1);
             }
         }
@@ -756,7 +777,7 @@ public final class GFRegistry {
             final BiomeListConfigSpec config = GreekFantasy.CONFIG.getSpawnConfigSpec(name);
             final ResourceKey<Biome> key = ResourceKey.create(Registry.BIOME_REGISTRY, event.getName());
             if (null == config) {
-                GreekFantasy.LOGGER.error("Error registering spawns: config for '" + name + "' not found!");
+                GreekFantasy.LOGGER.error("Error adding spawns: config for '" + name + "' not found!");
             } else if (config.weight() > 0 && config.canSpawnInBiome(key)) {
                 event.getSpawns().addSpawn(entity.getCategory(), new MobSpawnSettings.SpawnerData(entity, config.weight(), min, max));
             }
@@ -765,19 +786,23 @@ public final class GFRegistry {
         // creature
         public static final RegistryObject<EntityType<? extends BabySpider>> BABY_SPIDER = ENTITY_TYPES.register("baby_spider", () ->
                 EntityType.Builder.of(BabySpider::new, MobCategory.MONSTER)
-                        .sized(0.5F, 0.65F).clientTrackingRange(8)
+                        .sized(0.5F, 0.65F)
                         .build("baby_spider"));
         public static final RegistryObject<EntityType<? extends Drakaina>> DRAKAINA = ENTITY_TYPES.register("drakaina", () ->
                 EntityType.Builder.of(Drakaina::new, MobCategory.MONSTER)
-                        .sized(0.9F, 1.9F).clientTrackingRange(8)
+                        .sized(0.9F, 1.9F)
                         .build("drakaina"));
+        public static final RegistryObject<EntityType<? extends Empusa>> EMPUSA = ENTITY_TYPES.register("empusa", () ->
+                EntityType.Builder.of(Empusa::new, MobCategory.MONSTER)
+                        .sized(0.67F, 1.8F).fireImmune()
+                        .build("empusa"));
         public static final RegistryObject<EntityType<? extends Shade>> SHADE = ENTITY_TYPES.register("shade", () ->
                 EntityType.Builder.of(Shade::new, MobCategory.MONSTER)
-                        .sized(0.67F, 1.8F).clientTrackingRange(8).fireImmune()
+                        .sized(0.67F, 1.8F).fireImmune()
                         .build("shade"));
         public static final RegistryObject<EntityType<? extends Sparti>> SPARTI = ENTITY_TYPES.register("sparti", () ->
                 EntityType.Builder.of(Sparti::new, MobCategory.CREATURE)
-                        .sized(0.6F, 1.98F).clientTrackingRange(8)
+                        .sized(0.6F, 1.98F)
                         .build("sparti"));
         // other
         public static final RegistryObject<EntityType<? extends Curse>> CURSE = ENTITY_TYPES.register("curse", () ->
@@ -921,37 +946,49 @@ public final class GFRegistry {
 
         public static void register() {
             FEATURES.register(FMLJavaModLoadingContext.get().getModEventBus());
-            // register event listeners
             FMLJavaModLoadingContext.get().getModEventBus().addListener(FeatureReg::registerConfiguredFeatures);
         }
 
+        public static Holder<ConfiguredFeature<OreConfiguration, ?>> ORE_LIMESTONE;
+        public static Holder<ConfiguredFeature<OreConfiguration, ?>> ORE_MARBLE;
+        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> POMEGRANATE_TREE_FEATURE;
+        public static Holder<ConfiguredFeature<RandomPatchConfiguration, ?>> REEDS;
 
-        public static final RegistryObject<TreeFeature> POMEGRANATE_TREE = FEATURES.register("pomegranate_tree", () ->
-                new TreeFeature(TreeConfiguration.CODEC));
-        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> POMEGRANATE_TREE_FEATURE = null;
-
-        /**
-         * Registers configured features
-         * @param event the common setup event
-         * @see net.minecraft.data.worldgen.features.TreeFeatures
-         * @see net.minecraft.data.worldgen.features.OreFeatures
-         */
-        public static void registerConfiguredFeatures(final FMLCommonSetupEvent event) {
+        private static void registerConfiguredFeatures(final FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
-                POMEGRANATE_TREE_FEATURE = FeatureUtils.register("pomegranate_tree",
-                        POMEGRANATE_TREE.get(), createPomegranate().build());
+                ORE_LIMESTONE = FeatureUtils.register("limestone",  Feature.ORE,
+                        new OreConfiguration(OreFeatures.NATURAL_STONE, BlockReg.LIMESTONE.get().defaultBlockState(), 64)
+                );
+                ORE_MARBLE = FeatureUtils.register("marble", Feature.ORE,
+                        new OreConfiguration(OreFeatures.NATURAL_STONE, BlockReg.MARBLE.get().defaultBlockState(), 64)
+                );
+                POMEGRANATE_TREE_FEATURE = FeatureUtils.register("pomegranate_tree", Feature.TREE, createPomegranate().build());
+                REEDS = FeatureUtils.register("reeds", Feature.RANDOM_PATCH,
+                        new RandomPatchConfiguration(40, 5, 1,
+                                PlacementUtils.inlinePlaced(Feature.SIMPLE_BLOCK,
+                                    new SimpleBlockConfiguration(BlockStateProvider.simple(BlockReg.REEDS.get())),
+                                    BlockPredicateFilter.forPredicate(BlockPredicate.allOf(
+                                        BlockPredicate.replaceable(new BlockPos(0, 1, 0)),
+                                        BlockPredicate.hasSturdyFace(new BlockPos(0, -1, 0), Direction.UP),
+                                        BlockPredicate.anyOf(
+                                            BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), BlockPos.ZERO),
+                                            BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(1, -1, 0)),
+                                            BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(-1, -1, 0)),
+                                            BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, 1)),
+                                            BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, -1))))
+                                    )
+                                )
+                        )
+                );
             });
         }
-
 
         private static TreeConfiguration.TreeConfigurationBuilder createStraightBlobTree(Block trunk, Block leaves, int trunkHeight, int trunkHeightRandA, int trunkHeightRandB, int foliageRadius) {
             return new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(trunk), new StraightTrunkPlacer(trunkHeight, trunkHeightRandA, trunkHeightRandB), BlockStateProvider.simple(leaves), new BlobFoliagePlacer(ConstantInt.of(foliageRadius), ConstantInt.of(0), 3), new TwoLayersFeatureSize(1, 0, 1));
         }
 
         private static TreeConfiguration.TreeConfigurationBuilder createPomegranate() {
-            final RegistryObject<Block> log = RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "pomegranate_log"), ForgeRegistries.BLOCKS);
-            final RegistryObject<Block> leaves = RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "pomegranate_leaves"), ForgeRegistries.BLOCKS);
-            return createStraightBlobTree(log.get(), leaves.get(), 4, 2, 0, 2)
+            return createStraightBlobTree(BlockReg.POMEGRANATE_LOG.get(), BlockReg.POMEGRANATE_LEAVES.get(), 4, 2, 0, 2)
                     .ignoreVines().dirt(BlockStateProvider.simple(Blocks.NETHERRACK));
         }
     }
@@ -959,44 +996,76 @@ public final class GFRegistry {
     public static final class PlacementTypeReg {
 
         public static void register() {
-            // register event listeners
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(PlacementTypeReg::registerPlacementTypes);
+            PLACEMENT_MODIFIER_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
 
-        public static PlacementModifierType<DimensionFilter> DIMENSION_FILTER;
-
-        private static void registerPlacementTypes(final FMLCommonSetupEvent event) {
-            event.enqueueWork(() -> {
-                DIMENSION_FILTER = Registry.register(Registry.PLACEMENT_MODIFIERS, new ResourceLocation(MODID, "dimension"), () -> DimensionFilter.CODEC);
-            });
-        }
-
+        public static final RegistryObject<PlacementModifierType<DimensionFilter>> DIMENSION_FILTER = PLACEMENT_MODIFIER_TYPES.register("dimension", () -> () -> DimensionFilter.CODEC);
     }
 
 
     public static final class PlacementReg {
 
         public static void register() {
-            // register event listeners
             FMLJavaModLoadingContext.get().getModEventBus().addListener(PlacementReg::registerPlacedFeatures);
+            // register event listeners
             MinecraftForge.EVENT_BUS.addListener(PlacementReg::onBiomeLoading);
         }
 
+        public static Holder<PlacedFeature> ORE_LIMESTONE_UPPER;
+        public static Holder<PlacedFeature> ORE_LIMESTONE_LOWER;
+        public static Holder<PlacedFeature> ORE_MARBLE_UPPER;
+        public static Holder<PlacedFeature> ORE_MARBLE_LOWER;
         public static Holder<PlacedFeature> POMEGRANATE_TREE;
+        public static Holder<PlacedFeature> PATCH_REEDS;
+        public static Holder<PlacedFeature> PATCH_REEDS_SWAMP;
 
-        /**
-         * Registers feature placements
-         * @param event the common setup event
-         * @see net.minecraft.data.worldgen.placement.TreePlacements
-         * @see net.minecraft.data.worldgen.placement.OrePlacements
-         */
-        private static void registerPlacedFeatures(final FMLCommonSetupEvent event) {
+        private static void registerPlacedFeatures(final FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
-                BiomeListConfigSpec pomegranateSpec = GreekFantasy.CONFIG.getFeatureConfigSpec("pomegranate_tree");
-                POMEGRANATE_TREE = PlacementUtils.register("pomegranate_tree", FeatureReg.POMEGRANATE_TREE_FEATURE,
-                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, pomegranateSpec.weight()))),
-                        CountOnEveryLayerPlacement.of(4), BiomeFilter.biome(), DimensionFilter.dimension(),
-                        PlacementUtils.filteredByBlockSurvival(BlockReg.POMEGRANATE_SAPLING.get()));
+                BiomeListConfigSpec spec;
+                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("limestone_upper");
+                ORE_LIMESTONE_UPPER = PlacementUtils.register("limestone_upper", FeatureReg.ORE_LIMESTONE, List.of(
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        HeightRangePlacement.uniform(VerticalAnchor.absolute(64), VerticalAnchor.absolute(128)),
+                        InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
+                ));
+                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("limestone_lower");
+                ORE_LIMESTONE_LOWER = PlacementUtils.register("limestone_lower", FeatureReg.ORE_LIMESTONE, List.of(
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        CountPlacement.of(2),
+                        HeightRangePlacement.uniform(VerticalAnchor.absolute(0), VerticalAnchor.absolute(60)),
+                        InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
+                ));
+                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("marble_upper");
+                ORE_MARBLE_UPPER = PlacementUtils.register("marble_upper", FeatureReg.ORE_MARBLE, List.of(
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        HeightRangePlacement.uniform(VerticalAnchor.absolute(64), VerticalAnchor.absolute(128)),
+                        InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
+                ));
+                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("marble_lower");
+                ORE_MARBLE_LOWER = PlacementUtils.register("marble_lower", FeatureReg.ORE_MARBLE, List.of(
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        CountPlacement.of(2),
+                        HeightRangePlacement.uniform(VerticalAnchor.absolute(0), VerticalAnchor.absolute(60)),
+                        InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
+                ));
+                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("pomegranate_tree");
+                POMEGRANATE_TREE = PlacementUtils.register("pomegranate_tree", FeatureReg.POMEGRANATE_TREE_FEATURE, List.of(
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        CountOnEveryLayerPlacement.of(4), DimensionFilter.dimension(), BiomeFilter.biome(),
+                        PlacementUtils.filteredByBlockSurvival(BlockReg.POMEGRANATE_SAPLING.get())
+                ));
+                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("patch_reeds");
+                PATCH_REEDS = PlacementUtils.register("patch_reeds", FeatureReg.REEDS, List.of(
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                        DimensionFilter.dimension(), BiomeFilter.biome()
+                ));
+                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("patch_reeds_swamp");
+                PATCH_REEDS_SWAMP = PlacementUtils.register("patch_reeds_swamp", FeatureReg.REEDS, List.of(
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                        DimensionFilter.dimension(), BiomeFilter.biome()
+                ));
             });
         }
 
@@ -1014,15 +1083,20 @@ public final class GFRegistry {
                 addFeature(event, "pomegranate_tree", GenerationStep.Decoration.VEGETAL_DECORATION, POMEGRANATE_TREE);
             }
             if(event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
-                // TODO
+                addFeature(event, "limestone_upper", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_LIMESTONE_UPPER);
+                addFeature(event, "limestone_lower", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_LIMESTONE_LOWER);
+                addFeature(event, "marble_upper", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_MARBLE_UPPER);
+                addFeature(event, "marble_lower", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_MARBLE_LOWER);
+                addFeature(event, "patch_reeds", GenerationStep.Decoration.VEGETAL_DECORATION, PATCH_REEDS);
+                addFeature(event, "patch_reeds_swamp", GenerationStep.Decoration.VEGETAL_DECORATION, PATCH_REEDS_SWAMP);
             }
         }
 
-        private static void addFeature(final BiomeLoadingEvent event, final String featureName,
+        private static void addFeature(final BiomeLoadingEvent event, final String featureConfigSpec,
                                        final GenerationStep.Decoration stage, final Holder<PlacedFeature> feature) {
-            final BiomeListConfigSpec config = GreekFantasy.CONFIG.getFeatureConfigSpec(featureName);
+            final BiomeListConfigSpec config = GreekFantasy.CONFIG.getFeatureConfigSpec(featureConfigSpec);
             if (null == config) {
-                GreekFantasy.LOGGER.error("Error registering features: config for '" + featureName + "' not found!");
+                GreekFantasy.LOGGER.error("Error adding features: config for '" + featureConfigSpec + "' not found!");
             } else if (config.weight() > 0 && config.canSpawnInBiome(ResourceKey.create(Registry.BIOME_REGISTRY, event.getName()))) {
                 event.getGeneration().getFeatures(stage).add(feature);
             }

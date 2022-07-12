@@ -6,12 +6,14 @@ import greekfantasy.client.armor.WingedSandalsModel;
 import greekfantasy.client.blockentity.VaseBlockEntityRenderer;
 import greekfantasy.client.entity.BabySpiderRenderer;
 import greekfantasy.client.entity.DrakainaRenderer;
+import greekfantasy.client.entity.EmpusaRenderer;
 import greekfantasy.client.entity.ShadeRenderer;
 import greekfantasy.client.entity.SpartiRenderer;
 import greekfantasy.client.entity.SpearRenderer;
 import greekfantasy.client.entity.SpellRenderer;
 import greekfantasy.client.entity.model.BabySpiderModel;
 import greekfantasy.client.entity.model.DrakainaModel;
+import greekfantasy.client.entity.model.EmpusaModel;
 import greekfantasy.client.entity.model.ShadeModel;
 import greekfantasy.client.entity.model.SpearModel;
 import greekfantasy.client.entity.model.SpellModel;
@@ -102,6 +104,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(WingedSandalsModel.WINGED_SANDALS_MODEL_RESOURCE, WingedSandalsModel::createBodyLayer);
             // creature
             event.registerLayerDefinition(BabySpiderModel.BABY_SPIDER_MODEL_RESOURCE, BabySpiderModel::createBodyLayer);
+            event.registerLayerDefinition(EmpusaModel.EMPUSA_MODEL_RESOURCE, EmpusaModel::createBodyLayer);
             event.registerLayerDefinition(DrakainaModel.DRAKAINA_MODEL_RESOURCE, DrakainaModel::createBodyLayer);
             event.registerLayerDefinition(ShadeModel.SHADE_MODEL_RESOURCE, ShadeModel::createBodyLayer);
             // other
@@ -115,6 +118,7 @@ public final class GFClientEvents {
             // creature
             event.registerEntityRenderer(GFRegistry.EntityReg.BABY_SPIDER.get(), BabySpiderRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DRAKAINA.get(), DrakainaRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.EMPUSA.get(), EmpusaRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPARTI.get(), SpartiRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SHADE.get(), ShadeRenderer::new);
             // other
@@ -166,15 +170,16 @@ public final class GFClientEvents {
             registerRenderLayer("pomegranate_leaves", RenderType.cutoutMipped());
             registerRenderLayer("golden_leaves", RenderType.cutoutMipped());
             // cutout
-            registerCutout("olive_sapling");
-            registerCutout("olive_door");
-            registerCutout("olive_trapdoor");
-            registerCutout("pomegranate_sapling");
-            registerCutout("pomegranate_door");
-            registerCutout("pomegranate_trapdoor");
             registerCutout("golden_sapling");
-            registerCutout("olive_oil");
             registerCutout("golden_string");
+            registerCutout("olive_door");
+            registerCutout("olive_sapling");
+            registerCutout("olive_oil");
+            registerCutout("olive_trapdoor");
+            registerCutout("pomegranate_door");
+            registerCutout("pomegranate_sapling");
+            registerCutout("pomegranate_trapdoor");
+            registerCutout("reeds");
             registerCutout("wild_rose");
         }
 

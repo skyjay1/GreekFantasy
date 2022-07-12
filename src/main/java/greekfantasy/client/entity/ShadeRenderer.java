@@ -23,7 +23,7 @@ public class ShadeRenderer extends HumanoidMobRenderer<Shade, HumanoidModel<Shad
     protected void scale(final Shade entity, PoseStack poseStack, float partialTick) {
         // bob the entity up and down
         float ticks = entity.getId() * 2 + entity.tickCount + partialTick;
-        final float translateY = 0.15F * Mth.cos(ticks * 0.1F) - 0.25F;
+        final float translateY = 0.15F * Mth.cos(ticks * 0.1F) + 0.25F;
         poseStack.translate(0.0D, translateY, 0.0D);
     }
 

@@ -32,6 +32,6 @@ public class DimensionFilter extends PlacementFilter {
     }
 
     public PlacementModifierType<?> type() {
-        return GFRegistry.PlacementTypeReg.DIMENSION_FILTER;
+        return GFRegistry.PlacementTypeReg.DIMENSION_FILTER.get();
     }
 }

@@ -95,13 +95,10 @@ public class BabySpider extends Spider {
          * Returns whether an in-progress EntityAIBase should continue executing
          */
         public boolean canContinueToUse() {
-            float f = this.mob.getBrightness();
-            if (f >= 0.5F && this.mob.getRandom().nextInt(100) == 0) {
-                this.mob.setTarget(null);
+            if (BabySpider.this.isAttacking) {
                 return false;
-            } else {
-                return super.canContinueToUse();
             }
+            return super.canContinueToUse();
         }
 
 

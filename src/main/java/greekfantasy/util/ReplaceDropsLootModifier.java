@@ -35,6 +35,7 @@ public class ReplaceDropsLootModifier extends LootModifier {
     @Nonnull
     @Override
     protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
+        GreekFantasy.LOGGER.debug("ReplaceDropsLootModifier: " + replacement.getItem());
         // do not apply when incorrectly parsed or loot is empty
         if(replacement.isEmpty() || generatedLoot.isEmpty()) {
             return generatedLoot;
@@ -51,7 +52,8 @@ public class ReplaceDropsLootModifier extends LootModifier {
         if(tool.canPerformAction(ToolActions.SHEARS_DIG) || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) > 0) {
             return generatedLoot;
         }
-        // replace loot with flint
+        GreekFantasy.LOGGER.debug("success");
+        // replace loot with item
         return List.of(replacement.copy());
     }
 

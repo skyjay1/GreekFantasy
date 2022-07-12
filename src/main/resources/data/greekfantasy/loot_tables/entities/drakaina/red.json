@@ -45,7 +45,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "greekfantasy:snake_fang",
+          "name": "greekfantasy:deadly_fang",
           "conditions": [
             {
               "condition": "minecraft:random_chance_with_looting",
