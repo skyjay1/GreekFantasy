@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Pose;
 
-public class SpartiRenderer extends HumanoidMobRenderer<Sparti, SkeletonModel<Sparti>> {
+public class SpartiRenderer<T extends Sparti> extends HumanoidMobRenderer<T, SkeletonModel<T>> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/sparti/sparti.png");
 
     public SpartiRenderer(EntityRendererProvider.Context context) {
@@ -27,7 +27,7 @@ public class SpartiRenderer extends HumanoidMobRenderer<Sparti, SkeletonModel<Sp
     }
 
     @Override
-    protected void scale(final Sparti entity, PoseStack poseStack, float partialTick) {
+    protected void scale(final T entity, PoseStack poseStack, float partialTick) {
         // if the entity is spawning, shift the entity down
         if (entity.isSpawning()) {
             final float height = 1.99F;
@@ -37,12 +37,12 @@ public class SpartiRenderer extends HumanoidMobRenderer<Sparti, SkeletonModel<Sp
     }
 
     @Override
-    public ResourceLocation getTextureLocation(Sparti entity) {
+    public ResourceLocation getTextureLocation(T entity) {
         return TEXTURE;
     }
 
     @Override
-    protected boolean isShaking(Sparti entity) {
+    protected boolean isShaking(T entity) {
         return entity.isSpawning();
     }
 }

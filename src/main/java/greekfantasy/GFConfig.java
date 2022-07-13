@@ -58,6 +58,20 @@ public class GFConfig {
     public final ForgeConfigSpec.DoubleValue ELPIS_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue SHADE_SPAWN_CHANCE;
     public final ForgeConfigSpec.BooleanValue SHADE_IMMUNE_TO_NONOWNER;
+    private final ForgeConfigSpec.BooleanValue SHOW_ARACHNE_BOSS_BAR;
+    private boolean showArachneBossBar;
+    private final ForgeConfigSpec.BooleanValue SHOW_CIRCE_BOSS_BAR;
+    private boolean showCirceBossBar;
+    private final ForgeConfigSpec.BooleanValue SHOW_GIANT_BOAR_BOSS_BAR;
+    private boolean showGiantBoarBossBar;
+    private final ForgeConfigSpec.BooleanValue SHOW_HYDRA_BOSS_BAR;
+    private boolean showHydraBossBar;
+    private final ForgeConfigSpec.BooleanValue SHOW_MEDUSA_BOSS_BAR;
+    private boolean showMedusaBossBar;
+    private final ForgeConfigSpec.BooleanValue SHOW_NEMEAN_LION_BOSS_BAR;
+    private boolean showNemeanLionBossBar;
+    private final ForgeConfigSpec.BooleanValue SHOW_PYTHON_BOSS_BAR;
+    private boolean showPythonBossBar;
 
     // mob effect
     private final ForgeConfigSpec.BooleanValue CURSE_OF_CIRCE_ENABLED;
@@ -139,12 +153,19 @@ public class GFConfig {
         RAISING_SPARTI_LIFESPAN = builder.defineInRange("raising_sparti_lifespan", 120, 1, 24000);
         builder.pop();
 
-        builder.push("entity");
+        builder.push("mobs");
         ELPIS_SPAWN_CHANCE = builder
                 .comment("Percent chance that opening a mysterious box spawns an Elpis")
                 .defineInRange("elpis_spawn_chance", 0.6F, 0.0F, 1.0F);
         SHADE_SPAWN_CHANCE = builder.defineInRange("shade_spawn_chance", 1.0F, 0.0F, 1.0F);
         SHADE_IMMUNE_TO_NONOWNER = builder.define("shade_immune_to_nonowner", true);
+        SHOW_ARACHNE_BOSS_BAR = builder.define("show_arachne_boss_bar", false);
+        SHOW_CIRCE_BOSS_BAR = builder.define("show_circe_boss_bar", false);
+        SHOW_GIANT_BOAR_BOSS_BAR = builder.define("show_giant_boar_boss_bar", true);
+        SHOW_HYDRA_BOSS_BAR = builder.define("show_hydra_boss_bar", true);
+        SHOW_MEDUSA_BOSS_BAR = builder.define("show_medusa_boss_bar", false);
+        SHOW_NEMEAN_LION_BOSS_BAR = builder.define("show_nemean_lion_boss_bar", true);
+        SHOW_PYTHON_BOSS_BAR = builder.define("show_python_boss_bar", true);
         builder.pop();
 
         builder.push("mob_effects");
@@ -217,6 +238,14 @@ public class GFConfig {
         isMirroringEnabled = MIRRORING_ENABLED.get();
         isOverstepEnabled = OVERSTEP_ENABLED.get();
         isPoisoningEnabled = POISONING_ENABLED.get();
+        // mob
+        showArachneBossBar = SHOW_ARACHNE_BOSS_BAR.get();
+        showCirceBossBar = SHOW_CIRCE_BOSS_BAR.get();
+        showGiantBoarBossBar = SHOW_GIANT_BOAR_BOSS_BAR.get();
+        showHydraBossBar = SHOW_HYDRA_BOSS_BAR.get();
+        showMedusaBossBar = SHOW_MEDUSA_BOSS_BAR.get();
+        showNemeanLionBossBar = SHOW_NEMEAN_LION_BOSS_BAR.get();
+        showPythonBossBar = SHOW_PYTHON_BOSS_BAR.get();
         // mob effects
         isCurseOfCirceEnabled = CURSE_OF_CIRCE_ENABLED.get();
         curseOfCirceWhitelist = createEntityWhitelist(CURSE_OF_CIRCE_WHITELIST.get());
@@ -262,6 +291,37 @@ public class GFConfig {
     public boolean isOverstepEnabled() {
         return isOverstepEnabled;
     }
+
+    // mob
+
+    public boolean showArachneBossBar() {
+        return showArachneBossBar;
+    }
+
+    public boolean showCirceBossBar() {
+        return showCirceBossBar;
+    }
+
+    public boolean showGiantBoarBossBar() {
+        return showGiantBoarBossBar;
+    }
+
+    public boolean showHydraBossBar() {
+        return showHydraBossBar;
+    }
+
+    public boolean showMedusaBossBar() {
+        return showMedusaBossBar;
+    }
+
+    public boolean showNemeanLionBossBar() {
+        return showNemeanLionBossBar;
+    }
+
+    public boolean showPythonBossBar() {
+        return showPythonBossBar;
+    }
+
 
     // mob effects
 

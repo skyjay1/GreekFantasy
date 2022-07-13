@@ -2,7 +2,7 @@
   "type": "minecraft:village",
   "config": {
     "start_pool": "greekfantasy:satyr_camp/campfire",
-	"size": 4
+	"size": 2
   },
   "biomes": "#minecraft:has_structure/mineshaft",
   "adapt_noise": true,

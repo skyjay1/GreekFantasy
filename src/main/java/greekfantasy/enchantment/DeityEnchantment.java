@@ -1,13 +1,10 @@
 package greekfantasy.enchantment;
 
-
-import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
-import java.awt.*;
 import java.util.function.Predicate;
 
 public class DeityEnchantment extends Enchantment {

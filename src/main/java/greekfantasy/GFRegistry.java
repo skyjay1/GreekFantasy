@@ -19,6 +19,8 @@ import greekfantasy.enchantment.PoisoningEnchantment;
 import greekfantasy.enchantment.SilkstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
 import greekfantasy.entity.Sparti;
+import greekfantasy.entity.boss.Arachne;
+import greekfantasy.entity.boss.Python;
 import greekfantasy.entity.misc.Curse;
 import greekfantasy.entity.misc.CurseOfCirce;
 import greekfantasy.entity.misc.Discus;
@@ -55,6 +57,7 @@ import greekfantasy.mob_effect.MirroringEffect;
 import greekfantasy.mob_effect.PrisonerOfHadesEffect;
 import greekfantasy.mob_effect.StunnedEffect;
 import greekfantasy.util.ReplaceDropsLootModifier;
+import greekfantasy.worldgen.ArachnePitFeature;
 import greekfantasy.worldgen.BiomeListConfigSpec;
 import greekfantasy.worldgen.DimensionFilter;
 import greekfantasy.worldgen.PomegranateTreeGrower;
@@ -62,6 +65,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.data.worldgen.StructureFeatures;
+import net.minecraft.data.worldgen.features.CaveFeatures;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
@@ -121,8 +127,10 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.BlockColumnConfiguration;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.JigsawConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
@@ -177,9 +185,8 @@ public final class GFRegistry {
     private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, MODID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
-//    private static final DeferredRegister<ConfiguredFeature<?, ?>> CONFIGURED_FEATURES = DeferredRegister.create(BuiltinRegistries.CONFIGURED_FEATURE.key(), MODID);
+    private static final DeferredRegister<StructureFeature<?>> STRUCTURE_FEATURES = DeferredRegister.create(Registry.STRUCTURE_FEATURE_REGISTRY, MODID);
     private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registry.PLACEMENT_MODIFIERS.key(), MODID);
-//    private static final DeferredRegister<PlacedFeature> PLACED_FEATURES = DeferredRegister.create(BuiltinRegistries.PLACED_FEATURE.key(), MODID);
 
     public static void register() {
         BlockReg.register();
@@ -193,6 +200,7 @@ public final class GFRegistry {
         MenuReg.register();
         RecipeReg.register();
         FeatureReg.register();
+        StructureFeatureReg.register();
         PlacementTypeReg.register();
         PlacementReg.register();
     }
@@ -732,9 +740,11 @@ public final class GFRegistry {
         }
 
         private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+            register(event, ARACHNE.get(), Arachne::createAttributes, null);
             register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
             register(event, EMPUSA.get(), Empusa::createAttributes, Empusa::checkEmpusaSpawnRules);
             register(event, DRAKAINA.get(), Drakaina::createAttributes, Monster::checkMonsterSpawnRules);
+            register(event, PYTHON.get(), Python::createAttributes, null);
             register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, SPARTI.get(), Sparti::createAttributes, null);
         }
@@ -758,14 +768,15 @@ public final class GFRegistry {
         /**
          * Called from the event bus during the BiomeLoadingEvent.
          * Adds creature spawns to biomes.
+         *
          * @param event the biome loading event
          */
         private static void onBiomeLoading(BiomeLoadingEvent event) {
-            if(null == event.getName()) {
+            if (null == event.getName()) {
                 GreekFantasy.LOGGER.warn("Biome name was null during entity BiomeLoadingEvent, skipping.");
                 return;
             }
-            if(event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
+            if (event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
                 addSpawns(event, DRAKAINA.get(), 1, 2);
                 addSpawns(event, EMPUSA.get(), 1, 2);
                 addSpawns(event, SHADE.get(), 1, 1);
@@ -784,6 +795,10 @@ public final class GFRegistry {
         }
 
         // creature
+        public static final RegistryObject<EntityType<? extends Arachne>> ARACHNE = ENTITY_TYPES.register("arachne", () ->
+                EntityType.Builder.of(Arachne::new, MobCategory.MONSTER)
+                        .sized(0.94F, 1.9F)
+                        .build("arachne"));
         public static final RegistryObject<EntityType<? extends BabySpider>> BABY_SPIDER = ENTITY_TYPES.register("baby_spider", () ->
                 EntityType.Builder.of(BabySpider::new, MobCategory.MONSTER)
                         .sized(0.5F, 0.65F)
@@ -796,6 +811,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Empusa::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.8F).fireImmune()
                         .build("empusa"));
+        public static final RegistryObject<EntityType<? extends Python>> PYTHON = ENTITY_TYPES.register("python", () ->
+                EntityType.Builder.of(Python::new, MobCategory.MONSTER)
+                        .sized(1.4F, 1.9F).fireImmune()
+                        .build("python"));
         public static final RegistryObject<EntityType<? extends Shade>> SHADE = ENTITY_TYPES.register("shade", () ->
                 EntityType.Builder.of(Shade::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.8F).fireImmune()
@@ -942,6 +961,24 @@ public final class GFRegistry {
 
     }
 
+    public static final class StructureFeatureReg {
+
+        public static void register() {
+            STRUCTURE_FEATURES.register(FMLJavaModLoadingContext.get().getModEventBus());
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(StructureFeatureReg::registerStep);
+        }
+
+        public static final RegistryObject<StructureFeature<?>> ARACHNE_PIT = STRUCTURE_FEATURES.register("arachne_pit", () ->
+                new ArachnePitFeature(JigsawConfiguration.CODEC));
+
+        private static void registerStep(final FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
+                StructureFeature.STEP.put(ARACHNE_PIT.get(), GenerationStep.Decoration.UNDERGROUND_STRUCTURES);
+            });
+
+        }
+    }
+
     public static final class FeatureReg {
 
         public static void register() {
@@ -956,7 +993,7 @@ public final class GFRegistry {
 
         private static void registerConfiguredFeatures(final FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
-                ORE_LIMESTONE = FeatureUtils.register("limestone",  Feature.ORE,
+                ORE_LIMESTONE = FeatureUtils.register("limestone", Feature.ORE,
                         new OreConfiguration(OreFeatures.NATURAL_STONE, BlockReg.LIMESTONE.get().defaultBlockState(), 64)
                 );
                 ORE_MARBLE = FeatureUtils.register("marble", Feature.ORE,
@@ -966,17 +1003,17 @@ public final class GFRegistry {
                 REEDS = FeatureUtils.register("reeds", Feature.RANDOM_PATCH,
                         new RandomPatchConfiguration(40, 5, 1,
                                 PlacementUtils.inlinePlaced(Feature.SIMPLE_BLOCK,
-                                    new SimpleBlockConfiguration(BlockStateProvider.simple(BlockReg.REEDS.get())),
-                                    BlockPredicateFilter.forPredicate(BlockPredicate.allOf(
-                                        BlockPredicate.replaceable(new BlockPos(0, 1, 0)),
-                                        BlockPredicate.hasSturdyFace(new BlockPos(0, -1, 0), Direction.UP),
-                                        BlockPredicate.anyOf(
-                                            BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), BlockPos.ZERO),
-                                            BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(1, -1, 0)),
-                                            BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(-1, -1, 0)),
-                                            BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, 1)),
-                                            BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, -1))))
-                                    )
+                                        new SimpleBlockConfiguration(BlockStateProvider.simple(BlockReg.REEDS.get())),
+                                        BlockPredicateFilter.forPredicate(BlockPredicate.allOf(
+                                                BlockPredicate.replaceable(new BlockPos(0, 1, 0)),
+                                                BlockPredicate.hasSturdyFace(new BlockPos(0, -1, 0), Direction.UP),
+                                                BlockPredicate.anyOf(
+                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), BlockPos.ZERO),
+                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(1, -1, 0)),
+                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(-1, -1, 0)),
+                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, 1)),
+                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, -1))))
+                                        )
                                 )
                         )
                 );
@@ -1072,17 +1109,18 @@ public final class GFRegistry {
         /**
          * Called from the event bus during the BiomeLoadingEvent.
          * Adds features to biomes.
+         *
          * @param event the biome loading event
          */
         private static void onBiomeLoading(BiomeLoadingEvent event) {
-            if(null == event.getName()) {
+            if (null == event.getName()) {
                 GreekFantasy.LOGGER.warn("Biome name was null during feature BiomeLoadingEvent, skipping.");
                 return;
             }
-            if(event.getCategory() == Biome.BiomeCategory.NETHER) {
+            if (event.getCategory() == Biome.BiomeCategory.NETHER) {
                 addFeature(event, "pomegranate_tree", GenerationStep.Decoration.VEGETAL_DECORATION, POMEGRANATE_TREE);
             }
-            if(event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
+            if (event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
                 addFeature(event, "limestone_upper", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_LIMESTONE_UPPER);
                 addFeature(event, "limestone_lower", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_LIMESTONE_LOWER);
                 addFeature(event, "marble_upper", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_MARBLE_UPPER);

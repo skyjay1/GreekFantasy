@@ -43,13 +43,13 @@ __Key:__
 - _ _ _ _ _ Boss: Talos
 - _ _ _ _ _ Boss: Nemean Lion
 - _ _ _ _ _ Boss: Bronze Bull
-- _ _ _ _ _ Miniboss: Python
+- X X X X X Miniboss: Python
 - _ _ _ _ _ Miniboss: Giant Boar
 - _ _ _ _ _ Miniboss: Medusa
 - _ _ _ _ _ Miniboss: Cretan Minotaur
 - _ _ _ _ _ Miniboss: Circe
 - _ _ _ _ _ Miniboss: Hydra
-- _ _ _ _ _ Miniboss: Arachne
+- X X X X X Miniboss: Arachne
 - _ _ _ _ _ Fury
 - X X X X X Drakaina
 - _ _ _ _ _ Arion
@@ -88,9 +88,10 @@ __Key:__
 - X X X Marble veins
 - X X X Reeds
 - _ _ _ Olive Forest?
-- _ _ _ Satyr Camp
+- X ~ X Satyr Camp // TODO: satyr spawns
 - _ _ _ Ara Camp
-- _ _ _ Small Shrines
+- X X X Limestone Shrine
+- _ _ _ Marble Shrine
 - _ _ _ Harpy Nest
 - _ _ _ Python Pit
 - _ _ _ Lion Den
@@ -98,7 +99,7 @@ __Key:__
 - _ _ _ Olive Trees
 - X X X Pomegranate Trees
 - _ _ _ Golden Tree
-- _ _ _ Arachne Pit
+- X ~ X Arachne Pit
 
 
 ## Blocks

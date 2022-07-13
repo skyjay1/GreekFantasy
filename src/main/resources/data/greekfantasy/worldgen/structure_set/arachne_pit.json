@@ -1,14 +1,14 @@
 {
   "structures": [
     {
-      "structure": "greekfantasy:satyr_camp",
+      "structure": "greekfantasy:arachne_pit",
       "weight": 1
     }
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 15,
-    "separation": 9,
-    "salt": 188482002
+    "spacing": 8,
+    "separation": 4,
+    "salt": 952059062
   }
 }

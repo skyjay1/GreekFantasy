@@ -2,7 +2,7 @@
   "name": "greekfantasy:satyr_camp/tent",
   "fallback": "minecraft:empty",
   "elements": [
-    {
+	{
       "weight": 10,
       "element": {
         "element_type": "minecraft:single_pool_element",

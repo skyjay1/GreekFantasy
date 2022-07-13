@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-public class ShadeRenderer extends HumanoidMobRenderer<Shade, HumanoidModel<Shade>> {
+public class ShadeRenderer<T extends Shade> extends HumanoidMobRenderer<T, HumanoidModel<T>> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/shade.png");
 
     public ShadeRenderer(EntityRendererProvider.Context context) {
@@ -20,7 +20,7 @@ public class ShadeRenderer extends HumanoidMobRenderer<Shade, HumanoidModel<Shad
     }
 
     @Override
-    protected void scale(final Shade entity, PoseStack poseStack, float partialTick) {
+    protected void scale(final T entity, PoseStack poseStack, float partialTick) {
         // bob the entity up and down
         float ticks = entity.getId() * 2 + entity.tickCount + partialTick;
         final float translateY = 0.15F * Mth.cos(ticks * 0.1F) + 0.25F;
@@ -28,12 +28,12 @@ public class ShadeRenderer extends HumanoidMobRenderer<Shade, HumanoidModel<Shad
     }
 
     @Override
-    public void render(Shade entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, 15728880);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(Shade entity) {
+    public ResourceLocation getTextureLocation(T entity) {
         return TEXTURE;
     }
 }

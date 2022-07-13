@@ -12,7 +12,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
-public class ShadeModel extends HumanoidModel<Shade> {
+public class ShadeModel<T extends Shade> extends HumanoidModel<T> {
 
     public static final ModelLayerLocation SHADE_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "shade"), "shade");;
 
