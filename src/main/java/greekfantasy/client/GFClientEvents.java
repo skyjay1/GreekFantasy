@@ -7,8 +7,10 @@ import greekfantasy.client.blockentity.VaseBlockEntityRenderer;
 import greekfantasy.client.entity.ArachneRenderer;
 import greekfantasy.client.entity.BabySpiderRenderer;
 import greekfantasy.client.entity.DrakainaRenderer;
+import greekfantasy.client.entity.DryadRenderer;
 import greekfantasy.client.entity.EmpusaRenderer;
 import greekfantasy.client.entity.PythonRenderer;
+import greekfantasy.client.entity.SatyrRenderer;
 import greekfantasy.client.entity.ShadeRenderer;
 import greekfantasy.client.entity.SpartiRenderer;
 import greekfantasy.client.entity.SpearRenderer;
@@ -17,12 +19,15 @@ import greekfantasy.client.entity.model.ArachneModel;
 import greekfantasy.client.entity.model.BabySpiderModel;
 import greekfantasy.client.entity.model.DrakainaModel;
 import greekfantasy.client.entity.model.EmpusaModel;
+import greekfantasy.client.entity.model.NymphModel;
 import greekfantasy.client.entity.model.PythonModel;
+import greekfantasy.client.entity.model.SatyrModel;
 import greekfantasy.client.entity.model.ShadeModel;
 import greekfantasy.client.entity.model.SpearModel;
 import greekfantasy.client.entity.model.SpellModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.TridentModel;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
@@ -111,7 +116,10 @@ public final class GFClientEvents {
             event.registerLayerDefinition(BabySpiderModel.BABY_SPIDER_MODEL_RESOURCE, BabySpiderModel::createBodyLayer);
             event.registerLayerDefinition(DrakainaModel.DRAKAINA_MODEL_RESOURCE, DrakainaModel::createBodyLayer);
             event.registerLayerDefinition(EmpusaModel.EMPUSA_MODEL_RESOURCE, EmpusaModel::createBodyLayer);
+            event.registerLayerDefinition(NymphModel.NYMPH_LAYER_LOCATION, NymphModel::createBodyLayer);
             event.registerLayerDefinition(PythonModel.PYTHON_MODEL_RESOURCE, PythonModel::createBodyLayer);
+            event.registerLayerDefinition(SatyrModel.SATYR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(CubeDeformation.NONE));
+            event.registerLayerDefinition(SatyrModel.SATYR_INNER_ARMOR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(new CubeDeformation(0.25F)));
             event.registerLayerDefinition(ShadeModel.SHADE_MODEL_RESOURCE, ShadeModel::createBodyLayer);
             // other
             event.registerLayerDefinition(SpearModel.SPEAR_MODEL_RESOURCE, TridentModel::createLayer);
@@ -125,8 +133,10 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.ARACHNE.get(), ArachneRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.BABY_SPIDER.get(), BabySpiderRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DRAKAINA.get(), DrakainaRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.DRYAD.get(), DryadRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.EMPUSA.get(), EmpusaRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.PYTHON.get(), PythonRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.SATYR.get(), SatyrRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPARTI.get(), SpartiRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SHADE.get(), ShadeRenderer::new);
             // other

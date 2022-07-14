@@ -18,6 +18,8 @@ import greekfantasy.enchantment.OverstepEnchantment;
 import greekfantasy.enchantment.PoisoningEnchantment;
 import greekfantasy.enchantment.SilkstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
+import greekfantasy.entity.Dryad;
+import greekfantasy.entity.Satyr;
 import greekfantasy.entity.Sparti;
 import greekfantasy.entity.boss.Arachne;
 import greekfantasy.entity.boss.Python;
@@ -65,9 +67,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
-import net.minecraft.data.worldgen.StructureFeatures;
-import net.minecraft.data.worldgen.features.CaveFeatures;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
@@ -127,7 +126,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.JigsawConfiguration;
@@ -744,7 +742,9 @@ public final class GFRegistry {
             register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
             register(event, EMPUSA.get(), Empusa::createAttributes, Empusa::checkEmpusaSpawnRules);
             register(event, DRAKAINA.get(), Drakaina::createAttributes, Monster::checkMonsterSpawnRules);
+            register(event, DRYAD.get(), Dryad::createAttributes, Mob::checkMobSpawnRules);
             register(event, PYTHON.get(), Python::createAttributes, null);
+            register(event, SATYR.get(), Satyr::createAttributes, Mob::checkMobSpawnRules);
             register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, SPARTI.get(), Sparti::createAttributes, null);
         }
@@ -778,7 +778,9 @@ public final class GFRegistry {
             }
             if (event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
                 addSpawns(event, DRAKAINA.get(), 1, 2);
+                addSpawns(event, DRYAD.get(), 2, 5);
                 addSpawns(event, EMPUSA.get(), 1, 2);
+                addSpawns(event, SATYR.get(), 2, 5);
                 addSpawns(event, SHADE.get(), 1, 1);
             }
         }
@@ -807,6 +809,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Drakaina::new, MobCategory.MONSTER)
                         .sized(0.9F, 1.9F)
                         .build("drakaina"));
+        public static final RegistryObject<EntityType<? extends Dryad>> DRYAD = ENTITY_TYPES.register("dryad", () ->
+                EntityType.Builder.of(Dryad::new, MobCategory.CREATURE)
+                        .sized(0.48F, 1.8F)
+                        .build("dryad"));
         public static final RegistryObject<EntityType<? extends Empusa>> EMPUSA = ENTITY_TYPES.register("empusa", () ->
                 EntityType.Builder.of(Empusa::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.8F).fireImmune()
@@ -815,6 +821,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Python::new, MobCategory.MONSTER)
                         .sized(1.4F, 1.9F).fireImmune()
                         .build("python"));
+        public static final RegistryObject<EntityType<? extends Satyr>> SATYR = ENTITY_TYPES.register("satyr", () ->
+                EntityType.Builder.of(Satyr::new, MobCategory.CREATURE)
+                        .sized(0.67F, 1.8F)
+                        .build("satyr"));
         public static final RegistryObject<EntityType<? extends Shade>> SHADE = ENTITY_TYPES.register("shade", () ->
                 EntityType.Builder.of(Shade::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.8F).fireImmune()

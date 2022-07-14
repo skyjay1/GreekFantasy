@@ -31,7 +31,9 @@ public final class GFEvents {
         public static void onPlayerDeath(final LivingDeathEvent event) {
             if (!event.isCanceled() && !event.getEntityLiving().level.isClientSide() && event.getEntityLiving() instanceof Player player) {
                 // attempt to spawn a shade
-                if (!player.isSpectator() && player.experienceLevel > 3 && !player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && player.getRandom().nextFloat() < GreekFantasy.CONFIG.SHADE_SPAWN_CHANCE.get()) {
+                if (!player.isSpectator() && player.experienceLevel > 3
+                        && !player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)
+                        && player.getRandom().nextFloat() * 100.0F < GreekFantasy.CONFIG.SHADE_SPAWN_CHANCE.get()) {
                     // save XP value
                     int xp = player.totalExperience;
                     // remove XP from player

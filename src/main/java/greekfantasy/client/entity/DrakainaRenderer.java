@@ -6,6 +6,7 @@ import greekfantasy.entity.monster.Drakaina;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.EnumMap;
@@ -22,6 +23,7 @@ public class DrakainaRenderer<T extends Drakaina> extends MobRenderer<T, Drakain
 
     public DrakainaRenderer(EntityRendererProvider.Context context) {
         super(context, new DrakainaModel<>(context.bakeLayer(DrakainaModel.DRAKAINA_MODEL_RESOURCE)), 0.5F);
+        this.addLayer(new ItemInHandLayer<>(this));
     }
 
     @Override

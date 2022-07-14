@@ -15,7 +15,7 @@ import net.minecraftforge.client.model.data.EmptyModelData;
 
 public class EmpusaHairLayer<T extends Empusa> extends RenderLayer<T, EmpusaModel<T>> {
 
-    public EmpusaHairLayer(RenderLayerParent<T, EmpusaModel<T>> parent, EntityModelSet entityModelSet) {
+    public EmpusaHairLayer(RenderLayerParent<T, EmpusaModel<T>> parent) {
         super(parent);
     }
 

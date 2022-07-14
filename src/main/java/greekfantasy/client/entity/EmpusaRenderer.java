@@ -6,6 +6,7 @@ import greekfantasy.client.entity.model.EmpusaModel;
 import greekfantasy.entity.monster.Empusa;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class EmpusaRenderer<T extends Empusa> extends HumanoidMobRenderer<T, EmpusaModel<T>> {
@@ -14,7 +15,7 @@ public class EmpusaRenderer<T extends Empusa> extends HumanoidMobRenderer<T, Emp
 
     public EmpusaRenderer(final EntityRendererProvider.Context context) {
         super(context, new EmpusaModel<>(context.bakeLayer(EmpusaModel.EMPUSA_MODEL_RESOURCE)), 0.5F);
-        this.addLayer(new EmpusaHairLayer<>(this, context.getModelSet()));
+        this.addLayer(new EmpusaHairLayer<>(this));
     }
 
     @Override

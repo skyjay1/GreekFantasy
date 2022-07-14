@@ -57,7 +57,7 @@ public class MysteriousBoxManager {
                 final CommandSourceStack commandSource = manager.getGameLoopSender().withEntity(playerIn).withPosition(vec).withPermission(4).withSuppressedOutput();
                 manager.execute(function.get(), commandSource);
                 // percent chance to spawn Elpis as well
-                if (level.getRandom().nextFloat() < GreekFantasy.CONFIG.ELPIS_SPAWN_CHANCE.get()) {
+                if (level.getRandom().nextFloat() * 100.0F < GreekFantasy.CONFIG.ELPIS_SPAWN_CHANCE.get()) {
                     addElpis(level, pos);
                 }
                 return true;

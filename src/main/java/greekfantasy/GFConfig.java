@@ -57,6 +57,7 @@ public class GFConfig {
     // entity
     public final ForgeConfigSpec.DoubleValue ELPIS_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue SHADE_SPAWN_CHANCE;
+    public final ForgeConfigSpec.DoubleValue SATYR_SHAMAN_CHANCE;
     public final ForgeConfigSpec.BooleanValue SHADE_IMMUNE_TO_NONOWNER;
     private final ForgeConfigSpec.BooleanValue SHOW_ARACHNE_BOSS_BAR;
     private boolean showArachneBossBar;
@@ -156,8 +157,9 @@ public class GFConfig {
         builder.push("mobs");
         ELPIS_SPAWN_CHANCE = builder
                 .comment("Percent chance that opening a mysterious box spawns an Elpis")
-                .defineInRange("elpis_spawn_chance", 0.6F, 0.0F, 1.0F);
-        SHADE_SPAWN_CHANCE = builder.defineInRange("shade_spawn_chance", 1.0F, 0.0F, 1.0F);
+                .defineInRange("elpis_spawn_chance", 60.0F, 0.0F, 100.0F);
+        SHADE_SPAWN_CHANCE = builder.defineInRange("shade_spawn_chance", 100.0F, 0.0F, 100.0F);
+        SATYR_SHAMAN_CHANCE = builder.defineInRange("satyr_shaman_chance", 24.0F, 0.0F, 100.0F);
         SHADE_IMMUNE_TO_NONOWNER = builder.define("shade_immune_to_nonowner", true);
         SHOW_ARACHNE_BOSS_BAR = builder.define("show_arachne_boss_bar", false);
         SHOW_CIRCE_BOSS_BAR = builder.define("show_circe_boss_bar", false);
@@ -201,8 +203,11 @@ public class GFConfig {
         IS_SPAWN_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
                 .define("is_whitelist", true);
         putSpawnConfigSpec(builder, "drakaina",40, false, hostileBlacklist);
+        putSpawnConfigSpec(builder, "dryad", 24, true, forest);
         putSpawnConfigSpec(builder, "empusa",30, false, nonNetherHostileBlacklist);
+        putSpawnConfigSpec(builder, "lampad", 24, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString());
         putSpawnConfigSpec(builder, "shade", 10, false);
+        putSpawnConfigSpec(builder, "satyr", 22, true, forest);
         builder.pop();
 
         builder.comment("Feature generation chances (higher number = more features)").push("features");

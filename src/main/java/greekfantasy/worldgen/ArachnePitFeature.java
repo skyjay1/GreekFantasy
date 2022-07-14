@@ -25,13 +25,13 @@ public class ArachnePitFeature extends StructureFeature<JigsawConfiguration> {
             WorldgenRandom worldgenrandom = new WorldgenRandom(new LegacyRandomSource(0L));
             worldgenrandom.setSeed((long)(x ^ z << 4) ^ context.seed());
             worldgenrandom.nextInt();
-            int y = worldgenrandom.nextInt(-60, 128);
+            int y = worldgenrandom.nextInt(0, 80);
             BlockPos blockpos = new BlockPos(chunkpos.getMinBlockX(), y, chunkpos.getMinBlockZ());
             if(!checkLocation(context, blockpos)) {
                 return Optional.empty();
             }
             Pools.bootstrap();
-            // params: context, pieceGeneratorSupplier, position, buildInChunk?, buildAtSurface
+            // params: context, pieceGeneratorSupplier, position, buildInChunk?, buildAtSurfaceHeight
             return JigsawPlacement.addPieces(context, PoolElementStructurePiece::new, blockpos, true, false);
         });
     }
@@ -41,7 +41,7 @@ public class ArachnePitFeature extends StructureFeature<JigsawConfiguration> {
         int x = pos.getX();
         int z = pos.getZ();
         int y = context.chunkGenerator().getFirstOccupiedHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor());
-        if(pos.getY() - y < 8) {
+        if(y - pos.getY() < 8) {
             return false;
         }
         // random chance

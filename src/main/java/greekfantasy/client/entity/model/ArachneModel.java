@@ -77,7 +77,7 @@ public class ArachneModel<T extends Arachne> extends HumanoidModel<T> {
         partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(42, 16).mirror().addBox(0.0F, -1.0F, -2.0F, 3.0F, 12.0F, 4.0F, CubeDeformation.NONE).mirror(false), PartPose.offset(4.0F, 1.0F, -3.0F));
 
         PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(18, 16).addBox(-4.0F, -24.0F, -5.0F, 8.0F, 12.0F, 4.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 24.0F, 0.0F));
-        body.addOrReplaceChild("chest", CubeListBuilder.create().texOffs(0, 20).addBox(-4.0F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -24.0F, -5.0F, -0.1745F, 0.0F, 0.0F));
+        body.addOrReplaceChild("chest", CubeListBuilder.create().texOffs(0, 20).addBox(-4.0F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -23.0F, -5.0F, -0.1745F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("torso", CubeListBuilder.create().texOffs(33, 50).addBox(-3.5F, 0.0F, 0.0F, 7.0F, 3.0F, 2.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 12.0F, -5.0F, 0.7854F, 0.0F, 0.0F));
         partdefinition.addOrReplaceChild("body0", CubeListBuilder.create().texOffs(0, 32).addBox(-3.0F, -3.0F, -3.0F, 6.0F, 6.0F, 6.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 11.0F, 0.0F));

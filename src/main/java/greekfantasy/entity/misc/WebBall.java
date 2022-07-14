@@ -26,8 +26,10 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -68,25 +70,35 @@ public class WebBall extends ThrowableItemProjectile {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(TYPE, Byte.valueOf(WEB));
+        this.entityData.define(TYPE, WEB);
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult raytrace) {
-        super.onHitEntity(raytrace);
-        if (!this.level.isClientSide() && this.isAlive()) {
-            onWebImpact(raytrace, raytrace.getEntity().blockPosition());
-            discard();
-        }
+    protected void onHitEntity(EntityHitResult hitResult) {
+        super.onHitEntity(hitResult);
+        onWebImpact(hitResult, hitResult.getLocation());
+        discard();
     }
 
     @Override
-    protected void onHit(HitResult raytrace) {
-        super.onHit(raytrace);
-        if (!this.level.isClientSide() && this.isAlive()) {
-            onWebImpact(raytrace, blockPosition());
-            discard();
+    protected void onHitBlock(BlockHitResult hitResult) {
+        super.onHitBlock(hitResult);
+        onWebImpact(hitResult, hitResult.getLocation());
+        discard();
+    }
+
+    @Override
+    protected void onHit(HitResult hitResult) {
+        // do not process when discarded
+        if (this.level.isClientSide() || !this.isAlive()) {
+            return;
         }
+        // do not collide with cobwebs
+        if (hitResult.getType() == HitResult.Type.BLOCK &&
+                level.getBlockState(new BlockPos(hitResult.getLocation())).is(Blocks.COBWEB)) {
+            return;
+        }
+        super.onHit(hitResult);
     }
 
     @Override
@@ -130,10 +142,11 @@ public class WebBall extends ThrowableItemProjectile {
         tag.putByte(KEY_TYPE, getWebType());
     }
 
-    private void onWebImpact(final HitResult raytrace, final BlockPos webPos) {
+    protected void onWebImpact(final HitResult raytrace, final Vec3 webPos) {
         if(level.isClientSide()) {
             return;
         }
+        final BlockPos hitPos = new BlockPos(webPos);
         final byte type = getWebType();
         // nothing (drop string)
         if (type == 0) {
@@ -141,14 +154,14 @@ public class WebBall extends ThrowableItemProjectile {
             return;
         }
         // web
-        if (hasWeb(type) && level.isEmptyBlock(webPos)) {
-            level.setBlockAndUpdate(webPos, Blocks.COBWEB.defaultBlockState());
+        if (hasWeb(type) && level.isEmptyBlock(hitPos)) {
+            level.setBlockAndUpdate(hitPos, Blocks.COBWEB.defaultBlockState());
         }
         // spider
         if (hasSpider(type)) {
             BabySpider spider = GFRegistry.EntityReg.BABY_SPIDER.get().create(level);
             spider.copyPosition(this);
-            spider.restrictTo(webPos, 12);
+            spider.restrictTo(hitPos, 12);
             level.addFreshEntity(spider);
         }
         // item
@@ -158,7 +171,7 @@ public class WebBall extends ThrowableItemProjectile {
             LootContext.Builder lootcontext$builder = (new LootContext.Builder(serverLevel))
                     .withRandom(this.random)
                     .withParameter(LootContextParams.THIS_ENTITY, this)
-                    .withParameter(LootContextParams.ORIGIN, this.position())
+                    .withParameter(LootContextParams.ORIGIN, webPos)
                     .withParameter(LootContextParams.DAMAGE_SOURCE, DamageSource.FALL)
                     .withOptionalParameter(LootContextParams.KILLER_ENTITY, getOwner())
                     .withOptionalParameter(LootContextParams.DIRECT_KILLER_ENTITY, null);

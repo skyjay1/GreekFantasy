@@ -9,6 +9,7 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
@@ -17,6 +18,7 @@ public class ShadeRenderer<T extends Shade> extends HumanoidMobRenderer<T, Human
 
     public ShadeRenderer(EntityRendererProvider.Context context) {
         super(context, new ShadeModel(context.bakeLayer(ShadeModel.SHADE_MODEL_RESOURCE)), 0.5F);
+        this.addLayer(new ItemInHandLayer<>(this));
     }
 
     @Override
