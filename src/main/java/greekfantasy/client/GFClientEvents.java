@@ -4,6 +4,7 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.armor.WingedSandalsModel;
 import greekfantasy.client.blockentity.VaseBlockEntityRenderer;
+import greekfantasy.client.entity.AraRenderer;
 import greekfantasy.client.entity.ArachneRenderer;
 import greekfantasy.client.entity.BabySpiderRenderer;
 import greekfantasy.client.entity.DrakainaRenderer;
@@ -15,6 +16,7 @@ import greekfantasy.client.entity.ShadeRenderer;
 import greekfantasy.client.entity.SpartiRenderer;
 import greekfantasy.client.entity.SpearRenderer;
 import greekfantasy.client.entity.SpellRenderer;
+import greekfantasy.client.entity.model.AraModel;
 import greekfantasy.client.entity.model.ArachneModel;
 import greekfantasy.client.entity.model.BabySpiderModel;
 import greekfantasy.client.entity.model.DrakainaModel;
@@ -112,6 +114,7 @@ public final class GFClientEvents {
             // armor
             event.registerLayerDefinition(WingedSandalsModel.WINGED_SANDALS_MODEL_RESOURCE, WingedSandalsModel::createBodyLayer);
             // creature
+            event.registerLayerDefinition(AraModel.ARA_MODEL_RESOURCE, AraModel::createBodyLayer);
             event.registerLayerDefinition(ArachneModel.ARACHNE_MODEL_RESOURCE, ArachneModel::createBodyLayer);
             event.registerLayerDefinition(BabySpiderModel.BABY_SPIDER_MODEL_RESOURCE, BabySpiderModel::createBodyLayer);
             event.registerLayerDefinition(DrakainaModel.DRAKAINA_MODEL_RESOURCE, DrakainaModel::createBodyLayer);
@@ -130,6 +133,7 @@ public final class GFClientEvents {
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
             // register entities
             // creature
+            event.registerEntityRenderer(GFRegistry.EntityReg.ARA.get(), AraRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.ARACHNE.get(), ArachneRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.BABY_SPIDER.get(), BabySpiderRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DRAKAINA.get(), DrakainaRenderer::new);

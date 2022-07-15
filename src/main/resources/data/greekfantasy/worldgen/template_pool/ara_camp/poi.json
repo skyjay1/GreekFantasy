@@ -1,0 +1,15 @@
+{
+  "name": "greekfantasy:ara_camp/poi",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ara_camp/poi",
+        "projection": "rigid",
+        "processors": "minecraft:empty"
+      }
+    }
+  ]
+}

@@ -20,7 +20,7 @@ public class BagOfWindItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(final Level world, final Player player, final InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         // prevent the item from being used up all the way
         if (stack.getMaxDamage() - stack.getDamageValue() <= 1) {
@@ -36,7 +36,7 @@ public class BagOfWindItem extends Item {
         }
         // play sound
         player.playSound(SoundEvents.ELYTRA_FLYING, 1.0F, 1.0F);
-        return InteractionResultHolder.sidedSuccess(stack, world.isClientSide());
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 
     @Override

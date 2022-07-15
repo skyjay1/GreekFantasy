@@ -17,9 +17,9 @@ __Key:__
 `[Model] [AI] [Sounds] [Loot table] [Spawning]`
 
 - _ _ _ _ _ Naiad
-- _ _ _ _ _ Dryad
+- X X _ X X Dryad
 - _ _ _ _ _ Lampad
-- _ _ _ _ _ Satyr
+- X X X X ~ Satyr // TODO: spawn in satyr camps
 - _ _ _ _ _ Centaur
 - _ _ _ _ _ Cyprian Centaur
 - _ _ _ _ _ Minotaur
@@ -29,7 +29,7 @@ __Key:__
 - _ _ _ _ _ Shade
 - _ _ _ _ _ Siren
 - _ _ _ _ _ Cerastes
-- _ _ _ _ _ Ara
+- X X _ X X Ara
 - _ _ _ _ _ Cyclopes
 - _ _ _ _ _ Gigante
 - _ _ _ _ _ Unicorn
@@ -88,18 +88,18 @@ __Key:__
 - X X X Marble veins
 - X X X Reeds
 - _ _ _ Olive Forest?
-- X ~ X Satyr Camp // TODO: satyr spawns
-- _ _ _ Ara Camp
+- X X X Satyr Camp
+- X X X Ara Camp
 - X X X Limestone Shrine
 - _ _ _ Marble Shrine
 - _ _ _ Harpy Nest
-- _ _ _ Python Pit
+- X X X Python Pit
 - _ _ _ Lion Den
 - _ _ _ Cyclopes Cave
 - _ _ _ Olive Trees
 - X X X Pomegranate Trees
 - _ _ _ Golden Tree
-- X ~ X Arachne Pit
+- X X X Arachne Pit
 
 
 ## Blocks
@@ -138,7 +138,7 @@ __Key:__
 - _ _ _ Spawn Eggs
 - ~ _ _ Bronze Ingot
 - ~ _ _ Bronze Nugget
-- X _ _ Bronze artifacts (goblet, bowl, pile of coins, vase, ruined helmet, ruined cuirass, broken shield, figurine)
+- X _ _ Bronze artifacts (goblet, bowl, pile of coins, vase, ruined helmet, ruined cuirass, broken shield, figurine) // TODO worldgen loot, villager trade?
 - X _ _ Ichor
 - X _ _ Horn
 - X _ X Snakeskin
@@ -157,7 +157,7 @@ __Key:__
 - X X _ Ball of Golden String
 - X X _ Spider Banner Pattern
 - X X _ Ambrosia
-- X _ _ Horn of Plenty
+- X X _ Horn of Plenty
 - X X X Dragon Tooth (also: use to make golden sapling)
 - X X _ Staff of Healing
 - X _ _ Conch
@@ -174,11 +174,11 @@ __Key:__
 - X X _ Flint Knife
 - X X _ Ivory Sword
 - X _ _ Greek Fire
-- X _ _ Gorgon Blood
+- X X _ Gorgon Blood
 - X X _ Discus
 - X _ _ Mirror
 - X _ _ Golden Bridle
-- X _ _ Unicorn Horn
+- X X _ Unicorn Horn
 - X _ _ Panflute
 - X _ _ Lyre (normal, golden)
 - X X X Web Ball
@@ -229,7 +229,7 @@ __Key:__
 - X _ _ Overstep
 - X X _ Poisoning
 - X X _ Raising
-- X _ _ Silkstep
+- X X _ Silkstep
 - X X _ Smashing
 
 ## Other

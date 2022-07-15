@@ -1,14 +1,14 @@
 {
-  "name": "greekfantasy:satyr_camp/campfire",
+  "name": "greekfantasy:ara_camp/start",
   "fallback": "minecraft:empty",
   "elements": [
     {
       "weight": 1,
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "greekfantasy:satyr_camp/campfire",
+        "location": "greekfantasy:ara_camp/center",
         "projection": "terrain_matching",
-        "processors": "greekfantasy:satyr_camp"
+        "processors": "minecraft:empty"
       }
     }
   ]

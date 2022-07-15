@@ -53,6 +53,8 @@ public class GFConfig {
     private boolean isPoisoningEnabled;
     public final ForgeConfigSpec.BooleanValue RAISING_ENABLED;
     public final ForgeConfigSpec.IntValue RAISING_SPARTI_LIFESPAN;
+    private final ForgeConfigSpec.BooleanValue SILKSTEP_ENABLED;
+    private boolean isSilkstepEnabled;
 
     // entity
     public final ForgeConfigSpec.DoubleValue ELPIS_SPAWN_CHANCE;
@@ -152,6 +154,7 @@ public class GFConfig {
         POISONING_ENABLED = builder.define("poisoning_enabled", true);
         RAISING_ENABLED = builder.define("raising_enabled", true);
         RAISING_SPARTI_LIFESPAN = builder.defineInRange("raising_sparti_lifespan", 120, 1, 24000);
+        SILKSTEP_ENABLED = builder.define("silkstep_enabled", true);
         builder.pop();
 
         builder.push("mobs");
@@ -202,6 +205,7 @@ public class GFConfig {
                 .define("spawn_dimensions", Lists.newArrayList("minecraft:" + WILDCARD));
         IS_SPAWN_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
                 .define("is_whitelist", true);
+        putSpawnConfigSpec(builder, "ara", 10, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "drakaina",40, false, hostileBlacklist);
         putSpawnConfigSpec(builder, "dryad", 24, true, forest);
         putSpawnConfigSpec(builder, "empusa",30, false, nonNetherHostileBlacklist);
@@ -243,6 +247,7 @@ public class GFConfig {
         isMirroringEnabled = MIRRORING_ENABLED.get();
         isOverstepEnabled = OVERSTEP_ENABLED.get();
         isPoisoningEnabled = POISONING_ENABLED.get();
+        isSilkstepEnabled = SILKSTEP_ENABLED.get();
         // mob
         showArachneBossBar = SHOW_ARACHNE_BOSS_BAR.get();
         showCirceBossBar = SHOW_CIRCE_BOSS_BAR.get();
@@ -295,6 +300,10 @@ public class GFConfig {
 
     public boolean isOverstepEnabled() {
         return isOverstepEnabled;
+    }
+
+    public boolean isSilkstepEnabled() {
+        return isSilkstepEnabled;
     }
 
     // mob

@@ -31,6 +31,7 @@ import greekfantasy.entity.misc.HealingSpell;
 import greekfantasy.entity.misc.PoisonSpit;
 import greekfantasy.entity.misc.Spear;
 import greekfantasy.entity.misc.WebBall;
+import greekfantasy.entity.monster.Ara;
 import greekfantasy.entity.monster.BabySpider;
 import greekfantasy.entity.monster.Drakaina;
 import greekfantasy.entity.monster.Empusa;
@@ -39,18 +40,22 @@ import greekfantasy.item.BagOfWindItem;
 import greekfantasy.item.BidentItem;
 import greekfantasy.item.BronzeScrapItem;
 import greekfantasy.item.ClubItem;
+import greekfantasy.item.HasCraftRemainderItem;
 import greekfantasy.item.DiscusItem;
 import greekfantasy.item.DragonToothItem;
 import greekfantasy.item.GFArmorMaterials;
 import greekfantasy.item.GFTiers;
 import greekfantasy.item.GoldenBallItem;
+import greekfantasy.item.GorgonBloodItem;
 import greekfantasy.item.HelmOfDarknessItem;
+import greekfantasy.item.HornOfPlentyItem;
 import greekfantasy.item.KnifeItem;
 import greekfantasy.item.OliveOilItem;
 import greekfantasy.item.SnakeskinArmorItem;
 import greekfantasy.item.SpearItem;
 import greekfantasy.item.StaffOfHealingItem;
 import greekfantasy.item.ThunderboltItem;
+import greekfantasy.item.UnicornHornItem;
 import greekfantasy.item.WandOfCirceItem;
 import greekfantasy.item.WebBallItem;
 import greekfantasy.item.WingedSandalsItem;
@@ -63,6 +68,7 @@ import greekfantasy.worldgen.ArachnePitFeature;
 import greekfantasy.worldgen.BiomeListConfigSpec;
 import greekfantasy.worldgen.DimensionFilter;
 import greekfantasy.worldgen.PomegranateTreeGrower;
+import greekfantasy.worldgen.SatyrStructureProcessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -146,6 +152,8 @@ import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
@@ -197,6 +205,7 @@ public final class GFRegistry {
         BlockEntityReg.register();
         MenuReg.register();
         RecipeReg.register();
+        StructureProcessorReg.register();
         FeatureReg.register();
         StructureFeatureReg.register();
         PlacementTypeReg.register();
@@ -589,7 +598,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> CONCH = ITEMS.register("conch", () ->
                 new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(1))); // TODO ability
         public static final RegistryObject<Item> UNICORN_HORN = ITEMS.register("unicorn_horn", () ->
-                new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).stacksTo(1))); // TODO ability
+                new UnicornHornItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).stacksTo(1)));
         public static final RegistryObject<Item> HEART_OF_TALOS = ITEMS.register("heart_of_talos", () ->
                 new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(16)));
         public static final RegistryObject<Item> BAG_OF_WIND = ITEMS.register("bag_of_wind", () ->
@@ -597,9 +606,9 @@ public final class GFRegistry {
         public static final RegistryObject<Item> STAFF_OF_HEALING = ITEMS.register("staff_of_healing", () ->
                 new StaffOfHealingItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).durability(384)));
         public static final RegistryObject<Item> AMBROSIA = ITEMS.register("ambrosia", () ->
-                new Item(new Item.Properties().tab(GF_TAB).food(AMBROSIA_FOOD).rarity(Rarity.EPIC)));
+                new HasCraftRemainderItem(ItemReg.HORN, new Item.Properties().tab(GF_TAB).food(AMBROSIA_FOOD).rarity(Rarity.EPIC)));
         public static final RegistryObject<Item> HORN_OF_PLENTY = ITEMS.register("horn_of_plenty", () ->
-                new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON))); // TODO ability
+                new HornOfPlentyItem(ItemReg.HORN, new Item.Properties().tab(GF_TAB).durability(24).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> GOLDEN_FLEECE = ITEMS.register("golden_fleece", () ->
                 new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> GOLDEN_BALL = ITEMS.register("golden_ball", () ->
@@ -680,7 +689,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> AVERNAL_SHARD = ITEMS.register("avernal_shard", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> ICHOR_INFUSED_GEAR = ITEMS.register("ichor_infused_gear", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> GOLDEN_STRING = ITEMS.register("golden_string", () -> new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> GORGON_BLOOD = ITEMS.register("gorgon_blood", () -> new Item(new Item.Properties().tab(GF_TAB).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+        public static final RegistryObject<Item> GORGON_BLOOD = ITEMS.register("gorgon_blood", () -> new GorgonBloodItem(new Item.Properties().tab(GF_TAB).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
         public static final RegistryObject<Item> BOAR_EAR = ITEMS.register("boar_ear", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> BOAR_TUSK = ITEMS.register("boar_tusk", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> GOLDEN_BRIDLE = ITEMS.register("golden_bridle", () -> new Item(new Item.Properties().tab(GF_TAB)));
@@ -738,6 +747,7 @@ public final class GFRegistry {
         }
 
         private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+            register(event, ARA.get(), Ara::createAttributes, Ara::checkAraSpawnRules);
             register(event, ARACHNE.get(), Arachne::createAttributes, null);
             register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
             register(event, EMPUSA.get(), Empusa::createAttributes, Empusa::checkEmpusaSpawnRules);
@@ -777,6 +787,7 @@ public final class GFRegistry {
                 return;
             }
             if (event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
+                addSpawns(event, ARA.get(), 2, 5);
                 addSpawns(event, DRAKAINA.get(), 1, 2);
                 addSpawns(event, DRYAD.get(), 2, 5);
                 addSpawns(event, EMPUSA.get(), 1, 2);
@@ -797,6 +808,10 @@ public final class GFRegistry {
         }
 
         // creature
+        public static final RegistryObject<EntityType<? extends Ara>> ARA = ENTITY_TYPES.register("ara", () ->
+                EntityType.Builder.of(Ara::new, MobCategory.MONSTER)
+                        .sized(0.67F, 1.8F)
+                        .build("ara"));
         public static final RegistryObject<EntityType<? extends Arachne>> ARACHNE = ENTITY_TYPES.register("arachne", () ->
                 EntityType.Builder.of(Arachne::new, MobCategory.MONSTER)
                         .sized(0.94F, 1.9F)
@@ -986,6 +1001,22 @@ public final class GFRegistry {
                 StructureFeature.STEP.put(ARACHNE_PIT.get(), GenerationStep.Decoration.UNDERGROUND_STRUCTURES);
             });
 
+        }
+    }
+
+    public static final class StructureProcessorReg {
+
+        public static void register() {
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(StructureProcessorReg::registerStructureProcessors);
+        }
+
+        public static StructureProcessorType<SatyrStructureProcessor> SATYR_PROCESSOR;
+
+        private static void registerStructureProcessors(final FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
+                ResourceLocation satyrProcessorId = new ResourceLocation(GreekFantasy.MODID, "satyr");
+                SATYR_PROCESSOR = StructureProcessorType.register(satyrProcessorId.toString(), SatyrStructureProcessor.CODEC);
+            });
         }
     }
 

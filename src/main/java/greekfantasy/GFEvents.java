@@ -2,13 +2,19 @@ package greekfantasy;
 
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.integration.RGCompat;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -71,6 +77,38 @@ public final class GFEvents {
                 } else {
                     // set portal cooldown
                     event.getEntityLiving().setPortalCooldown();
+                }
+            }
+
+            // update silkstep enchantment
+            if (GreekFantasy.CONFIG.isSilkstepEnabled()
+                    && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.SILKSTEP.get(),
+                        event.getEntityLiving().getItemBySlot(EquipmentSlot.FEET)) > 0
+                    && (!(event.getEntityLiving() instanceof Player player && player.getAbilities().flying))
+                    && event.getEntityLiving().stuckSpeedMultiplier.lengthSqr() > 1.0E-7D) {
+                // this variable will become true if the player is collided with a cobweb
+                boolean cobweb = false;
+                // check all blocks within player's bounding box
+                AABB axisalignedbb = event.getEntityLiving().getBoundingBox();
+                BlockPos blockpos = new BlockPos(axisalignedbb.minX + 0.001D, axisalignedbb.minY + 0.001D, axisalignedbb.minZ + 0.001D);
+                BlockPos blockpos1 = new BlockPos(axisalignedbb.maxX - 0.001D, axisalignedbb.maxY - 0.001D, axisalignedbb.maxZ - 0.001D);
+                BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
+                entryloop:
+                for (int i = blockpos.getX(); i <= blockpos1.getX(); ++i) {
+                    for (int j = blockpos.getY(); j <= blockpos1.getY(); ++j) {
+                        for (int k = blockpos.getZ(); k <= blockpos1.getZ(); ++k) {
+                            blockpos$mutable.set(i, j, k);
+                            // if the block is a cobweb, exit the loops and change the motion multiplier
+                            if (event.getEntityLiving().level.getBlockState(blockpos$mutable).is(Blocks.COBWEB)) {
+                                cobweb = true;
+                                break entryloop;
+                            }
+                        }
+                    }
+                }
+                // actually reset the speed multiplier
+                if (cobweb) {
+                   event.getEntityLiving().stuckSpeedMultiplier = Vec3.ZERO;
                 }
             }
         }

@@ -64,8 +64,8 @@ public class Satyr extends PathfinderMob implements NeutralMob {
     private static final EntityDataAccessor<Byte> DATA_STATE = SynchedEntityData.defineId(Satyr.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Boolean> DATA_SHAMAN = SynchedEntityData.defineId(Satyr.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Byte> DATA_COLOR = SynchedEntityData.defineId(Satyr.class, EntityDataSerializers.BYTE);
-    private static final String KEY_SHAMAN = "Shaman";
-    private static final String KEY_COLOR = "Color";
+    public static final String KEY_SHAMAN = "Shaman";
+    public static final String KEY_COLOR = "Color";
 
     private static final ResourceLocation SUMMONING_SONG = new ResourceLocation(GreekFantasy.MODID, "sarias_song");
 
@@ -163,11 +163,6 @@ public class Satyr extends PathfinderMob implements NeutralMob {
         } else {
             // anger timer
             this.updatePersistentAnger((ServerLevel) this.level, true);
-            // campfire checker
-            /*if (this.tickCount % 60 == 1 && campfirePos != null && !Satyr.this.wantsToDanceAround(campfirePos)) {
-                campfirePos = null;
-                setDancing(false);
-            }*/
         }
 
         // dancing timer
@@ -214,7 +209,7 @@ public class Satyr extends PathfinderMob implements NeutralMob {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-        // coat colors based on group data
+        // determine color variant based on spawn group data, or create new group data
         Variant color;
         if (spawnDataIn instanceof Satyr.GroupData) {
             color = ((Satyr.GroupData) spawnDataIn).variant;
@@ -222,11 +217,14 @@ public class Satyr extends PathfinderMob implements NeutralMob {
             color = Util.getRandom(Variant.values(), this.random);
             spawnDataIn = new Satyr.GroupData(color);
         }
-        this.setVariant(color);
-        // random chance to be a satyr shaman
-        if (level.getRandom().nextFloat() * 100.0F < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get()) {
-            this.setShaman(true);
+
+        if(spawnType != MobSpawnType.STRUCTURE) {
+            // set variant when not spawned as part of a structure
+            this.setVariant(color);
+            // random chance to be a satyr shaman
+            this.setShaman(level.getRandom().nextFloat() * 100.0F < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get());
         }
+
         return super.finalizeSpawn(level, difficulty, spawnType, spawnDataIn, dataTag);
     }
 
@@ -481,6 +479,7 @@ public class Satyr extends PathfinderMob implements NeutralMob {
         public void stop() {
             super.stop();
             Satyr.this.setSummoning(false);
+            Satyr.this.level.broadcastEntityEvent(Satyr.this, PLAY_SUMMON_SOUND);
         }
 
         @Override

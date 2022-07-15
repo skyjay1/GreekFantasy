@@ -3,6 +3,10 @@
     {
       "structure": "greekfantasy:satyr_camp",
       "weight": 1
+    },
+    {
+      "structure": "greekfantasy:ara_camp",
+      "weight": 1
     }
   ],
   "placement": {
