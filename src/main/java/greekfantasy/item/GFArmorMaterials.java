@@ -15,21 +15,22 @@ import java.util.function.Supplier;
 
 public class GFArmorMaterials {
 
+    // TODO change to bronze ingots?
     private static final ResourceLocation COPPER_INGOTS = new ResourceLocation("forge", "ingots/copper");
 
-    public static final GFArmorMaterial HELLENIC = new GFArmorMaterial("hellenic", 15, new int[]{2, 5, 6, 2}, 18,
+    public static final GFArmorMaterial HELLENIC = new GFArmorMaterial("hellenic", 26, new int[]{2, 5, 6, 2}, 18,
             SoundEvents.ARMOR_EQUIP_IRON, 0.0F, 0.0F, () -> Ingredient.of(ForgeRegistries.ITEMS.tags().createOptionalTagKey(COPPER_INGOTS, Set.of(() -> Items.COPPER_INGOT))));
 
-    public static final GFArmorMaterial SNAKESKIN = new GFArmorMaterial("snakeskin", 15, new int[]{1, 4, 5, 2}, 15,
+    public static final GFArmorMaterial SNAKESKIN = new GFArmorMaterial("snakeskin", 16, new int[]{1, 4, 5, 2}, 15,
             SoundEvents.ARMOR_EQUIP_LEATHER, 0.0F, 0.0F, () -> Ingredient.of(GFRegistry.ItemReg.TOUGH_SNAKESKIN.get()));
 
-    public static final GFArmorMaterial AVERNAL = new GFArmorMaterial("avernal", 15, new int[]{2, 5, 6, 2}, 11,
+    public static final GFArmorMaterial AVERNAL = new GFArmorMaterial("avernal", 22, new int[]{2, 5, 6, 2}, 11,
             SoundEvents.ARMOR_EQUIP_IRON, 1.0F, 0.0F, () -> Ingredient.of(GFRegistry.ItemReg.AVERNAL_SHARD.get()));
 
-    public static final GFArmorMaterial NEMEAN = new GFArmorMaterial("nemean", 15, new int[]{2, 5, 6, 3}, 9,
-            SoundEvents.ARMOR_EQUIP_IRON, 2.0F, 0.0F, () -> Ingredient.EMPTY);
+    public static final GFArmorMaterial NEMEAN = new GFArmorMaterial("nemean", 37, new int[]{2, 5, 6, 3}, 9,
+            SoundEvents.ARMOR_EQUIP_LEATHER, 2.0F, 0.0F, () -> Ingredient.EMPTY);
 
-    public static final GFArmorMaterial WINGED = new GFArmorMaterial("winged", 11, new int[]{2, 5, 6, 2}, 22,
+    public static final GFArmorMaterial WINGED = new GFArmorMaterial("winged", 12, new int[]{2, 5, 6, 2}, 22,
             SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, -0.05F, () -> Ingredient.of(GFRegistry.ItemReg.AVERNAL_FEATHER.get()));
 
     private static final class GFArmorMaterial implements ArmorMaterial {

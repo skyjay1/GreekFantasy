@@ -2,6 +2,7 @@ package greekfantasy.client;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.armor.HellenicArmorModel;
 import greekfantasy.client.armor.WingedSandalsModel;
 import greekfantasy.client.blockentity.VaseBlockEntityRenderer;
 import greekfantasy.client.entity.AraRenderer;
@@ -10,12 +11,14 @@ import greekfantasy.client.entity.BabySpiderRenderer;
 import greekfantasy.client.entity.DrakainaRenderer;
 import greekfantasy.client.entity.DryadRenderer;
 import greekfantasy.client.entity.EmpusaRenderer;
+import greekfantasy.client.entity.FakePigRenderer;
 import greekfantasy.client.entity.PythonRenderer;
 import greekfantasy.client.entity.SatyrRenderer;
 import greekfantasy.client.entity.ShadeRenderer;
 import greekfantasy.client.entity.SpartiRenderer;
 import greekfantasy.client.entity.SpearRenderer;
 import greekfantasy.client.entity.SpellRenderer;
+import greekfantasy.client.entity.layer.NemeanLionHideLayer;
 import greekfantasy.client.entity.model.AraModel;
 import greekfantasy.client.entity.model.ArachneModel;
 import greekfantasy.client.entity.model.BabySpiderModel;
@@ -28,15 +31,20 @@ import greekfantasy.client.entity.model.ShadeModel;
 import greekfantasy.client.entity.model.SpearModel;
 import greekfantasy.client.entity.model.SpellModel;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.TridentModel;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -55,22 +63,37 @@ public final class GFClientEvents {
 
     public static final class ForgeHandler {
 
+        private static FakePigRenderer<LivingEntity> pigRenderer;
+
         /**
          * Used to hide the third-person view of an entity that is
          * wearing the Helm of Darkness. Next, attempts to render
          * any entity that is under the Curse of Circe as a pig.
+         *
          * @param event the Pre RenderLivingEvent
          */
         @SubscribeEvent(priority = EventPriority.HIGH)
         public static void onRenderLiving(final RenderLivingEvent.Pre<?, ?> event) {
             // cancel rendering when helm of darkness is equipped
-            if(GreekFantasy.CONFIG.helmHidesArmor() && event.getEntity().getItemBySlot(EquipmentSlot.HEAD).is(GFRegistry.ItemReg.HELM_OF_DARKNESS.get())) {
+            if (GreekFantasy.CONFIG.helmHidesArmor() && event.getEntity().getItemBySlot(EquipmentSlot.HEAD).is(GFRegistry.ItemReg.HELM_OF_DARKNESS.get())) {
                 event.setCanceled(true);
                 return;
             }
             // render pig when curse of circe is applied
-            if(GreekFantasy.CONFIG.isCurseOfCirceEnabled() && event.getEntity().hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get())) {
-                // TODO
+            if (GreekFantasy.CONFIG.isCurseOfCirceEnabled() && event.getEntity().hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get())) {
+                // lazy-load pig renderer
+                if (null == pigRenderer) {
+                    Minecraft mc = Minecraft.getInstance();
+                    EntityRendererProvider.Context context = new EntityRendererProvider.Context(mc.getEntityRenderDispatcher(),
+                            mc.getItemRenderer(), mc.getResourceManager(), mc.getEntityModels(), mc.font);
+                    pigRenderer = new FakePigRenderer<>(context);
+                }
+                // render pig
+                pigRenderer.render(event.getEntity(), event.getEntity().getXRot(), event.getPartialTick(),
+                        event.getPoseStack(), event.getMultiBufferSource(),
+                        pigRenderer.getPackedLightCoords(event.getEntity(), event.getPartialTick()));
+                // cancel event
+                event.setCanceled(true);
             }
         }
 
@@ -84,12 +107,12 @@ public final class GFClientEvents {
         @SubscribeEvent(priority = EventPriority.HIGH)
         public static void onRenderHand(final RenderHandEvent event) {
             final Minecraft mc = Minecraft.getInstance();
-            if(GreekFantasy.CONFIG.helmHidesArmor() && mc.player.getItemBySlot(EquipmentSlot.HEAD).is(GFRegistry.ItemReg.HELM_OF_DARKNESS.get())) {
+            if (GreekFantasy.CONFIG.helmHidesArmor() && mc.player.getItemBySlot(EquipmentSlot.HEAD).is(GFRegistry.ItemReg.HELM_OF_DARKNESS.get())) {
                 event.setCanceled(true);
                 return;
             }
             // render pig when curse of circe is applied
-            if(GreekFantasy.CONFIG.isCurseOfCirceEnabled()
+            if (GreekFantasy.CONFIG.isCurseOfCirceEnabled()
                     && mc.player.hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get())) {
                 event.setCanceled(true);
                 return;
@@ -109,9 +132,26 @@ public final class GFClientEvents {
         }
 
         @SubscribeEvent
+        public static void registerPlayerLayers(final EntityRenderersEvent.AddLayers event) {
+            // add layer renders to default model
+            if (event.getSkin("default") instanceof PlayerRenderer playerRenderer) {
+                playerRenderer.addLayer(new NemeanLionHideLayer<>(playerRenderer,
+                        new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),
+                        new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
+            }
+            // add layer renders to slim model
+            if (event.getSkin("slim") instanceof PlayerRenderer playerRenderer) {
+                playerRenderer.addLayer(new NemeanLionHideLayer<>(playerRenderer,
+                        new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_SLIM_INNER_ARMOR)),
+                        new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_SLIM_OUTER_ARMOR))));
+            }
+        }
+
+        @SubscribeEvent
         public static void registerEntityLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             // register layer definitions
             // armor
+            event.registerLayerDefinition(HellenicArmorModel.HELLENIC_ARMOR_MODEL_RESOURCE, HellenicArmorModel::createBodyLayer);
             event.registerLayerDefinition(WingedSandalsModel.WINGED_SANDALS_MODEL_RESOURCE, WingedSandalsModel::createBodyLayer);
             // creature
             event.registerLayerDefinition(AraModel.ARA_MODEL_RESOURCE, AraModel::createBodyLayer);

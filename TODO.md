@@ -197,9 +197,9 @@ __Key:__
 
 - X X X _ Helm of Darkness
 - X X X _ Winged Sandals
-- X _ _ _ Achilles Armor (Hellenic armor? Bronze armor?)
+- X X X _ Achilles Armor (Hellenic armor? Bronze armor?)
 - X X X _ Snakeskin Armor
-- X _ _ _ Nemean Lion Hide
+- X X X _ Nemean Lion Hide
 
 ## Advancements
 
@@ -207,7 +207,7 @@ __Key:__
 
 ## Potions
 
-- ~ Curse of Circe
+- X Curse of Circe
 - ~ Mirroring
 - X Stunned
 - X Petrified

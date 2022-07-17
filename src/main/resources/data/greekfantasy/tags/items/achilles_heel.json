@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+  	"greekfantasy:hellenic_helmet",
+    "greekfantasy:hellenic_chestplate",
+    "greekfantasy:hellenic_leggings",
+    "greekfantasy:hellenic_boots"
+  ]
+}

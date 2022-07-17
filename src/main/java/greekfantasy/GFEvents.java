@@ -2,27 +2,45 @@ package greekfantasy;
 
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.integration.RGCompat;
+import greekfantasy.item.HellenicArmorItem;
+import greekfantasy.item.NemeanLionHideItem;
+import greekfantasy.mob_effect.CurseOfCirceEffect;
+import greekfantasy.network.SCurseOfCircePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.network.PacketDistributor;
+
+import java.util.Optional;
 
 public final class GFEvents {
 
@@ -56,6 +74,58 @@ public final class GFEvents {
         }
 
         /**
+         * Used to prevent or increase projectile damage when wearing certain armor
+         * @param event the projectile impact event
+         */
+        @SubscribeEvent
+        public static void onProjectileImpact(final ProjectileImpactEvent event) {
+            if(event.getRayTraceResult().getType() == HitResult.Type.ENTITY
+                    && event.getRayTraceResult() instanceof EntityHitResult entityHitResult
+                    && entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
+                // determine dot product between entity and projectile
+                final double dot = getDotProduct(livingEntity, event.getProjectile(), true);
+                final int achillesCount = HellenicArmorItem.getAchillesCount(livingEntity);
+                // determine if the entity is wearing armor and immune to projectiles
+                if(achillesCount > 0 && HellenicArmorItem.isImmune(livingEntity, event.getProjectile(), dot, achillesCount)) {
+                    // reflect the projectile motion
+                    event.getProjectile().setDeltaMovement(event.getProjectile().getDeltaMovement().multiply(-1.0D, 1.0D, -1.0D));
+                    // cancel the event
+                    event.setCanceled(true);
+                    return;
+                }
+                // determine if entity is wearing armor and weak to arrow projectiles
+                if(achillesCount > 0 && event.getProjectile() instanceof AbstractArrow arrow
+                        && HellenicArmorItem.isCritical(livingEntity, arrow, dot, achillesCount)) {
+                    // double the damage of the projectile
+                    arrow.setBaseDamage(arrow.getBaseDamage() * (2.0D + 0.5D * achillesCount));
+                    event.setCanceled(false);
+                    return;
+                }
+                // determine if the entity is wearing nemean lion hide and immune to projectile
+                if(achillesCount == 0 && livingEntity.getItemBySlot(EquipmentSlot.HEAD).is(GFRegistry.ItemReg.NEMEAN_LION_HIDE.get())
+                        && NemeanLionHideItem.isImmune(livingEntity, event.getProjectile(), dot)) {
+                    // reflect the projectile motion
+                    event.getProjectile().setDeltaMovement(event.getProjectile().getDeltaMovement().multiply(-1.0D, 1.0D, -1.0D));
+                    // cancel the event
+                    event.setCanceled(true);
+                    return;
+                }
+            }
+        }
+
+        /**
+         * @param first the first entity
+         * @param second the second entity
+         * @param horizontalOnly true if the dot product should only account for horizontal facing
+         * @return the dot product  between the facing directions of two entities
+         */
+        private static double getDotProduct(final Entity first, final Entity second, final boolean horizontalOnly) {
+            Vec3 firstFacing = Vec3.directionFromRotation(first.getXRot(), first.getYRot());
+            Vec3 secondFacing = Vec3.directionFromRotation(second.getXRot(), horizontalOnly ? first.getYRot() : second.getYRot());
+            return secondFacing.dot(firstFacing);
+        }
+
+        /**
          * Used to handle Prisoner of Hades effect
          * (updating portal cooldown and removing when out of the nether)
          * @param event
@@ -66,6 +136,7 @@ public final class GFEvents {
             if(event.getEntityLiving().level.isClientSide()) {
                 return;
             }
+
             // handle Prisoner of Hades mob effect
             final MobEffect prisonerOfHades = GFRegistry.MobEffectReg.PRISONER_OF_HADES.get();
             if(event.getEntityLiving().hasEffect(prisonerOfHades)) {
@@ -171,7 +242,7 @@ public final class GFEvents {
         }
 
         /**
-         * Used to prevent certain mobs from attacking players when either the player
+         * Used to prevent mobs from attacking players when either the player
          * or the mob are under Curse of Circe
          *
          * @param event the living target event
@@ -179,15 +250,66 @@ public final class GFEvents {
         @SubscribeEvent
         public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
             if (!event.getEntityLiving().level.isClientSide()
+                    && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
                     && event.getEntityLiving() instanceof Mob mob
                     && event.getTarget() != null
-                    && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
+                    && event.getTarget() != mob.getLastHurtByMob()
                     && (mob.hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get())
                         || event.getTarget().hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get()))) {
                 // remove attack target
                 mob.setTarget(null);
             }
         }
+
+        /**
+         * Used to update client when Curse of Circe is applied
+         * @param event the potion added event
+         */
+        @SubscribeEvent
+        public static void onMobEffectStart(final PotionEvent.PotionAddedEvent event) {
+            if(!event.getEntityLiving().level.isClientSide()
+                    && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
+                    && event.getPotionEffect().getEffect() == GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get()
+                    && event.getOldPotionEffect() == null) {
+                // update health
+                if(event.getOldPotionEffect() == null) {
+                    float health = Mth.clamp(event.getEntityLiving().getHealth(), 1.0F, event.getEntityLiving().getMaxHealth() + (float) CurseOfCirceEffect.HEALTH_MODIFIER);
+                    event.getEntityLiving().setHealth(health);
+                }
+                // send packet
+                GreekFantasy.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> event.getEntityLiving()),
+                        SCurseOfCircePacket.addEffect(event.getEntityLiving().getId(), event.getPotionEffect().getDuration()));
+            }
+        }
+
+        /**
+         * Used to update client when Curse of Circe is removed
+         * @param event the potion added event
+         */
+        @SubscribeEvent
+        public static void onMobEffectRemove(final PotionEvent.PotionRemoveEvent event) {
+            if(!event.getEntityLiving().level.isClientSide() && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
+                    && event.getPotionEffect().getEffect() == GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get()) {
+                // send packet
+                GreekFantasy.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> event.getEntityLiving()),
+                        SCurseOfCircePacket.removeEffect(event.getEntityLiving().getId()));
+            }
+        }
+
+        /**
+         * Used to update client when Curse of Circe is expired
+         * @param event the potion added event
+         */
+        @SubscribeEvent
+        public static void onMobEffectExpire(final PotionEvent.PotionExpiryEvent event) {
+            if(!event.getEntityLiving().level.isClientSide() && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
+                    && event.getPotionEffect().getEffect() == GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get()) {
+                // send packet
+                GreekFantasy.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> event.getEntityLiving()),
+                        SCurseOfCircePacket.removeEffect(event.getEntityLiving().getId()));
+            }
+        }
+
     }
 
     public static final class ModHandler {

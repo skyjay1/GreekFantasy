@@ -47,9 +47,11 @@ import greekfantasy.item.GFArmorMaterials;
 import greekfantasy.item.GFTiers;
 import greekfantasy.item.GoldenBallItem;
 import greekfantasy.item.GorgonBloodItem;
+import greekfantasy.item.HellenicArmorItem;
 import greekfantasy.item.HelmOfDarknessItem;
 import greekfantasy.item.HornOfPlentyItem;
 import greekfantasy.item.KnifeItem;
+import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.item.OliveOilItem;
 import greekfantasy.item.SnakeskinArmorItem;
 import greekfantasy.item.SpearItem;
@@ -630,18 +632,18 @@ public final class GFRegistry {
         public static final RegistryObject<Item> WINGED_SANDALS = ITEMS.register("winged_sandals", () ->
                 new WingedSandalsItem(GFArmorMaterials.WINGED, new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC)));
         public static final RegistryObject<Item> NEMEAN_LION_HIDE = ITEMS.register("nemean_lion_hide", () ->
-                new ArmorItem(GFArmorMaterials.NEMEAN, EquipmentSlot.HEAD,
-                        new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).setNoRepair())); // TODO ability
+                new NemeanLionHideItem(GFArmorMaterials.NEMEAN, EquipmentSlot.HEAD,
+                        new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).setNoRepair()));
 
         //// ARMOR ////
         public static final RegistryObject<Item> HELLENIC_HELMET = ITEMS.register("hellenic_helmet", () ->
-                new ArmorItem(GFArmorMaterials.HELLENIC, EquipmentSlot.HEAD, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
+                new HellenicArmorItem(GFArmorMaterials.HELLENIC, EquipmentSlot.HEAD, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> HELLENIC_CHESTPLATE = ITEMS.register("hellenic_chestplate", () ->
-                new ArmorItem(GFArmorMaterials.HELLENIC, EquipmentSlot.CHEST, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
+                new HellenicArmorItem(GFArmorMaterials.HELLENIC, EquipmentSlot.CHEST, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> HELLENIC_LEGGINGS = ITEMS.register("hellenic_leggings", () ->
-                new ArmorItem(GFArmorMaterials.HELLENIC, EquipmentSlot.LEGS, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
+                new HellenicArmorItem(GFArmorMaterials.HELLENIC, EquipmentSlot.LEGS, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> HELLENIC_BOOTS = ITEMS.register("hellenic_boots", () ->
-                new ArmorItem(GFArmorMaterials.HELLENIC, EquipmentSlot.FEET, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
+                new HellenicArmorItem(GFArmorMaterials.HELLENIC, EquipmentSlot.FEET, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> SNAKESKIN_HELMET = ITEMS.register("snakeskin_helmet", () ->
                 new SnakeskinArmorItem(GFArmorMaterials.SNAKESKIN, EquipmentSlot.HEAD, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> SNAKESKIN_CHESTPLATE = ITEMS.register("snakeskin_chestplate", () ->

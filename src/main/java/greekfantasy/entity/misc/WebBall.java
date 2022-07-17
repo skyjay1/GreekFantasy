@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -128,6 +129,13 @@ public class WebBall extends ThrowableItemProjectile {
     @Override
     protected float getGravity() {
         return 0.08F;
+    }
+
+    @Override
+    public void makeStuckInBlock(BlockState blockState, Vec3 stuckSpeedMultiplier) {
+        if(!blockState.is(Blocks.COBWEB)) {
+            super.makeStuckInBlock(blockState, stuckSpeedMultiplier);
+        }
     }
 
     @Override

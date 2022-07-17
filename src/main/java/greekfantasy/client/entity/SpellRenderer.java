@@ -32,7 +32,7 @@ public abstract class SpellRenderer<T extends Projectile> extends EntityRenderer
     }
 
     @Override
-    public void render(T entity, float rotationYaw, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+    public void render(T entity, float renderOffsetX, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
         this.entityModel.prepareMobModel(entity, 0.0F, 0.0F, partialTick);
         this.entityModel.setupAnim(entity, 0.0F, 0.0F, entity.tickCount + partialTick, 0.0F, 0.0F);
         final VertexConsumer vertexConsumer = multiBufferSource.getBuffer(entityModel.renderType(getTextureLocation(entity)));

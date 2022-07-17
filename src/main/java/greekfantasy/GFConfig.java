@@ -81,7 +81,7 @@ public class GFConfig {
     private boolean isCurseOfCirceEnabled;
     public final ForgeConfigSpec.IntValue CURSE_OF_CIRCE_DURATION;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> CURSE_OF_CIRCE_WHITELIST;
-    private List<ResourceLocation> curseOfCirceWhitelist;
+    private List<? extends String> curseOfCirceWhitelist;
 
     // palladium
     private final ForgeConfigSpec.BooleanValue PALLADIUM_ENABLED;
@@ -120,7 +120,11 @@ public class GFConfig {
             ForgeRegistries.ENTITIES.getKey(EntityType.WANDERING_TRADER).toString(),
             ForgeRegistries.ENTITIES.getKey(EntityType.ILLUSIONER).toString(),
             ForgeRegistries.ENTITIES.getKey(EntityType.PILLAGER).toString(),
-            ForgeRegistries.ENTITIES.getKey(EntityType.WITCH).toString()
+            ForgeRegistries.ENTITIES.getKey(EntityType.WITCH).toString(),
+            new ResourceLocation(GreekFantasy.MODID, "ara").toString(),
+            new ResourceLocation(GreekFantasy.MODID, "dryad").toString(),
+            new ResourceLocation(GreekFantasy.MODID, "naiad").toString(),
+            new ResourceLocation(GreekFantasy.MODID, "satyr").toString()
     };
 
     public GFConfig(final ForgeConfigSpec.Builder builder) {
@@ -176,7 +180,10 @@ public class GFConfig {
         builder.push("mob_effects");
         CURSE_OF_CIRCE_ENABLED = builder.define("curse_of_circe_enabled", true);
         CURSE_OF_CIRCE_DURATION = builder.defineInRange("curse_of_circe_duration", 900, 1, 24000);
-        CURSE_OF_CIRCE_WHITELIST = builder.defineList("curse_of_circe_whitelist", List.of(curseOfCirceWhitelistDefault), o -> o instanceof String);
+        CURSE_OF_CIRCE_WHITELIST = builder.comment("Mobs that can be affected by the Curse of Circe.",
+                        "Accepts entity id or mod id with wildcard.",
+                        "Example: [\"minecraft:zombie\", \"othermod:" + WILDCARD + "\"]")
+                .defineList("curse_of_circe_whitelist", List.of(curseOfCirceWhitelistDefault), o -> o instanceof String);
         builder.pop();
 
         builder.push("palladium");
@@ -258,7 +265,7 @@ public class GFConfig {
         showPythonBossBar = SHOW_PYTHON_BOSS_BAR.get();
         // mob effects
         isCurseOfCirceEnabled = CURSE_OF_CIRCE_ENABLED.get();
-        curseOfCirceWhitelist = createEntityWhitelist(CURSE_OF_CIRCE_WHITELIST.get());
+        curseOfCirceWhitelist = ImmutableList.copyOf(CURSE_OF_CIRCE_WHITELIST.get());
         // palladium
         palladiumEnabled = PALLADIUM_ENABLED.get();
         palladiumRefreshInterval = PALLADIUM_REFRESH_INTERVAL.get();
@@ -344,7 +351,9 @@ public class GFConfig {
     }
 
     public boolean isCurseOfCirceApplicable(final LivingEntity entity) {
-        return curseOfCirceWhitelist.contains(entity.getType().getRegistryName());
+        ResourceLocation type = ForgeRegistries.ENTITIES.getKey(entity.getType());
+        return curseOfCirceWhitelist.contains(type.toString())
+                || curseOfCirceWhitelist.contains(type.getNamespace() + ":" + WILDCARD);
     }
 
     // palladium
@@ -402,17 +411,5 @@ public class GFConfig {
     private static boolean matchesBiomeListConfigSpec(final List<? extends String> list, final boolean isWhitelist, final ResourceLocation dimensionId) {
         // check dimension id or mod id
         return isWhitelist == (list.contains(dimensionId.toString()) || list.contains(dimensionId.getNamespace() + ":" + WILDCARD));
-    }
-
-
-    private static List<ResourceLocation> createEntityWhitelist(final Collection<? extends String> stringList) {
-        ImmutableList.Builder<ResourceLocation> builder = new ImmutableList.Builder<>();
-        for(final String s : stringList) {
-            ResourceLocation id = ResourceLocation.tryParse(s);
-            if(id != null && ForgeRegistries.ENTITIES.containsKey(id)) {
-                builder.add(id);
-            }
-        }
-        return builder.build();
     }
 }
