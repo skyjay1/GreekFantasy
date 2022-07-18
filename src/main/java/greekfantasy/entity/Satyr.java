@@ -209,22 +209,21 @@ public class Satyr extends PathfinderMob implements NeutralMob {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-        // determine color variant based on spawn group data, or create new group data
-        Variant color;
-        if (spawnDataIn instanceof Satyr.GroupData) {
-            color = ((Satyr.GroupData) spawnDataIn).variant;
-        } else {
-            color = Util.getRandom(Variant.values(), this.random);
-            spawnDataIn = new Satyr.GroupData(color);
-        }
-
+        // set variant when not spawned as part of a structure
         if(spawnType != MobSpawnType.STRUCTURE) {
-            // set variant when not spawned as part of a structure
+            // determine color variant based on spawn group data, or create new group data
+            Variant color;
+            if (spawnDataIn instanceof Satyr.GroupData) {
+                color = ((Satyr.GroupData) spawnDataIn).variant;
+            } else {
+                color = Util.getRandom(Variant.values(), this.random);
+                spawnDataIn = new Satyr.GroupData(color);
+            }
             this.setVariant(color);
-            // random chance to be a satyr shaman
-            this.setShaman(level.getRandom().nextFloat() * 100.0F < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get());
         }
 
+        // random chance to be a satyr shaman
+        this.setShaman(level.getRandom().nextFloat() * 100.0F < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get());
         return super.finalizeSpawn(level, difficulty, spawnType, spawnDataIn, dataTag);
     }
 

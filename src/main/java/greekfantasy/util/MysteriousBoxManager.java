@@ -2,13 +2,14 @@ package greekfantasy.util;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.Elpis;
 import net.minecraft.commands.CommandFunction;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerFunctionManager;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,12 +50,14 @@ public class MysteriousBoxManager {
 
     public static boolean onBoxOpened(final Level level, final Player playerIn, final BlockState state, final BlockPos pos) {
         final MinecraftServer server = level.getServer();
-        if (server != null) {
+        if (server != null && level instanceof ServerLevel serverLevel) {
             final ServerFunctionManager manager = server.getFunctions();
-            final Optional<CommandFunction> function = getRandomFunction(manager, level.getRandom());
+            final Optional<CommandFunction> function = getRandomFunction(manager, serverLevel.getRandom());
             final Vec3 vec = Vec3.atCenterOf(pos).add(0, 0.35D, 0);
             if (function.isPresent()) {
-                final CommandSourceStack commandSource = manager.getGameLoopSender().withEntity(playerIn).withPosition(vec).withPermission(4).withSuppressedOutput();
+                final CommandSourceStack commandSource = manager.getGameLoopSender()
+                        .withLevel(serverLevel).withEntity(playerIn).withPosition(vec)
+                        .withPermission(4).withSuppressedOutput();
                 manager.execute(function.get(), commandSource);
                 // percent chance to spawn Elpis as well
                 if (level.getRandom().nextFloat() * 100.0F < GreekFantasy.CONFIG.ELPIS_SPAWN_CHANCE.get()) {
@@ -67,9 +70,9 @@ public class MysteriousBoxManager {
     }
 
     public static void addElpis(final Level level, final BlockPos pos) {
-        /*final ElpisEntity entity = GFRegistry.EntityReg.ELPIS_ENTITY.create(worldIn);
+        final Elpis entity = GFRegistry.EntityReg.ELPIS.get().create(level);
         entity.moveTo(pos.getX() + 0.5D, pos.getY() + 0.85D, pos.getZ() + 0.5D, 0, 0);
-        entity.restrictTo(pos.above(), ElpisEntity.wanderDistance);
-        worldIn.addFreshEntity(entity);*/
+        entity.restrictTo(pos.above(), Elpis.wanderDistance);
+        level.addFreshEntity(entity);
     }
 }

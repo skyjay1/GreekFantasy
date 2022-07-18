@@ -12,6 +12,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -98,22 +100,45 @@ public class MysteriousBoxBlock extends HorizontalDirectionalBlock implements Si
     @Override
     public InteractionResult use(final BlockState state, final Level level, final BlockPos pos,
                                  final Player player, final InteractionHand hand, final BlockHitResult hit) {
-        if (!state.getValue(OPEN).booleanValue()) {
+        if (!state.getValue(OPEN)) {
             addSmokeParticles(level, pos, level.random, 32);
             level.playSound(player, pos, SoundEvents.BARREL_OPEN, SoundSource.BLOCKS,
                     0.8F + level.getRandom().nextFloat() * 0.4F,
                     0.8F + level.getRandom().nextFloat() * 0.4F);
-            if (!player.level.isClientSide()) {
-                // open the box
-                final boolean open = MysteriousBoxManager.onBoxOpened(level, player, state, pos);
-                if (open) {
-                    level.setBlock(pos, state.setValue(OPEN, Boolean.valueOf(true)), 2);
-                }
+            if(!player.level.isClientSide() && MysteriousBoxManager.onBoxOpened(level, player, state, pos)) {
+                level.setBlock(pos, state.setValue(OPEN, true), Block.UPDATE_CLIENTS);
             }
             return InteractionResult.CONSUME;
         }
 
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+        // if player is using correct tool or box is already open, use default behavior
+        if(state.getValue(OPEN) || willHarvest || null == player) {
+            return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+        }
+        // block destroy events
+        playerWillDestroy(level, pos, state, player);
+        // add particles and play sound
+        addSmokeParticles(level, pos, level.random, 32);
+        level.playSound(player, pos, SoundEvents.BARREL_OPEN, SoundSource.BLOCKS,
+                0.8F + level.getRandom().nextFloat() * 0.4F,
+                0.8F + level.getRandom().nextFloat() * 0.4F);
+        // open the box and replace with opened variant of block
+        if(!player.level.isClientSide() && MysteriousBoxManager.onBoxOpened(level, player, state, pos)) {
+            level.setBlock(pos, state.setValue(OPEN, true), Block.UPDATE_CLIENTS);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player) {
+        // block can be harvested when using correct tool AND (open OR silk touch)
+        // this is necessary so that onDestroyedByPlayer has the correct value for willHarvest
+        return super.canHarvestBlock(state, level, pos, player) && (state.getValue(OPEN) || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getInventory().getSelected()) > 0);
     }
 
     @Override

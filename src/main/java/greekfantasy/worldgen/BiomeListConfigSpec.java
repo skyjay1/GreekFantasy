@@ -1,6 +1,7 @@
 package greekfantasy.worldgen;
 
 import com.google.common.collect.Lists;
+import greekfantasy.GFConfig;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
@@ -62,10 +63,15 @@ public class BiomeListConfigSpec {
 
     public boolean hasBiome(final ResourceKey<Biome> biome) {
         final Set<String> types = BiomeDictionary.getTypes(biome).stream().map(t -> t.getName()).collect(Collectors.toSet());
+        final String wild = biome.location().getNamespace() + ":" + GFConfig.WILDCARD;
         // check each string in the whitelist
         for (final String whitelistName : list()) {
+            // if the whitelistName contains wildcard, check if mod id matches
+            if(whitelistName.equals(wild)) {
+                return true;
+            }
             // if the whitelistName is a biome registry name, compare against the given biome
-            if (!whitelistName.isEmpty() && whitelistName.contains(":") && biome.location().toString().equals(whitelistName)) {
+            if (whitelistName.contains(":") && biome.location().toString().equals(whitelistName)) {
                 return true;
             }
             // if the whitelistName is a biome type, check if the given biome contains that type

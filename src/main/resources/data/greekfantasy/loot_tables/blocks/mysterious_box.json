@@ -2,12 +2,25 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "name": "main",
       "rolls": 1,
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "greekfantasy:mysterious_box",
           "conditions": [
+            {
+              "condition": "minecraft:match_tool",
+              "predicate": {
+                "enchantments": [
+                  {
+                    "enchantment": "minecraft:silk_touch",
+                    "levels": {
+                      "min": 1
+                    }
+                  }
+                ]
+              }
+            },
             {
               "condition": "minecraft:block_state_property",
               "block": "greekfantasy:mysterious_box",
@@ -15,8 +28,7 @@
                 "open": "false"
               }
             }
-          ],
-          "name": "greekfantasy:mysterious_box"
+          ]
         }
       ]
     }

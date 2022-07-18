@@ -1,0 +1,15 @@
+{
+  "name": "greekfantasy:nether_shrine",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:nether_shrine",
+        "projection": "rigid",
+        "processors": "minecraft:empty"
+      }
+    }
+  ]
+}

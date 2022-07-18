@@ -93,7 +93,7 @@ public class GFConfig {
     private final ForgeConfigSpec.IntValue PALLADIUM_Y_RANGE;
     private int palladiumYRange;
 
-    private static final String WILDCARD = "*";
+    public static final String WILDCARD = "*";
 
     // spawns
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> SPAWN_DIMENSION_WHITELIST;
@@ -233,6 +233,7 @@ public class GFConfig {
         putFeatureConfigSpec(builder, "limestone_lower", 1000, true, BiomeDictionary.Type.OVERWORLD.getName());
         putFeatureConfigSpec(builder, "marble_upper", 190, true, BiomeDictionary.Type.OVERWORLD.getName());
         putFeatureConfigSpec(builder, "marble_lower", 1000, true, BiomeDictionary.Type.OVERWORLD.getName());
+        putFeatureConfigSpec(builder, "olive_tree", 300, true, Biomes.FOREST.location().toString(), Biomes.BIRCH_FOREST.location().toString(), Biomes.OLD_GROWTH_BIRCH_FOREST.location().toString());
         putFeatureConfigSpec(builder, "patch_reeds", 250, true, BiomeDictionary.Type.OVERWORLD.getName());
         putFeatureConfigSpec(builder, "patch_reeds_swamp", 900, true, BiomeDictionary.Type.SWAMP.getName());
         putFeatureConfigSpec(builder, "pomegranate_tree", 500, true, Biomes.WARPED_FOREST.location().toString(), Biomes.CRIMSON_FOREST.location().toString());

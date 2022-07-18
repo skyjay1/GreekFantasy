@@ -652,10 +652,6 @@ public class Dryad extends PathfinderMob implements NeutralMob {
 
         @Override
         public void tick() {
-            // look at the tradingPlayer
-            if (Dryad.this.tradingPlayer != null) {
-                Dryad.this.lookControl.setLookAt(Dryad.this.tradingPlayer, Dryad.this.getMaxHeadYRot(), 100.0F);
-            }
             // stop moving and look down
             Dryad.this.getNavigation().stop();
             Dryad.this.getLookControl().setLookAt(Dryad.this.getEyePosition(1.0F).add(0.0D, -0.25D, 0.0D));

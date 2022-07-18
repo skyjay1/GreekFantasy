@@ -1,11 +1,7 @@
 {
   "structures": [
     {
-      "structure": "greekfantasy:limestone_shrine",
-      "weight": 1
-    },
-    {
-      "structure": "greekfantasy:marble_shrine",
+      "structure": "greekfantasy:nether_shrine",
       "weight": 1
     }
   ],
@@ -13,6 +9,6 @@
     "type": "minecraft:random_spread",
     "spacing": 11,
     "separation": 7,
-    "salt": 157187750
+    "salt": 18926442
   }
 }

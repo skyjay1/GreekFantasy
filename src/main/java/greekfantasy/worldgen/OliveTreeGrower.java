@@ -7,8 +7,8 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 
 import java.util.Random;
 
-public class PomegranateTreeGrower extends AbstractTreeGrower {
+public class OliveTreeGrower extends AbstractTreeGrower {
     protected Holder<? extends ConfiguredFeature<?, ?>> getConfiguredFeature(Random random, boolean hasFlowers) {
-        return GFRegistry.FeatureReg.POMEGRANATE_TREE;
+        return GFRegistry.FeatureReg.OLIVE_TREE;
     }
 }

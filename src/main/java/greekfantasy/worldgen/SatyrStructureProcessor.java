@@ -53,12 +53,7 @@ public class SatyrStructureProcessor extends StructureProcessor {
             Variant variant = Util.getRandom(net.minecraft.world.entity.animal.horse.Variant.values(), random);
             // write color variant to compound
             tag.putByte(Satyr.KEY_COLOR, (byte) variant.getId());
-            // determine shaman
-            boolean isShaman = random.nextFloat() * 100.0F < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get();
-            // write shaman to compound
-            tag.putBoolean(Satyr.KEY_SHAMAN, isShaman);
             // create modified entity info
-            GreekFantasy.LOGGER.debug("processing satyr at " + seedPos + " seed=" + seed + " color=" + variant.name());
             return new StructureTemplate.StructureEntityInfo(entityInfo.pos, entityInfo.blockPos, tag);
         }
         return entityInfo;
