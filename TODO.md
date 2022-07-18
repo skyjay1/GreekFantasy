@@ -24,7 +24,7 @@ __Key:__
 - _ _ _ _ _ Cyprian Centaur
 - _ _ _ _ _ Minotaur
 - _ _ _ _ _ Gorgon
-- _ _ _ _ _ Harpy
+- X X X X X Harpy
 - X X X X X Empusa
 - X X X X X Shade
 - _ _ _ _ _ Siren
@@ -93,13 +93,13 @@ __Key:__
 - X X X Limestone Shrine
 - X X X Marble Shrine
 - X X X Nether Shrine
-- _ _ _ Harpy Nest
+- X X X Harpy Nest
 - X X X Python Pit
 - _ _ _ Lion Den
 - _ _ _ Cyclopes Cave
 - X X X Olive Trees
 - X X X Pomegranate Trees
-- _ _ _ Golden Tree
+- X _ X Golden Tree
 - X X X Arachne Pit
 
 

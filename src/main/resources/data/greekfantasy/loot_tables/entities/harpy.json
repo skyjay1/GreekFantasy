@@ -1,0 +1,44 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+	  "name": "main",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 2.0,
+                "max": 5.0,
+                "type": "minecraft:uniform"
+              }
+            },
+            {
+              "function": "minecraft:looting_enchant",
+              "count": 1
+            }
+          ],
+          "name": "minecraft:feather"
+        }
+      ]
+    },
+    {
+	  "name": "pool1",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "greekfantasy:avernal_feather",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 3
+        }
+      ]
+    }
+  ]
+}

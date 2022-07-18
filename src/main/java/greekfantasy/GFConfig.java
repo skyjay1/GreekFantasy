@@ -216,6 +216,7 @@ public class GFConfig {
         putSpawnConfigSpec(builder, "drakaina",40, false, hostileBlacklist);
         putSpawnConfigSpec(builder, "dryad", 24, true, forest);
         putSpawnConfigSpec(builder, "empusa",30, false, nonNetherHostileBlacklist);
+        putSpawnConfigSpec(builder, "harpy", 24, true, Biomes.DESERT.location().toString(), Biomes.WOODED_BADLANDS.location().toString());
         putSpawnConfigSpec(builder, "lampad", 24, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString());
         putSpawnConfigSpec(builder, "naiad", 12, true, BiomeDictionary.Type.WATER.getName());
         putSpawnConfigSpec(builder, "shade", 10, false);
@@ -230,6 +231,13 @@ public class GFConfig {
         IS_FEATURE_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
                 .define("is_whitelist", true);
         this.FEATURE_CONFIG_SPECS.clear();
+        putFeatureConfigSpec(builder, "acacia_harpy_nest", 14, true, BiomeDictionary.Type.SAVANNA.getName());
+        putFeatureConfigSpec(builder, "birch_harpy_nest", 14, true, Biomes.FOREST.location().toString(), Biomes.BIRCH_FOREST.location().toString(), Biomes.OLD_GROWTH_BIRCH_FOREST.location().toString());
+        putFeatureConfigSpec(builder, "dark_oak_harpy_nest", 14, true, Biomes.DARK_FOREST.location().toString());
+        putFeatureConfigSpec(builder, "jungle_harpy_nest", 14, true, BiomeDictionary.Type.JUNGLE.getName());
+        putFeatureConfigSpec(builder, "oak_harpy_nest", 14, true, Biomes.FOREST.location().toString());
+        putFeatureConfigSpec(builder, "olive_harpy_nest", 14, true, Biomes.FOREST.location().toString(), Biomes.BIRCH_FOREST.location().toString(), Biomes.OLD_GROWTH_BIRCH_FOREST.location().toString());
+        putFeatureConfigSpec(builder, "spruce_harpy_nest", 14, true, BiomeDictionary.Type.CONIFEROUS.getName(), BiomeDictionary.Type.PEAK.getName());
         putFeatureConfigSpec(builder, "limestone_upper", 190, true, BiomeDictionary.Type.OVERWORLD.getName());
         putFeatureConfigSpec(builder, "limestone_lower", 1000, true, BiomeDictionary.Type.OVERWORLD.getName());
         putFeatureConfigSpec(builder, "marble_upper", 190, true, BiomeDictionary.Type.OVERWORLD.getName());
