@@ -52,8 +52,8 @@ public class SpellModel<T extends Projectile> extends EntityModel<T> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red,
-                               float green, float blue, float alpha) {
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
+                               float red, float green, float blue, float alpha) {
         this.root.render(poseStack, vertexConsumer, usePackedLight ? packedLight : 15728880, packedOverlay);
     }
 

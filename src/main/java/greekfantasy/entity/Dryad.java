@@ -16,7 +16,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.DifficultyInstance;
@@ -80,7 +79,7 @@ public class Dryad extends PathfinderMob implements NeutralMob {
     protected static final String KEY_TREE_POS = "Tree";
     protected static final String KEY_HIDING = "HidingTime";
 
-    protected Variant variant = Variant.OAK;
+    protected NymphVariant variant = Variant.OAK;
 
     protected BlockPos treePos = null;
 
@@ -96,8 +95,8 @@ public class Dryad extends PathfinderMob implements NeutralMob {
     // number of ticks the entity has been hiding
     protected int hidingTime;
 
-    public Dryad(final EntityType<? extends Dryad> type, final Level worldIn) {
-        super(type, worldIn);
+    public Dryad(final EntityType<? extends Dryad> type, final Level level) {
+        super(type, level);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -109,7 +108,6 @@ public class Dryad extends PathfinderMob implements NeutralMob {
 
     @Override
     protected void registerGoals() {
-        super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.1D, false));
         this.goalSelector.addGoal(2, new Dryad.TradeGoal(50 + random.nextInt(20)));
@@ -143,9 +141,9 @@ public class Dryad extends PathfinderMob implements NeutralMob {
             // update tree pos
             this.setTreePos(null);
         }
-        
+
         // regeneration
-        if(this.treePos != null && this.isHiding() && random.nextInt(400) == 1) {
+        if (this.treePos != null && this.isHiding() && random.nextInt(400) == 1) {
             this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60));
         }
 
@@ -233,11 +231,11 @@ public class Dryad extends PathfinderMob implements NeutralMob {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType mobType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         SpawnGroupData data = super.finalizeSpawn(worldIn, difficultyIn, mobType, spawnDataIn, dataTag);
-        final Variant variant;
+        final NymphVariant variant;
         if (mobType == MobSpawnType.COMMAND || mobType == MobSpawnType.SPAWN_EGG || mobType == MobSpawnType.SPAWNER || mobType == MobSpawnType.DISPENSER) {
-            variant = Variant.getRandom(worldIn.getRandom());
+            variant = getRandomVariant();
         } else {
-            variant = Variant.getForBiome(worldIn.getBiome(this.blockPosition()));
+            variant = getVariantForBiome(worldIn.getBiome(this.blockPosition()));
         }
         this.setVariant(variant);
         return data;
@@ -248,7 +246,7 @@ public class Dryad extends PathfinderMob implements NeutralMob {
         return this.getVariant().getDeathLootTable();
     }
 
-    // IAngerable methods
+    // NeutralMob methods
 
     @Override
     public void startPersistentAngerTimer() {
@@ -273,11 +271,6 @@ public class Dryad extends PathfinderMob implements NeutralMob {
     @Override
     public UUID getPersistentAngerTarget() {
         return this.angerTarget;
-    }
-
-    @Override
-    public float getBrightness() {
-        return 1.0F;
     }
 
     @Override
@@ -359,11 +352,11 @@ public class Dryad extends PathfinderMob implements NeutralMob {
     public void trade(@Nullable final Player player, final ItemStack tradeItem) {
         // determine target position
         Vec3 tradeTarget;
-        if(player != null) {
+        if (player != null) {
             tradeTarget = player.position();
         } else {
             tradeTarget = LandRandomPos.getPos(this, 4, 2);
-            if(null == tradeTarget) {
+            if (null == tradeTarget) {
                 tradeTarget = Dryad.this.position();
             }
         }
@@ -388,17 +381,25 @@ public class Dryad extends PathfinderMob implements NeutralMob {
 
     // Variant methods
 
-    public void setVariant(final Variant variantIn) {
+    public void setVariant(final NymphVariant variantIn) {
         this.variant = variantIn;
         this.getEntityData().set(DATA_VARIANT, variantIn.getSerializedName());
     }
 
-    public Variant getVariant() {
+    public NymphVariant getVariant() {
         return variant;
     }
 
-    public Variant getVariantByName(final String name) {
+    public NymphVariant getVariantByName(final String name) {
         return Variant.getByName(name);
+    }
+
+    public NymphVariant getRandomVariant() {
+        return Variant.getRandom(level.getRandom());
+    }
+
+    public NymphVariant getVariantForBiome(final Holder<Biome> biome) {
+        return Variant.getForBiome(biome);
     }
 
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
@@ -415,7 +416,7 @@ public class Dryad extends PathfinderMob implements NeutralMob {
     }
 
     public Vec3 getTreeVec() {
-        if(treePos != null) {
+        if (treePos != null) {
             return Vec3.atBottomCenterOf(treePos.above());
         }
         return null;
@@ -443,8 +444,8 @@ public class Dryad extends PathfinderMob implements NeutralMob {
      * block that is underneath a full-size tree.
      *
      * @param level the world
-     * @param pos     the block pos beneath the tree
-     * @param logs    the blocks that are considered logs
+     * @param pos   the block pos beneath the tree
+     * @param logs  the blocks that are considered logs
      * @return if this block pos is supporting a likely tree
      **/
     public static boolean isTreeAt(final BlockGetter level, final BlockPos pos, final TagKey<Block> logs) {
@@ -483,7 +484,7 @@ public class Dryad extends PathfinderMob implements NeutralMob {
      **/
     public boolean isWithinDistanceOfTree(final double dis) {
         final Vec3 treeVec = getTreeVec();
-        if(treeVec != null) {
+        if (treeVec != null) {
             return treeVec.closerThan(position(), dis);
         }
         return false;
@@ -556,7 +557,7 @@ public class Dryad extends PathfinderMob implements NeutralMob {
         @Override
         public boolean isTargetBlock(LevelReader worldIn, BlockPos pos) {
             // ensure the target block is a tree
-            if(!isTreeAt(worldIn, pos, Dryad.this.getVariant().getLogs())) {
+            if (!isTreeAt(worldIn, pos, Dryad.this.getVariant().getLogs())) {
                 return false;
             }
             // ensure the block is not claimed by nearby dryads
@@ -668,7 +669,7 @@ public class Dryad extends PathfinderMob implements NeutralMob {
         }
     }
 
-    public static class Variant implements StringRepresentable {
+    public static class Variant implements NymphVariant {
         public static final Variant ACACIA = new Variant("acacia", new ResourceLocation("forge", "is_savanna"), () -> Blocks.ACACIA_SAPLING);
         public static final Variant BIRCH = new Variant("birch", new ResourceLocation("forge", "is_birch"), () -> Blocks.BIRCH_SAPLING);
         public static final Variant DARK_OAK = new Variant("dark_oak", new ResourceLocation("forge", "is_spooky"), () -> Blocks.DARK_OAK_SAPLING);
@@ -711,8 +712,8 @@ public class Dryad extends PathfinderMob implements NeutralMob {
         }
 
         public static Variant getForBiome(final Holder<Biome> biome) {
-            for(Variant variant : OVERWORLD.values()) {
-                if(biome.is(variant.biomeTag)) {
+            for (Variant variant : OVERWORLD.values()) {
+                if (biome.is(variant.biomeTag)) {
                     return variant;
                 }
             }
@@ -728,18 +729,27 @@ public class Dryad extends PathfinderMob implements NeutralMob {
             return OVERWORLD.getOrDefault(n, OAK);
         }
 
+        @Override
         public TagKey<Block> getLogs() {
             return tag;
         }
 
+        @Override
+        public TagKey<Biome> getBiome() {
+            return biomeTag;
+        }
+
+        @Override
         public BlockState getSapling() {
             return sapling.get().defaultBlockState();
         }
 
+        @Override
         public ResourceLocation getDeathLootTable() {
             return deathLootTable;
         }
 
+        @Override
         public ResourceLocation getTradeLootTable() {
             return tradeLootTable;
         }

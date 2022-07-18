@@ -3,6 +3,7 @@ package greekfantasy.client.entity;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.entity.model.NymphModel;
 import greekfantasy.entity.Dryad;
+import greekfantasy.entity.NymphVariant;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public class DryadRenderer<T extends Dryad> extends MobRenderer<T, NymphModel<T>> {
 
-    public static final Map<Dryad.Variant, ResourceLocation> TEXTURE_MAP = new HashMap<>();
+    public static final Map<NymphVariant, ResourceLocation> TEXTURE_MAP = new HashMap<>();
 
     static {
         TEXTURE_MAP.put(Dryad.Variant.ACACIA, new ResourceLocation(GreekFantasy.MODID, "textures/entity/dryad/acacia.png"));
@@ -30,10 +31,6 @@ public class DryadRenderer<T extends Dryad> extends MobRenderer<T, NymphModel<T>
         this.addLayer(new ItemInHandLayer<>(this));
     }
 
-    /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless
-     * you call Render.bindEntityTexture.
-     */
     @Override
     public ResourceLocation getTextureLocation(final T entity) {
         return TEXTURE_MAP.get(entity.getVariant());

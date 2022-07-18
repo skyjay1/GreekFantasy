@@ -20,6 +20,8 @@ import greekfantasy.enchantment.SilkstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
 import greekfantasy.entity.Dryad;
 import greekfantasy.entity.Elpis;
+import greekfantasy.entity.Lampad;
+import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Satyr;
 import greekfantasy.entity.Sparti;
 import greekfantasy.entity.boss.Arachne;
@@ -762,6 +764,8 @@ public final class GFRegistry {
             register(event, EMPUSA.get(), Empusa::createAttributes, Empusa::checkEmpusaSpawnRules);
             register(event, DRAKAINA.get(), Drakaina::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, DRYAD.get(), Dryad::createAttributes, Mob::checkMobSpawnRules);
+            register(event, LAMPAD.get(), Lampad::createAttributes, Mob::checkMobSpawnRules);
+            register(event, NAIAD.get(), Naiad::createAttributes, Naiad::checkNaiadSpawnRules);
             register(event, PYTHON.get(), Python::createAttributes, null);
             register(event, SATYR.get(), Satyr::createAttributes, Mob::checkMobSpawnRules);
             register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
@@ -808,6 +812,8 @@ public final class GFRegistry {
                 addSpawns(event, DRAKAINA.get(), 1, 2);
                 addSpawns(event, DRYAD.get(), 2, 5);
                 addSpawns(event, EMPUSA.get(), 1, 2);
+                addSpawns(event, LAMPAD.get(), 2, 5);
+                addSpawns(event, NAIAD.get(), 2, 5);
                 addSpawns(event, SATYR.get(), 2, 5);
                 addSpawns(event, SHADE.get(), 1, 1);
             }
@@ -853,6 +859,14 @@ public final class GFRegistry {
                 EntityType.Builder.of(Empusa::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.8F).fireImmune()
                         .build("empusa"));
+        public static final RegistryObject<EntityType<? extends Lampad>> LAMPAD = ENTITY_TYPES.register("lampad", () ->
+                EntityType.Builder.of(Lampad::new, MobCategory.CREATURE)
+                        .sized(0.48F, 1.8F).fireImmune()
+                        .build("lampad"));
+        public static final RegistryObject<EntityType<? extends Naiad>> NAIAD = ENTITY_TYPES.register("naiad", () ->
+                EntityType.Builder.of(Naiad::new, MobCategory.WATER_CREATURE)
+                        .sized(0.48F, 1.8F)
+                        .build("naiad"));
         public static final RegistryObject<EntityType<? extends Python>> PYTHON = ENTITY_TYPES.register("python", () ->
                 EntityType.Builder.of(Python::new, MobCategory.MONSTER)
                         .sized(1.4F, 1.9F).fireImmune()

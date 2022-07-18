@@ -16,17 +16,17 @@ __Key:__
 
 `[Model] [AI] [Sounds] [Loot table] [Spawning]`
 
-- _ _ _ _ _ Naiad
+- X X _ X X Naiad
 - X X _ X X Dryad
-- _ _ _ _ _ Lampad
-- X X X X ~ Satyr // TODO: spawn in satyr camps
+- X X _ X X Lampad
+- X X X X X Satyr
 - _ _ _ _ _ Centaur
 - _ _ _ _ _ Cyprian Centaur
 - _ _ _ _ _ Minotaur
 - _ _ _ _ _ Gorgon
 - _ _ _ _ _ Harpy
 - X X X X X Empusa
-- _ _ _ _ _ Shade
+- X X X X X Shade
 - _ _ _ _ _ Siren
 - _ _ _ _ _ Cerastes
 - X X _ X X Ara
@@ -34,7 +34,7 @@ __Key:__
 - _ _ _ _ _ Gigante
 - _ _ _ _ _ Unicorn
 - _ _ _ _ _ Orthus
-- _ _ _ _ _ Elpis
+- X X ~ X X Elpis
 - X X X X X Sparti
 - _ _ _ _ _ Mad Cow (summoned by Geryon)
 - _ _ _ _ _ Boss: Cerberus
@@ -91,12 +91,13 @@ __Key:__
 - X X X Satyr Camp
 - X X X Ara Camp
 - X X X Limestone Shrine
-- _ _ _ Marble Shrine
+- X X X Marble Shrine
+- X X X Nether Shrine
 - _ _ _ Harpy Nest
 - X X X Python Pit
 - _ _ _ Lion Den
 - _ _ _ Cyclopes Cave
-- _ _ _ Olive Trees
+- X X X Olive Trees
 - X X X Pomegranate Trees
 - _ _ _ Golden Tree
 - X X X Arachne Pit
@@ -185,7 +186,7 @@ __Key:__
 - X X _ Olive Oil
 - X _ _ Olive Salve
 - X ~ _ Olives
-- X _ _ Olive Sapling
+- X X X Olive Sapling
 - X X X Pomegranate
 - X X X Pomegranate Sapling
 
