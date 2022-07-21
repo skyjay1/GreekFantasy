@@ -3,7 +3,6 @@ package greekfantasy.enchantment;
 import greekfantasy.GreekFantasy;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraftforge.common.ToolActions;
@@ -26,17 +25,17 @@ public class MirroringEnchantment extends Enchantment {
 
     @Override
     public boolean isTreasureOnly() {
-        return GreekFantasy.CONFIG.isMirroringEnabled();
+        return GreekFantasy.CONFIG.isMirroringEnchantmentEnabled();
     }
 
     @Override
     public boolean isTradeable() {
-        return GreekFantasy.CONFIG.isMirroringEnabled();
+        return GreekFantasy.CONFIG.isMirroringEnchantmentEnabled();
     }
 
     @Override
     public boolean isDiscoverable() {
-        return GreekFantasy.CONFIG.isMirroringEnabled();
+        return GreekFantasy.CONFIG.isMirroringEnchantmentEnabled();
     }
 
     @Override
@@ -46,12 +45,12 @@ public class MirroringEnchantment extends Enchantment {
 
     @Override
     public boolean isAllowedOnBooks() {
-        return GreekFantasy.CONFIG.isMirroringEnabled();
+        return GreekFantasy.CONFIG.isMirroringEnchantmentEnabled();
     }
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack) {
-        return GreekFantasy.CONFIG.isMirroringEnabled()
+        return GreekFantasy.CONFIG.isMirroringEnchantmentEnabled()
                 && stack.canPerformAction(ToolActions.SHIELD_BLOCK)
                 && super.canApplyAtEnchantingTable(stack);
     }

@@ -16,6 +16,7 @@ import greekfantasy.client.entity.ElpisRenderer;
 import greekfantasy.client.entity.EmpusaRenderer;
 import greekfantasy.client.entity.FakePigRenderer;
 import greekfantasy.client.entity.FuryRenderer;
+import greekfantasy.client.entity.GorgonRenderer;
 import greekfantasy.client.entity.HarpyRenderer;
 import greekfantasy.client.entity.LampadRenderer;
 import greekfantasy.client.entity.NaiadRenderer;
@@ -35,6 +36,7 @@ import greekfantasy.client.entity.model.DrakainaModel;
 import greekfantasy.client.entity.model.ElpisModel;
 import greekfantasy.client.entity.model.EmpusaModel;
 import greekfantasy.client.entity.model.FuryModel;
+import greekfantasy.client.entity.model.GorgonModel;
 import greekfantasy.client.entity.model.HalfHorseModel;
 import greekfantasy.client.entity.model.HarpyModel;
 import greekfantasy.client.entity.model.NymphModel;
@@ -43,12 +45,14 @@ import greekfantasy.client.entity.model.SatyrModel;
 import greekfantasy.client.entity.model.ShadeModel;
 import greekfantasy.client.entity.model.SpearModel;
 import greekfantasy.client.entity.model.SpellModel;
+import greekfantasy.client.particle.GorgonParticle;
 import greekfantasy.entity.Lampad;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.TridentModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -65,6 +69,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -177,6 +182,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(ElpisModel.ELPIS_MODEL_RESOURCE, ElpisModel::createBodyLayer);
             event.registerLayerDefinition(EmpusaModel.EMPUSA_MODEL_RESOURCE, EmpusaModel::createBodyLayer);
             event.registerLayerDefinition(FuryModel.FURY_MODEL_RESOURCE, FuryModel::createBodyLayer);
+            event.registerLayerDefinition(GorgonModel.GORGON_MODEL_RESOURCE, GorgonModel::createBodyLayer);
             event.registerLayerDefinition(HalfHorseModel.HALF_HORSE_MODEL_RESOURCE, HalfHorseModel::createBodyLayer);
             event.registerLayerDefinition(HarpyModel.HARPY_MODEL_RESOURCE, HarpyModel::createBodyLayer);
             event.registerLayerDefinition(NymphModel.NYMPH_LAYER_LOCATION, NymphModel::createBodyLayer);
@@ -203,6 +209,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.ELPIS.get(), ElpisRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.EMPUSA.get(), EmpusaRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.FURY.get(), FuryRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.GORGON.get(), GorgonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.HARPY.get(), HarpyRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.LAMPAD.get(), LampadRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.NAIAD.get(), NaiadRenderer::new);
@@ -252,6 +259,11 @@ public final class GFClientEvents {
                     RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "olive_leaves"), ForgeRegistries.ITEMS).get());
             event.getItemColors().register((ItemStack item, int i) -> 0x80f66b,
                     RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "golden_leaves"), ForgeRegistries.ITEMS).get());
+        }
+
+        @SubscribeEvent
+        public static void registerParticleProviders(final ParticleFactoryRegisterEvent event) {
+            Minecraft.getInstance().particleEngine.register(GFRegistry.ParticleReg.GORGON.get(), new GorgonParticle.Provider());
         }
 
         private static void registerRenderLayers() {

@@ -43,6 +43,7 @@ import greekfantasy.entity.monster.Cyprian;
 import greekfantasy.entity.monster.Drakaina;
 import greekfantasy.entity.monster.Empusa;
 import greekfantasy.entity.monster.Fury;
+import greekfantasy.entity.monster.Gorgon;
 import greekfantasy.entity.monster.Harpy;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.item.BagOfWindItem;
@@ -93,6 +94,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.data.worldgen.features.TreeFeatures;
@@ -215,6 +218,7 @@ public final class GFRegistry {
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
     private static final DeferredRegister<StructureFeature<?>> STRUCTURE_FEATURES = DeferredRegister.create(Registry.STRUCTURE_FEATURE_REGISTRY, MODID);
     private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registry.PLACEMENT_MODIFIERS.key(), MODID);
+    private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
 
     public static void register() {
         BlockReg.register();
@@ -225,8 +229,9 @@ public final class GFRegistry {
         EnchantmentReg.register();
         EntityReg.register();
         BlockEntityReg.register();
-        MenuReg.register();
         RecipeReg.register();
+        MenuReg.register();
+        ParticleReg.register();
         StructureProcessorReg.register();
         FeatureReg.register();
         StructureFeatureReg.register();
@@ -820,6 +825,7 @@ public final class GFRegistry {
             register(event, ELPIS.get(), Elpis::createAttributes, null);
             register(event, EMPUSA.get(), Empusa::createAttributes, Empusa::checkEmpusaSpawnRules);
             register(event, FURY.get(), Fury::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
+            register(event, GORGON.get(), Gorgon::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, HARPY.get(), Harpy::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
             register(event, LAMPAD.get(), Lampad::createAttributes, Mob::checkMobSpawnRules);
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
@@ -873,6 +879,7 @@ public final class GFRegistry {
                 addSpawns(event, EMPUSA.get(), 1, 2);
                 addSpawns(event, FURY.get(), 3, 3);
                 addSpawns(event, HARPY.get(), 1, 3);
+                addSpawns(event, GORGON.get(), 1, 2);
                 addSpawns(event, LAMPAD.get(), 2, 5);
                 addSpawns(event, NAIAD.get(), 2, 5);
                 addSpawns(event, SATYR.get(), 2, 5);
@@ -932,6 +939,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Fury::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.4F).fireImmune()
                         .build("fury"));
+        public static final RegistryObject<EntityType<? extends Gorgon>> GORGON = ENTITY_TYPES.register("gorgon", () ->
+                EntityType.Builder.of(Gorgon::new, MobCategory.MONSTER)
+                        .sized(0.9F, 1.9F)
+                        .build("gorgon"));
         public static final RegistryObject<EntityType<? extends Harpy>> HARPY = ENTITY_TYPES.register("harpy", () ->
                 EntityType.Builder.of(Harpy::new, MobCategory.MONSTER)
                         .sized(0.7F, 1.8F)
@@ -1102,6 +1113,16 @@ public final class GFRegistry {
             MENU_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
 
+    }
+
+    public static final class ParticleReg {
+
+        public static void register() {
+            PARTICLE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
+        }
+
+        public static final RegistryObject<SimpleParticleType> GORGON = PARTICLE_TYPES.register("gorgon", () ->
+                new SimpleParticleType(true));
     }
 
     public static final class StructureFeatureReg {

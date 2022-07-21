@@ -8,14 +8,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,8 +41,8 @@ public class GFConfig {
     private final ForgeConfigSpec.BooleanValue FLYING_ENABLED;
     private boolean isFlyingEnabled;
     public final ForgeConfigSpec.BooleanValue HUNTING_ENABLED;
-    private final ForgeConfigSpec.BooleanValue MIRRORING_ENABLED;
-    private boolean isMirroringEnabled;
+    private final ForgeConfigSpec.BooleanValue MIRRORING_ENCHANTMENT_ENABLED;
+    private boolean isMirroringEnchantmentEnabled;
     public final ForgeConfigSpec.BooleanValue SMASHING_NERF;
     private final ForgeConfigSpec.BooleanValue OVERSTEP_ENABLED;
     private boolean isOverstepEnabled;
@@ -58,6 +55,8 @@ public class GFConfig {
 
     // entity
     public final ForgeConfigSpec.DoubleValue ELPIS_SPAWN_CHANCE;
+    public final ForgeConfigSpec.DoubleValue MEDUSA_LIGHTNING_CHANCE;
+    public final ForgeConfigSpec.DoubleValue MEDUSA_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue SHADE_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue SATYR_SHAMAN_CHANCE;
     public final ForgeConfigSpec.BooleanValue SHADE_IMMUNE_TO_NONOWNER;
@@ -82,6 +81,9 @@ public class GFConfig {
     public final ForgeConfigSpec.IntValue CURSE_OF_CIRCE_DURATION;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> CURSE_OF_CIRCE_WHITELIST;
     private List<? extends String> curseOfCirceWhitelist;
+    private final ForgeConfigSpec.BooleanValue MIRRORING_EFFECT_ENABLED;
+    private boolean isMirroringEffectEnabled;
+    public final ForgeConfigSpec.BooleanValue PETRIFIED_NERF;
 
     // palladium
     private final ForgeConfigSpec.BooleanValue PALLADIUM_ENABLED;
@@ -150,7 +152,7 @@ public class GFConfig {
         FIREFLASH_DESTROYS_BLOCKS = builder.define("fireflash_destroys_blocks", true);
         FLYING_ENABLED = builder.define("flying_enabled", true);
         HUNTING_ENABLED = builder.define("hunting_enabled", true);
-        MIRRORING_ENABLED = builder.define("mirroring_enabled", true);
+        MIRRORING_ENCHANTMENT_ENABLED = builder.define("mirroring_enabled", true);
         SMASHING_NERF = builder
                 .comment("When true, Smashing applies slowness instead of stunning")
                 .define("smashing_nerf", false);
@@ -165,6 +167,10 @@ public class GFConfig {
         ELPIS_SPAWN_CHANCE = builder
                 .comment("Percent chance that opening a mysterious box spawns an Elpis")
                 .defineInRange("elpis_spawn_chance", 60.0F, 0.0F, 100.0F);
+        MEDUSA_LIGHTNING_CHANCE = builder
+                .comment("Percent chance that lightning converts Gorgon to Medusa")
+                .defineInRange("medusa_lightning_chance", 95.0F, 0.0F, 100.0F);
+        MEDUSA_SPAWN_CHANCE = builder.defineInRange("medusa_spawn_chance", 0.8F, 0.0F, 100.0F);
         SHADE_SPAWN_CHANCE = builder.defineInRange("shade_spawn_chance", 100.0F, 0.0F, 100.0F);
         SATYR_SHAMAN_CHANCE = builder.defineInRange("satyr_shaman_chance", 24.0F, 0.0F, 100.0F);
         SHADE_IMMUNE_TO_NONOWNER = builder.define("shade_immune_to_nonowner", true);
@@ -184,6 +190,10 @@ public class GFConfig {
                         "Accepts entity id or mod id with wildcard.",
                         "Example: [\"minecraft:zombie\", \"othermod:" + WILDCARD + "\"]")
                 .defineList("curse_of_circe_whitelist", List.of(curseOfCirceWhitelistDefault), o -> o instanceof String);
+        MIRRORING_EFFECT_ENABLED = builder.define("mirroring_enabled", false);
+        PETRIFIED_NERF = builder
+                .comment("When true, Petrified applies slowness instead of stunning")
+                .define("petrified_nerf", false);
         builder.pop();
 
         builder.push("palladium");
@@ -221,6 +231,7 @@ public class GFConfig {
         putSpawnConfigSpec(builder, "dryad", 24, true, forest);
         putSpawnConfigSpec(builder, "empusa",30, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "fury", 9, true, Biomes.NETHER_WASTES.location().toString());
+        putSpawnConfigSpec(builder, "gorgon", 20, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "harpy", 24, true, Biomes.DESERT.location().toString(), Biomes.WOODED_BADLANDS.location().toString());
         putSpawnConfigSpec(builder, "lampad", 24, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString());
         putSpawnConfigSpec(builder, "naiad", 12, true, BiomeDictionary.Type.WATER.getName());
@@ -266,7 +277,7 @@ public class GFConfig {
         wingedSandalsDurabilityChance = WINGED_SANDALS_DURABILITY_CHANCE.get();
         // enchantments
         isFlyingEnabled = FLYING_ENABLED.get();
-        isMirroringEnabled = MIRRORING_ENABLED.get();
+        isMirroringEnchantmentEnabled = MIRRORING_ENCHANTMENT_ENABLED.get();
         isOverstepEnabled = OVERSTEP_ENABLED.get();
         isPoisoningEnabled = POISONING_ENABLED.get();
         isSilkstepEnabled = SILKSTEP_ENABLED.get();
@@ -281,6 +292,7 @@ public class GFConfig {
         // mob effects
         isCurseOfCirceEnabled = CURSE_OF_CIRCE_ENABLED.get();
         curseOfCirceWhitelist = ImmutableList.copyOf(CURSE_OF_CIRCE_WHITELIST.get());
+        isMirroringEffectEnabled = MIRRORING_EFFECT_ENABLED.get();
         // palladium
         palladiumEnabled = PALLADIUM_ENABLED.get();
         palladiumRefreshInterval = PALLADIUM_REFRESH_INTERVAL.get();
@@ -316,8 +328,8 @@ public class GFConfig {
         return isPoisoningEnabled;
     }
 
-    public boolean isMirroringEnabled() {
-        return isMirroringEnabled;
+    public boolean isMirroringEnchantmentEnabled() {
+        return isMirroringEnchantmentEnabled;
     }
 
     public boolean isOverstepEnabled() {
@@ -369,6 +381,10 @@ public class GFConfig {
         ResourceLocation type = ForgeRegistries.ENTITIES.getKey(entity.getType());
         return curseOfCirceWhitelist.contains(type.toString())
                 || curseOfCirceWhitelist.contains(type.getNamespace() + ":" + WILDCARD);
+    }
+
+    public boolean isMirroringEffectEnabled() {
+        return isMirroringEffectEnabled;
     }
 
     // palladium

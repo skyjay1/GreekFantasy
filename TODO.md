@@ -23,7 +23,7 @@ __Key:__
 - X X X X X Centaur
 - X X X X X Cyprian Centaur
 - _ _ _ _ _ Minotaur
-- _ _ _ _ _ Gorgon
+- ~ X X X X Gorgon
 - X X X X X Harpy
 - X X X X X Empusa
 - X X X X X Shade
@@ -45,7 +45,7 @@ __Key:__
 - _ _ _ _ _ Boss: Bronze Bull
 - X X X X X Miniboss: Python
 - _ _ _ _ _ Miniboss: Giant Boar
-- _ _ _ _ _ Miniboss: Medusa
+- ~ X X X X Miniboss: Medusa
 - _ _ _ _ _ Miniboss: Cretan Minotaur
 - _ _ _ _ _ Miniboss: Circe
 - _ _ _ _ _ Miniboss: Hydra
