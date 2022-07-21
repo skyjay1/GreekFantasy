@@ -84,8 +84,7 @@ public class HarpyModel<T extends Harpy> extends HumanoidModel<T> {
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-
-        final float flyingTime = entity.flyingTime;
+        final float flyingTime = entity.getFlyingTime(ageInTicks - entity.tickCount);
         final float flyingTimeLeft = 1.0F - flyingTime;
         // animate legs (only while flying)
         this.leftLeg.xRot *= (flyingTimeLeft * 0.6F);
@@ -98,7 +97,7 @@ public class HarpyModel<T extends Harpy> extends HumanoidModel<T> {
     public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
         super.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTick);
         float ticks = entity.getId() * 2 + entity.tickCount + partialTick;
-        final float flyingTime = entity.flyingTime;
+        final float flyingTime = entity.getFlyingTime(partialTick);
         final float flyingTimeLeft = 1.0F - flyingTime;
         final float downSwing = 0.5F;
         final float wingAngle = 0.5F;

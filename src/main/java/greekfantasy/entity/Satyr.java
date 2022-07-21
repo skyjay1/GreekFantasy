@@ -2,6 +2,7 @@ package greekfantasy.entity;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.SummonMobGoal;
+import greekfantasy.entity.util.HasHorseVariant;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -59,7 +60,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.BiPredicate;
 
-public class Satyr extends PathfinderMob implements NeutralMob {
+public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant {
 
     private static final EntityDataAccessor<Byte> DATA_STATE = SynchedEntityData.defineId(Satyr.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Boolean> DATA_SHAMAN = SynchedEntityData.defineId(Satyr.class, EntityDataSerializers.BOOLEAN);
@@ -503,7 +504,7 @@ public class Satyr extends PathfinderMob implements NeutralMob {
 
         @Override
         public boolean canUse() {
-            return Satyr.this.getTarget() == null && super.canUse();
+            return null == Satyr.this.getLastHurtByMob() && super.canUse();
         }
 
         @Override

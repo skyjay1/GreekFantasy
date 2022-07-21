@@ -44,7 +44,8 @@ public class Harpy extends Monster implements FlyingAnimal {
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_NEST = SynchedEntityData.defineId(Harpy.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     private static final String KEY_NEST = "Nest";
 
-    public float flyingTime;
+    private float flyingTime0;
+    private float flyingTime;
     public float flap;
     public float flapSpeed;
     public float oFlapSpeed;
@@ -92,7 +93,7 @@ public class Harpy extends Monster implements FlyingAnimal {
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Dryad.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Dryad.class, 10, true, false, e -> e instanceof Dryad dryad && !dryad.isHiding()));
     }
 
     @Override
@@ -114,6 +115,7 @@ public class Harpy extends Monster implements FlyingAnimal {
             setDeltaMovement(m.multiply(1.0D, multY, 1.0D));
         }
         // update flying counter
+        this.flyingTime0 = flyingTime;
         if (this.isFlying()) {
             flyingTime = Math.min(1.0F, flyingTime + 0.09F);
         } else {
@@ -204,6 +206,10 @@ public class Harpy extends Monster implements FlyingAnimal {
     @Override
     public boolean isFlying() {
         return !this.onGround || this.getDeltaMovement().lengthSqr() > 0.06D;
+    }
+
+    public float getFlyingTime(final float partialTick) {
+        return Mth.lerp(partialTick, flyingTime0, flyingTime);
     }
 
     private void calculateFlapping() {

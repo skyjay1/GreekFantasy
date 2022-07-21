@@ -1,0 +1,13 @@
+{
+  "group": "greekfantasy:bronze",
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "greekfantasy:bronze_cuirass"
+  },
+  "result": {
+    "item": "greekfantasy:bronze_nugget",
+    "count": 27
+  },
+  "experience": 0.2,
+  "cookingtime": 100
+}

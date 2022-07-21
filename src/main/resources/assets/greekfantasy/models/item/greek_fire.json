@@ -13,6 +13,12 @@
 	  "textures": {
 		"layer0": "greekfantasy:item/greek_fire"
 	  }
+    },
+    "ground": {
+      "parent": "greekfantasy:block/vase",
+      "textures": {
+        "texture": "greekfantasy:item/greek_fire_3d"
+      }
     }
   }
 }

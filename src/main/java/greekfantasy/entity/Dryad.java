@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.FindBlockGoal;
+import greekfantasy.entity.util.NymphVariant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;

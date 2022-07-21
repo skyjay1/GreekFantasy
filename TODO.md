@@ -20,8 +20,8 @@ __Key:__
 - X X _ X X Dryad
 - X X _ X X Lampad
 - X X X X X Satyr
-- _ _ _ _ _ Centaur
-- _ _ _ _ _ Cyprian Centaur
+- X X X X X Centaur
+- X X X X X Cyprian Centaur
 - _ _ _ _ _ Minotaur
 - _ _ _ _ _ Gorgon
 - X X X X X Harpy
@@ -36,9 +36,9 @@ __Key:__
 - _ _ _ _ _ Orthus
 - X X ~ X X Elpis
 - X X X X X Sparti
-- _ _ _ _ _ Mad Cow (summoned by Geryon)
+- _ _ _ _ _ Mad Cow
 - _ _ _ _ _ Boss: Cerberus
-- _ _ _ _ _ Boss: Geryon (3-headed Gigante)
+- _ _ _ _ _ Boss: Geryon
 - _ _ _ _ _ Boss: Charybdis
 - _ _ _ _ _ Boss: Talos
 - _ _ _ _ _ Boss: Nemean Lion
@@ -50,7 +50,7 @@ __Key:__
 - _ _ _ _ _ Miniboss: Circe
 - _ _ _ _ _ Miniboss: Hydra
 - X X X X X Miniboss: Arachne
-- _ _ _ _ _ Fury
+- ~ X X X X Fury // TO DO: improve hair in model
 - X X X X X Drakaina
 - _ _ _ _ _ Arion
 - _ _ _ _ _ Whirl
@@ -58,7 +58,6 @@ __Key:__
 - _ _ _ _ _ Golden Ram
 - _ _ _ _ _ Makhai
 - X X X X X Baby Spider
-- _ _ _ _ _ Sphinx (when answered correct, places treasure chest and despawns)
 
 
 ### Other
@@ -71,7 +70,7 @@ __Key:__
 - X X Curse
 - X X Curse of Circe
 - X X Poison Spit
-- _ _ Greek Fire
+- X X Greek Fire
 - X X Discus
 - X X Web Ball
 - X X Spear (and Bident)
@@ -114,15 +113,14 @@ __Key:__
 - X X _ Olive Log, leaves, planks, and variants
 - X X _ Pomegranate Log, leaves, planks, and variants
 - X X _ Mysterious Box
-- X _ _ Ichor-Infused Block
-- ~ _ _ Block of Bronze
+- X X X Block of Bronze
 - X X _ Terracotta Vase and variants
 - ~ _ _ Mob Heads (Orthus, Gigante, Cerberus)
 - X X _ Oil Lamp
 - X X _ Olive Oil
-- X _ _ Olive Sapling
+- X X _ Olive Sapling
 - X X X Pomegranate Sapling
-- X _ _ Golden Sapling
+- X X _ Golden Sapling
 - X X _ Nest
 - X ~ _ Wild Rose
 - _ _ _ Cretan Stone and variants
@@ -137,9 +135,9 @@ __Key:__
 `[In-game] [Use] [Obtainable]`
 
 - _ _ _ Spawn Eggs
-- ~ _ _ Bronze Ingot
-- ~ _ _ Bronze Nugget
-- X _ _ Bronze artifacts (goblet, bowl, pile of coins, vase, ruined helmet, ruined cuirass, broken shield, figurine) // TODO worldgen loot, villager trade?
+- X X X Bronze Ingot
+- X X X Bronze Nugget
+- X X X Bronze artifacts (goblet, bowl, pile of coins, vase, ruined helmet, ruined cuirass, broken shield, figurine)
 - X _ _ Ichor
 - X _ _ Horn
 - X _ X Snakeskin
@@ -161,9 +159,9 @@ __Key:__
 - X X _ Horn of Plenty
 - X X X Dragon Tooth (also: use to make golden sapling)
 - X X _ Staff of Healing
-- X _ _ Conch
+- X X _ Conch
 - X X _ Bag of Wind
-- X _ _ Golden Tree Sapling
+- X X _ Golden Tree Sapling
 - X X _ Thunderbolt
 - X X _ Wand of Circe
 - X _ _ Avernal Bow
@@ -174,9 +172,9 @@ __Key:__
 - X X _ Bident
 - X X _ Flint Knife
 - X X _ Ivory Sword
-- X _ _ Greek Fire
+- X X _ Greek Fire
 - X X _ Gorgon Blood
-- X X _ Discus
+- X X X Discus
 - X _ _ Mirror
 - X _ _ Golden Bridle
 - X X _ Unicorn Horn
@@ -239,6 +237,7 @@ __Key:__
 
 - X Dragon Tooth from Bone blocks
 - X Web Ball from Cobweb
+- X Bronze Scrap in chests
 
 ### Uses for bronze
 
@@ -254,7 +253,7 @@ __Key:__
 
 Can I do something with these?
 
-- Sphinx
+- Sphinx (when answered correct, places treasure chest and despawns)
 - Muses: Calliope, Clio, Erato, Euterpe, Melpomene, Polyhymnia, Terpsichore, Thalia, Urania
 - Amazons (fight like players w/ sword and shield, can be hired) (queen is Hippolyta)
 - Amazonian Girdle (Hippolyta)

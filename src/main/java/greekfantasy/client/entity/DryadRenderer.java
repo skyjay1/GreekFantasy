@@ -3,7 +3,7 @@ package greekfantasy.client.entity;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.entity.model.NymphModel;
 import greekfantasy.entity.Dryad;
-import greekfantasy.entity.NymphVariant;
+import greekfantasy.entity.util.NymphVariant;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;

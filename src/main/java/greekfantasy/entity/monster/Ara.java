@@ -1,18 +1,15 @@
 package greekfantasy.entity.monster;
 
 import greekfantasy.GFRegistry;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -26,15 +23,12 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 import java.util.UUID;
 
 public class Ara extends PathfinderMob implements NeutralMob {
@@ -65,12 +59,6 @@ public class Ara extends PathfinderMob implements NeutralMob {
                 .add(Attributes.MAX_HEALTH, 24.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ATTACK_DAMAGE, 2.5D);
-    }
-
-    public static boolean checkAraSpawnRules(final EntityType<? extends PathfinderMob> entity, final ServerLevelAccessor world, final MobSpawnType reason,
-                                             final BlockPos pos, final Random rand) {
-        return reason == MobSpawnType.SPAWNER || (world.getDifficulty() != Difficulty.PEACEFUL &&
-                Monster.isDarkEnoughToSpawn(world, pos, rand) && checkMobSpawnRules(entity, world, reason, pos, rand));
     }
 
     @Override

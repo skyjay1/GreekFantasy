@@ -6,6 +6,7 @@ import greekfantasy.item.HellenicArmorItem;
 import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.mob_effect.CurseOfCirceEffect;
 import greekfantasy.network.SCurseOfCircePacket;
+import greekfantasy.util.SummonBossUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
@@ -36,6 +37,7 @@ import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
@@ -307,6 +309,19 @@ public final class GFEvents {
                 // send packet
                 GreekFantasy.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> event.getEntityLiving()),
                         SCurseOfCircePacket.removeEffect(event.getEntityLiving().getId()));
+            }
+        }
+
+        /**
+         * Checks if a Bronze block was placed and notifies SpawnBossUtil
+         **/
+        @SubscribeEvent
+        public static void onPlacePumpkin(final BlockEvent.EntityPlaceEvent event) {
+            // ensure the block matches
+            if (!event.isCanceled() && event.getPlacedBlock().is(SummonBossUtil.BRONZE_BLOCK)
+                    && event.getWorld() instanceof Level level) {
+                // delegate to SummonBossUtil
+                SummonBossUtil.onPlaceBlock(level, event.getPos(), event.getPlacedBlock(), event.getEntity());
             }
         }
 

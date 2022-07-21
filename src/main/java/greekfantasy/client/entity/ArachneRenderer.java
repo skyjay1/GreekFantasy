@@ -14,7 +14,7 @@ public class ArachneRenderer<T extends Arachne> extends HumanoidMobRenderer<T, A
 
     public ArachneRenderer(final EntityRendererProvider.Context context) {
         super(context, new ArachneModel<T>(context.bakeLayer(ArachneModel.ARACHNE_MODEL_RESOURCE)), 0.8F);
-        this.addLayer(new ArachneEyesLayer<>(this, context.getModelSet()));
+        this.addLayer(new ArachneEyesLayer<>(this));
     }
 
     @Override

@@ -11,7 +11,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
@@ -55,7 +54,6 @@ import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
@@ -103,15 +101,6 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
                 .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 0.6D);
     }
 
-    public static boolean checkNaiadSpawnRules(EntityType<? extends PathfinderMob> entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random rand) {
-        if (!level.getFluidState(pos.below()).is(FluidTags.WATER)) {
-            return false;
-        } else {
-            boolean flag = (mobSpawnType == MobSpawnType.SPAWNER || level.getFluidState(pos).is(FluidTags.WATER));
-            return rand.nextInt(30) == 0 && isDeepEnoughToSpawn(level, pos) && flag;
-        }
-    }
-
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
@@ -143,9 +132,9 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
     @Override
     public void tick() {
         super.tick();
-        if(this.isInWater() && this.getDeltaMovement().horizontalDistanceSqr() > 0.0012D) {
+        if (this.isInWater() && this.getDeltaMovement().horizontalDistanceSqr() > 0.0012D) {
             this.setPose(Pose.SWIMMING);
-        } else if(this.getPose() == Pose.SWIMMING) {
+        } else if (this.getPose() == Pose.SWIMMING) {
             this.setPose(Pose.STANDING);
         }
     }
@@ -262,9 +251,6 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         return airSupply;
     }
 
-    private static boolean isDeepEnoughToSpawn(LevelAccessor level, BlockPos pos) {
-        return pos.getY() < level.getSeaLevel() - 5;
-    }
 
     /*protected SoundEvent getAmbientSound() {
         return this.isInWater() ? SoundEvents.DROWNED_AMBIENT_WATER : SoundEvents.DROWNED_AMBIENT;
@@ -361,7 +347,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         double d1 = target.getY(0.33D) - throwntrident.getY();
         double d2 = target.getZ() - this.getZ();
         double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-        throwntrident.shoot(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.level.getDifficulty().getId() * 4));
+        throwntrident.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
         this.playSound(SoundEvents.TRIDENT_THROW, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
         this.level.addFreshEntity(throwntrident);
     }
@@ -396,13 +382,13 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
                 double d2 = this.wantedZ - this.naiad.getZ();
                 double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
                 d1 /= d3;
-                float f = (float)(Mth.atan2(d2, d0) * (double)(180F / (float)Math.PI)) - 90.0F;
+                float f = (float) (Mth.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
                 this.naiad.setYRot(this.rotlerp(this.naiad.getYRot(), f, 90.0F));
                 this.naiad.yBodyRot = this.naiad.getYRot();
-                float f1 = (float)(this.speedModifier * this.naiad.getAttributeValue(Attributes.MOVEMENT_SPEED));
+                float f1 = (float) (this.speedModifier * this.naiad.getAttributeValue(Attributes.MOVEMENT_SPEED));
                 float f2 = Mth.lerp(0.125F, this.naiad.getSpeed(), f1);
                 this.naiad.setSpeed(f2);
-                this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().add((double)f2 * d0 * 0.005D, (double)f2 * d1 * 0.1D, (double)f2 * d2 * 0.005D));
+                this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().add((double) f2 * d0 * 0.005D, (double) f2 * d1 * 0.1D, (double) f2 * d2 * 0.005D));
             } else {
                 if (!this.naiad.onGround) {
                     this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().add(0.0D, -0.008D, 0.0D));
@@ -428,7 +414,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
 
         @Override
         public boolean canUse() {
-            return this.naiad.isInWater() && this.naiad.getY() < (double)(this.seaLevel - 1);
+            return this.naiad.isInWater() && this.naiad.getY() < (double) (this.seaLevel - 1);
         }
 
         @Override
@@ -438,8 +424,8 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
 
         @Override
         public void tick() {
-            if (this.naiad.getY() < (double)(this.seaLevel - 1) && (this.naiad.getNavigation().isDone() || this.naiad.closeToNextPos())) {
-                Vec3 vec3 = DefaultRandomPos.getPosTowards(this.naiad, 4, 8, new Vec3(this.naiad.getX(), (double)(this.seaLevel - 1), this.naiad.getZ()), (double)((float)Math.PI / 2F));
+            if (this.naiad.getY() < (double) (this.seaLevel - 1) && (this.naiad.getNavigation().isDone() || this.naiad.closeToNextPos())) {
+                Vec3 vec3 = DefaultRandomPos.getPosTowards(this.naiad, 4, 8, new Vec3(this.naiad.getX(), (double) (this.seaLevel - 1), this.naiad.getZ()), (double) ((float) Math.PI / 2F));
                 if (vec3 == null) {
                     this.stuck = true;
                     return;

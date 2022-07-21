@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "greekfantasy:block/ichor_infused_block"
-  }
-}

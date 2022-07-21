@@ -18,6 +18,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -42,7 +43,7 @@ public class ThunderboltItem extends Item {
 
         if (!level.isClientSide()) {
             // raytrace
-            final HitResult raytrace = raytraceFromEntity(player, 64.0F);
+            final BlockHitResult raytrace = raytraceFromEntity(player, 64.0F);
             if (raytrace.getType() != HitResult.Type.MISS) {
                 // add a lightning bolt at the resulting position
                 LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level);
@@ -79,11 +80,11 @@ public class ThunderboltItem extends Item {
         return repair.getItem() == GFRegistry.ItemReg.ICHOR.get();
     }
 
-    public static HitResult raytraceFromEntity(final LivingEntity player, final float range) {
+    public static BlockHitResult raytraceFromEntity(final LivingEntity player, final float range) {
         return raytraceFromEntity(player, range, ClipContext.Fluid.SOURCE_ONLY);
     }
 
-    public static HitResult raytraceFromEntity(final LivingEntity player, final float range, final ClipContext.Fluid fluidMode) {
+    public static BlockHitResult raytraceFromEntity(final LivingEntity player, final float range, final ClipContext.Fluid fluidMode) {
         // raytrace to determine which block the player is looking at within the given range
         final Vec3 startVec = player.getEyePosition(1.0F);
         final float pitch = (float) Math.toRadians(-player.getXRot());

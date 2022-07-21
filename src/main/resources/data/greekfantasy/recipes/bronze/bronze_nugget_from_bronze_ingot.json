@@ -1,0 +1,10 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+    { "tag": "forge:ingots/bronze" }
+  ],
+  "result": {
+    "item": "greekfantasy:bronze_nugget",
+    "count": 9
+  }
+}

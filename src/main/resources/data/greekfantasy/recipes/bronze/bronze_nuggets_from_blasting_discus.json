@@ -1,0 +1,13 @@
+{
+  "group": "greekfantasy:bronze",
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "greekfantasy:discus"
+  },
+  "result": {
+    "item": "greekfantasy:bronze_nugget",
+    "count": 6
+  },
+  "experience": 0.2,
+  "cookingtime": 100
+}

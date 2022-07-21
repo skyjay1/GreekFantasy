@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "IOI",
+    "III"
+  ],
+  "key": {
+    "I": { "tag": "forge:nuggets/bronze" },
+    "O": { "tag": "minecraft:music_discs" }
+  },
+  "result": {
+    "item": "greekfantasy:discus",
+    "count": 2
+  }
+}

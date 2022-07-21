@@ -3,6 +3,7 @@ package greekfantasy.entity;
 import com.google.common.collect.ImmutableMap;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.util.NymphVariant;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;

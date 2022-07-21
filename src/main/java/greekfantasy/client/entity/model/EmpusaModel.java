@@ -29,11 +29,11 @@ public class EmpusaModel<T extends Empusa> extends HumanoidModel<T> {
     public EmpusaModel(final ModelPart root) {
         super(root);
         this.leftWingArm = root.getChild("left_wing_arm");
-        this.leftWingInner = leftWingArm.getChild("left_wing_inner");
-        this.leftWingOuter = leftWingInner.getChild("left_wing_outer");
+        this.leftWingInner = leftWingArm.getChild("left_inner_wing");
+        this.leftWingOuter = leftWingInner.getChild("left_outer_wing");
         this.rightWingArm = root.getChild("right_wing_arm");
-        this.rightWingInner = rightWingArm.getChild("right_wing_inner");
-        this.rightWingOuter = rightWingInner.getChild("right_wing_outer");
+        this.rightWingInner = rightWingArm.getChild("right_inner_wing");
+        this.rightWingOuter = rightWingInner.getChild("right_outer_wing");
         
     }
 
@@ -51,12 +51,12 @@ public class EmpusaModel<T extends Empusa> extends HumanoidModel<T> {
         partdefinition.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(16, 48).mirror().addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, CubeDeformation.NONE), PartPose.offset(1.9F, 12.0F, 0.0F));
 
         PartDefinition left_wing_arm = partdefinition.addOrReplaceChild("left_wing_arm", CubeListBuilder.create().texOffs(47, 33).addBox(0.0F, -2.0F, -0.1F, 2.0F, 2.0F, 4.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(1.0F, 4.0F, 2.0F, 0.0873F, 0.3927F, 0.0F));
-        PartDefinition left_wing_inner = left_wing_arm.addOrReplaceChild("left_wing_inner", CubeListBuilder.create().texOffs(31, 33).addBox(-4.0F, -7.0F, 0.0F, 6.0F, 14.0F, 1.0F, CubeDeformation.NONE), PartPose.offset(3.0F, 0.0F, 4.0F));
-        left_wing_inner.addOrReplaceChild("left_wing_outer", CubeListBuilder.create().texOffs(46, 43).addBox(0.0F, -8.0F, 0.0F, 8.0F, 20.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(2.0F, -2.0F, 0.0F, 0.0F, 0.3491F, 0.0F));
+        PartDefinition left_wing_inner = left_wing_arm.addOrReplaceChild("left_inner_wing", CubeListBuilder.create().texOffs(31, 33).addBox(-4.0F, -7.0F, 0.0F, 6.0F, 14.0F, 1.0F, CubeDeformation.NONE), PartPose.offset(3.0F, 0.0F, 4.0F));
+        left_wing_inner.addOrReplaceChild("left_outer_wing", CubeListBuilder.create().texOffs(46, 43).addBox(0.0F, -8.0F, 0.0F, 8.0F, 20.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(2.0F, -2.0F, 0.0F, 0.0F, 0.3491F, 0.0F));
 
         PartDefinition right_wing_arm = partdefinition.addOrReplaceChild("right_wing_arm", CubeListBuilder.create().texOffs(47, 33).addBox(-2.0F, -2.0F, -0.1F, 2.0F, 2.0F, 4.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(-1.0F, 4.0F, 2.0F, 0.0873F, -0.3927F, 0.0F));
-        PartDefinition right_wing_inner = right_wing_arm.addOrReplaceChild("right_wing_inner", CubeListBuilder.create().texOffs(31, 33).mirror().addBox(-3.0F, -7.0F, 0.0F, 6.0F, 14.0F, 1.0F, CubeDeformation.NONE).mirror(false), PartPose.offset(-2.0F, 0.0F, 4.0F));
-        right_wing_inner.addOrReplaceChild("right_wing_outer", CubeListBuilder.create().texOffs(46, 43).mirror().addBox(-8.0F, -8.0F, 0.0F, 8.0F, 20.0F, 1.0F, CubeDeformation.NONE).mirror(false), PartPose.offsetAndRotation(-3.0F, -2.0F, 0.0F, 0.0F, -0.3491F, 0.0F));
+        PartDefinition right_wing_inner = right_wing_arm.addOrReplaceChild("right_inner_wing", CubeListBuilder.create().texOffs(31, 33).mirror().addBox(-3.0F, -7.0F, 0.0F, 6.0F, 14.0F, 1.0F, CubeDeformation.NONE).mirror(false), PartPose.offset(-2.0F, 0.0F, 4.0F));
+        right_wing_inner.addOrReplaceChild("right_outer_wing", CubeListBuilder.create().texOffs(46, 43).mirror().addBox(-8.0F, -8.0F, 0.0F, 8.0F, 20.0F, 1.0F, CubeDeformation.NONE).mirror(false), PartPose.offsetAndRotation(-3.0F, -2.0F, 0.0F, 0.0F, -0.3491F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 64, 64);
     }

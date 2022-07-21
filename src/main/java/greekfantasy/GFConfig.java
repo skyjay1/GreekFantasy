@@ -213,9 +213,14 @@ public class GFConfig {
         IS_SPAWN_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
                 .define("is_whitelist", true);
         putSpawnConfigSpec(builder, "ara", 10, false, nonNetherHostileBlacklist);
+        putSpawnConfigSpec(builder, "centaur", 15, true, BiomeDictionary.Type.PLAINS.toString(), BiomeDictionary.Type.CONIFEROUS.toString());
+        putSpawnConfigSpec(builder, "cerastes", 30, true, Biomes.DESERT.location().toString());
+        putSpawnConfigSpec(builder, "cyclopes", 20, true, BiomeDictionary.Type.MOUNTAIN.toString(), BiomeDictionary.Type.PLATEAU.toString());
+        putSpawnConfigSpec(builder, "cyprian", 15, true, BiomeDictionary.Type.PLAINS.toString(), BiomeDictionary.Type.CONIFEROUS.toString());
         putSpawnConfigSpec(builder, "drakaina",40, false, hostileBlacklist);
         putSpawnConfigSpec(builder, "dryad", 24, true, forest);
         putSpawnConfigSpec(builder, "empusa",30, false, nonNetherHostileBlacklist);
+        putSpawnConfigSpec(builder, "fury", 9, true, Biomes.NETHER_WASTES.location().toString());
         putSpawnConfigSpec(builder, "harpy", 24, true, Biomes.DESERT.location().toString(), Biomes.WOODED_BADLANDS.location().toString());
         putSpawnConfigSpec(builder, "lampad", 24, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString());
         putSpawnConfigSpec(builder, "naiad", 12, true, BiomeDictionary.Type.WATER.getName());

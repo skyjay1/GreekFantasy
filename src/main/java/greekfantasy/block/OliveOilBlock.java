@@ -189,7 +189,9 @@ public class OliveOilBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return level.getBlockState(pos).getFluidState().getType() == Fluids.WATER || level.getBlockState(pos.below()).isSolidRender(level, pos.below());
+        return (level.getFluidState(pos).getType() == Fluids.WATER
+                || level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP))
+                && level.getFluidState(pos.above()).isEmpty();
     }
 
     @Override
@@ -265,7 +267,7 @@ public class OliveOilBlock extends Block implements SimpleWaterloggedBlock {
     private static boolean nextToFire(LevelReader world, BlockPos pos) {
         BlockPos p;
         BlockState s;
-        for (final Direction d : Direction.values()) {
+        for (final Direction d : Direction.Plane.HORIZONTAL) {
             p = pos.relative(d);
             s = world.getBlockState(p);
             if (isFire(world, s, p)) {
@@ -279,13 +281,27 @@ public class OliveOilBlock extends Block implements SimpleWaterloggedBlock {
         return state.is(BlockTags.FIRE) || (state.is(GFRegistry.BlockReg.OLIVE_OIL.get()) && state.getValue(LIT));
     }
 
-    public static void setFire(LevelAccessor level, BlockState state, BlockPos pos) {
+    public static void setFire(Level level, BlockState state, BlockPos pos) {
         level.setBlock(pos, state.setValue(LIT, true), 3);
         if (state.getValue(WATERLOGGED)) {
             // when waterlogged, place soul fire
             if (level.isEmptyBlock(pos.above())) {
                 level.setBlock(pos.above(), Blocks.SOUL_FIRE.defaultBlockState(), 3);
             }
+        } else if(inPortalDimension(level)) {
+            // attempt to light portal (when not waterlogged)
+            Optional<PortalShape> optional = PortalShape.findEmptyPortalShape(level, pos, Direction.Axis.X);
+            optional = net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(level, pos, optional);
+            if (optional.isPresent()) {
+                optional.get().createPortalBlocks();
+                return;
+            }
+
+            if (!state.canSurvive(level, pos)) {
+                level.removeBlock(pos, false);
+            }
         }
+
+
     }
 }

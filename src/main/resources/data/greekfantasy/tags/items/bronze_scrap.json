@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+  	"greekfantasy:bronze_bowl",
+    "greekfantasy:bronze_coins",
+    "greekfantasy:bronze_cuirass",
+    "greekfantasy:bronze_figurine",
+    "greekfantasy:bronze_goblet",
+    "greekfantasy:bronze_helmet",
+    "greekfantasy:bronze_shield",
+    "greekfantasy:bronze_vase"
+  ]
+}

@@ -1,4 +1,4 @@
-package greekfantasy.entity;
+package greekfantasy.entity.util;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
