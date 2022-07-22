@@ -84,6 +84,7 @@ public class GFConfig {
     private final ForgeConfigSpec.BooleanValue MIRRORING_EFFECT_ENABLED;
     private boolean isMirroringEffectEnabled;
     public final ForgeConfigSpec.BooleanValue PETRIFIED_NERF;
+    public final ForgeConfigSpec.BooleanValue STUNNED_NERF;
 
     // palladium
     private final ForgeConfigSpec.BooleanValue PALLADIUM_ENABLED;
@@ -125,6 +126,7 @@ public class GFConfig {
             ForgeRegistries.ENTITIES.getKey(EntityType.WITCH).toString(),
             new ResourceLocation(GreekFantasy.MODID, "ara").toString(),
             new ResourceLocation(GreekFantasy.MODID, "dryad").toString(),
+            new ResourceLocation(GreekFantasy.MODID, "lampad").toString(),
             new ResourceLocation(GreekFantasy.MODID, "naiad").toString(),
             new ResourceLocation(GreekFantasy.MODID, "satyr").toString()
     };
@@ -194,6 +196,9 @@ public class GFConfig {
         PETRIFIED_NERF = builder
                 .comment("When true, Petrified applies slowness instead of stunning")
                 .define("petrified_nerf", false);
+        STUNNED_NERF = builder
+                .comment("When true, Stunned applies slowness instead of stunning")
+                .define("stunned_nerf", false);
         builder.pop();
 
         builder.push("palladium");
@@ -214,7 +219,6 @@ public class GFConfig {
         final String[] nonNetherHostileBlacklist = {BiomeDictionary.Type.NETHER.toString(), BiomeDictionary.Type.END.toString(), BiomeDictionary.Type.WATER.toString(),
                 BiomeDictionary.Type.COLD.toString(), BiomeDictionary.Type.SNOWY.toString(), BiomeDictionary.Type.MUSHROOM.toString()};
 
-
         builder.comment("Mob spawn weights (higher number = more spawns)").push("mob_spawns");
         SPAWN_DIMENSION_WHITELIST = builder.comment("Dimensions in which mobs can spawn.",
                         "Accepts dimension id or mod id with wildcard.",
@@ -223,17 +227,20 @@ public class GFConfig {
         IS_SPAWN_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
                 .define("is_whitelist", true);
         putSpawnConfigSpec(builder, "ara", 10, false, nonNetherHostileBlacklist);
-        putSpawnConfigSpec(builder, "centaur", 15, true, BiomeDictionary.Type.PLAINS.toString(), BiomeDictionary.Type.CONIFEROUS.toString());
+        putSpawnConfigSpec(builder, "centaur", 15, true, BiomeDictionary.Type.PLAINS.getName(), BiomeDictionary.Type.CONIFEROUS.getName());
         putSpawnConfigSpec(builder, "cerastes", 30, true, Biomes.DESERT.location().toString());
-        putSpawnConfigSpec(builder, "cyclopes", 20, true, BiomeDictionary.Type.MOUNTAIN.toString(), BiomeDictionary.Type.PLATEAU.toString());
-        putSpawnConfigSpec(builder, "cyprian", 15, true, BiomeDictionary.Type.PLAINS.toString(), BiomeDictionary.Type.CONIFEROUS.toString());
+        putSpawnConfigSpec(builder, "cyclops", 24, true, BiomeDictionary.Type.MOUNTAIN.getName(), BiomeDictionary.Type.PLATEAU.getName(), BiomeDictionary.Type.HILLS.getName());
+        putSpawnConfigSpec(builder, "cyprian", 15, true, BiomeDictionary.Type.PLAINS.getName(), BiomeDictionary.Type.CONIFEROUS.getName());
         putSpawnConfigSpec(builder, "drakaina",40, false, hostileBlacklist);
         putSpawnConfigSpec(builder, "dryad", 24, true, forest);
         putSpawnConfigSpec(builder, "empusa",30, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "fury", 9, true, Biomes.NETHER_WASTES.location().toString());
+        putSpawnConfigSpec(builder, "gigante", 20, true, BiomeDictionary.Type.MOUNTAIN.getName(), BiomeDictionary.Type.PLATEAU.getName(),
+                BiomeDictionary.Type.HILLS.getName(), Biomes.SNOWY_PLAINS.location().toString(), Biomes.SNOWY_SLOPES.location().toString());
         putSpawnConfigSpec(builder, "gorgon", 20, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "harpy", 24, true, Biomes.DESERT.location().toString(), Biomes.WOODED_BADLANDS.location().toString());
         putSpawnConfigSpec(builder, "lampad", 24, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString());
+        putSpawnConfigSpec(builder, "minotaur", 50, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "naiad", 12, true, BiomeDictionary.Type.WATER.getName());
         putSpawnConfigSpec(builder, "shade", 10, false);
         putSpawnConfigSpec(builder, "satyr", 22, true, forest);

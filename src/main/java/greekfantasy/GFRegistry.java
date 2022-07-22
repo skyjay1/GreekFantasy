@@ -22,6 +22,7 @@ import greekfantasy.enchantment.SmashingEnchantment;
 import greekfantasy.entity.Centaur;
 import greekfantasy.entity.Dryad;
 import greekfantasy.entity.Elpis;
+import greekfantasy.entity.Gigante;
 import greekfantasy.entity.Lampad;
 import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Satyr;
@@ -39,12 +40,14 @@ import greekfantasy.entity.misc.Spear;
 import greekfantasy.entity.misc.WebBall;
 import greekfantasy.entity.monster.Ara;
 import greekfantasy.entity.monster.BabySpider;
+import greekfantasy.entity.monster.Cyclops;
 import greekfantasy.entity.monster.Cyprian;
 import greekfantasy.entity.monster.Drakaina;
 import greekfantasy.entity.monster.Empusa;
 import greekfantasy.entity.monster.Fury;
 import greekfantasy.entity.monster.Gorgon;
 import greekfantasy.entity.monster.Harpy;
+import greekfantasy.entity.monster.Minotaur;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.item.BagOfWindItem;
 import greekfantasy.item.BidentItem;
@@ -819,15 +822,18 @@ public final class GFRegistry {
             register(event, ARACHNE.get(), Arachne::createAttributes, null);
             register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
             register(event, CENTAUR.get(), Centaur::createAttributes, Mob::checkMobSpawnRules);
+            register(event, CYCLOPS.get(), Cyclops::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, CYPRIAN.get(), Cyprian::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, DRAKAINA.get(), Drakaina::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, DRYAD.get(), Dryad::createAttributes, Mob::checkMobSpawnRules);
             register(event, ELPIS.get(), Elpis::createAttributes, null);
             register(event, EMPUSA.get(), Empusa::createAttributes, Empusa::checkEmpusaSpawnRules);
             register(event, FURY.get(), Fury::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
+            register(event, GIGANTE.get(), Gigante::createAttributes, Mob::checkMobSpawnRules);
             register(event, GORGON.get(), Gorgon::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, HARPY.get(), Harpy::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
             register(event, LAMPAD.get(), Lampad::createAttributes, Mob::checkMobSpawnRules);
+            register(event, MINOTAUR.get(), Minotaur::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
             register(event, PYTHON.get(), Python::createAttributes, null);
             register(event, SATYR.get(), Satyr::createAttributes, Mob::checkMobSpawnRules);
@@ -873,14 +879,17 @@ public final class GFRegistry {
             if (event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
                 addSpawns(event, ARA.get(), 2, 5);
                 addSpawns(event, CENTAUR.get(), 2, 4);
+                addSpawns(event, CYCLOPS.get(), 2, 5);
                 addSpawns(event, CYPRIAN.get(), 1, 3);
                 addSpawns(event, DRAKAINA.get(), 1, 2);
                 addSpawns(event, DRYAD.get(), 2, 5);
                 addSpawns(event, EMPUSA.get(), 1, 2);
                 addSpawns(event, FURY.get(), 3, 3);
-                addSpawns(event, HARPY.get(), 1, 3);
+                addSpawns(event, GIGANTE.get(), 2, 4);
                 addSpawns(event, GORGON.get(), 1, 2);
+                addSpawns(event, HARPY.get(), 1, 3);
                 addSpawns(event, LAMPAD.get(), 2, 5);
+                addSpawns(event, MINOTAUR.get(), 2, 5);
                 addSpawns(event, NAIAD.get(), 2, 5);
                 addSpawns(event, SATYR.get(), 2, 5);
                 addSpawns(event, SHADE.get(), 1, 1);
@@ -915,6 +924,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Centaur::new, MobCategory.CREATURE)
                         .sized(1.39F, 2.49F)
                         .build("centaur"));
+        public static final RegistryObject<EntityType<? extends Cyclops>> CYCLOPS = ENTITY_TYPES.register("cyclops", () ->
+                EntityType.Builder.of(Cyclops::new, MobCategory.MONSTER)
+                        .sized(0.99F, 2.92F)
+                        .build("cyclops"));
         public static final RegistryObject<EntityType<? extends Cyprian>> CYPRIAN = ENTITY_TYPES.register("cyprian", () ->
                 EntityType.Builder.of(Cyprian::new, MobCategory.MONSTER)
                         .sized(1.39F, 2.49F)
@@ -939,6 +952,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Fury::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.4F).fireImmune()
                         .build("fury"));
+        public static final RegistryObject<EntityType<? extends Gigante>> GIGANTE = ENTITY_TYPES.register("gigante", () ->
+                EntityType.Builder.of(Gigante::new, MobCategory.CREATURE)
+                        .sized(1.98F, 4.79F)
+                        .build("gigante"));
         public static final RegistryObject<EntityType<? extends Gorgon>> GORGON = ENTITY_TYPES.register("gorgon", () ->
                 EntityType.Builder.of(Gorgon::new, MobCategory.MONSTER)
                         .sized(0.9F, 1.9F)
@@ -951,6 +968,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Lampad::new, MobCategory.CREATURE)
                         .sized(0.48F, 1.8F).fireImmune()
                         .build("lampad"));
+        public static final RegistryObject<EntityType<? extends Minotaur>> MINOTAUR = ENTITY_TYPES.register("minotaur", () ->
+                EntityType.Builder.of(Minotaur::new, MobCategory.MONSTER)
+                        .sized(0.7F, 1.94F)
+                        .build("minotaur"));
         public static final RegistryObject<EntityType<? extends Naiad>> NAIAD = ENTITY_TYPES.register("naiad", () ->
                 EntityType.Builder.of(Naiad::new, MobCategory.WATER_CREATURE)
                         .sized(0.48F, 1.8F)

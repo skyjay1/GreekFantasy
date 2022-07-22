@@ -48,17 +48,17 @@ public class NymphModel<T extends LivingEntity> extends HumanoidModel<T> {
 	}
 
 	@Override
-	public void setupAnim(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 						  float headPitch) {
-		super.setupAnim(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 		// fix rotation points
 		leftArm.setPos(3.0F, 2.0F, 0.0F);
 		rightArm.setPos(-3.0F, 2.0F, 0.0F);
 		leftLeg.setPos(1.5F, 12.0F, 0.0F);
 		rightLeg.setPos(-1.5F, 12.0F, 0.0F);
 		// held item
-		if (!entityIn.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
-			this.getArm(entityIn.getMainArm()).xRot += -0.42F;
+		if (!entity.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
+			this.getArm(entity.getMainArm()).xRot += -0.42F;
 		}
 	}
 	@Override

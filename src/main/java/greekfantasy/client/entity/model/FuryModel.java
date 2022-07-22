@@ -2,7 +2,6 @@ package greekfantasy.client.entity.model;
 
 import com.google.common.collect.ImmutableList;
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.monster.Empusa;
 import greekfantasy.entity.monster.Fury;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -16,7 +15,6 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FuryModel<T extends Fury> extends HumanoidModel<T> {
@@ -52,22 +50,11 @@ public class FuryModel<T extends Fury> extends HumanoidModel<T> {
         this.middleHair = hair.getChild("middle_hair");
         this.upperHair = hair.getChild("upper_hair");
 
-        // locate children for lower hair
-        this.lowerSnakes = new ArrayList<>();
-        for(int i = 1; i <= GorgonModel.LOWER_HAIR_COUNT; i++) {
-            this.lowerSnakes.add(lowerHair.getChild(GorgonModel.HOLDER + i).getChild("lower_snake"));
-        }
-        // locate children for middle hair
-        this.middleSnakes = new ArrayList<>();
-        for(int i = 1; i <= GorgonModel.MIDDLE_HAIR_COUNT; i++) {
-            this.middleSnakes.add(middleHair.getChild(GorgonModel.HOLDER + i).getChild("lower_snake"));
-        }
-        // locate children for upper hair
-        this.upperSnakes = new ArrayList<>();
-        for(int i = 1; i <= GorgonModel.UPPER_HAIR_COUNT; i++) {
-            upperSnakes.add(upperHair.getChild(GorgonModel.HOLDER + i).getChild("lower_snake"));
-        }
-        
+        // locate snake model parts
+        this.lowerSnakes = GFModelUtil.getSnakeModelParts(lowerHair, GorgonModel.LOWER_HAIR_COUNT);
+        this.middleSnakes = GFModelUtil.getSnakeModelParts(middleHair, GorgonModel.MIDDLE_HAIR_COUNT);
+        this.upperSnakes = GFModelUtil.getSnakeModelParts(upperHair, GorgonModel.UPPER_HAIR_COUNT);
+
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -82,9 +69,9 @@ public class FuryModel<T extends Fury> extends HumanoidModel<T> {
         PartDefinition middleHair = hair.addOrReplaceChild("middle_hair", CubeListBuilder.create(), PartPose.offset(0.0F, -8.5F, 0.0F));
         PartDefinition upperHair = hair.addOrReplaceChild("upper_hair", CubeListBuilder.create(), PartPose.offset(0.0F, -8.5F, 0.0F));
 
-        GorgonModel.createSnakeLayers(lowerHair, 3.8F, (float) Math.PI / (GorgonModel.LOWER_HAIR_COUNT * 0.5F), CubeDeformation.NONE, 0, 52);
-        GorgonModel.createSnakeLayers(middleHair, 2.25F, (float) Math.PI / (GorgonModel.MIDDLE_HAIR_COUNT * 0.5F), CubeDeformation.NONE, 0, 52);
-        GorgonModel.createSnakeLayers(upperHair, 1.25F, (float) Math.PI / (GorgonModel.UPPER_HAIR_COUNT * 0.5F), CubeDeformation.NONE, 0, 52);
+        GFModelUtil.createSnakeLayers(lowerHair, 3.8F, (float) Math.PI / (GorgonModel.LOWER_HAIR_COUNT * 0.5F), CubeDeformation.NONE, 0, 52);
+        GFModelUtil.createSnakeLayers(middleHair, 2.25F, (float) Math.PI / (GorgonModel.MIDDLE_HAIR_COUNT * 0.5F), CubeDeformation.NONE, 0, 52);
+        GFModelUtil.createSnakeLayers(upperHair, 1.25F, (float) Math.PI / (GorgonModel.UPPER_HAIR_COUNT * 0.5F), CubeDeformation.NONE, 0, 52);
 
         PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(16, 16).addBox(-4.0F, 4.0F, -2.0F, 8.0F, 12.0F, 4.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 0.0F, 0.0F));
         body.addOrReplaceChild("chest", CubeListBuilder.create().texOffs(0, 32).addBox(-3.99F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 5.0F, -2.0F, -0.2182F, 0.0F, 0.0F));
@@ -126,7 +113,7 @@ public class FuryModel<T extends Fury> extends HumanoidModel<T> {
         final boolean flying = flyingTime > 0.08F;
         float wingSpeed = 0.35F;
         float wingSpan = 0.11F;
-        if(flying) {
+        if (flying) {
             wingSpeed += 0.225F;
             wingSpan += 0.06F;
         }
@@ -138,7 +125,7 @@ public class FuryModel<T extends Fury> extends HumanoidModel<T> {
         this.rightWingInner.yRot = -this.leftWingInner.yRot;
         this.rightWingOuter.yRot = -this.leftWingOuter.yRot;
         // adjust angles when flying
-        if(flying) {
+        if (flying) {
             // reduce leg motion
             this.leftLeg.xRot *= 0.25F;
             this.rightLeg.xRot *= 0.25F;
@@ -151,9 +138,9 @@ public class FuryModel<T extends Fury> extends HumanoidModel<T> {
     public void setupSnakeAnim(final float ageInTicks) {
         // set up animations for each hair part
         hair.copyFrom(head);
-        GorgonModel.setupSnakeAnim(lowerSnakes, ageInTicks, 1.7F);
-        GorgonModel.setupSnakeAnim(middleSnakes, ageInTicks, 1.03F);
-        GorgonModel.setupSnakeAnim(upperSnakes, ageInTicks, 0.82F);
+        GFModelUtil.setupSnakeAnim(lowerSnakes, ageInTicks, 1.7F);
+        GFModelUtil.setupSnakeAnim(middleSnakes, ageInTicks, 1.03F);
+        GFModelUtil.setupSnakeAnim(upperSnakes, ageInTicks, 0.82F);
     }
 
     @Override

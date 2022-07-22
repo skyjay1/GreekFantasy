@@ -22,7 +22,7 @@ __Key:__
 - X X X X X Satyr
 - X X X X X Centaur
 - X X X X X Cyprian Centaur
-- _ _ _ _ _ Minotaur
+- _ X X X X Minotaur
 - X X X X X Gorgon
 - X X X X X Harpy
 - X X X X X Empusa
@@ -30,8 +30,8 @@ __Key:__
 - _ _ _ _ _ Siren
 - _ _ _ _ _ Cerastes
 - X X _ X X Ara
-- _ _ _ _ _ Cyclopes
-- _ _ _ _ _ Gigante
+- X X _ _ X Cyclops // TO DO: make a different monster drop avernal shards?
+- X X X X X Gigante
 - _ _ _ _ _ Unicorn
 - _ _ _ _ _ Orthus
 - X X ~ X X Elpis

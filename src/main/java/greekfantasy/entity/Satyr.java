@@ -37,6 +37,7 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
@@ -145,7 +146,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
         });
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new Satyr.HurtByTargetGoal());
+        this.targetSelector.addGoal(1, new SatyrHurtByTargetGoal());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(3, new ResetUniversalAngerTargetGoal<>(this, true));
     }
@@ -432,9 +433,9 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
     /**
      * Used to alert shaman satyrs when the entity is hurt
      */
-    class HurtByTargetGoal extends net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal {
+    class SatyrHurtByTargetGoal extends HurtByTargetGoal {
 
-        public HurtByTargetGoal() {
+        public SatyrHurtByTargetGoal() {
             super(Satyr.this);
         }
 

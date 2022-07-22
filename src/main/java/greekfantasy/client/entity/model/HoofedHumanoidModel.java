@@ -13,14 +13,14 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class HoofedHumanoidModel<T extends LivingEntity> extends HumanoidModel<T> {
 
-	private final ModelPart leftLegUpper;
-	private final ModelPart leftLegLower;
-	private final ModelPart leftHoof;
-	private final ModelPart rightLegUpper;
-	private final ModelPart rightLegLower;
-	private final ModelPart rightHoof;
-	private final ModelPart tailUpper;
-	private final ModelPart tailLower;
+	protected final ModelPart leftLegUpper;
+	protected final ModelPart leftLegLower;
+	protected final ModelPart leftHoof;
+	protected final ModelPart rightLegUpper;
+	protected final ModelPart rightLegLower;
+	protected final ModelPart rightHoof;
+	protected final ModelPart tailUpper;
+	protected final ModelPart tailLower;
 
 	public HoofedHumanoidModel(ModelPart root, final boolean showTail, final boolean showHat) {
 		super(root);
@@ -63,9 +63,8 @@ public class HoofedHumanoidModel<T extends LivingEntity> extends HumanoidModel<T
 	}
 
 	@Override
-	public void prepareMobModel(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-		super.prepareMobModel(entityIn, limbSwing, limbSwingAmount, partialTick);
-		final float ticks = entityIn.tickCount + partialTick;
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 		float limbSwingSin = Mth.cos(limbSwing + (float) Math.PI) * limbSwingAmount;
 		float limbSwingCos = Mth.cos(limbSwing) * limbSwingAmount;
 		float rightLegSwing = 0.38F * limbSwingSin;
@@ -78,7 +77,7 @@ public class HoofedHumanoidModel<T extends LivingEntity> extends HumanoidModel<T
 
 		// tail
 		if (tailUpper.visible) {
-			float idleSwing = 0.1F * Mth.cos(ticks * 0.08F);
+			float idleSwing = 0.1F * Mth.cos(ageInTicks * 0.08F);
 			float tailSwing = 0.42F * limbSwingCos;
 			tailUpper.xRot = 0.6854F + tailSwing;
 			tailLower.xRot = 0.3491F + tailSwing * 0.6F;
