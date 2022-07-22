@@ -30,7 +30,7 @@ __Key:__
 - _ _ _ _ _ Siren
 - _ _ _ _ _ Cerastes
 - X X _ X X Ara
-- X X _ _ X Cyclops // TO DO: make a different monster drop avernal shards?
+- X X X _ X Cyclops // TO DO: drops bronze nuggets and a different monster drops avernal shards?
 - X X X X X Gigante
 - _ _ _ _ _ Unicorn
 - _ _ _ _ _ Orthus
@@ -115,7 +115,9 @@ __Key:__
 - X X _ Mysterious Box
 - X X X Block of Bronze
 - X X _ Terracotta Vase and variants
-- ~ _ _ Mob Heads (Orthus, Gigante, Cerberus)
+- X _ X Gigante Head
+- ~ _ _ Orthus Head
+- ~ _ _ Cerberus Head
 - X X _ Oil Lamp
 - X X _ Olive Oil
 - X X _ Olive Sapling
@@ -141,7 +143,7 @@ __Key:__
 - X _ _ Ichor
 - X _ _ Horn
 - X _ X Snakeskin
-- X _ _ Tough Snakeskin
+- X _ X Tough Snakeskin
 - X _ X Deadly Fang
 - X _ _ Heart of Talos
 - X _ _ Ichor-Infused Gear
@@ -175,7 +177,7 @@ __Key:__
 - X X _ Greek Fire
 - X X _ Gorgon Blood
 - X X X Discus
-- X _ _ Mirror
+- X X _ Mirror
 - X _ _ Golden Bridle
 - X X _ Unicorn Horn
 - X _ _ Panflute
@@ -196,8 +198,8 @@ __Key:__
 
 - X X X _ Helm of Darkness
 - X X X _ Winged Sandals
-- X X X _ Achilles Armor (Hellenic armor? Bronze armor?)
-- X X X _ Snakeskin Armor
+- X X X _ Hellenic Armor
+- X X X X Snakeskin Armor
 - X X X _ Nemean Lion Hide
 
 ## Advancements
@@ -207,7 +209,7 @@ __Key:__
 ## Potions
 
 - X Curse of Circe
-- ~ Mirroring
+- X Mirroring
 - X Stunned
 - X Petrified
 - X Prisoner of Hades
@@ -224,7 +226,7 @@ __Key:__
 - X X _ Fireflash
 - X X _ Hunting
 - X _ _ Lord of the Sea
-- X _ _ Mirroring
+- X X _ Mirroring
 - X _ _ Overstep
 - X X _ Poisoning
 - X X _ Raising

@@ -4,7 +4,9 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.armor.HellenicArmorModel;
 import greekfantasy.client.armor.WingedSandalsModel;
+import greekfantasy.client.blockentity.GiganteHeadBlockEntityRenderer;
 import greekfantasy.client.blockentity.VaseBlockEntityRenderer;
+import greekfantasy.client.blockentity.model.GiganteHeadModel;
 import greekfantasy.client.entity.AraRenderer;
 import greekfantasy.client.entity.ArachneRenderer;
 import greekfantasy.client.entity.BabySpiderRenderer;
@@ -202,6 +204,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(SatyrModel.SATYR_INNER_ARMOR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(new CubeDeformation(0.25F)));
             event.registerLayerDefinition(ShadeModel.SHADE_MODEL_RESOURCE, ShadeModel::createBodyLayer);
             // other
+            event.registerLayerDefinition(GiganteHeadModel.GIGANTE_HEAD_MODEL_RESOURCE, GiganteHeadModel::createLayer);
             event.registerLayerDefinition(SpearModel.SPEAR_MODEL_RESOURCE, TridentModel::createLayer);
             event.registerLayerDefinition(SpellModel.SPELL_MODEL_RESOURCE, SpellModel::createLayer);
         }
@@ -242,6 +245,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.SPEAR.get(), SpearRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.WEB_BALL.get(), ThrownItemRenderer::new);
             // register block entities
+            event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.GIGANTE_HEAD.get(), GiganteHeadBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.VASE.get(), VaseBlockEntityRenderer::new);
         }
 

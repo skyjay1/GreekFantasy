@@ -3,7 +3,6 @@ package greekfantasy.item;
 import com.google.common.collect.ImmutableMultimap;
 import greekfantasy.entity.misc.Spear;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -35,7 +34,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.IItemRenderProperties;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -190,9 +188,9 @@ public class SpearItem extends TieredItem implements Vanishable {
 
     @Override
     public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer) {
-        consumer.accept(new IItemRenderProperties() {
+        consumer.accept(new net.minecraftforge.client.IItemRenderProperties() {
             @Override
-            public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getItemStackRenderer() {
                 final ResourceLocation id = ForgeRegistries.ITEMS.getKey(SpearItem.this);
                 return greekfantasy.client.blockentity.BlockEntityRendererProvider.getSpear(id);
             }

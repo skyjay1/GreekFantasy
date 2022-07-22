@@ -2,6 +2,7 @@ package greekfantasy;
 
 import com.google.common.collect.ImmutableList;
 import greekfantasy.block.GoldenStringBlock;
+import greekfantasy.block.MobHeadBlock;
 import greekfantasy.block.MysteriousBoxBlock;
 import greekfantasy.block.NestBlock;
 import greekfantasy.block.OilLampBlock;
@@ -11,6 +12,7 @@ import greekfantasy.block.PomegranateSaplingBlock;
 import greekfantasy.block.ReedsBlock;
 import greekfantasy.block.VaseBlock;
 import greekfantasy.block.WildRoseBlock;
+import greekfantasy.blockentity.MobHeadBlockEntity;
 import greekfantasy.blockentity.VaseBlockEntity;
 import greekfantasy.enchantment.DeityEnchantment;
 import greekfantasy.enchantment.HuntingEnchantment;
@@ -54,6 +56,7 @@ import greekfantasy.item.BidentItem;
 import greekfantasy.item.BronzeScrapItem;
 import greekfantasy.item.ClubItem;
 import greekfantasy.item.ConchItem;
+import greekfantasy.item.GiganteHeadItem;
 import greekfantasy.item.GreekFireItem;
 import greekfantasy.item.HasCraftRemainderItem;
 import greekfantasy.item.DiscusItem;
@@ -284,11 +287,11 @@ public final class GFRegistry {
                 new MysteriousBoxBlock(BlockBehaviour.Properties.of(Material.WOOD)
                         .strength(0.8F, 3.0F).sound(SoundType.WOOD).noOcclusion()));
         public static final RegistryObject<Block> GIGANTE_HEAD = BLOCKS.register("gigante_head", () ->
-                new Block(BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
+                new MobHeadBlock.GiganteHeadBlock(BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
         public static final RegistryObject<Block> ORTHUS_HEAD = BLOCKS.register("orthus_head", () ->
-                new Block(BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
+                new MobHeadBlock.OrthusHeadBlock(BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
         public static final RegistryObject<Block> CERBERUS_HEAD = BLOCKS.register("cerberus_head", () ->
-                new Block(BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
+                new MobHeadBlock.CerberusHeadBlock(BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
         public static final RegistryObject<Block> OIL_LAMP = BLOCKS.register("oil_lamp", () ->
                 new OilLampBlock(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_BROWN)
                         .noOcclusion().lightLevel(b -> b.getValue(OilLampBlock.LIT) ? 11 : 0).strength(0.2F, 0.1F)));
@@ -771,7 +774,7 @@ public final class GFRegistry {
         //// ITEM BLOCKS ////
         public static final RegistryObject<BlockItem> BRONZE_BLOCK = registerItemBlock(BlockReg.BRONZE_BLOCK);
         public static final RegistryObject<BlockItem> MYSTERIOUS_BOX = registerItemBlock(BlockReg.MYSTERIOUS_BOX);
-        public static final RegistryObject<BlockItem> GIGANTE_HEAD = registerItemBlock(BlockReg.GIGANTE_HEAD);
+        public static final RegistryObject<BlockItem> GIGANTE_HEAD = ITEMS.register("gigante_head", () -> new GiganteHeadItem(BlockReg.GIGANTE_HEAD.get(), new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<BlockItem> ORTHUS_HEAD = registerItemBlock(BlockReg.ORTHUS_HEAD);
         public static final RegistryObject<BlockItem> CERBERUS_HEAD = registerItemBlock(BlockReg.CERBERUS_HEAD);
         public static final RegistryObject<BlockItem> OIL_LAMP = registerItemBlock(BlockReg.OIL_LAMP);
@@ -1036,6 +1039,21 @@ public final class GFRegistry {
         public static void register() {
             BLOCK_ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
+
+        public static final RegistryObject<BlockEntityType<MobHeadBlockEntity.CerberusBlockEntity>> CERBERUS_HEAD = BLOCK_ENTITY_TYPES.register("cerberus_head", () ->
+                BlockEntityType.Builder.of(MobHeadBlockEntity.CerberusBlockEntity::new, BlockReg.CERBERUS_HEAD.get())
+                .build(null)
+        );
+
+        public static final RegistryObject<BlockEntityType<MobHeadBlockEntity.GiganteBlockEntity>> GIGANTE_HEAD = BLOCK_ENTITY_TYPES.register("gigante_head", () ->
+                BlockEntityType.Builder.of(MobHeadBlockEntity.GiganteBlockEntity::new, BlockReg.GIGANTE_HEAD.get())
+                        .build(null)
+        );
+
+        public static final RegistryObject<BlockEntityType<MobHeadBlockEntity.OrthusBlockEntity>> ORTHUS_HEAD = BLOCK_ENTITY_TYPES.register("orthus_head", () ->
+                BlockEntityType.Builder.of(MobHeadBlockEntity.OrthusBlockEntity::new, BlockReg.ORTHUS_HEAD.get())
+                        .build(null)
+        );
 
         public static final RegistryObject<BlockEntityType<VaseBlockEntity>> VASE = BLOCK_ENTITY_TYPES.register("vase", () -> {
             // create set of vase blocks using registry objects

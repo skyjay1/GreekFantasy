@@ -10,8 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class GiganteRenderer<T extends Gigante> extends HumanoidMobRenderer<T, GiganteModel<T>> {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/gigante.png");
-    private static final float SCALE = 1.9F;
+    public static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/gigante.png");
+    public static final float SCALE = 1.9F;
 
     public GiganteRenderer(EntityRendererProvider.Context context) {
         super(context, new GiganteModel<>(context.bakeLayer(GiganteModel.GIGANTE_MODEL_RESOURCE)), 0.75F);

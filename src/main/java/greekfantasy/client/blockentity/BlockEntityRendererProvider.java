@@ -22,15 +22,17 @@ public class BlockEntityRendererProvider {
             orthusHead = new MobHeadTileEntityRenderer.OrthusItemStackRenderer();
         }
         return orthusHead;
-    }
+    }*/
 
-    public static BlockEntityWithoutLevelRenderer bakeGiganteHeadISTER() {
+    public static BlockEntityWithoutLevelRenderer getGiganteHead() {
         if (giganteHead == null) {
-            giganteHead = new MobHeadTileEntityRenderer.GiganteItemStackRenderer();
+            final BlockEntityRenderDispatcher dispatcher = Minecraft.getInstance().getBlockEntityRenderDispatcher();
+            final EntityModelSet entityModelSet = Minecraft.getInstance().getEntityModels();
+            giganteHead = new GiganteHeadBlockEntityRenderer.GiganteHeadItemStackRenderer(dispatcher, entityModelSet);
         }
         return giganteHead;
     }
-
+/*
     public static BlockEntityWithoutLevelRenderer bakeCerberusHeadISTER() {
         if (cerberusHead == null) {
             cerberusHead = new MobHeadTileEntityRenderer.CerberusItemStackRenderer();
