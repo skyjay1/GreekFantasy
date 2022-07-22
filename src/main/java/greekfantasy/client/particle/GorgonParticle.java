@@ -21,12 +21,13 @@ import net.minecraft.util.Mth;
 
 public class GorgonParticle extends Particle {
     private final GorgonModel<Gorgon> model;
-    private final RenderType renderType;
+    private static final RenderType renderType = RenderType.entityTranslucent(GorgonRenderer.GORGON_TEXTURE);
+    // this is used in a sinusoid function to determine distance from the camera
+    private static final float distanceCoefficient = (float) Math.PI * 1.35F;
 
     public GorgonParticle(ClientLevel level, double posX, double posY, double posZ, double motX, double motY, double motZ) {
         super(level, posX, posY, posZ, motX, motY, motZ);
         this.model = new GorgonModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(GorgonModel.GORGON_MODEL_RESOURCE));
-        this.renderType = RenderType.entityTranslucent(GorgonRenderer.GORGON_TEXTURE);
         this.gravity = 0.0F;
         this.age = 0;
         this.lifetime = 78;
@@ -39,10 +40,10 @@ public class GorgonParticle extends Particle {
 
     @Override
     public void render(VertexConsumer buffer, Camera renderInfo, float partialTick) {
-        float agePercent = (this.age + partialTick) / this.lifetime;
-        float cosAge = Mth.sin(agePercent * (float) Math.PI);
-        float disZ = 0.65F * (cosAge - 0.5F);
-        this.alpha = 0.05F + 0.75F * (agePercent);
+        final float ageInTicks = this.age + partialTick;
+        final float agePercent = ageInTicks / (float) this.lifetime;
+        final float zOffset = Mth.sin(agePercent * distanceCoefficient) - 0.5F;
+        this.alpha = 0.15F + 0.65F * (agePercent);
 
         PoseStack poseStack = new PoseStack();
 
@@ -50,11 +51,12 @@ public class GorgonParticle extends Particle {
         poseStack.mulPose(Vector3f.XP.rotationDegrees(180.0F));
 
         poseStack.scale(-1.0F, 1.0F, -1.0F);
-        poseStack.translate(0.0D, 0.309999D, 1.15D + disZ);
+        poseStack.translate(0.0D, 0.31D, 2.15D + 0.75F * zOffset);
 
         MultiBufferSource.BufferSource multibuffersource$buffersource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer vertexconsumer = multibuffersource$buffersource.getBuffer(this.renderType);
-        this.model.renderToBuffer(poseStack, vertexconsumer, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, this.alpha);
+        this.model.setupSnakeAnim(ageInTicks);
+        this.model.getHead().render(poseStack, vertexconsumer, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, this.alpha);
         multibuffersource$buffersource.endBatch();
     }
 

@@ -45,6 +45,11 @@
         },
         {
           "type": "minecraft:item",
+          "weight": 7,
+          "name": "greekfantasy:bronze_nugget"
+        },
+        {
+          "type": "minecraft:item",
           "weight": 8,
           "name": "minecraft:gold_nugget"
         },

@@ -13,7 +13,7 @@ public class GorgonRenderer<T extends Gorgon> extends MobRenderer<T, GorgonModel
 
     public static final ResourceLocation GORGON_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/gorgon/gorgon.png");
     public static final ResourceLocation MEDUSA_TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/gorgon/medusa.png");
-    protected static final float MEDUSA_SCALE = 1.18F;
+    protected static final float MEDUSA_SCALE = 1.12F;
 
     public GorgonRenderer(EntityRendererProvider.Context context) {
         super(context, new GorgonModel<>(context.bakeLayer(GorgonModel.GORGON_MODEL_RESOURCE)), 0.5F);

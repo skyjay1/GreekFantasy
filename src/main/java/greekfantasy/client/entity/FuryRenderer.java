@@ -2,6 +2,7 @@ package greekfantasy.client.entity;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.entity.layer.FuryEyesLayer;
+import greekfantasy.client.entity.layer.FuryHairLayer;
 import greekfantasy.client.entity.model.FuryModel;
 import greekfantasy.client.entity.model.HarpyModel;
 import greekfantasy.entity.monster.Fury;
@@ -16,6 +17,7 @@ public class FuryRenderer<T extends Fury> extends HumanoidMobRenderer<T, FuryMod
     public FuryRenderer(EntityRendererProvider.Context context) {
         super(context, new FuryModel<>(context.bakeLayer(FuryModel.FURY_MODEL_RESOURCE)), 0.5F);
         this.addLayer(new FuryEyesLayer<>(this));
+        this.addLayer(new FuryHairLayer<>(this));
     }
 
     @Override

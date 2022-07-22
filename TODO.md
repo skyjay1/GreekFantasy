@@ -23,7 +23,7 @@ __Key:__
 - X X X X X Centaur
 - X X X X X Cyprian Centaur
 - _ _ _ _ _ Minotaur
-- ~ X X X X Gorgon
+- X X X X X Gorgon
 - X X X X X Harpy
 - X X X X X Empusa
 - X X X X X Shade
@@ -50,7 +50,7 @@ __Key:__
 - _ _ _ _ _ Miniboss: Circe
 - _ _ _ _ _ Miniboss: Hydra
 - X X X X X Miniboss: Arachne
-- ~ X X X X Fury // TO DO: improve hair in model
+- X X X X X Fury
 - X X X X X Drakaina
 - _ _ _ _ _ Arion
 - _ _ _ _ _ Whirl

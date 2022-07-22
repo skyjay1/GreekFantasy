@@ -37,6 +37,7 @@ public class Fury extends Monster implements FlyingAnimal, RangedAttackMob {
     public static final int MAX_AGGRO_TIME = 45;
     private float flyingTime0;
     private float flyingTime;
+    private int aggroTime0;
     private int aggroTime;
 
     public Fury(final EntityType<? extends Fury> type, final Level level) {
@@ -115,6 +116,7 @@ public class Fury extends Monster implements FlyingAnimal, RangedAttackMob {
                 flyingTime = Math.max(0.0F, flyingTime - 0.05F);
             }
             // update aggro counter
+            aggroTime0 = aggroTime;
             if (this.isAggressive()) {
                 aggroTime = Math.min(aggroTime + 1, MAX_AGGRO_TIME);
             } else {
@@ -175,12 +177,7 @@ public class Fury extends Monster implements FlyingAnimal, RangedAttackMob {
     // Aggro
 
     public float getAggroPercent(final float partialTick) {
-        if (aggroTime <= 0) {
-            return 0.0F;
-        }
-        final float prevAggroPercent = Math.max((float) aggroTime - partialTick, 0.0F) / (float) MAX_AGGRO_TIME;
-        final float aggroPercent = (float) aggroTime / (float) MAX_AGGRO_TIME;
-        return Mth.lerp(partialTick / 8, prevAggroPercent, aggroPercent);
+        return Mth.lerp(partialTick, aggroTime0, aggroTime) / (float) MAX_AGGRO_TIME;
     }
 
     //Ranged Attack //

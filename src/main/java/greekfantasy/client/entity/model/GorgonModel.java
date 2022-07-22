@@ -42,17 +42,17 @@ public class GorgonModel<T extends Gorgon> extends DrakainaModel<T> {
         // locate children for lower hair
         this.lowerSnakes = new ArrayList<>();
         for(int i = 1; i <= LOWER_HAIR_COUNT; i++) {
-            this.lowerSnakes.add(lowerHair.getChild(HOLDER + i));
+            this.lowerSnakes.add(lowerHair.getChild(HOLDER + i).getChild("lower_snake"));
         }
         // locate children for middle hair
         this.middleSnakes = new ArrayList<>();
         for(int i = 1; i <= MIDDLE_HAIR_COUNT; i++) {
-            this.middleSnakes.add(middleHair.getChild(HOLDER + i));
+            this.middleSnakes.add(middleHair.getChild(HOLDER + i).getChild("lower_snake"));
         }
         // locate children for upper hair
         this.upperSnakes = new ArrayList<>();
         for(int i = 1; i <= UPPER_HAIR_COUNT; i++) {
-            upperSnakes.add(upperHair.getChild(HOLDER + i));
+            upperSnakes.add(upperHair.getChild(HOLDER + i).getChild("lower_snake"));
         }
         // hide hat
         this.hat.visible = false;
@@ -62,6 +62,8 @@ public class GorgonModel<T extends Gorgon> extends DrakainaModel<T> {
         MeshDefinition meshdefinition = DrakainaModel.createMesh(CubeDeformation.NONE, 0.0F);
         PartDefinition partdefinition = meshdefinition.getRoot();
 
+        PartDefinition chest = partdefinition.getChild("body").addOrReplaceChild("chest", CubeListBuilder.create().texOffs(0, 17).addBox(-4.0F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 1.0F, -4.0F, -0.2182F, 0.0F, 0.0F));
+
         PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 0.0F, -2.0F));
 
         PartDefinition hair = head.addOrReplaceChild("hair", CubeListBuilder.create(), PartPose.offset(0.0F, -8.0F, 0.0F));
@@ -69,9 +71,9 @@ public class GorgonModel<T extends Gorgon> extends DrakainaModel<T> {
         PartDefinition middleHair = hair.addOrReplaceChild("middle_hair", CubeListBuilder.create(), PartPose.ZERO);
         PartDefinition upperHair = hair.addOrReplaceChild("upper_hair", CubeListBuilder.create(), PartPose.ZERO);
 
-        createSnakeLayers(lowerHair, 3.8F, (float) Math.PI / (LOWER_HAIR_COUNT * 0.5F), CubeDeformation.NONE);
-        createSnakeLayers(middleHair, 2.25F, (float) Math.PI / (MIDDLE_HAIR_COUNT * 0.5F), CubeDeformation.NONE);
-        createSnakeLayers(upperHair, 1.25F, (float) Math.PI / (UPPER_HAIR_COUNT * 0.5F), CubeDeformation.NONE);
+        createSnakeLayers(lowerHair, 3.8F, (float) Math.PI / (LOWER_HAIR_COUNT * 0.5F), CubeDeformation.NONE, 46, 52);
+        createSnakeLayers(middleHair, 2.25F, (float) Math.PI / (MIDDLE_HAIR_COUNT * 0.5F), CubeDeformation.NONE, 46, 52);
+        createSnakeLayers(upperHair, 1.25F, (float) Math.PI / (UPPER_HAIR_COUNT * 0.5F), CubeDeformation.NONE, 46, 52);
 
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
@@ -83,22 +85,40 @@ public class GorgonModel<T extends Gorgon> extends DrakainaModel<T> {
      * @param radius          the radius of the circle
      * @param deltaAngle      the angle separation between child models
      * @param cubeDeformation the cube deformation
+     * @param textureX the texture x offset
+     * @param textureY the texture y offset
      * @return the root part with its new children
      */
-    private static PartDefinition createSnakeLayers(final PartDefinition root, final float radius,
-                                                    final float deltaAngle, final CubeDeformation cubeDeformation) {
-        for (double angle = 0.0D, count = 1.0D; angle < Math.PI * 2; angle += deltaAngle) {
+    public static PartDefinition createSnakeLayers(final PartDefinition root, final float radius,
+                                                   final float deltaAngle, final CubeDeformation cubeDeformation,
+                                                   final int textureX, final int textureY) {
+        for (double angle = 0.0D, count = 1.0D, tau = Math.PI * 2.0D; angle < tau; angle += deltaAngle) {
             final float ptX = (float) (Math.cos(angle) * radius);
             final float ptZ = (float) (Math.sin(angle) * radius);
             final float angY = (float) (angle - (deltaAngle * 2 * count));
-            final PartDefinition holder = root.addOrReplaceChild(HOLDER + String.valueOf((int)count), CubeListBuilder.create(), PartPose.ZERO);
-            final PartDefinition snake = createSnakeLayer(holder, cubeDeformation, ptX, -0.5F, ptZ, 0, angY, 0, 46, 52);
+            final PartDefinition holder = root.addOrReplaceChild(HOLDER + String.valueOf((int)count), CubeListBuilder.create(),
+                    PartPose.offset(ptX, -0.5F, ptZ));
+            final PartDefinition snake = createSnakeLayer(holder, cubeDeformation, 0.0F, 0.0F, 0.0F, 0.0F, angY, 0.0F, textureX, textureY);
             count++;
         }
         return root;
     }
 
-    private static PartDefinition createSnakeLayer(final PartDefinition root, final CubeDeformation cubeDeformation,
+    /**
+     *
+     * @param root the root part
+     * @param cubeDeformation the cube deformation
+     * @param offsetX the part pose x offset
+     * @param offsetY the part pose y offset
+     * @param offsetZ the part pose z offset
+     * @param angleX the initial x rotation
+     * @param angleY the initial y rotation
+     * @param angleZ the initial z rotation
+     * @param textureX the texture x offset
+     * @param textureY the texture y offset
+     * @return
+     */
+    public static PartDefinition createSnakeLayer(final PartDefinition root, final CubeDeformation cubeDeformation,
                                                    final float offsetX, final float offsetY, final float offsetZ,
                                                    final float angleX, final float angleY, final float angleZ,
                                                    final int textureX, final int textureY) {
@@ -106,7 +126,7 @@ public class GorgonModel<T extends Gorgon> extends DrakainaModel<T> {
         PartDefinition lowerSnake = root.addOrReplaceChild("lower_snake", CubeListBuilder.create()
                         .texOffs(textureX, textureY)
                         .addBox(-0.5F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, cubeDeformation),
-                PartPose.offsetAndRotation(offsetX, offsetY, offsetZ, /*0.5236F + */angleX, angleY, angleZ));
+                PartPose.offsetAndRotation(offsetX, offsetY, offsetZ, 0.5236F + angleX, angleY, angleZ));
         PartDefinition middleSnake = lowerSnake.addOrReplaceChild("middle_snake", CubeListBuilder.create()
                         .texOffs(textureX, textureY + 4)
                         .addBox(-0.5F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, cubeDeformation),
@@ -122,13 +142,17 @@ public class GorgonModel<T extends Gorgon> extends DrakainaModel<T> {
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        setupSnakeAnim(ageInTicks);
+    }
+
+    public void setupSnakeAnim(final float ageInTicks) {
         // set up animations for each hair part
         setupSnakeAnim(lowerSnakes, ageInTicks, 1.7F);
         setupSnakeAnim(middleSnakes, ageInTicks, 1.03F);
         setupSnakeAnim(upperSnakes, ageInTicks, 0.82F);
     }
 
-    private void setupSnakeAnim(final List<ModelPart> list, final float ticks, final float baseAngleX) {
+    public static void setupSnakeAnim(final List<ModelPart> list, final float ticks, final float baseAngleX) {
         int i = 0;
         for (final ModelPart m : list) {
             // update rotation angles
