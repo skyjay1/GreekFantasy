@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SS",
+    "SS"
+  ],
+  "key": {
+    "S": {
+      "item": "greekfantasy:marble"
+    }
+  },
+  "result": {
+    "item": "greekfantasy:polished_marble",
+    "count": 4
+  }
+}

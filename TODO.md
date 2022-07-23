@@ -58,6 +58,7 @@ __Key:__
 - _ _ _ _ _ Golden Ram
 - _ _ _ _ _ Makhai
 - X X X X X Baby Spider
+- _ _ _ _ _ Automaton (friendly Talos)
 
 
 ### Other
@@ -108,26 +109,26 @@ __Key:__
 
 `[In-game] [Use] [Obtainable]`
 
-- X X _ Limestone, variants, and Pillar
-- X X _ Marble, variants, and Pillar
-- X X _ Olive Log, leaves, planks, and variants
+- X X X Limestone, variants, and Pillar
+- X X X Marble, variants, and Pillar
+- X X X Olive Log, leaves, planks, and variants
 - X X _ Pomegranate Log, leaves, planks, and variants
-- X X _ Mysterious Box
+- X X X Mysterious Box
 - X X X Block of Bronze
-- X X _ Terracotta Vase and variants
+- X X X Terracotta Vase and variants
 - X _ X Gigante Head
 - X X X Orthus Head
 - ~ _ _ Cerberus Head
-- X X _ Oil Lamp
-- X X _ Olive Oil
-- X X _ Olive Sapling
+- X X X Oil Lamp
+- X X X Olive Oil
+- X X X Olive Sapling
 - X X X Pomegranate Sapling
-- X X _ Golden Sapling
+- X X X Golden Sapling
 - X X _ Nest
 - X ~ _ Wild Rose
 - _ _ _ Cretan Stone and variants
-- X _ X Reeds
-- X _ _ Golden String
+- X X X Reeds
+- X X X Golden String
 
 
 ## Items
@@ -140,52 +141,52 @@ __Key:__
 - X X X Bronze Ingot
 - X X X Bronze Nugget
 - X X X Bronze artifacts (goblet, bowl, pile of coins, vase, ruined helmet, ruined cuirass, broken shield, figurine)
-- X _ _ Ichor
-- X _ _ Horn
-- X _ X Snakeskin
-- X _ X Tough Snakeskin
-- X _ X Deadly Fang
+- X X X Ichor
+- X X X Horn
+- X X X Snakeskin
+- X X X Tough Snakeskin
+- X X X Deadly Fang
 - X _ _ Heart of Talos
-- X _ _ Ichor-Infused Gear
-- X _ X Avernal Feather
+- X X _ Ichor-Infused Gear
+- X X X Avernal Feather
 - X _ _ Avernal Hide
-- X _ X Avernal Wing
-- X _ X Avernal Hair
+- X X X Avernal Wing
+- X X X Avernal Hair
 - X _ X Avernal Claw
 - X _ _ Avernal Shard
 - X _ _ Boar Ear
 - X _ _ Golden Fleece
-- X X _ Ball of Golden String
-- X X _ Spider Banner Pattern
-- X X _ Ambrosia
-- X X _ Horn of Plenty
+- X X X Ball of Golden String
+- X X X Spider Banner Pattern
+- X X X Ambrosia
+- X X X Horn of Plenty
 - X X X Dragon Tooth (also: use to make golden sapling)
 - X X _ Staff of Healing
 - X X _ Conch
-- X X _ Bag of Wind
-- X X _ Golden Tree Sapling
-- X X _ Thunderbolt
+- X X X Bag of Wind
+- X X X Golden Tree Sapling
+- X X X Thunderbolt
 - X X _ Wand of Circe
-- X _ _ Avernal Bow
-- X _ _ Bow of Apollo
-- X _ _ Bow of Artemis
-- X X _ Club (wood, stone, iron)
-- X X _ Spear (wood, stone, iron, gold, diamond, netherite, flint)
-- X X _ Bident
-- X X _ Flint Knife
-- X X _ Ivory Sword
-- X X _ Greek Fire
-- X X _ Gorgon Blood
+- X X X Avernal Bow
+- X X _ Bow of Apollo
+- X X _ Bow of Artemis
+- X X X Club (wood, stone, iron)
+- X X X Spear (wood, stone, iron, gold, diamond, netherite, flint)
+- X X X Bident
+- X X X Flint Knife
+- X X X Ivory Sword
+- X X X Greek Fire
+- X X X Gorgon Blood
 - X X X Discus
-- X X _ Mirror
-- X _ _ Golden Bridle
+- X X X Mirror
+- X _ X Golden Bridle
 - X X _ Unicorn Horn
-- X _ _ Panflute
+- X _ X Panflute
 - X _ _ Lyre (normal, golden)
 - X X X Web Ball
-- X X _ Olive Oil
+- X X X Olive Oil
 - X _ _ Olive Salve
-- X ~ _ Olives
+- X X X Olives
 - X X X Olive Sapling
 - X X X Pomegranate
 - X X X Pomegranate Sapling
@@ -196,15 +197,15 @@ __Key:__
 
 `[In-game] [Model] [Use] [Obtainable]`
 
-- X X X _ Helm of Darkness
-- X X X _ Winged Sandals
-- X X X _ Hellenic Armor
+- X X X ~ Helm of Darkness // TO DO cerberus
+- X X X X Winged Sandals
+- X X X X Hellenic Armor
 - X X X X Snakeskin Armor
-- X X X _ Nemean Lion Hide
+- X X X _ Nemean Lion Hide // TO DO Lion
 
 ## Advancements
 
-- _ Recipe Advancements (data gen?)
+- ~ Recipe Advancements (data gen?)
 
 ## Potions
 
@@ -246,6 +247,7 @@ __Key:__
 - Hellenic Armor Set
 - Mirror
 - Discus
+- Bident
 - Decoration block
 - Summon Talos
 - Summon Bronze Bull

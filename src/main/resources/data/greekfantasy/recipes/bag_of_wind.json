@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " F ",
+    "#O#",
+    "###"
+  ],
+  "key": {
+    "#": { "item": "minecraft:leather" },
+    "F": { "item": "greekfantasy:avernal_feather" },
+    "O": { "item": "greekfantasy:conch" }
+  },
+  "result": {
+    "item": "greekfantasy:bag_of_wind"
+  }
+}

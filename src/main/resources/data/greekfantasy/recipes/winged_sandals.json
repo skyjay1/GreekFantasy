@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+  	"FQF",
+    "FBF"
+  ],
+  "key": {
+    "F": { "item": "greekfantasy:avernal_feather" },
+    "Q": { "item": "greekfantasy:bag_of_wind" },
+    "B": { "item": "minecraft:leather_boots" }
+  },
+  "result": {
+    "item": "greekfantasy:winged_sandals",
+    "count": 1,
+    "nbt": "{Enchantments:[{id:\"greekfantasy:overstep\",lvl:1}]}"
+  }
+}

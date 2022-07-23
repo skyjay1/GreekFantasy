@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#O#",
+    " # "
+  ],
+  "key": {
+    "#": { "item": "minecraft:terracotta" },
+    "O": { "item": "minecraft:lime_dye" }
+  },
+  "result": {
+    "item": "greekfantasy:lime_terracotta_vase",
+    "count": 3
+  }
+}

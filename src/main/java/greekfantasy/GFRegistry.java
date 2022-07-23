@@ -58,6 +58,7 @@ import greekfantasy.item.BidentItem;
 import greekfantasy.item.BronzeScrapItem;
 import greekfantasy.item.ClubItem;
 import greekfantasy.item.ConchItem;
+import greekfantasy.item.EnchantedBowItem;
 import greekfantasy.item.GiganteHeadItem;
 import greekfantasy.item.GreekFireItem;
 import greekfantasy.item.HasCraftRemainderItem;
@@ -581,11 +582,11 @@ public final class GFRegistry {
         public static final RegistryObject<Item> WAND_OF_CIRCE = ITEMS.register("wand_of_circe", () ->
                 new WandOfCirceItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).durability(54)));
         public static final RegistryObject<Item> AVERNAL_BOW = ITEMS.register("avernal_bow", () ->
-                new BowItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).stacksTo(1)));
+                new EnchantedBowItem.AvernalBowItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).stacksTo(1)));
         public static final RegistryObject<Item> APOLLO_BOW = ITEMS.register("apollo_bow", () ->
-                new BowItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC).stacksTo(1)));
+                new EnchantedBowItem.ApolloBowItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC).stacksTo(1)));
         public static final RegistryObject<Item> ARTEMIS_BOW = ITEMS.register("artemis_bow", () ->
-                new BowItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC).stacksTo(1)));
+                new EnchantedBowItem.ArtemisBowItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC).stacksTo(1)));
 
         //// WEAPONS ////
         public static final RegistryObject<Item> WOODEN_CLUB = ITEMS.register("wooden_club", () ->

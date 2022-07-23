@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "~~~",
+    "###"
+  ],
+  "key": {
+    "#": { "item": "greekfantasy:reeds" },
+    "~": { "tag": "forge:string" }
+  },
+  "result": {
+    "item": "minecraft:panflute"
+  }
+}

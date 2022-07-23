@@ -1,0 +1,17 @@
+{
+
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " /S",
+    "/ S",
+    " /S"
+  ],
+  "key": {
+    "S": { "item": "greekfantasy:avernal_hair" },
+    "/": { "tag": "forge:rods/wooden" }
+  },
+  "result": {
+    "item": "greekfantasy:avernal_bow",
+    "nbt": "{Enchantments:[{id:vanishing_curse,lvl:1},{id:flame,lvl:1}]}"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_ingredients": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "minecraft:terracotta"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "greekfantasy:terracotta_vase/terracotta_vase"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_ingredients",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "greekfantasy:terracotta_vase/terracotta_vase",
+      "greekfantasy:terracotta_vase/black_terracotta_vase",
+      "greekfantasy:terracotta_vase/black_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/blue_terracotta_vase",
+      "greekfantasy:terracotta_vase/blue_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/brown_terracotta_vase",
+      "greekfantasy:terracotta_vase/brown_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/cyan_terracotta_vase",
+      "greekfantasy:terracotta_vase/cyan_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/gray_terracotta_vase",
+      "greekfantasy:terracotta_vase/gray_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/green_terracotta_vase",
+      "greekfantasy:terracotta_vase/green_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/light_blue_terracotta_vase",
+      "greekfantasy:terracotta_vase/light_blue_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/light_gray_terracotta_vase",
+      "greekfantasy:terracotta_vase/light_gray_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/lime_terracotta_vase",
+      "greekfantasy:terracotta_vase/lime_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/magenta_terracotta_vase",
+      "greekfantasy:terracotta_vase/magenta_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/orange_terracotta_vase",
+      "greekfantasy:terracotta_vase/orange_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/pink_terracotta_vase",
+      "greekfantasy:terracotta_vase/pink_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/purple_terracotta_vase",
+      "greekfantasy:terracotta_vase/purple_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/red_terracotta_vase",
+      "greekfantasy:terracotta_vase/red_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/white_terracotta_vase",
+      "greekfantasy:terracotta_vase/white_terracotta_vase_from_dye",
+      "greekfantasy:terracotta_vase/yellow_terracotta_vase",
+      "greekfantasy:terracotta_vase/yellow_terracotta_vase_from_dye"
+    ]
+  }
+}

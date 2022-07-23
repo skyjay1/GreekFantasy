@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "V#V",
+    "# #"
+  ],
+  "key": {
+    "#": { "tag": "forge:ingots/copper" },
+    "V": { "tag": "forge:ingots/bronze" }
+  },
+  "result": {
+    "item": "greekfantasy:hellenic_helmet",
+    "count": 1
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X",
+    "X",
+    "#"
+  ],
+  "key": {
+    "#": { "tag": "minecraft:planks" },
+    "X": { "tag": "minecraft:logs" }
+  },
+  "result": {
+    "item": "greekfantasy:wooden_club"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "# #",
+    " # "
+  ],
+  "key": {
+    "#": { "item": "minecraft:light_gray_terracotta" }
+  },
+  "result": {
+    "item": "greekfantasy:light_gray_terracotta_vase",
+    "count": 3
+  }
+}

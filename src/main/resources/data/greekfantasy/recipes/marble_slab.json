@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "greekfantasy:marble"
+    }
+  },
+  "result": {
+    "item": "greekfantasy:marble_slab",
+    "count": 6
+  }
+}

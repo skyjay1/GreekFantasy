@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+	{ "item": "minecraft:blaze_powder" },
+    { "item": "greekfantasy:ichor" },
+	{ "item": "minecraft:glowstone_dust" },
+    { "item": "minecraft:honey_bottle" },
+    { "item": "greekfantasy:horn" }
+  ],
+  "result": {
+    "item": "greekfantasy:ambrosia",
+    "count": 1
+  }
+}

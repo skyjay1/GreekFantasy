@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "tag": "minecraft:saplings" },
+	{ "item": "greekfantasy:dragon_tooth" }
+  ],
+  "result": {
+    "item": "greekfantasy:golden_apple_sapling",
+    "count": 1
+  }
+}

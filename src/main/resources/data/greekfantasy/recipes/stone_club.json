@@ -1,0 +1,10 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+	{ "item": "greekfantasy:wooden_club" },
+	{ "tag": "minecraft:stone_tool_materials" }
+  ],
+  "result": {
+	"item": "greekfantasy:stone_club"
+  }
+}
