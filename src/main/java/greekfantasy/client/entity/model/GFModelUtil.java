@@ -11,7 +11,25 @@ import java.util.List;
 
 public final class GFModelUtil {
 
+    /** Used in snake layer helper methods **/
     public static final String HOLDER = "holder_";
+
+    /**
+     * Adds or replaces an orthus head part with the given name
+     * @param root the root part
+     * @param name the head part name
+     * @param offsetX the x offset
+     * @return the orthus head part definition
+     */
+    public static PartDefinition addOrReplaceOrthusHead(final PartDefinition root, final String name, final float offsetX) {
+        return root.addOrReplaceChild(name, CubeListBuilder.create()
+                .texOffs(0, 0).addBox(-3.0F, -3.0F, -4.0F, 6.0F, 6.0F, 4.0F, CubeDeformation.NONE)
+                .texOffs(16, 14).addBox(-3.0F, -5.0F, -3.0F, 2.0F, 2.0F, 1.0F, CubeDeformation.NONE)
+                .texOffs(16, 14).addBox(1.0F, -5.0F, -3.0F, 2.0F, 2.0F, 1.0F, CubeDeformation.NONE)
+                .texOffs(0, 10).addBox(-1.5F, -0.0156F, -7.0F, 3.0F, 3.0F, 4.0F, CubeDeformation.NONE), PartPose.offset(offsetX, 12.5F, -5.0F));
+        
+        
+    }
 
     /**
      * Creates snake model definitions in a circle with the given size

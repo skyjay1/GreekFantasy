@@ -74,7 +74,7 @@ __Key:__
 - X X Discus
 - X X Web Ball
 - X X Spear (and Bident)
-- _ _ Orthus Head
+- X X Orthus Head
 - _ _ Palladium
 
 ## Structures
@@ -116,7 +116,7 @@ __Key:__
 - X X X Block of Bronze
 - X X _ Terracotta Vase and variants
 - X _ X Gigante Head
-- ~ _ _ Orthus Head
+- X X X Orthus Head
 - ~ _ _ Cerberus Head
 - X X _ Oil Lamp
 - X X _ Olive Oil
@@ -147,11 +147,11 @@ __Key:__
 - X _ X Deadly Fang
 - X _ _ Heart of Talos
 - X _ _ Ichor-Infused Gear
-- X _ _ Avernal Feather
+- X _ X Avernal Feather
 - X _ _ Avernal Hide
 - X _ X Avernal Wing
 - X _ X Avernal Hair
-- X _ _ Avernal Claw
+- X _ X Avernal Claw
 - X _ _ Avernal Shard
 - X _ _ Boar Ear
 - X _ _ Golden Fleece

@@ -1,5 +1,6 @@
 package greekfantasy;
 
+import greekfantasy.entity.Orthus;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.integration.RGCompat;
 import greekfantasy.item.HellenicArmorItem;
@@ -11,16 +12,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -30,6 +30,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -41,8 +42,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
-
-import java.util.Optional;
 
 public final class GFEvents {
 
@@ -316,12 +315,23 @@ public final class GFEvents {
          * Checks if a Bronze block was placed and notifies SpawnBossUtil
          **/
         @SubscribeEvent
-        public static void onPlacePumpkin(final BlockEvent.EntityPlaceEvent event) {
+        public static void onEntityPlaceBlock(final BlockEvent.EntityPlaceEvent event) {
             // ensure the block matches
             if (!event.isCanceled() && event.getPlacedBlock().is(SummonBossUtil.BRONZE_BLOCK)
                     && event.getWorld() instanceof Level level) {
                 // delegate to SummonBossUtil
-                SummonBossUtil.onPlaceBlock(level, event.getPos(), event.getPlacedBlock(), event.getEntity());
+                SummonBossUtil.onPlaceBronzeBlock(level, event.getPos(), event.getPlacedBlock(), event.getEntity());
+            }
+        }
+
+        @SubscribeEvent
+        public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
+            if(event.getEntity() instanceof PathfinderMob mob) {
+                // add avoid orthus goal to wither skeleton
+                if(mob.getType() == EntityType.WITHER_SKELETON) {
+                    mob.goalSelector.addGoal(3, new AvoidEntityGoal<>(mob, Orthus.class, 6.0F, 1.0D, 1.2D));
+                }
+                // TODO add avoid cerastes goal to rabbits
             }
         }
 

@@ -33,12 +33,11 @@ public abstract class MobHeadBlockEntityRenderer implements BlockEntityRenderer<
         poseStack.pushPose();
 
         // apply wall rotations, if any
-        applyRotations(poseStack, blockEntity.onWall());
         poseStack.translate(0.5D, 1.0F, 0.5D);
-        poseStack.scale(scale, scale, scale);
         poseStack.mulPose(Vector3f.XP.rotationDegrees(180.0F));
         poseStack.mulPose(Vector3f.YP.rotationDegrees(rotation));
-        //poseStack.translate(-0.5D / scale, 0.0D, -0.5D / scale);
+        applyRotations(poseStack, blockEntity.onWall());
+        poseStack.scale(scale, scale, scale);
         VertexConsumer vertexBuilder = bufferSource.getBuffer(RenderType.entityCutoutNoCull(texture));
         // render the model
         model.renderToBuffer(poseStack, vertexBuilder, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);

@@ -17,12 +17,14 @@ public class BlockEntityRendererProvider {
     private static BlockEntityWithoutLevelRenderer giganteHead;
     private static final Map<ResourceLocation, BlockEntityWithoutLevelRenderer> spearMap = new HashMap<>();
 
-    /*public static BlockEntityWithoutLevelRenderer bakeOrthusHeadISTER() {
+    public static BlockEntityWithoutLevelRenderer getOrthusHead() {
         if (orthusHead == null) {
-            orthusHead = new MobHeadTileEntityRenderer.OrthusItemStackRenderer();
+            final BlockEntityRenderDispatcher dispatcher = Minecraft.getInstance().getBlockEntityRenderDispatcher();
+            final EntityModelSet entityModelSet = Minecraft.getInstance().getEntityModels();
+            orthusHead = new OrthusHeadBlockEntityRenderer.OrthusHeadItemStackRenderer(dispatcher, entityModelSet);
         }
         return orthusHead;
-    }*/
+    }
 
     public static BlockEntityWithoutLevelRenderer getGiganteHead() {
         if (giganteHead == null) {

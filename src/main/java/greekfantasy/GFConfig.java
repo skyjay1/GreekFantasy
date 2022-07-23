@@ -242,6 +242,7 @@ public class GFConfig {
         putSpawnConfigSpec(builder, "lampad", 24, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString());
         putSpawnConfigSpec(builder, "minotaur", 50, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "naiad", 12, true, BiomeDictionary.Type.WATER.getName());
+        putSpawnConfigSpec(builder, "orthus", 20, true, BiomeDictionary.Type.NETHER.getName());
         putSpawnConfigSpec(builder, "shade", 10, false);
         putSpawnConfigSpec(builder, "satyr", 22, true, forest);
         builder.pop();

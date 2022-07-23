@@ -1,22 +1,18 @@
 package greekfantasy.block;
 
-import greekfantasy.GFRegistry;
 import greekfantasy.blockentity.MobHeadBlockEntity;
-import greekfantasy.util.SummonBossUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -25,17 +21,22 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
+import net.minecraftforge.registries.RegistryObject;
 
-public abstract class MobHeadBlock extends HorizontalDirectionalBlock implements EntityBlock, SimpleWaterloggedBlock {
+import java.util.function.Supplier;
+
+public class MobHeadBlock extends HorizontalDirectionalBlock implements EntityBlock, SimpleWaterloggedBlock {
 
     public static final BooleanProperty WALL = BooleanProperty.create("wall");
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 15.9D, 16.0D);
 
-    public MobHeadBlock(Properties prop) {
+    private final Supplier<BlockEntityType<MobHeadBlockEntity>> blockEntityTypeSupplier;
+
+    public MobHeadBlock(RegistryObject<BlockEntityType<MobHeadBlockEntity>> typeSupplier, Properties prop) {
         super(prop);
+        this.blockEntityTypeSupplier = typeSupplier;
         this.registerDefaultState(this.getStateDefinition().any()
                 .setValue(WALL, Boolean.valueOf(false))
                 .setValue(FACING, Direction.NORTH)
@@ -74,46 +75,9 @@ public abstract class MobHeadBlock extends HorizontalDirectionalBlock implements
         return SHAPE;
     }
 
-
-    public static class CerberusHeadBlock extends MobHeadBlock {
-
-        public CerberusHeadBlock(Properties prop) {
-            super(prop);
-        }
-
-        @Override
-        public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-            final MobHeadBlockEntity blockEntity = GFRegistry.BlockEntityReg.CERBERUS_HEAD.get().create(pos, state);
-            blockEntity.setWall(state.getValue(MobHeadBlock.WALL));
-            return blockEntity;
-        }
-    }
-
-    public static class GiganteHeadBlock extends MobHeadBlock {
-
-        public GiganteHeadBlock(Properties prop) {
-            super(prop);
-        }
-
-        @Override
-        public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-            final MobHeadBlockEntity blockEntity = GFRegistry.BlockEntityReg.GIGANTE_HEAD.get().create(pos, state);
-            blockEntity.setWall(state.getValue(MobHeadBlock.WALL));
-            return blockEntity;
-        }
-    }
-
-    public static class OrthusHeadBlock extends MobHeadBlock {
-
-        public OrthusHeadBlock(Properties prop) {
-            super(prop);
-        }
-
-        @Override
-        public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-            final MobHeadBlockEntity blockEntity = GFRegistry.BlockEntityReg.ORTHUS_HEAD.get().create(pos, state);
-            blockEntity.setWall(state.getValue(MobHeadBlock.WALL));
-            return blockEntity;
-        }
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        final MobHeadBlockEntity blockEntity = blockEntityTypeSupplier.get().create(pos, state);
+        return blockEntity;
     }
 }

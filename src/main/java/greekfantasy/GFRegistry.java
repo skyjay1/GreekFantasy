@@ -7,6 +7,7 @@ import greekfantasy.block.MysteriousBoxBlock;
 import greekfantasy.block.NestBlock;
 import greekfantasy.block.OilLampBlock;
 import greekfantasy.block.OliveOilBlock;
+import greekfantasy.block.OrthusHeadBlock;
 import greekfantasy.block.PillarBlock;
 import greekfantasy.block.PomegranateSaplingBlock;
 import greekfantasy.block.ReedsBlock;
@@ -27,6 +28,7 @@ import greekfantasy.entity.Elpis;
 import greekfantasy.entity.Gigante;
 import greekfantasy.entity.Lampad;
 import greekfantasy.entity.Naiad;
+import greekfantasy.entity.Orthus;
 import greekfantasy.entity.Satyr;
 import greekfantasy.entity.Sparti;
 import greekfantasy.entity.boss.Arachne;
@@ -71,6 +73,7 @@ import greekfantasy.item.HornOfPlentyItem;
 import greekfantasy.item.KnifeItem;
 import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.item.OliveOilItem;
+import greekfantasy.item.OrthusHeadItem;
 import greekfantasy.item.SnakeskinArmorItem;
 import greekfantasy.item.SpearItem;
 import greekfantasy.item.StaffOfHealingItem;
@@ -287,11 +290,11 @@ public final class GFRegistry {
                 new MysteriousBoxBlock(BlockBehaviour.Properties.of(Material.WOOD)
                         .strength(0.8F, 3.0F).sound(SoundType.WOOD).noOcclusion()));
         public static final RegistryObject<Block> GIGANTE_HEAD = BLOCKS.register("gigante_head", () ->
-                new MobHeadBlock.GiganteHeadBlock(BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
+                new MobHeadBlock(BlockEntityReg.GIGANTE_HEAD, BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
         public static final RegistryObject<Block> ORTHUS_HEAD = BLOCKS.register("orthus_head", () ->
-                new MobHeadBlock.OrthusHeadBlock(BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
+                new OrthusHeadBlock(BlockEntityReg.ORTHUS_HEAD, BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
         public static final RegistryObject<Block> CERBERUS_HEAD = BLOCKS.register("cerberus_head", () ->
-                new MobHeadBlock.CerberusHeadBlock(BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
+                new MobHeadBlock(BlockEntityReg.CERBERUS_HEAD, BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).noOcclusion()));
         public static final RegistryObject<Block> OIL_LAMP = BLOCKS.register("oil_lamp", () ->
                 new OilLampBlock(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_BROWN)
                         .noOcclusion().lightLevel(b -> b.getValue(OilLampBlock.LIT) ? 11 : 0).strength(0.2F, 0.1F)));
@@ -775,7 +778,7 @@ public final class GFRegistry {
         public static final RegistryObject<BlockItem> BRONZE_BLOCK = registerItemBlock(BlockReg.BRONZE_BLOCK);
         public static final RegistryObject<BlockItem> MYSTERIOUS_BOX = registerItemBlock(BlockReg.MYSTERIOUS_BOX);
         public static final RegistryObject<BlockItem> GIGANTE_HEAD = ITEMS.register("gigante_head", () -> new GiganteHeadItem(BlockReg.GIGANTE_HEAD.get(), new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<BlockItem> ORTHUS_HEAD = registerItemBlock(BlockReg.ORTHUS_HEAD);
+        public static final RegistryObject<BlockItem> ORTHUS_HEAD = ITEMS.register("orthus_head", () -> new OrthusHeadItem(BlockReg.ORTHUS_HEAD.get(), new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<BlockItem> CERBERUS_HEAD = registerItemBlock(BlockReg.CERBERUS_HEAD);
         public static final RegistryObject<BlockItem> OIL_LAMP = registerItemBlock(BlockReg.OIL_LAMP);
         public static final RegistryObject<BlockItem> OLIVE_SAPLING = registerItemBlock(BlockReg.OLIVE_SAPLING);
@@ -838,6 +841,7 @@ public final class GFRegistry {
             register(event, LAMPAD.get(), Lampad::createAttributes, Mob::checkMobSpawnRules);
             register(event, MINOTAUR.get(), Minotaur::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
+            register(event, ORTHUS.get(), Orthus::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, PYTHON.get(), Python::createAttributes, null);
             register(event, SATYR.get(), Satyr::createAttributes, Mob::checkMobSpawnRules);
             register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
@@ -894,6 +898,7 @@ public final class GFRegistry {
                 addSpawns(event, LAMPAD.get(), 2, 5);
                 addSpawns(event, MINOTAUR.get(), 2, 5);
                 addSpawns(event, NAIAD.get(), 2, 5);
+                addSpawns(event, ORTHUS.get(), 2, 4);
                 addSpawns(event, SATYR.get(), 2, 5);
                 addSpawns(event, SHADE.get(), 1, 1);
             }
@@ -979,6 +984,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Naiad::new, MobCategory.WATER_CREATURE)
                         .sized(0.48F, 1.8F)
                         .build("naiad"));
+        public static final RegistryObject<EntityType<? extends Orthus>> ORTHUS = ENTITY_TYPES.register("orthus", () ->
+                EntityType.Builder.of(Orthus::new, MobCategory.MONSTER)
+                        .sized(0.6F, 0.85F).fireImmune()
+                        .build("orthus"));
         public static final RegistryObject<EntityType<? extends Python>> PYTHON = ENTITY_TYPES.register("python", () ->
                 EntityType.Builder.of(Python::new, MobCategory.MONSTER)
                         .sized(1.4F, 1.9F).fireImmune()
@@ -1040,19 +1049,25 @@ public final class GFRegistry {
             BLOCK_ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
 
-        public static final RegistryObject<BlockEntityType<MobHeadBlockEntity.CerberusBlockEntity>> CERBERUS_HEAD = BLOCK_ENTITY_TYPES.register("cerberus_head", () ->
-                BlockEntityType.Builder.of(MobHeadBlockEntity.CerberusBlockEntity::new, BlockReg.CERBERUS_HEAD.get())
+        public static final RegistryObject<BlockEntityType<MobHeadBlockEntity>> CERBERUS_HEAD = BLOCK_ENTITY_TYPES.register("cerberus_head", () ->
+                BlockEntityType.Builder.of((pos, state) ->
+                        new MobHeadBlockEntity(BlockEntityReg.CERBERUS_HEAD.get(), pos, state),
+                    BlockReg.CERBERUS_HEAD.get())
                 .build(null)
         );
 
-        public static final RegistryObject<BlockEntityType<MobHeadBlockEntity.GiganteBlockEntity>> GIGANTE_HEAD = BLOCK_ENTITY_TYPES.register("gigante_head", () ->
-                BlockEntityType.Builder.of(MobHeadBlockEntity.GiganteBlockEntity::new, BlockReg.GIGANTE_HEAD.get())
-                        .build(null)
+        public static final RegistryObject<BlockEntityType<MobHeadBlockEntity>> GIGANTE_HEAD = BLOCK_ENTITY_TYPES.register("gigante_head", () ->
+                BlockEntityType.Builder.of((pos, state) ->
+                        new MobHeadBlockEntity(BlockEntityReg.GIGANTE_HEAD.get(), pos, state),
+                    BlockReg.GIGANTE_HEAD.get())
+                .build(null)
         );
 
-        public static final RegistryObject<BlockEntityType<MobHeadBlockEntity.OrthusBlockEntity>> ORTHUS_HEAD = BLOCK_ENTITY_TYPES.register("orthus_head", () ->
-                BlockEntityType.Builder.of(MobHeadBlockEntity.OrthusBlockEntity::new, BlockReg.ORTHUS_HEAD.get())
-                        .build(null)
+        public static final RegistryObject<BlockEntityType<MobHeadBlockEntity>> ORTHUS_HEAD = BLOCK_ENTITY_TYPES.register("orthus_head", () ->
+                BlockEntityType.Builder.of((pos, state) ->
+                            new MobHeadBlockEntity(BlockEntityReg.ORTHUS_HEAD.get(), pos, state),
+                    BlockReg.ORTHUS_HEAD.get())
+                .build(null)
         );
 
         public static final RegistryObject<BlockEntityType<VaseBlockEntity>> VASE = BLOCK_ENTITY_TYPES.register("vase", () -> {
