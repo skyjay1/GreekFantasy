@@ -2,6 +2,7 @@ package greekfantasy.entity.monster;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.util.GFMobType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -27,6 +28,7 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -127,6 +129,11 @@ public class Gorgon extends Monster implements RangedAttackMob {
             return true;
         }
         return super.isInvulnerableTo(source);
+    }
+
+    @Override
+    public MobType getMobType() {
+        return GFMobType.SERPENT;
     }
 
     @Nullable

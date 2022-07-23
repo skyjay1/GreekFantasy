@@ -33,7 +33,7 @@ __Key:__
 - X X X _ X Cyclops // TO DO: drops bronze nuggets and a different monster drops avernal shards?
 - X X X X X Gigante
 - _ _ _ _ _ Unicorn
-- _ _ _ _ _ Orthus
+- X X X X X Orthus
 - X X ~ X X Elpis
 - X X X X X Sparti
 - _ _ _ _ _ Mad Cow
@@ -222,6 +222,7 @@ __Key:__
 
 `[In-game] [Use] [Obtainable]`
 
+- X X _ Bane of Serpents
 - X _ _ Daybreak
 - X _ _ Flying
 - X X _ Fireflash

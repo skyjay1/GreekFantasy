@@ -15,6 +15,7 @@ import greekfantasy.block.VaseBlock;
 import greekfantasy.block.WildRoseBlock;
 import greekfantasy.blockentity.MobHeadBlockEntity;
 import greekfantasy.blockentity.VaseBlockEntity;
+import greekfantasy.enchantment.BaneOfSerpentsEnchantment;
 import greekfantasy.enchantment.DeityEnchantment;
 import greekfantasy.enchantment.HuntingEnchantment;
 import greekfantasy.enchantment.MirroringEnchantment;
@@ -1115,6 +1116,8 @@ public final class GFRegistry {
             ENCHANTMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
 
+        public static final RegistryObject<Enchantment> BANE_OF_SERPENTS = ENCHANTMENTS.register("bane_of_serpents", () ->
+                new BaneOfSerpentsEnchantment(Enchantment.Rarity.UNCOMMON));
         public static final RegistryObject<Enchantment> DAYBREAK = ENCHANTMENTS.register("daybreak", () ->
                 new DeityEnchantment(Enchantment.Rarity.RARE, EnchantmentCategory.BREAKABLE, EquipmentSlot.MAINHAND, 1, i -> i.is(Items.CLOCK)));
         public static final RegistryObject<Enchantment> FLYING = ENCHANTMENTS.register("flying", () ->

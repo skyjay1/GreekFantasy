@@ -25,6 +25,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -251,6 +252,10 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         return airSupply;
     }
 
+    @Override
+    public MobType getMobType() {
+        return MobType.WATER;
+    }
 
     /*protected SoundEvent getAmbientSound() {
         return this.isInWater() ? SoundEvents.DROWNED_AMBIENT_WATER : SoundEvents.DROWNED_AMBIENT;

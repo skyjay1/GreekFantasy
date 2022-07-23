@@ -4,6 +4,7 @@ package greekfantasy.entity.boss;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.IntervalRangedAttackGoal;
 import greekfantasy.entity.misc.PoisonSpit;
+import greekfantasy.entity.util.GFMobType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -123,6 +124,11 @@ public class Python extends Monster implements RangedAttackMob {
     }
 
     // Misc //
+
+    @Override
+    public MobType getMobType() {
+        return GFMobType.SERPENT;
+    }
 
     @Override
     public boolean canChangeDimensions() {

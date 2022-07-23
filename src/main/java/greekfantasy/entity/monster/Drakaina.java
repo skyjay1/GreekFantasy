@@ -1,6 +1,7 @@
 package greekfantasy.entity.monster;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.util.GFMobType;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -132,6 +134,11 @@ public class Drakaina extends Monster {
     }
 
     // MISC //
+
+    @Override
+    public MobType getMobType() {
+        return GFMobType.SERPENT;
+    }
 
     @Override
     public ResourceLocation getDefaultLootTable() {

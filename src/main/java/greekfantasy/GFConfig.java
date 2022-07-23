@@ -36,6 +36,7 @@ public class GFConfig {
     private boolean helmHidesArmor;
 
     // enchantments
+    public final ForgeConfigSpec.BooleanValue BANE_OF_SERPENTS_ENABLED;
     public final ForgeConfigSpec.BooleanValue FIREFLASH_ENABLED;
     public final ForgeConfigSpec.BooleanValue FIREFLASH_DESTROYS_BLOCKS;
     private final ForgeConfigSpec.BooleanValue FLYING_ENABLED;
@@ -150,6 +151,7 @@ public class GFConfig {
         builder.pop();
 
         builder.push("enchantments");
+        BANE_OF_SERPENTS_ENABLED = builder.define("bane_of_serpents_enabled", true);
         FIREFLASH_ENABLED = builder.define("fireflash_enabled", true);
         FIREFLASH_DESTROYS_BLOCKS = builder.define("fireflash_destroys_blocks", true);
         FLYING_ENABLED = builder.define("flying_enabled", true);
