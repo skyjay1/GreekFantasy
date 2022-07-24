@@ -61,6 +61,7 @@ public class NymphModel<T extends LivingEntity> extends HumanoidModel<T> {
 			this.getArm(entity.getMainArm()).xRot += -0.42F;
 		}
 	}
+
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
 							   float red, float green, float blue, float alpha) {

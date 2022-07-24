@@ -3,6 +3,7 @@ package greekfantasy.entity;
 import com.google.common.collect.ImmutableMap;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GoToWaterGoal;
+import greekfantasy.entity.ai.SwimUpGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
@@ -113,7 +114,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         this.goalSelector.addGoal(1, new GoToWaterGoal(this, 1.0D, false));
         this.goalSelector.addGoal(2, new Naiad.NaiadTridentAttackGoal(this, 1.0D, 40, 10.0F));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1D, false));
-        this.goalSelector.addGoal(5, new SwimUpGoal(this, 1.0D, this.level.getSeaLevel()));
+        this.goalSelector.addGoal(5, new Naiad.NaiadSwimUpGoal(this, 1.0D, this.level.getSeaLevel(), 1));
         this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Satyr.class, 10.0F, 1.2D, 1.1D));
         this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 0.8D, 140) {
             @Override
@@ -292,6 +293,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         return level.isUnobstructed(this);
     }
 
+    @Override
     public boolean isPushedByFluid() {
         return !this.isSwimming();
     }
@@ -328,21 +330,6 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
                 this.setSwimming(false);
             }
         }
-    }
-
-    protected boolean closeToNextPos() {
-        Path path = this.getNavigation().getPath();
-        if (path != null) {
-            BlockPos blockpos = path.getTarget();
-            if (blockpos != null) {
-                double d0 = this.distanceToSqr(blockpos.getX(), blockpos.getY(), blockpos.getZ());
-                if (d0 < 4.0D) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     @Override
@@ -405,50 +392,23 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         }
     }
 
-    static class SwimUpGoal extends Goal {
+    static class NaiadSwimUpGoal extends SwimUpGoal {
         private final Naiad naiad;
-        private final double speedModifier;
-        private final int seaLevel;
-        private boolean stuck;
 
-        public SwimUpGoal(Naiad p_32440_, double p_32441_, int p_32442_) {
-            this.naiad = p_32440_;
-            this.speedModifier = p_32441_;
-            this.seaLevel = p_32442_;
-        }
-
-        @Override
-        public boolean canUse() {
-            return this.naiad.isInWater() && this.naiad.getY() < (double) (this.seaLevel - 1);
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return this.canUse() && !this.stuck;
-        }
-
-        @Override
-        public void tick() {
-            if (this.naiad.getY() < (double) (this.seaLevel - 1) && (this.naiad.getNavigation().isDone() || this.naiad.closeToNextPos())) {
-                Vec3 vec3 = DefaultRandomPos.getPosTowards(this.naiad, 4, 8, new Vec3(this.naiad.getX(), (double) (this.seaLevel - 1), this.naiad.getZ()), (double) ((float) Math.PI / 2F));
-                if (vec3 == null) {
-                    this.stuck = true;
-                    return;
-                }
-
-                this.naiad.getNavigation().moveTo(vec3.x, vec3.y, vec3.z, this.speedModifier);
-            }
-
+        public NaiadSwimUpGoal(Naiad mob, double speedModifier, int seaLevel, int deltaSeaLevel) {
+            super(mob, speedModifier, seaLevel, deltaSeaLevel);
+            this.naiad = mob;
         }
 
         @Override
         public void start() {
+            super.start();
             this.naiad.setSearchingForLand(true);
-            this.stuck = false;
         }
 
         @Override
         public void stop() {
+            super.stop();
             this.naiad.setSearchingForLand(false);
         }
     }

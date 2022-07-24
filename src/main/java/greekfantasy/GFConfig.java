@@ -12,6 +12,7 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -245,8 +246,9 @@ public class GFConfig {
         putSpawnConfigSpec(builder, "minotaur", 50, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "naiad", 12, true, BiomeDictionary.Type.WATER.getName());
         putSpawnConfigSpec(builder, "orthus", 20, true, BiomeDictionary.Type.NETHER.getName());
-        putSpawnConfigSpec(builder, "shade", 10, false);
         putSpawnConfigSpec(builder, "satyr", 22, true, forest);
+        putSpawnConfigSpec(builder, "shade", 10, false);
+        putSpawnConfigSpec(builder, "siren", 10, true, Biomes.LUKEWARM_OCEAN.location().toString(), Biomes.WARM_OCEAN.location().toString());
         builder.pop();
 
         builder.comment("Feature generation chances (higher number = more features)").push("features");
@@ -387,7 +389,7 @@ public class GFConfig {
         return isCurseOfCirceEnabled;
     }
 
-    public boolean isCurseOfCirceApplicable(final LivingEntity entity) {
+    public boolean isCurseOfCirceApplicable(@NonNull final LivingEntity entity) {
         ResourceLocation type = ForgeRegistries.ENTITIES.getKey(entity.getType());
         return curseOfCirceWhitelist.contains(type.toString())
                 || curseOfCirceWhitelist.contains(type.getNamespace() + ":" + WILDCARD);

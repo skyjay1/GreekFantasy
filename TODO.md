@@ -27,7 +27,7 @@ __Key:__
 - X X X X X Harpy
 - X X X X X Empusa
 - X X X X X Shade
-- _ _ _ _ _ Siren
+- X ~ ~ X X Siren
 - _ _ _ _ _ Cerastes
 - X X _ X X Ara
 - X X X _ X Cyclops // TO DO: drops bronze nuggets and a different monster drops avernal shards?
@@ -47,7 +47,7 @@ __Key:__
 - _ _ _ _ _ Miniboss: Giant Boar
 - ~ X X X X Miniboss: Medusa
 - _ _ _ _ _ Miniboss: Cretan Minotaur
-- _ _ _ _ _ Miniboss: Circe
+- _ X X _ _ Miniboss: Circe
 - _ _ _ _ _ Miniboss: Hydra
 - X X X X X Miniboss: Arachne
 - X X X X X Fury
@@ -209,11 +209,16 @@ __Key:__
 
 ## Potions
 
-- X Curse of Circe
-- X Mirroring
-- X Stunned
-- X Petrified
-- X Prisoner of Hades
+__Key:__
+
+`[In-game] [Recipe]`
+
+- X _ Curse of Circe
+- X _ Mirroring
+- X _ Stunned
+- X _ Petrified
+- X _ Prisoner of Hades
+- X _ Molasses
 
 
 ## Enchantments

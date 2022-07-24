@@ -10,6 +10,6 @@
     "~": { "tag": "forge:string" }
   },
   "result": {
-    "item": "minecraft:panflute"
+    "item": "greekfantasy:panflute"
   }
 }
