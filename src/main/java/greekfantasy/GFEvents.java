@@ -9,6 +9,7 @@ import greekfantasy.mob_effect.CurseOfCirceEffect;
 import greekfantasy.network.SCurseOfCircePacket;
 import greekfantasy.util.SummonBossUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
@@ -33,6 +34,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
@@ -194,6 +196,7 @@ public final class GFEvents {
             if(event.phase != TickEvent.Phase.START || !event.player.isAlive()) {
                 return;
             }
+
             // update pose when player is under curse of circe
             if(GreekFantasy.CONFIG.isCurseOfCirceEnabled()) {
                 final boolean curseOfCirce = event.player.hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get());
@@ -206,6 +209,36 @@ public final class GFEvents {
                 } else if (!curseOfCirce && Pose.FALL_FLYING == forcedPose) {
                     // clear the forced pose
                     event.player.setForcedPose(null);
+                }
+            }
+
+            // every few ticks, ensure that flying players can still fly
+            if (GreekFantasy.CONFIG.isFlyingEnabled() && event.player.level instanceof ServerLevel &&
+                    !event.player.isCreative() && !event.player.isSpectator() && event.player.tickCount > 10
+                    && event.player.level.getGameTime() % 11 == 0) {
+                // load saved data
+                final GFSavedData data = GFSavedData.getOrCreate((ServerLevel) event.player.level);
+                // remove flying players who do not meet the conditions
+                if (data.hasFlyingPlayer(event.player) && !GFSavedData.validatePlayer(event.player)) {
+                    data.removeFlyingPlayer(event.player);
+                }
+            }
+        }
+
+        /**
+         * Used to enable flying players when they equip enchanted winged sandals.
+         *
+         * @param event the equipment change event
+         */
+        @SubscribeEvent
+        public static void onChangeEquipment(final LivingEquipmentChangeEvent event) {
+            // Check which equipment was changed and if it is a player
+            if (GreekFantasy.CONFIG.isFlyingEnabled() && event.getEntityLiving() instanceof Player player && player.level instanceof ServerLevel
+                    && event.getSlot() == EquipmentSlot.FEET && event.getTo().is(GFRegistry.ItemReg.WINGED_SANDALS.get())) {
+                GFSavedData data = GFSavedData.getOrCreate((ServerLevel) player.level);
+                // ensure player meets conditions before enabling flight
+                if (GFSavedData.validatePlayer(player)) {
+                    data.addFlyingPlayer(player);
                 }
             }
         }

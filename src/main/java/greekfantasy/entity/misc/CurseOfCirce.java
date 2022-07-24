@@ -46,8 +46,7 @@ public class CurseOfCirce extends MobEffectProjectile {
         return List.of(
                 new MobEffectInstance(effect, mobEffectDuration, amp, false, true),
                 new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, slownessDuration, amp + 1, false, false, false),
-                new MobEffectInstance(MobEffects.DIG_SLOWDOWN, mobEffectDuration - 1, amp + 1, false, false, false),
-                new MobEffectInstance(MobEffects.WEAKNESS, mobEffectDuration - 1, amp + 1, false, false, false));
+                new MobEffectInstance(MobEffects.DIG_SLOWDOWN, mobEffectDuration - 1, amp + 1, false, false, false));
     }
 
     @Override

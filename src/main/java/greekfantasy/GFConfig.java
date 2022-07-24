@@ -56,6 +56,7 @@ public class GFConfig {
     private boolean isSilkstepEnabled;
 
     // entity
+    public final ForgeConfigSpec.DoubleValue CIRCE_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue ELPIS_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue MEDUSA_LIGHTNING_CHANCE;
     public final ForgeConfigSpec.DoubleValue MEDUSA_SPAWN_CHANCE;
@@ -169,6 +170,7 @@ public class GFConfig {
         builder.pop();
 
         builder.push("mobs");
+        CIRCE_SPAWN_CHANCE = builder.defineInRange("circe_spawn_chance", 2.0F, 0.0F, 100.0F);
         ELPIS_SPAWN_CHANCE = builder
                 .comment("Percent chance that opening a mysterious box spawns an Elpis")
                 .defineInRange("elpis_spawn_chance", 60.0F, 0.0F, 100.0F);
@@ -249,6 +251,7 @@ public class GFConfig {
         putSpawnConfigSpec(builder, "satyr", 22, true, forest);
         putSpawnConfigSpec(builder, "shade", 10, false);
         putSpawnConfigSpec(builder, "siren", 10, true, Biomes.LUKEWARM_OCEAN.location().toString(), Biomes.WARM_OCEAN.location().toString());
+        putSpawnConfigSpec(builder, "whirl", 6, true, BiomeDictionary.Type.OCEAN.getName());
         builder.pop();
 
         builder.comment("Feature generation chances (higher number = more features)").push("features");

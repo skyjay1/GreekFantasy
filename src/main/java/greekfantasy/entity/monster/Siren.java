@@ -224,7 +224,7 @@ public class Siren extends WaterAnimal implements Enemy {
                 float f1 = (float) (this.speedModifier * this.siren.getAttributeValue(Attributes.MOVEMENT_SPEED));
                 float f2 = Mth.lerp(0.125F, this.siren.getSpeed(), f1);
                 this.siren.setSpeed(f2);
-                this.siren.setDeltaMovement(this.siren.getDeltaMovement().add((double) f2 * d0 * 0.005D, (double) f2 * d1 * 0.1D, (double) f2 * d2 * 0.005D));
+                this.siren.setDeltaMovement(this.siren.getDeltaMovement().add((double) f2 * d0 * 0.05D, (double) f2 * d1 * 0.1D, (double) f2 * d2 * 0.05D));
             } else {
                 if (!this.siren.onGround) {
                     this.siren.setDeltaMovement(this.siren.getDeltaMovement().add(0.0D, -0.008D, 0.0D));

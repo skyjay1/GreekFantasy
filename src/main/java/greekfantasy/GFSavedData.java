@@ -1,5 +1,6 @@
 package greekfantasy;
 
+import greekfantasy.integration.RGCompat;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -7,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 
@@ -15,17 +17,17 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class GFWorldSavedData extends SavedData {
+public class GFSavedData extends SavedData {
 
     private final List<UUID> flyingPlayers = new ArrayList<>();
     private static final String KEY_PLAYERS = "FlyingPlayers";
 
-    public static GFWorldSavedData getOrCreate(final ServerLevel server) {
-        return server.getDataStorage().computeIfAbsent(GFWorldSavedData::read, GFWorldSavedData::new, GreekFantasy.MODID);
+    public static GFSavedData getOrCreate(final ServerLevel server) {
+        return server.getDataStorage().computeIfAbsent(GFSavedData::read, GFSavedData::new, GreekFantasy.MODID);
     }
 
-    public static GFWorldSavedData read(CompoundTag nbt) {
-        GFWorldSavedData instance = new GFWorldSavedData();
+    public static GFSavedData read(CompoundTag nbt) {
+        GFSavedData instance = new GFSavedData();
         instance.load(nbt);
         return instance;
     }
@@ -33,13 +35,13 @@ public class GFWorldSavedData extends SavedData {
     // Flying Player methods //
 
     public void addFlyingPlayer(final Player player) {
-        flyingPlayers.add(Player.createPlayerUUID(player.getName().getContents()));
+        flyingPlayers.add(player.getUUID());
         player.getAbilities().mayfly = true;
         player.onUpdateAbilities();
     }
 
     public void removeFlyingPlayer(final Player player) {
-        flyingPlayers.remove(Player.createPlayerUUID(player.getName().getContents()));
+        flyingPlayers.remove(player.getUUID());
         player.getAbilities().mayfly = false;
         player.getAbilities().flying = false;
         player.onUpdateAbilities();
@@ -93,8 +95,8 @@ public class GFWorldSavedData extends SavedData {
      */
     public static boolean validatePlayer(final Player player) {
         final ItemStack feet = player.getItemBySlot(EquipmentSlot.FEET);
-        return false;/*(feet.getItem() == GFRegistry.ItemReg.WINGED_SANDALS
-                && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.FLYING_ENCHANTMENT, feet) > 0
-                && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseFlying(player)));*/
+        return (feet.getItem() == GFRegistry.ItemReg.WINGED_SANDALS.get()
+                && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.FLYING.get(), feet) > 0
+                && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseFlying(player)));
     }
 }

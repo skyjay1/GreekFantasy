@@ -22,12 +22,12 @@ __Key:__
 - X X X X X Satyr
 - X X X X X Centaur
 - X X X X X Cyprian Centaur
-- _ X X X X Minotaur
+- X X X X X Minotaur
 - X X X X X Gorgon
 - X X X X X Harpy
 - X X X X X Empusa
 - X X X X X Shade
-- X ~ ~ X X Siren
+- X X ~ X X Siren
 - _ _ _ _ _ Cerastes
 - X X _ X X Ara
 - X X X _ X Cyclops // TO DO: drops bronze nuggets and a different monster drops avernal shards?
@@ -39,21 +39,21 @@ __Key:__
 - _ _ _ _ _ Mad Cow
 - _ _ _ _ _ Boss: Cerberus
 - _ _ _ _ _ Boss: Geryon
-- _ _ _ _ _ Boss: Charybdis
+- X X X X X Boss: Charybdis
 - _ _ _ _ _ Boss: Talos
 - _ _ _ _ _ Boss: Nemean Lion
 - _ _ _ _ _ Boss: Bronze Bull
 - X X X X X Miniboss: Python
 - _ _ _ _ _ Miniboss: Giant Boar
-- ~ X X X X Miniboss: Medusa
+- X X X X X Miniboss: Medusa
 - _ _ _ _ _ Miniboss: Cretan Minotaur
-- _ X X _ _ Miniboss: Circe
+- X X X X _ Miniboss: Circe
 - _ _ _ _ _ Miniboss: Hydra
 - X X X X X Miniboss: Arachne
 - X X X X X Fury
 - X X X X X Drakaina
 - _ _ _ _ _ Arion
-- _ _ _ _ _ Whirl
+- X X X X X Whirl
 - _ _ _ _ _ Pegasus
 - _ _ _ _ _ Golden Ram
 - _ _ _ _ _ Makhai
@@ -125,7 +125,7 @@ __Key:__
 - X X X Pomegranate Sapling
 - X X X Golden Sapling
 - X X _ Nest
-- X ~ _ Wild Rose
+- X ~ X Wild Rose
 - _ _ _ Cretan Stone and variants
 - X X X Reeds
 - X X X Golden String
@@ -162,7 +162,7 @@ __Key:__
 - X X X Horn of Plenty
 - X X X Dragon Tooth (also: use to make golden sapling)
 - X X _ Staff of Healing
-- X X _ Conch
+- X X X Conch
 - X X X Bag of Wind
 - X X X Golden Tree Sapling
 - X X X Thunderbolt
@@ -217,8 +217,8 @@ __Key:__
 - X _ Mirroring
 - X _ Stunned
 - X _ Petrified
-- X _ Prisoner of Hades
-- X _ Molasses
+- X . Prisoner of Hades
+- X _ Slow Swim
 
 
 ## Enchantments
@@ -227,7 +227,7 @@ __Key:__
 
 `[In-game] [Use] [Obtainable]`
 
-- X X _ Bane of Serpents
+- X X X Bane of Serpents
 - X _ _ Daybreak
 - X _ _ Flying
 - X X _ Fireflash

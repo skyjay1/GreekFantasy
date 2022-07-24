@@ -32,7 +32,9 @@ import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Orthus;
 import greekfantasy.entity.Satyr;
 import greekfantasy.entity.Sparti;
+import greekfantasy.entity.Whirl;
 import greekfantasy.entity.boss.Arachne;
+import greekfantasy.entity.boss.Charybdis;
 import greekfantasy.entity.boss.Python;
 import greekfantasy.entity.misc.Curse;
 import greekfantasy.entity.misc.CurseOfCirce;
@@ -850,6 +852,7 @@ public final class GFRegistry {
             register(event, ARACHNE.get(), Arachne::createAttributes, null);
             register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
             register(event, CENTAUR.get(), Centaur::createAttributes, Mob::checkMobSpawnRules);
+            register(event, CHARYBDIS.get(), Charybdis::createAttributes, null);
             register(event, CIRCE.get(), Circe::createAttributes, null);
             register(event, CYCLOPS.get(), Cyclops::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, CYPRIAN.get(), Cyprian::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
@@ -870,6 +873,7 @@ public final class GFRegistry {
             register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, SIREN.get(), Siren::createAttributes, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
             register(event, SPARTI.get(), Sparti::createAttributes, null);
+            register(event, WHIRL.get(), Whirl::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
         }
 
         /**
@@ -926,6 +930,7 @@ public final class GFRegistry {
                 addSpawns(event, SATYR.get(), 2, 5);
                 addSpawns(event, SHADE.get(), 1, 1);
                 addSpawns(event, SIREN.get(), 1, 4);
+                addSpawns(event, WHIRL.get(), 1, 1);
             }
         }
 
@@ -957,6 +962,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Centaur::new, MobCategory.CREATURE)
                         .sized(1.39F, 2.49F)
                         .build("centaur"));
+        public static final RegistryObject<EntityType<? extends Charybdis>> CHARYBDIS = ENTITY_TYPES.register("charybdis", () ->
+                EntityType.Builder.of(Charybdis::new, MobCategory.WATER_CREATURE)
+                        .sized(5.9F, 7.9F).fireImmune()
+                        .build("charybdis"));
         public static final RegistryObject<EntityType<? extends Circe>> CIRCE = ENTITY_TYPES.register("circe", () ->
                 EntityType.Builder.of(Circe::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.8F)
@@ -1037,6 +1046,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Sparti::new, MobCategory.CREATURE)
                         .sized(0.6F, 1.98F)
                         .build("sparti"));
+        public static final RegistryObject<EntityType<? extends Whirl>> WHIRL = ENTITY_TYPES.register("whirl", () ->
+                EntityType.Builder.of(Whirl::new, MobCategory.WATER_CREATURE)
+                        .sized(2.9F, 5.0F)
+                        .build("whirl"));
         // other
         public static final RegistryObject<EntityType<? extends Curse>> CURSE = ENTITY_TYPES.register("curse", () ->
                 EntityType.Builder.<Curse>of(Curse::new, MobCategory.MISC)

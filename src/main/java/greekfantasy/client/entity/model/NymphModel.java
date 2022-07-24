@@ -33,7 +33,7 @@ public class NymphModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 		PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create()
 				.texOffs(0, 0).addBox(-3.5F, -7.0F, -3.5F, 7.0F, 7.0F, 7.0F, CubeDeformation.NONE)
-				.texOffs(21, 0).addBox(-3.5F, 0.0F, -1.5F, 7.0F, 5.0F, 1.0F, CubeDeformation.NONE), PartPose.ZERO);
+				.texOffs(21, 0).addBox(-3.5F, 0.0F, 2.5F, 7.0F, 5.0F, 1.0F, CubeDeformation.NONE), PartPose.ZERO);
 
 		PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 16).addBox(-3.0F, 0.0F, -1.5F, 6.0F, 12.0F, 3.0F, CubeDeformation.NONE), PartPose.ZERO);
 		body.addOrReplaceChild("chest", CubeListBuilder.create().texOffs(30, 7).addBox(-2.99F, 0.3473F, -2.5F, 6.0F, 4.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 1.0F, 1.0F, -0.1745F, 0.0F, 0.0F));

@@ -100,6 +100,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
                 .add(Attributes.MAX_HEALTH, 24.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ATTACK_DAMAGE, 3.0D)
+                .add(Attributes.ARMOR, 1.0D)
                 .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 0.6D);
     }
 
@@ -380,7 +381,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
                 float f1 = (float) (this.speedModifier * this.naiad.getAttributeValue(Attributes.MOVEMENT_SPEED));
                 float f2 = Mth.lerp(0.125F, this.naiad.getSpeed(), f1);
                 this.naiad.setSpeed(f2);
-                this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().add((double) f2 * d0 * 0.005D, (double) f2 * d1 * 0.1D, (double) f2 * d2 * 0.005D));
+                this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().add((double) f2 * d0 * 0.05D, (double) f2 * d1 * 0.1D, (double) f2 * d2 * 0.05D));
             } else {
                 if (!this.naiad.onGround) {
                     this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().add(0.0D, -0.008D, 0.0D));

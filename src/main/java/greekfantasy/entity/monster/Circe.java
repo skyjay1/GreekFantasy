@@ -16,6 +16,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
@@ -64,8 +65,8 @@ public class Circe extends Monster implements RangedAttackMob {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new IntervalRangedAttackGoal<>(this, 90, 1, GreekFantasy.CONFIG.WAND_OF_CIRCE_COOLDOWN.get() * 4));
-        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class, 6.0F, 1.4D, 1.2D, e -> NOT_CURSED.test(e) && e == Circe.this.getTarget()));
+        this.goalSelector.addGoal(1, new IntervalRangedAttackGoal<>(this, 10, 1, GreekFantasy.CONFIG.WAND_OF_CIRCE_COOLDOWN.get() * 4));
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class, 6.0F, 1.4D, 1.2D, NOT_CURSED.and(e -> e == Circe.this.getTarget())));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D) {
             @Override
             public boolean canUse() {
@@ -94,7 +95,9 @@ public class Circe extends Monster implements RangedAttackMob {
     @Override
     protected void populateDefaultEquipmentSlots(DifficultyInstance difficulty) {
         super.populateDefaultEquipmentSlots(difficulty);
+        // hold wand in main hand (wand drop is handled in loot table)
         this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(GFRegistry.ItemReg.WAND_OF_CIRCE.get()));
+        this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
     }
 
     @Nullable
@@ -136,8 +139,8 @@ public class Circe extends Monster implements RangedAttackMob {
     }
 
     @Override
-    protected float getSoundVolume() {
-        return 0.8F;
+    public float getVoicePitch() {
+        return super.getVoicePitch() + 0.2F;
     }
 
     //Boss //
