@@ -88,7 +88,7 @@ import greekfantasy.item.WebBallItem;
 import greekfantasy.item.WingedSandalsItem;
 import greekfantasy.mob_effect.CurseOfCirceEffect;
 import greekfantasy.mob_effect.MirroringEffect;
-import greekfantasy.mob_effect.MolassesEffect;
+import greekfantasy.mob_effect.SlowSwimEffect;
 import greekfantasy.mob_effect.PrisonerOfHadesEffect;
 import greekfantasy.mob_effect.StunnedEffect;
 import greekfantasy.util.BronzeScrapLootModifier;
@@ -134,7 +134,6 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -1137,7 +1136,7 @@ public final class GFRegistry {
         public static final RegistryObject<MobEffect> PETRIFIED = MOB_EFFECTS.register("petrified", () -> new StunnedEffect());
         public static final RegistryObject<MobEffect> PRISONER_OF_HADES = MOB_EFFECTS.register("prisoner_of_hades", () -> new PrisonerOfHadesEffect());
         public static final RegistryObject<MobEffect> STUNNED = MOB_EFFECTS.register("stunned", () -> new StunnedEffect());
-        public static final RegistryObject<MobEffect> MOLASSES = MOB_EFFECTS.register("molasses", () -> new MolassesEffect());
+        public static final RegistryObject<MobEffect> SLOW_SWIM = MOB_EFFECTS.register("slow_swim", () -> new SlowSwimEffect());
 
     }
 

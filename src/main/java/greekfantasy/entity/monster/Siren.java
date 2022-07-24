@@ -284,7 +284,7 @@ public class Siren extends WaterAnimal implements Enemy {
                 // determine target
                 final LivingEntity target = Siren.this.getTarget();
                 // apply swim speed slowdown
-                target.addEffect(new MobEffectInstance(GFRegistry.MobEffectReg.MOLASSES.get(), maxDuration, 2));
+                target.addEffect(new MobEffectInstance(GFRegistry.MobEffectReg.SLOW_SWIM.get(), maxDuration, 2));
             } else {
                 stop();
             }
