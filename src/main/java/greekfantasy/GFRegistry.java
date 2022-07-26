@@ -33,6 +33,7 @@ import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Orthus;
 import greekfantasy.entity.Satyr;
 import greekfantasy.entity.Sparti;
+import greekfantasy.entity.Unicorn;
 import greekfantasy.entity.Whirl;
 import greekfantasy.entity.boss.Arachne;
 import greekfantasy.entity.boss.Charybdis;
@@ -56,6 +57,7 @@ import greekfantasy.entity.monster.Empusa;
 import greekfantasy.entity.monster.Fury;
 import greekfantasy.entity.monster.Gorgon;
 import greekfantasy.entity.monster.Harpy;
+import greekfantasy.entity.monster.MadCow;
 import greekfantasy.entity.monster.Minotaur;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.entity.monster.Siren;
@@ -867,6 +869,7 @@ public final class GFRegistry {
             register(event, GORGON.get(), Gorgon::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, HARPY.get(), Harpy::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
             register(event, LAMPAD.get(), Lampad::createAttributes, Mob::checkMobSpawnRules);
+            register(event, MAD_COW.get(), MadCow::createAttributes, SpawnRulesUtil::checkAnyLightMonsterSpawnRules);
             register(event, MINOTAUR.get(), Minotaur::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
             register(event, ORTHUS.get(), Orthus::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
@@ -875,6 +878,7 @@ public final class GFRegistry {
             register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, SIREN.get(), Siren::createAttributes, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
             register(event, SPARTI.get(), Sparti::createAttributes, null);
+            register(event, UNICORN.get(), Unicorn::createAttributes, Mob::checkMobSpawnRules);
             register(event, WHIRL.get(), Whirl::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
         }
 
@@ -927,12 +931,14 @@ public final class GFRegistry {
                 addSpawns(event, GORGON.get(), 1, 2);
                 addSpawns(event, HARPY.get(), 1, 3);
                 addSpawns(event, LAMPAD.get(), 2, 5);
+                addSpawns(event, MAD_COW.get(), 1, 1);
                 addSpawns(event, MINOTAUR.get(), 2, 5);
                 addSpawns(event, NAIAD.get(), 2, 5);
                 addSpawns(event, ORTHUS.get(), 2, 4);
                 addSpawns(event, SATYR.get(), 2, 5);
                 addSpawns(event, SHADE.get(), 1, 1);
                 addSpawns(event, SIREN.get(), 1, 4);
+                addSpawns(event, UNICORN.get(), 3, 5);
                 addSpawns(event, WHIRL.get(), 1, 1);
             }
         }
@@ -1021,6 +1027,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Lampad::new, MobCategory.CREATURE)
                         .sized(0.48F, 1.8F).fireImmune()
                         .build("lampad"));
+        public static final RegistryObject<EntityType<? extends MadCow>> MAD_COW = ENTITY_TYPES.register("mad_cow", () ->
+                EntityType.Builder.of(MadCow::new, MobCategory.MONSTER)
+                        .sized(0.9F, 1.4F)
+                        .build("mad_cow"));
         public static final RegistryObject<EntityType<? extends Minotaur>> MINOTAUR = ENTITY_TYPES.register("minotaur", () ->
                 EntityType.Builder.of(Minotaur::new, MobCategory.MONSTER)
                         .sized(0.7F, 1.94F)
@@ -1053,6 +1063,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Sparti::new, MobCategory.CREATURE)
                         .sized(0.6F, 1.98F)
                         .build("sparti"));
+        public static final RegistryObject<EntityType<? extends Unicorn>> UNICORN = ENTITY_TYPES.register("unicorn", () ->
+                EntityType.Builder.of(Unicorn::new, MobCategory.CREATURE)
+                        .sized(1.39F, 1.98F)
+                        .build("unicorn"));
         public static final RegistryObject<EntityType<? extends Whirl>> WHIRL = ENTITY_TYPES.register("whirl", () ->
                 EntityType.Builder.of(Whirl::new, MobCategory.WATER_CREATURE)
                         .sized(2.9F, 5.0F)

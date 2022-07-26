@@ -91,7 +91,7 @@ public class Charybdis extends WaterAnimal {
 
     public static Charybdis spawnCharybdis(final ServerLevel world, final Whirl whirl) {
         Charybdis entity = GFRegistry.EntityReg.CHARYBDIS.get().create(world);
-        entity.moveTo(whirl.getX(), whirl.getY() - 2.0D, whirl.getZ(), whirl.getYRot(), whirl.getXRot());
+        entity.moveTo(whirl.getX(), whirl.getY() - 2.8D, whirl.getZ(), whirl.getYRot(), whirl.getXRot());
         entity.finalizeSpawn(world, world.getCurrentDifficultyAt(whirl.blockPosition()), MobSpawnType.CONVERSION, null, null);
         if (whirl.hasCustomName()) {
             entity.setCustomName(whirl.getCustomName());
@@ -140,7 +140,7 @@ public class Charybdis extends WaterAnimal {
         super.registerGoals();
         this.goalSelector.addGoal(1, new GFFloatGoal(this));
         this.goalSelector.addGoal(2, new Charybdis.SwirlGoal(this, SWIRL_TIME, 114, RANGE));
-        this.goalSelector.addGoal(3, new Charybdis.ThrowGoal(THROW_TIME, 82, RANGE * 0.75D));
+        this.goalSelector.addGoal(3, new Charybdis.ThrowGoal(THROW_TIME, 190, RANGE * 0.75D));
     }
 
     @Override
@@ -164,7 +164,7 @@ public class Charybdis extends WaterAnimal {
         swirlTime0 = swirlTime;
         if (isSwirling()) {
             swirlTime = Math.min(swirlTime + 1, SWIRL_TIME);
-            this.setYBodyRot(this.yBodyRot + 10);
+            this.setYBodyRot(this.yBodyRot + 5);
         } else if (swirlTime > 0) {
             swirlTime = 0;
         }

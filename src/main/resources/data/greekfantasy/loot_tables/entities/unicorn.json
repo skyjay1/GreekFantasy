@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 0.0,
+                "max": 1.0,
+                "type": "minecraft:uniform"
+              }
+            }
+          ],
+          "name": "greekfantasy:unicorn_horn"
+        },
+        {
+          "type": "minecraft:empty"
+        }
+      ]
+    },
+    {
+	  "rolls": 1,
+	  "entries": [
+		{
+		  "type": "minecraft:loot_table",
+		  "name": "minecraft:entities/horse"
+		}
+	  ]
+	}
+  ]
+}

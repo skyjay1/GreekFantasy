@@ -28,6 +28,7 @@ import greekfantasy.client.entity.GiganteRenderer;
 import greekfantasy.client.entity.GorgonRenderer;
 import greekfantasy.client.entity.HarpyRenderer;
 import greekfantasy.client.entity.LampadRenderer;
+import greekfantasy.client.entity.MadCowRenderer;
 import greekfantasy.client.entity.MinotaurRenderer;
 import greekfantasy.client.entity.NaiadRenderer;
 import greekfantasy.client.entity.OrthusRenderer;
@@ -38,6 +39,7 @@ import greekfantasy.client.entity.SirenRenderer;
 import greekfantasy.client.entity.SpartiRenderer;
 import greekfantasy.client.entity.SpearRenderer;
 import greekfantasy.client.entity.SpellRenderer;
+import greekfantasy.client.entity.UnicornRenderer;
 import greekfantasy.client.entity.WhirlRenderer;
 import greekfantasy.client.entity.layer.NemeanLionHideLayer;
 import greekfantasy.client.entity.model.AraModel;
@@ -66,6 +68,7 @@ import greekfantasy.client.entity.model.ShadeModel;
 import greekfantasy.client.entity.model.SirenModel;
 import greekfantasy.client.entity.model.SpearModel;
 import greekfantasy.client.entity.model.SpellModel;
+import greekfantasy.client.entity.model.UnicornModel;
 import greekfantasy.client.particle.GorgonParticle;
 import greekfantasy.entity.Lampad;
 import net.minecraft.client.Minecraft;
@@ -149,11 +152,13 @@ public final class GFClientEvents {
         @SubscribeEvent(priority = EventPriority.HIGH)
         public static void onRenderHand(final RenderHandEvent event) {
             final Minecraft mc = Minecraft.getInstance();
+            if(null == mc.player) {
+                return;
+            }
             if (GreekFantasy.CONFIG.helmHidesArmor() && mc.player.getItemBySlot(EquipmentSlot.HEAD).is(GFRegistry.ItemReg.HELM_OF_DARKNESS.get())) {
                 event.setCanceled(true);
                 return;
             }
-            // render pig when curse of circe is applied
             if (GreekFantasy.CONFIG.isCurseOfCirceEnabled()
                     && mc.player.hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get())) {
                 event.setCanceled(true);
@@ -221,6 +226,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(SatyrModel.SATYR_INNER_ARMOR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(new CubeDeformation(0.25F)));
             event.registerLayerDefinition(ShadeModel.SHADE_MODEL_RESOURCE, ShadeModel::createBodyLayer);
             event.registerLayerDefinition(SirenModel.SIREN_MODEL_RESOURCE, SirenModel::createBodyLayer);
+            event.registerLayerDefinition(UnicornModel.UNICORN_MODEL_RESOURCE, UnicornModel::createBodyLayer);
             // other
             event.registerLayerDefinition(GiganteHeadModel.GIGANTE_HEAD_MODEL_RESOURCE, GiganteHeadModel::createLayer);
             event.registerLayerDefinition(OrthusHeadModel.ORTHUS_HEAD_MODEL_RESOURCE, OrthusHeadModel::createLayer);
@@ -250,6 +256,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.GORGON.get(), GorgonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.HARPY.get(), HarpyRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.LAMPAD.get(), LampadRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.MAD_COW.get(), MadCowRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.MINOTAUR.get(), MinotaurRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.NAIAD.get(), NaiadRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.ORTHUS.get(), OrthusRenderer::new);
@@ -258,6 +265,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.SPARTI.get(), SpartiRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SHADE.get(), ShadeRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SIREN.get(), SirenRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.UNICORN.get(), UnicornRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.WHIRL.get(), WhirlRenderer::new);
             // other
             event.registerEntityRenderer(GFRegistry.EntityReg.CURSE.get(), SpellRenderer.CurseRenderer::new);

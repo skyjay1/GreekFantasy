@@ -17,7 +17,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 
 public class SpellModel<T extends Projectile> extends EntityModel<T> {
 
-    public static final ModelLayerLocation SPELL_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "spell"), "spell");;
+    public static final ModelLayerLocation SPELL_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "spell"), "spell");
 
     private final boolean usePackedLight;
     private final ModelPart root;

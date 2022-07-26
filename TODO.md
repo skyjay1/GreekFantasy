@@ -32,11 +32,11 @@ __Key:__
 - X X _ X X Ara
 - X X X _ X Cyclops // TO DO: drops bronze nuggets and a different monster drops avernal shards?
 - X X X X X Gigante
-- _ _ _ _ _ Unicorn
+- X X X X X Unicorn
 - X X X X X Orthus
 - X X ~ X X Elpis
 - X X X X X Sparti
-- _ _ _ _ _ Mad Cow
+- X X X X X Mad Cow
 - _ _ _ _ _ Boss: Cerberus
 - _ _ _ _ _ Boss: Geryon
 - X X X X X Boss: Charybdis

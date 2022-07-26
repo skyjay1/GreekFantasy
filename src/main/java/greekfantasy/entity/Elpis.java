@@ -126,7 +126,7 @@ public class Elpis extends PathfinderMob implements FlyingAnimal {
     public void tick() {
         super.tick();
         setNoGravity(true);
-        if (this.level.isClientSide() && random.nextInt(12) == 0) {
+        if (this.level.isClientSide() && random.nextInt(9) == 0) {
             // add particles
             final double radius = 0.25D;
             if (isTrading()) {

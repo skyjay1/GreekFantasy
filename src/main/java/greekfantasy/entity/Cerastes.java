@@ -439,7 +439,7 @@ public class Cerastes extends TamableAnimal {
 
         @Override
         protected boolean isValidTarget(LevelReader worldIn, BlockPos pos) {
-            if (!worldIn.getBlockState(pos.above(1)).getMaterial().blocksMotion() && worldIn.getBlockState(pos).is(BlockTags.SAND)) {
+            if (!worldIn.getBlockState(pos).getMaterial().blocksMotion() && worldIn.getBlockState(pos.below()).is(BlockTags.SAND)) {
                 Cerastes.this.isGoingToSand = true;
                 return true;
             }

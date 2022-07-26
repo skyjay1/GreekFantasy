@@ -148,11 +148,11 @@ public class CharybdisModel extends AgeableListModel<Charybdis> {
         final float throwingTime = entity.isThrowing() ? entity.getThrowPercent(partialTick) : 0;
         final float throwingTimeLeft = 1.0F - throwingTime;
         final float throwingZ = 0.9F - 2F * Math.abs(throwingTime - 0.5F);
-        final float armAmplitude = 0.4F + swirlingTime * 0.6F;
+        final float armAmplitude = 0.25F + swirlingTime * 0.6F;
         Triple<ModelPart, ModelPart, ModelPart> arm;
         for (int i = 0, n = armList.size(); i < n; i++) {
             arm = armList.get(i);
-            float idleSwing = Mth.cos(ageInTicks * 0.28F + i * 1.62F) * armAmplitude;
+            float idleSwing = Mth.cos(ageInTicks * 0.08F + i * 1.62F) * armAmplitude;
             GFModelUtil.setupCharybdisArmAnim(arm.getLeft(), arm.getMiddle(), arm.getRight(), idleSwing, throwingTimeLeft, throwingZ);
         }
     }

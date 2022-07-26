@@ -71,7 +71,7 @@ public class BabySpider extends Spider {
         public AttackGoal(PathfinderMob creature, double speedIn, int maxCooldownIn) {
             super(creature, speedIn, false);
             maxCooldown = maxCooldownIn;
-            cooldown = 20;
+            cooldown = 10;
         }
 
         @Override
@@ -89,18 +89,6 @@ public class BabySpider extends Spider {
             super.start();
             BabySpider.this.isAttacking = true;
         }
-
-
-        /**
-         * Returns whether an in-progress EntityAIBase should continue executing
-         */
-        public boolean canContinueToUse() {
-            if (BabySpider.this.isAttacking) {
-                return false;
-            }
-            return super.canContinueToUse();
-        }
-
 
         @Override
         public void stop() {

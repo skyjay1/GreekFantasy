@@ -245,12 +245,14 @@ public class GFConfig {
         putSpawnConfigSpec(builder, "gorgon", 20, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "harpy", 24, true, Biomes.DESERT.location().toString(), Biomes.WOODED_BADLANDS.location().toString());
         putSpawnConfigSpec(builder, "lampad", 24, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString());
+        putSpawnConfigSpec(builder, "mad_cow", 2, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "minotaur", 50, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "naiad", 12, true, BiomeDictionary.Type.WATER.getName());
         putSpawnConfigSpec(builder, "orthus", 20, true, BiomeDictionary.Type.NETHER.getName());
         putSpawnConfigSpec(builder, "satyr", 22, true, forest);
         putSpawnConfigSpec(builder, "shade", 10, false);
         putSpawnConfigSpec(builder, "siren", 10, true, Biomes.LUKEWARM_OCEAN.location().toString(), Biomes.WARM_OCEAN.location().toString());
+        putSpawnConfigSpec(builder, "unicorn", 11, true, Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString());
         putSpawnConfigSpec(builder, "whirl", 6, true, BiomeDictionary.Type.OCEAN.getName());
         builder.pop();
 
