@@ -1,6 +1,7 @@
 package greekfantasy.client.entity.model;
 import com.google.common.collect.ImmutableList;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.Orthus;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -15,7 +16,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.TamableAnimal;
 
-public class OrthusModel<T extends TamableAnimal & NeutralMob> extends AgeableListModel<T> {
+public class OrthusModel<T extends Orthus> extends AgeableListModel<T> {
 	public static final ModelLayerLocation ORTHUS_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "orthus"), "orthus");
 
 	protected final ModelPart rightHead;
@@ -91,6 +92,10 @@ public class OrthusModel<T extends TamableAnimal & NeutralMob> extends AgeableLi
 
 	@Override
 	public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
+		// begging
+		float headZRot = entity.getHeadRollAngle(partialTick);
+		this.leftHead.zRot = headZRot;
+		this.rightHead.zRot = headZRot;
 		// tail
 		if (entity.isAngry()) {
 			this.tail.yRot = 0.0F;

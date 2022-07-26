@@ -24,6 +24,7 @@ import greekfantasy.enchantment.PoisoningEnchantment;
 import greekfantasy.enchantment.SilkstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
 import greekfantasy.entity.Centaur;
+import greekfantasy.entity.Cerastes;
 import greekfantasy.entity.Dryad;
 import greekfantasy.entity.Elpis;
 import greekfantasy.entity.Gigante;
@@ -852,6 +853,7 @@ public final class GFRegistry {
             register(event, ARACHNE.get(), Arachne::createAttributes, null);
             register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
             register(event, CENTAUR.get(), Centaur::createAttributes, Mob::checkMobSpawnRules);
+            register(event, CERASTES.get(), Cerastes::createAttributes, Cerastes::checkCerastesSpawnRules);
             register(event, CHARYBDIS.get(), Charybdis::createAttributes, null);
             register(event, CIRCE.get(), Circe::createAttributes, null);
             register(event, CYCLOPS.get(), Cyclops::createAttributes, Monster::checkMonsterSpawnRules);
@@ -914,6 +916,7 @@ public final class GFRegistry {
             if (event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
                 addSpawns(event, ARA.get(), 2, 5);
                 addSpawns(event, CENTAUR.get(), 2, 4);
+                addSpawns(event, CERASTES.get(), 1, 3);
                 addSpawns(event, CYCLOPS.get(), 2, 5);
                 addSpawns(event, CYPRIAN.get(), 1, 3);
                 addSpawns(event, DRAKAINA.get(), 1, 2);
@@ -962,6 +965,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Centaur::new, MobCategory.CREATURE)
                         .sized(1.39F, 2.49F)
                         .build("centaur"));
+        public static final RegistryObject<EntityType<? extends Cerastes>> CERASTES = ENTITY_TYPES.register("cerastes", () ->
+                EntityType.Builder.of(Cerastes::new, MobCategory.CREATURE)
+                        .sized(0.98F, 0.94F)
+                        .build("cerastes"));
         public static final RegistryObject<EntityType<? extends Charybdis>> CHARYBDIS = ENTITY_TYPES.register("charybdis", () ->
                 EntityType.Builder.of(Charybdis::new, MobCategory.WATER_CREATURE)
                         .sized(5.9F, 7.9F).fireImmune()

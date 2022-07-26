@@ -2,7 +2,7 @@ package greekfantasy.entity.boss;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.entity.Whirl;
-import greekfantasy.entity.ai.SwimUpGoal;
+import greekfantasy.entity.ai.GFFloatGoal;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
@@ -90,7 +91,7 @@ public class Charybdis extends WaterAnimal {
 
     public static Charybdis spawnCharybdis(final ServerLevel world, final Whirl whirl) {
         Charybdis entity = GFRegistry.EntityReg.CHARYBDIS.get().create(world);
-        entity.copyPosition(whirl);
+        entity.moveTo(whirl.getX(), whirl.getY() - 2.0D, whirl.getZ(), whirl.getYRot(), whirl.getXRot());
         entity.finalizeSpawn(world, world.getCurrentDifficultyAt(whirl.blockPosition()), MobSpawnType.CONVERSION, null, null);
         if (whirl.hasCustomName()) {
             entity.setCustomName(whirl.getCustomName());
@@ -131,20 +132,19 @@ public class Charybdis extends WaterAnimal {
     @Override
     public void defineSynchedData() {
         super.defineSynchedData();
-        this.getEntityData().define(STATE, Byte.valueOf(NONE));
+        this.getEntityData().define(STATE, NONE);
     }
 
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(1, new SwimUpGoal(this, 1.0D, level.getSeaLevel(), 7));
+        this.goalSelector.addGoal(1, new GFFloatGoal(this));
         this.goalSelector.addGoal(2, new Charybdis.SwirlGoal(this, SWIRL_TIME, 114, RANGE));
         this.goalSelector.addGoal(3, new Charybdis.ThrowGoal(THROW_TIME, 82, RANGE * 0.75D));
     }
 
     @Override
     public void aiStep() {
-
         super.aiStep();
 
         // boss info
@@ -163,8 +163,8 @@ public class Charybdis extends WaterAnimal {
         // update swirl attack
         swirlTime0 = swirlTime;
         if (isSwirling()) {
-            swirlTime = Math.max(swirlTime + 1, SWIRL_TIME);
-            this.setRot(this.getYRot() + 1, this.getXRot());
+            swirlTime = Math.min(swirlTime + 1, SWIRL_TIME);
+            this.setYBodyRot(this.yBodyRot + 10);
         } else if (swirlTime > 0) {
             swirlTime = 0;
         }
@@ -172,7 +172,7 @@ public class Charybdis extends WaterAnimal {
         // update throw attack
         throwTime0 = throwTime;
         if (isThrowing()) {
-            throwTime = Math.max(throwTime + 1, THROW_TIME);
+            throwTime = Math.min(throwTime + 1, THROW_TIME);
         } else if (throwTime > 0) {
             throwTime = 0;
         }
@@ -324,8 +324,8 @@ public class Charybdis extends WaterAnimal {
 
     @Override
     public void travel(final Vec3 vec) {
-        if (isEffectiveAi() && isInWater()) {
-            moveRelative(0.02F, vec);
+        if (isEffectiveAi() && isInWater() && !this.isEyeInFluid(FluidTags.WATER)) {
+            moveRelative(-0.02F, vec);
             move(MoverType.SELF, getDeltaMovement());
             setDeltaMovement(getDeltaMovement().scale(0.9D));
         } else {
@@ -345,6 +345,7 @@ public class Charybdis extends WaterAnimal {
         byte clientFlag = NONE_CLIENT;
         switch (state) {
             case NONE:
+                spawnTime0 = swirlTime0 = throwTime0 = 0;
                 spawnTime = swirlTime = throwTime = 0;
                 break;
             case SPAWNING:
@@ -511,6 +512,11 @@ public class Charybdis extends WaterAnimal {
             cooldown = lCooldown;
             range = lRange;
             cooldownTime = 50;
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
         }
 
         @Override

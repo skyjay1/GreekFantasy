@@ -3,7 +3,8 @@ package greekfantasy.entity.monster;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GoToWaterGoal;
-import greekfantasy.entity.ai.SwimUpGoal;
+import greekfantasy.entity.ai.GFFloatGoal;
+import greekfantasy.entity.boss.Charybdis;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -78,7 +79,7 @@ public class Siren extends WaterAnimal implements Enemy {
         this.goalSelector.addGoal(1, new GoToWaterGoal(this, 1.0D, false));
         this.goalSelector.addGoal(2, new Siren.CharmAttackGoal(250, 100, 12));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1D, false));
-        this.goalSelector.addGoal(4, new SwimUpGoal(this, 1.0D, this.level.getSeaLevel(), -1));
+        this.goalSelector.addGoal(5, new AvoidEntityGoal<>(this, Charybdis.class, 12.0F, 1.0D, 1.0D));
         this.goalSelector.addGoal(5, new AvoidEntityGoal<>(this, Pufferfish.class, 10.0F, 1.2D, 1.0D));
         this.goalSelector.addGoal(6, new RandomSwimmingGoal(this, 0.9D, 140));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -123,11 +124,7 @@ public class Siren extends WaterAnimal implements Enemy {
     @Override
     public void updateSwimming() {
         if (!this.level.isClientSide) {
-            if (this.isEffectiveAi()/* && this.isInWater()*/ && this.wantsToSwim()) {
-                this.setSwimming(true);
-            } else {
-                this.setSwimming(false);
-            }
+            this.setSwimming(true);
         }
     }
 
@@ -139,24 +136,8 @@ public class Siren extends WaterAnimal implements Enemy {
     }
 
     @Override
-    public void travel(final Vec3 vec) {
-        if (isEffectiveAi() && isInWater() && wantsToSwim()) {
-            moveRelative(0.01F, vec);
-            move(MoverType.SELF, getDeltaMovement());
-            setDeltaMovement(getDeltaMovement().scale(0.9D));
-        } else {
-            super.travel(vec);
-        }
-    }
-
-    @Override
     public boolean isPushedByFluid() {
         return !isSwimming();
-    }
-
-    boolean wantsToSwim() {
-        LivingEntity livingentity = this.getTarget();
-        return null == livingentity || livingentity.isInWater();
     }
 
     // Charming methods
@@ -203,13 +184,14 @@ public class Siren extends WaterAnimal implements Enemy {
 
         public void tick() {
             LivingEntity livingentity = this.siren.getTarget();
-            if (this.siren.wantsToSwim() && this.siren.isInWater()) {
+            if (this.siren.isInWater()) {
                 if (livingentity != null && livingentity.getY() > this.siren.getY()) {
-                    this.siren.setDeltaMovement(this.siren.getDeltaMovement().add(0.0D, 0.002D, 0.0D));
+                    this.siren.setDeltaMovement(this.siren.getDeltaMovement().add(0.0D, 0.02D, 0.0D));
                 }
 
                 if (this.operation != MoveControl.Operation.MOVE_TO || this.siren.getNavigation().isDone()) {
                     this.siren.setSpeed(0.0F);
+                    this.siren.setDeltaMovement(this.siren.getDeltaMovement().multiply(1.0D, 0.5D, 1.0D));
                     return;
                 }
 
@@ -224,7 +206,7 @@ public class Siren extends WaterAnimal implements Enemy {
                 float f1 = (float) (this.speedModifier * this.siren.getAttributeValue(Attributes.MOVEMENT_SPEED));
                 float f2 = Mth.lerp(0.125F, this.siren.getSpeed(), f1);
                 this.siren.setSpeed(f2);
-                this.siren.setDeltaMovement(this.siren.getDeltaMovement().add((double) f2 * d0 * 0.05D, (double) f2 * d1 * 0.1D, (double) f2 * d2 * 0.05D));
+                this.siren.setDeltaMovement(this.siren.getDeltaMovement().add((double) f2 * d0 * 0.03D, (double) f2 * d1 * 0.1D, (double) f2 * d2 * 0.03D));
             } else {
                 if (!this.siren.onGround) {
                     this.siren.setDeltaMovement(this.siren.getDeltaMovement().add(0.0D, -0.008D, 0.0D));

@@ -43,6 +43,11 @@ public class SummonMobGoal<T extends Mob> extends Goal {
     }
 
     @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
+    @Override
     public boolean canUse() {
         if (cooldown > 0) {
             cooldown--;

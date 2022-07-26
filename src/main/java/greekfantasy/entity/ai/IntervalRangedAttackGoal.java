@@ -27,6 +27,11 @@ public class IntervalRangedAttackGoal<T extends Mob & RangedAttackMob> extends G
     }
 
     @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
+    @Override
     public boolean canUse() {
         if (this.cooldown > 0) {
             cooldown--;

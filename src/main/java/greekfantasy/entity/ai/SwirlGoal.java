@@ -56,6 +56,11 @@ public abstract class SwirlGoal extends Goal {
     }
 
     @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
+    @Override
     public boolean canUse() {
         if (cooldownTime > 0) {
             cooldownTime--;

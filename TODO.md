@@ -28,7 +28,7 @@ __Key:__
 - X X X X X Empusa
 - X X X X X Shade
 - X X ~ X X Siren
-- _ _ _ _ _ Cerastes
+- X X X X X Cerastes
 - X X _ X X Ara
 - X X X _ X Cyclops // TO DO: drops bronze nuggets and a different monster drops avernal shards?
 - X X X X X Gigante
@@ -47,7 +47,7 @@ __Key:__
 - _ _ _ _ _ Miniboss: Giant Boar
 - X X X X X Miniboss: Medusa
 - _ _ _ _ _ Miniboss: Cretan Minotaur
-- X X X X _ Miniboss: Circe
+- X X X X X Miniboss: Circe
 - _ _ _ _ _ Miniboss: Hydra
 - X X X X X Miniboss: Arachne
 - X X X X X Fury
@@ -137,7 +137,7 @@ __Key:__
 
 `[In-game] [Use] [Obtainable]`
 
-- _ _ _ Spawn Eggs
+- _ _ . Spawn Eggs
 - X X X Bronze Ingot
 - X X X Bronze Nugget
 - X X X Bronze artifacts (goblet, bowl, pile of coins, vase, ruined helmet, ruined cuirass, broken shield, figurine)

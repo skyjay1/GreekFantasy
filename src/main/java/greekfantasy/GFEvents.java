@@ -1,6 +1,8 @@
 package greekfantasy;
 
+import greekfantasy.entity.Cerastes;
 import greekfantasy.entity.Orthus;
+import greekfantasy.entity.monster.Circe;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.integration.RGCompat;
 import greekfantasy.item.HellenicArmorItem;
@@ -11,7 +13,9 @@ import greekfantasy.util.SummonBossUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -20,6 +24,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -32,11 +37,13 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -357,15 +364,81 @@ public final class GFEvents {
             }
         }
 
+        /**
+         * Used to add AI to Minecraft entities when they are spawned.
+         *
+         * @param event the spawn event
+         **/
         @SubscribeEvent
         public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
-            if(event.getEntity() instanceof PathfinderMob mob) {
+            if(event.getEntity() instanceof PathfinderMob mob && !event.getEntity().level.isClientSide()) {
                 // add avoid orthus goal to wither skeleton
                 if(mob.getType() == EntityType.WITHER_SKELETON) {
                     mob.goalSelector.addGoal(3, new AvoidEntityGoal<>(mob, Orthus.class, 6.0F, 1.0D, 1.2D));
                 }
-                // TODO add avoid cerastes goal to rabbits
+                // add avoid cerastes goal to rabbits
+                if(mob.getType() == EntityType.RABBIT && ((Rabbit)event.getEntity()).getRabbitType() != 99) {
+                    mob.goalSelector.addGoal(3, new AvoidEntityGoal<>(mob, Cerastes.class, 6.0F, 1.0D, 1.2D,
+                            e -> e instanceof Cerastes cerastes && !cerastes.isHiding()));
+                }
             }
+        }
+
+        /**
+         * Used to sometimes replace Witch with Circe when a witch is spawned.
+         * Used to sometimes replace Sheep with Golden Ram when a yellow sheep is spawned.
+         *
+         * @param event the LivingSpawnEvent.SpecialSpawn
+         */
+        @SubscribeEvent
+        public static void onEntitySpawn(final LivingSpawnEvent.SpecialSpawn event) {
+            // check if the entity is a witch
+            if (event.getEntity() != null && event.getEntity().getType() == EntityType.WITCH &&
+                    (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.CIRCE_SPAWN_CHANCE.get()
+                    && event.getWorld() instanceof Level) {
+                event.setCanceled(true);
+                // spawn Circe instead of witch
+                final Circe circe = GFRegistry.EntityReg.CIRCE.get().create((Level) event.getWorld());
+                circe.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
+                event.getWorld().addFreshEntity(circe);
+            }
+            // check if the entity is a sheep
+           /* if (event.getEntity() != null && event.getEntity().getType() == EntityType.SHEEP && event.getWorld() instanceof World) {
+                // check if the sheep has yellow wool
+                SheepEntity sheep = (SheepEntity) event.getEntity();
+                if (sheep.getColor() == DyeColor.YELLOW && (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.getGoldenRamChance()) {
+                    // spawn Golden Ram instead of sheep
+                    event.setCanceled(true);
+                    final GoldenRamEntity ram = GFRegistry.EntityReg.GOLDEN_RAM_ENTITY.create((World) event.getWorld());
+                    ram.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
+                    event.getWorld().addFreshEntity(ram);
+                }
+            }*/
+        }
+
+        /**
+         * Used to replace ocelot with Nemean Lion when the former is struck by lightning
+         * (while under the Strength potion effect)
+         *
+         * @param event the EntityStruckByLightning event
+         */
+        @SubscribeEvent
+        public static void onEntityStruckByLightning(final EntityStruckByLightningEvent event) {
+            /*if (event.getEntity() instanceof LivingEntity && event.getEntity().getType() == EntityType.OCELOT
+                    && ((LivingEntity) event.getEntity()).getEffect(MobEffects.DAMAGE_BOOST) != null
+                    && event.getEntity().level.getDifficulty() != Difficulty.PEACEFUL
+                    && event.getEntity().level.random.nextFloat() * 100.0F < GreekFantasy.CONFIG.getLightningLionChance()) {
+                // remove the entity and spawn a nemean lion
+                NemeanLionEntity lion = GFRegistry.EntityReg.NEMEAN_LION_ENTITY.create(event.getEntity().level);
+                lion.copyPosition(event.getEntity());
+                if (event.getEntity().hasCustomName()) {
+                    lion.setCustomName(event.getEntity().getCustomName());
+                    lion.setCustomNameVisible(event.getEntity().isCustomNameVisible());
+                }
+                lion.setPersistenceRequired();
+                event.getEntity().getCommandSenderWorld().addFreshEntity(lion);
+                event.getEntity().remove();
+            }*/
         }
 
     }

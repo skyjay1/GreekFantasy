@@ -143,16 +143,17 @@ public class CharybdisModel extends AgeableListModel<Charybdis> {
     }
 
     public void setupArmAnim(Charybdis entity, float ageInTicks) {
-        final float partialTick = entity.tickCount - ageInTicks;
+        final float partialTick = ageInTicks - entity.tickCount;
         final float swirlingTime = entity.isSwirling() ? entity.getSwirlPercent(partialTick) : 0;
         final float throwingTime = entity.isThrowing() ? entity.getThrowPercent(partialTick) : 0;
         final float throwingTimeLeft = 1.0F - throwingTime;
         final float throwingZ = 0.9F - 2F * Math.abs(throwingTime - 0.5F);
-        final float swirlingMult = 0.058F + 0.14F * Math.min(swirlingTime * 10.0F, 1.0F);
+        final float armAmplitude = 0.4F + swirlingTime * 0.6F;
         Triple<ModelPart, ModelPart, ModelPart> arm;
         for (int i = 0, n = armList.size(); i < n; i++) {
             arm = armList.get(i);
-            GFModelUtil.setupCharybdisArmAnim(arm.getLeft(), arm.getMiddle(), arm.getRight(), Mth.cos(ageInTicks * swirlingMult + i * 1.62F), throwingTimeLeft, throwingZ);
+            float idleSwing = Mth.cos(ageInTicks * 0.28F + i * 1.62F) * armAmplitude;
+            GFModelUtil.setupCharybdisArmAnim(arm.getLeft(), arm.getMiddle(), arm.getRight(), idleSwing, throwingTimeLeft, throwingZ);
         }
     }
 

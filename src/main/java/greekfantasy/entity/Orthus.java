@@ -3,14 +3,19 @@ package greekfantasy.entity;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.ShootFireGoal;
+import greekfantasy.entity.ai.GFBegGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.InteractionHand;
@@ -29,7 +34,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -49,22 +53,18 @@ import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 public class Orthus extends TamableAnimal implements NeutralMob {
 
+    private static final EntityDataAccessor<Boolean> INTERESTED = SynchedEntityData.defineId(Orthus.class, EntityDataSerializers.BOOLEAN);
     protected static final TagKey<Item> FOOD = ForgeRegistries.ITEMS.tags().createTagKey(new ResourceLocation(GreekFantasy.MODID, "orthus_food"));
 
     protected static final String KEY_LIFE_TICKS = "LifeTicks";
@@ -89,6 +89,10 @@ public class Orthus extends TamableAnimal implements NeutralMob {
     /** The number of ticks this entity is breathing fire **/
     protected int fireTime;
 
+    /** Angle to rotate head when interested **/
+    private float interestedAngle;
+    private float interestedAngleO;
+
     public Orthus(final EntityType<? extends Orthus> type, final Level level) {
         super(type, level);
     }
@@ -103,21 +107,22 @@ public class Orthus extends TamableAnimal implements NeutralMob {
     @Override
     public void defineSynchedData() {
         super.defineSynchedData();
+        this.getEntityData().define(INTERESTED, false);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(3, new Orthus.FireAttackGoal(MAX_FIRE_TIME, 165, FIRE_RANGE));
-        this.goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
-        this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
-        this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 4.0F, false));
-        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(8, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(9, new Orthus.BegGoal(8.0D));
+        this.goalSelector.addGoal(2, new Orthus.OrthusBegGoal(8.0D));
+        this.goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
+        this.goalSelector.addGoal(4, new Orthus.FireAttackGoal(MAX_FIRE_TIME, 165, FIRE_RANGE));
+        this.goalSelector.addGoal(5, new LeapAtTargetGoal(this, 0.4F));
+        this.goalSelector.addGoal(6, new MeleeAttackGoal(this, 1.0D, true));
+        this.goalSelector.addGoal(7, new FollowOwnerGoal(this, 1.0D, 10.0F, 4.0F, false));
+        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(9, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(11, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this).setAlertOthers());
@@ -141,10 +146,19 @@ public class Orthus extends TamableAnimal implements NeutralMob {
     @Override
     public void tick() {
         super.tick();
+        if(this.isAlive()) {
+            // update interested angle
+            this.interestedAngleO = this.interestedAngle;
+            if (this.isInterested()) {
+                this.interestedAngle += (1.0F - this.interestedAngle) * 0.4F;
+            } else {
+                this.interestedAngle += (0.0F - this.interestedAngle) * 0.4F;
+            }
 
-        // spawn particles
-        if (level.isClientSide() && this.isFireAttack()) {
-            spawnFireParticles();
+            // spawn particles
+            if (level.isClientSide() && this.isFireAttack()) {
+                spawnFireParticles();
+            }
         }
     }
 
@@ -161,9 +175,9 @@ public class Orthus extends TamableAnimal implements NeutralMob {
             return !tamable.isTame() || tamable.getOwner() != owner;
         } else if (target instanceof Player targetPlayer && owner instanceof Player ownerPlayer
                 && !ownerPlayer.canHarmPlayer(targetPlayer)) {
-            return false;
+            return false;/*
         } else if(target.getMainHandItem().is(FOOD) || target.getOffhandItem().is(FOOD)) {
-            return false;
+            return false;*/
         } else if (target instanceof AbstractHorse horse && horse.isTamed()) {
             return false;
         }
@@ -425,6 +439,18 @@ public class Orthus extends TamableAnimal implements NeutralMob {
         }
     }
 
+    public void setInterested(final boolean interested) {
+        this.getEntityData().set(INTERESTED, interested);
+    }
+
+    public boolean isInterested() {
+        return this.getEntityData().get(INTERESTED);
+    }
+
+    public float getHeadRollAngle(float partialTick) {
+        return Mth.lerp(partialTick, this.interestedAngleO, this.interestedAngle) * 0.15F * (float)Math.PI;
+    }
+
     public void setFireAttack(final boolean shooting) {
         if(shooting) {
             this.fireTime = MAX_FIRE_TIME;
@@ -443,54 +469,31 @@ public class Orthus extends TamableAnimal implements NeutralMob {
         return this.fireTime > 0;
     }
 
-    class BegGoal extends Goal {
+    class OrthusBegGoal extends GFBegGoal {
 
-        protected static final Predicate<LivingEntity> CAUSE_BEG = e -> e.getMainHandItem().is(FOOD) || e.getOffhandItem().is(FOOD);
-
-        protected final double range;
-        protected final int interval;
-        @Nullable
-        protected LivingEntity player;
-
-        protected BegGoal(final double rangeIn) {
-            this(rangeIn, 10);
+        protected OrthusBegGoal(final double rangeIn) {
+            super(Orthus.this, rangeIn, 10, item -> item.is(FOOD));
         }
-
-        protected BegGoal(final double rangeIn, int intervalIn) {
-            range = rangeIn;
-            interval = intervalIn;
-        }
-
 
         @Override
-        public boolean canUse() {
-            if (Orthus.this.tickCount % interval == 0) {
-                // find a player within range to cause begging
-                final List<Player> list = Orthus.this.level.getEntitiesOfClass(Player.class, Orthus.this.getBoundingBox().inflate(range));
-                if (!list.isEmpty()) {
-                    player = list.get(0);
-                } else {
-                    player = null;
-                }
+        public void start() {
+            super.start();
+            if(Orthus.this.isFireAttack()) {
+                Orthus.this.setFireAttack(false);
             }
-            return player != null;
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return canUse();
+            Orthus.this.setInterested(true);
         }
 
         @Override
         public void tick() {
-            Orthus.this.getLookControl().setLookAt(player, Orthus.this.getMaxHeadYRot(), Orthus.this.getMaxHeadXRot());
-            Orthus.this.getNavigation().stop();
-            // decrease fire time
-            if(Orthus.this.fireTime-- <= 0) {
-                stop();
-            }
+            super.tick();
         }
 
+        @Override
+        public void stop() {
+            super.stop();
+            Orthus.this.setInterested(false);
+        }
     }
 
     class FireAttackGoal extends ShootFireGoal {

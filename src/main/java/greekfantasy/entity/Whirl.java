@@ -2,6 +2,7 @@ package greekfantasy.entity;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.GFFloatGoal;
 import greekfantasy.entity.boss.Charybdis;
 import greekfantasy.integration.RGCompat;
 import net.minecraft.core.BlockPos;
@@ -47,8 +48,6 @@ public class Whirl extends WaterAnimal {
     protected static final String KEY_AFFECTS_MOBS = "AttractMobs";
     protected static final String KEY_LIFE_TICKS = "LifeTicks";
 
-    private static final double RANGE = 9.0D;
-
     /**
      * The number of ticks until the entity starts taking damage
      **/
@@ -77,7 +76,7 @@ public class Whirl extends WaterAnimal {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new Whirl.SwimToSurfaceGoal());
+        this.goalSelector.addGoal(1, new GFFloatGoal(this));
         this.goalSelector.addGoal(2, new Whirl.SwirlGoal(this));
     }
 
@@ -260,20 +259,6 @@ public class Whirl extends WaterAnimal {
     }
 
     // Goals //
-
-    class SwimToSurfaceGoal extends FloatGoal {
-
-        public SwimToSurfaceGoal() {
-            super(Whirl.this);
-        }
-
-        @Override
-        public boolean canUse() {
-            BlockPos pos = Whirl.this.blockPosition().above((int) Math.ceil(Whirl.this.getBbHeight()));
-            BlockState state = Whirl.this.level.getBlockState(pos);
-            return state.is(Blocks.WATER) && super.canUse();
-        }
-    }
 
     private static class SwirlGoal extends greekfantasy.entity.ai.SwirlGoal {
         private final Whirl whirl;

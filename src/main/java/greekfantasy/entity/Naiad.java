@@ -3,8 +3,7 @@ package greekfantasy.entity;
 import com.google.common.collect.ImmutableMap;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GoToWaterGoal;
-import greekfantasy.entity.ai.SwimUpGoal;
-import net.minecraft.core.BlockPos;
+import greekfantasy.entity.boss.Charybdis;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -36,7 +35,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -48,7 +46,6 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
-import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.monster.Drowned;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
@@ -60,7 +57,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -76,7 +72,6 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
 
     protected Variant variant = Variant.RIVER;
 
-    boolean searchingForLand;
     protected final WaterBoundPathNavigation waterNavigation;
     protected final GroundPathNavigation groundNavigation;
 
@@ -115,15 +110,20 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         this.goalSelector.addGoal(1, new GoToWaterGoal(this, 1.0D, false));
         this.goalSelector.addGoal(2, new Naiad.NaiadTridentAttackGoal(this, 1.0D, 40, 10.0F));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1D, false));
-        this.goalSelector.addGoal(5, new Naiad.NaiadSwimUpGoal(this, 1.0D, this.level.getSeaLevel(), 1));
         this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Satyr.class, 10.0F, 1.2D, 1.1D));
-        this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 0.8D, 140) {
+        this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Charybdis.class, 12.0F, 1.0D, 1.0D));
+        this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 0.8D, 120) {
             @Override
             public boolean canUse() {
                 return Naiad.this.isInWater() && super.canUse();
             }
         });
-        this.goalSelector.addGoal(8, new RandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(8, new RandomStrollGoal(this, 0.9D) {
+            @Override
+            public boolean canUse() {
+                return !Naiad.this.isInWater() && super.canUse();
+            }
+        });
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -299,31 +299,10 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         return !this.isSwimming();
     }
 
-    boolean wantsToSwim() {
-        if (this.searchingForLand) {
-            return true;
-        } else {
-            LivingEntity livingentity = this.getTarget();
-            return livingentity != null && livingentity.isInWater();
-        }
-    }
-
-    @Override
-    public void travel(Vec3 moveVec) {
-        if (this.isEffectiveAi() && this.isInWater() && this.wantsToSwim()) {
-            this.moveRelative(0.01F, moveVec);
-            this.move(MoverType.SELF, this.getDeltaMovement());
-            this.setDeltaMovement(this.getDeltaMovement().scale(0.9D));
-        } else {
-            super.travel(moveVec);
-        }
-
-    }
-
     @Override
     public void updateSwimming() {
         if (!this.level.isClientSide) {
-            if (this.isEffectiveAi() && this.isInWater() && this.wantsToSwim()) {
+            if (this.isEffectiveAi() && this.isInWater()) {
                 this.navigation = this.waterNavigation;
                 this.setSwimming(true);
             } else {
@@ -345,10 +324,6 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         this.level.addFreshEntity(throwntrident);
     }
 
-    public void setSearchingForLand(boolean searchingForLand) {
-        this.searchingForLand = searchingForLand;
-    }
-
     static class NaiadMoveControl extends MoveControl {
         private final Naiad naiad;
 
@@ -360,13 +335,14 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         @Override
         public void tick() {
             LivingEntity livingentity = this.naiad.getTarget();
-            if (this.naiad.wantsToSwim() && this.naiad.isInWater()) {
-                if (livingentity != null && livingentity.getY() > this.naiad.getY() || this.naiad.searchingForLand) {
-                    this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().add(0.0D, 0.002D, 0.0D));
+            if (this.naiad.isInWater()) {
+                if (livingentity != null && livingentity.getY() > this.naiad.getY()) {
+                    this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().add(0.0D, 0.006D, 0.0D));
                 }
 
                 if (this.operation != MoveControl.Operation.MOVE_TO || this.naiad.getNavigation().isDone()) {
                     this.naiad.setSpeed(0.0F);
+                    this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().multiply(1.0D, 0.5D, 1.0D));
                     return;
                 }
 
@@ -390,27 +366,6 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
                 super.tick();
             }
 
-        }
-    }
-
-    static class NaiadSwimUpGoal extends SwimUpGoal {
-        private final Naiad naiad;
-
-        public NaiadSwimUpGoal(Naiad mob, double speedModifier, int seaLevel, int deltaSeaLevel) {
-            super(mob, speedModifier, seaLevel, deltaSeaLevel);
-            this.naiad = mob;
-        }
-
-        @Override
-        public void start() {
-            super.start();
-            this.naiad.setSearchingForLand(true);
-        }
-
-        @Override
-        public void stop() {
-            super.stop();
-            this.naiad.setSearchingForLand(false);
         }
     }
 
