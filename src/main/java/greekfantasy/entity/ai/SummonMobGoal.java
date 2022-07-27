@@ -10,7 +10,7 @@ import java.util.EnumSet;
 
 public class SummonMobGoal<T extends Mob> extends Goal {
     protected final PathfinderMob summoner;
-    protected final EntityType<T> mobSupplier;
+    protected final EntityType<? extends T> mobSupplier;
     protected final int maxDuration;
     protected final int maxCooldown;
     protected final int count;
@@ -27,12 +27,12 @@ public class SummonMobGoal<T extends Mob> extends Goal {
     protected int cooldown;
 
     public SummonMobGoal(final PathfinderMob entity, final int duration, final int cooldown,
-                         final EntityType<T> mob) {
+                         final EntityType<? extends T> mob) {
         this(entity, duration, cooldown, mob, 1);
     }
 
     public SummonMobGoal(final PathfinderMob entity, final int duration, final int cooldown,
-                         final EntityType<T> mob, final int mobCount) {
+                         final EntityType<? extends T> mob, final int mobCount) {
         this.setFlags(EnumSet.of(Goal.Flag.MOVE));
         this.summoner = entity;
         this.maxDuration = duration;
@@ -75,7 +75,7 @@ public class SummonMobGoal<T extends Mob> extends Goal {
         if (progress++ > maxDuration) {
             // create entity
             for (int i = 0; i < count; i++) {
-                final T mobEntity = mobSupplier.create(summoner.level);
+                T mobEntity = summonMob();
                 onSummonMob(mobEntity);
             }
             stop();
@@ -88,11 +88,18 @@ public class SummonMobGoal<T extends Mob> extends Goal {
         this.cooldown = maxCooldown;
     }
 
-    protected void onSummonMob(final T mobEntity) {
+    protected T summonMob() {
+        final T mobEntity = mobSupplier.create(summoner.level);
         final float yaw = summoner.getYRot();
         final float pitch = summoner.getXRot();
-        mobEntity.moveTo(summoner.getX(), summoner.getY() + 0.5D, summoner.getZ(), yaw, pitch);
+        mobEntity.copyPosition(summoner);
+        mobEntity.setLastHurtByMob(summoner.getLastHurtByMob());
         mobEntity.setTarget(summoner.getTarget());
         summoner.level.addFreshEntity(mobEntity);
+        return mobEntity;
+    }
+
+    protected void onSummonMob(final T mobEntity) {
+
     }
 }

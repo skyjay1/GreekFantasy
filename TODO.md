@@ -37,7 +37,7 @@ __Key:__
 - X X ~ X X Elpis
 - X X X X X Sparti
 - X X X X X Mad Cow
-- _ _ _ _ _ Boss: Cerberus
+- X X X X X Boss: Cerberus
 - _ _ _ _ _ Boss: Geryon
 - X X X X X Boss: Charybdis
 - _ _ _ _ _ Boss: Talos
@@ -54,7 +54,7 @@ __Key:__
 - X X X X X Drakaina
 - _ _ _ _ _ Arion
 - X X X X X Whirl
-- _ _ _ _ _ Pegasus
+- X X X X X Pegasus
 - _ _ _ _ _ Golden Ram
 - _ _ _ _ _ Makhai
 - X X X X X Baby Spider
@@ -118,7 +118,7 @@ __Key:__
 - X X X Terracotta Vase and variants
 - X _ X Gigante Head
 - X X X Orthus Head
-- ~ _ _ Cerberus Head
+- ~ _ X Cerberus Head
 - X X X Oil Lamp
 - X X X Olive Oil
 - X X X Olive Sapling
@@ -149,10 +149,10 @@ __Key:__
 - X _ _ Heart of Talos
 - X X _ Ichor-Infused Gear
 - X X X Avernal Feather
-- X _ _ Avernal Hide
+- X ~ X Avernal Hide // TO DO: enchanted book crafting
 - X X X Avernal Wing
 - X X X Avernal Hair
-- X _ X Avernal Claw
+- X _ X Avernal Claw // TO DO: enchanted book crafting
 - X _ _ Avernal Shard
 - X _ _ Boar Ear
 - X _ _ Golden Fleece
@@ -160,7 +160,7 @@ __Key:__
 - X X X Spider Banner Pattern
 - X X X Ambrosia
 - X X X Horn of Plenty
-- X X X Dragon Tooth (also: use to make golden sapling)
+- X X X Dragon Tooth
 - X X _ Staff of Healing
 - X X X Conch
 - X X X Bag of Wind
@@ -179,8 +179,8 @@ __Key:__
 - X X X Gorgon Blood
 - X X X Discus
 - X X X Mirror
-- X _ X Golden Bridle
-- X X _ Unicorn Horn
+- X X X Golden Bridle
+- X X X Unicorn Horn
 - X _ X Panflute
 - X _ _ Lyre (normal, golden)
 - X X X Web Ball
@@ -197,7 +197,7 @@ __Key:__
 
 `[In-game] [Model] [Use] [Obtainable]`
 
-- X X X ~ Helm of Darkness // TO DO cerberus
+- X X X X Helm of Darkness
 - X X X X Winged Sandals
 - X X X X Hellenic Armor
 - X X X X Snakeskin Armor
@@ -213,12 +213,12 @@ __Key:__
 
 `[In-game] [Recipe]`
 
-- X _ Curse of Circe
-- X _ Mirroring
-- X _ Stunned
-- X _ Petrified
+- X X Curse of Circe
+- X X Mirroring
+- X . Stunned
+- X . Petrified
 - X . Prisoner of Hades
-- X _ Slow Swim
+- X X Slow Swim
 
 
 ## Enchantments

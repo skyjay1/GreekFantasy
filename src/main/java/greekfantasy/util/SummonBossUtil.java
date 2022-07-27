@@ -1,6 +1,7 @@
 package greekfantasy.util;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.boss.Cerberus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
 import net.minecraft.world.level.block.state.predicate.BlockMaterialPredicate;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -48,10 +50,10 @@ public final class SummonBossUtil {
      * BlockPattern for Cerberus boss
      **/
     private static final BlockPattern cerberusPattern = BlockPatternBuilder.start()
-            .aisle("~~~~", "~~~~", "~##~")
-            .aisle("~OO~", "~OO~", "#^^#")
-            .aisle("~OO~", "~OO~", "#^^#")
-            .aisle("~~~~", "~~~~", "~##~")
+            .aisle("~##~", "~~~~", "~~~~")
+            .aisle("#^^#", "~OO~", "~OO~")
+            .aisle("#^^#", "~OO~", "~OO~")
+            .aisle("~##~", "~~~~", "~~~~")
             .where('#', BlockInWorld.hasState(state -> state.is(CERBERUS_FRAME)))
             .where('^', BlockInWorld.hasState(state -> state.is(Blocks.LAVA)))
             .where('O', BlockInWorld.hasState(BlockMaterialPredicate.forMaterial(Material.AIR)))
@@ -126,12 +128,12 @@ public final class SummonBossUtil {
             // replace the lava blocks that were used
             for (int i = 1; i < pattern.getWidth() - 1; ++i) {
                 for (int k = 1; k < pattern.getDepth() - 1; ++k) {
-                    BlockInWorld cachedblockinfo1 = helper.getBlock(i, 2, k);
+                    BlockInWorld cachedblockinfo1 = helper.getBlock(i, 0, k);
                     level.setBlock(cachedblockinfo1.getPos(), Blocks.MAGMA_BLOCK.defaultBlockState(), Block.UPDATE_ALL);
                 }
             }
             // spawn the cerberus
-            // TODO CerberusEntity.spawnCerberus(level, pos.add(0, 1.0D, 0));
+            Cerberus.spawnCerberus(level, Vec3.atBottomCenterOf(pos.above()));
             return true;
         }
         return false;

@@ -26,7 +26,7 @@ public class AraFlintLayer<T extends Ara> extends RenderLayer<T, AraModel<T>> {
 
     @Override
     public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, T entity,
-                       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+                       float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
         // initialize item stack
         if (null == itemStack) {
             itemStack = new ItemStack(Items.FLINT);
@@ -37,7 +37,7 @@ public class AraFlintLayer<T extends Ara> extends RenderLayer<T, AraModel<T>> {
             final float tx = (4.0F / 16.0F) * scale;
             final float ty = (12.0F / 16.0F) * scale;
             final float tz = (-2.0F / 16.0F) * scale;
-            final float spin = 180.0F + (180.0F) * Mth.cos((entity.tickCount + entity.getId() * 3) * 0.08F);
+            final float spin = 180.0F + (180.0F) * Mth.cos((entity.tickCount + entity.getId() * 3 + partialTick) * 0.08F);
             poseStack.pushPose();
             // transforms
             this.getParentModel().body.translateAndRotate(poseStack);

@@ -345,4 +345,28 @@ public final class GFModelUtil {
         upperArm.zRot = idleSwingCos * 0.14F * throwingTimeLeft + 0.36F * throwingZ;
     }
 
+    /**
+     * Creates a part definition for a cerberus head with the given offsets
+     * @param root the root part
+     * @param name the part name
+     * @param offsetX the x offset
+     * @param offsetY the y offset
+     * @param offsetZ the z offset
+     * @param xRot the x rotation
+     * @return the cerberus head part definition
+     */
+    public static PartDefinition addOrReplaceCerberusHead(final PartDefinition root, final String name,
+                                                          final float offsetX, final float offsetY, final float offsetZ,
+                                                          final float xRot, final float yRot, final float zRot) {
+        PartDefinition head = root.addOrReplaceChild(name, CubeListBuilder.create()
+                .texOffs(0, 0).addBox(-2.5F + xRot, -2.0F, -5.0F, 5.0F, 6.0F, 5.0F, CubeDeformation.NONE)
+                .texOffs(21, 0).addBox(-1.5F + xRot, 1.0F, -9.0F, 3.0F, 2.0F, 4.0F, CubeDeformation.NONE)
+                .texOffs(16, 0).addBox(-2.5F + xRot, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, CubeDeformation.NONE)
+                .texOffs(16, 0).mirror().addBox(0.5F + xRot, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, CubeDeformation.NONE).mirror(false),
+                PartPose.offset(offsetX, offsetY, offsetZ));
+        PartDefinition mouth = head.addOrReplaceChild("mouth", CubeListBuilder.create().texOffs(21, 6).addBox(-1.5F + xRot, 0.0F, -4.0F, 3.0F, 1.0F, 4.0F, CubeDeformation.NONE),
+                PartPose.offsetAndRotation(0.0F, 3.0F, -5.0F, 0.0436F, 0.0F, 0.0F));
+        return head;
+    }
+
 }

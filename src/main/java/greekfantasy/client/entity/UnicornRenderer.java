@@ -13,7 +13,7 @@ public class UnicornRenderer<T extends Unicorn> extends MobRenderer<T, UnicornMo
     private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/unicorn/unicorn.png");
 
     public UnicornRenderer(EntityRendererProvider.Context context) {
-        super(context, new UnicornModel<T>(context.bakeLayer(UnicornModel.UNICORN_MODEL_RESOURCE)), 0.5F);
+        super(context, new UnicornModel<T>(context.bakeLayer(UnicornModel.UNICORN_MODEL_RESOURCE)), 0.75F);
         this.addLayer(new UnicornHornLayer<T>(this));
     }
 

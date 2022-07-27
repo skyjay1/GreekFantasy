@@ -14,6 +14,7 @@ import greekfantasy.client.entity.ArachneRenderer;
 import greekfantasy.client.entity.BabySpiderRenderer;
 import greekfantasy.client.entity.CentaurRenderer;
 import greekfantasy.client.entity.CerastesRenderer;
+import greekfantasy.client.entity.CerberusRenderer;
 import greekfantasy.client.entity.CharybdisRenderer;
 import greekfantasy.client.entity.CirceRenderer;
 import greekfantasy.client.entity.CyclopsRenderer;
@@ -32,6 +33,7 @@ import greekfantasy.client.entity.MadCowRenderer;
 import greekfantasy.client.entity.MinotaurRenderer;
 import greekfantasy.client.entity.NaiadRenderer;
 import greekfantasy.client.entity.OrthusRenderer;
+import greekfantasy.client.entity.PegasusRenderer;
 import greekfantasy.client.entity.PythonRenderer;
 import greekfantasy.client.entity.SatyrRenderer;
 import greekfantasy.client.entity.ShadeRenderer;
@@ -47,6 +49,7 @@ import greekfantasy.client.entity.model.ArachneModel;
 import greekfantasy.client.entity.model.BabySpiderModel;
 import greekfantasy.client.entity.model.CentaurModel;
 import greekfantasy.client.entity.model.CerastesModel;
+import greekfantasy.client.entity.model.CerberusModel;
 import greekfantasy.client.entity.model.CharybdisModel;
 import greekfantasy.client.entity.model.CirceModel;
 import greekfantasy.client.entity.model.CyclopsModel;
@@ -62,6 +65,7 @@ import greekfantasy.client.entity.model.HarpyModel;
 import greekfantasy.client.entity.model.MinotaurModel;
 import greekfantasy.client.entity.model.NymphModel;
 import greekfantasy.client.entity.model.OrthusModel;
+import greekfantasy.client.entity.model.PegasusModel;
 import greekfantasy.client.entity.model.PythonModel;
 import greekfantasy.client.entity.model.SatyrModel;
 import greekfantasy.client.entity.model.ShadeModel;
@@ -71,6 +75,7 @@ import greekfantasy.client.entity.model.SpellModel;
 import greekfantasy.client.entity.model.UnicornModel;
 import greekfantasy.client.particle.GorgonParticle;
 import greekfantasy.entity.Lampad;
+import greekfantasy.entity.Pegasus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.TridentModel;
@@ -98,6 +103,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -108,7 +114,10 @@ public final class GFClientEvents {
 
     public static final class ForgeHandler {
 
+        /** Used in render living event as a replacement for entities that should be rendered as pigs **/
         private static FakePigRenderer<LivingEntity> pigRenderer;
+        /** Used in the client tick event to handle movement when riding a pegasus **/
+        private static boolean wasJumping;
 
         /**
          * Used to hide the third-person view of an entity that is
@@ -165,6 +174,29 @@ public final class GFClientEvents {
                 return;
             }
         }
+
+        /**
+         * Used to handle jumping when the player is riding a pegasus
+         *
+         * @param event the client tick event
+         */
+        @SubscribeEvent
+        public static void onClientTick(final TickEvent.ClientTickEvent event) {
+            if (event.phase == TickEvent.Phase.END) {
+                final Minecraft mc = Minecraft.getInstance();
+                if (mc.player != null && mc.player.isRidingJumpable() && mc.player.getVehicle() instanceof Pegasus pegasus) {
+                    mc.player.jumpRidingTicks = -10;
+                    if (mc.player.input.jumping && !wasJumping) {
+                        // if starting to jump, set flag
+                        wasJumping = true;
+                    } else if (!mc.player.input.jumping && wasJumping) {
+                        // if not jumping but was previously, send jump packet
+                        wasJumping = false;
+                        pegasus.flyingJump();
+                    }
+                }
+            }
+        }
     }
 
     public static final class ModHandler {
@@ -206,6 +238,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(BabySpiderModel.BABY_SPIDER_MODEL_RESOURCE, BabySpiderModel::createBodyLayer);
             event.registerLayerDefinition(CentaurModel.CENTAUR_MODEL_RESOURCE, CentaurModel::createBodyLayer);
             event.registerLayerDefinition(CerastesModel.CERASTES_LAYER_LOCATION, CerastesModel::createBodyLayer);
+            event.registerLayerDefinition(CerberusModel.CERBERUS_MODEL_RESOURCE, CerberusModel::createBodyLayer);
             event.registerLayerDefinition(CharybdisModel.CHARYBDIS_MODEL_RESOURCE, CharybdisModel::createBodyLayer);
             event.registerLayerDefinition(CirceModel.CIRCE_MODEL_RESOURCE, CirceModel::createBodyLayer);
             event.registerLayerDefinition(CyclopsModel.CYCLOPS_MODEL_RESOURCE, CyclopsModel::createBodyLayer);
@@ -221,6 +254,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(MinotaurModel.MINOTAUR_MODEL_RESOURCE, MinotaurModel::createBodyLayer);
             event.registerLayerDefinition(NymphModel.NYMPH_LAYER_LOCATION, NymphModel::createBodyLayer);
             event.registerLayerDefinition(OrthusModel.ORTHUS_MODEL_RESOURCE, OrthusModel::createBodyLayer);
+            event.registerLayerDefinition(PegasusModel.PEGASUS_MODEL_RESOURCE, PegasusModel::createBodyLayer);
             event.registerLayerDefinition(PythonModel.PYTHON_MODEL_RESOURCE, PythonModel::createBodyLayer);
             event.registerLayerDefinition(SatyrModel.SATYR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(CubeDeformation.NONE));
             event.registerLayerDefinition(SatyrModel.SATYR_INNER_ARMOR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(new CubeDeformation(0.25F)));
@@ -243,6 +277,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.BABY_SPIDER.get(), BabySpiderRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CENTAUR.get(), CentaurRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CERASTES.get(), CerastesRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.CERBERUS.get(), CerberusRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CHARYBDIS.get(), CharybdisRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CIRCE.get(), CirceRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CYCLOPS.get(), CyclopsRenderer::new);
@@ -260,6 +295,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.MINOTAUR.get(), MinotaurRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.NAIAD.get(), NaiadRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.ORTHUS.get(), OrthusRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.PEGASUS.get(), PegasusRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.PYTHON.get(), PythonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SATYR.get(), SatyrRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPARTI.get(), SpartiRenderer::new);

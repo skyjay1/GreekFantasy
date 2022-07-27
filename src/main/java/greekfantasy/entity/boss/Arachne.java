@@ -57,7 +57,7 @@ public class Arachne extends Monster implements RangedAttackMob {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new Arachne.RangedAttackGoal(1.0D, 75, 15.0F));
-        this.goalSelector.addGoal(4, new Arachne.MeleeAttackGoal(1.0D, true));
+        this.goalSelector.addGoal(4, new ArachneAttackGoal(1.0D, true));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
@@ -172,9 +172,9 @@ public class Arachne extends Monster implements RangedAttackMob {
         }
     }
 
-    class MeleeAttackGoal extends net.minecraft.world.entity.ai.goal.MeleeAttackGoal {
+    class ArachneAttackGoal extends net.minecraft.world.entity.ai.goal.MeleeAttackGoal {
 
-        public MeleeAttackGoal(double moveSpeed, boolean useLongMemory) {
+        public ArachneAttackGoal(double moveSpeed, boolean useLongMemory) {
             super(Arachne.this, moveSpeed, useLongMemory);
         }
 

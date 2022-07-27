@@ -31,11 +31,13 @@ import greekfantasy.entity.Gigante;
 import greekfantasy.entity.Lampad;
 import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Orthus;
+import greekfantasy.entity.Pegasus;
 import greekfantasy.entity.Satyr;
 import greekfantasy.entity.Sparti;
 import greekfantasy.entity.Unicorn;
 import greekfantasy.entity.Whirl;
 import greekfantasy.entity.boss.Arachne;
+import greekfantasy.entity.boss.Cerberus;
 import greekfantasy.entity.boss.Charybdis;
 import greekfantasy.entity.boss.Python;
 import greekfantasy.entity.misc.Curse;
@@ -148,7 +150,10 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
@@ -204,10 +209,12 @@ import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -856,6 +863,7 @@ public final class GFRegistry {
             register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
             register(event, CENTAUR.get(), Centaur::createAttributes, Mob::checkMobSpawnRules);
             register(event, CERASTES.get(), Cerastes::createAttributes, Cerastes::checkCerastesSpawnRules);
+            register(event, CERBERUS.get(), Cerberus::createAttributes, null);
             register(event, CHARYBDIS.get(), Charybdis::createAttributes, null);
             register(event, CIRCE.get(), Circe::createAttributes, null);
             register(event, CYCLOPS.get(), Cyclops::createAttributes, Monster::checkMonsterSpawnRules);
@@ -873,6 +881,7 @@ public final class GFRegistry {
             register(event, MINOTAUR.get(), Minotaur::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
             register(event, ORTHUS.get(), Orthus::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
+            register(event, PEGASUS.get(), Pegasus::createAttributes, Mob::checkMobSpawnRules);
             register(event, PYTHON.get(), Python::createAttributes, null);
             register(event, SATYR.get(), Satyr::createAttributes, Mob::checkMobSpawnRules);
             register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
@@ -935,6 +944,7 @@ public final class GFRegistry {
                 addSpawns(event, MINOTAUR.get(), 2, 5);
                 addSpawns(event, NAIAD.get(), 2, 5);
                 addSpawns(event, ORTHUS.get(), 2, 4);
+                addSpawns(event, PEGASUS.get(), 3, 5);
                 addSpawns(event, SATYR.get(), 2, 5);
                 addSpawns(event, SHADE.get(), 1, 1);
                 addSpawns(event, SIREN.get(), 1, 4);
@@ -975,6 +985,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Cerastes::new, MobCategory.CREATURE)
                         .sized(0.98F, 0.94F)
                         .build("cerastes"));
+        public static final RegistryObject<EntityType<? extends Cerberus>> CERBERUS = ENTITY_TYPES.register("cerberus", () ->
+                EntityType.Builder.of(Cerberus::new, MobCategory.MONSTER)
+                        .sized(1.98F, 1.9F).fireImmune()
+                        .build("cerberus"));
         public static final RegistryObject<EntityType<? extends Charybdis>> CHARYBDIS = ENTITY_TYPES.register("charybdis", () ->
                 EntityType.Builder.of(Charybdis::new, MobCategory.WATER_CREATURE)
                         .sized(5.9F, 7.9F).fireImmune()
@@ -1043,6 +1057,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Orthus::new, MobCategory.MONSTER)
                         .sized(0.6F, 0.85F).fireImmune()
                         .build("orthus"));
+        public static final RegistryObject<EntityType<? extends Pegasus>> PEGASUS = ENTITY_TYPES.register("pegasus", () ->
+                EntityType.Builder.of(Pegasus::new, MobCategory.CREATURE)
+                        .sized(1.39F, 1.98F)
+                        .build("pegasus"));
         public static final RegistryObject<EntityType<? extends Python>> PYTHON = ENTITY_TYPES.register("python", () ->
                 EntityType.Builder.of(Python::new, MobCategory.MONSTER)
                         .sized(1.4F, 1.9F).fireImmune()
@@ -1155,6 +1173,85 @@ public final class GFRegistry {
 
         public static void register() {
             POTIONS.register(FMLJavaModLoadingContext.get().getModEventBus());
+            // add setup listener
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(PotionReg::registerPotionRecipes);
+        }
+
+        public static final RegistryObject<Potion> MIRRORING = POTIONS.register("mirroring",
+                () -> new Potion(new MobEffectInstance(MobEffectReg.MIRRORING.get(), 3600)));
+        public static final RegistryObject<Potion> LONG_MIRRORING = POTIONS.register("long_mirroring",
+                () -> new Potion(new MobEffectInstance(MobEffectReg.MIRRORING.get(), 9600)));
+
+        public static final RegistryObject<Potion> CURSE_OF_CIRCE = POTIONS.register("curse_of_circe",
+                () -> new Potion(new MobEffectInstance(MobEffectReg.CURSE_OF_CIRCE.get(), 3600)));
+        public static final RegistryObject<Potion> LONG_CURSE_OF_CIRCE = POTIONS.register("long_curse_of_circe",
+                () -> new Potion(new MobEffectInstance(MobEffectReg.CURSE_OF_CIRCE.get(), 9600)));
+
+        public static final RegistryObject<Potion> SLOW_SWIM = POTIONS.register("slow_swim",
+                () -> new Potion(new MobEffectInstance(MobEffectReg.SLOW_SWIM.get(), 3600)));
+        public static final RegistryObject<Potion> LONG_SLOW_SWIM = POTIONS.register("long_slow_swim",
+                () -> new Potion(new MobEffectInstance(MobEffectReg.SLOW_SWIM.get(), 9600)));
+
+
+        public static void registerPotionRecipes(final FMLCommonSetupEvent event) {
+            event.enqueueWork(() -> {
+                final ItemStack awkward = PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD);
+                // Mirroring potion
+                if (GreekFantasy.CONFIG.isMirroringEffectEnabled()) {
+                    // create item stacks
+                    final ItemStack mirroring = PotionUtils.setPotion(new ItemStack(Items.POTION), MIRRORING.get());
+                    final ItemStack splashMirroring = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), MIRRORING.get());
+                    final ItemStack lingeringMirroring = PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), MIRRORING.get());
+                    // Add brewing recipes
+                    BrewingRecipeRegistry.addRecipe(
+                            Ingredient.of(awkward),
+                            Ingredient.of(new ItemStack(ItemReg.SNAKESKIN.get())), mirroring);
+                    BrewingRecipeRegistry.addRecipe(Ingredient.of(mirroring), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                            PotionUtils.setPotion(new ItemStack(Items.POTION), LONG_MIRRORING.get()));
+                    BrewingRecipeRegistry.addRecipe(Ingredient.of(mirroring), Ingredient.of(new ItemStack(Items.GUNPOWDER)), splashMirroring);
+                    BrewingRecipeRegistry.addRecipe(Ingredient.of(mirroring), Ingredient.of(new ItemStack(Items.DRAGON_BREATH)), lingeringMirroring);
+                    BrewingRecipeRegistry.addRecipe(Ingredient.of(splashMirroring), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                            PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), LONG_MIRRORING.get()));
+                    BrewingRecipeRegistry.addRecipe(Ingredient.of(lingeringMirroring), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                            PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), LONG_MIRRORING.get()));
+                }
+                // Curse of Circe potion
+                if (GreekFantasy.CONFIG.isCurseOfCirceEnabled()) {
+                    // create item stacks
+                    final ItemStack curseOfCirce = PotionUtils.setPotion(new ItemStack(Items.POTION), CURSE_OF_CIRCE.get());
+                    final ItemStack splashCurseOfCirce = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), CURSE_OF_CIRCE.get());
+                    final ItemStack lingeringCurseOfCirce = PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), CURSE_OF_CIRCE.get());
+                    // Add brewing recipes
+                    BrewingRecipeRegistry.addRecipe(
+                            Ingredient.of(awkward),
+                            Ingredient.of(new ItemStack(ItemReg.BOAR_EAR.get())), curseOfCirce);
+                    BrewingRecipeRegistry.addRecipe(Ingredient.of(curseOfCirce), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                            PotionUtils.setPotion(new ItemStack(Items.POTION), LONG_CURSE_OF_CIRCE.get()));
+                    BrewingRecipeRegistry.addRecipe(Ingredient.of(curseOfCirce), Ingredient.of(new ItemStack(Items.GUNPOWDER)), splashCurseOfCirce);
+                    BrewingRecipeRegistry.addRecipe(Ingredient.of(curseOfCirce), Ingredient.of(new ItemStack(Items.DRAGON_BREATH)), lingeringCurseOfCirce);
+                    BrewingRecipeRegistry.addRecipe(Ingredient.of(splashCurseOfCirce), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                            PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), LONG_CURSE_OF_CIRCE.get()));
+                    BrewingRecipeRegistry.addRecipe(Ingredient.of(lingeringCurseOfCirce), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                            PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), LONG_CURSE_OF_CIRCE.get()));
+                }
+                // Slow Swim potion
+                // create item stacks
+                final ItemStack slowSwim = PotionUtils.setPotion(new ItemStack(Items.POTION), SLOW_SWIM.get());
+                final ItemStack splashSlowSwim = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), SLOW_SWIM.get());
+                final ItemStack lingeringSlowSwim = PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), SLOW_SWIM.get());
+                // Add brewing recipes
+                BrewingRecipeRegistry.addRecipe(
+                        Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.TURTLE_MASTER)),
+                        Ingredient.of(new ItemStack(Items.FERMENTED_SPIDER_EYE)), slowSwim);
+                BrewingRecipeRegistry.addRecipe(Ingredient.of(slowSwim), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                        PotionUtils.setPotion(new ItemStack(Items.POTION), LONG_SLOW_SWIM.get()));
+                BrewingRecipeRegistry.addRecipe(Ingredient.of(slowSwim), Ingredient.of(new ItemStack(Items.GUNPOWDER)), splashSlowSwim);
+                BrewingRecipeRegistry.addRecipe(Ingredient.of(slowSwim), Ingredient.of(new ItemStack(Items.DRAGON_BREATH)), lingeringSlowSwim);
+                BrewingRecipeRegistry.addRecipe(Ingredient.of(splashSlowSwim), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                        PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), LONG_SLOW_SWIM.get()));
+                BrewingRecipeRegistry.addRecipe(Ingredient.of(lingeringSlowSwim), Ingredient.of(new ItemStack(Items.REDSTONE)),
+                        PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), LONG_SLOW_SWIM.get()));
+            });
         }
 
     }

@@ -91,7 +91,7 @@ public class Orthus extends TamableAnimal implements NeutralMob {
 
     /** Angle to rotate head when interested **/
     private float interestedAngle;
-    private float interestedAngleO;
+    private float interestedAngle0;
 
     public Orthus(final EntityType<? extends Orthus> type, final Level level) {
         super(type, level);
@@ -148,7 +148,7 @@ public class Orthus extends TamableAnimal implements NeutralMob {
         super.tick();
         if(this.isAlive()) {
             // update interested angle
-            this.interestedAngleO = this.interestedAngle;
+            this.interestedAngle0 = this.interestedAngle;
             if (this.isInterested()) {
                 this.interestedAngle += (1.0F - this.interestedAngle) * 0.4F;
             } else {
@@ -448,7 +448,7 @@ public class Orthus extends TamableAnimal implements NeutralMob {
     }
 
     public float getHeadRollAngle(float partialTick) {
-        return Mth.lerp(partialTick, this.interestedAngleO, this.interestedAngle) * 0.15F * (float)Math.PI;
+        return Mth.lerp(partialTick, this.interestedAngle0, this.interestedAngle) * 0.15F * (float)Math.PI;
     }
 
     public void setFireAttack(final boolean shooting) {

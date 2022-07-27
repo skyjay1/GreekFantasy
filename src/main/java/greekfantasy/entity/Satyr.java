@@ -112,7 +112,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
         this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0F);
         this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, -1.0F);
         meleeAttackGoal = new MeleeAttackGoal(this, 1.0D, false);
-        summonAnimalsGoal = new SummonAnimalsGoal(MAX_SUMMON_TIME, 480);
+        summonAnimalsGoal = new SummonWolfGoal(MAX_SUMMON_TIME, 480);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -459,9 +459,9 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
     /**
      * Used to summon wolves when the entity is attacking
      */
-    class SummonAnimalsGoal extends SummonMobGoal<Wolf> {
+    class SummonWolfGoal extends SummonMobGoal<Wolf> {
 
-        public SummonAnimalsGoal(final int duration, final int cooldown) {
+        public SummonWolfGoal(final int duration, final int cooldown) {
             super(Satyr.this, duration, cooldown, EntityType.WOLF, 3);
         }
 
@@ -485,7 +485,6 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
 
         @Override
         protected void onSummonMob(final Wolf mobEntity) {
-            super.onSummonMob(mobEntity);
             mobEntity.setRemainingPersistentAngerTime(800);
             LivingEntity target = Satyr.this.getTarget();
             if(target != null) {
