@@ -62,7 +62,7 @@ public class GiganteModel<T extends LivingEntity> extends HumanoidModel<T> {
     }
 
     @Override
-    public void translateToHand(final HumanoidArm sideIn, final PoseStack matrixStackIn) {
+    public void translateToHand(final HumanoidArm sideIn, final PoseStack poseStack) {
         float dX = sideIn == HumanoidArm.RIGHT ? -2F : 2F;
         float dZ = -3.5F;
         float dY = 3.0F;
@@ -70,7 +70,7 @@ public class GiganteModel<T extends LivingEntity> extends HumanoidModel<T> {
         armModel.x += dX;
         armModel.y += dY;
         armModel.z += dZ;
-        armModel.translateAndRotate(matrixStackIn);
+        armModel.translateAndRotate(poseStack);
         armModel.x -= dX;
         armModel.y -= dY;
         armModel.z -= dZ;

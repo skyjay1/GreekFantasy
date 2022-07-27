@@ -358,9 +358,9 @@ public final class GFEvents {
         public static void onEntityPlaceBlock(final BlockEvent.EntityPlaceEvent event) {
             // ensure the block matches
             if (!event.isCanceled() && event.getPlacedBlock().is(SummonBossUtil.BRONZE_BLOCK)
-                    && event.getWorld() instanceof Level level) {
+                    && event.getWorld() instanceof Level) {
                 // delegate to SummonBossUtil
-                SummonBossUtil.onPlaceBronzeBlock(level, event.getPos(), event.getPlacedBlock(), event.getEntity());
+                SummonBossUtil.onPlaceBronzeBlock((Level) event.getWorld(), event.getPos(), event.getPlacedBlock(), event.getEntity());
             }
         }
 

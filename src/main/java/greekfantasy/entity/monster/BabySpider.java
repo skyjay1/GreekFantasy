@@ -54,8 +54,8 @@ public class BabySpider extends Spider {
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new TargetGoal<>(this, Player.class));
-        this.targetSelector.addGoal(3, new TargetGoal<>(this, IronGolem.class));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, false, false));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, false, false));
     }
 
     @Override
@@ -123,23 +123,6 @@ public class BabySpider extends Spider {
                 return false;
             }
             return super.canContinueToUse();
-        }
-    }
-
-    class TargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
-
-        public TargetGoal(BabySpider spider, Class<T> classTarget) {
-            super(spider, classTarget, true);
-        }
-
-        /**
-         * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-         * method as well.
-         */
-        @Override
-        public boolean canUse() {
-            float f = this.mob.getBrightness();
-            return !(f >= 0.5F) && super.canUse();
         }
     }
 }

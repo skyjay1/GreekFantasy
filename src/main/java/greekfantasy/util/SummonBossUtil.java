@@ -1,9 +1,12 @@
 package greekfantasy.util;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.boss.BronzeBull;
 import greekfantasy.entity.boss.Cerberus;
+import greekfantasy.entity.boss.Talos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -88,7 +91,7 @@ public final class SummonBossUtil {
                 }
             }
             // spawn the talos
-            // TODO TalosEntity.spawnTalos(worldIn, helper.getBlock(1, 2, 0).getPos(), 0);
+            Talos.spawnTalos(level, helper.getBlock(1, 2, 0).getPos(), 0);
             return true;
         }
         // check if a bronze bull was built
@@ -105,7 +108,7 @@ public final class SummonBossUtil {
                 }
             }
             // spawn the bronze bull
-            // TODO BronzeBullEntity.spawnBronzeBull(worldIn, helper.getBlock(1, 1, 0).getPos(), 0);
+            BronzeBull.spawnBronzeBull(level, helper.getBlock(1, 1, 0).getPos(), 0);
             return true;
         }
         return false;

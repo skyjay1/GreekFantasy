@@ -9,6 +9,7 @@ __Key:__
 ## Bugs and urgent updates
 
 - Everything ;^D
+- Charybdis "throw" animation cuts off
 
 ## Entities
 
@@ -40,9 +41,9 @@ __Key:__
 - X X X X X Boss: Cerberus
 - _ _ _ _ _ Boss: Geryon
 - X X X X X Boss: Charybdis
-- _ _ _ _ _ Boss: Talos
+- X X X X X Boss: Talos
 - _ _ _ _ _ Boss: Nemean Lion
-- _ _ _ _ _ Boss: Bronze Bull
+- X X X X X Boss: Bronze Bull
 - X X X X X Miniboss: Python
 - _ _ _ _ _ Miniboss: Giant Boar
 - X X X X X Miniboss: Medusa
@@ -129,6 +130,7 @@ __Key:__
 - _ _ _ Cretan Stone and variants
 - X X X Reeds
 - X X X Golden String
+- _ _ _ Ichor-Infused Gearbox
 
 
 ## Items
@@ -146,8 +148,8 @@ __Key:__
 - X X X Snakeskin
 - X X X Tough Snakeskin
 - X X X Deadly Fang
-- X _ _ Heart of Talos
-- X X _ Ichor-Infused Gear
+- X _ X Heart of Talos
+- X X X Ichor-Infused Gear
 - X X X Avernal Feather
 - X ~ X Avernal Hide // TO DO: enchanted book crafting
 - X X X Avernal Wing
@@ -229,7 +231,7 @@ __Key:__
 
 - X X X Bane of Serpents
 - X _ _ Daybreak
-- X _ _ Flying
+- X X _ Flying
 - X X _ Fireflash
 - X X _ Hunting
 - X _ _ Lord of the Sea

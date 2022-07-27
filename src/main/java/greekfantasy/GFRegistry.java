@@ -37,9 +37,11 @@ import greekfantasy.entity.Sparti;
 import greekfantasy.entity.Unicorn;
 import greekfantasy.entity.Whirl;
 import greekfantasy.entity.boss.Arachne;
+import greekfantasy.entity.boss.BronzeBull;
 import greekfantasy.entity.boss.Cerberus;
 import greekfantasy.entity.boss.Charybdis;
 import greekfantasy.entity.boss.Python;
+import greekfantasy.entity.boss.Talos;
 import greekfantasy.entity.misc.Curse;
 import greekfantasy.entity.misc.CurseOfCirce;
 import greekfantasy.entity.misc.Discus;
@@ -861,6 +863,7 @@ public final class GFRegistry {
             register(event, ARA.get(), Ara::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, ARACHNE.get(), Arachne::createAttributes, null);
             register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
+            register(event, BRONZE_BULL.get(), BronzeBull::createAttributes, null);
             register(event, CENTAUR.get(), Centaur::createAttributes, Mob::checkMobSpawnRules);
             register(event, CERASTES.get(), Cerastes::createAttributes, Cerastes::checkCerastesSpawnRules);
             register(event, CERBERUS.get(), Cerberus::createAttributes, null);
@@ -887,6 +890,7 @@ public final class GFRegistry {
             register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, SIREN.get(), Siren::createAttributes, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
             register(event, SPARTI.get(), Sparti::createAttributes, null);
+            register(event, TALOS.get(), Talos::createAttributes, null);
             register(event, UNICORN.get(), Unicorn::createAttributes, Mob::checkMobSpawnRules);
             register(event, WHIRL.get(), Whirl::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
         }
@@ -977,6 +981,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(BabySpider::new, MobCategory.MONSTER)
                         .sized(0.5F, 0.65F)
                         .build("baby_spider"));
+        public static final RegistryObject<EntityType<? extends BronzeBull>> BRONZE_BULL = ENTITY_TYPES.register("bronze_bull", () ->
+                EntityType.Builder.of(BronzeBull::new, MobCategory.MONSTER)
+                        .sized(1.95F, 2.98F).fireImmune()
+                        .build("bronze_bull"));
         public static final RegistryObject<EntityType<? extends Centaur>> CENTAUR = ENTITY_TYPES.register("centaur", () ->
                 EntityType.Builder.of(Centaur::new, MobCategory.CREATURE)
                         .sized(1.39F, 2.49F)
@@ -1081,6 +1089,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Sparti::new, MobCategory.CREATURE)
                         .sized(0.6F, 1.98F)
                         .build("sparti"));
+        public static final RegistryObject<EntityType<? extends Talos>> TALOS = ENTITY_TYPES.register("talos", () ->
+                EntityType.Builder.of(Talos::new, MobCategory.MONSTER)
+                        .sized(1.98F, 4.96F).fireImmune()
+                        .build("talos"));
         public static final RegistryObject<EntityType<? extends Unicorn>> UNICORN = ENTITY_TYPES.register("unicorn", () ->
                 EntityType.Builder.of(Unicorn::new, MobCategory.CREATURE)
                         .sized(1.39F, 1.98F)

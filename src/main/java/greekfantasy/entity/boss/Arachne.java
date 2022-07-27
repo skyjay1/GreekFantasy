@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -56,7 +57,7 @@ public class Arachne extends Monster implements RangedAttackMob {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new Arachne.RangedAttackGoal(1.0D, 75, 15.0F));
+        this.goalSelector.addGoal(2, new ArachneRangedAttackGoal(1.0D, 75, 15.0F));
         this.goalSelector.addGoal(4, new ArachneAttackGoal(1.0D, true));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -160,8 +161,8 @@ public class Arachne extends Monster implements RangedAttackMob {
         return false;
     }
 
-    class RangedAttackGoal extends net.minecraft.world.entity.ai.goal.RangedAttackGoal {
-        public RangedAttackGoal(double moveSpeed, int attackInterval, float attackDistance) {
+    class ArachneRangedAttackGoal extends RangedAttackGoal {
+        public ArachneRangedAttackGoal(double moveSpeed, int attackInterval, float attackDistance) {
             super(Arachne.this, moveSpeed, attackInterval, attackDistance);
         }
 
