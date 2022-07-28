@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:stripped_olive_log"
+            "items": [
+				"greekfantasy:stripped_olive_log"
+			]
           }
         ]
       },

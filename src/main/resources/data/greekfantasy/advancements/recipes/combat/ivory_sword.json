@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:boar_tusk"
+            "items": [
+				"greekfantasy:boar_tusk"
+			]
           }
         ]
       },

@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:avernal_shard"
+            "items": [
+				"greekfantasy:avernal_shard"
+			]
           }
         ]
       },

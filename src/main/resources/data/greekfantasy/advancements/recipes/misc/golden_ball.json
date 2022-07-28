@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:golden_string"
+            "items": [
+				"greekfantasy:golden_string"
+			]
           }
         ]
       },

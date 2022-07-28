@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:ichor_infused_gear"
+            "tag": "forge:storage_blocks/iron"
           }
         ]
       },

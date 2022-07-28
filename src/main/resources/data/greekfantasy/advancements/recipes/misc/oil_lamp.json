@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:olive_oil"
+            "items": [
+				"greekfantasy:olive_oil"
+			]
           }
         ]
       },

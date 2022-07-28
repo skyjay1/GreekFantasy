@@ -2,6 +2,7 @@ package greekfantasy;
 
 import greekfantasy.entity.Cerastes;
 import greekfantasy.entity.Orthus;
+import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.monster.Circe;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.integration.RGCompat;
@@ -26,6 +27,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -56,6 +58,9 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class GFEvents {
 
     public static final class ForgeHandler {
@@ -83,6 +88,42 @@ public final class GFEvents {
                     shade.setOwnerUUID(player.getUUID());
                     shade.setPersistenceRequired();
                     player.level.addFreshEntity(shade);
+                }
+            }
+        }
+
+        /**
+         * Used to summon a Geryon when a cow is killed and other spawn conditions are met
+         *
+         * @param event the living death event
+         */
+        @SubscribeEvent
+        public static void onLivingDeath(final LivingDeathEvent event) {
+            if (!event.isCanceled() && event.getEntityLiving().isEffectiveAi() && event.getSource().getEntity() instanceof Player) {
+                // check if the cow was killed by a player and if geryon can spawn here
+                final BlockPos deathPos = event.getEntityLiving().blockPosition();
+                if (event.getEntityLiving() instanceof Cow && Geryon.canGeryonSpawnOn(event.getEntityLiving().level, deathPos)) {
+                    // check for Geryon Head blocks nearby
+                    final List<BlockPos> heads = new ArrayList<>();
+                    final int r = 3;
+                    BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+                    for (int x = -r; x <= r; x++) {
+                        for (int y = -2; y <= 2; y++) {
+                            for (int z = -r; z <= r; z++) {
+                                pos.setWithOffset(deathPos, x, y, z);
+                                if (event.getEntityLiving().level.getBlockState(pos).is(GFRegistry.BlockReg.GIGANTE_HEAD.get())) {
+                                    heads.add(pos.immutable());
+                                }
+                                // if we found at least three heads, remove them and spawn a geryon
+                                if (heads.size() >= 3) {
+                                    heads.subList(0, 3).forEach(p -> event.getEntityLiving().level.destroyBlock(p, false));
+                                    final float yaw = Mth.wrapDegrees(event.getSource().getEntity().getYRot() + 180.0F);
+                                    Geryon.spawnGeryon(event.getEntityLiving().level, deathPos, yaw);
+                                    return;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -288,19 +329,30 @@ public final class GFEvents {
 
         /**
          * Used to prevent mobs from attacking players when either the player
-         * or the mob are under Curse of Circe
+         * or the mob are under Curse of Circe, Stunned, or Petrified
          *
          * @param event the living target event
          **/
         @SubscribeEvent
         public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
+            if(null == event.getTarget()) {
+                return;
+            }
+            // check for curse of circe
             if (!event.getEntityLiving().level.isClientSide()
                     && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
                     && event.getEntityLiving() instanceof Mob mob
-                    && event.getTarget() != null
                     && event.getTarget() != mob.getLastHurtByMob()
                     && (mob.hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get())
                         || event.getTarget().hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get()))) {
+                // remove attack target
+                mob.setTarget(null);
+            }
+            // check for stunned or petrified
+            if (!event.getEntityLiving().level.isClientSide()
+                    && event.getEntityLiving() instanceof Mob mob
+                    && (mob.hasEffect(GFRegistry.MobEffectReg.STUNNED.get())
+                    || mob.hasEffect(GFRegistry.MobEffectReg.PETRIFIED.get()))) {
                 // remove attack target
                 mob.setTarget(null);
             }

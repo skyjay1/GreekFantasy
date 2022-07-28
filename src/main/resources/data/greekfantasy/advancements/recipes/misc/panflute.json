@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:reeds"
+            "items": [
+				"greekfantasy:reeds"
+			]
           }
         ]
       },

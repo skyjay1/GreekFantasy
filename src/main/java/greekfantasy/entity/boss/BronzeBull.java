@@ -195,7 +195,7 @@ public class BronzeBull extends Monster {
         }
         if (super.doHurtTarget(entity)) {
             // apply extra knockback velocity when attacking (ignores knockback resistance)
-            final double knockbackFactor = 0.92D;
+            final double knockbackFactor = 0.82D;
             final Vec3 myPos = this.position();
             final Vec3 ePos = entity.position();
             final double dX = Math.signum(ePos.x - myPos.x) * knockbackFactor;

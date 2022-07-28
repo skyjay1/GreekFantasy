@@ -43,7 +43,7 @@ __Key:__
 - X X X X X Sparti
 - X X X X X Mad Cow
 - X X X X X Boss: Cerberus
-- _ _ _ _ _ Boss: Geryon
+- X X X X X Boss: Geryon
 - X X X X X Boss: Charybdis
 - X X X X X Boss: Talos
 - _ _ _ _ _ Boss: Nemean Lion

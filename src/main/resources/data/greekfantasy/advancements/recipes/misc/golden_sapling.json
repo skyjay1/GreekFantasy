@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:dragon_tooth"
+            "items": [
+				"greekfantasy:dragon_tooth"
+			]
           }
         ]
       },

@@ -1,13 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-  	"FQF",
+  	".Q.",
     "FBF"
   ],
   "key": {
-    "F": { "item": "greekfantasy:avernal_feather" },
+    "F": { "item": "minecraft:feather" },
     "Q": { "item": "greekfantasy:bag_of_wind" },
-    "B": { "item": "minecraft:leather_boots" }
+    "B": { "item": "minecraft:leather_boots" },
+    ".": { "item": "greekfantasy:ichor" }
   },
   "result": {
     "item": "greekfantasy:winged_sandals",

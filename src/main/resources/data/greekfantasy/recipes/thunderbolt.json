@@ -1,13 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "...",
+    "###",
     "IXI",
-    "..."
+    "###"
   ],
   "key": {
-    ".": { "tag": "forge:nuggets/gold" },
-    "I": { "item": "greekfantasy:ichor_infused_gear" },
+    "I": { "item": "greekfantasy:ichor" },
+    "#": { "tag": "forge:ingots/gold" },
     "X": { "tag": "forge:storage_blocks/iron" }
   },
   "result": {

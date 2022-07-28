@@ -41,6 +41,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
 import javax.annotation.Nullable;
@@ -119,7 +120,14 @@ public class Gigante extends PathfinderMob implements NeutralMob {
     @Override
     public boolean doHurtTarget(final Entity entityIn) {
         if (super.doHurtTarget(entityIn)) {
-            entityIn.setDeltaMovement(entityIn.getDeltaMovement().add(0.0D, 0.25F, 0.0D));
+            // apply extra knockback velocity when attacking (ignores knockback resistance)
+            final double knockbackFactor = 0.2D;
+            final Vec3 myPos = this.position();
+            final Vec3 ePos = entityIn.position();
+            final double dX = Math.signum(ePos.x - myPos.x) * knockbackFactor;
+            final double dZ = Math.signum(ePos.z - myPos.z) * knockbackFactor;
+            entityIn.push(dX, knockbackFactor / 2.0D, dZ);
+            entityIn.hurtMarked = true;
             return true;
         }
         return false;
@@ -264,6 +272,11 @@ public class Gigante extends PathfinderMob implements NeutralMob {
         protected void resetAttackCooldown() {
             super.resetAttackCooldown();
             Gigante.this.setAttackCooldown();
+        }
+
+        @Override
+        protected double getAttackReachSqr(LivingEntity attackTarget) {
+            return super.getAttackReachSqr(attackTarget) - 3.0D;
         }
     }
 

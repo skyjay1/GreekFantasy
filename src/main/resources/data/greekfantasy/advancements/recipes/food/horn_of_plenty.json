@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:horn"
+            "items": [
+				"greekfantasy:horn"
+			]
           }
         ]
       },

@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:deadly_fang"
+            "items": [
+				"greekfantasy:deadly_fang"
+			]
           }
         ]
       },

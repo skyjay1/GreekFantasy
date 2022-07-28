@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "minecraft:flint"
+            "items": [
+				"minecraft:flint"
+			]
           }
         ]
       },

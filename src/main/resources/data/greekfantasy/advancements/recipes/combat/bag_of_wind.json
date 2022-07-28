@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:avernal_feather"
+            "items": [
+				"greekfantasy:avernal_feather"
+			]
           }
         ]
       },

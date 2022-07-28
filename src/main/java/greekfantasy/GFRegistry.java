@@ -40,6 +40,7 @@ import greekfantasy.entity.boss.Arachne;
 import greekfantasy.entity.boss.BronzeBull;
 import greekfantasy.entity.boss.Cerberus;
 import greekfantasy.entity.boss.Charybdis;
+import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.Python;
 import greekfantasy.entity.boss.Talos;
 import greekfantasy.entity.misc.Curse;
@@ -878,6 +879,7 @@ public final class GFRegistry {
             register(event, ELPIS.get(), Elpis::createAttributes, null);
             register(event, EMPUSA.get(), Empusa::createAttributes, Empusa::checkEmpusaSpawnRules);
             register(event, FURY.get(), Fury::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
+            register(event, GERYON.get(), Geryon::createAttributes, null);
             register(event, GIGANTE.get(), Gigante::createAttributes, Mob::checkMobSpawnRules);
             register(event, GORGON.get(), Gorgon::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, HARPY.get(), Harpy::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
@@ -1035,6 +1037,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Fury::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.4F).fireImmune()
                         .build("fury"));
+        public static final RegistryObject<EntityType<? extends Geryon>> GERYON = ENTITY_TYPES.register("geryon", () ->
+                EntityType.Builder.of(Geryon::new, MobCategory.MONSTER)
+                        .sized(1.98F, 4.96F).fireImmune()
+                        .build("geryon"));
         public static final RegistryObject<EntityType<? extends Gigante>> GIGANTE = ENTITY_TYPES.register("gigante", () ->
                 EntityType.Builder.of(Gigante::new, MobCategory.CREATURE)
                         .sized(1.98F, 4.79F)

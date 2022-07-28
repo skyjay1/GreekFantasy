@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "tag": "greekfantasy:olive_planks"
+            "items": [
+				"greekfantasy:olive_planks"
+			]
           }
         ]
       },
