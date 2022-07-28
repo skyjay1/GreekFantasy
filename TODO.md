@@ -10,6 +10,10 @@ __Key:__
 
 - Everything ;^D
 - Charybdis "throw" animation cuts off
+- Circe rapid fire
+- Orthus stands when sitting
+- Use Orthus head should equip it
+- Sparti bounding box doesn't reset
 
 ## Entities
 
@@ -125,7 +129,7 @@ __Key:__
 - X X X Olive Sapling
 - X X X Pomegranate Sapling
 - X X X Golden Sapling
-- X X _ Nest
+- X X X Nest
 - X ~ X Wild Rose
 - _ _ _ Cretan Stone and variants
 - X X X Reeds
@@ -183,8 +187,8 @@ __Key:__
 - X X X Mirror
 - X X X Golden Bridle
 - X X X Unicorn Horn
-- X _ X Panflute
-- X _ _ Lyre (normal, golden)
+- X X X Panflute
+- X X X Lyre (wooden, golden)
 - X X X Web Ball
 - X X X Olive Oil
 - X _ _ Olive Salve

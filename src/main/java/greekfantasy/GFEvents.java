@@ -9,9 +9,11 @@ import greekfantasy.item.HellenicArmorItem;
 import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.mob_effect.CurseOfCirceEffect;
 import greekfantasy.network.SCurseOfCircePacket;
+import greekfantasy.network.SSongPacket;
 import greekfantasy.util.SummonBossUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffect;
@@ -35,6 +37,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -46,6 +49,7 @@ import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -439,6 +443,30 @@ public final class GFEvents {
                 event.getEntity().getCommandSenderWorld().addFreshEntity(lion);
                 event.getEntity().remove();
             }*/
+        }
+
+        /**
+         * Used to sync datapack data from the server to each client
+         *
+         * @param event the player login event
+         **/
+        @SubscribeEvent
+        public static void onPlayerLogin(final PlayerEvent.PlayerLoggedInEvent event) {
+            Player player = event.getPlayer();
+            if (player instanceof ServerPlayer) {
+                // sync panflute songs
+                GreekFantasy.SONGS.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new SSongPacket(e.getKey(), e.getValue().get())));
+            }
+        }
+
+        /**
+         * Used to sync datapack info when resources are reloaded
+         *
+         * @param event the reload listener event
+         **/
+        @SubscribeEvent
+        public static void onAddReloadListeners(final AddReloadListenerEvent event) {
+            event.addListener(GreekFantasy.SONGS);
         }
 
     }

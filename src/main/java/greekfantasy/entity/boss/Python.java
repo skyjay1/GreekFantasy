@@ -48,8 +48,8 @@ public class Python extends Monster implements RangedAttackMob {
     private static final byte NONE = (byte) 0;
     private static final byte SPAWNING = (byte) 1;
     private static final byte SPIT = (byte) 2;
-    // bytes to use in Level#broadcastEntityState
-    private static final byte SPIT_CLIENT = 9;
+    // bytes to use in Level#broadcastEntityEvent
+    private static final byte SPIT_EVENT = 9;
 
     private static final Predicate<LivingEntity> TARGET_SELECTOR = (e) -> {
         final MobType mobType = e.getMobType();
@@ -85,14 +85,14 @@ public class Python extends Monster implements RangedAttackMob {
     @Override
     public void defineSynchedData() {
         super.defineSynchedData();
-        this.getEntityData().define(STATE, Byte.valueOf(NONE));
+        this.getEntityData().define(STATE, NONE);
     }
 
     @Override
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(3, new Python.PoisonSpitAttackGoal(MAX_SPIT_TIME, 3, 165));
+        this.goalSelector.addGoal(3, new Python.PoisonSpitAttackGoal(MAX_SPIT_TIME / 3, 3, 165));
         this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.7D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -259,7 +259,7 @@ public class Python extends Monster implements RangedAttackMob {
     @Override
     public void handleEntityEvent(byte id) {
         switch (id) {
-            case SPIT_CLIENT:
+            case SPIT_EVENT:
 
                 break;
             default:
@@ -284,8 +284,8 @@ public class Python extends Monster implements RangedAttackMob {
 
     class PoisonSpitAttackGoal extends IntervalRangedAttackGoal<Python> {
 
-        protected PoisonSpitAttackGoal(final int duration, final int count, final int maxCooldownIn) {
-            super(Python.this, duration, count, maxCooldownIn);
+        protected PoisonSpitAttackGoal(final int interval, final int count, final int maxCooldownIn) {
+            super(Python.this, interval, count, maxCooldownIn);
         }
 
         @Override
@@ -297,7 +297,7 @@ public class Python extends Monster implements RangedAttackMob {
         public void start() {
             super.start();
             Python.this.setSpitAttack(true);
-            Python.this.getCommandSenderWorld().broadcastEntityEvent(Python.this, SPIT_CLIENT);
+            Python.this.level.broadcastEntityEvent(Python.this, SPIT_EVENT);
             Python.this.playSound(SoundEvents.CREEPER_PRIMED, 1.0F, 1.2F);
         }
 

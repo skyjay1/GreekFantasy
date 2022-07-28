@@ -83,6 +83,7 @@ import greekfantasy.item.GorgonBloodItem;
 import greekfantasy.item.HellenicArmorItem;
 import greekfantasy.item.HelmOfDarknessItem;
 import greekfantasy.item.HornOfPlentyItem;
+import greekfantasy.item.InstrumentItem;
 import greekfantasy.item.KnifeItem;
 import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.item.OliveOilItem;
@@ -125,6 +126,7 @@ import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -704,12 +706,12 @@ public final class GFRegistry {
 
         //// MISC ITEMS ////
         // TODO instruments
-        public static final RegistryObject<Item> PANFLUTE = ITEMS.register("panflute", () ->
-                new Item(new Item.Properties().tab(GF_TAB).stacksTo(1)));
-        public static final RegistryObject<Item> LYRE = ITEMS.register("wooden_lyre", () ->
-                new Item(new Item.Properties().tab(GF_TAB).stacksTo(1)));
-        public static final RegistryObject<Item> GOLDEN_LYRE = ITEMS.register("golden_lyre", () ->
-                new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).stacksTo(1)));
+        public static final RegistryObject<InstrumentItem> PANFLUTE = ITEMS.register("panflute", () ->
+                new InstrumentItem(new Item.Properties().tab(GF_TAB).stacksTo(1), () -> SoundEvents.NOTE_BLOCK_FLUTE));
+        public static final RegistryObject<InstrumentItem> WOODEN_LYRE = ITEMS.register("wooden_lyre", () ->
+                new InstrumentItem(new Item.Properties().tab(GF_TAB).stacksTo(1), () -> SoundEvents.NOTE_BLOCK_HARP));
+        public static final RegistryObject<InstrumentItem> GOLDEN_LYRE = ITEMS.register("golden_lyre", () ->
+                new InstrumentItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).stacksTo(1), () -> SoundEvents.NOTE_BLOCK_GUITAR));
         public static final RegistryObject<Item> OLIVES = ITEMS.register("olives", () ->
                 new Item(new Item.Properties().tab(GF_TAB).food(OLIVES_FOOD)));
         public static final RegistryObject<Item> OLIVE_OIL = ITEMS.register("olive_oil", () ->

@@ -10,20 +10,26 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import java.util.EnumSet;
 
 public class IntervalRangedAttackGoal<T extends Mob & RangedAttackMob> extends Goal {
-    protected T entity;
-    protected int goalTime;
-    protected int maxTime;
-    protected int maxCooldown;
-    protected int interval;
+    protected final T entity;
+    protected final int maxDuration;
+    protected final int maxCooldown;
+    protected final int interval;
+    protected int progressTimer;
     protected int cooldown;
 
-    public IntervalRangedAttackGoal(final T entityIn, final int duration, final int count, final int maxCooldownIn) {
+    /**
+     * @param entityIn the entity
+     * @param interval the number of ticks between ranged attacks
+     * @param count the number of ranged attacks before cooldown begins
+     * @param maxCooldownIn the maximum cooldown for this attack
+     */
+    public IntervalRangedAttackGoal(final T entityIn, final int interval, final int count, final int maxCooldownIn) {
         this.setFlags(EnumSet.allOf(Goal.Flag.class));
         this.entity = entityIn;
-        this.maxTime = duration;
+        this.interval = Math.max(1, interval);
+        this.maxDuration = interval * count;
         this.maxCooldown = maxCooldownIn;
         this.cooldown = 30;
-        this.interval = Math.floorDiv(Math.max(count, duration - 20), count);
     }
 
     @Override
@@ -43,14 +49,14 @@ public class IntervalRangedAttackGoal<T extends Mob & RangedAttackMob> extends G
 
     @Override
     public boolean canContinueToUse() {
-        return goalTime > 0 && entity.getTarget() != null
+        return progressTimer > 0 && entity.getTarget() != null
                 && entity.getSensing().hasLineOfSight(entity.getTarget())
                 && isWithinRange(entity.getTarget());
     }
 
     @Override
     public void start() {
-        goalTime = 1;
+        progressTimer = 1;
         entity.setAggressive(true);
     }
 
@@ -61,12 +67,12 @@ public class IntervalRangedAttackGoal<T extends Mob & RangedAttackMob> extends G
         entity.getNavigation().stop();
         entity.lookAt(target, 100.0F, 100.0F);
         entity.getLookControl().setLookAt(target, 100.0F, 100.0F);
-        // spit attack on interval
-        if (goalTime % interval == 0) {
+        // ranged attack on interval
+        if (progressTimer % interval == 0) {
             entity.performRangedAttack(target, 0.1F);
         }
-        // finish the spit attack
-        if (goalTime++ >= maxTime) {
+        // increase timer and finish goal when timer reaches max
+        if (progressTimer++ > maxDuration) {
             stop();
         }
     }
@@ -74,15 +80,15 @@ public class IntervalRangedAttackGoal<T extends Mob & RangedAttackMob> extends G
     @Override
     public void stop() {
         entity.setAggressive(false);
-        this.goalTime = 0;
+        this.progressTimer = 0;
         this.cooldown = maxCooldown;
     }
 
     protected boolean isWithinRange(final LivingEntity target) {
         if (target != null) {
             final double disSq = entity.distanceToSqr(target);
-            final double maxRange = entity.getAttributeValue(Attributes.FOLLOW_RANGE) * 0.75D;
-            return disSq > 9.0D && disSq < (maxRange * maxRange);
+            final double maxRange = entity.getAttributeValue(Attributes.FOLLOW_RANGE) * 0.85D;
+            return disSq > 4.0D && disSq < (maxRange * maxRange);
         }
         return false;
     }

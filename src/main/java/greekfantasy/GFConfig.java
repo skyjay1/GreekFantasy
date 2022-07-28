@@ -62,6 +62,9 @@ public class GFConfig {
     public final ForgeConfigSpec.DoubleValue MEDUSA_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue SHADE_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue SATYR_SHAMAN_CHANCE;
+    private static final ResourceLocation SATYR_SONG_FALLBACK = new ResourceLocation(GreekFantasy.MODID, "greensleeves");
+    private final ForgeConfigSpec.ConfigValue<? extends String> SATYR_SONG;
+    private ResourceLocation satyrSong;
     public final ForgeConfigSpec.BooleanValue SHADE_IMMUNE_TO_NONOWNER;
     private final ForgeConfigSpec.BooleanValue SHOW_ARACHNE_BOSS_BAR;
     private boolean showArachneBossBar;
@@ -180,6 +183,7 @@ public class GFConfig {
         MEDUSA_SPAWN_CHANCE = builder.defineInRange("medusa_spawn_chance", 0.8F, 0.0F, 100.0F);
         SHADE_SPAWN_CHANCE = builder.defineInRange("shade_spawn_chance", 100.0F, 0.0F, 100.0F);
         SATYR_SHAMAN_CHANCE = builder.defineInRange("satyr_shaman_chance", 24.0F, 0.0F, 100.0F);
+        SATYR_SONG = builder.define("satyr_song", SATYR_SONG_FALLBACK.toString());
         SHADE_IMMUNE_TO_NONOWNER = builder.define("shade_immune_to_nonowner", true);
         SHOW_ARACHNE_BOSS_BAR = builder.define("show_arachne_boss_bar", false);
         SHOW_CIRCE_BOSS_BAR = builder.define("show_circe_boss_bar", false);
@@ -307,6 +311,10 @@ public class GFConfig {
         showMedusaBossBar = SHOW_MEDUSA_BOSS_BAR.get();
         showNemeanLionBossBar = SHOW_NEMEAN_LION_BOSS_BAR.get();
         showPythonBossBar = SHOW_PYTHON_BOSS_BAR.get();
+        satyrSong = ResourceLocation.tryParse(SATYR_SONG.get());
+        if(null == satyrSong) {
+            satyrSong = SATYR_SONG_FALLBACK;
+        }
         // mob effects
         isCurseOfCirceEnabled = CURSE_OF_CIRCE_ENABLED.get();
         curseOfCirceWhitelist = ImmutableList.copyOf(CURSE_OF_CIRCE_WHITELIST.get());
@@ -388,6 +396,9 @@ public class GFConfig {
         return showPythonBossBar;
     }
 
+    public ResourceLocation getSatyrSong() {
+        return satyrSong;
+    }
 
     // mob effects
 

@@ -13,18 +13,24 @@ import java.util.EnumSet;
 public class ShootFireGoal extends Goal {
     private final Mob entity;
     private final int maxCooldown;
-    private final int maxShootFireTime;
-    private final double fireRange;
+    private final int maxDuration;
+    private final double range;
 
-    private int fireBreathingTime;
+    private int progressTimer;
     private int cooldown;
 
-    protected ShootFireGoal(final Mob entityIn, final int fireTimeIn, final int maxCooldownIn, final double fireRangeIn) {
+    /**
+     * @param entity the entity
+     * @param duration the maximum duration of this goal
+     * @param maxCooldown the maximum amount of time before the goal can execute again
+     * @param range the maximum distance from the target to execute this goal
+     */
+    protected ShootFireGoal(final Mob entity, final int duration, final int maxCooldown, final double range) {
         this.setFlags(EnumSet.allOf(Goal.Flag.class));
-        this.entity = entityIn;
-        this.maxShootFireTime = fireTimeIn;
-        this.fireRange = fireRangeIn;
-        this.maxCooldown = maxCooldownIn;
+        this.entity = entity;
+        this.maxDuration = duration;
+        this.range = range;
+        this.maxCooldown = maxCooldown;
         this.cooldown = 30;
     }
 
@@ -38,7 +44,7 @@ public class ShootFireGoal extends Goal {
         if (this.cooldown > 0) {
             cooldown--;
         } else return entity.getTarget() != null
-                && entity.distanceToSqr(entity.getTarget()) < (fireRange * fireRange)
+                && entity.distanceToSqr(entity.getTarget()) < (range * range)
                 && entity.getSensing().hasLineOfSight(entity.getTarget());
         return false;
     }
@@ -47,25 +53,25 @@ public class ShootFireGoal extends Goal {
     public boolean canContinueToUse() {
         return entity.getTarget() != null
                 && entity.getSensing().hasLineOfSight(entity.getTarget())
-                && entity.distanceToSqr(entity.getTarget()) < (fireRange * fireRange);
+                && entity.distanceToSqr(entity.getTarget()) < (range * range);
     }
 
     @Override
     public void start() {
-        this.fireBreathingTime = 1;
+        this.progressTimer = 1;
         entity.playSound(SoundEvents.CREEPER_PRIMED, 1.0F, 1.2F);
     }
 
     @Override
     public void tick() {
-        if (fireBreathingTime > 0 && fireBreathingTime < maxShootFireTime) {
-            fireBreathingTime++;
+        if (progressTimer > 0 && progressTimer < maxDuration) {
+            progressTimer++;
             // stop the entity from moving, and adjust look vecs
             entity.getNavigation().stop();
             entity.lookAt(entity.getTarget(), 100.0F, 100.0F);
             entity.getLookControl().setLookAt(entity.getTarget(), 100.0F, 100.0F);
             // set fire to targetPos
-            if (fireBreathingTime > 18 && fireBreathingTime % 7 == 0) {
+            if (progressTimer > 18 && progressTimer % 7 == 0) {
                 final Vec3 entityPos = entity.getEyePosition();
                 setFireToIntersectingEntities(entityPos, entity.getTarget().position(), 0.65D, 5);
                 entity.playSound(SoundEvents.FIRECHARGE_USE, 1.0F, 1.0F);
@@ -77,7 +83,7 @@ public class ShootFireGoal extends Goal {
 
     @Override
     public void stop() {
-        this.fireBreathingTime = 0;
+        this.progressTimer = 0;
         this.cooldown = maxCooldown;
     }
 

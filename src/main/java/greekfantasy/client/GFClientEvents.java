@@ -78,16 +78,12 @@ import greekfantasy.client.entity.model.SpellModel;
 import greekfantasy.client.entity.model.TalosModel;
 import greekfantasy.client.entity.model.UnicornModel;
 import greekfantasy.client.particle.GorgonParticle;
-import greekfantasy.entity.Lampad;
 import greekfantasy.entity.Pegasus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.TridentModel;
-import net.minecraft.client.model.geom.LayerDefinitions;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -394,6 +390,10 @@ public final class GFClientEvents {
         }
 
         private static void registerModelProperties() {
+            // register instruments
+            registerInstrumentProperties(GFRegistry.ItemReg.PANFLUTE.get());
+            registerInstrumentProperties(GFRegistry.ItemReg.WOODEN_LYRE.get());
+            registerInstrumentProperties(GFRegistry.ItemReg.GOLDEN_LYRE.get());
             // register bows
             registerBowProperties(GFRegistry.ItemReg.AVERNAL_BOW.get());
             registerBowProperties(GFRegistry.ItemReg.APOLLO_BOW.get());
@@ -407,6 +407,11 @@ public final class GFClientEvents {
             registerSpearProperties(GFRegistry.ItemReg.IRON_SPEAR.get());
             registerSpearProperties(GFRegistry.ItemReg.DIAMOND_SPEAR.get());
             registerSpearProperties(GFRegistry.ItemReg.NETHERITE_SPEAR.get());
+        }
+
+        private static void registerInstrumentProperties(final Item instrument) {
+            ItemProperties.register(instrument, new ResourceLocation("playing"),
+                    (item, world, entity, tintIndex) -> (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
         }
 
         private static void registerBowProperties(final Item bow) {

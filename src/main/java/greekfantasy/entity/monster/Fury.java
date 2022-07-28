@@ -63,7 +63,7 @@ public class Fury extends Monster implements FlyingAnimal, RangedAttackMob {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new IntervalRangedAttackGoal<>(this, 210, 2, 200));
+        this.goalSelector.addGoal(1, new IntervalRangedAttackGoal<>(this, 90, 2, 200));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
         this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0D, 6.0F, 12.0F) {
             @Override

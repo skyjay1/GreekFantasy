@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "/O/",
+    "/O/",
+    " # "
+  ],
+  "key": {
+    "/": { "tag": "forge:rods/wooden" },
+    "#": { "tag": "minecraft:planks" },
+    "O": { "tag": "forge:string" }
+  },
+  "result": {
+    "item": "greekfantasy:wooden_lyre"
+  }
+}

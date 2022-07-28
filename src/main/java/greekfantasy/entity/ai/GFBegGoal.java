@@ -21,6 +21,12 @@ public class GFBegGoal extends Goal {
     @Nullable
     protected LivingEntity player;
 
+    /**
+     * @param mob the entity
+     * @param range the range to check for entities holding beg items
+     * @param interval the number of ticks between goal updates
+     * @param isBegItem the predicate for items that trigger this goal
+     */
     protected GFBegGoal(final Mob mob, final double range, final int interval, final Predicate<ItemStack> isBegItem) {
         this.setFlags(EnumSet.of(Flag.LOOK, Flag.TARGET, Flag.MOVE));
         this.mob = mob;

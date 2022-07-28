@@ -53,7 +53,7 @@ public class Sparti extends TamableAnimal implements RangedAttackMob {
     protected static final String KEY_SPAWN_TIME = "Spawning";
     protected static final String KEY_LIFE_TICKS = "LifeTicks";
     //bytes to use in Level#broadcastEntityEvent
-    private static final byte SPAWN_CLIENT = 11;
+    private static final byte SPAWN_EVENT = 11;
 
     /**
      * The max time spent 'spawning'
@@ -107,12 +107,18 @@ public class Sparti extends TamableAnimal implements RangedAttackMob {
         }
 
         // update spawn time
-        if (spawnTime > 0) {
-            --spawnTime;
+        if (isSpawning() && --spawnTime <= 0) {
+            refreshDimensions();
         }
 
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
         // particles when spawning
-        if (isSpawning() && level.isClientSide()) {
+        if (level.isClientSide() && isSpawning()) {
             int i = Mth.floor(this.getX());
             int j = Mth.floor(this.getY() - (double) 0.2F);
             int k = Mth.floor(this.getZ());
@@ -150,7 +156,7 @@ public class Sparti extends TamableAnimal implements RangedAttackMob {
         this.spawnTime = maxSpawnTime;
         this.refreshDimensions();
         if (!level.isClientSide()) {
-            this.level.broadcastEntityEvent(this, SPAWN_CLIENT);
+            this.level.broadcastEntityEvent(this, SPAWN_EVENT);
         }
     }
 
@@ -165,7 +171,7 @@ public class Sparti extends TamableAnimal implements RangedAttackMob {
     @Override
     public void handleEntityEvent(byte id) {
         switch (id) {
-            case SPAWN_CLIENT:
+            case SPAWN_EVENT:
                 setSpawning();
                 break;
             default:

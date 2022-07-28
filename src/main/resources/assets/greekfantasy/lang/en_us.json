@@ -346,6 +346,8 @@
   "advancements.greekfantasy.place_pomegranate_sapling.title": "Ticking Time Bomb",
   "advancements.greekfantasy.place_pomegranate_sapling.description": "Plant a Pomegranate tree in the Overworld",
   "container.vase": "Vase",
+  "screen.greekfantasy.controls.octave": "Scroll Wheel: change octave",
+  "screen.greekfantasy.controls.songs": "Space: toggle songs",
   "gui.songs.title": "Songs",
   "song.augustin.name": "O du lieber Augustin",
   "song.augustin.credits": "Traditional Austrian",

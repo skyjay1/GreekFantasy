@@ -10,7 +10,7 @@ import java.util.EnumSet;
 
 public class SummonMobGoal<T extends Mob> extends Goal {
     protected final PathfinderMob summoner;
-    protected final EntityType<? extends T> mobSupplier;
+    protected final EntityType<? extends T> mobEntityType;
     protected final int maxDuration;
     protected final int maxCooldown;
     protected final int count;
@@ -19,25 +19,31 @@ public class SummonMobGoal<T extends Mob> extends Goal {
      * Counts up from 0, up to maxDuration, at which point
      * the mobs are summoned and the goal stops
      */
-    protected int progress;
+    protected int progressTimer;
     /**
      * Counts down from maxCooldown. When it reaches 0,
      * the goal can run
      */
     protected int cooldown;
 
+    /**
+     * @param entity the entity
+     * @param duration the number of ticks it takes to prepare the goal
+     * @param cooldown the number of ticks to wait before the goal can execute again
+     * @param entityType the entity type of the mob to summon
+     */
     public SummonMobGoal(final PathfinderMob entity, final int duration, final int cooldown,
-                         final EntityType<? extends T> mob) {
-        this(entity, duration, cooldown, mob, 1);
+                         final EntityType<? extends T> entityType) {
+        this(entity, duration, cooldown, entityType, 1);
     }
 
     public SummonMobGoal(final PathfinderMob entity, final int duration, final int cooldown,
-                         final EntityType<? extends T> mob, final int mobCount) {
+                         final EntityType<? extends T> entityType, final int mobCount) {
         this.setFlags(EnumSet.of(Goal.Flag.MOVE));
         this.summoner = entity;
         this.maxDuration = duration;
         this.maxCooldown = cooldown;
-        this.mobSupplier = mob;
+        this.mobEntityType = entityType;
         this.count = mobCount;
         this.cooldown = 100;
     }
@@ -59,12 +65,12 @@ public class SummonMobGoal<T extends Mob> extends Goal {
 
     @Override
     public void start() {
-        this.progress = 1;
+        this.progressTimer = 1;
     }
 
     @Override
     public boolean canContinueToUse() {
-        return this.progress > 0 && summoner.getTarget() != null;
+        return this.progressTimer > 0 && summoner.getTarget() != null;
     }
 
     @Override
@@ -72,7 +78,7 @@ public class SummonMobGoal<T extends Mob> extends Goal {
         super.tick();
         summoner.getNavigation().stop();
         summoner.getLookControl().setLookAt(summoner.getTarget(), 100.0F, 100.0F);
-        if (progress++ > maxDuration) {
+        if (progressTimer++ > maxDuration) {
             // create entity
             for (int i = 0; i < count; i++) {
                 T mobEntity = summonMob();
@@ -84,14 +90,12 @@ public class SummonMobGoal<T extends Mob> extends Goal {
 
     @Override
     public void stop() {
-        this.progress = 0;
+        this.progressTimer = 0;
         this.cooldown = maxCooldown;
     }
 
     protected T summonMob() {
-        final T mobEntity = mobSupplier.create(summoner.level);
-        final float yaw = summoner.getYRot();
-        final float pitch = summoner.getXRot();
+        final T mobEntity = mobEntityType.create(summoner.level);
         mobEntity.copyPosition(summoner);
         mobEntity.setLastHurtByMob(summoner.getLastHurtByMob());
         mobEntity.setTarget(summoner.getTarget());
@@ -99,7 +103,5 @@ public class SummonMobGoal<T extends Mob> extends Goal {
         return mobEntity;
     }
 
-    protected void onSummonMob(final T mobEntity) {
-
-    }
+    protected void onSummonMob(final T mobEntity) { }
 }

@@ -1,0 +1,62 @@
+package greekfantasy.client.screen.radial;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+
+/**
+ * Adapted from https://github.com/gigaherz/ToolBelt under the following license:
+ * <p>
+ * Copyright (c) 2015, David Quintana <gigaherz@gmail.com>
+ * All rights reserved.
+ * <p>
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the author nor the
+ * names of the contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * <p>
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+public class DrawingContext {
+    public final int width;
+    public final int height;
+    public final float x;
+    public final float y;
+    public final float z;
+    public final Font fontRenderer;
+    public final ItemRenderer itemRenderer;
+    public final PoseStack poseStack;
+    public final IDrawingHelper drawingHelper;
+
+    public DrawingContext(PoseStack poseStack, int width, int height, float x, float y, float z, Font fontRenderer, ItemRenderer itemRenderer, IDrawingHelper drawingHelper) {
+        this.poseStack = poseStack;
+        this.width = width;
+        this.height = height;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.fontRenderer = fontRenderer;
+        this.itemRenderer = itemRenderer;
+        this.drawingHelper = drawingHelper;
+    }
+
+    @FunctionalInterface
+    public interface IDrawingHelper {
+        void renderTooltip(PoseStack poseStack, int mouseX, int mouseY);
+    }
+}

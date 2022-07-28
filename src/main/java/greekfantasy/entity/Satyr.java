@@ -1,8 +1,11 @@
 package greekfantasy.entity;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.SummonMobGoal;
 import greekfantasy.entity.util.HasHorseVariant;
+import greekfantasy.item.InstrumentItem;
+import greekfantasy.util.SongManager;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -156,12 +159,11 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
         super.aiStep();
         if (this.level.isClientSide()) {
             // play music
-            // TODO
-            /*if (isSummoning()) {
-                SongManager.playMusic(this, (InstrumentItem) GFRegistry.ItemReg.PANFLUTE, SUMMONING_SONG, summonTime, 0.92F, 0.34F);
+            if (isSummoning()) {
+                SongManager.playMusic(this, GFRegistry.ItemReg.PANFLUTE.get(), SUMMONING_SONG, summonTime, 0.92F, 0.34F);
             } else if (isDancing()) {
-                SongManager.playMusic(this, (InstrumentItem) GFRegistry.ItemReg.PANFLUTE, GreekFantasy.CONFIG.getSatyrSong(), level.getGameTime(), 0.84F, 0.28F);
-            }*/
+                SongManager.playMusic(this, GFRegistry.ItemReg.PANFLUTE.get(), GreekFantasy.CONFIG.getSatyrSong(), level.getGameTime(), 0.84F, 0.28F);
+            }
         } else {
             // anger timer
             this.updatePersistentAnger((ServerLevel) this.level, true);
