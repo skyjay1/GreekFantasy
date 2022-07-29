@@ -1,10 +1,10 @@
 {
   "type": "minecraft:village",
   "config": {
-    "start_pool": "greekfantasy:marble_shrine",
+    "start_pool": "greekfantasy:cyclops_cave",
 	"size": 1
   },
-  "biomes": "#greekfantasy:has_structure/shrine",
+  "biomes": "#greekfantasy:has_structure/cyclops_cave",
   "adapt_noise": true,
   "spawn_overrides": {}
 }

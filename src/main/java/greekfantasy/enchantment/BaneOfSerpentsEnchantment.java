@@ -25,6 +25,16 @@ public class BaneOfSerpentsEnchantment extends DamageEnchantment {
     }
 
     @Override
+    public int getMinCost(int level) {
+        return 5 + (level - 1) * 8;
+    }
+
+    @Override
+    public int getMaxCost(int level) {
+        return this.getMinCost(level) + 20;
+    }
+
+    @Override
     public boolean checkCompatibility(Enchantment enchantment) {
         return !(enchantment instanceof DamageEnchantment);
     }

@@ -14,7 +14,7 @@ public class ArionRenderer extends AbstractHorseRenderer<Horse, HorseModel<Horse
     private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/arion.png");
 
     public ArionRenderer(final EntityRendererProvider.Context context) {
-        super(context, new HorseModel<>(context.bakeLayer(ModelLayers.HORSE)), 0.75F);
+        super(context, new HorseModel<>(context.bakeLayer(ModelLayers.HORSE)), 1.15F);
         this.addLayer(new HorseArmorLayer(this, context.getModelSet()));
     }
 

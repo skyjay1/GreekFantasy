@@ -1,0 +1,8 @@
+{
+  "disabled": false,
+  "description": "quest.greekfantasy.summon_arion",
+  "components": [
+    "quest.greekfantasy.summon_arion.line1",
+    "quest.greekfantasy.summon_arion.line2"
+  ]
+}

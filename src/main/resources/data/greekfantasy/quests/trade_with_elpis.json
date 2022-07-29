@@ -1,4 +1,5 @@
 {
+  "disabled": false,
   "description": "quest.greekfantasy.trade_with_elpis",
   "components": [
     "quest.greekfantasy.trade_with_elpis.line1",

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:is_plains",
+    "#forge:is_savanna",
+    "#minecraft:is_badlands",
+    "#minecraft:is_taiga"
+  ]
+}

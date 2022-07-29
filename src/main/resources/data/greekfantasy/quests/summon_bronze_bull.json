@@ -1,4 +1,5 @@
 {
+  "disabled": false,
   "description": "quest.greekfantasy.summon_bronze_bull",
   "components": [
     "quest.greekfantasy.summon_bronze_bull.line1",

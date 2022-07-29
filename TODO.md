@@ -90,19 +90,19 @@ __Key:__
 - X X X Limestone veins
 - X X X Marble veins
 - X X X Reeds
-- _ _ _ Olive Forest?
 - X X X Satyr Camp
 - X X X Ara Camp
+- X X X Centaur Camp
 - X X X Limestone Shrine
 - X X X Marble Shrine
 - X X X Nether Shrine
 - X X X Harpy Nest
 - X X X Python Pit
 - _ _ _ Lion Den
-- _ _ _ Cyclopes Cave
+- X X X Cyclopes Cave
 - X X X Olive Trees
 - X X X Pomegranate Trees
-- X _ X Golden Tree
+- X . X Golden Tree
 - X X X Arachne Pit
 
 

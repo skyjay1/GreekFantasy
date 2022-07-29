@@ -4,7 +4,7 @@
     "start_pool": "greekfantasy:limestone_shrine",
 	"size": 1
   },
-  "biomes": "#minecraft:has_structure/mineshaft",
+  "biomes": "#greekfantasy:has_structure/shrine",
   "adapt_noise": true,
   "spawn_overrides": {}
 }

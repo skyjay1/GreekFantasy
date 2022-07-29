@@ -1,4 +1,5 @@
 {
+  "disabled": false,
   "description": "quest.greekfantasy.summon_geryon",
   "components": [
     "quest.greekfantasy.summon_geryon.line1",

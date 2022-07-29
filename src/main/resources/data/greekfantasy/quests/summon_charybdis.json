@@ -1,4 +1,5 @@
 {
+  "disabled": false,
   "description": "quest.greekfantasy.summon_charybdis",
   "components": [
     "quest.greekfantasy.summon_charybdis.line1",

@@ -1,4 +1,5 @@
 {
+  "disabled": false,
   "description": "quest.greekfantasy.trade_with_nymph",
   "components": [
     "quest.greekfantasy.trade_with_nymph.line1",

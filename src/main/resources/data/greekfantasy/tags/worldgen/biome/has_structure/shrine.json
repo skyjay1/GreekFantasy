@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:is_plains",
+    "#forge:is_coniferous",
+    "#forge:is_savanna",
+    "#forge:is_plateau",
+    "#forge:is_dry/overworld",
+    "#forge:is_mushroom",
+    "#forge:is_swamp",
+    "#minecraft:is_badlands",
+    "#minecraft:is_taiga",
+    "#minecraft:is_mountain",
+    "#minecraft:is_beach",
+    "minecraft:dark_forest"
+  ]
+}

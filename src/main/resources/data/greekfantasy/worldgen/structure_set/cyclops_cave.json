@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "greekfantasy:cyclops_cave",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 15,
+    "separation": 8,
+    "salt": 644977430
+  }
+}

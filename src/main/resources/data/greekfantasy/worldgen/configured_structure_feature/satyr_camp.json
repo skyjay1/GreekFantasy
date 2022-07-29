@@ -4,7 +4,7 @@
     "start_pool": "greekfantasy:satyr_camp/campfire",
 	"size": 2
   },
-  "biomes": "#minecraft:has_structure/mineshaft",
+  "biomes": "#greekfantasy:has_structure/satyr_camp",
   "adapt_noise": true,
   "spawn_overrides": {}
 }

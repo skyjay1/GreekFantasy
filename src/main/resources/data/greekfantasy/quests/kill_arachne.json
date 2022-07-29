@@ -1,4 +1,5 @@
 {
+  "disabled": false,
   "description": "quest.greekfantasy.kill_arachne",
   "components": [
     "quest.greekfantasy.kill_arachne.line1",

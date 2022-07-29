@@ -4,7 +4,7 @@
     "start_pool": "greekfantasy:centaur_camp/start",
 	"size": 2
   },
-  "biomes": "#minecraft:has_structure/mineshaft",
+  "biomes": "#greekfantasy:has_structure/centaur_camp",
   "adapt_noise": true,
   "spawn_overrides": {}
 }

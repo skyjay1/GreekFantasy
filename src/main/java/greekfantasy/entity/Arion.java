@@ -60,7 +60,7 @@ public class Arion extends Horse {
         entity.setPersistenceRequired();
         entity.yBodyRot = horse.yBodyRot;
         entity.setPortalCooldown();
-        entity.setAge(0);
+        entity.setAge(1);
         level.addFreshEntity(entity);
         // copy inventory and remove the old horse
         entity.copyInventory(horse);
@@ -140,7 +140,7 @@ public class Arion extends Horse {
 
     @Override
     public double getPassengersRidingOffset() {
-        return super.getPassengersRidingOffset() - 0.25D;
+        return super.getPassengersRidingOffset() - 0.15D;
     }
 
     @Override

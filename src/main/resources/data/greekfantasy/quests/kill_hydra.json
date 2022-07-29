@@ -1,4 +1,5 @@
 {
+  "disabled": false,
   "description": "quest.greekfantasy.kill_hydra",
   "components": [
     "quest.greekfantasy.kill_hydra.line1",

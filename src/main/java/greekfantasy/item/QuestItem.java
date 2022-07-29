@@ -20,6 +20,8 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 
 public class QuestItem extends Item {
@@ -34,8 +36,16 @@ public class QuestItem extends Item {
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> list) {
         if (this.allowdedIn(group)) {
-            List<ResourceLocation> questIds = new ArrayList<>(GreekFantasy.QUESTS.getKeys());
+            List<ResourceLocation> questIds = new ArrayList<>();
+            // add each non-disabled quest to the list
+            for(Map.Entry<ResourceLocation, Optional<Quest>> entry : GreekFantasy.QUESTS.getEntries()) {
+                if(entry.getValue().isPresent() && !entry.getValue().get().isDisabled()) {
+                    questIds.add(entry.getKey());
+                }
+            }
+            // sort by namespace and path
             questIds.sort(ResourceLocation::compareNamespaced);
+            // add itemstack for each quest
             for(ResourceLocation questId : questIds) {
                 ItemStack itemStack = new ItemStack(this);
                 itemStack.getOrCreateTag().putString(KEY_QUEST, questId.toString());

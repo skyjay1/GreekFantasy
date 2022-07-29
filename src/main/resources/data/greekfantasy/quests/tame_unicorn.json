@@ -1,4 +1,5 @@
 {
+  "disabled": false,
   "description": "quest.greekfantasy.tame_unicorn",
   "components": [
     "quest.greekfantasy.tame_unicorn.line1",

@@ -4,7 +4,7 @@
     "start_pool": "greekfantasy:ara_camp/start",
 	"size": 2
   },
-  "biomes": "#minecraft:has_structure/mineshaft",
+  "biomes": "#greekfantasy:has_structure/ara_camp",
   "adapt_noise": true,
   "spawn_overrides": {}
 }
