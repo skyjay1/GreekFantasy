@@ -72,4 +72,14 @@ public class Cyprian extends Centaur implements Enemy {
     public boolean hasBullHead() {
         return true;
     }
+
+    @Override
+    protected void addTradeGoal() {
+        // do nothing
+    }
+
+    @Override
+    public boolean canPlayerTrade(Player player) {
+        return false;
+    }
 }

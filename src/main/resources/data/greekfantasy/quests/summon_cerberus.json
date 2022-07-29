@@ -1,0 +1,9 @@
+{
+  "description": "quest.greekfantasy.summon_cerberus",
+  "components": [
+    "quest.greekfantasy.summon_cerberus.line1",
+    "quest.greekfantasy.summon_cerberus.line2",
+    "quest.greekfantasy.summon_cerberus.line3",
+    "quest.greekfantasy.summon_cerberus.line4"
+  ]
+}

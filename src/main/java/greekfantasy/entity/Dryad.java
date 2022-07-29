@@ -14,6 +14,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -80,11 +81,12 @@ public class Dryad extends PathfinderMob implements NeutralMob {
     protected static final String KEY_TREE_POS = "Tree";
     protected static final String KEY_HIDING = "HidingTime";
 
-    protected NymphVariant variant = Variant.OAK;
-
-    protected BlockPos treePos = null;
-
     protected static final TagKey<Item> DRYAD_TRADES = ItemTags.create(new ResourceLocation(GreekFantasy.MODID, "dryad_trade"));
+
+    private static final byte FINISH_TRADE_EVENT = 9;
+
+    protected NymphVariant variant = Variant.OAK;
+    protected BlockPos treePos = null;
     protected Player tradingPlayer = null;
 
     protected static final UniformInt ANGER_RANGE = TimeUtil.rangeOfSeconds(4, 10);
@@ -304,7 +306,7 @@ public class Dryad extends PathfinderMob implements NeutralMob {
             }
         }
 
-        return super.mobInteract(player, hand);
+        return InteractionResult.sidedSuccess(!level.isClientSide());
     }
 
     /**
@@ -368,7 +370,6 @@ public class Dryad extends PathfinderMob implements NeutralMob {
         // shrink/remove held item
         tradeItem.shrink(1);
         this.setItemInHand(InteractionHand.MAIN_HAND, tradeItem);
-        this.swing(InteractionHand.MAIN_HAND, true);
         if (tradeItem.getCount() <= 0) {
             this.setTradingPlayer(null);
         }
@@ -376,8 +377,23 @@ public class Dryad extends PathfinderMob implements NeutralMob {
         if (player != null && random.nextInt(3) == 0) {
             this.level.addFreshEntity(new ExperienceOrb(this.level, this.getX(), this.getY(), this.getZ(), 1 + random.nextInt(2)));
         }
-        // send packet to spawn particles
-        ((ServerLevel) this.level).sendParticles(ParticleTypes.HAPPY_VILLAGER, this.getX(), this.getEyeY(), this.getZ(), 4, 0, 0, 0, 0);
+        this.level.broadcastEntityEvent(this, FINISH_TRADE_EVENT);
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        switch (id) {
+            case FINISH_TRADE_EVENT:
+                // swing arm and play sound
+                this.swing(InteractionHand.MAIN_HAND, true);
+                for(int i = 0; i < 4; i++) {
+                    this.level.addParticle(ParticleTypes.HAPPY_VILLAGER, this.getX() + 0.5D * (random.nextDouble() - 0.5D), this.getEyeY() + 0.5D * (random.nextDouble() - 0.5D), this.getZ() + 0.5D  * (random.nextDouble() - 0.5D), 0, 0, 0);
+                }
+                break;
+            default:
+                super.handleEntityEvent(id);
+                break;
+        }
     }
 
     // Variant methods

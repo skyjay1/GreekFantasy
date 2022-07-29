@@ -1,0 +1,8 @@
+{
+  "description": "quest.greekfantasy.summon_nemean_lion",
+  "components": [
+    "quest.greekfantasy.summon_nemean_lion.line1",
+    "quest.greekfantasy.summon_nemean_lion.line2",
+    "quest.greekfantasy.summon_nemean_lion.line3"
+  ]
+}

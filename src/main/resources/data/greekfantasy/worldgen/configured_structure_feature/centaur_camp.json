@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:village",
+  "config": {
+    "start_pool": "greekfantasy:centaur_camp/start",
+	"size": 2
+  },
+  "biomes": "#minecraft:has_structure/mineshaft",
+  "adapt_noise": true,
+  "spawn_overrides": {}
+}

@@ -9,6 +9,15 @@ public final class ScreenLoader {
     private ScreenLoader() {
     }
 
+    public static void openQuestScreen(final Player playerIn, final int itemSlot, final ItemStack itemstack) {
+        // only load client-side, of course
+        if (!playerIn.level.isClientSide()) {
+            return;
+        }
+        // open the gui
+        Minecraft.getInstance().setScreen(new QuestScreen(itemSlot, itemstack));
+    }
+
     public static void openInstrumentScreen(final Player playerIn, final int itemSlot, final ItemStack itemstack) {
         // only load client-side, of course
         if (!playerIn.level.isClientSide()) {

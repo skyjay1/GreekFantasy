@@ -2,8 +2,10 @@ package greekfantasy;
 
 import greekfantasy.network.CPlayNotePacket;
 import greekfantasy.network.SCurseOfCircePacket;
+import greekfantasy.network.SQuestPacket;
 import greekfantasy.network.SSongPacket;
 import greekfantasy.util.GenericJsonReloadListener;
+import greekfantasy.util.Quest;
 import greekfantasy.util.Song;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -45,11 +47,12 @@ public class GreekFantasy {
 
     public static final GenericJsonReloadListener<Song> SONGS = new GenericJsonReloadListener<>("songs", Song.class, Song.CODEC,
             l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSongPacket(e.getKey(), e.getValue().get()))));
+    public static final GenericJsonReloadListener<Quest> QUESTS = new GenericJsonReloadListener<>("quests", Quest.class, Quest.CODEC,
+            l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SQuestPacket(e.getKey(), e.getValue().get()))));
 
 
     public GreekFantasy() {
         // register config
-        GreekFantasy.LOGGER.debug("registerConfig");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC);
         // registry listeners
         GFRegistry.register();
@@ -68,10 +71,10 @@ public class GreekFantasy {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::reloadConfig);
 
         // register messages
-        GreekFantasy.LOGGER.debug("registerNetwork");
         int messageId = 0;
         //CHANNEL.registerMessage(messageId++, CUpdateInstrumentPacket.class, CUpdateInstrumentPacket::toBytes, CUpdateInstrumentPacket::fromBytes, CUpdateInstrumentPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(messageId++, SSongPacket.class, SSongPacket::toBytes, SSongPacket::fromBytes, SSongPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(messageId++, SQuestPacket.class, SQuestPacket::toBytes, SQuestPacket::fromBytes, SQuestPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(messageId++, SCurseOfCircePacket.class, SCurseOfCircePacket::toBytes, SCurseOfCircePacket::fromBytes, SCurseOfCircePacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(messageId++, CPlayNotePacket.class, CPlayNotePacket::toBytes, CPlayNotePacket::fromBytes, CPlayNotePacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         //CHANNEL.registerMessage(messageId++, CUseEnchantmentPacket.class, CUseEnchantmentPacket::toBytes, CUseEnchantmentPacket::fromBytes, CUseEnchantmentPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));

@@ -1,0 +1,8 @@
+{
+  "description": "quest.greekfantasy.summon_charybdis",
+  "components": [
+    "quest.greekfantasy.summon_charybdis.line1",
+    "quest.greekfantasy.summon_charybdis.line2",
+    "quest.greekfantasy.summon_charybdis.line3"
+  ]
+}

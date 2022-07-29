@@ -7,6 +7,10 @@
     {
       "structure": "greekfantasy:ara_camp",
       "weight": 1
+    },
+    {
+      "structure": "greekfantasy:centaur_camp",
+      "weight": 1
     }
   ],
   "placement": {

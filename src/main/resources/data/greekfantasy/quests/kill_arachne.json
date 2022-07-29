@@ -1,0 +1,7 @@
+{
+  "description": "quest.greekfantasy.kill_arachne",
+  "components": [
+    "quest.greekfantasy.kill_arachne.line1",
+    "quest.greekfantasy.kill_arachne.line2"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "description": "quest.greekfantasy.summon_talos",
+  "components": [
+    "quest.greekfantasy.summon_talos.line1",
+    "quest.greekfantasy.summon_talos.line2",
+    "quest.greekfantasy.summon_talos.line3"
+  ]
+}

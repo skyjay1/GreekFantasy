@@ -1,0 +1,7 @@
+{
+  "description": "quest.greekfantasy.tame_unicorn",
+  "components": [
+    "quest.greekfantasy.tame_unicorn.line1",
+    "quest.greekfantasy.tame_unicorn.line2"
+  ]
+}

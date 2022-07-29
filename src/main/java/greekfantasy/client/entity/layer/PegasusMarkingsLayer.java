@@ -16,16 +16,6 @@ import java.util.EnumMap;
 
 public class PegasusMarkingsLayer<T extends Pegasus> extends RenderLayer<T, PegasusModel<T>> {
 
-    public static final EnumMap<Markings, ResourceLocation> COAT_TEXTURES = new EnumMap<>(Markings.class);
-
-    static {
-        COAT_TEXTURES.put(Markings.NONE, null);
-        COAT_TEXTURES.put(Markings.WHITE, new ResourceLocation("textures/entity/horse/horse_markings_white.png"));
-        COAT_TEXTURES.put(Markings.WHITE_FIELD, new ResourceLocation("textures/entity/horse/horse_markings_whitefield.png"));
-        COAT_TEXTURES.put(Markings.WHITE_DOTS, new ResourceLocation("textures/entity/horse/horse_markings_whitedots.png"));
-        COAT_TEXTURES.put(Markings.BLACK_DOTS, new ResourceLocation("textures/entity/horse/horse_markings_blackdots.png"));
-    }
-
     public PegasusMarkingsLayer(RenderLayerParent<T, PegasusModel<T>> parent) {
         super(parent);
     }
@@ -42,6 +32,6 @@ public class PegasusMarkingsLayer<T extends Pegasus> extends RenderLayer<T, Pega
 
     @Override
     public ResourceLocation getTextureLocation(final T entity) {
-        return COAT_TEXTURES.get(entity.getMarkings());
+        return HalfHorseMarkingsLayer.MARKINGS_TEXTURES.get(entity.getMarkings());
     }
 }

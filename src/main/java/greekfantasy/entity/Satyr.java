@@ -4,7 +4,6 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.SummonMobGoal;
 import greekfantasy.entity.util.HasHorseVariant;
-import greekfantasy.item.InstrumentItem;
 import greekfantasy.util.SongManager;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -45,6 +44,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.horse.Markings;
 import net.minecraft.world.entity.animal.horse.Variant;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
@@ -68,9 +68,9 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
 
     private static final EntityDataAccessor<Byte> DATA_STATE = SynchedEntityData.defineId(Satyr.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Boolean> DATA_SHAMAN = SynchedEntityData.defineId(Satyr.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Byte> DATA_COLOR = SynchedEntityData.defineId(Satyr.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Satyr.class, EntityDataSerializers.INT);
     public static final String KEY_SHAMAN = "Shaman";
-    public static final String KEY_COLOR = "Color";
+    public static final String KEY_VARIANT = "Variant";
 
     private static final ResourceLocation SUMMONING_SONG = new ResourceLocation(GreekFantasy.MODID, "sarias_song");
 
@@ -130,7 +130,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
         super.defineSynchedData();
         this.getEntityData().define(DATA_STATE, NONE);
         this.getEntityData().define(DATA_SHAMAN, Boolean.FALSE);
-        this.getEntityData().define(DATA_COLOR, (byte) 0);
+        this.getEntityData().define(DATA_VARIANT, 0);
     }
 
     @Override
@@ -263,7 +263,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean(KEY_SHAMAN, this.isShaman());
-        compound.putByte(KEY_COLOR, (byte) this.getVariant().getId());
+        compound.putByte(KEY_VARIANT, (byte) this.getVariant().getId());
         this.addPersistentAngerSaveData(compound);
     }
 
@@ -271,7 +271,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setShaman(compound.getBoolean(KEY_SHAMAN));
-        this.setVariant(Variant.byId(compound.getByte(KEY_COLOR)));
+        this.setVariant(Variant.byId(compound.getByte(KEY_VARIANT)));
         this.readPersistentAngerSaveData(this.level, compound);
     }
 
@@ -347,11 +347,22 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
     }
 
     public void setVariant(final Variant color) {
-        this.getEntityData().set(DATA_COLOR, (byte) color.getId());
+
     }
 
-    public Variant getVariant() {
-        return Variant.byId(this.getEntityData().get(DATA_COLOR).intValue());
+    @Override
+    public void setPackedVariant(int packedColorsTypes) {
+        this.getEntityData().set(DATA_VARIANT, packedColorsTypes);
+    }
+
+    @Override
+    public int getPackedVariant() {
+    return getEntityData().get(DATA_VARIANT);
+    }
+
+    @Override
+    public Markings getMarkings() {
+        return Markings.NONE;
     }
 
     protected void updateCombatAI() {

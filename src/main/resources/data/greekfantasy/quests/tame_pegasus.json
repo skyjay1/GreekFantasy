@@ -1,0 +1,7 @@
+{
+  "description": "quest.greekfantasy.tame_pegasus",
+  "components": [
+    "quest.greekfantasy.tame_pegasus.line1",
+    "quest.greekfantasy.tame_pegasus.line2"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "description": "quest.greekfantasy.trade_with_centaur",
+  "components": [
+    "quest.greekfantasy.trade_with_centaur.line1",
+    "quest.greekfantasy.trade_with_centaur.line2"
+  ]
+}

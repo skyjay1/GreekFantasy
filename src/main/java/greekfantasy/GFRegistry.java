@@ -89,6 +89,7 @@ import greekfantasy.item.KnifeItem;
 import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.item.OliveOilItem;
 import greekfantasy.item.OrthusHeadItem;
+import greekfantasy.item.QuestItem;
 import greekfantasy.item.SnakeskinArmorItem;
 import greekfantasy.item.SpearItem;
 import greekfantasy.item.StaffOfHealingItem;
@@ -103,10 +104,13 @@ import greekfantasy.mob_effect.SlowSwimEffect;
 import greekfantasy.mob_effect.PrisonerOfHadesEffect;
 import greekfantasy.mob_effect.StunnedEffect;
 import greekfantasy.util.BronzeScrapLootModifier;
+import greekfantasy.util.Quest;
+import greekfantasy.util.QuestLootModifier;
 import greekfantasy.util.ReplaceDropsLootModifier;
 import greekfantasy.util.SpawnRulesUtil;
 import greekfantasy.worldgen.ArachnePitFeature;
 import greekfantasy.worldgen.BiomeListConfigSpec;
+import greekfantasy.worldgen.CentaurStructureProcessor;
 import greekfantasy.worldgen.DimensionFilter;
 import greekfantasy.worldgen.GoldenTreeGrower;
 import greekfantasy.worldgen.HarpyNestFeature;
@@ -706,7 +710,8 @@ public final class GFRegistry {
                 new SnakeskinArmorItem(GFArmorMaterials.SNAKESKIN, EquipmentSlot.FEET, new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
 
         //// MISC ITEMS ////
-        // TODO instruments
+        public static final RegistryObject<QuestItem> QUEST = ITEMS.register("quest", () ->
+                new QuestItem(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<InstrumentItem> PANFLUTE = ITEMS.register("panflute", () ->
                 new InstrumentItem(new Item.Properties().tab(GF_TAB).stacksTo(1), () -> SoundEvents.NOTE_BLOCK_FLUTE));
         public static final RegistryObject<InstrumentItem> WOODEN_LYRE = ITEMS.register("wooden_lyre", () ->
@@ -1336,6 +1341,8 @@ public final class GFRegistry {
                 "replace_drops", () -> new ReplaceDropsLootModifier.Serializer());
         public static final RegistryObject<BronzeScrapLootModifier.Serializer> BRONZE_SCRAP_MODIFIER = LOOT_MODIFIER_SERIALIZERS.register(
                 "bronze_scrap", () -> new BronzeScrapLootModifier.Serializer());
+        public static final RegistryObject<QuestLootModifier.Serializer> QUEST_MODIFIER = LOOT_MODIFIER_SERIALIZERS.register(
+                "quest", () -> new QuestLootModifier.Serializer());
 
     }
 
@@ -1390,6 +1397,7 @@ public final class GFRegistry {
         }
 
         public static StructureProcessorType<LocStructureProcessor> LOC_PROCESSOR;
+        public static StructureProcessorType<CentaurStructureProcessor> CENTAUR_PROCESSOR;
         public static StructureProcessorType<SatyrStructureProcessor> SATYR_PROCESSOR;
 
         private static void registerStructureProcessors(final FMLClientSetupEvent event) {
@@ -1400,6 +1408,10 @@ public final class GFRegistry {
                 // register satyr processor
                 ResourceLocation satyrProcessorId = new ResourceLocation(GreekFantasy.MODID, "satyr");
                 SATYR_PROCESSOR = StructureProcessorType.register(satyrProcessorId.toString(), SatyrStructureProcessor.CODEC);
+                // register centaur processor
+                ResourceLocation centaurProcessorId = new ResourceLocation(GreekFantasy.MODID, "centaur");
+                CENTAUR_PROCESSOR = StructureProcessorType.register(centaurProcessorId.toString(), CentaurStructureProcessor.CODEC);
+
             });
         }
     }

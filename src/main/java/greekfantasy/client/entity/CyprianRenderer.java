@@ -2,6 +2,7 @@ package greekfantasy.client.entity;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.entity.layer.HalfHorseLayer;
+import greekfantasy.client.entity.layer.HalfHorseMarkingsLayer;
 import greekfantasy.client.entity.layer.QuiverLayer;
 import greekfantasy.client.entity.model.CyprianModel;
 import greekfantasy.entity.monster.Cyprian;
@@ -29,6 +30,7 @@ public class CyprianRenderer<T extends Cyprian> extends HumanoidMobRenderer<T, C
     public CyprianRenderer(final EntityRendererProvider.Context context) {
         super(context, new CyprianModel<T>(context.bakeLayer(CyprianModel.CYPRIAN_MODEL_RESOURCE)), 0.75F);
         this.addLayer(new HalfHorseLayer<>(this, context.getModelSet()));
+        this.addLayer(new HalfHorseMarkingsLayer<>(this, context.getModelSet()));
         this.addLayer(new QuiverLayer<>(this));
     }
 

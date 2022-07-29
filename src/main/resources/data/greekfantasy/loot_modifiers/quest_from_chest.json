@@ -1,0 +1,15 @@
+{
+  "type": "greekfantasy:quest",
+  "conditions": [
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.78
+    }
+  ],
+  "paths": [
+    "greekfantasy:chests/ara_tent",
+    "greekfantasy:chests/centaur_stable"
+  ],
+  "min": 1,
+  "max": 2
+}

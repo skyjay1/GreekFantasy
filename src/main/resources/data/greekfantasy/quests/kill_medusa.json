@@ -1,0 +1,7 @@
+{
+  "description": "quest.greekfantasy.kill_medusa",
+  "components": [
+    "quest.greekfantasy.kill_medusa.line1",
+    "quest.greekfantasy.kill_medusa.line2"
+  ]
+}

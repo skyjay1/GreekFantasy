@@ -1,6 +1,7 @@
 package greekfantasy.entity;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.entity.util.HasHorseVariant;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -41,7 +42,7 @@ import net.minecraftforge.common.ForgeMod;
 
 import javax.annotation.Nullable;
 
-public class Pegasus extends AbstractHorse implements FlyingAnimal {
+public class Pegasus extends AbstractHorse implements FlyingAnimal, HasHorseVariant {
 
     private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(Pegasus.class, EntityDataSerializers.INT);
     private static final String KEY_VARIANT = "Variant";
@@ -356,24 +357,14 @@ public class Pegasus extends AbstractHorse implements FlyingAnimal {
 
     // Color
 
+    @Override
     public void setPackedVariant(int packedColorsTypes) {
         this.entityData.set(VARIANT, packedColorsTypes);
     }
 
+    @Override
     public int getPackedVariant() {
         return this.entityData.get(VARIANT);
-    }
-
-    public void setVariant(Variant color, Markings type) {
-        this.setPackedVariant(color.getId() & 255 | type.getId() << 8 & '\uff00');
-    }
-
-    public Variant getVariant() {
-        return Variant.byId(this.getPackedVariant() & 255);
-    }
-
-    public Markings getMarkings() {
-        return Markings.byId((this.getPackedVariant() & '\uff00') >> 8);
     }
 
     // NBT

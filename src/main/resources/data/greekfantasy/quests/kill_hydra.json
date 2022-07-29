@@ -1,0 +1,7 @@
+{
+  "description": "quest.greekfantasy.kill_hydra",
+  "components": [
+    "quest.greekfantasy.kill_hydra.line1",
+    "quest.greekfantasy.kill_hydra.line2"
+  ]
+}

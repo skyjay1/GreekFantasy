@@ -121,7 +121,7 @@ __Key:__
 - X X X Mysterious Box
 - X X X Block of Bronze
 - X X X Terracotta Vase and variants
-- X _ X Gigante Head
+- X X X Gigante Head
 - X X X Orthus Head
 - ~ _ X Cerberus Head
 - X X X Oil Lamp
@@ -196,6 +196,7 @@ __Key:__
 - X X X Olive Sapling
 - X X X Pomegranate
 - X X X Pomegranate Sapling
+- X X X Quest
 
 ### Armor
 
@@ -253,6 +254,8 @@ __Key:__
 - X Dragon Tooth from Bone blocks
 - X Web Ball from Cobweb
 - X Bronze Scrap in chests
+- X Quest from Centaur
+- X Quest in chests
 
 ### Uses for bronze
 

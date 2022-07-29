@@ -10,6 +10,7 @@ import greekfantasy.item.HellenicArmorItem;
 import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.mob_effect.CurseOfCirceEffect;
 import greekfantasy.network.SCurseOfCircePacket;
+import greekfantasy.network.SQuestPacket;
 import greekfantasy.network.SSongPacket;
 import greekfantasy.util.SummonBossUtil;
 import net.minecraft.core.BlockPos;
@@ -506,8 +507,10 @@ public final class GFEvents {
         public static void onPlayerLogin(final PlayerEvent.PlayerLoggedInEvent event) {
             Player player = event.getPlayer();
             if (player instanceof ServerPlayer) {
-                // sync panflute songs
+                // sync songs
                 GreekFantasy.SONGS.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new SSongPacket(e.getKey(), e.getValue().get())));
+                // sync quests
+                GreekFantasy.QUESTS.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new SQuestPacket(e.getKey(), e.getValue().get())));
             }
         }
 
@@ -519,6 +522,7 @@ public final class GFEvents {
         @SubscribeEvent
         public static void onAddReloadListeners(final AddReloadListenerEvent event) {
             event.addListener(GreekFantasy.SONGS);
+            event.addListener(GreekFantasy.QUESTS);
         }
 
     }

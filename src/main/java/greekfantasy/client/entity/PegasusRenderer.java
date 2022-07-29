@@ -19,6 +19,6 @@ public class PegasusRenderer<T extends Pegasus> extends MobRenderer<T, PegasusMo
 
     @Override
     public ResourceLocation getTextureLocation(T entity) {
-        return HalfHorseLayer.TEXTURE_MAP.get(entity.getVariant());
+        return HalfHorseLayer.BODY_TEXTURES.get(entity.getVariant());
     }
 }

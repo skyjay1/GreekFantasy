@@ -1,6 +1,7 @@
 package greekfantasy.client.entity;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.client.entity.layer.HalfHorseMarkingsLayer;
 import greekfantasy.client.entity.layer.HalfHorseLayer;
 import greekfantasy.client.entity.layer.QuiverLayer;
 import greekfantasy.client.entity.model.CentaurModel;
@@ -29,6 +30,7 @@ public class CentaurRenderer<T extends Centaur> extends HumanoidMobRenderer<T, C
     public CentaurRenderer(final EntityRendererProvider.Context context) {
         super(context, new CentaurModel<T>(context.bakeLayer(CentaurModel.CENTAUR_MODEL_RESOURCE)), 0.75F);
         this.addLayer(new HalfHorseLayer<>(this, context.getModelSet()));
+        this.addLayer(new HalfHorseMarkingsLayer<>(this, context.getModelSet()));
         this.addLayer(new QuiverLayer<>(this));
     }
 

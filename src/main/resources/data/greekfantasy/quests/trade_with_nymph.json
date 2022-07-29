@@ -1,0 +1,8 @@
+{
+  "description": "quest.greekfantasy.trade_with_nymph",
+  "components": [
+    "quest.greekfantasy.trade_with_nymph.line1",
+    "quest.greekfantasy.trade_with_nymph.line2",
+    "quest.greekfantasy.trade_with_nymph.line3"
+  ]
+}

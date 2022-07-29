@@ -1,0 +1,39 @@
+{
+  "name": "greekfantasy:centaur_camp/building",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 10,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:centaur_camp/stable",
+        "projection": "rigid",
+        "processors": "greekfantasy:centaur_camp"
+      }
+    },
+    {
+      "weight": 7,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:centaur_camp/stable_with_chest",
+        "projection": "rigid",
+        "processors": "greekfantasy:centaur_camp"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:centaur_camp/trough",
+        "projection": "rigid",
+        "processors": "minecraft:empty"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+  ]
+}
