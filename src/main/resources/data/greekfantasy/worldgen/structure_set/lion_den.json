@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "greekfantasy:lion_den",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 16,
+    "separation": 10,
+    "salt": 1968169522
+  }
+}

@@ -43,6 +43,7 @@ import greekfantasy.entity.boss.Cerberus;
 import greekfantasy.entity.boss.Charybdis;
 import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.GiantBoar;
+import greekfantasy.entity.boss.NemeanLion;
 import greekfantasy.entity.boss.Python;
 import greekfantasy.entity.boss.Talos;
 import greekfantasy.entity.misc.Curse;
@@ -896,6 +897,7 @@ public final class GFRegistry {
             register(event, MAD_COW.get(), MadCow::createAttributes, SpawnRulesUtil::checkAnyLightMonsterSpawnRules);
             register(event, MINOTAUR.get(), Minotaur::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
+            register(event, NEMEAN_LION.get(), NemeanLion::createAttributes, null);
             register(event, ORTHUS.get(), Orthus::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, PEGASUS.get(), Pegasus::createAttributes, Mob::checkMobSpawnRules);
             register(event, PYTHON.get(), Python::createAttributes, null);
@@ -1086,6 +1088,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Naiad::new, MobCategory.WATER_CREATURE)
                         .sized(0.48F, 1.8F)
                         .build("naiad"));
+        public static final RegistryObject<EntityType<? extends NemeanLion>> NEMEAN_LION = ENTITY_TYPES.register("nemean_lion", () ->
+                EntityType.Builder.of(NemeanLion::new, MobCategory.MONSTER)
+                        .sized(1.92F, 2.28F).fireImmune()
+                        .build("nemean_lion"));
         public static final RegistryObject<EntityType<? extends Orthus>> ORTHUS = ENTITY_TYPES.register("orthus", () ->
                 EntityType.Builder.of(Orthus::new, MobCategory.MONSTER)
                         .sized(0.6F, 0.85F).fireImmune()

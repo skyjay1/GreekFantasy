@@ -37,14 +37,14 @@ __Key:__
 - X X X X X Gigante
 - X X X X X Unicorn
 - X X X X X Orthus
-- X X ~ X X Elpis
+- X X X X X Elpis
 - X X X X X Sparti
 - X X X X X Mad Cow
 - X X X X X Boss: Cerberus
 - X X X X X Boss: Geryon
 - X X X X X Boss: Charybdis
 - X X X X X Boss: Talos
-- _ _ _ _ _ Boss: Nemean Lion
+- X X X X X Boss: Nemean Lion
 - X X X X X Boss: Bronze Bull
 - X X X X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
@@ -98,7 +98,7 @@ __Key:__
 - X X X Nether Shrine
 - X X X Harpy Nest
 - X X X Python Pit
-- _ _ _ Lion Den
+- X X X Lion Den
 - X X X Cyclopes Cave
 - X X X Olive Trees
 - X X X Pomegranate Trees
@@ -207,7 +207,7 @@ __Key:__
 - X X X X Winged Sandals
 - X X X X Hellenic Armor
 - X X X X Snakeskin Armor
-- X X X _ Nemean Lion Hide // TO DO Lion
+- X X X X Nemean Lion Hide
 
 ## Advancements
 

@@ -150,7 +150,7 @@ public class Geryon extends Monster {
         this.goalSelector.addGoal(0, new Geryon.SpawningGoal());
         this.goalSelector.addGoal(1, new Geryon.SummonCowGoal(MAX_SUMMON_TIME, 440));
         this.goalSelector.addGoal(2, new Geryon.SmashAttackGoal(SMASH_RANGE, 210));
-        this.goalSelector.addGoal(3, new GeryonMeleeAttackGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(3, new Geryon.GeryonAttackGoal(1.0D, false));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -548,10 +548,10 @@ public class Geryon extends Monster {
         }
     }
 
-    class GeryonMeleeAttackGoal extends MeleeAttackGoal {
+    class GeryonAttackGoal extends MeleeAttackGoal {
 
-        public GeryonMeleeAttackGoal(PathfinderMob creature, double speedIn, boolean useLongMemory) {
-            super(creature, speedIn, useLongMemory);
+        public GeryonAttackGoal(double speedIn, boolean useLongMemory) {
+            super(Geryon.this, speedIn, useLongMemory);
         }
 
         @Override
