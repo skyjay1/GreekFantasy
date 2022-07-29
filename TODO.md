@@ -10,10 +10,8 @@ __Key:__
 
 - Everything ;^D
 - Charybdis "throw" animation cuts off
-- Circe rapid fire
 - Orthus stands when sitting
 - Use Orthus head should equip it
-- Sparti bounding box doesn't reset
 
 ## Entities
 
@@ -35,7 +33,7 @@ __Key:__
 - X X ~ X X Siren
 - X X X X X Cerastes
 - X X _ X X Ara
-- X X X _ X Cyclops // TO DO: drops bronze nuggets and a different monster drops avernal shards?
+- X X X X X Cyclops
 - X X X X X Gigante
 - X X X X X Unicorn
 - X X X X X Orthus
@@ -49,7 +47,7 @@ __Key:__
 - _ _ _ _ _ Boss: Nemean Lion
 - X X X X X Boss: Bronze Bull
 - X X X X X Miniboss: Python
-- _ _ _ _ _ Miniboss: Giant Boar
+- X X X X X Miniboss: Giant Boar
 - X X X X X Miniboss: Medusa
 - _ _ _ _ _ Miniboss: Cretan Minotaur
 - X X X X X Miniboss: Circe
@@ -57,7 +55,7 @@ __Key:__
 - X X X X X Miniboss: Arachne
 - X X X X X Fury
 - X X X X X Drakaina
-- _ _ _ _ _ Arion
+- X X X X X Arion
 - X X X X X Whirl
 - X X X X X Pegasus
 - _ _ _ _ _ Golden Ram
@@ -159,8 +157,9 @@ __Key:__
 - X X X Avernal Wing
 - X X X Avernal Hair
 - X _ X Avernal Claw // TO DO: enchanted book crafting
-- X _ _ Avernal Shard
-- X _ _ Boar Ear
+- X X X Avernal Shard
+- X X X Boar Ear
+- X X X Boar Tusk
 - X _ _ Golden Fleece
 - X X X Ball of Golden String
 - X X X Spider Banner Pattern
@@ -242,10 +241,10 @@ __Key:__
 - X _ _ Lord of the Sea
 - X X _ Mirroring
 - X _ _ Overstep
-- X X _ Poisoning
+- X X X Poisoning
 - X X _ Raising
-- X X _ Silkstep
-- X X _ Smashing
+- X X X Silkstep
+- X X X Smashing
 
 ## Other
 

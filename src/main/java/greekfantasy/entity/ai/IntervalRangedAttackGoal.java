@@ -27,7 +27,7 @@ public class IntervalRangedAttackGoal<T extends Mob & RangedAttackMob> extends G
         this.setFlags(EnumSet.allOf(Goal.Flag.class));
         this.entity = entityIn;
         this.interval = Math.max(1, interval);
-        this.maxDuration = interval * count;
+        this.maxDuration = this.interval * count;
         this.maxCooldown = maxCooldownIn;
         this.cooldown = 30;
     }
@@ -49,7 +49,7 @@ public class IntervalRangedAttackGoal<T extends Mob & RangedAttackMob> extends G
 
     @Override
     public boolean canContinueToUse() {
-        return progressTimer > 0 && entity.getTarget() != null
+        return progressTimer > 0 && this.cooldown <= 0 && entity.getTarget() != null
                 && entity.getSensing().hasLineOfSight(entity.getTarget())
                 && isWithinRange(entity.getTarget());
     }

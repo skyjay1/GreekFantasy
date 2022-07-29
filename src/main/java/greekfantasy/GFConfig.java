@@ -58,6 +58,7 @@ public class GFConfig {
     // entity
     public final ForgeConfigSpec.DoubleValue CIRCE_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue ELPIS_SPAWN_CHANCE;
+    public final ForgeConfigSpec.BooleanValue GIANT_BOAR_NON_NETHER;
     public final ForgeConfigSpec.DoubleValue MEDUSA_LIGHTNING_CHANCE;
     public final ForgeConfigSpec.DoubleValue MEDUSA_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue SHADE_SPAWN_CHANCE;
@@ -174,6 +175,8 @@ public class GFConfig {
 
         builder.push("mobs");
         CIRCE_SPAWN_CHANCE = builder.defineInRange("circe_spawn_chance", 2.0F, 0.0F, 100.0F);
+        GIANT_BOAR_NON_NETHER = builder.comment("Whether a hoglin must be outside of the nether to be turned to a Giant Boar")
+                .define("giant_boar_non_nether", true);
         ELPIS_SPAWN_CHANCE = builder
                 .comment("Percent chance that opening a mysterious box spawns an Elpis")
                 .defineInRange("elpis_spawn_chance", 60.0F, 0.0F, 100.0F);

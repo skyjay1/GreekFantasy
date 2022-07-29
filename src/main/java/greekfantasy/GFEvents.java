@@ -1,8 +1,10 @@
 package greekfantasy;
 
+import greekfantasy.entity.Arion;
 import greekfantasy.entity.Cerastes;
 import greekfantasy.entity.Orthus;
 import greekfantasy.entity.boss.Geryon;
+import greekfantasy.entity.boss.GiantBoar;
 import greekfantasy.entity.monster.Circe;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.integration.RGCompat;
@@ -14,8 +16,10 @@ import greekfantasy.network.SQuestPacket;
 import greekfantasy.network.SSongPacket;
 import greekfantasy.util.SummonBossUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffect;
@@ -30,8 +34,11 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Rabbit;
+import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -58,6 +65,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -496,6 +504,39 @@ public final class GFEvents {
                 event.getEntity().getCommandSenderWorld().addFreshEntity(lion);
                 event.getEntity().remove();
             }*/
+        }
+
+        /**
+         * Used to convert hoglins to giant boars.
+         * Used to convert horses to arions.
+         *
+         * @param event the PlayerInteractEvent.EntityInteract event
+         **/
+        @SubscribeEvent
+        public static void onPlayerInteract(final PlayerInteractEvent.EntityInteract event) {
+            // when player uses poisonous potato on adult hoglin while outside the nether
+            if (!event.isCanceled() && (!GreekFantasy.CONFIG.GIANT_BOAR_NON_NETHER.get() || event.getWorld().dimension() != Level.NETHER)
+                    && event.getTarget().getType() == EntityType.HOGLIN
+                    && event.getTarget() instanceof Hoglin hoglin && event.getWorld() instanceof ServerLevel
+                    && event.getItemStack().is(GiantBoar.TRIGGER)) {
+                if (!hoglin.isBaby()) {
+                    // spawn giant boar and shrink the item stack
+                    GiantBoar.spawnGiantBoar((ServerLevel) event.getWorld(), hoglin);
+                    if (!event.getPlayer().isCreative()) {
+                        event.getItemStack().shrink(1);
+                    }
+                }
+            } else if (!event.isCanceled() && event.getTarget().getType() == EntityType.HORSE && event.getTarget() instanceof Horse horse
+                    && event.getWorld() instanceof ServerLevel level && event.getItemStack().is(Arion.TRIGGER)) {
+                // when player uses enchanted golden apple on adult horse
+                if (!horse.isBaby() && horse.isTamed()) {
+                    // spawn Arion and shrink the item stack
+                    Arion.spawnArion(level, event.getPlayer(), horse);
+                    if (!event.getPlayer().isCreative()) {
+                        event.getItemStack().shrink(1);
+                    }
+                }
+            }
         }
 
         /**

@@ -11,6 +11,7 @@ import greekfantasy.client.blockentity.model.GiganteHeadModel;
 import greekfantasy.client.blockentity.model.OrthusHeadModel;
 import greekfantasy.client.entity.AraRenderer;
 import greekfantasy.client.entity.ArachneRenderer;
+import greekfantasy.client.entity.ArionRenderer;
 import greekfantasy.client.entity.BabySpiderRenderer;
 import greekfantasy.client.entity.BronzeBullRenderer;
 import greekfantasy.client.entity.CentaurRenderer;
@@ -27,6 +28,7 @@ import greekfantasy.client.entity.EmpusaRenderer;
 import greekfantasy.client.entity.FakePigRenderer;
 import greekfantasy.client.entity.FuryRenderer;
 import greekfantasy.client.entity.GeryonRenderer;
+import greekfantasy.client.entity.GiantBoarRenderer;
 import greekfantasy.client.entity.GiganteRenderer;
 import greekfantasy.client.entity.GorgonRenderer;
 import greekfantasy.client.entity.HarpyRenderer;
@@ -280,6 +282,7 @@ public final class GFClientEvents {
             // creature
             event.registerEntityRenderer(GFRegistry.EntityReg.ARA.get(), AraRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.ARACHNE.get(), ArachneRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.ARION.get(), ArionRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.BABY_SPIDER.get(), BabySpiderRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.BRONZE_BULL.get(), BronzeBullRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CENTAUR.get(), CentaurRenderer::new);
@@ -295,6 +298,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.EMPUSA.get(), EmpusaRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.FURY.get(), FuryRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.GERYON.get(), GeryonRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.GIANT_BOAR.get(), GiantBoarRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.GIGANTE.get(), GiganteRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.GORGON.get(), GorgonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.HARPY.get(), HarpyRenderer::new);

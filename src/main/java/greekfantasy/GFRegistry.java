@@ -23,6 +23,7 @@ import greekfantasy.enchantment.OverstepEnchantment;
 import greekfantasy.enchantment.PoisoningEnchantment;
 import greekfantasy.enchantment.SilkstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
+import greekfantasy.entity.Arion;
 import greekfantasy.entity.Centaur;
 import greekfantasy.entity.Cerastes;
 import greekfantasy.entity.Dryad;
@@ -41,6 +42,7 @@ import greekfantasy.entity.boss.BronzeBull;
 import greekfantasy.entity.boss.Cerberus;
 import greekfantasy.entity.boss.Charybdis;
 import greekfantasy.entity.boss.Geryon;
+import greekfantasy.entity.boss.GiantBoar;
 import greekfantasy.entity.boss.Python;
 import greekfantasy.entity.boss.Talos;
 import greekfantasy.entity.misc.Curse;
@@ -870,6 +872,7 @@ public final class GFRegistry {
         private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
             register(event, ARA.get(), Ara::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, ARACHNE.get(), Arachne::createAttributes, null);
+            register(event, ARION.get(), Arion::createAttributes, null);
             register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
             register(event, BRONZE_BULL.get(), BronzeBull::createAttributes, null);
             register(event, CENTAUR.get(), Centaur::createAttributes, Mob::checkMobSpawnRules);
@@ -885,6 +888,7 @@ public final class GFRegistry {
             register(event, EMPUSA.get(), Empusa::createAttributes, Empusa::checkEmpusaSpawnRules);
             register(event, FURY.get(), Fury::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
             register(event, GERYON.get(), Geryon::createAttributes, null);
+            register(event, GIANT_BOAR.get(), GiantBoar::createAttributes, null);
             register(event, GIGANTE.get(), Gigante::createAttributes, Mob::checkMobSpawnRules);
             register(event, GORGON.get(), Gorgon::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, HARPY.get(), Harpy::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
@@ -986,6 +990,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Arachne::new, MobCategory.MONSTER)
                         .sized(0.94F, 1.9F)
                         .build("arachne"));
+        public static final RegistryObject<EntityType<? extends Arion>> ARION = ENTITY_TYPES.register("arion", () ->
+                EntityType.Builder.of(Arion::new, MobCategory.CREATURE)
+                        .sized(1.39F, 1.98F)
+                        .build("arion"));
         public static final RegistryObject<EntityType<? extends BabySpider>> BABY_SPIDER = ENTITY_TYPES.register("baby_spider", () ->
                 EntityType.Builder.of(BabySpider::new, MobCategory.MONSTER)
                         .sized(0.5F, 0.65F)
@@ -1058,6 +1066,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Harpy::new, MobCategory.MONSTER)
                         .sized(0.7F, 1.8F)
                         .build("harpy"));
+        public static final RegistryObject<EntityType<? extends GiantBoar>> GIANT_BOAR = ENTITY_TYPES.register("giant_boar", () ->
+                EntityType.Builder.of(GiantBoar::new, MobCategory.MONSTER)
+                        .sized(2.653F, 2.66F)
+                        .build("giant_boar"));
         public static final RegistryObject<EntityType<? extends Lampad>> LAMPAD = ENTITY_TYPES.register("lampad", () ->
                 EntityType.Builder.of(Lampad::new, MobCategory.CREATURE)
                         .sized(0.48F, 1.8F).fireImmune()
