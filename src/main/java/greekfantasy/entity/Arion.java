@@ -50,6 +50,7 @@ public class Arion extends Horse {
     public static Arion spawnArion(final ServerLevel level, final Player player, final Horse horse) {
         Arion entity = GFRegistry.EntityReg.ARION.get().create(level);
         entity.copyPosition(horse);
+        entity.yBodyRot = horse.yBodyRot;
         entity.finalizeSpawn(level, level.getCurrentDifficultyAt(horse.blockPosition()), MobSpawnType.CONVERSION, null, null);
         if (horse.hasCustomName()) {
             entity.setCustomName(horse.getCustomName());
@@ -58,18 +59,17 @@ public class Arion extends Horse {
         entity.setOwnerUUID(horse.getOwnerUUID());
         entity.setTamed(horse.isTamed());
         entity.setPersistenceRequired();
-        entity.yBodyRot = horse.yBodyRot;
         entity.setPortalCooldown();
-        entity.setAge(1);
+        entity.setAge(horse.getAge());
         level.addFreshEntity(entity);
         // copy inventory and remove the old horse
         entity.copyInventory(horse);
         horse.inventory.clearContent();
         horse.discard();
         // give potion effects
-        entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 600));
-        entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 600));
-        entity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 600));
+        entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60));
+        entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60));
+        entity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 60));
         // play sound
         level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.PLAYER_LEVELUP, entity.getSoundSource(), 1.0F, 1.0F, false);
         return entity;

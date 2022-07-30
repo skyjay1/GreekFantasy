@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+	{
+	  "item": "greekfantasy:avernal_feather"
+	}
+  ],
+  "result": {
+	"item": "minecraft:feather"
+  }
+}

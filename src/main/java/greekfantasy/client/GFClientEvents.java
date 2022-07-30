@@ -4,9 +4,11 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.armor.HellenicArmorModel;
 import greekfantasy.client.armor.WingedSandalsModel;
+import greekfantasy.client.blockentity.CerberusHeadBlockEntityRenderer;
 import greekfantasy.client.blockentity.GiganteHeadBlockEntityRenderer;
 import greekfantasy.client.blockentity.OrthusHeadBlockEntityRenderer;
 import greekfantasy.client.blockentity.VaseBlockEntityRenderer;
+import greekfantasy.client.blockentity.model.CerberusHeadModel;
 import greekfantasy.client.blockentity.model.GiganteHeadModel;
 import greekfantasy.client.blockentity.model.OrthusHeadModel;
 import greekfantasy.client.entity.AraRenderer;
@@ -30,6 +32,7 @@ import greekfantasy.client.entity.FuryRenderer;
 import greekfantasy.client.entity.GeryonRenderer;
 import greekfantasy.client.entity.GiantBoarRenderer;
 import greekfantasy.client.entity.GiganteRenderer;
+import greekfantasy.client.entity.GoldenRamRenderer;
 import greekfantasy.client.entity.GorgonRenderer;
 import greekfantasy.client.entity.HarpyRenderer;
 import greekfantasy.client.entity.LampadRenderer;
@@ -67,6 +70,7 @@ import greekfantasy.client.entity.model.EmpusaModel;
 import greekfantasy.client.entity.model.FuryModel;
 import greekfantasy.client.entity.model.GeryonModel;
 import greekfantasy.client.entity.model.GiganteModel;
+import greekfantasy.client.entity.model.GoldenRamModel;
 import greekfantasy.client.entity.model.GorgonModel;
 import greekfantasy.client.entity.model.HalfHorseModel;
 import greekfantasy.client.entity.model.HarpyModel;
@@ -257,6 +261,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(GeryonModel.GERYON_MODEL_RESOURCE, () -> GeryonModel.createBodyLayer(CubeDeformation.NONE));
             event.registerLayerDefinition(GeryonModel.GERYON_ARMOR_MODEL_RESOURCE, () -> GeryonModel.createBodyLayer(new CubeDeformation(0.25F)));
             event.registerLayerDefinition(GiganteModel.GIGANTE_MODEL_RESOURCE, GiganteModel::createBodyLayer);
+            event.registerLayerDefinition(GoldenRamModel.RAM_MODEL_RESOURCE, GoldenRamModel::createBodyLayer);
             event.registerLayerDefinition(GorgonModel.GORGON_MODEL_RESOURCE, GorgonModel::createBodyLayer);
             event.registerLayerDefinition(HalfHorseModel.HALF_HORSE_MODEL_RESOURCE, HalfHorseModel::createBodyLayer);
             event.registerLayerDefinition(HarpyModel.HARPY_MODEL_RESOURCE, HarpyModel::createBodyLayer);
@@ -273,6 +278,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(TalosModel.TALOS_MODEL_RESOURCE, TalosModel::createBodyLayer);
             event.registerLayerDefinition(UnicornModel.UNICORN_MODEL_RESOURCE, UnicornModel::createBodyLayer);
             // other
+            event.registerLayerDefinition(CerberusHeadModel.CERBERUS_HEAD_MODEL_RESOURCE, CerberusHeadModel::createLayer);
             event.registerLayerDefinition(GiganteHeadModel.GIGANTE_HEAD_MODEL_RESOURCE, GiganteHeadModel::createLayer);
             event.registerLayerDefinition(OrthusHeadModel.ORTHUS_HEAD_MODEL_RESOURCE, OrthusHeadModel::createLayer);
             event.registerLayerDefinition(SpearModel.SPEAR_MODEL_RESOURCE, TridentModel::createLayer);
@@ -303,6 +309,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.GERYON.get(), GeryonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.GIANT_BOAR.get(), GiantBoarRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.GIGANTE.get(), GiganteRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.GOLDEN_RAM.get(), GoldenRamRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.GORGON.get(), GorgonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.HARPY.get(), HarpyRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.LAMPAD.get(), LampadRenderer::new);
@@ -331,6 +338,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.SPEAR.get(), SpearRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.WEB_BALL.get(), ThrownItemRenderer::new);
             // register block entities
+            event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.CERBERUS_HEAD.get(), CerberusHeadBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.GIGANTE_HEAD.get(), GiganteHeadBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.ORTHUS_HEAD.get(), OrthusHeadBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.VASE.get(), VaseBlockEntityRenderer::new);

@@ -34,13 +34,15 @@ public class BlockEntityRendererProvider {
         }
         return giganteHead;
     }
-/*
-    public static BlockEntityWithoutLevelRenderer bakeCerberusHeadISTER() {
+
+    public static BlockEntityWithoutLevelRenderer getCerberusHead() {
         if (cerberusHead == null) {
-            cerberusHead = new MobHeadTileEntityRenderer.CerberusItemStackRenderer();
+            final BlockEntityRenderDispatcher dispatcher = Minecraft.getInstance().getBlockEntityRenderDispatcher();
+            final EntityModelSet entityModelSet = Minecraft.getInstance().getEntityModels();
+            cerberusHead = new CerberusHeadBlockEntityRenderer.CerberusHeadItemStackRenderer(dispatcher, entityModelSet);
         }
         return cerberusHead;
-    }*/
+    }
 
     public static BlockEntityWithoutLevelRenderer getSpear(final ResourceLocation key) {
         if(net.minecraftforge.fml.loading.FMLEnvironment.dist != net.minecraftforge.api.distmarker.Dist.CLIENT) {

@@ -74,13 +74,13 @@ public class CerberusModel<T extends Cerberus> extends AgeableListModel<T> {
                 .texOffs(0, 12).addBox(-4.0F, -17.0F, 0.0F, 8.0F, 7.0F, 9.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 24.0F, 0.0F));
 
         PartDefinition middleNeck = partdefinition.addOrReplaceChild("middle_neck", CubeListBuilder.create().texOffs(50, 18).addBox(-1.5F, -4.0F, -3.0F, 3.0F, 4.0F, 3.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 12.0F, -6.0F, 0.0F, 0.0F, 0.0F));
-        GFModelUtil.addOrReplaceCerberusHead(middleNeck, "middle_head", 0.0F, -4.0F, -3.0F, 0.0F, 0.0F, 0.0F);
+        GFModelUtil.addOrReplaceCerberusHead(middleNeck, "middle_head", 0.0F, -4.0F, -3.0F, 0.0F);
         
         PartDefinition leftNeck = partdefinition.addOrReplaceChild("left_neck", CubeListBuilder.create().texOffs(50, 17).addBox(-2.0F, -4.0F, -3.0F, 3.0F, 4.0F, 3.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(4.0F, 14.0F, -5.0F, 0.0F, -0.5236F, 0.0F));
-        GFModelUtil.addOrReplaceCerberusHead(leftNeck, "left_head", 0.0F, -4.0F, -3.0F, -0.5F, 0.0F, 0.0F);
+        GFModelUtil.addOrReplaceCerberusHead(leftNeck, "left_head", 0.0F, -4.0F, -3.0F, -0.5F);
 
         PartDefinition rightNeck = partdefinition.addOrReplaceChild("right_neck", CubeListBuilder.create().texOffs(50, 17).addBox(-1.0F, -4.0F, -3.0F, 3.0F, 4.0F, 3.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(-4.0F, 14.0F, -5.0F, 0.0F, 0.5236F, 0.0F));
-        GFModelUtil.addOrReplaceCerberusHead(rightNeck, "right_head", 0.0F, -4.0F, -3.0F, 0.5F, 0.0F, 0.0F);
+        GFModelUtil.addOrReplaceCerberusHead(rightNeck, "right_head", 0.0F, -4.0F, -3.0F, 0.5F);
 
         partdefinition.addOrReplaceChild("right_front_leg", CubeListBuilder.create()
                 .texOffs(37, 0).addBox(-1.0F, 4.0F, -2.0F, 3.0F, 6.0F, 3.0F, CubeDeformation.NONE)

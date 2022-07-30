@@ -58,7 +58,7 @@ __Key:__
 - X X X X X Arion
 - X X X X X Whirl
 - X X X X X Pegasus
-- _ _ _ _ _ Golden Ram
+- X X X X X Golden Ram
 - _ _ _ _ _ Makhai
 - X X X X X Baby Spider
 - _ _ _ _ _ Automaton (friendly Talos)
@@ -115,20 +115,20 @@ __Key:__
 - X X X Limestone, variants, and Pillar
 - X X X Marble, variants, and Pillar
 - X X X Olive Log, leaves, planks, and variants
-- X X _ Pomegranate Log, leaves, planks, and variants
+- X X X Pomegranate Log, leaves, planks, and variants
 - X X X Mysterious Box
 - X X X Block of Bronze
 - X X X Terracotta Vase and variants
 - X X X Gigante Head
 - X X X Orthus Head
-- ~ _ X Cerberus Head
+- X X X Cerberus Head
 - X X X Oil Lamp
 - X X X Olive Oil
 - X X X Olive Sapling
 - X X X Pomegranate Sapling
 - X X X Golden Sapling
 - X X X Nest
-- X ~ X Wild Rose
+- X X X Wild Rose
 - _ _ _ Cretan Stone and variants
 - X X X Reeds
 - X X X Golden String
@@ -141,7 +141,7 @@ __Key:__
 
 `[In-game] [Use] [Obtainable]`
 
-- _ _ . Spawn Eggs
+- X X . Spawn Eggs
 - X X X Bronze Ingot
 - X X X Bronze Nugget
 - X X X Bronze artifacts (goblet, bowl, pile of coins, vase, ruined helmet, ruined cuirass, broken shield, figurine)
@@ -153,25 +153,25 @@ __Key:__
 - X _ X Heart of Talos
 - X X X Ichor-Infused Gear
 - X X X Avernal Feather
-- X ~ X Avernal Hide // TO DO: enchanted book crafting
+- X X X Avernal Hide
 - X X X Avernal Wing
 - X X X Avernal Hair
-- X _ X Avernal Claw // TO DO: enchanted book crafting
+- X X X Avernal Claw
 - X X X Avernal Shard
 - X X X Boar Ear
 - X X X Boar Tusk
-- X _ _ Golden Fleece
+- X X X Golden Fleece
 - X X X Ball of Golden String
 - X X X Spider Banner Pattern
 - X X X Ambrosia
 - X X X Horn of Plenty
 - X X X Dragon Tooth
-- X X _ Staff of Healing
+- X X X Staff of Healing
 - X X X Conch
 - X X X Bag of Wind
 - X X X Golden Tree Sapling
 - X X X Thunderbolt
-- X X _ Wand of Circe
+- X X X Wand of Circe
 - X X X Avernal Bow
 - X X _ Bow of Apollo
 - X X _ Bow of Artemis
@@ -211,7 +211,7 @@ __Key:__
 
 ## Advancements
 
-- ~ Recipe Advancements (data gen?)
+- X Recipe Advancements
 
 ## Potions
 

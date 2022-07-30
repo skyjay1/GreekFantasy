@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "wooden_trapdoor",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "greekfantasy:pomegranate_planks"
+    }
+  },
+  "result": {
+    "item": "greekfantasy:pomegranate_trapdoor",
+    "count": 2
+  }
+}

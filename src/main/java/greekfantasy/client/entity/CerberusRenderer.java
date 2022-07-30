@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CerberusRenderer<T extends Cerberus> extends MobRenderer<T, CerberusModel<T>> {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/cerberus/cerberus.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/cerberus/cerberus.png");
     public static final float SCALE = 1.9F;
 
     public CerberusRenderer(EntityRendererProvider.Context context) {

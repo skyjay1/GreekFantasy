@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "wooden_stairs",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "greekfantasy:pomegranate_planks"
+    }
+  },
+  "result": {
+    "item": "greekfantasy:pomegranate_stairs",
+    "count": 4
+  }
+}

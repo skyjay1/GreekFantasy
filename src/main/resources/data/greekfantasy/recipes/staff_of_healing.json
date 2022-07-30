@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    ".O.",
+    "#/#",
+    "#/#"
+  ],
+  "key": {
+    "#": { "item": "greekfantasy:snakeskin" },
+    "/": { "tag": "forge:rods/wooden" },
+    "O": { "item": "minecraft:golden_apple" },
+    ".": { "item": "minecraft:ghast_tear" }
+  },
+  "result": {
+    "item": "greekfantasy:staff_of_healing"
+  }
+}

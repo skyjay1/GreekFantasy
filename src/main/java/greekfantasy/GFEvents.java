@@ -2,6 +2,7 @@ package greekfantasy;
 
 import greekfantasy.entity.Arion;
 import greekfantasy.entity.Cerastes;
+import greekfantasy.entity.GoldenRam;
 import greekfantasy.entity.Orthus;
 import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.GiantBoar;
@@ -34,10 +35,12 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Rabbit;
+import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
@@ -509,29 +512,48 @@ public final class GFEvents {
         /**
          * Used to convert hoglins to giant boars.
          * Used to convert horses to arions.
+         * Used to convert yellow sheep to golden rams.
          *
          * @param event the PlayerInteractEvent.EntityInteract event
          **/
         @SubscribeEvent
         public static void onPlayerInteract(final PlayerInteractEvent.EntityInteract event) {
+            if(event.isCanceled() || !(event.getWorld() instanceof ServerLevel)) {
+                return;
+            }
+            ServerLevel level = (ServerLevel) event.getWorld();
             // when player uses poisonous potato on adult hoglin while outside the nether
-            if (!event.isCanceled() && (!GreekFantasy.CONFIG.GIANT_BOAR_NON_NETHER.get() || event.getWorld().dimension() != Level.NETHER)
+            if ((!GreekFantasy.CONFIG.GIANT_BOAR_NON_NETHER.get() || event.getWorld().dimension() != Level.NETHER)
                     && event.getTarget().getType() == EntityType.HOGLIN
-                    && event.getTarget() instanceof Hoglin hoglin && event.getWorld() instanceof ServerLevel
+                    && event.getTarget() instanceof Hoglin hoglin
                     && event.getItemStack().is(GiantBoar.TRIGGER)) {
                 if (!hoglin.isBaby()) {
                     // spawn giant boar and shrink the item stack
-                    GiantBoar.spawnGiantBoar((ServerLevel) event.getWorld(), hoglin);
+                    GiantBoar.spawnGiantBoar(level, hoglin);
                     if (!event.getPlayer().isCreative()) {
                         event.getItemStack().shrink(1);
                     }
                 }
-            } else if (!event.isCanceled() && event.getTarget().getType() == EntityType.HORSE && event.getTarget() instanceof Horse horse
-                    && event.getWorld() instanceof ServerLevel level && event.getItemStack().is(Arion.TRIGGER)) {
-                // when player uses enchanted golden apple on adult horse
+            }
+            // when player uses enchanted golden apple on adult horse
+            if (event.getTarget().getType() == EntityType.HORSE
+                    && event.getTarget() instanceof Horse horse
+                    && event.getItemStack().is(Arion.TRIGGER)) {
                 if (!horse.isBaby() && horse.isTamed()) {
                     // spawn Arion and shrink the item stack
                     Arion.spawnArion(level, event.getPlayer(), horse);
+                    if (!event.getPlayer().isCreative()) {
+                        event.getItemStack().shrink(1);
+                    }
+                }
+            }
+            // when player uses dragon breath on shearable yellow sheep
+            if (event.getTarget().getType() == EntityType.SHEEP
+                    && event.getTarget() instanceof Sheep sheep
+                    && event.getItemStack().is(GoldenRam.TRIGGER)) {
+                if (sheep.readyForShearing() && sheep.getColor() == DyeColor.YELLOW) {
+                    // spawn Arion and shrink the item stack
+                    GoldenRam.spawnGoldenRam(level, event.getPlayer(), sheep);
                     if (!event.getPlayer().isCreative()) {
                         event.getItemStack().shrink(1);
                     }

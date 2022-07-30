@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S",
+    "/",
+    "F"
+  ],
+  "key": {
+  	"/": { "tag": "forge:rods/wooden" },
+    "F": { "item": "minecraft:feather" },
+    "S": { "item": "greekfantasy:deadly_fang" }
+  },
+  "result": {
+    "item": "minecraft:tipped_arrow",
+    "count": 2,
+    "nbt": "{Potion:\"minecraft:poison\"}"
+  }
+}

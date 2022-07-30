@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "greekfantasy:wild_rose" },
+    { "item": "minecraft:book" }
+  ],
+  "result": {
+    "item": "minecraft:enchanted_book",
+    "nbt": "{StoredEnchantments:[{id:\"greekfantasy:hunting\",lvl:1}]}"
+  }
+}

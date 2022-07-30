@@ -1,0 +1,9 @@
+{
+  "disabled": false,
+  "description": "quest.greekfantasy.summon_golden_ram",
+  "components": [
+    "quest.greekfantasy.summon_golden_ram.line1",
+    "quest.greekfantasy.summon_golden_ram.line2",
+    "quest.greekfantasy.summon_golden_ram.line3"
+  ]
+}

@@ -58,20 +58,8 @@ public class CerastesModel<T extends Cerastes> extends AgeableListModel<T> {
 
         head.addOrReplaceChild("left_nub", CubeListBuilder.create().texOffs(59, 13).addBox(0.0F, -4.0F, -1.0F, 1.0F, 4.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(1.0F, -4.0F, -4.0F, 0.48F, 0.0F, 0.1745F));
         head.addOrReplaceChild("right_nub", CubeListBuilder.create().texOffs(59, 13).addBox(-1.0F, -4.0F, -1.0F, 1.0F, 4.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(-1.0F, -4.0F, -4.0F, 0.48F, 0.0F, -0.1745F));
-
-        PartDefinition left_horn = head.addOrReplaceChild("left_horn", CubeListBuilder.create(), PartPose.offsetAndRotation(3.0F, -2.0F, -4.0F, -0.2618F, 0.0F, 0.0F));
-        PartDefinition lower_left_horn = left_horn.addOrReplaceChild("lower_left_horn", CubeListBuilder.create().texOffs(58, 0).addBox(0.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 0.0F, 0.0F));
-        PartDefinition lower_middle_left_horn = lower_left_horn.addOrReplaceChild("lower_middle_left_horn", CubeListBuilder.create().texOffs(58, 6).addBox(0.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -0.7854F, 0.1745F, 0.0F));
-        PartDefinition middle_left_horn = lower_middle_left_horn.addOrReplaceChild("middle_left_horn", CubeListBuilder.create().texOffs(58, 13).addBox(0.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -1.2217F, 0.1745F, 0.0F));
-        PartDefinition upper_middle_left_horn = middle_left_horn.addOrReplaceChild("upper_middle_left_horn", CubeListBuilder.create().texOffs(58, 18).addBox(0.0F, -3.0F, 0.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -1.2217F, 0.1745F, 0.0F));
-        PartDefinition upper_left_horn = upper_middle_left_horn.addOrReplaceChild("upper_left_horn", CubeListBuilder.create().texOffs(58, 22).addBox(0.0F, -3.0F, 0.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -3.0F, 0.0F, -1.0472F, 0.1745F, 0.0F));
-
-        PartDefinition right_horn = head.addOrReplaceChild("right_horn", CubeListBuilder.create(), PartPose.offsetAndRotation(-3.0F, -2.0F, -4.0F, -0.2618F, 0.0F, 0.0F));
-        PartDefinition lower_right_horn = right_horn.addOrReplaceChild("lower_right_horn", CubeListBuilder.create().texOffs(58, 0).addBox(-1.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 0.0F, 0.0F));
-        PartDefinition lower_middle_right_horn = lower_right_horn.addOrReplaceChild("lower_middle_right_horn", CubeListBuilder.create().texOffs(58, 6).addBox(-1.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -0.7854F, -0.1745F, 0.0F));
-        PartDefinition middle_right_horn = lower_middle_right_horn.addOrReplaceChild("middle_right_horn", CubeListBuilder.create().texOffs(58, 13).addBox(-1.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -1.2217F, -0.1745F, 0.0F));
-        PartDefinition upper_middle_right_horn = middle_right_horn.addOrReplaceChild("upper_middle_right_horn", CubeListBuilder.create().texOffs(58, 18).addBox(-1.0F, -3.0F, 0.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -1.2217F, -0.1745F, 0.0F));
-        PartDefinition upper_right_horn = upper_middle_right_horn.addOrReplaceChild("upper_right_horn", CubeListBuilder.create().texOffs(58, 22).addBox(-1.0F, -3.0F, 0.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -3.0F, 0.0F, -1.0472F, -0.1745F, 0.0F));
+        GFModelUtil.addOrReplaceRamHorn(head, "left_horn", 3.0F, -2.0F, -4.0F, true);
+        GFModelUtil.addOrReplaceRamHorn(head, "right_horn", -3.0F, -2.0F, -4.0F, true);
 
         PartDefinition body1 = partdefinition.addOrReplaceChild("body1", CubeListBuilder.create().texOffs(0, 13).addBox(-2.0F, 0.0F, 0.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 8.0F, -4.5F, -0.7854F, 0.0F, 0.0F));
         PartDefinition body2 = body1.addOrReplaceChild("body2", CubeListBuilder.create().texOffs(0, 13).addBox(-1.99F, 0.0F, 0.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, 6.0F, -0.5236F, 0.0F, 0.0F));

@@ -1,0 +1,11 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+	{ "item": "greekfantasy:golden_fleece" },
+	{ "item": "minecraft:crying_obsidian" },
+	{ "item": "minecraft:emerald" }
+  ],
+  "result": {
+	"item": "minecraft:totem_of_undying"
+  }
+}

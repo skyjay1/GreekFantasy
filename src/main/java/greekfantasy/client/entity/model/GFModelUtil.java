@@ -349,24 +349,54 @@ public final class GFModelUtil {
      * Creates a part definition for a cerberus head with the given offsets
      * @param root the root part
      * @param name the part name
-     * @param offsetX the x offset
-     * @param offsetY the y offset
-     * @param offsetZ the z offset
+     * @param x the x offset
+     * @param y the y offset
+     * @param z the z offset
      * @param xRot the x rotation
      * @return the cerberus head part definition
      */
     public static PartDefinition addOrReplaceCerberusHead(final PartDefinition root, final String name,
-                                                          final float offsetX, final float offsetY, final float offsetZ,
-                                                          final float xRot, final float yRot, final float zRot) {
+                                                          final float x, final float y, final float z,
+                                                          final float xRot) {
         PartDefinition head = root.addOrReplaceChild(name, CubeListBuilder.create()
                 .texOffs(0, 0).addBox(-2.5F + xRot, -2.0F, -5.0F, 5.0F, 6.0F, 5.0F, CubeDeformation.NONE)
                 .texOffs(21, 0).addBox(-1.5F + xRot, 1.0F, -9.0F, 3.0F, 2.0F, 4.0F, CubeDeformation.NONE)
                 .texOffs(16, 0).addBox(-2.5F + xRot, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, CubeDeformation.NONE)
                 .texOffs(16, 0).mirror().addBox(0.5F + xRot, -4.0F, -2.0F, 2.0F, 2.0F, 1.0F, CubeDeformation.NONE).mirror(false),
-                PartPose.offset(offsetX, offsetY, offsetZ));
+                PartPose.offset(x, y, z));
         PartDefinition mouth = head.addOrReplaceChild("mouth", CubeListBuilder.create().texOffs(21, 6).addBox(-1.5F + xRot, 0.0F, -4.0F, 3.0F, 1.0F, 4.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 3.0F, -5.0F, 0.0436F, 0.0F, 0.0F));
         return head;
+    }
+
+    /**
+     * Creates a part definition for ram horns, as used by cerastes and golden ram
+     * @param root the root part
+     * @param name the part name
+     * @param x the x offset
+     * @param y the y offset
+     * @param z the z offset
+     * @param isLeft true if the horn is angled left
+     * @return the horn part definition
+     */
+    public static PartDefinition addOrReplaceRamHorn(final PartDefinition root, final String name, final float x, final float y, final float z, final boolean isLeft) {
+        PartDefinition horn;
+        if(isLeft) {
+            horn = root.addOrReplaceChild(name, CubeListBuilder.create(), PartPose.offsetAndRotation(x, y, z, -0.2618F, 0.0F, 0.0F));
+            PartDefinition lowerLeftHorn = horn.addOrReplaceChild("lower_left_horn", CubeListBuilder.create().texOffs(58, 0).addBox(0.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 0.0F, 0.0F));
+            PartDefinition lowerMiddleLeftHorn = lowerLeftHorn.addOrReplaceChild("lower_middle_left_horn", CubeListBuilder.create().texOffs(58, 6).addBox(0.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -0.7854F, 0.1745F, 0.0F));
+            PartDefinition middleLeftHorn = lowerMiddleLeftHorn.addOrReplaceChild("middle_left_horn", CubeListBuilder.create().texOffs(58, 13).addBox(0.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -1.2217F, 0.1745F, 0.0F));
+            PartDefinition upperMiddleLeftHorn = middleLeftHorn.addOrReplaceChild("upper_middle_left_horn", CubeListBuilder.create().texOffs(58, 18).addBox(0.0F, -3.0F, 0.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -1.2217F, 0.1745F, 0.0F));
+            PartDefinition upperLeftHorn = upperMiddleLeftHorn.addOrReplaceChild("upper_left_horn", CubeListBuilder.create().texOffs(58, 22).addBox(0.0F, -3.0F, 0.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -3.0F, 0.0F, -1.0472F, 0.1745F, 0.0F));
+        } else {
+            horn = root.addOrReplaceChild(name, CubeListBuilder.create(), PartPose.offsetAndRotation(x, y, z, -0.2618F, 0.0F, 0.0F));
+            PartDefinition lowerRightHorn = horn.addOrReplaceChild("lower_right_horn", CubeListBuilder.create().texOffs(58, 0).addBox(-1.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 0.0F, 0.0F));
+            PartDefinition lowerMiddleRightHorn = lowerRightHorn.addOrReplaceChild("lower_middle_right_horn", CubeListBuilder.create().texOffs(58, 6).addBox(-1.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -0.7854F, -0.1745F, 0.0F));
+            PartDefinition middleRightHorn = lowerMiddleRightHorn.addOrReplaceChild("middle_right_horn", CubeListBuilder.create().texOffs(58, 13).addBox(-1.0F, -4.0F, 0.0F, 1.0F, 4.0F, 2.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -1.2217F, -0.1745F, 0.0F));
+            PartDefinition upperMiddleRightHorn = middleRightHorn.addOrReplaceChild("upper_middle_right_horn", CubeListBuilder.create().texOffs(58, 18).addBox(-1.0F, -3.0F, 0.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -1.2217F, -0.1745F, 0.0F));
+            PartDefinition upperRightHorn = upperMiddleRightHorn.addOrReplaceChild("upper_right_horn", CubeListBuilder.create().texOffs(58, 22).addBox(-1.0F, -3.0F, 0.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -3.0F, 0.0F, -1.0472F, -0.1745F, 0.0F));
+        }
+        return horn;
     }
 
 }
