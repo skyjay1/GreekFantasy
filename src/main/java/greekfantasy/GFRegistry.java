@@ -45,6 +45,8 @@ import greekfantasy.entity.boss.Cerberus;
 import greekfantasy.entity.boss.Charybdis;
 import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.GiantBoar;
+import greekfantasy.entity.boss.Hydra;
+import greekfantasy.entity.boss.HydraHead;
 import greekfantasy.entity.boss.NemeanLion;
 import greekfantasy.entity.boss.Python;
 import greekfantasy.entity.boss.Talos;
@@ -110,7 +112,6 @@ import greekfantasy.mob_effect.SlowSwimEffect;
 import greekfantasy.mob_effect.PrisonerOfHadesEffect;
 import greekfantasy.mob_effect.StunnedEffect;
 import greekfantasy.util.BronzeScrapLootModifier;
-import greekfantasy.util.Quest;
 import greekfantasy.util.QuestLootModifier;
 import greekfantasy.util.ReplaceDropsLootModifier;
 import greekfantasy.util.SpawnRulesUtil;
@@ -901,6 +902,8 @@ public final class GFRegistry {
             register(event, GOLDEN_RAM.get(), GoldenRam::createAttributes, null);
             register(event, GORGON.get(), Gorgon::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, HARPY.get(), Harpy::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
+            register(event, HYDRA.get(), Hydra::createAttributes, null); // TODO
+            register(event, HYDRA_HEAD.get(), HydraHead::createAttributes, null);
             register(event, LAMPAD.get(), Lampad::createAttributes, Mob::checkMobSpawnRules);
             register(event, MAD_COW.get(), MadCow::createAttributes, SpawnRulesUtil::checkAnyLightMonsterSpawnRules);
             register(event, MINOTAUR.get(), Minotaur::createAttributes, Monster::checkMonsterSpawnRules);
@@ -1080,6 +1083,14 @@ public final class GFRegistry {
                 EntityType.Builder.of(Harpy::new, MobCategory.MONSTER)
                         .sized(0.7F, 1.8F)
                         .build("harpy"));
+        public static final RegistryObject<EntityType<? extends Hydra>> HYDRA = ENTITY_TYPES.register("hydra", () ->
+                EntityType.Builder.of(Hydra::new, MobCategory.MONSTER)
+                        .sized(2.4F, 2.24F).fireImmune()
+                        .build("hydra"));
+        public static final RegistryObject<EntityType<? extends HydraHead>> HYDRA_HEAD = ENTITY_TYPES.register("hydra_head", () ->
+                EntityType.Builder.of(HydraHead::new, MobCategory.MISC)
+                        .sized(0.68F, 1.88F).noSummon()
+                        .build("hydra_head"));
         public static final RegistryObject<EntityType<? extends GiantBoar>> GIANT_BOAR = ENTITY_TYPES.register("giant_boar", () ->
                 EntityType.Builder.of(GiantBoar::new, MobCategory.MONSTER)
                         .sized(2.653F, 2.66F)

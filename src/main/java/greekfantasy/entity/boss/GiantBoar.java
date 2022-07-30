@@ -237,6 +237,10 @@ public class GiantBoar extends Hoglin {
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
         this.bossInfo.addPlayer(player);
+        if(this.hasCustomName()) {
+            this.bossInfo.setName(this.getCustomName());
+        }
+        this.bossInfo.setVisible(GreekFantasy.CONFIG.showGiantBoarBossBar());
     }
 
     @Override

@@ -51,7 +51,7 @@ __Key:__
 - X X X X X Miniboss: Medusa
 - _ _ _ _ _ Miniboss: Cretan Minotaur
 - X X X X X Miniboss: Circe
-- _ _ _ _ _ Miniboss: Hydra
+- X X X X X Miniboss: Hydra
 - X X X X X Miniboss: Arachne
 - X X X X X Fury
 - X X X X X Drakaina
@@ -104,6 +104,7 @@ __Key:__
 - X X X Pomegranate Trees
 - X . X Golden Tree
 - X X X Arachne Pit
+- _ _ _ Hydra Lair
 
 
 ## Blocks

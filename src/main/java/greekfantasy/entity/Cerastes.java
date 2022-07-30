@@ -3,6 +3,8 @@ package greekfantasy.entity;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GFBegGoal;
+import greekfantasy.entity.boss.Hydra;
+import greekfantasy.entity.misc.Curse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -47,6 +49,7 @@ import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -224,9 +227,15 @@ public class Cerastes extends TamableAnimal {
 
     @Override
     public boolean hurt(final DamageSource source, final float amount) {
+        boolean hurt = super.hurt(source, amount);
         this.setHiding(false);
         this.setStanding(true);
-        return super.hurt(source, amount);
+        if(hurt && source.getDirectEntity() instanceof Curse && this.level instanceof ServerLevel) {
+            // cause explosion and summon hydra
+            level.explode(this, this.getX(), this.getY(), this.getZ(), 2.5F, Explosion.BlockInteraction.DESTROY);
+            Hydra.spawnHydra((ServerLevel) this.level, this);
+        }
+        return hurt;
     }
 
     @Override

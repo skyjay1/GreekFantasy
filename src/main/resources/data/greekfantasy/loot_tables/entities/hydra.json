@@ -1,0 +1,42 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "greekfantasy:iron_spear",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{Potion:{Potion:\"minecraft:poison\",Amplifier:1,Duration:180}}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:tipped_arrow",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 6,
+                "max": 24
+              }
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{Potion:\"minecraft:poison\"}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
