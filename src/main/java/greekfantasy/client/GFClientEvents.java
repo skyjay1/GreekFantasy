@@ -14,6 +14,7 @@ import greekfantasy.client.blockentity.model.OrthusHeadModel;
 import greekfantasy.client.entity.AraRenderer;
 import greekfantasy.client.entity.ArachneRenderer;
 import greekfantasy.client.entity.ArionRenderer;
+import greekfantasy.client.entity.AutomatonRenderer;
 import greekfantasy.client.entity.BabySpiderRenderer;
 import greekfantasy.client.entity.BronzeBullRenderer;
 import greekfantasy.client.entity.CentaurRenderer;
@@ -39,6 +40,7 @@ import greekfantasy.client.entity.HydraHeadRenderer;
 import greekfantasy.client.entity.HydraRenderer;
 import greekfantasy.client.entity.LampadRenderer;
 import greekfantasy.client.entity.MadCowRenderer;
+import greekfantasy.client.entity.MakhaiRenderer;
 import greekfantasy.client.entity.MinotaurRenderer;
 import greekfantasy.client.entity.NaiadRenderer;
 import greekfantasy.client.entity.NemeanLionRenderer;
@@ -55,6 +57,7 @@ import greekfantasy.client.entity.TalosRenderer;
 import greekfantasy.client.entity.UnicornRenderer;
 import greekfantasy.client.entity.WhirlRenderer;
 import greekfantasy.client.entity.layer.NemeanLionHideLayer;
+import greekfantasy.client.entity.layer.PlayerSoulFireLayer;
 import greekfantasy.client.entity.model.AraModel;
 import greekfantasy.client.entity.model.ArachneModel;
 import greekfantasy.client.entity.model.BabySpiderModel;
@@ -78,6 +81,7 @@ import greekfantasy.client.entity.model.HalfHorseModel;
 import greekfantasy.client.entity.model.HarpyModel;
 import greekfantasy.client.entity.model.HydraBodyModel;
 import greekfantasy.client.entity.model.HydraHeadModel;
+import greekfantasy.client.entity.model.MakhaiModel;
 import greekfantasy.client.entity.model.MinotaurModel;
 import greekfantasy.client.entity.model.NemeanLionModel;
 import greekfantasy.client.entity.model.NymphModel;
@@ -89,7 +93,7 @@ import greekfantasy.client.entity.model.ShadeModel;
 import greekfantasy.client.entity.model.SirenModel;
 import greekfantasy.client.entity.model.SpearModel;
 import greekfantasy.client.entity.model.SpellModel;
-import greekfantasy.client.entity.model.TalosModel;
+import greekfantasy.client.entity.model.AutomatonModel;
 import greekfantasy.client.entity.model.UnicornModel;
 import greekfantasy.client.particle.GorgonParticle;
 import greekfantasy.entity.Pegasus;
@@ -231,12 +235,14 @@ public final class GFClientEvents {
                 playerRenderer.addLayer(new NemeanLionHideLayer<>(playerRenderer,
                         new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),
                         new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
+                playerRenderer.addLayer(new PlayerSoulFireLayer<>(playerRenderer));
             }
             // add layer renders to slim model
             if (event.getSkin("slim") instanceof PlayerRenderer playerRenderer) {
                 playerRenderer.addLayer(new NemeanLionHideLayer<>(playerRenderer,
                         new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_SLIM_INNER_ARMOR)),
                         new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_SLIM_OUTER_ARMOR))));
+                playerRenderer.addLayer(new PlayerSoulFireLayer<>(playerRenderer));
             }
         }
 
@@ -247,6 +253,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(HellenicArmorModel.HELLENIC_ARMOR_MODEL_RESOURCE, HellenicArmorModel::createBodyLayer);
             event.registerLayerDefinition(WingedSandalsModel.WINGED_SANDALS_MODEL_RESOURCE, WingedSandalsModel::createBodyLayer);
             // creature
+            event.registerLayerDefinition(AutomatonModel.AUTOMATON_MODEL_RESOURCE, AutomatonModel::createBodyLayer);
             event.registerLayerDefinition(AraModel.ARA_MODEL_RESOURCE, AraModel::createBodyLayer);
             event.registerLayerDefinition(ArachneModel.ARACHNE_MODEL_RESOURCE, ArachneModel::createBodyLayer);
             event.registerLayerDefinition(BabySpiderModel.BABY_SPIDER_MODEL_RESOURCE, BabySpiderModel::createBodyLayer);
@@ -271,6 +278,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(HarpyModel.HARPY_MODEL_RESOURCE, HarpyModel::createBodyLayer);
             event.registerLayerDefinition(HydraBodyModel.HYDRA_BODY_MODEL_RESOURCE, HydraBodyModel::createBodyLayer);
             event.registerLayerDefinition(HydraHeadModel.HYDRA_HEAD_MODEL_RESOURCE, HydraHeadModel::createBodyLayer);
+            event.registerLayerDefinition(MakhaiModel.MAKHAI_MODEL_RESOURCE, MakhaiModel::createBodyLayer);
             event.registerLayerDefinition(MinotaurModel.MINOTAUR_MODEL_RESOURCE, MinotaurModel::createBodyLayer);
             event.registerLayerDefinition(NemeanLionModel.NEMEAN_LION_MODEL_RESOURCE, NemeanLionModel::createBodyLayer);
             event.registerLayerDefinition(NymphModel.NYMPH_LAYER_LOCATION, NymphModel::createBodyLayer);
@@ -281,7 +289,6 @@ public final class GFClientEvents {
             event.registerLayerDefinition(SatyrModel.SATYR_INNER_ARMOR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(new CubeDeformation(0.25F)));
             event.registerLayerDefinition(ShadeModel.SHADE_MODEL_RESOURCE, ShadeModel::createBodyLayer);
             event.registerLayerDefinition(SirenModel.SIREN_MODEL_RESOURCE, SirenModel::createBodyLayer);
-            event.registerLayerDefinition(TalosModel.TALOS_MODEL_RESOURCE, TalosModel::createBodyLayer);
             event.registerLayerDefinition(UnicornModel.UNICORN_MODEL_RESOURCE, UnicornModel::createBodyLayer);
             // other
             event.registerLayerDefinition(CerberusHeadModel.CERBERUS_HEAD_MODEL_RESOURCE, CerberusHeadModel::createLayer);
@@ -295,6 +302,7 @@ public final class GFClientEvents {
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
             // register entities
             // creature
+            event.registerEntityRenderer(GFRegistry.EntityReg.AUTOMATON.get(), AutomatonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.ARA.get(), AraRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.ARACHNE.get(), ArachneRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.ARION.get(), ArionRenderer::new);
@@ -322,6 +330,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.HYDRA_HEAD.get(), HydraHeadRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.LAMPAD.get(), LampadRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.MAD_COW.get(), MadCowRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.MAKHAI.get(), MakhaiRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.MINOTAUR.get(), MinotaurRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.NAIAD.get(), NaiadRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.NEMEAN_LION.get(), NemeanLionRenderer::new);

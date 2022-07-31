@@ -1,6 +1,8 @@
 package greekfantasy.entity.boss;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.CooldownMeleeAttackGoal;
+import greekfantasy.entity.util.HasCustomCooldown;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -42,10 +44,12 @@ import net.minecraftforge.common.ForgeMod;
 
 import java.util.EnumSet;
 
-public class NemeanLion extends Monster {
+public class NemeanLion extends Monster implements HasCustomCooldown {
 
     private static final EntityDataAccessor<Byte> STATE = SynchedEntityData.defineId(NemeanLion.class, EntityDataSerializers.BYTE);
     private static final String KEY_STATE = "NemeanState";
+    private static final String KEY_ATTACK_TIME = "AttackTime";
+    private static final String KEY_SITTING_TIME = "SittingTime";
     //bytes to use in STATE
     private static final byte NONE = (byte) 0;
     private static final byte SPAWNING = (byte) 1; // unused
@@ -98,7 +102,7 @@ public class NemeanLion extends Monster {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new NemeanLion.RunAroundLikeCrazyGoal(1.0D));
         this.goalSelector.addGoal(2, new NemeanLion.SitGoal());
-        this.goalSelector.addGoal(3, new NemeanLion.NemeanLionAttackGoal(1.15D, true));
+        this.goalSelector.addGoal(3, new NemeanLion.NemeanLionAttackGoal(1.15D, true, ATTACK_COOLDOWN));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.86D) {
             @Override
             public boolean canUse() {
@@ -343,20 +347,27 @@ public class NemeanLion extends Monster {
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putByte(KEY_STATE, this.getNemeanState());
+        compound.putInt(KEY_ATTACK_TIME, this.attackTime);
+        compound.putInt(KEY_SITTING_TIME, this.sittingTime);
+        saveCustomCooldown(compound);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setNemeanState(compound.getByte(KEY_STATE));
+        this.attackTime = compound.getInt(KEY_ATTACK_TIME);
+        this.sittingTime = compound.getInt(KEY_SITTING_TIME);
+        readCustomCooldown(compound);
     }
 
-    public void setAttackCooldown() {
-        attackCooldown = ATTACK_COOLDOWN;
+    @Override
+    public void setCustomCooldown(int cooldown) {
+        attackCooldown = cooldown;
     }
 
-    public boolean hasNoCooldown() {
-        return attackCooldown <= 0;
+    public int getCustomCooldown() {
+        return attackCooldown;
     }
 
     class SitGoal extends Goal {
@@ -395,23 +406,10 @@ public class NemeanLion extends Monster {
         }
     }
 
-    class NemeanLionAttackGoal extends MeleeAttackGoal {
+    class NemeanLionAttackGoal extends CooldownMeleeAttackGoal<NemeanLion> {
 
-        public NemeanLionAttackGoal(double speedIn, boolean useLongMemory) {
-            super(NemeanLion.this, speedIn, useLongMemory);
-        }
-
-        @Override
-        protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
-            if (NemeanLion.this.hasNoCooldown()) {
-                super.checkAndPerformAttack(enemy, distToEnemySqr);
-            }
-        }
-
-        @Override
-        protected void resetAttackCooldown() {
-            super.resetAttackCooldown();
-            NemeanLion.this.setAttackCooldown();
+        public NemeanLionAttackGoal(double speedIn, boolean useLongMemory, int cooldown) {
+            super(NemeanLion.this, speedIn, useLongMemory, cooldown);
         }
 
         @Override

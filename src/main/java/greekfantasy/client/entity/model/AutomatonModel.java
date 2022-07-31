@@ -3,6 +3,7 @@ package greekfantasy.client.entity.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.Automaton;
 import greekfantasy.entity.boss.Talos;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HeadedModel;
@@ -19,8 +20,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 
-public class TalosModel<T extends Talos> extends HierarchicalModel<T> implements ArmedModel, HeadedModel {
-    public static final ModelLayerLocation TALOS_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "talos"), "talos");
+public class AutomatonModel<T extends Automaton> extends HierarchicalModel<T> implements ArmedModel, HeadedModel {
+    public static final ModelLayerLocation AUTOMATON_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "automaton"), "automaton");
 
     // root
     protected final ModelPart root;
@@ -51,7 +52,7 @@ public class TalosModel<T extends Talos> extends HierarchicalModel<T> implements
     protected final ModelPart leftMiddleLeg;
     protected final ModelPart leftLowerLeg;
 
-    public TalosModel(final ModelPart root) {
+    public AutomatonModel(final ModelPart root) {
         super();
         this.root = root;
         // head
@@ -120,17 +121,15 @@ public class TalosModel<T extends Talos> extends HierarchicalModel<T> implements
     @Override
     public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
         super.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTick);
-        // swinging arm
-        float attackTime = 1.0F - this.attackTime;
-        attackTime *= attackTime;
-        attackTime *= attackTime;
-        attackTime = 1.0F - attackTime;
-        float sinAttackTimeLeft = Mth.sin(attackTime * (float) Math.PI);
-        leftArm.xRot = sinAttackTimeLeft * -1.8F;
-        leftArm.zRot = Mth.sin(this.attackTime * (float) Math.PI) * -0.4F;
-
+        if (entity.getAttackTimer() > 0) {
+            float attackingPercent = entity.getAttackPercent(partialTick);
+            this.leftArm.xRot = -1.5F * (Mth.sin(attackingPercent * (float)Math.PI) * 0.5F + 0.5F);
+        } else {
+            this.leftArm.xRot = (-0.2F - 1.5F * Mth.triangleWave(limbSwing, 10.0F)) * limbSwingAmount;
+        }
+        this.rightArm.xRot = (-0.2F + 1.5F * Mth.triangleWave(limbSwing, 10.0F)) * limbSwingAmount;
         // shooting animation
-        rightArm.xRot = -0.98F * entity.getShootAnglePercent(partialTick);
+        rightArm.xRot += entity.getShootAnglePercent(partialTick) * entity.getMaxShootingAngle();
     }
 
     @Override

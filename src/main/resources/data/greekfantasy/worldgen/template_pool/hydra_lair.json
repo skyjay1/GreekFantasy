@@ -1,0 +1,15 @@
+{
+  "name": "greekfantasy:hydra_lair",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:hydra_lair",
+        "projection": "rigid",
+        "processors": "minecraft:empty"
+      }
+    }
+  ]
+}

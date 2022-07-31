@@ -12,7 +12,7 @@
       }
     },
     {
-      "weight": 8,
+      "weight": 9,
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "greekfantasy:ara_camp/tent_with_chest",

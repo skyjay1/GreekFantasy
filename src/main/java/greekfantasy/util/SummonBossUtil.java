@@ -1,6 +1,8 @@
 package greekfantasy.util;
 
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.Automaton;
 import greekfantasy.entity.boss.BronzeBull;
 import greekfantasy.entity.boss.Cerberus;
 import greekfantasy.entity.boss.Talos;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
 import net.minecraft.world.level.block.state.predicate.BlockMaterialPredicate;
+import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -62,6 +65,15 @@ public final class SummonBossUtil {
             .where('O', BlockInWorld.hasState(BlockMaterialPredicate.forMaterial(Material.AIR)))
             .where('~', BlockInWorld.hasState(state -> true)).build();
 
+    /**
+     * BlockPattern for Automaton
+     **/
+    private static final BlockPattern automatonPattern = BlockPatternBuilder.start()
+            .aisle("^", "#")
+            .where('^', BlockInWorld.hasState(state -> state.is(BRONZE_BLOCK)))
+            .where('#', BlockInWorld.hasState(BlockStatePredicate.forBlock(GFRegistry.BlockReg.ICHOR_INFUSED_GEARBOX.get())))
+            .build();
+
 
     /**
      * Called when a block in the {@link #BRONZE_BLOCK} tag is placed. Checks if a boss stucture was formed,
@@ -77,9 +89,26 @@ public final class SummonBossUtil {
         if(!state.is(BRONZE_BLOCK)) {
             return false;
         }
-        // check if a talos was built
-        BlockPattern pattern = talosPattern;
+        // check if an automaton was built
+        BlockPattern pattern = automatonPattern;
         BlockPattern.BlockPatternMatch helper = pattern.find(level, pos);
+        if (helper != null) {
+            // remove the blocks that were used
+            for (int i = 0; i < pattern.getWidth(); ++i) {
+                for (int j = 0; j < pattern.getHeight(); ++j) {
+                    for (int k = 0; k < pattern.getDepth(); ++k) {
+                        BlockInWorld cachedblockinfo1 = helper.getBlock(i, j, k);
+                        level.destroyBlock(cachedblockinfo1.getPos(), false);
+                    }
+                }
+            }
+            // spawn the automaton
+            Automaton.spawnAutomaton(level, helper.getBlock(0, 1, 0).getPos(), 0);
+            return true;
+        }
+        // check if a talos was built
+        pattern = talosPattern;
+        helper = pattern.find(level, pos);
         if (helper != null) {
             // remove the blocks that were used
             for (int i = 0; i < pattern.getWidth(); ++i) {

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#A#",
+    "A.A",
+    "#A#"
+  ],
+  "key": {
+    "#": { "tag": "forge:ingots/copper" },
+    "A": { "item": "greekfantasy:ichor_infused_gear" },
+    ".": { "item": "greekfantasy:heart_of_talos" }
+  },
+  "result": {
+    "item": "greekfantasy:ichor_infused_gearbox",
+    "count": 1
+  }
+}

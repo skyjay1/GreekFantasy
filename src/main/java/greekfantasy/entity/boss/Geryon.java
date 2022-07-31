@@ -2,8 +2,10 @@ package greekfantasy.entity.boss;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.CooldownMeleeAttackGoal;
 import greekfantasy.entity.ai.SummonMobGoal;
 import greekfantasy.entity.monster.MadCow;
+import greekfantasy.entity.util.HasCustomCooldown;
 import greekfantasy.item.ClubItem;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -57,10 +59,13 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 
-public class Geryon extends Monster {
+public class Geryon extends Monster implements HasCustomCooldown {
 
     private static final EntityDataAccessor<Byte> STATE = SynchedEntityData.defineId(Geryon.class, EntityDataSerializers.BYTE);
     private static final String KEY_STATE = "GeryonState";
+    private static final String KEY_SPAWN_TIME = "SpawnTime";
+    private static final String KEY_SMASH_TIME = "SmashTime";
+    private static final String KEY_SUMMON_TIME = "SummonTime";
     // bytes to use in STATE
     private static final byte NONE = (byte) 0;
     private static final byte SPAWNING = (byte) 1;
@@ -81,7 +86,6 @@ public class Geryon extends Monster {
     private final ServerBossEvent bossInfo = (ServerBossEvent) (new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
 
     private int spawnTime;
-    private int smashTime0;
     private int smashTime;
     private int summonTime0;
     private int summonTime;
@@ -150,7 +154,7 @@ public class Geryon extends Monster {
         this.goalSelector.addGoal(0, new Geryon.SpawningGoal());
         this.goalSelector.addGoal(1, new Geryon.SummonCowGoal(MAX_SUMMON_TIME, 440));
         this.goalSelector.addGoal(2, new Geryon.SmashAttackGoal(SMASH_RANGE, 210));
-        this.goalSelector.addGoal(3, new Geryon.GeryonAttackGoal(1.0D, false));
+        this.goalSelector.addGoal(3, new Geryon.GeryonAttackGoal(1.0D, false, ATTACK_COOLDOWN));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -166,7 +170,7 @@ public class Geryon extends Monster {
         this.bossInfo.setProgress(this.getHealth() / this.getMaxHealth());
 
         // attack cooldown
-        attackCooldown = Math.max(attackCooldown - 1, 0);
+        tickCustomCooldown();
 
         // update spawn time
         if (isSpawning() && --spawnTime <= 0) {
@@ -325,12 +329,20 @@ public class Geryon extends Monster {
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putByte(KEY_STATE, this.getGeryonState());
+        compound.putInt(KEY_SPAWN_TIME, this.spawnTime);
+        compound.putInt(KEY_SUMMON_TIME, this.summonTime);
+        compound.putInt(KEY_SMASH_TIME, this.smashTime);
+        saveCustomCooldown(compound);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setGeryonState(compound.getByte(KEY_STATE));
+        this.spawnTime = compound.getInt(KEY_SPAWN_TIME);
+        this.summonTime = compound.getInt(KEY_SUMMON_TIME);
+        this.smashTime = compound.getInt(KEY_SMASH_TIME);
+        readCustomCooldown(compound);
     }
 
     // States //
@@ -373,14 +385,6 @@ public class Geryon extends Monster {
         if (spawning && !this.level.isClientSide()) {
             this.level.broadcastEntityEvent(this, START_SPAWN_EVENT);
         }
-    }
-
-    public void setAttackCooldown() {
-        attackCooldown = ATTACK_COOLDOWN;
-    }
-
-    public boolean hasNoCooldown() {
-        return attackCooldown <= 0;
     }
 
     @Override
@@ -529,6 +533,16 @@ public class Geryon extends Monster {
         }
     }
 
+    @Override
+    public void setCustomCooldown(int cooldown) {
+        this.attackCooldown = cooldown;
+    }
+
+    @Override
+    public int getCustomCooldown() {
+        return this.attackCooldown;
+    }
+
     // Custom goals
 
     class SpawningGoal extends Goal {
@@ -548,23 +562,10 @@ public class Geryon extends Monster {
         }
     }
 
-    class GeryonAttackGoal extends MeleeAttackGoal {
+    class GeryonAttackGoal extends CooldownMeleeAttackGoal<Geryon> {
 
-        public GeryonAttackGoal(double speedIn, boolean useLongMemory) {
-            super(Geryon.this, speedIn, useLongMemory);
-        }
-
-        @Override
-        protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
-            if (Geryon.this.hasNoCooldown()) {
-                super.checkAndPerformAttack(enemy, distToEnemySqr);
-            }
-        }
-
-        @Override
-        protected void resetAttackCooldown() {
-            super.resetAttackCooldown();
-            Geryon.this.setAttackCooldown();
+        public GeryonAttackGoal(double speedIn, boolean useLongMemory, int cooldown) {
+            super(Geryon.this, speedIn, useLongMemory, cooldown);
         }
 
         @Override
@@ -600,7 +601,7 @@ public class Geryon extends Monster {
                 return false;
             }
             return Geryon.this.getTarget() != null && Geryon.this.isNoneState()
-                    && Geryon.this.hasNoCooldown()
+                    && Geryon.this.hasNoCustomCooldown()
                     && Geryon.this.distanceToSqr(Geryon.this.getTarget()) < (range * range);
         }
 
@@ -614,7 +615,7 @@ public class Geryon extends Monster {
                 // get a list of nearby entities and use smash attack on each one
                 Geryon.this.level.getEntities(Geryon.this, Geryon.this.getBoundingBox().inflate(range, range / 2, range))
                         .forEach(e -> Geryon.this.useSmashAttack(e));
-                Geryon.this.setAttackCooldown();
+                Geryon.this.setCustomCooldown(ATTACK_COOLDOWN);
                 // destroy nearby blocks
                 if (isBlockSmash) {
                     Geryon.this.destroyIntersectingBlocks(2.5D);
@@ -646,7 +647,7 @@ public class Geryon extends Monster {
 
         @Override
         public boolean canUse() {
-            return super.canUse() && Geryon.this.hasNoCooldown() && Geryon.this.isNoneState();
+            return super.canUse() && Geryon.this.hasNoCustomCooldown() && Geryon.this.isNoneState();
         }
 
         @Override
@@ -663,7 +664,7 @@ public class Geryon extends Monster {
         @Override
         public void stop() {
             super.stop();
-            Geryon.this.setAttackCooldown();
+            Geryon.this.setCustomCooldown(ATTACK_COOLDOWN);
             Geryon.this.setSummoning(false);
         }
     }

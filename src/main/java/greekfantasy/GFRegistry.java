@@ -25,6 +25,7 @@ import greekfantasy.enchantment.PoisoningEnchantment;
 import greekfantasy.enchantment.SilkstepEnchantment;
 import greekfantasy.enchantment.SmashingEnchantment;
 import greekfantasy.entity.Arion;
+import greekfantasy.entity.Automaton;
 import greekfantasy.entity.Centaur;
 import greekfantasy.entity.Cerastes;
 import greekfantasy.entity.Dryad;
@@ -32,6 +33,7 @@ import greekfantasy.entity.Elpis;
 import greekfantasy.entity.Gigante;
 import greekfantasy.entity.GoldenRam;
 import greekfantasy.entity.Lampad;
+import greekfantasy.entity.Makhai;
 import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Orthus;
 import greekfantasy.entity.Pegasus;
@@ -316,7 +318,11 @@ public final class GFRegistry {
         public static final RegistryObject<Block> POMEGRANATE_LEAVES = RegistryObject.create(new ResourceLocation(MODID, "pomegranate_leaves"), ForgeRegistries.BLOCKS);
         public static final RegistryObject<Block> GOLDEN_LEAVES = RegistryObject.create(new ResourceLocation(MODID, "golden_leaves"), ForgeRegistries.BLOCKS);
         public static final RegistryObject<Block> BRONZE_BLOCK = BLOCKS.register("bronze_block", () ->
-                new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_ORANGE)
+                new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN)
+                        .requiresCorrectToolForDrops().strength(3.0F, 6.0F)
+                        .sound(SoundType.METAL)));
+        public static final RegistryObject<Block> ICHOR_INFUSED_GEARBOX = BLOCKS.register("ichor_infused_gearbox", () ->
+                new RotatedPillarBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_ORANGE)
                         .requiresCorrectToolForDrops().strength(3.0F, 6.0F)
                         .sound(SoundType.METAL)));
         public static final RegistryObject<Block> MYSTERIOUS_BOX = BLOCKS.register("mysterious_box", () ->
@@ -800,12 +806,14 @@ public final class GFRegistry {
                 new ForgeSpawnEggItem(EntityReg.GORGON, 0x3a8228, 0xbcbcbc, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> HARPY_SPAWN_EGG = ITEMS.register("harpy_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.HARPY, 0x724e36, 0x332411, new Item.Properties().tab(GF_TAB)));
-        // TODO hydra
+        public static final RegistryObject<Item> HYDRA_SPAWN_EGG = ITEMS.register("hydra_spawn_egg", () ->
+                new ForgeSpawnEggItem(EntityReg.HYDRA, 0x372828, 0x9d4217, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> LAMPAD_SPAWN_EGG = ITEMS.register("lampad_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.LAMPAD, 0x643026, 0xfed93f, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> MAD_COW_SPAWN_EGG = ITEMS.register("mad_cow_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.MAD_COW, 0x443626, 0xcf9797, new Item.Properties().tab(GF_TAB)));
-        // TODO makhai
+        public static final RegistryObject<Item> MAKHAI_SPAWN_EGG = ITEMS.register("makhai_spawn_egg", () ->
+                new ForgeSpawnEggItem(EntityReg.MAKHAI, 0x513f38, 0xf33531, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> MINOTAUR_SPAWN_EGG = ITEMS.register("minotaur_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.MINOTAUR, 0x443626, 0x734933, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> NAIAD_SPAWN_EGG = ITEMS.register("naiad_spawn_egg", () ->
@@ -837,6 +845,7 @@ public final class GFRegistry {
 
         //// ITEM BLOCKS ////
         public static final RegistryObject<BlockItem> BRONZE_BLOCK = registerItemBlock(BlockReg.BRONZE_BLOCK);
+        public static final RegistryObject<BlockItem> ICHOR_INFUSED_GEARBOX = registerItemBlock(BlockReg.ICHOR_INFUSED_GEARBOX);
         public static final RegistryObject<BlockItem> MYSTERIOUS_BOX = registerItemBlock(BlockReg.MYSTERIOUS_BOX);
         public static final RegistryObject<BlockItem> GIGANTE_HEAD = ITEMS.register("gigante_head", () -> new GiganteHeadItem(BlockReg.GIGANTE_HEAD.get(), new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<BlockItem> ORTHUS_HEAD = ITEMS.register("orthus_head", () -> new OrthusHeadItem(BlockReg.ORTHUS_HEAD.get(), new Item.Properties().tab(GF_TAB)));
@@ -879,6 +888,7 @@ public final class GFRegistry {
         }
 
         private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+            register(event, AUTOMATON.get(), Automaton::createAttributes, null);
             register(event, ARA.get(), Ara::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, ARACHNE.get(), Arachne::createAttributes, null);
             register(event, ARION.get(), Arion::createAttributes, null);
@@ -902,10 +912,11 @@ public final class GFRegistry {
             register(event, GOLDEN_RAM.get(), GoldenRam::createAttributes, null);
             register(event, GORGON.get(), Gorgon::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, HARPY.get(), Harpy::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
-            register(event, HYDRA.get(), Hydra::createAttributes, null); // TODO
+            register(event, HYDRA.get(), Hydra::createAttributes, null);
             register(event, HYDRA_HEAD.get(), HydraHead::createAttributes, null);
             register(event, LAMPAD.get(), Lampad::createAttributes, Mob::checkMobSpawnRules);
             register(event, MAD_COW.get(), MadCow::createAttributes, SpawnRulesUtil::checkAnyLightMonsterSpawnRules);
+            register(event, MAKHAI.get(), Makhai::createAttributes, null);
             register(event, MINOTAUR.get(), Minotaur::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
             register(event, NEMEAN_LION.get(), NemeanLion::createAttributes, null);
@@ -995,6 +1006,10 @@ public final class GFRegistry {
         }
 
         // creature
+        public static final RegistryObject<EntityType<? extends Automaton>> AUTOMATON = ENTITY_TYPES.register("automaton", () ->
+                EntityType.Builder.of(Automaton::new, MobCategory.MISC)
+                        .sized(0.94F, 2.48F)
+                        .build("automaton"));
         public static final RegistryObject<EntityType<? extends Ara>> ARA = ENTITY_TYPES.register("ara", () ->
                 EntityType.Builder.of(Ara::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.8F)
@@ -1103,6 +1118,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(MadCow::new, MobCategory.MONSTER)
                         .sized(0.9F, 1.4F)
                         .build("mad_cow"));
+        public static final RegistryObject<EntityType<? extends Makhai>> MAKHAI = ENTITY_TYPES.register("makhai", () ->
+                EntityType.Builder.of(Makhai::new, MobCategory.CREATURE)
+                        .sized(0.70F, 1.8F)
+                        .build("makhai"));
         public static final RegistryObject<EntityType<? extends Minotaur>> MINOTAUR = ENTITY_TYPES.register("minotaur", () ->
                 EntityType.Builder.of(Minotaur::new, MobCategory.MONSTER)
                         .sized(0.7F, 1.94F)

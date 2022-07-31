@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "greekfantasy:block/ichor_infused_gearbox_horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "greekfantasy:block/ichor_infused_gearbox"
+    },
+    "axis=z": {
+      "model": "greekfantasy:block/ichor_infused_gearbox_horizontal",
+      "x": 90
+    }
+  }
+}

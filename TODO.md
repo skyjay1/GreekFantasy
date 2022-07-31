@@ -11,7 +11,7 @@ __Key:__
 - Everything ;^D
 - Charybdis "throw" animation cuts off
 - Orthus stands when sitting
-- Use Orthus head should equip it
+- Cerberus Head item model not aligned
 
 ## Entities
 
@@ -51,7 +51,7 @@ __Key:__
 - X X X X X Miniboss: Medusa
 - _ _ _ _ _ Miniboss: Cretan Minotaur
 - X X X X X Miniboss: Circe
-- X X X X X Miniboss: Hydra
+- X X X X _ Miniboss: Hydra
 - X X X X X Miniboss: Arachne
 - X X X X X Fury
 - X X X X X Drakaina
@@ -59,9 +59,9 @@ __Key:__
 - X X X X X Whirl
 - X X X X X Pegasus
 - X X X X X Golden Ram
-- _ _ _ _ _ Makhai
+- X X X X _ Makhai
 - X X X X X Baby Spider
-- _ _ _ _ _ Automaton (friendly Talos)
+- X X X X X Automaton (friendly Talos)
 
 
 ### Other
@@ -104,7 +104,7 @@ __Key:__
 - X X X Pomegranate Trees
 - X . X Golden Tree
 - X X X Arachne Pit
-- _ _ _ Hydra Lair
+- X X X Hydra Lair
 
 
 ## Blocks
@@ -133,7 +133,7 @@ __Key:__
 - _ _ _ Cretan Stone and variants
 - X X X Reeds
 - X X X Golden String
-- _ _ _ Ichor-Infused Gearbox
+- X X X Ichor-Infused Gearbox
 
 
 ## Items
@@ -151,7 +151,7 @@ __Key:__
 - X X X Snakeskin
 - X X X Tough Snakeskin
 - X X X Deadly Fang
-- X _ X Heart of Talos
+- X X X Heart of Talos
 - X X X Ichor-Infused Gear
 - X X X Avernal Feather
 - X X X Avernal Hide

@@ -31,6 +31,7 @@ public class MinotaurModel<T extends Minotaur> extends HoofedHumanoidModel<T> {
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        this.head.setPos(0, 0, 0.0F);
         if (entity.isCharging()) {
             final float stompSpeed = 0.58F;
             final float limbSwingSin = Mth.cos(ageInTicks * stompSpeed + (float) Math.PI);

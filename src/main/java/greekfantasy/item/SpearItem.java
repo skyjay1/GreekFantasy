@@ -50,7 +50,7 @@ public class SpearItem extends TieredItem implements Vanishable {
     protected final int setFire;
 
     public SpearItem(Tier tier, Item.Properties properties) {
-        this(tier, 1.0F, properties);
+        this(tier, 0.75F, properties);
     }
 
     public SpearItem(Tier tier, float attackRange, Item.Properties properties) {

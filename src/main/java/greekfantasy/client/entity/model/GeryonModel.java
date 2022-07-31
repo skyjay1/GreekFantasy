@@ -58,9 +58,8 @@ public class GeryonModel<T extends Geryon> extends GiganteModel<T> {
         this.rightHead.y += 1.0F;
         //this.head.y -= 0.25F;
         // smash animation
-        final float partialTicksss = partialTick - entity.tickCount;
-        final float smashTime = entity.getSmashPercent(partialTicksss);
-        final float summonTime = entity.getSummonPercent(partialTicksss);
+        final float smashTime = entity.getSmashPercent(partialTick);
+        final float summonTime = entity.getSummonPercent(partialTick);
         if (summonTime > 0) {
             final ModelPart arm = this.getArm(entity.getMainArm().getOpposite());
             arm.xRot = -1.5708F * summonTime;

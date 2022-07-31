@@ -62,6 +62,7 @@ public class CerberusHeadBlockEntityRenderer extends MobHeadBlockEntityRenderer 
         @Override
         public void renderByItem(ItemStack item, ItemTransforms.TransformType transform, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLightIn, int combinedOverlayIn) {
             poseStack.pushPose();
+            poseStack.translate(-4.0F / 16.0F, 3.0F / 16.0F, 0.0F);
             poseStack.scale(-1.0F, -1.0F, 1.0F);
             VertexConsumer vertexBuilder = ItemRenderer.getFoilBufferDirect(bufferSource, this.model.renderType(TEXTURE), false, item.hasFoil());
             model.renderToBuffer(poseStack, vertexBuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
