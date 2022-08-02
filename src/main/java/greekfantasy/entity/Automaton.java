@@ -25,6 +25,8 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -134,6 +136,7 @@ public class Automaton extends AbstractGolem implements RangedAttackMob, HasCust
     protected void registerAutomatonGoals() {
         this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, false));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.1D, Ingredient.of(BRONZE_INGOT), false));
+        this.goalSelector.addGoal(6, new Automaton.HealingGoal());
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, e -> e instanceof Enemy));
     }
@@ -470,6 +473,28 @@ public class Automaton extends AbstractGolem implements RangedAttackMob, HasCust
             Automaton.this.getLookControl().setLookAt(Automaton.this.getX(), Automaton.this.getY(), Automaton.this.getZ());
             Automaton.this.setRot(0, 0);
             Automaton.this.setTarget(null);
+        }
+    }
+
+    class HealingGoal extends Goal {
+
+        public HealingGoal() {
+            setFlags(EnumSet.allOf(Goal.Flag.class));
+        }
+
+        @Override
+        public boolean canUse() {
+            return Automaton.this.getHealth() < Automaton.this.getMaxHealth()
+                    && null == Automaton.this.getTarget() && Automaton.this.getNavigation().isDone();
+        }
+
+        @Override
+        public void tick() {
+            Automaton.this.getLookControl().setLookAt(Automaton.this.getX(), Automaton.this.getY(), Automaton.this.getZ());
+            Automaton.this.setRot(0, 0);
+            if(Automaton.this.getRandom().nextInt(110) == 0) {
+                Automaton.this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 21, 0, true, true));
+            }
         }
     }
 

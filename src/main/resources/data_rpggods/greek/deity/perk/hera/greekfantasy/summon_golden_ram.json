@@ -1,0 +1,25 @@
+{
+    "icon": {
+        "item": "greekfantasy:golden_fleece"
+    },
+    "range": {
+        "deity": "greek:hera",
+        "minlevel": 6,
+        "maxlevel": 10
+    },
+    "condition": [
+        {
+            "type": "random_tick"
+        }
+    ],
+    "action": [
+        {
+            "type": "summon",
+            "tag": {
+                "id": "greekfantasy:golden_ram"
+            }
+        }
+    ],
+    "chance": 0.009,
+    "cooldown": 16000
+}

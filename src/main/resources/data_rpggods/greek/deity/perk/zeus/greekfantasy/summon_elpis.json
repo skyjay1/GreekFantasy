@@ -1,0 +1,26 @@
+{
+    "icon": {
+        "item": "minecraft:diamond"
+    },
+    "range": {
+        "deity": "greek:zeus",
+        "minlevel": 6,
+        "maxlevel": 10
+    },
+    "condition": [
+        {
+            "type": "random_tick"
+        }
+    ],
+    "action": [
+        {
+            "type": "summon",
+            "tag": {
+                "id": "greekfantasy:elpis",
+                "ElpisState": 5
+            }
+        }
+    ],
+    "chance": 0.009,
+    "cooldown": 16000
+}

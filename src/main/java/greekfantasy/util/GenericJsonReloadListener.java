@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import greekfantasy.GreekFantasy;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.NbtOps;
@@ -13,7 +14,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.fml.LogicalSide;
-import rpggods.RPGGods;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -102,11 +102,11 @@ public class GenericJsonReloadListener<T> extends SimpleJsonResourceReloadListen
     protected void apply(Map<ResourceLocation, JsonElement> jsons, ResourceManager manager, ProfilerFiller profile) {
         // build the maps
         OBJECTS.clear();
-        RPGGods.LOGGER.debug("Parsing Reloadable JSON map of type " + objClass.getName());
+        GreekFantasy.LOGGER.debug("Parsing Reloadable JSON map of type " + objClass.getName());
         jsons.forEach((key, input) -> OBJECTS.put(key, jsonToObject(input).resultOrPartial(
-                error -> RPGGods.LOGGER.error("Failed to read JSON object for type" + objClass.getName() + "\n" + error))));
+                error -> GreekFantasy.LOGGER.error("Failed to read JSON object for type" + objClass.getName() + "\n" + error))));
         // print size of the map for debugging purposes
-        RPGGods.LOGGER.debug("Found " + OBJECTS.size() + " entries");
+        GreekFantasy.LOGGER.debug("Found " + OBJECTS.size() + " entries");
         boolean isServer = true;
         try {
             LogicalSidedProvider.WORKQUEUE.get(LogicalSide.SERVER);

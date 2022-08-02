@@ -11,7 +11,6 @@ __Key:__
 - Everything ;^D
 - Charybdis "throw" animation cuts off
 - Orthus stands when sitting
-- Cerberus Head item model not aligned
 
 ## Entities
 
@@ -59,7 +58,7 @@ __Key:__
 - X X X X X Whirl
 - X X X X X Pegasus
 - X X X X X Golden Ram
-- X X X X _ Makhai
+- X X X X X Makhai
 - X X X X X Baby Spider
 - X X X X X Automaton (friendly Talos)
 
@@ -174,8 +173,8 @@ __Key:__
 - X X X Thunderbolt
 - X X X Wand of Circe
 - X X X Avernal Bow
-- X X _ Bow of Apollo
-- X X _ Bow of Artemis
+- X X X Bow of Apollo
+- X X X Bow of Artemis
 - X X X Club (wood, stone, iron)
 - X X X Spear (wood, stone, iron, gold, diamond, netherite, flint)
 - X X X Bident
@@ -235,15 +234,15 @@ __Key:__
 `[In-game] [Use] [Obtainable]`
 
 - X X X Bane of Serpents
-- X X _ Daybreak
-- X X _ Flying
-- X X _ Fireflash
-- X X _ Hunting
-- X X _ Lord of the Sea
-- X X _ Mirroring
+- X X X Daybreak
+- X X X Flying
+- X X X Fireflash
+- X X X Hunting
+- X X X Lord of the Sea
+- X X X Mirroring
 - X X X Overstep
 - X X X Poisoning
-- X X _ Raising
+- X X X Raising
 - X X X Silkstep
 - X X X Smashing
 

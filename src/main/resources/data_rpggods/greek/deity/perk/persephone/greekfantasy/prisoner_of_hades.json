@@ -1,0 +1,32 @@
+{
+    "icon": {
+        "item": "greekfantasy:pomegranate",
+        "color": 14277081
+    },
+    "range": {
+        "deity": "greek:persephone",
+        "minlevel": -4,
+        "maxlevel": -10
+    },
+    "condition": [
+        {
+            "type": "random_tick"
+        },
+        {
+            "type": "dimension",
+            "data": "minecraft:the_nether"
+        }
+    ],
+    "action": [
+        {
+            "type": "potion",
+            "tag": {
+                "Potion": "greekfantasy:prisoner_of_hades",
+                "Amplifier": 0,
+                "Duration": 4500
+            }
+        }
+    ],
+    "cooldown": 4600,
+    "chance": 0.020
+}

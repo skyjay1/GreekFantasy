@@ -1,0 +1,27 @@
+{
+    "icon": {
+        "item": "minecraft:iron_sword"
+    },
+    "range": {
+        "deity": "greek:ares",
+        "minlevel": 4,
+        "maxlevel": 10
+    },
+    "condition": [
+        {
+            "type": "enter_combat"
+        }
+    ],
+    "action": [
+        {
+            "type": "summon",
+            "tag": {
+                "id": "greekfantasy:makhai",
+                "MakhaiState": 1,
+                "MakhaiTame": true
+            }
+        }
+    ],
+    "chance": 0.006,
+    "cooldown": 16000
+}

@@ -20,9 +20,14 @@ import greekfantasy.network.SCurseOfCircePacket;
 import greekfantasy.network.SQuestPacket;
 import greekfantasy.network.SSongPacket;
 import greekfantasy.util.SummonBossUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -64,6 +69,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.TickEvent;
@@ -84,9 +90,12 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.resource.PathResourcePack;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -281,6 +290,19 @@ public final class GFEvents {
         public static void onPlayerTick(final TickEvent.PlayerTickEvent event) {
             if(event.phase != TickEvent.Phase.START || !event.player.isAlive()) {
                 return;
+            }
+
+            // update pose when player is riding nemean lion
+            final boolean isRidingLion = event.player.getVehicle() instanceof NemeanLion;
+            final Pose currentPose = event.player.getForcedPose();
+            // update the forced pose
+            if (isRidingLion && currentPose != Pose.FALL_FLYING) {
+                // apply the forced pose
+                event.player.setForcedPose(Pose.FALL_FLYING);
+                event.player.setPose(Pose.FALL_FLYING);
+            } else if (!isRidingLion && Pose.FALL_FLYING == currentPose) {
+                // clear the forced pose
+                event.player.setForcedPose(null);
             }
 
             // update pose when player is under curse of circe
@@ -660,6 +682,8 @@ public final class GFEvents {
                 // sync quests
                 GreekFantasy.QUESTS.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new SQuestPacket(e.getKey(), e.getValue().get())));
             }
+            // remove this when not in beta
+            event.getPlayer().displayClientMessage(new TextComponent("You are using a beta version of Greek Fantasy - do not distribute.").withStyle(ChatFormatting.AQUA), false);
         }
 
         /**
@@ -716,6 +740,32 @@ public final class GFEvents {
     }
 
     public static final class ModHandler {
+
+        @SubscribeEvent
+        public static void onAddPackFinders(final AddPackFindersEvent event) {
+            if(event.getPackType() == PackType.SERVER_DATA) {
+                // register RPG Gods data pack
+                if(GreekFantasy.isRGLoaded()) {
+                    GreekFantasy.LOGGER.info("Greek Fantasy detected RPG Gods, registering data pack now");
+                    registerAddon(event, "data_rpggods");
+                }
+            }
+        }
+
+        private static void registerAddon(final AddPackFindersEvent event, final String packName) {
+            event.addRepositorySource((packConsumer, constructor) -> {
+                Pack pack = Pack.create(GreekFantasy.MODID + ":" + packName, true, () -> {
+                    Path path = ModList.get().getModFileById(GreekFantasy.MODID).getFile().findResource("/" + packName);
+                    return new PathResourcePack(packName, path);
+                }, constructor, Pack.Position.TOP, PackSource.DEFAULT);
+
+                if (pack != null) {
+                    packConsumer.accept(pack);
+                } else {
+                    GreekFantasy.LOGGER.error(GreekFantasy.MODID + ": Failed to register data pack \"" + packName + "\"");
+                }
+            });
+        }
 
     }
 }
