@@ -95,7 +95,7 @@ public class Automaton extends AbstractGolem implements RangedAttackMob, HasCust
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 210.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.21D)
+                .add(Attributes.MOVEMENT_SPEED, 0.20D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.ATTACK_DAMAGE, 9.5D)
                 .add(Attributes.ATTACK_KNOCKBACK, ClubItem.ATTACK_KNOCKBACK_AMOUNT * 0.35D)

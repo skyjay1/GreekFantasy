@@ -1,0 +1,38 @@
+{
+  "type": "greekfantasy:olive_salve",
+  "ingredients": [
+    { "item": "greekfantasy:olive_oil" },
+    { "item": "minecraft:kelp" },
+    { "item": "minecraft:scute" }
+  ],
+  "result": {
+    "item": "greekfantasy:olive_salve"
+  },
+  "use_effect": {
+    "mob_effect": "minecraft:resistance",
+    "duration": 250,
+    "amplifier": 2,
+    "weight": 1
+  },
+  "bonus_effects": [
+    {
+      "mob_effect": "minecraft:slowness",
+      "amplifier": 0,
+      "duration": 250,
+      "weight": 2
+    },
+    {
+      "mob_effect": "minecraft:slowness",
+      "amplifier": 1,
+      "duration": 250,
+      "weight": 1
+    },
+    {
+      "mob_effect": "minecraft:slowness",
+      "amplifier": 2,
+      "duration": 250,
+      "weight": 1
+    }
+  ],
+  "rolls": 1
+}

@@ -45,6 +45,7 @@ import greekfantasy.client.entity.MinotaurRenderer;
 import greekfantasy.client.entity.NaiadRenderer;
 import greekfantasy.client.entity.NemeanLionRenderer;
 import greekfantasy.client.entity.OrthusRenderer;
+import greekfantasy.client.entity.PalladiumRenderer;
 import greekfantasy.client.entity.PegasusRenderer;
 import greekfantasy.client.entity.PythonRenderer;
 import greekfantasy.client.entity.SatyrRenderer;
@@ -86,6 +87,7 @@ import greekfantasy.client.entity.model.MinotaurModel;
 import greekfantasy.client.entity.model.NemeanLionModel;
 import greekfantasy.client.entity.model.NymphModel;
 import greekfantasy.client.entity.model.OrthusModel;
+import greekfantasy.client.entity.model.PalladiumModel;
 import greekfantasy.client.entity.model.PegasusModel;
 import greekfantasy.client.entity.model.PythonModel;
 import greekfantasy.client.entity.model.SatyrModel;
@@ -97,11 +99,13 @@ import greekfantasy.client.entity.model.AutomatonModel;
 import greekfantasy.client.entity.model.UnicornModel;
 import greekfantasy.client.particle.GorgonParticle;
 import greekfantasy.entity.Pegasus;
+import greekfantasy.item.WingedSandalsItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.TridentModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -112,8 +116,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -121,12 +127,16 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.UUID;
 
 public final class GFClientEvents {
 
@@ -215,6 +225,33 @@ public final class GFClientEvents {
                 }
             }
         }
+
+        /**
+         * This method enables or disabled autojump based on the level of Overstep enchantment
+         * on the player feet item.
+         *
+         * @param event the player tick event (only handles TickEvent.Phase.START)
+         **/
+        @SubscribeEvent(priority = EventPriority.HIGH)
+        public static void onPlayerTick(final TickEvent.PlayerTickEvent event) {
+            if (event.phase == TickEvent.Phase.START && event.side == LogicalSide.CLIENT
+                    && GreekFantasy.CONFIG.isOverstepEnabled()
+                    && event.player instanceof LocalPlayer player) {
+                final Minecraft mc = Minecraft.getInstance();
+                ItemStack feet = player.getItemBySlot(EquipmentSlot.FEET);
+                // check if the player is wearing an item with overstep enchantment in feet slot
+                final boolean hasOverstep = !feet.isEmpty() && feet.isDamageableItem() && feet.getMaxDamage() - feet.getDamageValue() > WingedSandalsItem.BROKEN
+                        && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.OVERSTEP.get(), feet) > 0;
+                // if the player has overstep and is not sneaking, disable autojump
+                if (hasOverstep && !player.isCrouching() && player.isAutoJumpEnabled()) {
+                    // use Access Transformers to use/modify this field directly
+                    player.autoJumpEnabled = false;
+                } else {
+                    // restore autojump value from game options
+                    player.autoJumpEnabled = mc.options.autoJump;
+                }
+            }
+        }
     }
 
     public static final class ModHandler {
@@ -283,6 +320,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(NemeanLionModel.NEMEAN_LION_MODEL_RESOURCE, NemeanLionModel::createBodyLayer);
             event.registerLayerDefinition(NymphModel.NYMPH_LAYER_LOCATION, NymphModel::createBodyLayer);
             event.registerLayerDefinition(OrthusModel.ORTHUS_MODEL_RESOURCE, OrthusModel::createBodyLayer);
+            event.registerLayerDefinition(PalladiumModel.PALLADIUM_MODEL_RESOURCE, PalladiumModel::createBodyLayer);
             event.registerLayerDefinition(PegasusModel.PEGASUS_MODEL_RESOURCE, PegasusModel::createBodyLayer);
             event.registerLayerDefinition(PythonModel.PYTHON_MODEL_RESOURCE, PythonModel::createBodyLayer);
             event.registerLayerDefinition(SatyrModel.SATYR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(CubeDeformation.NONE));
@@ -351,6 +389,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.DRAGON_TOOTH.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.GREEK_FIRE.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.HEALING_SPELL.get(), SpellRenderer.HealingSpellRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.PALLADIUM.get(), PalladiumRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.POISON_SPIT.get(), SpellRenderer.PoisonSpitRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPEAR.get(), SpearRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.WEB_BALL.get(), ThrownItemRenderer::new);
@@ -429,9 +468,11 @@ public final class GFClientEvents {
 
         private static void registerModelProperties() {
             // register instruments
-            registerInstrumentProperties(GFRegistry.ItemReg.PANFLUTE.get());
-            registerInstrumentProperties(GFRegistry.ItemReg.WOODEN_LYRE.get());
-            registerInstrumentProperties(GFRegistry.ItemReg.GOLDEN_LYRE.get());
+            registerUsingProperties(GFRegistry.ItemReg.PANFLUTE.get(), "playing");
+            registerUsingProperties(GFRegistry.ItemReg.WOODEN_LYRE.get(), "playing");
+            registerUsingProperties(GFRegistry.ItemReg.GOLDEN_LYRE.get(), "playing");
+            // register salve
+            registerUsingProperties(GFRegistry.ItemReg.OLIVE_SALVE.get(), "using");
             // register bows
             registerBowProperties(GFRegistry.ItemReg.AVERNAL_BOW.get());
             registerBowProperties(GFRegistry.ItemReg.APOLLO_BOW.get());
@@ -447,8 +488,8 @@ public final class GFClientEvents {
             registerSpearProperties(GFRegistry.ItemReg.NETHERITE_SPEAR.get());
         }
 
-        private static void registerInstrumentProperties(final Item instrument) {
-            ItemProperties.register(instrument, new ResourceLocation("playing"),
+        private static void registerUsingProperties(final Item usingItem, final String propertyName) {
+            ItemProperties.register(usingItem, new ResourceLocation(propertyName),
                     (item, world, entity, tintIndex) -> (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
         }
 

@@ -1,0 +1,36 @@
+{
+  "type": "greekfantasy:olive_salve",
+  "ingredients": [
+    { "item": "greekfantasy:olive_oil" },
+    { "item": "minecraft:kelp" },
+    { "tag": "forge:mushrooms" }
+  ],
+  "result": {
+    "item": "greekfantasy:olive_salve"
+  },
+  "use_effect": {
+    "mob_effect": "minecraft:haste",
+    "duration": 250,
+    "weight": 1
+  },
+  "bonus_effects": [
+    {
+      "mob_effect": "minecraft:regeneration",
+      "duration": 250,
+      "weight": 2
+    },
+    {
+      "mob_effect": "minecraft:poison",
+      "amplifier": 0,
+      "duration": 250,
+      "weight": 1
+    },
+    {
+      "mob_effect": "minecraft:hunger",
+      "amplifier": 0,
+      "duration": 250,
+      "weight": 1
+    }
+  ],
+  "rolls": 1
+}

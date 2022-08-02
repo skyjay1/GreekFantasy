@@ -72,13 +72,10 @@ public class GreekFantasy {
 
         // register messages
         int messageId = 0;
-        //CHANNEL.registerMessage(messageId++, CUpdateInstrumentPacket.class, CUpdateInstrumentPacket::toBytes, CUpdateInstrumentPacket::fromBytes, CUpdateInstrumentPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(messageId++, SSongPacket.class, SSongPacket::toBytes, SSongPacket::fromBytes, SSongPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(messageId++, SQuestPacket.class, SQuestPacket::toBytes, SQuestPacket::fromBytes, SQuestPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(messageId++, SCurseOfCircePacket.class, SCurseOfCircePacket::toBytes, SCurseOfCircePacket::fromBytes, SCurseOfCircePacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(messageId++, CPlayNotePacket.class, CPlayNotePacket::toBytes, CPlayNotePacket::fromBytes, CPlayNotePacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        //CHANNEL.registerMessage(messageId++, CUseEnchantmentPacket.class, CUseEnchantmentPacket::toBytes, CUseEnchantmentPacket::fromBytes, CUseEnchantmentPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
-
     }
 
     public static void setup(final FMLCommonSetupEvent event) {

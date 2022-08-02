@@ -1,0 +1,13 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "greekfantasy:item/olive_salve"
+  },
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [ -5, 0, 60  ],
+      "translation": [ 7, -6, -12 ],
+      "scale": [ 0.68, 0.68, 0.68 ]
+    }
+  }
+}

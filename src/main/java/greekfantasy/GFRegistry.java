@@ -36,6 +36,7 @@ import greekfantasy.entity.Lampad;
 import greekfantasy.entity.Makhai;
 import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Orthus;
+import greekfantasy.entity.Palladium;
 import greekfantasy.entity.Pegasus;
 import greekfantasy.entity.Satyr;
 import greekfantasy.entity.Sparti;
@@ -98,7 +99,9 @@ import greekfantasy.item.InstrumentItem;
 import greekfantasy.item.KnifeItem;
 import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.item.OliveOilItem;
+import greekfantasy.item.OliveSalveItem;
 import greekfantasy.item.OrthusHeadItem;
+import greekfantasy.item.PalladiumItem;
 import greekfantasy.item.QuestItem;
 import greekfantasy.item.SnakeskinArmorItem;
 import greekfantasy.item.SpearItem;
@@ -116,6 +119,7 @@ import greekfantasy.mob_effect.StunnedEffect;
 import greekfantasy.util.BronzeScrapLootModifier;
 import greekfantasy.util.QuestLootModifier;
 import greekfantasy.util.ReplaceDropsLootModifier;
+import greekfantasy.util.SalveRecipe;
 import greekfantasy.util.SpawnRulesUtil;
 import greekfantasy.worldgen.ArachnePitFeature;
 import greekfantasy.worldgen.BiomeListConfigSpec;
@@ -182,6 +186,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.LightBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SlabBlock;
@@ -361,7 +366,8 @@ public final class GFRegistry {
                 new WildRoseBlock(MobEffects.SATURATION, 9, Block.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS)));
         public static final RegistryObject<Block> REEDS = BLOCKS.register("reeds", () ->
                 new ReedsBlock(Block.Properties.of(Material.REPLACEABLE_WATER_PLANT).noCollission().instabreak().randomTicks().sound(SoundType.CROP)));
-
+        public static final RegistryObject<Block> LIGHT = BLOCKS.register("light", () ->
+                new LightBlock(BlockBehaviour.Properties.copy(Blocks.LIGHT)));
 
         /**
          * Registers all of the following: log, stripped log, wood, stripped wood, planks, stairs, slab, door, trapdoor
@@ -609,6 +615,7 @@ public final class GFRegistry {
                 .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 800, 0), 1.0F)
                 .effect(() -> new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 800, 0), 1.0F)
                 .effect(() -> new MobEffectInstance(MobEffects.ABSORPTION, 2400, 3), 1.0F).build();
+        private static final FoodProperties OLIVE_SALVE_FOOD = new FoodProperties.Builder().alwaysEat().build();
 
         public static void register() {
             ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -735,7 +742,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> OLIVE_OIL = ITEMS.register("olive_oil", () ->
                 new OliveOilItem(BlockReg.OLIVE_OIL.get(), new Item.Properties().tab(GF_TAB).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
         public static final RegistryObject<Item> OLIVE_SALVE = ITEMS.register("olive_salve", () ->
-                new Item(new Item.Properties().tab(GF_TAB).stacksTo(1))); // TODO salve
+                new OliveSalveItem(new Item.Properties().tab(GF_TAB).stacksTo(1).food(OLIVE_SALVE_FOOD)));
         public static final RegistryObject<Item> POMEGRANATE = ITEMS.register("pomegranate", () ->
                 new Item(new Item.Properties().tab(GF_TAB).food(POMEGRANATE_FOOD)));
 
@@ -841,7 +848,7 @@ public final class GFRegistry {
 
         //// LEGENDARY ITEM BLOCKS ////
         public static final RegistryObject<Item> PALLADIUM = ITEMS.register("palladium", () ->
-                new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(1))); // TODO places palladium
+                new PalladiumItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(1)));
 
         //// ITEM BLOCKS ////
         public static final RegistryObject<BlockItem> BRONZE_BLOCK = registerItemBlock(BlockReg.BRONZE_BLOCK);
@@ -921,6 +928,7 @@ public final class GFRegistry {
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
             register(event, NEMEAN_LION.get(), NemeanLion::createAttributes, null);
             register(event, ORTHUS.get(), Orthus::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
+            event.put(PALLADIUM.get(), Palladium.createAttributes().build());
             register(event, PEGASUS.get(), Pegasus::createAttributes, Mob::checkMobSpawnRules);
             register(event, PYTHON.get(), Python::createAttributes, null);
             register(event, SATYR.get(), Satyr::createAttributes, Mob::checkMobSpawnRules);
@@ -1199,6 +1207,10 @@ public final class GFRegistry {
                 EntityType.Builder.<HealingSpell>of(HealingSpell::new, MobCategory.MISC)
                         .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
                         .build("healing_spell"));
+        public static final RegistryObject<EntityType<? extends Palladium>> PALLADIUM = ENTITY_TYPES.register("palladium", () ->
+                EntityType.Builder.of(Palladium::new, MobCategory.MISC)
+                        .sized(0.98F, 2.24F).fireImmune()
+                        .build("palladium"));
         public static final RegistryObject<EntityType<? extends PoisonSpit>> POISON_SPIT = ENTITY_TYPES.register("poison_spit", () ->
                 EntityType.Builder.<PoisonSpit>of(PoisonSpit::new, MobCategory.MISC)
                         .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
@@ -1412,6 +1424,8 @@ public final class GFRegistry {
             RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
 
+        public static final RegistryObject<RecipeSerializer> OLIVE_SALVE = RECIPE_SERIALIZERS.register(SalveRecipe.Serializer.CATEGORY, () ->
+                new SalveRecipe.Serializer());
     }
 
     public static final class MenuReg {

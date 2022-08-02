@@ -79,7 +79,7 @@ __Key:__
 - X X Web Ball
 - X X Spear (and Bident)
 - X X Orthus Head
-- _ _ Palladium
+- X X Palladium
 
 ## Structures
 
@@ -191,7 +191,7 @@ __Key:__
 - X X X Lyre (wooden, golden)
 - X X X Web Ball
 - X X X Olive Oil
-- X _ _ Olive Salve
+- X X X Olive Salve
 - X X X Olives
 - X X X Olive Sapling
 - X X X Pomegranate
@@ -235,19 +235,23 @@ __Key:__
 `[In-game] [Use] [Obtainable]`
 
 - X X X Bane of Serpents
-- X _ _ Daybreak
+- X X _ Daybreak
 - X X _ Flying
 - X X _ Fireflash
 - X X _ Hunting
-- X _ _ Lord of the Sea
+- X X _ Lord of the Sea
 - X X _ Mirroring
-- X _ _ Overstep
+- X X X Overstep
 - X X X Poisoning
 - X X _ Raising
 - X X X Silkstep
 - X X X Smashing
 
 ## Other
+
+### Recipe Types
+
+- X Olive Salve
 
 ### Global Loot Modifiers
 

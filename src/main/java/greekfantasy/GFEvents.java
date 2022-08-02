@@ -4,23 +4,27 @@ import greekfantasy.entity.Arion;
 import greekfantasy.entity.Cerastes;
 import greekfantasy.entity.GoldenRam;
 import greekfantasy.entity.Orthus;
+import greekfantasy.entity.Palladium;
+import greekfantasy.entity.Whirl;
 import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.GiantBoar;
+import greekfantasy.entity.boss.NemeanLion;
 import greekfantasy.entity.monster.Circe;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.integration.RGCompat;
 import greekfantasy.item.HellenicArmorItem;
 import greekfantasy.item.NemeanLionHideItem;
+import greekfantasy.item.ThunderboltItem;
 import greekfantasy.mob_effect.CurseOfCirceEffect;
 import greekfantasy.network.SCurseOfCircePacket;
 import greekfantasy.network.SQuestPacket;
 import greekfantasy.network.SSongPacket;
 import greekfantasy.util.SummonBossUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagKey;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffect;
@@ -28,34 +32,46 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.level.entity.LevelEntityGetter;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -65,17 +81,23 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public final class GFEvents {
 
     public static final class ForgeHandler {
+
+        public static final UUID STEP_HEIGHT_MODIFIER = UUID.fromString("3b9d697f-8823-4e0e-b704-be09f54712d7");
+        /** Used in the client tick event to ensure items with Overstep provide a step height attribute bonus **/
+        private static final AttributeModifier stepHeightModifier = new AttributeModifier(STEP_HEIGHT_MODIFIER, "Armor step height modifier", 0.62D, AttributeModifier.Operation.ADDITION);;
 
         /**
          * Used to spawn a shade with the player's XP when they die.
@@ -433,6 +455,18 @@ public final class GFEvents {
         }
 
         /**
+         * Used to add a step height modifier to items with Overstep enchantment
+         * @param event the attribute modifier event
+         */
+        @SubscribeEvent
+        public static void onItemAttributeModifiers(final ItemAttributeModifierEvent event) {
+            // determine if step height modifer should apply
+            if(event.getSlotType() == EquipmentSlot.FEET && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.OVERSTEP.get(), event.getItemStack()) > 0) {
+                event.addModifier(ForgeMod.STEP_HEIGHT_ADDITION.get(), stepHeightModifier);
+            }
+        }
+
+        /**
          * Used to add AI to Minecraft entities when they are spawned.
          *
          * @param event the spawn event
@@ -449,6 +483,41 @@ public final class GFEvents {
                     mob.goalSelector.addGoal(3, new AvoidEntityGoal<>(mob, Cerastes.class, 6.0F, 1.0D, 1.2D,
                             e -> e instanceof Cerastes cerastes && !cerastes.isHiding()));
                 }
+            }
+        }
+
+        /**
+         * Used to add prevent monsters from spawning near Palladium blocks
+         *
+         * @param event the spawn event
+         **/
+        @SubscribeEvent
+        public static void onLivingCheckSpawn(final LivingSpawnEvent.CheckSpawn event) {
+            final int cRadius = GreekFantasy.CONFIG.getPalladiumChunkRange();
+            final int cVertical = GreekFantasy.CONFIG.getPalladiumYRange() / 2; // divide by 2 to center on block
+            if (GreekFantasy.CONFIG.isPalladiumEnabled() && !event.getEntityLiving().level.isClientSide()
+                    && (event.getSpawnReason() == MobSpawnType.NATURAL
+                        || event.getSpawnReason() == MobSpawnType.REINFORCEMENT
+                        || event.getSpawnReason() == MobSpawnType.PATROL
+                        || event.getSpawnReason() == MobSpawnType.SPAWNER)
+                    && event.getWorld() instanceof ServerLevel level
+                    && event.getEntityLiving() instanceof Enemy && event.getEntityLiving().canChangeDimensions()) {
+                // determine spawn area
+                final BlockPos eventPos = new BlockPos(event.getX(), event.getY(), event.getZ());
+                final ChunkPos eventChunkPos = new ChunkPos(eventPos);
+                final ChunkPos minChunkPos = new ChunkPos(eventChunkPos.x - cRadius, eventChunkPos.z - cRadius);
+                final ChunkPos maxChunkPos = new ChunkPos(eventChunkPos.x + cRadius, eventChunkPos.z + cRadius);
+                final BlockPos minBlock = minChunkPos.getBlockAt(0, eventPos.getY() - cVertical, 0);
+                final BlockPos maxBlock = maxChunkPos.getBlockAt(15, eventPos.getY() + cVertical, 15);
+                final AABB aabb = new AABB(minBlock, maxBlock);
+
+                // search each chunk in range for a palladium
+                LevelEntityGetter<Entity> entityGetter = level.getEntities();
+                entityGetter.get(EntityTypeTest.forClass(Palladium.class), aabb, e -> {
+                    if(event.getResult() != Event.Result.DENY) {
+                        event.setResult(Event.Result.DENY);
+                    }
+                });
             }
         }
 
@@ -470,18 +539,6 @@ public final class GFEvents {
                 circe.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
                 event.getWorld().addFreshEntity(circe);
             }
-            // check if the entity is a sheep
-           /* if (event.getEntity() != null && event.getEntity().getType() == EntityType.SHEEP && event.getWorld() instanceof World) {
-                // check if the sheep has yellow wool
-                SheepEntity sheep = (SheepEntity) event.getEntity();
-                if (sheep.getColor() == DyeColor.YELLOW && (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.getGoldenRamChance()) {
-                    // spawn Golden Ram instead of sheep
-                    event.setCanceled(true);
-                    final GoldenRamEntity ram = GFRegistry.EntityReg.GOLDEN_RAM_ENTITY.create((World) event.getWorld());
-                    ram.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
-                    event.getWorld().addFreshEntity(ram);
-                }
-            }*/
         }
 
         /**
@@ -492,21 +549,21 @@ public final class GFEvents {
          */
         @SubscribeEvent
         public static void onEntityStruckByLightning(final EntityStruckByLightningEvent event) {
-            /*if (event.getEntity() instanceof LivingEntity && event.getEntity().getType() == EntityType.OCELOT
-                    && ((LivingEntity) event.getEntity()).getEffect(MobEffects.DAMAGE_BOOST) != null
-                    && event.getEntity().level.getDifficulty() != Difficulty.PEACEFUL
-                    && event.getEntity().level.random.nextFloat() * 100.0F < GreekFantasy.CONFIG.getLightningLionChance()) {
+            if (event.getEntity() instanceof LivingEntity livingEntity && livingEntity.getType() == EntityType.OCELOT
+                    && livingEntity.getEffect(MobEffects.DAMAGE_BOOST) != null
+                    && livingEntity.level.getDifficulty() != Difficulty.PEACEFUL
+                    && livingEntity.level.random.nextFloat() * 100.0F < GreekFantasy.CONFIG.NEMEAN_LION_LIGHTNING_CHANCE.get()) {
                 // remove the entity and spawn a nemean lion
-                NemeanLionEntity lion = GFRegistry.EntityReg.NEMEAN_LION_ENTITY.create(event.getEntity().level);
+                NemeanLion lion = GFRegistry.EntityReg.NEMEAN_LION.get().create(event.getEntity().level);
                 lion.copyPosition(event.getEntity());
                 if (event.getEntity().hasCustomName()) {
                     lion.setCustomName(event.getEntity().getCustomName());
                     lion.setCustomNameVisible(event.getEntity().isCustomNameVisible());
                 }
                 lion.setPersistenceRequired();
-                event.getEntity().getCommandSenderWorld().addFreshEntity(lion);
-                event.getEntity().remove();
-            }*/
+                event.getEntity().level.addFreshEntity(lion);
+                event.getEntity().discard();
+            }
         }
 
         /**
@@ -561,6 +618,34 @@ public final class GFEvents {
             }
         }
 
+
+        @SubscribeEvent
+        public static void onPlayerStartUsingItem(final LivingEntityUseItemEvent.Start event) {
+            if(!event.getEntityLiving().level.isClientSide() && event.getEntityLiving() instanceof ServerPlayer player
+                    && !event.isCanceled() && event.getItem().is(Items.TRIDENT)
+                    && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.LORD_OF_THE_SEA.get(), event.getItem()) > 0
+                    && !player.getCooldowns().isOnCooldown(Items.TRIDENT)
+                    && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseLordOfTheSea(player))) {
+                // cancel the event
+                event.setCanceled(true);
+                useLordOfTheSea(player, event.getItem());
+            }
+        }
+
+        @SubscribeEvent
+        public static void onPlayerRightClickItem(final PlayerInteractEvent.RightClickItem event) {
+            if(!event.getEntityLiving().level.isClientSide() && event.getEntityLiving() instanceof ServerPlayer player
+                    && !event.isCanceled() && event.getItemStack().is(Items.CLOCK)
+                    && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.DAYBREAK.get(), event.getItemStack()) > 0
+                    && player.level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)
+                    && player.level.getDayTime() % 24000L > 13000L
+                    && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseDaybreak(player))) {
+                // cancel the event
+                event.setCanceled(true);
+                useDaybreak(player, event.getItemStack());
+            }
+        }
+
         /**
          * Used to sync datapack data from the server to each client
          *
@@ -588,6 +673,46 @@ public final class GFEvents {
             event.addListener(GreekFantasy.QUESTS);
         }
 
+        private static void useLordOfTheSea(final ServerPlayer player, final ItemStack item) {
+            final BlockHitResult raytrace = ThunderboltItem.raytraceFromEntity(player, 48.0F);
+            // add a lightning bolt at the resulting position
+            if (raytrace.getType() != HitResult.Type.MISS) {
+                final Whirl whirl = GFRegistry.EntityReg.WHIRL.get().create(player.level);
+                final BlockPos pos = new BlockPos(raytrace.getLocation());
+                // make sure there is enough water here
+                if (player.level.getFluidState(pos).is(FluidTags.WATER)
+                        && player.level.getFluidState(pos.below((int) Math.ceil(whirl.getBbHeight()))).is(FluidTags.WATER)) {
+                    // summon a powerful whirl with limited life and mob attracting turned on
+                    whirl.moveTo(raytrace.getLocation().x(), raytrace.getLocation().y() - whirl.getBbHeight(), raytrace.getLocation().z(), 0, 0);
+                    player.level.addFreshEntity(whirl);
+                    whirl.setLimitedLife(GreekFantasy.CONFIG.LORD_OF_THE_SEA_WHIRL_LIFESPAN.get() * 20);
+                    whirl.setAttractMobs(true);
+                    whirl.playSound(SoundEvents.TRIDENT_THUNDER, 1.5F, 0.6F + whirl.getRandom().nextFloat() * 0.32F);
+                    // summon a lightning bolt
+                    LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(player.level);
+                    bolt.setSilent(true);
+                    bolt.setPos(raytrace.getLocation().x(), raytrace.getLocation().y(), raytrace.getLocation().z());
+                    bolt.setVisualOnly(true);
+                    player.level.addFreshEntity(bolt);
+                    // cooldown and item damage
+                    player.getCooldowns().addCooldown(item.getItem(), 100);
+                    if (!player.isCreative()) {
+                        item.hurtAndBreak(25, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+                    }
+                }
+            }
+        }
+
+        private static void useDaybreak(final ServerPlayer player, final ItemStack item) {
+            final ServerLevel world = player.getLevel();
+            long nextDay = world.getLevelData().getDayTime() + 24000L;
+            world.setDayTime(nextDay - nextDay % 24000L);
+            // break the item
+            player.broadcastBreakEvent(EquipmentSlot.MAINHAND);
+            if (!player.isCreative()) {
+                item.shrink(1);
+            }
+        }
     }
 
     public static final class ModHandler {

@@ -1,6 +1,14 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "item/generated",
   "textures": {
     "layer0": "greekfantasy:item/olive_salve"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "using": 1
+      },
+      "model": "greekfantasy:item/olive_salve_using"
+    }
+  ]
 }

@@ -38,11 +38,14 @@ public class GFConfig {
 
     // enchantments
     public final ForgeConfigSpec.BooleanValue BANE_OF_SERPENTS_ENABLED;
+    public final ForgeConfigSpec.BooleanValue DAYBREAK_ENABLED;
     public final ForgeConfigSpec.BooleanValue FIREFLASH_ENABLED;
     public final ForgeConfigSpec.BooleanValue FIREFLASH_DESTROYS_BLOCKS;
     private final ForgeConfigSpec.BooleanValue FLYING_ENABLED;
     private boolean isFlyingEnabled;
     public final ForgeConfigSpec.BooleanValue HUNTING_ENABLED;
+    public final ForgeConfigSpec.BooleanValue LORD_OF_THE_SEA_ENABLED;
+    public final ForgeConfigSpec.IntValue LORD_OF_THE_SEA_WHIRL_LIFESPAN;
     private final ForgeConfigSpec.BooleanValue MIRRORING_ENCHANTMENT_ENABLED;
     private boolean isMirroringEnchantmentEnabled;
     public final ForgeConfigSpec.BooleanValue SMASHING_NERF;
@@ -61,6 +64,7 @@ public class GFConfig {
     public final ForgeConfigSpec.BooleanValue GIANT_BOAR_NON_NETHER;
     public final ForgeConfigSpec.DoubleValue MEDUSA_LIGHTNING_CHANCE;
     public final ForgeConfigSpec.DoubleValue MEDUSA_SPAWN_CHANCE;
+    public final ForgeConfigSpec.DoubleValue NEMEAN_LION_LIGHTNING_CHANCE;
     public final ForgeConfigSpec.DoubleValue SHADE_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue SATYR_SHAMAN_CHANCE;
     private static final ResourceLocation SATYR_SONG_FALLBACK = new ResourceLocation(GreekFantasy.MODID, "greensleeves");
@@ -158,10 +162,13 @@ public class GFConfig {
 
         builder.push("enchantments");
         BANE_OF_SERPENTS_ENABLED = builder.define("bane_of_serpents_enabled", true);
+        DAYBREAK_ENABLED = builder.define("daybreak_enabled", true);
         FIREFLASH_ENABLED = builder.define("fireflash_enabled", true);
         FIREFLASH_DESTROYS_BLOCKS = builder.define("fireflash_destroys_blocks", true);
         FLYING_ENABLED = builder.define("flying_enabled", true);
         HUNTING_ENABLED = builder.define("hunting_enabled", true);
+        LORD_OF_THE_SEA_ENABLED = builder.define("lord_of_the_sea_enabled", true);
+        LORD_OF_THE_SEA_WHIRL_LIFESPAN = builder.defineInRange("lord_of_the_sea_whirl_lifespan", 60, 1, 1200);
         MIRRORING_ENCHANTMENT_ENABLED = builder.define("mirroring_enabled", true);
         SMASHING_NERF = builder
                 .comment("When true, Smashing applies slowness instead of stunning")
@@ -169,7 +176,7 @@ public class GFConfig {
         OVERSTEP_ENABLED = builder.define("overstep_enabled", true);
         POISONING_ENABLED = builder.define("poisoning_enabled", true);
         RAISING_ENABLED = builder.define("raising_enabled", true);
-        RAISING_SPARTI_LIFESPAN = builder.defineInRange("raising_sparti_lifespan", 120, 1, 24000);
+        RAISING_SPARTI_LIFESPAN = builder.defineInRange("raising_sparti_lifespan", 120, 1, 1200);
         SILKSTEP_ENABLED = builder.define("silkstep_enabled", true);
         builder.pop();
 
@@ -184,6 +191,9 @@ public class GFConfig {
                 .comment("Percent chance that lightning converts Gorgon to Medusa")
                 .defineInRange("medusa_lightning_chance", 95.0F, 0.0F, 100.0F);
         MEDUSA_SPAWN_CHANCE = builder.defineInRange("medusa_spawn_chance", 0.8F, 0.0F, 100.0F);
+       NEMEAN_LION_LIGHTNING_CHANCE = builder
+                .comment("Percent chance that lightning converts strengthened Ocelot to Nemean Lion")
+                .defineInRange("nemean_lion_lightning_chance", 100.0F, 0.0F, 100.0F);
         SHADE_SPAWN_CHANCE = builder.defineInRange("shade_spawn_chance", 100.0F, 0.0F, 100.0F);
         SATYR_SHAMAN_CHANCE = builder.defineInRange("satyr_shaman_chance", 24.0F, 0.0F, 100.0F);
         SATYR_SONG = builder.define("satyr_song", SATYR_SONG_FALLBACK.toString());
