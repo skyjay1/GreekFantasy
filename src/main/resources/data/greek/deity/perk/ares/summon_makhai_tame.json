@@ -1,0 +1,27 @@
+{
+    "icon": {
+        "item": "minecraft:golden_sword",
+        "color": 65535
+    },
+    "range": {
+        "deity": "greek:ares",
+        "minlevel": 2,
+        "maxlevel": 10
+    },
+    "condition": [
+        {
+            "type": "enter_combat"
+        }
+    ],
+    "action": [
+        {
+            "type": "summon",
+            "tag": {
+                "id": "greekfantasy:makhai",
+                "MakhaiTame": true
+            }
+        }
+    ],
+    "chance": 0.15,
+    "cooldown": 4000
+}

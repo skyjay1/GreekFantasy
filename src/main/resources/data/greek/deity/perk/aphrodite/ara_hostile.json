@@ -1,0 +1,21 @@
+{
+    "icon": {
+        "item": "minecraft:flint",
+        "color": 14277081
+    },
+    "range": {
+        "deity": "greek:aphrodite",
+        "minlevel": 8,
+        "maxlevel": 10
+    },
+    "action": [
+        {
+            "type": "affinity",
+            "affinity": {
+                "type": "hostile",
+                "entity": "greekfantasy:ara"
+            }
+        }
+    ],
+    "cooldown": 0
+}

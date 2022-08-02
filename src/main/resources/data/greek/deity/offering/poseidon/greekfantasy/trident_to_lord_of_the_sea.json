@@ -1,0 +1,13 @@
+{
+  "item": {
+    "id": "minecraft:trident",
+    "Count": 1
+  },
+  "trade": {
+    "id": "minecraft:trident",
+    "Count": 1
+  },
+  "trade_tag": "{ Enchantments: [{ id: \"greekfantasy:lord_of_the_sea\", lvl: 1 }] }",
+  "minlevel": 10,
+  "maxuses": 1
+}

@@ -1,0 +1,27 @@
+{
+    "icon": {
+        "item": "greekfantasy:boar_ear",
+        "color": 65535
+    },
+    "range": {
+        "deity": "greek:artemis",
+        "minlevel": -9,
+        "maxlevel": -10
+    },
+    "condition": [
+        {
+            "type": "random_tick"
+        }
+    ],
+    "action": [
+        {
+            "type": "summon",
+            "tag": {
+                "id": "greekfantasy:giant_boar"
+            },
+            "multiplier": 0
+        }
+    ],
+    "chance": 0.005,
+    "cooldown": 19000
+}

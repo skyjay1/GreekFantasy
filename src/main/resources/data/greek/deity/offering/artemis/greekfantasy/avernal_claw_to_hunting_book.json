@@ -1,0 +1,13 @@
+{
+  "item": {
+    "id": "greekfantasy:avernal_claw",
+    "Count": 1
+  },
+  "trade": {
+    "id": "minecraft:enchanted_book",
+    "Count": 1
+  },
+  "trade_tag": "{ StoredEnchantments: [{ id: \"greekfantasy:hunting\", lvl: 2 }] }",
+  "minlevel": 5,
+  "maxuses": 1
+}
