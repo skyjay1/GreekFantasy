@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 public class BagOfWindItem extends Item {
@@ -22,10 +23,6 @@ public class BagOfWindItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        // prevent the item from being used up all the way
-        if (stack.getMaxDamage() - stack.getDamageValue() <= 1) {
-            return InteractionResultHolder.fail(stack);
-        }
         // give player potion effect
         final int duration = GreekFantasy.CONFIG.BAG_OF_WIND_DURATION.get();
         player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, duration, 1));
@@ -35,12 +32,12 @@ public class BagOfWindItem extends Item {
             stack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
         }
         // play sound
-        player.playSound(SoundEvents.ELYTRA_FLYING, 1.0F, 1.0F);
+        player.playSound(SoundEvents.ELYTRA_FLYING, 0.11F, 1.0F);
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 
     @Override
     public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return toRepair.getItem() == this && toRepair.getDamageValue() < toRepair.getMaxDamage() && repair.getItem() == GFRegistry.ItemReg.AVERNAL_FEATHER.get();
+        return toRepair.getItem() == this && toRepair.getDamageValue() < toRepair.getMaxDamage() && repair.is(Items.FEATHER);
     }
 }

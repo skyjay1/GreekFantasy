@@ -51,7 +51,7 @@ public class Discus extends ThrowableItemProjectile {
     @Override
     protected void onHitEntity(EntityHitResult raytrace) {
         super.onHitEntity(raytrace);
-        final float damage = (float) (this.getDeltaMovement().horizontalDistanceSqr() * 2.2D);
+        final float damage = (float) (this.getDeltaMovement().horizontalDistanceSqr() * 3.2D);
         raytrace.getEntity().hurt(DamageSource.thrown(this, getOwner()), damage);
     }
 

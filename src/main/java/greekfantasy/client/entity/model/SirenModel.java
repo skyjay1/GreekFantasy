@@ -16,6 +16,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public class SirenModel<T extends Siren> extends HumanoidModel<T> {
 
@@ -77,6 +78,17 @@ public class SirenModel<T extends Siren> extends HumanoidModel<T> {
         this.leftArm.y += -2.0F;
         this.rightArm.x += 1.0F;
         this.rightArm.y += -2.0F;
+        // swimming animation
+        if (entity.isSwimming() || entity.isInWater()) {
+            final float tailAngle = 0.21F;
+            final float tailSpeed = 0.14F;
+            // animate tail
+            final float cosTail = Mth.cos((ageInTicks + entity.getId() * 3) * tailSpeed) * tailAngle;
+            upperTail.xRot = -0.2618F + cosTail * 0.4F;
+            middleTail.xRot = 0.5236F + cosTail * 0.6F;
+            lowerTail.xRot = 0.2618F + cosTail * 0.8F;
+            //lowerTail.xRot = cosTail * 0.8F;
+        }
     }
 
     @Override

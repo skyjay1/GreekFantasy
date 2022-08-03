@@ -66,13 +66,8 @@ public class Empusa extends Monster {
     public void aiStep() {
         super.aiStep();
         // hurt in daytime, then remove when at half health if not currently attacking
-        if (!this.level.isClientSide() && this.level.isDay() && this.hurtTime == 0 && random.nextInt(20) == 0) {
-            this.hurt(DamageSource.STARVE, 1.0F);
-            if (this.getHealth() < this.getMaxHealth() / 2.0F && this.getTarget() == null) {
-                // remove the entity without dropping loot
-                this.discard();
-                return;
-            }
+        if (!this.level.isClientSide() && this.level.isDay() && this.hurtTime == 0 && this.tickCount % 24 == 0) {
+            this.hurt(DamageSource.STARVE, 2.0F);
         }
 
         // spawn particles

@@ -347,7 +347,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
     }
 
     public void setVariant(final Variant color) {
-
+        HasHorseVariant.super.setVariant(color);
     }
 
     @Override

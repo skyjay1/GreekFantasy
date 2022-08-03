@@ -53,7 +53,8 @@ public class UnicornHornItem extends Item {
         }
         // give brief regen effect
         entityLiving.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 80, 0));
-        stack.hurtAndBreak(2, entityLiving, (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        // damage item
+        stack.hurtAndBreak(1, entityLiving, (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
         return stack;
     }
 

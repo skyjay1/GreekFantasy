@@ -241,6 +241,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
             variant = getVariantForBiome(worldIn.getBiome(this.blockPosition()));
         }
         this.setVariant(variant);
+        populateDefaultEquipmentSlots(difficultyIn);
         return data;
     }
 
@@ -282,7 +283,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
 
     @Override
     protected void populateDefaultEquipmentSlots(DifficultyInstance difficulty) {
-        float tridentChance = (this.getVariant() == Variant.OCEAN) ? 0.42F : 0.21F;
+        float tridentChance = (this.getVariant() == Variant.OCEAN) ? 0.55F : 0.31F;
         if (this.random.nextFloat() < tridentChance) {
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.TRIDENT));
         }

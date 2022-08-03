@@ -96,6 +96,7 @@ import greekfantasy.item.HellenicArmorItem;
 import greekfantasy.item.HelmOfDarknessItem;
 import greekfantasy.item.HornOfPlentyItem;
 import greekfantasy.item.InstrumentItem;
+import greekfantasy.item.IvorySwordItem;
 import greekfantasy.item.KnifeItem;
 import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.item.OliveOilItem;
@@ -659,7 +660,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> FLINT_KNIFE = ITEMS.register("flint_knife", () ->
                 new KnifeItem(GFTiers.FLINT, 3, -1.7F, -1.0F, new Item.Properties().tab(GF_TAB).stacksTo(1)));
         public static final RegistryObject<Item> IVORY_SWORD = ITEMS.register("ivory_sword", () ->
-                new SwordItem(GFTiers.IVORY, 3, -2.2F, new Item.Properties().tab(GF_TAB).stacksTo(1)));
+                new IvorySwordItem(GFTiers.IVORY, 3, -2.2F, new Item.Properties().tab(GF_TAB).stacksTo(1)));
         public static final RegistryObject<Item> DISCUS = ITEMS.register("discus", () ->
                 new DiscusItem(new Item.Properties().tab(GF_TAB).stacksTo(16)));
         public static final RegistryObject<Item> GREEK_FIRE = ITEMS.register("greek_fire", () ->
@@ -675,7 +676,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> CONCH = ITEMS.register("conch", () ->
                 new ConchItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(1)));
         public static final RegistryObject<Item> UNICORN_HORN = ITEMS.register("unicorn_horn", () ->
-                new UnicornHornItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).stacksTo(1)));
+                new UnicornHornItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).durability(44)));
         public static final RegistryObject<Item> HEART_OF_TALOS = ITEMS.register("heart_of_talos", () ->
                 new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(16)));
         public static final RegistryObject<Item> BAG_OF_WIND = ITEMS.register("bag_of_wind", () ->
