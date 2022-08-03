@@ -26,5 +26,8 @@ public class NemeanLionHideLayer<T extends LivingEntity, M extends HumanoidModel
     @Override
     protected void setPartVisibility(A modelIn, EquipmentSlot slotIn) {
         modelIn.setAllVisible(true);
+        modelIn.head.visible = false;
+        modelIn.leftLeg.visible = false;
+        modelIn.rightLeg.visible = false;
     }
 }

@@ -683,7 +683,7 @@ public final class GFEvents {
                 GreekFantasy.QUESTS.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new SQuestPacket(e.getKey(), e.getValue().get())));
             }
             // remove this when not in beta
-            event.getPlayer().displayClientMessage(new TextComponent("You are using a beta version of Greek Fantasy - do not distribute.").withStyle(ChatFormatting.AQUA), false);
+            // event.getPlayer().displayClientMessage(new TextComponent("You are using a beta version of Greek Fantasy - do not distribute.").withStyle(ChatFormatting.AQUA), false);
         }
 
         /**

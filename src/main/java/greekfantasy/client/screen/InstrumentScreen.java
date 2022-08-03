@@ -73,6 +73,7 @@ public class InstrumentScreen extends Screen {
     private int tickCount;
     private float scrollAmount;
     private boolean songsVisible;
+    private boolean isDraggingScrollbar;
 
     private Component octaveControlComponent;
     private Component songVisibilityComponent;
@@ -150,7 +151,7 @@ public class InstrumentScreen extends Screen {
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
         if (songsVisible && mouseX < this.x - RADIAL_WIDTH - SONG_RADIAL_MARGIN) {
             // attempt to scroll song menu
-            float scrollAmount = Mth.clamp(this.scrollAmount - (float) amount * (1.0F / this.songs.size()), 0.0F, 1.0F);
+            float scrollAmount = Mth.clamp(this.scrollAmount - (float) amount * (1.0F / Math.max(1, this.songs.size() - VISIBLE_SONG_COUNT)), 0.0F, 1.0F);
             setSongScrollAmount(scrollAmount);
             scrollButton.setScrollAmount(scrollAmount);
         } else {
@@ -158,6 +159,12 @@ public class InstrumentScreen extends Screen {
             setGroup((int) (this.group + amount));
         }
         return true;
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        this.isDraggingScrollbar = false;
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
@@ -183,7 +190,7 @@ public class InstrumentScreen extends Screen {
 
     private void setSongScrollAmount(final float amount) {
         this.scrollAmount = Mth.clamp(amount, 0.0F, 1.0F);
-        final int startIndex = Math.round(scrollAmount * VISIBLE_SONG_COUNT);
+        final int startIndex = Math.max(0, Math.round(scrollAmount * songs.size()) - VISIBLE_SONG_COUNT);
         for (int buttonId = 0; buttonId < VISIBLE_SONG_COUNT; buttonId++) {
             int index = buttonId + startIndex;
             this.songButtons[buttonId].setSong(this.songsVisible && index < songs.size() ? songs.get(index) : null);
@@ -278,23 +285,17 @@ public class InstrumentScreen extends Screen {
 
         private InstrumentScreen screen;
         private int scrollY;
-        private int startX;
-        private int startY;
-        private int scrollHeight;
 
         public ScrollButton(final InstrumentScreen screen, int x, int y) {
             super(x, y, SCROLL_WIDTH, VISIBLE_SONG_COUNT * SONG_HEIGHT, TextComponent.EMPTY, b -> {});
             this.screen = screen;
-            this.startX = x;
-            this.startY = y;
-            this.scrollHeight = VISIBLE_SONG_COUNT * SONG_HEIGHT - this.height;
         }
 
         @Override
         public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
             if (this.visible) {
                 // draw button background
-                int color = isHoveredOrFocused() ? BACKGROUND_HOVER_COLOR : BACKGROUND_COLOR;
+                int color = isHoveredOrFocused() || screen.isDraggingScrollbar ? BACKGROUND_HOVER_COLOR : BACKGROUND_COLOR;
                 int r = (color >> 16) & 0xFF;
                 int g = (color >> 8) & 0xFF;
                 int b = (color >> 0) & 0xFF;
@@ -309,6 +310,7 @@ public class InstrumentScreen extends Screen {
 
         @Override
         public void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
+            screen.isDraggingScrollbar = true;
             float scrollAmount = Mth.clamp((float) (mouseY - this.y) / (float) this.height, 0.0F, 1.0F);
             screen.setSongScrollAmount(scrollAmount);
             this.setScrollAmount(scrollAmount);
@@ -316,7 +318,7 @@ public class InstrumentScreen extends Screen {
 
         public void setScrollAmount(final float scrollAmount) {
             this.x = (int) screen.x - RADIAL_WIDTH - SONG_RADIAL_MARGIN - SONG_WIDTH - this.width - 2;
-            this.scrollY = this.y + (int) ((float)scrollAmount * (float)(this.height - SCROLL_HEIGHT));
+            this.scrollY = this.y + (int) (scrollAmount * (float)(this.height - SCROLL_HEIGHT));
         }
     }
 }

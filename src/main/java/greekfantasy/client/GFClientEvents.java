@@ -3,6 +3,7 @@ package greekfantasy.client;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.client.armor.HellenicArmorModel;
+import greekfantasy.client.armor.NemeanArmorModel;
 import greekfantasy.client.armor.WingedSandalsModel;
 import greekfantasy.client.blockentity.CerberusHeadBlockEntityRenderer;
 import greekfantasy.client.blockentity.GiganteHeadBlockEntityRenderer;
@@ -270,15 +271,15 @@ public final class GFClientEvents {
             // add layer renders to default model
             if (event.getSkin("default") instanceof PlayerRenderer playerRenderer) {
                 playerRenderer.addLayer(new NemeanLionHideLayer<>(playerRenderer,
-                        new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),
-                        new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
+                        new NemeanArmorModel<>(event.getEntityModels().bakeLayer(NemeanArmorModel.NEMEAN_ARMOR_MODEL_RESOURCE)),
+                        new NemeanArmorModel<>(event.getEntityModels().bakeLayer(NemeanArmorModel.NEMEAN_ARMOR_MODEL_RESOURCE))));
                 playerRenderer.addLayer(new PlayerSoulFireLayer<>(playerRenderer));
             }
             // add layer renders to slim model
             if (event.getSkin("slim") instanceof PlayerRenderer playerRenderer) {
                 playerRenderer.addLayer(new NemeanLionHideLayer<>(playerRenderer,
-                        new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_SLIM_INNER_ARMOR)),
-                        new HumanoidModel<>(event.getEntityModels().bakeLayer(ModelLayers.PLAYER_SLIM_OUTER_ARMOR))));
+                        new NemeanArmorModel<>(event.getEntityModels().bakeLayer(NemeanArmorModel.NEMEAN_ARMOR_MODEL_RESOURCE)),
+                        new NemeanArmorModel<>(event.getEntityModels().bakeLayer(NemeanArmorModel.NEMEAN_ARMOR_MODEL_RESOURCE))));
                 playerRenderer.addLayer(new PlayerSoulFireLayer<>(playerRenderer));
             }
         }
@@ -290,9 +291,9 @@ public final class GFClientEvents {
             event.registerLayerDefinition(HellenicArmorModel.HELLENIC_ARMOR_MODEL_RESOURCE, HellenicArmorModel::createBodyLayer);
             event.registerLayerDefinition(WingedSandalsModel.WINGED_SANDALS_MODEL_RESOURCE, WingedSandalsModel::createBodyLayer);
             // creature
-            event.registerLayerDefinition(AutomatonModel.AUTOMATON_MODEL_RESOURCE, AutomatonModel::createBodyLayer);
             event.registerLayerDefinition(AraModel.ARA_MODEL_RESOURCE, AraModel::createBodyLayer);
             event.registerLayerDefinition(ArachneModel.ARACHNE_MODEL_RESOURCE, ArachneModel::createBodyLayer);
+            event.registerLayerDefinition(AutomatonModel.AUTOMATON_MODEL_RESOURCE, AutomatonModel::createBodyLayer);
             event.registerLayerDefinition(BabySpiderModel.BABY_SPIDER_MODEL_RESOURCE, BabySpiderModel::createBodyLayer);
             event.registerLayerDefinition(BronzeBullModel.BULL_MODEL_RESOURCE, BronzeBullModel::createBodyLayer);
             event.registerLayerDefinition(CentaurModel.CENTAUR_MODEL_RESOURCE, CentaurModel::createBodyLayer);
@@ -317,6 +318,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(HydraHeadModel.HYDRA_HEAD_MODEL_RESOURCE, HydraHeadModel::createBodyLayer);
             event.registerLayerDefinition(MakhaiModel.MAKHAI_MODEL_RESOURCE, MakhaiModel::createBodyLayer);
             event.registerLayerDefinition(MinotaurModel.MINOTAUR_MODEL_RESOURCE, MinotaurModel::createBodyLayer);
+            event.registerLayerDefinition(NemeanArmorModel.NEMEAN_ARMOR_MODEL_RESOURCE, NemeanArmorModel::createBodyLayer);
             event.registerLayerDefinition(NemeanLionModel.NEMEAN_LION_MODEL_RESOURCE, NemeanLionModel::createBodyLayer);
             event.registerLayerDefinition(NymphModel.NYMPH_LAYER_LOCATION, NymphModel::createBodyLayer);
             event.registerLayerDefinition(OrthusModel.ORTHUS_MODEL_RESOURCE, OrthusModel::createBodyLayer);

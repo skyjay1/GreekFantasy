@@ -170,7 +170,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
@@ -237,7 +236,6 @@ import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -1457,7 +1455,7 @@ public final class GFRegistry {
         public static final RegistryObject<StructureFeature<?>> ARACHNE_PIT = STRUCTURE_FEATURES.register("arachne_pit", () ->
                 new ArachnePitFeature(JigsawConfiguration.CODEC));
 
-        private static void registerStep(final FMLClientSetupEvent event) {
+        private static void registerStep(final FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
                 StructureFeature.STEP.put(ARACHNE_PIT.get(), GenerationStep.Decoration.UNDERGROUND_STRUCTURES);
             });
@@ -1475,7 +1473,7 @@ public final class GFRegistry {
         public static StructureProcessorType<CentaurStructureProcessor> CENTAUR_PROCESSOR;
         public static StructureProcessorType<SatyrStructureProcessor> SATYR_PROCESSOR;
 
-        private static void registerStructureProcessors(final FMLClientSetupEvent event) {
+        private static void registerStructureProcessors(final FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
                 // register loc processor
                 ResourceLocation locProcessorId = new ResourceLocation(GreekFantasy.MODID, "loc");
@@ -1517,7 +1515,7 @@ public final class GFRegistry {
         public static Holder<ConfiguredFeature<TreeConfiguration, ?>> POMEGRANATE_TREE;
         public static Holder<ConfiguredFeature<RandomPatchConfiguration, ?>> REEDS;
 
-        private static void registerConfiguredFeatures(final FMLClientSetupEvent event) {
+        private static void registerConfiguredFeatures(final FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
                 GOLDEN_TREE = FeatureUtils.register("golden_tree", Feature.TREE, createGolden().build());
                 ACACIA_HARPY_NEST = FeatureUtils.register("acacia_harpy_nest", HARPY_NEST_FEATURE.get(), TreeFeatures.ACACIA.value().config());
@@ -1607,7 +1605,7 @@ public final class GFRegistry {
         public static Holder<PlacedFeature> PATCH_REEDS;
         public static Holder<PlacedFeature> PATCH_REEDS_SWAMP;
 
-        private static void registerPlacedFeatures(final FMLClientSetupEvent event) {
+        private static void registerPlacedFeatures(final FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
                 BiomeListConfigSpec spec;
                 spec = GreekFantasy.CONFIG.getFeatureConfigSpec("limestone_upper");

@@ -168,8 +168,10 @@ public class HydraHead extends Monster {
             this.setSevered();
             // create another head that is currently "severed"
             HydraHead head = getHydra().addHead(getHydra().getHeads());
-            head.setSevered();
-            level.addFreshEntity(head);
+            if(!head.isRemoved()) {
+                head.setSevered();
+                level.addFreshEntity(head);
+            }
         }
         // reset health to prevent removal
         this.setHealth(1.0F);

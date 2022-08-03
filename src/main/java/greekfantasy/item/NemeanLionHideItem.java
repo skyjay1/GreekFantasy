@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.IItemRenderProperties;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -43,5 +44,24 @@ public class NemeanLionHideItem extends ArmorItem {
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         return TEXTURE_1;
+    }
+
+    @Override
+    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer) {
+        consumer.accept(new IItemRenderProperties() {
+            private greekfantasy.client.armor.NemeanArmorModel model;
+
+            @Nullable
+            @Override
+            public net.minecraft.client.model.HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, net.minecraft.client.model.HumanoidModel<?> _default) {
+                //if (null == model) {
+                    model = new greekfantasy.client.armor.NemeanArmorModel(
+                            net.minecraft.client.Minecraft.getInstance().getEntityModels()
+                                    .bakeLayer(greekfantasy.client.armor.NemeanArmorModel.NEMEAN_ARMOR_MODEL_RESOURCE));
+                //}
+                model.copyRotations(_default);
+                return model;
+            }
+        });
     }
 }
