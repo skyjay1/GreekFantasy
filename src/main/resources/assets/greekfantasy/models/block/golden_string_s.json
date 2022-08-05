@@ -1,5 +1,6 @@
 {
 	"ambientocclusion": false,
+	"render_type": "cutout",
 	"textures": {
 		"string": "greekfantasy:block/golden_string",
 		"particle": "greekfantasy:block/golden_string"

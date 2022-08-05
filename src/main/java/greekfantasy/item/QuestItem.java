@@ -5,7 +5,6 @@ import greekfantasy.util.Quest;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -35,7 +34,7 @@ public class QuestItem extends Item {
 
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> list) {
-        if (this.allowdedIn(group)) {
+        if (this.allowedIn(group)) {
             List<ResourceLocation> questIds = new ArrayList<>();
             // add each non-disabled quest to the list
             for(Map.Entry<ResourceLocation, Optional<Quest>> entry : GreekFantasy.QUESTS.getEntries()) {
@@ -78,7 +77,7 @@ public class QuestItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
-        list.add(new TranslatableComponent("item.greekfantasy.quest.tooltip").withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable("item.greekfantasy.quest.tooltip").withStyle(ChatFormatting.GRAY));
     }
 
     @Override

@@ -8,6 +8,7 @@ import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.horse.Markings;
 import net.minecraft.world.entity.animal.horse.Variant;
@@ -47,7 +48,7 @@ public class CentaurStructureProcessor extends StructureProcessor {
         if(entityType.isPresent() && entityType.get() == GFRegistry.EntityReg.CENTAUR.get()) {
             // determine color variant
             final long seed = placementSettings.getBoundingBox().hashCode();
-            Random random = new Random(seed);
+            RandomSource random = RandomSource.create(seed);
             Variant variant = Util.getRandom(Variant.values(), random);
             Markings markings = Markings.values()[Mth.floor(Math.random() * Markings.values().length)];
             // write color variant to compound

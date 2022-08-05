@@ -12,7 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 
 public class PlayerSoulFireLayer<T extends Player> extends RenderLayer<T, PlayerModel<T>> {
 
@@ -35,7 +35,7 @@ public class PlayerSoulFireLayer<T extends Player> extends RenderLayer<T, Player
             // render fire here
             // note: packed light flag 15728640 uses world light, 15728880 uses constant/full light
             Minecraft.getInstance().getBlockRenderer().renderSingleBlock(Blocks.SOUL_FIRE.defaultBlockState(),
-                    poseStack, multiBufferSource, 15728880, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+                    poseStack, multiBufferSource, 15728880, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
             // finish rendering
             poseStack.popPose();
         }

@@ -3,6 +3,7 @@ package greekfantasy.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
@@ -19,7 +20,7 @@ public class PomegranateSaplingBlock extends SaplingBlock {
     }
 
     @Override
-    public void advanceTree(ServerLevel world, BlockPos pos, BlockState state, Random rand) {
+    public void advanceTree(ServerLevel world, BlockPos pos, BlockState state, RandomSource rand) {
         if (state.getValue(STAGE) == 0) {
             world.setBlock(pos, state.cycle(STAGE), 4);
         } else {

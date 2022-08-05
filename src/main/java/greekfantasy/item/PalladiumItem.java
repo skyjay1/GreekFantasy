@@ -45,7 +45,7 @@ public class PalladiumItem extends Item {
                     // add palladium entity and play sound
                     serverLevel.addFreshEntity(palladium);
                     world.playSound(null, palladium.getX(), palladium.getY(), palladium.getZ(), SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 0.75F, 0.8F);
-                    world.gameEvent(context.getPlayer(), GameEvent.ENTITY_PLACE, palladium);
+                    context.getPlayer().gameEvent(GameEvent.ENTITY_PLACE);
                 }
                 itemstack.shrink(1);
                 return InteractionResult.sidedSuccess(world.isClientSide);

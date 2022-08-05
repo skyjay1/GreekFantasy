@@ -1,11 +1,11 @@
 modLoader="javafml"
-loaderVersion="[40,)"
+loaderVersion="[42,)"
 license="GNU GPLv3"
 issueTrackerURL="https://github.com/skyjay1/GreekFantasy/issues"
 
 [[mods]]
     modId="greekfantasy"
-    version="18.2.0"
+    version="19.1.0"
     displayName="Greek Fantasy"
     credits=""
     authors="skyjay1"
@@ -14,13 +14,13 @@ issueTrackerURL="https://github.com/skyjay1/GreekFantasy/issues"
     [[dependencies.greekfantasy]]
         modId="forge"
         mandatory=true
-        versionRange="[40.1,)"
+        versionRange="[42,)"
         ordering="NONE"
         side="BOTH"
 
     [[dependencies.greekfantasy]]
         modId="rpggods"
         mandatory=false
-        versionRange="[18.2.0,)"
+        versionRange="[19.1.0,)"
         ordering="AFTER"
         side="BOTH"

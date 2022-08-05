@@ -3,7 +3,6 @@ package greekfantasy.item;
 import greekfantasy.GreekFantasy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -17,7 +16,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.IItemRenderProperties;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -77,8 +75,8 @@ public class HellenicArmorItem extends ArmorItem {
 
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
-        list.add(new TranslatableComponent("item.greekfantasy.hellenic_armor.tooltip.resist").withStyle(ChatFormatting.GOLD));
-        list.add(new TranslatableComponent("item.greekfantasy.hellenic_armor.tooltip.weak").withStyle(ChatFormatting.RED));
+        list.add(Component.translatable("item.greekfantasy.hellenic_armor.tooltip.resist").withStyle(ChatFormatting.GOLD));
+        list.add(Component.translatable("item.greekfantasy.hellenic_armor.tooltip.weak").withStyle(ChatFormatting.RED));
     }
 
     @Nullable
@@ -95,12 +93,12 @@ public class HellenicArmorItem extends ArmorItem {
     }
 
     @Override
-    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer) {
-        consumer.accept(new IItemRenderProperties() {
+    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+        consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
             private greekfantasy.client.armor.HellenicArmorModel model;
             @Nullable
             @Override
-            public net.minecraft.client.model.HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, net.minecraft.client.model.HumanoidModel<?> _default) {
+            public net.minecraft.client.model.HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, net.minecraft.client.model.HumanoidModel<?> _default) {
                 // lazy-load model
                 if(null == model) {
                     model = new greekfantasy.client.armor.HellenicArmorModel(

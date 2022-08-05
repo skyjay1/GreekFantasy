@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
@@ -57,14 +56,14 @@ public class Song {
      * @return an translated text component for the name
      **/
     public Component getName() {
-        return new TranslatableComponent(getNameTranslationKey());
+        return Component.translatable(getNameTranslationKey());
     }
 
     /**
      * @return an translated text component for the name
      **/
     public Component getCredits() {
-        return new TranslatableComponent(getCreditsTranslationKey()).withStyle(ChatFormatting.ITALIC);
+        return Component.translatable(getCreditsTranslationKey()).withStyle(ChatFormatting.ITALIC);
     }
 
     /**

@@ -15,7 +15,7 @@ public class OliveOilItem extends BlockItem {
     @Override
     public InteractionResult place(BlockPlaceContext blockPlaceContext) {
         // determine container item
-        ItemStack container = blockPlaceContext.getItemInHand().getContainerItem();
+        ItemStack container = blockPlaceContext.getItemInHand().getCraftingRemainingItem();
         InteractionResult result = super.place(blockPlaceContext);
         // if block was placed, give player container item
         if(result == InteractionResult.SUCCESS && blockPlaceContext.getPlayer() != null && !blockPlaceContext.getPlayer().isCreative()) {

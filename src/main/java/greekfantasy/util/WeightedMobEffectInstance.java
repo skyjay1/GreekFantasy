@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import greekfantasy.item.OliveSalveItem;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.Weight;
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.effect.MobEffect;
@@ -78,7 +79,7 @@ public class WeightedMobEffectInstance extends WeightedEntry.IntrusiveBase {
      * @return a weighted entry from the list, or null if it fails
      */
     @Nullable
-    public static <T extends WeightedEntry> T sample(final Collection<T> collection, final Random random) {
+    public static <T extends WeightedEntry> T sample(final Collection<T> collection, final RandomSource random) {
         // add all the weights
         int sum = 0;
         for(T instance : collection) {

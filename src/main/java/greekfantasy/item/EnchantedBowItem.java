@@ -3,7 +3,6 @@ package greekfantasy.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -146,7 +145,7 @@ public abstract class EnchantedBowItem extends BowItem {
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         // add the item to the group with enchantment already applied
-        if (this.allowdedIn(group)) {
+        if (this.allowedIn(group)) {
             ItemStack stack = new ItemStack(this);
             checkAndApplyBaseEnchantments(stack);
             items.add(stack);
@@ -231,8 +230,8 @@ public abstract class EnchantedBowItem extends BowItem {
         @Override
         public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
             // add multishot tooltip
-            list.add(new TranslatableComponent(Enchantments.MULTISHOT.getDescriptionId()).withStyle(ChatFormatting.AQUA)
-                    .append(" ").append(new TranslatableComponent("enchantment.level.2").withStyle(ChatFormatting.AQUA)));
+            list.add(Component.translatable(Enchantments.MULTISHOT.getDescriptionId()).withStyle(ChatFormatting.AQUA)
+                    .append(" ").append(Component.translatable("enchantment.level.2").withStyle(ChatFormatting.AQUA)));
         }
     }
 
@@ -272,8 +271,8 @@ public abstract class EnchantedBowItem extends BowItem {
         @Override
         public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
             // add multishot tooltip
-            list.add(new TranslatableComponent(Enchantments.MULTISHOT.getDescriptionId()).withStyle(ChatFormatting.AQUA)
-                    .append(" ").append(new TranslatableComponent("enchantment.level.1").withStyle(ChatFormatting.AQUA)));
+            list.add(Component.translatable(Enchantments.MULTISHOT.getDescriptionId()).withStyle(ChatFormatting.AQUA)
+                    .append(" ").append(Component.translatable("enchantment.level.1").withStyle(ChatFormatting.AQUA)));
         }
     }
 }

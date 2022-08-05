@@ -6,6 +6,7 @@ import greekfantasy.entity.Satyr;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.horse.Variant;
 import net.minecraft.world.level.LevelReader;
@@ -15,7 +16,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 import java.util.Optional;
-import java.util.Random;
 
 public class SatyrStructureProcessor extends StructureProcessor {
 
@@ -44,8 +44,8 @@ public class SatyrStructureProcessor extends StructureProcessor {
         if(entityType.isPresent() && entityType.get() == GFRegistry.EntityReg.SATYR.get()) {
             // determine color variant
             final long seed = placementSettings.getBoundingBox().hashCode();
-            Random random = new Random(seed);
-            Variant variant = Util.getRandom(net.minecraft.world.entity.animal.horse.Variant.values(), random);
+            RandomSource random = RandomSource.create(seed);
+            Variant variant = Util.getRandom(Variant.values(), random);
             // write color variant to compound
             tag.putByte(Satyr.KEY_VARIANT, (byte) variant.getId());
             // create modified entity info

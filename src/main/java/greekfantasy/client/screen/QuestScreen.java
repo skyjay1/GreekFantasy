@@ -11,7 +11,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -40,7 +39,7 @@ public class QuestScreen extends Screen {
     private List<MutableComponent> components;
 
     protected QuestScreen(int itemSlot, ItemStack itemStack) {
-        super(TextComponent.EMPTY);
+        super(Component.empty());
         this.itemSlot = itemSlot;
         this.itemStack = itemStack;
         if(itemStack.is(GFRegistry.ItemReg.QUEST.get()) && itemStack.hasTag() && itemStack.getTag().contains(QuestItem.KEY_QUEST)) {

@@ -3,7 +3,6 @@ package greekfantasy.item;
 import greekfantasy.GreekFantasy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -45,7 +44,7 @@ public class HornOfPlentyItem extends HasCraftRemainderItem {
                 }
             });
         }
-        ItemStack container = getContainerItem(itemStack);
+        ItemStack container = getCraftingRemainingItem(itemStack);
         if (!player.isCreative()) {
             itemStack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
         }
@@ -55,7 +54,7 @@ public class HornOfPlentyItem extends HasCraftRemainderItem {
 
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
-        list.add(new TranslatableComponent(getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable(getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
     }
 
     protected List<ItemStack> sampleLoot(final Player player, final ItemStack itemStack) {

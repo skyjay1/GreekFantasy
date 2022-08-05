@@ -28,7 +28,7 @@ public class SnakeskinArmorItem extends ArmorItem {
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         // add the item to the group with enchantment already applied
-        if (this.allowdedIn(group)) {
+        if (this.allowedIn(group)) {
             final ItemStack stack = new ItemStack(this);
             if (GreekFantasy.CONFIG.isPoisoningEnabled()) {
                 stack.enchant(GFRegistry.EnchantmentReg.POISONING.get(), 1);

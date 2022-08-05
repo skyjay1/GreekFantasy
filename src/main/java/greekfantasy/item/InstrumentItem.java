@@ -2,7 +2,6 @@ package greekfantasy.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -57,7 +56,7 @@ public class InstrumentItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(new TranslatableComponent("item.tooltip.right_click_instrument").withStyle(ChatFormatting.AQUA));
+        tooltip.add(Component.translatable("item.tooltip.right_click_instrument").withStyle(ChatFormatting.AQUA));
     }
 
 }

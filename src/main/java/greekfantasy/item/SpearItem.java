@@ -5,7 +5,6 @@ import greekfantasy.entity.misc.Spear;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -180,17 +179,17 @@ public class SpearItem extends TieredItem implements Vanishable {
         if (nbt.contains(KEY_MOB_EFFECT)) {
             MobEffect potion = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(nbt.getString(KEY_MOB_EFFECT)));
             int level = 1 + nbt.getInt("Amplifier");
-            tooltip.add(new TranslatableComponent(potion.getDescriptionId()).append(" ")
-                    .append(new TranslatableComponent("enchantment.level." + level))
+            tooltip.add(Component.translatable(potion.getDescriptionId()).append(" ")
+                    .append(Component.translatable("enchantment.level." + level))
                     .withStyle(ChatFormatting.GREEN));
         }
     }
 
     @Override
-    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer) {
-        consumer.accept(new net.minecraftforge.client.IItemRenderProperties() {
+    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+        consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 final ResourceLocation id = ForgeRegistries.ITEMS.getKey(SpearItem.this);
                 return greekfantasy.client.blockentity.BlockEntityRendererProvider.getSpear(id);
             }

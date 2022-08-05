@@ -3,6 +3,7 @@ package greekfantasy.entity.monster;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -45,7 +46,7 @@ public class Empusa extends Monster {
                 .add(Attributes.ATTACK_DAMAGE, 3.0D);
     }
 
-    public static boolean checkEmpusaSpawnRules(EntityType<? extends Monster> entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random rand) {
+    public static boolean checkEmpusaSpawnRules(EntityType<? extends Monster> entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, RandomSource rand) {
         return !level.getLevel().isDay() && checkMonsterSpawnRules(entityType, level, mobSpawnType, pos, rand);
     }
 

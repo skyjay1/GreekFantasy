@@ -13,8 +13,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -79,7 +77,7 @@ public class InstrumentScreen extends Screen {
     private Component songVisibilityComponent;
 
     public InstrumentScreen(int itemSlot, ItemStack itemStack) {
-        super(TextComponent.EMPTY);
+        super(Component.empty());
         if (!(itemStack.getItem() instanceof InstrumentItem)) {
             throw new IllegalArgumentException("Instrument Screen received an item that is not InstrumentItem");
         }
@@ -91,7 +89,7 @@ public class InstrumentScreen extends Screen {
         this.itemStack = itemStack;
         // create radial menu items
         for (int i = 0, n = items.length; i < n; i++) {
-            items[i] = new NoteRadialMenuItem(this, new TextComponent(NOTE_NAMES[i]), i + 1);
+            items[i] = new NoteRadialMenuItem(this, Component.literal(NOTE_NAMES[i]), i + 1);
         }
         // create song items
         this.songs = new ArrayList<>(GreekFantasy.SONGS.getKeys());
@@ -102,8 +100,8 @@ public class InstrumentScreen extends Screen {
         super.init();
         this.x = width / 2.0F;
         this.y = height / 2.0F - 9.0F;
-        octaveControlComponent = new TranslatableComponent("screen." + GreekFantasy.MODID + ".controls.octave");
-        songVisibilityComponent = new TranslatableComponent("screen." + GreekFantasy.MODID + ".controls.songs");
+        octaveControlComponent = Component.translatable("screen." + GreekFantasy.MODID + ".controls.octave");
+        songVisibilityComponent = Component.translatable("screen." + GreekFantasy.MODID + ".controls.songs");
         // add song buttons
         int songY = (int) (this.y) - (VISIBLE_SONG_COUNT * SONG_HEIGHT) / 2;
         this.songButtons = new SongButton[VISIBLE_SONG_COUNT];
@@ -222,7 +220,7 @@ public class InstrumentScreen extends Screen {
         private Component credits;
 
         public SongButton(final InstrumentScreen screen, final int x, final int y) {
-            super(x, y, SONG_WIDTH, SONG_HEIGHT, TextComponent.EMPTY, b -> {
+            super(x, y, SONG_WIDTH, SONG_HEIGHT, Component.empty(), b -> {
             });
             this.screen = screen;
             this.visible = false;
@@ -287,7 +285,7 @@ public class InstrumentScreen extends Screen {
         private int scrollY;
 
         public ScrollButton(final InstrumentScreen screen, int x, int y) {
-            super(x, y, SCROLL_WIDTH, VISIBLE_SONG_COUNT * SONG_HEIGHT, TextComponent.EMPTY, b -> {});
+            super(x, y, SCROLL_WIDTH, VISIBLE_SONG_COUNT * SONG_HEIGHT, Component.empty(), b -> {});
             this.screen = screen;
         }
 

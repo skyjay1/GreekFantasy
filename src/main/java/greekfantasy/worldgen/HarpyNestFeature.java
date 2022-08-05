@@ -5,6 +5,7 @@ import greekfantasy.GFRegistry;
 import greekfantasy.entity.monster.Harpy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -19,7 +20,6 @@ import net.minecraft.world.level.material.Material;
 import java.util.Random;
 
 public class HarpyNestFeature extends Feature<TreeConfiguration> {
-
 
     public HarpyNestFeature(final Codec<TreeConfiguration> codec) {
         super(codec);
@@ -43,7 +43,7 @@ public class HarpyNestFeature extends Feature<TreeConfiguration> {
         // unwrap config
         final ServerLevelAccessor level = context.level();
         final TreeConfiguration config = context.config();
-        final Random rand = context.random();
+        final RandomSource rand = context.random();
         // determine start position and height
         BlockPos.MutableBlockPos pos = context.origin().mutable();
         int dHeight = context.random().nextInt(3) - 1;
@@ -91,7 +91,7 @@ public class HarpyNestFeature extends Feature<TreeConfiguration> {
         // unwrap config
         final ServerLevelAccessor level = context.level();
         final TreeConfiguration config = context.config();
-        final Random rand = context.random();
+        final RandomSource rand = context.random();
         // determine start position and height
         BlockPos.MutableBlockPos pos = context.origin().mutable();
         int dHeight = context.random().nextInt(3) - 1;
@@ -179,7 +179,7 @@ public class HarpyNestFeature extends Feature<TreeConfiguration> {
                 || state.getMaterial().isReplaceable() || state.getMaterial() == Material.LEAVES));
     }
 
-    protected static void generateLeavesAround(LevelAccessor level, Random rand, BlockPos pos, BlockStateProvider leaf, int radius) {
+    protected static void generateLeavesAround(LevelAccessor level, RandomSource rand, BlockPos pos, BlockStateProvider leaf, int radius) {
         BlockPos.MutableBlockPos p = pos.mutable();
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
@@ -203,7 +203,7 @@ public class HarpyNestFeature extends Feature<TreeConfiguration> {
         }
     }
 
-    protected static void addHarpy(final ServerLevelAccessor level, final Random rand, final BlockPos pos) {
+    protected static void addHarpy(final ServerLevelAccessor level, final RandomSource rand, final BlockPos pos) {
         // spawn a harpy
         final Harpy entity = GFRegistry.EntityReg.HARPY.get().create(level.getLevel());
         entity.moveTo(pos.getX() + rand.nextDouble(), pos.getY() + 0.5D, pos.getZ() + rand.nextDouble(), 0, 0);
@@ -211,7 +211,7 @@ public class HarpyNestFeature extends Feature<TreeConfiguration> {
         level.addFreshEntity(entity);
     }
 
-    protected static boolean shouldGenerateLeaf(final int x, final int z, final int radius, final Random rand) {
+    protected static boolean shouldGenerateLeaf(final int x, final int z, final int radius, final RandomSource rand) {
         return !(Math.abs(x) == radius && Math.abs(z) == radius && rand.nextInt(2) == 0);
     }
 }

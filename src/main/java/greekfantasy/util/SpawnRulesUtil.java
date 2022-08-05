@@ -2,6 +2,7 @@ package greekfantasy.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -26,7 +27,7 @@ public class SpawnRulesUtil {
      * @param rand the random instance
      * @return true if the difficulty is not peaceful and it is dark enough for a monster to spawn
      */
-    public static boolean checkMonsterSpawnRules(EntityType<? extends PathfinderMob> entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random rand) {
+    public static boolean checkMonsterSpawnRules(EntityType<? extends PathfinderMob> entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, RandomSource rand) {
         return level.getDifficulty() != Difficulty.PEACEFUL && Monster.isDarkEnoughToSpawn(level, pos, rand) && Mob.checkMobSpawnRules(entityType, level, mobSpawnType, pos, rand);
     }
 
@@ -39,7 +40,7 @@ public class SpawnRulesUtil {
      * @param rand the random instance
      * @return true if the difficulty is not peaceful
      */
-    public static boolean checkAnyLightMonsterSpawnRules(EntityType<? extends PathfinderMob> entityType, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random rand) {
+    public static boolean checkAnyLightMonsterSpawnRules(EntityType<? extends PathfinderMob> entityType, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, RandomSource rand) {
         return level.getDifficulty() != Difficulty.PEACEFUL && Mob.checkMobSpawnRules(entityType, level, mobSpawnType, pos, rand);
     }
 
@@ -52,7 +53,7 @@ public class SpawnRulesUtil {
      * @param rand the random instance
      * @return true if the position is in water and deep enough
      */
-    public static boolean checkWaterMobSpawnRules(EntityType<? extends PathfinderMob> entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random rand) {
+    public static boolean checkWaterMobSpawnRules(EntityType<? extends PathfinderMob> entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, RandomSource rand) {
         if (!level.getFluidState(pos.below()).is(FluidTags.WATER)) {
             return false;
         } else {
@@ -70,7 +71,7 @@ public class SpawnRulesUtil {
      * @param rand the random instance
      * @return true if the position is in water and between 0 and 13 blocks below sea level
      */
-    public static boolean checkSurfaceWaterMobSpawnRules(EntityType<? extends PathfinderMob> entityType, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random rand) {
+    public static boolean checkSurfaceWaterMobSpawnRules(EntityType<? extends PathfinderMob> entityType, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, RandomSource rand) {
         int seaLevel = level.getSeaLevel();
         int belowSeaLevel = seaLevel - 13;
         return pos.getY() >= belowSeaLevel && pos.getY() <= seaLevel && level.getFluidState(pos.below()).is(FluidTags.WATER) && level.getBlockState(pos.above()).is(Blocks.WATER);
@@ -85,7 +86,7 @@ public class SpawnRulesUtil {
      * @param rand the random instance
      * @return true if the difficulty is not peaceful and the position is in water and deep enough
      */
-    public static boolean checkWaterMonsterSpawnRules(EntityType<? extends PathfinderMob> entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random rand) {
+    public static boolean checkWaterMonsterSpawnRules(EntityType<? extends PathfinderMob> entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, RandomSource rand) {
         return level.getDifficulty() != Difficulty.PEACEFUL && checkWaterMobSpawnRules(entityType, level, mobSpawnType, pos, rand);
     }
 

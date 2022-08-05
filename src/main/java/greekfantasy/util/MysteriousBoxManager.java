@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerFunctionManager;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,7 +33,7 @@ public class MysteriousBoxManager {
         });
     }
 
-    private static Optional<CommandFunction> getRandomFunction(final ServerFunctionManager manager, final Random rand) {
+    private static Optional<CommandFunction> getRandomFunction(final ServerFunctionManager manager, final RandomSource rand) {
         // load functions the first time this is called
         if (functions.isEmpty()) {
             loadFunctions(manager);

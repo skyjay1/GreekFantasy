@@ -13,9 +13,9 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
 public class OliveTreeFeature extends Feature<TreeConfiguration> {
 
@@ -36,7 +36,7 @@ public class OliveTreeFeature extends Feature<TreeConfiguration> {
         Rotation rotation = Rotation.getRandom(context.random());
 
         // template for tree
-        final StructureManager manager = context.level().getLevel().getStructureManager();
+        final StructureTemplateManager manager = context.level().getLevel().getStructureManager();
         final StructureTemplate template = manager.getOrCreate(Util.getRandom(OLIVE_TREES, context.random()));
 
         // position for tree

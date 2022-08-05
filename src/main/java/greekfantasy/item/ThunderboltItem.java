@@ -3,7 +3,7 @@ package greekfantasy.item;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.integration.RGCompat;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -37,7 +37,7 @@ public class ThunderboltItem extends Item {
         }
         // check for config settings and/or rain
         if (!level.isRaining() && !level.isThundering()) {
-            player.displayClientMessage(new TranslatableComponent(getDescriptionId() + ".use.deny.rain"), true);
+            player.displayClientMessage(Component.translatable(getDescriptionId() + ".use.deny.rain"), true);
             return InteractionResultHolder.fail(stack);
         }
 

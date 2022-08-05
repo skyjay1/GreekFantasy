@@ -1,20 +1,11 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-        jcenter()
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7.32'
-    }
+plugins {
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
-apply plugin: 'net.minecraftforge.gradle'
+
 apply plugin: 'org.spongepowered.mixin'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
 version = project.mod_version
 group = project.maven_group // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -104,8 +95,8 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:rpggods-${project.rpggods_project}:${project.rpggods_file}")
 
     // JEI
-	compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
-	runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+	compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+	runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 
 }
 // This block of code expands all the gradle properties in the specified resource targets.
@@ -152,18 +143,15 @@ jar {
 }
 
 // Example configuration to allow publishing using the maven-publish task
-// we define a custom artifact that is sourced from the reobfJar output task
-// and then declare that to be published
-// Note you'll need to add a repository here
-def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile) {
-    type 'jar'
-    builtBy 'reobfJar'
-}
+// This is the preferred method to reobfuscate your jar file
+jar.finalizedBy('reobfJar')
+// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
+//publish.dependsOn('reobfJar')
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact reobfArtifact
+            artifact jar
         }
     }
     repositories {
@@ -175,22 +163,6 @@ publishing {
 
 javadoc {
   failOnError = false
-}
-
-task deobfJar(type: Jar, dependsOn: 'jar') {
-    from "build/source/main"
-    classifier "deobf"
-}
-artifacts {
-    archives deobfJar
-}
-
-task javadocJar(type: Jar, dependsOn: 'javadoc') {
-    from "build/docs/javadoc"
-    classifier "javadoc"
-}
-artifacts {
-    archives javadocJar
 }
 
 tasks.withType(JavaCompile).configureEach {

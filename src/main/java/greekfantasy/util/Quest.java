@@ -7,15 +7,15 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.item.QuestItem;
 import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.compress.utils.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Quest {
 
@@ -61,7 +61,7 @@ public class Quest {
      * @return a new text component for the quest description
      */
     public MutableComponent getDescription() {
-        return new TranslatableComponent(getDescriptionId());
+        return Component.translatable(getDescriptionId());
     }
 
     /**
@@ -70,7 +70,7 @@ public class Quest {
     public List<MutableComponent> getComponents() {
         List<MutableComponent> list = new ArrayList<>();
         for(String id : getComponentsIds()) {
-            list.add(new TranslatableComponent(id));
+            list.add(Component.translatable(id));
         }
         return list;
     }
@@ -88,7 +88,7 @@ public class Quest {
      * @param rand a random instance
      * @return the random quest ID, or "empty" if it failed
      */
-    public static ResourceLocation getRandomQuestId(final Random rand) {
+    public static ResourceLocation getRandomQuestId(final RandomSource rand) {
         ResourceLocation[] keys = GreekFantasy.QUESTS.getKeys().toArray(new ResourceLocation[0]);
         // attempt to locate a non-disabled quest
         for(int attempts = 0; attempts < 10; attempts++) {

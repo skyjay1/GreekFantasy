@@ -7,8 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -62,11 +61,11 @@ public class OliveSalveItem extends Item {
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
         MobEffect primaryEffect = getPrimaryEffect(itemStack);
         if (primaryEffect != null) {
-            list.add(new TranslatableComponent(this.getDescriptionId() + ".tooltip",
-                    new TranslatableComponent(primaryEffect.getDescriptionId()))
+            list.add(Component.translatable(this.getDescriptionId() + ".tooltip",
+                    Component.translatable(primaryEffect.getDescriptionId()))
                     .withStyle(ChatFormatting.BLUE));
         } else {
-            list.add(new TranslatableComponent("effect.none").withStyle(ChatFormatting.BLUE));
+            list.add(Component.translatable("effect.none").withStyle(ChatFormatting.BLUE));
         }
     }
 
@@ -87,7 +86,7 @@ public class OliveSalveItem extends Item {
         return WeightedMobEffectInstance.fromTag(itemStack.getTag().getCompound(KEY_USE_EFFECT)).createMobEffectInstance();
     }
 
-    private List<MobEffectInstance> getBonusEffectInstances(final ItemStack itemStack, final int rolls, final Random random) {
+    private List<MobEffectInstance> getBonusEffectInstances(final ItemStack itemStack, final int rolls, final RandomSource random) {
         if (!itemStack.hasTag() || !itemStack.getTag().contains(KEY_BONUS_EFFECTS)) {
             return List.of();
         }

@@ -43,10 +43,10 @@ public class GiganteHeadItem extends BlockItem implements Wearable {
     }
 
     @Override
-    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer) {
-        consumer.accept(new net.minecraftforge.client.IItemRenderProperties() {
+    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+        consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
             @Override
-            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 return greekfantasy.client.blockentity.BlockEntityRendererProvider.getGiganteHead();
             }
         });

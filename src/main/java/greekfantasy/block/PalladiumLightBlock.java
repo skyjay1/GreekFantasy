@@ -4,6 +4,7 @@ import greekfantasy.entity.Palladium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -32,7 +33,7 @@ public class PalladiumLightBlock extends LightBlock {
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel level, BlockPos pos, Random rand) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rand) {
         super.tick(state, level, pos, rand);
         level.scheduleTick(pos, this, 9);
         if (state.getValue(BlockStateProperties.WATERLOGGED)) {

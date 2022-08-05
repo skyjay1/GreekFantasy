@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementFilter;
@@ -24,13 +25,15 @@ public class DimensionFilter extends PlacementFilter {
         return INSTANCE;
     }
 
-    protected boolean shouldPlace(PlacementContext context, Random rand, BlockPos pos) {
+    @Override
+    protected boolean shouldPlace(PlacementContext context, RandomSource rand, BlockPos pos) {
         PlacedFeature placedfeature = context.topFeature().orElseThrow(() -> {
             return new IllegalStateException("Tried to dimension check an unregistered feature");
         });
         return GreekFantasy.CONFIG.featureMatchesDimension(context.getLevel().getLevel());
     }
 
+    @Override
     public PlacementModifierType<?> type() {
         return GFRegistry.PlacementTypeReg.DIMENSION_FILTER.get();
     }

@@ -1,6 +1,7 @@
 package greekfantasy;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.serialization.Codec;
 import greekfantasy.block.CerberusHeadBlock;
 import greekfantasy.block.GoldenStringBlock;
 import greekfantasy.block.MobHeadBlock;
@@ -122,7 +123,6 @@ import greekfantasy.util.QuestLootModifier;
 import greekfantasy.util.ReplaceDropsLootModifier;
 import greekfantasy.util.SalveRecipe;
 import greekfantasy.util.SpawnRulesUtil;
-import greekfantasy.worldgen.ArachnePitFeature;
 import greekfantasy.worldgen.BiomeListConfigSpec;
 import greekfantasy.worldgen.CentaurStructureProcessor;
 import greekfantasy.worldgen.DimensionFilter;
@@ -146,6 +146,7 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -203,9 +204,7 @@ import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.JigsawConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
@@ -233,9 +232,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -257,14 +255,13 @@ public final class GFRegistry {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     private static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(ForgeRegistries.POTIONS, MODID);
     private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, MODID);
-    private static final DeferredRegister<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS, MODID);
+    private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     private static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MODID);
-    private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
-    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, MODID);
-    private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, MODID);
+    private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
-    private static final DeferredRegister<StructureFeature<?>> STRUCTURE_FEATURES = DeferredRegister.create(Registry.STRUCTURE_FEATURE_REGISTRY, MODID);
+    private static final DeferredRegister<Feature<?>> STRUCTURE_FEATURES = DeferredRegister.create(Registry.FEATURE_REGISTRY, MODID);
     private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registry.PLACEMENT_MODIFIERS.key(), MODID);
     private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
 
@@ -278,7 +275,6 @@ public final class GFRegistry {
         EntityReg.register();
         BlockEntityReg.register();
         RecipeReg.register();
-        MenuReg.register();
         ParticleReg.register();
         StructureProcessorReg.register();
         FeatureReg.register();
@@ -696,7 +692,7 @@ public final class GFRegistry {
                         return true;
                     }
                 });
-        private static final BannerPattern SPIDER_PATTERN = BannerPattern.create("greekfantasy_spider", "greekfantasy_spider", "greekfantasy_spider", true);
+        public static final TagKey<BannerPattern> SPIDER_PATTERN = TagKey.create(Registry.BANNER_PATTERN_REGISTRY, new ResourceLocation(GreekFantasy.MODID, "pattern_item/spider"));
         public static final RegistryObject<Item> SPIDER_BANNER_PATTERN = ITEMS.register("spider_banner_pattern", () ->
                 new BannerPatternItem(SPIDER_PATTERN, new Item.Properties().tab(GF_TAB).stacksTo(1).rarity(Rarity.RARE)));
 
@@ -1408,12 +1404,12 @@ public final class GFRegistry {
             LOOT_MODIFIER_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
 
-        public static final RegistryObject<ReplaceDropsLootModifier.Serializer> REPLACE_DROPS_MODIFIER = LOOT_MODIFIER_SERIALIZERS.register(
-                "replace_drops", () -> new ReplaceDropsLootModifier.Serializer());
-        public static final RegistryObject<BronzeScrapLootModifier.Serializer> BRONZE_SCRAP_MODIFIER = LOOT_MODIFIER_SERIALIZERS.register(
-                "bronze_scrap", () -> new BronzeScrapLootModifier.Serializer());
-        public static final RegistryObject<QuestLootModifier.Serializer> QUEST_MODIFIER = LOOT_MODIFIER_SERIALIZERS.register(
-                "quest", () -> new QuestLootModifier.Serializer());
+        public static final RegistryObject<Codec<ReplaceDropsLootModifier>> REPLACE_DROPS_MODIFIER = LOOT_MODIFIER_SERIALIZERS.register(
+                "replace_drops", ReplaceDropsLootModifier.CODEC_SUPPLIER);
+        public static final RegistryObject<Codec<BronzeScrapLootModifier>> BRONZE_SCRAP_MODIFIER = LOOT_MODIFIER_SERIALIZERS.register(
+                "bronze_scrap", BronzeScrapLootModifier.CODEC_SUPPLIER);
+        public static final RegistryObject<Codec<QuestLootModifier>> QUEST_MODIFIER = LOOT_MODIFIER_SERIALIZERS.register(
+                "quest", QuestLootModifier.CODEC_SUPPLIER);
 
     }
 
@@ -1425,14 +1421,6 @@ public final class GFRegistry {
 
         public static final RegistryObject<RecipeSerializer> OLIVE_SALVE = RECIPE_SERIALIZERS.register(SalveRecipe.Serializer.CATEGORY, () ->
                 new SalveRecipe.Serializer());
-    }
-
-    public static final class MenuReg {
-
-        public static void register() {
-            MENU_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        }
-
     }
 
     public static final class ParticleReg {
@@ -1449,17 +1437,6 @@ public final class GFRegistry {
 
         public static void register() {
             STRUCTURE_FEATURES.register(FMLJavaModLoadingContext.get().getModEventBus());
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(StructureFeatureReg::registerStep);
-        }
-
-        public static final RegistryObject<StructureFeature<?>> ARACHNE_PIT = STRUCTURE_FEATURES.register("arachne_pit", () ->
-                new ArachnePitFeature(JigsawConfiguration.CODEC));
-
-        private static void registerStep(final FMLCommonSetupEvent event) {
-            event.enqueueWork(() -> {
-                StructureFeature.STEP.put(ARACHNE_PIT.get(), GenerationStep.Decoration.UNDERGROUND_STRUCTURES);
-            });
-
         }
     }
 
@@ -1541,11 +1518,11 @@ public final class GFRegistry {
                                                 BlockPredicate.replaceable(new BlockPos(0, 1, 0)),
                                                 BlockPredicate.hasSturdyFace(new BlockPos(0, -1, 0), Direction.UP),
                                                 BlockPredicate.anyOf(
-                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), BlockPos.ZERO),
-                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(1, -1, 0)),
-                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(-1, -1, 0)),
-                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, 1)),
-                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, -1))))
+                                                        BlockPredicate.matchesFluids(BlockPos.ZERO, Fluids.WATER, Fluids.FLOWING_WATER),
+                                                        BlockPredicate.matchesFluids(new BlockPos(1, -1, 0), Fluids.WATER, Fluids.FLOWING_WATER),
+                                                        BlockPredicate.matchesFluids(new BlockPos(-1, -1, 0), Fluids.WATER, Fluids.FLOWING_WATER),
+                                                        BlockPredicate.matchesFluids(new BlockPos(0, -1, 1), Fluids.WATER, Fluids.FLOWING_WATER),
+                                                        BlockPredicate.matchesFluids(new BlockPos(0, -1, -1), Fluids.WATER, Fluids.FLOWING_WATER)))
                                         )
                                 )
                         )

@@ -1,12 +1,10 @@
 package greekfantasy.blockentity;
 
 import greekfantasy.GFRegistry;
-import mezz.jei.plugins.vanilla.ingredients.item.ItemStackHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
@@ -143,7 +141,7 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
     }
 
     protected Component getDefaultName() {
-        return new TranslatableComponent("container.vase");
+        return Component.translatable("container.vase");
     }
 
     @Override

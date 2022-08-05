@@ -1,40 +1,51 @@
 package greekfantasy.util;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
-import greekfantasy.GreekFantasy;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class QuestLootModifier extends LootModifier {
 
+    public static final Supplier<Codec<QuestLootModifier>> CODEC_SUPPLIER = Suppliers.memoize(() -> RecordCodecBuilder.create(inst ->
+            codecStart(inst)
+                    .and(Codec.STRING.listOf().fieldOf("paths").forGetter(QuestLootModifier::getPaths))
+                    .and(IntProvider.CODEC.fieldOf("count").forGetter(QuestLootModifier::getCount))
+                    .apply(inst, QuestLootModifier::new)));
+
     private final List<String> paths;
-    private final UniformInt count;
+    private final IntProvider count;
 
     protected QuestLootModifier(final LootItemCondition[] conditionsIn, final List<String> paths,
-                                final int min, final int max) {
+                                final IntProvider count) {
         super(conditionsIn);
         this.paths = ImmutableList.copyOf(paths);
-        this.count = UniformInt.of(min, max);
+        this.count = count;
+    }
+
+    public List<String> getPaths() {
+        return paths;
+    }
+
+    public IntProvider getCount() {
+        return count;
     }
 
     @Nonnull
     @Override
-    protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
+    protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         ResourceLocation lootTable = context.getQueriedLootTableId();
         boolean matchesPath = false;
         // iterate over each path to check if this modifier can apply
@@ -56,44 +67,8 @@ public class QuestLootModifier extends LootModifier {
         return generatedLoot;
     }
 
-    public static class Serializer extends GlobalLootModifierSerializer<QuestLootModifier> {
-
-        private static final String PATHS = "paths";
-        private static final String MIN = "min";
-        private static final String MAX = "max";
-
-        private final Gson GSON;
-
-        public Serializer() {
-            this.GSON = new GsonBuilder().create();
-        }
-
-        @Override
-        public QuestLootModifier read(ResourceLocation name, JsonObject object, LootItemCondition[] conditionsIn) {
-            List<String> paths = Codec.STRING.listOf().parse(JsonOps.INSTANCE, object.get(PATHS))
-                    .resultOrPartial(s -> GreekFantasy.LOGGER.error("Failed to parse '" + PATHS + "' in loot modifier for input: " + s))
-                    .orElse(List.of());
-
-            int min = object.get(MIN).getAsInt();
-            int max = object.get(MAX).getAsInt();
-
-            return new QuestLootModifier(conditionsIn, paths, min, max);
-        }
-
-        @Override
-        public JsonObject write(QuestLootModifier instance) {
-            JsonObject json = makeConditions(instance.conditions);
-
-            json.add(PATHS, Codec.STRING.listOf().encodeStart(JsonOps.INSTANCE, instance.paths)
-                    .resultOrPartial(s -> GreekFantasy.LOGGER.error("Failed to write '" + PATHS + "' in loot modifier for input: " + s))
-                    .orElse(new JsonArray()));
-
-            json.add(MIN, new JsonPrimitive(instance.count.getMinValue()));
-            json.add(MAX, new JsonPrimitive(instance.count.getMaxValue()));
-
-            return json;
-        }
-
-
+    @Override
+    public Codec<? extends IGlobalLootModifier> codec() {
+        return CODEC_SUPPLIER.get();
     }
 }

@@ -23,14 +23,14 @@ public class HasCraftRemainderItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         InteractionResultHolder<ItemStack> result = super.use(level, player, hand);
         if (result.getObject().isEmpty()) {
-            return new InteractionResultHolder<>(result.getResult(), getContainerItem(result.getObject()));
+            return new InteractionResultHolder<>(result.getResult(), getCraftingRemainingItem(result.getObject()));
         }
         return result;
     }
 
     @Override
     public ItemStack finishUsingItem(ItemStack item, Level level, LivingEntity entity) {
-        ItemStack container = item.getContainerItem();
+        ItemStack container = item.getCraftingRemainingItem();
         ItemStack result = super.finishUsingItem(item, level, entity);
         // replace with container item
         if (result.isEmpty()) {
@@ -43,12 +43,12 @@ public class HasCraftRemainderItem extends Item {
     }
 
     @Override
-    public boolean hasContainerItem(ItemStack stack) {
+    public boolean hasCraftingRemainingItem(ItemStack stack) {
         return true;
     }
 
     @Override
-    public ItemStack getContainerItem(ItemStack itemStack) {
+    public ItemStack getCraftingRemainingItem(ItemStack itemStack) {
         return new ItemStack(craftRemainderSupplier.get());
     }
 }

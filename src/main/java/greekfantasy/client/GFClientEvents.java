@@ -102,9 +102,7 @@ import greekfantasy.client.particle.GorgonParticle;
 import greekfantasy.entity.Pegasus;
 import greekfantasy.item.WingedSandalsItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.TridentModel;
-import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -117,18 +115,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -136,8 +132,6 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-
-import java.util.UUID;
 
 public final class GFClientEvents {
 
@@ -168,7 +162,7 @@ public final class GFClientEvents {
                 if (null == pigRenderer) {
                     Minecraft mc = Minecraft.getInstance();
                     EntityRendererProvider.Context context = new EntityRendererProvider.Context(mc.getEntityRenderDispatcher(),
-                            mc.getItemRenderer(), mc.getResourceManager(), mc.getEntityModels(), mc.font);
+                            mc.getItemRenderer(), mc.getBlockRenderer(), mc.gameRenderer.itemInHandRenderer, mc.getResourceManager(), mc.getEntityModels(), mc.font);
                     pigRenderer = new FakePigRenderer<>(context);
                 }
                 // render pig
@@ -249,7 +243,7 @@ public final class GFClientEvents {
                     player.autoJumpEnabled = false;
                 } else {
                     // restore autojump value from game options
-                    player.autoJumpEnabled = mc.options.autoJump;
+                    player.autoJumpEnabled = mc.options.autoJump().get();
                 }
             }
         }
@@ -261,8 +255,6 @@ public final class GFClientEvents {
 
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            event.enqueueWork(ModHandler::registerRenderLayers);
-            event.enqueueWork(ModHandler::registerContainerRenders);
             event.enqueueWork(ModHandler::registerModelProperties);
         }
 
@@ -409,12 +401,10 @@ public final class GFClientEvents {
          * @param event the ColorHandlerEvent (Block)
          **/
         @SubscribeEvent
-        public static void registerBlockColors(final ColorHandlerEvent.Block event) {
-            event.getBlockColors().register(
-                    (BlockState stateIn, BlockAndTintGetter level, BlockPos pos, int color) -> 0xD8E3D0,
+        public static void registerBlockColors(final RegisterColorHandlersEvent.Block event) {
+            event.register((BlockState stateIn, BlockAndTintGetter level, BlockPos pos, int color) -> 0xD8E3D0,
                     RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "olive_leaves"), ForgeRegistries.BLOCKS).get());
-            event.getBlockColors().register(
-                    (BlockState stateIn, BlockAndTintGetter level, BlockPos pos, int color) -> 0x80f66b,
+            event.register((BlockState stateIn, BlockAndTintGetter level, BlockPos pos, int color) -> 0x80f66b,
                     RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "golden_leaves"), ForgeRegistries.BLOCKS).get());
         }
 
@@ -425,47 +415,16 @@ public final class GFClientEvents {
          * @param event the ColorHandlerEvent (Item)
          **/
         @SubscribeEvent
-        public static void registerItemColors(final ColorHandlerEvent.Item event) {
-            event.getItemColors().register((ItemStack item, int i) -> 0xD8E3D0,
+        public static void registerItemColors(final RegisterColorHandlersEvent.Item event) {
+            event.register((ItemStack item, int i) -> 0xD8E3D0,
                     RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "olive_leaves"), ForgeRegistries.ITEMS).get());
-            event.getItemColors().register((ItemStack item, int i) -> 0x80f66b,
+            event.register((ItemStack item, int i) -> 0x80f66b,
                     RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "golden_leaves"), ForgeRegistries.ITEMS).get());
         }
 
         @SubscribeEvent
-        public static void registerParticleProviders(final ParticleFactoryRegisterEvent event) {
-            Minecraft.getInstance().particleEngine.register(GFRegistry.ParticleReg.GORGON.get(), new GorgonParticle.Provider());
-        }
-
-        private static void registerRenderLayers() {
-            // cutout mipped
-            registerRenderLayer("olive_leaves", RenderType.cutoutMipped());
-            registerRenderLayer("pomegranate_leaves", RenderType.cutoutMipped());
-            registerRenderLayer("golden_leaves", RenderType.cutoutMipped());
-            // cutout
-            registerCutout("golden_sapling");
-            registerCutout("golden_string");
-            registerCutout("olive_door");
-            registerCutout("olive_sapling");
-            registerCutout("olive_oil");
-            registerCutout("olive_trapdoor");
-            registerCutout("pomegranate_door");
-            registerCutout("pomegranate_sapling");
-            registerCutout("pomegranate_trapdoor");
-            registerCutout("reeds");
-            registerCutout("wild_rose");
-        }
-
-        private static void registerCutout(final String blockName) {
-            registerRenderLayer(blockName, RenderType.cutout());
-        }
-
-        private static void registerRenderLayer(final String blockName, RenderType renderType) {
-            ItemBlockRenderTypes.setRenderLayer(RegistryObject.create(new ResourceLocation(MODID, blockName), ForgeRegistries.BLOCKS).get(), renderType);
-        }
-
-        private static void registerContainerRenders() {
-
+        public static void registerParticleProviders(final RegisterParticleProvidersEvent event) {
+            event.register(GFRegistry.ParticleReg.GORGON.get(), new GorgonParticle.Provider());
         }
 
         private static void registerModelProperties() {

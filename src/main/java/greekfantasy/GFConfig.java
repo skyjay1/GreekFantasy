@@ -125,16 +125,16 @@ public class GFConfig {
 
     @SuppressWarnings("ConstantConditions")
     private static final String[] curseOfCirceWhitelistDefault = {
-            ForgeRegistries.ENTITIES.getKey(EntityType.PLAYER).toString(),
-            ForgeRegistries.ENTITIES.getKey(EntityType.VILLAGER).toString(),
-            ForgeRegistries.ENTITIES.getKey(EntityType.ZOMBIE).toString(),
-            ForgeRegistries.ENTITIES.getKey(EntityType.ZOMBIE_VILLAGER).toString(),
-            ForgeRegistries.ENTITIES.getKey(EntityType.HUSK).toString(),
-            ForgeRegistries.ENTITIES.getKey(EntityType.VINDICATOR).toString(),
-            ForgeRegistries.ENTITIES.getKey(EntityType.WANDERING_TRADER).toString(),
-            ForgeRegistries.ENTITIES.getKey(EntityType.ILLUSIONER).toString(),
-            ForgeRegistries.ENTITIES.getKey(EntityType.PILLAGER).toString(),
-            ForgeRegistries.ENTITIES.getKey(EntityType.WITCH).toString(),
+            ForgeRegistries.ENTITY_TYPES.getKey(EntityType.PLAYER).toString(),
+            ForgeRegistries.ENTITY_TYPES.getKey(EntityType.VILLAGER).toString(),
+            ForgeRegistries.ENTITY_TYPES.getKey(EntityType.ZOMBIE).toString(),
+            ForgeRegistries.ENTITY_TYPES.getKey(EntityType.ZOMBIE_VILLAGER).toString(),
+            ForgeRegistries.ENTITY_TYPES.getKey(EntityType.HUSK).toString(),
+            ForgeRegistries.ENTITY_TYPES.getKey(EntityType.VINDICATOR).toString(),
+            ForgeRegistries.ENTITY_TYPES.getKey(EntityType.WANDERING_TRADER).toString(),
+            ForgeRegistries.ENTITY_TYPES.getKey(EntityType.ILLUSIONER).toString(),
+            ForgeRegistries.ENTITY_TYPES.getKey(EntityType.PILLAGER).toString(),
+            ForgeRegistries.ENTITY_TYPES.getKey(EntityType.WITCH).toString(),
             new ResourceLocation(GreekFantasy.MODID, "ara").toString(),
             new ResourceLocation(GreekFantasy.MODID, "dryad").toString(),
             new ResourceLocation(GreekFantasy.MODID, "lampad").toString(),
@@ -420,7 +420,7 @@ public class GFConfig {
     }
 
     public boolean isCurseOfCirceApplicable(@NonNull final LivingEntity entity) {
-        ResourceLocation type = ForgeRegistries.ENTITIES.getKey(entity.getType());
+        ResourceLocation type = ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
         return curseOfCirceWhitelist.contains(type.toString())
                 || curseOfCirceWhitelist.contains(type.getNamespace() + ":" + WILDCARD);
     }

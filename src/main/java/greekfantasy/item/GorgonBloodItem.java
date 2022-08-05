@@ -2,7 +2,6 @@ package greekfantasy.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -64,7 +63,7 @@ public class GorgonBloodItem extends Item {
 
     @Override
     public ItemStack finishUsingItem(ItemStack item, Level level, LivingEntity entity) {
-        ItemStack container = item.getContainerItem();
+        ItemStack container = item.getCraftingRemainingItem();
         ItemStack result = super.finishUsingItem(item, level, entity);
         // replace with container item
         if (result.isEmpty()) {
@@ -74,13 +73,13 @@ public class GorgonBloodItem extends Item {
             player.getInventory().add(container);
         }
 
-        level.gameEvent(entity, GameEvent.DRINKING_FINISH, entity.eyeBlockPosition());
+        entity.gameEvent(GameEvent.DRINK);
         return result;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(new TranslatableComponent(getDescriptionId() + ".tooltip.heal").withStyle(ChatFormatting.GREEN));
-        tooltip.add(new TranslatableComponent(getDescriptionId() + ".tooltip.poison").withStyle(ChatFormatting.RED));
+        tooltip.add(Component.translatable(getDescriptionId() + ".tooltip.heal").withStyle(ChatFormatting.GREEN));
+        tooltip.add(Component.translatable(getDescriptionId() + ".tooltip.poison").withStyle(ChatFormatting.RED));
     }
 }

@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -95,7 +96,7 @@ public class Cerastes extends TamableAnimal {
         this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
     }
 
-    public static boolean checkCerastesSpawnRules(EntityType<? extends PathfinderMob> entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random rand) {
+    public static boolean checkCerastesSpawnRules(EntityType<? extends PathfinderMob> entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, RandomSource rand) {
         return Mob.checkMobSpawnRules(entityType, level, mobSpawnType, pos, rand) && level.getBlockState(pos.below()).is(BlockTags.SAND);
     }
 
@@ -332,7 +333,7 @@ public class Cerastes extends TamableAnimal {
                     }
 
                     this.heal((float)itemstack.getFoodProperties(this).getNutrition());
-                    this.gameEvent(GameEvent.MOB_INTERACT, this.eyeBlockPosition());
+                    this.gameEvent(GameEvent.ENTITY_INTERACT);
                     return InteractionResult.SUCCESS;
                 }
 

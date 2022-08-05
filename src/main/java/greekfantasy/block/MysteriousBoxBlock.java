@@ -4,10 +4,10 @@ import greekfantasy.util.MysteriousBoxManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +18,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -174,13 +173,13 @@ public class MysteriousBoxBlock extends HorizontalDirectionalBlock implements Si
     }
 
     @Override
-    public void animateTick(BlockState stateIn, Level level, BlockPos pos, Random rand) {
+    public void animateTick(BlockState stateIn, Level level, BlockPos pos, RandomSource rand) {
         if (stateIn.getValue(OPEN).booleanValue()) {
             addSmokeParticles(level, pos, rand, 3);
         }
     }
 
-    private void addSmokeParticles(final Level world, final BlockPos pos, final Random rand, final int count) {
+    private void addSmokeParticles(final Level world, final BlockPos pos, final RandomSource rand, final int count) {
         final double x = pos.getX() + 0.5D;
         final double y = pos.getY() + 0.22D;
         final double z = pos.getZ() + 0.5D;

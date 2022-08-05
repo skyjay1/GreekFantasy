@@ -3,6 +3,7 @@ package greekfantasy.enchantment;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -40,14 +41,14 @@ public class PoisoningEnchantment extends Enchantment {
         }
     }
 
-    public static boolean shouldHit(int level, Random rand) {
+    public static boolean shouldHit(int level, RandomSource rand) {
         if (level <= 0) {
             return false;
         }
         return (rand.nextFloat() < 0.15F * level);
     }
 
-    public static int getDuration(int level, Random rand) {
+    public static int getDuration(int level, RandomSource rand) {
         if (level > 5) {
             return 200;
         }

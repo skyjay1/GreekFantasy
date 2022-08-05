@@ -295,7 +295,7 @@ public class Gorgon extends Monster implements RangedAttackMob {
         this.getEntityData().set(MEDUSA, medusa);
         updateCombatGoal(medusa);
         if (medusa) {
-            this.setCustomName(new TranslatableComponent(this.getType().getDescriptionId().concat(".medusa")));
+            this.setCustomName(Component.translatable(this.getType().getDescriptionId().concat(".medusa")));
         }
     }
 

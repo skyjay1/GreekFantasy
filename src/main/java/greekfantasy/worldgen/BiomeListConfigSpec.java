@@ -2,11 +2,15 @@ package greekfantasy.worldgen;
 
 import com.google.common.collect.Lists;
 import greekfantasy.GFConfig;
+import net.minecraft.core.Holder;
+import net.minecraft.data.worldgen.biome.Biomes;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 import java.util.Set;
@@ -62,7 +66,6 @@ public class BiomeListConfigSpec {
     }
 
     public boolean hasBiome(final ResourceKey<Biome> biome) {
-        final Set<String> types = BiomeDictionary.getTypes(biome).stream().map(t -> t.getName()).collect(Collectors.toSet());
         final String wild = biome.location().getNamespace() + ":" + GFConfig.WILDCARD;
         // check each string in the whitelist
         for (final String whitelistName : list()) {
@@ -71,11 +74,17 @@ public class BiomeListConfigSpec {
                 return true;
             }
             // if the whitelistName is a biome registry name, compare against the given biome
-            if (whitelistName.contains(":") && biome.location().toString().equals(whitelistName)) {
+            if (whitelistName.contains(":") && !whitelistName.startsWith("#") && biome.location().toString().equals(whitelistName)) {
                 return true;
             }
-            // if the whitelistName is a biome type, check if the given biome contains that type
-            if (types.contains(whitelistName)) {
+            // if the whitelistName is a biome tag, check if the given biome contains that type
+            if (whitelistName.contains(":") && whitelistName.startsWith("#")) {
+                ResourceLocation biomeTag = ResourceLocation.tryParse(whitelistName.substring(1));
+                if(biomeTag != null) {
+                    TagKey<Biome> biomeTagKey = ForgeRegistries.BIOMES.tags().createTagKey(biomeTag);
+                    Holder<Biome> biomeHolder = Holder.direct(ForgeRegistries.BIOMES.getValue(biome.location()));
+                    return biomeHolder.is(biomeTagKey);
+                }
                 return true;
             }
         }

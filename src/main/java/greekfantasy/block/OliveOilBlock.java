@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -89,7 +90,7 @@ public class OliveOilBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel level, BlockPos pos, Random rand) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rand) {
         // if invalid position, remove this block
         if (!state.canSurvive(level, pos)) {
             level.destroyBlock(pos, false);
@@ -238,7 +239,7 @@ public class OliveOilBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public void animateTick(BlockState stateIn, Level level, BlockPos pos, Random rand) {
+    public void animateTick(BlockState stateIn, Level level, BlockPos pos, RandomSource rand) {
         if (stateIn.getValue(LIT)) {
             // play fire sound
             if (rand.nextInt(24) == 0) {

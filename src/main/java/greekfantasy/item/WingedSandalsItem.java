@@ -7,7 +7,6 @@ import greekfantasy.GreekFantasy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -25,8 +24,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.IItemRenderProperties;
-import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -72,7 +69,7 @@ public class WingedSandalsItem extends ArmorItem {
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         // add the item to the group with enchantment already applied
-        if (this.allowdedIn(group)) {
+        if (this.allowedIn(group)) {
             final ItemStack stack = new ItemStack(this);
             if (GreekFantasy.CONFIG.isOverstepEnabled()) {
                 stack.enchant(GFRegistry.EnchantmentReg.OVERSTEP.get(), 1);
@@ -84,7 +81,7 @@ public class WingedSandalsItem extends ArmorItem {
     @Override
     public void onCraftedBy(ItemStack stack, Level level, Player player) {
         // add Overstep enchantment if not present
-        if (GreekFantasy.CONFIG.isOverstepEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.OVERSTEP.get(), stack) < 1) {
+        if (GreekFantasy.CONFIG.isOverstepEnabled() && stack.getEnchantmentLevel(GFRegistry.EnchantmentReg.OVERSTEP.get()) < 1) {
             stack.enchant(GFRegistry.EnchantmentReg.OVERSTEP.get(), 1);
         }
     }
@@ -110,11 +107,11 @@ public class WingedSandalsItem extends ArmorItem {
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         // add broken tooltip
         if (stack.getMaxDamage() - stack.getDamageValue() <= BROKEN) {
-            tooltip.add(new TranslatableComponent("item.tooltip.broken").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+            tooltip.add(Component.translatable("item.tooltip.broken").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
         // add jump boost tooltip
-        tooltip.add(new TranslatableComponent(MobEffects.JUMP.getDescriptionId()).withStyle(ChatFormatting.AQUA)
-                .append(" ").append(new TranslatableComponent("enchantment.level.5").withStyle(ChatFormatting.AQUA)));
+        tooltip.add(Component.translatable(MobEffects.JUMP.getDescriptionId()).withStyle(ChatFormatting.AQUA)
+                .append(" ").append(Component.translatable("enchantment.level.5").withStyle(ChatFormatting.AQUA)));
 
     }
 
@@ -125,13 +122,13 @@ public class WingedSandalsItem extends ArmorItem {
     }
 
     @Override
-    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer) {
-        consumer.accept(new IItemRenderProperties() {
+    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+        consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
             private greekfantasy.client.armor.WingedSandalsModel model;
 
             @Nullable
             @Override
-            public net.minecraft.client.model.HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, net.minecraft.client.model.HumanoidModel<?> _default) {
+            public net.minecraft.client.model.HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, net.minecraft.client.model.HumanoidModel<?> _default) {
                 if (null == model) {
                     model = new greekfantasy.client.armor.WingedSandalsModel(
                             net.minecraft.client.Minecraft.getInstance().getEntityModels()

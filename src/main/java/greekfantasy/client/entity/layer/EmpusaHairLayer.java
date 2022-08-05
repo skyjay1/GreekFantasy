@@ -5,13 +5,12 @@ import com.mojang.math.Vector3f;
 import greekfantasy.client.entity.model.EmpusaModel;
 import greekfantasy.entity.monster.Empusa;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 
 public class EmpusaHairLayer<T extends Empusa> extends RenderLayer<T, EmpusaModel<T>> {
 
@@ -33,7 +32,7 @@ public class EmpusaHairLayer<T extends Empusa> extends RenderLayer<T, EmpusaMode
             // render fire here
             // note: packed light flag 15728640 uses world light, 15728880 uses constant/full light
             Minecraft.getInstance().getBlockRenderer().renderSingleBlock(Blocks.FIRE.defaultBlockState(),
-                    poseStack, multiBufferSource, 15728880, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+                    poseStack, multiBufferSource, 15728880, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
             // finish rendering
             poseStack.popPose();
         }

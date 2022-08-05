@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/door_bottom",
+  "render_type": "cutout",
   "textures": {
     "top": "greekfantasy:block/olive_door_top",
     "bottom": "greekfantasy:block/olive_door_bottom"
