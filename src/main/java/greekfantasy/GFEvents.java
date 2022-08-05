@@ -422,6 +422,7 @@ public final class GFEvents {
         public static void onMobEffectStart(final PotionEvent.PotionAddedEvent event) {
             if(!event.getEntityLiving().level.isClientSide()
                     && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
+                    && event.getPotionEffect() != null
                     && event.getPotionEffect().getEffect() == GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get()
                     && event.getOldPotionEffect() == null) {
                 // update health
@@ -442,6 +443,7 @@ public final class GFEvents {
         @SubscribeEvent
         public static void onMobEffectRemove(final PotionEvent.PotionRemoveEvent event) {
             if(!event.getEntityLiving().level.isClientSide() && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
+                    && event.getPotionEffect() != null
                     && event.getPotionEffect().getEffect() == GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get()) {
                 // send packet
                 GreekFantasy.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> event.getEntityLiving()),
@@ -456,6 +458,7 @@ public final class GFEvents {
         @SubscribeEvent
         public static void onMobEffectExpire(final PotionEvent.PotionExpiryEvent event) {
             if(!event.getEntityLiving().level.isClientSide() && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
+                    && event.getPotionEffect() != null
                     && event.getPotionEffect().getEffect() == GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get()) {
                 // send packet
                 GreekFantasy.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> event.getEntityLiving()),
