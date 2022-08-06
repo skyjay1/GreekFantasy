@@ -23,7 +23,7 @@ public class DrakainaRenderer<T extends Drakaina> extends MobRenderer<T, Drakain
 
     public DrakainaRenderer(EntityRendererProvider.Context context) {
         super(context, new DrakainaModel<>(context.bakeLayer(DrakainaModel.DRAKAINA_MODEL_RESOURCE)), 0.5F);
-        this.addLayer(new ItemInHandLayer<>(this));
+        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
 
     @Override

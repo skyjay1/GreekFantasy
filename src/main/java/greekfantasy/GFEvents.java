@@ -92,6 +92,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.resource.PathPackResources;
 
+import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -350,34 +351,47 @@ public final class GFEvents {
 
         /**
          * Used to prevent players from using items while stunned.
-         * Note: PlayerInteractEvent has several children but
-         * we receive and cancel all of the ones that can be cancelled
          *
-         * @param event a PlayerInteractEvent or any of its children
+         * @param event the living attack event
          **/
         @SubscribeEvent
-        public static void onPlayerInteract(final PlayerInteractEvent event) {
-            if (event.isCancelable() && event.getEntity().isAlive()
-                    && (event.getEntity().hasEffect(GFRegistry.MobEffectReg.STUNNED.get()))
-                        || event.getEntity().hasEffect(GFRegistry.MobEffectReg.PETRIFIED.get())) {
+        public static void onPlayerAttack(final AttackEntityEvent event) {
+            if (event.isCancelable() && isStunnedOrPetrified(event.getEntity())) {
                 // cancel the event
                 event.setCanceled(true);
             }
         }
 
         /**
-         * Used to prevent players from using items while stunned.
-         *
-         * @param event the living attack event
-         **/
+         * Used to prevent breaking of blocks when the player is stunned or petrified
+         * @param event the break speed event
+         */
         @SubscribeEvent
-        public static void onPlayerAttack(final AttackEntityEvent event) {
-            if (event.isCancelable() && event.getEntity().isAlive()
-                    && (event.getEntity().hasEffect(GFRegistry.MobEffectReg.STUNNED.get()))
-                    || event.getEntity().hasEffect(GFRegistry.MobEffectReg.PETRIFIED.get())) {
+        public static void onBreakSpeed(final PlayerEvent.BreakSpeed event) {
+            if (event.isCancelable() && isStunnedOrPetrified(event.getEntity())) {
                 // cancel the event
                 event.setCanceled(true);
             }
+        }
+
+        /**
+         * Used to prevent using items on blocks when the player is stunned or petrified
+         * @param event the right click block event
+         */
+        @SubscribeEvent
+        public static void onRightClickBlock(final PlayerInteractEvent.RightClickBlock event) {
+            if (event.isCancelable() && isStunnedOrPetrified(event.getEntity())) {
+                // cancel the event
+                event.setCanceled(true);
+            }
+        }
+
+        /**
+         * @param entity the living entity
+         * @return true if the entity is alive and has either the stunned or petrified effect
+         */
+        private static boolean isStunnedOrPetrified(@Nullable LivingEntity entity) {
+            return entity != null && entity.isAlive() && (entity.hasEffect(GFRegistry.MobEffectReg.STUNNED.get()) || entity.hasEffect(GFRegistry.MobEffectReg.PETRIFIED.get()));
         }
 
         /**
@@ -391,7 +405,7 @@ public final class GFEvents {
             if(null == event.getTarget()) {
                 return;
             }
-            // check for curse of circe
+            // check mob or target for curse of circe
             if (!event.getEntity().level.isClientSide()
                     && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
                     && event.getEntity() instanceof Mob mob
@@ -401,11 +415,10 @@ public final class GFEvents {
                 // remove attack target
                 mob.setTarget(null);
             }
-            // check for stunned or petrified
+            // check mob for stunned or petrified
             if (!event.getEntity().level.isClientSide()
                     && event.getEntity() instanceof Mob mob
-                    && (mob.hasEffect(GFRegistry.MobEffectReg.STUNNED.get())
-                    || mob.hasEffect(GFRegistry.MobEffectReg.PETRIFIED.get()))) {
+                    && isStunnedOrPetrified(mob)) {
                 // remove attack target
                 mob.setTarget(null);
             }
@@ -600,6 +613,10 @@ public final class GFEvents {
             if(event.isCanceled() || !(event.getLevel() instanceof ServerLevel)) {
                 return;
             }
+            if(event.isCancelable() && isStunnedOrPetrified(event.getEntity())) {
+                event.setCanceled(true);
+                return;
+            }
             ServerLevel level = (ServerLevel) event.getLevel();
             // when player uses poisonous potato on adult hoglin while outside the nether
             if ((!GreekFantasy.CONFIG.GIANT_BOAR_NON_NETHER.get() || level.dimension() != Level.NETHER)
@@ -641,8 +658,17 @@ public final class GFEvents {
         }
 
 
+        /**
+         * Canceled when the player is stunned or petrified.
+         * Used to trigger Lord of the Sea when the player starts using an enchanted trident
+         * @param event the use item start event
+         */
         @SubscribeEvent
         public static void onPlayerStartUsingItem(final LivingEntityUseItemEvent.Start event) {
+            if(event.isCancelable() && isStunnedOrPetrified(event.getEntity())) {
+                event.setCanceled(true);
+                return;
+            }
             if(!event.getEntity().level.isClientSide() && event.getEntity() instanceof ServerPlayer player
                     && !event.isCanceled() && event.getItem().is(Items.TRIDENT)
                     && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.LORD_OF_THE_SEA.get(), event.getItem()) > 0
@@ -654,8 +680,29 @@ public final class GFEvents {
             }
         }
 
+        /**
+         * Canceled when the player is stunned or petrified
+         * @param event the use item tick event
+         */
+        @SubscribeEvent
+        public static void onPlayerTickUsingItem(final LivingEntityUseItemEvent.Tick event) {
+            if(event.isCancelable() && isStunnedOrPetrified(event.getEntity())) {
+                event.setCanceled(true);
+                return;
+            }
+        }
+
+        /**
+         * Canceled when the player is stunned or petrified.
+         * Used to run daybreak enchantment when right clicking while holding a clock.
+         * @param event the player right click item event
+         */
         @SubscribeEvent
         public static void onPlayerRightClickItem(final PlayerInteractEvent.RightClickItem event) {
+            if(event.isCancelable() && isStunnedOrPetrified(event.getEntity())) {
+                event.setCanceled(true);
+                return;
+            }
             if(!event.getEntity().level.isClientSide() && event.getEntity() instanceof ServerPlayer player
                     && !event.isCanceled() && event.getItemStack().is(Items.CLOCK)
                     && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.DAYBREAK.get(), event.getItemStack()) > 0

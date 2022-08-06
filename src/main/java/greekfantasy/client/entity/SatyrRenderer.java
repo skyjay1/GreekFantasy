@@ -37,7 +37,7 @@ public class SatyrRenderer<T extends Satyr> extends MobRenderer<T, SatyrModel<T>
         this.addLayer(new SatyrShamanLayer<>(this, context.getModelSet()));
         this.addLayer(new SatyrPanfluteLayer<>(this));
         this.addLayer(new SatyrGroverLayer<>(this, context.getModelSet()));
-        this.addLayer(new ItemInHandLayer<>(this));
+        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
 
     @Override

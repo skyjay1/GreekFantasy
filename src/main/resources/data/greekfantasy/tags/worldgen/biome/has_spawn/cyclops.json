@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:is_mountain",
+    "#forge:is_plateau",
+    "#minecraft:is_hill",
+    "minecraft:snowy_plains",
+    "minecraft:snowy_slopes"
+  ]
+}

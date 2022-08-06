@@ -4,6 +4,7 @@ import greekfantasy.GFRegistry;
 import greekfantasy.item.ClubItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -88,7 +89,7 @@ public class Cyclops extends Monster {
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(DifficultyInstance difficulty) {
+    protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
         // note: do not call super method because this entity cannot wear armor
         if (this.random.nextBoolean()) {
             // determine club type
@@ -107,7 +108,7 @@ public class Cyclops extends Monster {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficulty, MobSpawnType mobSpawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-        populateDefaultEquipmentSlots(difficulty);
+        populateDefaultEquipmentSlots(level.getRandom(), difficulty);
         return super.finalizeSpawn(worldIn, difficulty, mobSpawnType, spawnDataIn, dataTag);
     }
 

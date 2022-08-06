@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#greekfantasy:has_spawn/pegasus",
+  "spawners":
+  {
+    "type": "greekfantasy:pegasus",
+    "weight": 11,
+    "minCount": 3,
+    "maxCount": 5
+  }
+}

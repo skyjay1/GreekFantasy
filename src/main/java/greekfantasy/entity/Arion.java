@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -109,18 +110,18 @@ public class Arion extends Horse {
     // CALLED FROM ON INITIAL SPAWN //
 
     @Override
-    protected float generateRandomMaxHealth() {
-        return super.generateRandomMaxHealth() + 30.0F;
+    protected float generateRandomMaxHealth(RandomSource random) {
+        return super.generateRandomMaxHealth(random) + 30.0F;
     }
 
     @Override
-    protected double generateRandomJumpStrength() {
-        return super.generateRandomJumpStrength() + 0.25F;
+    protected double generateRandomJumpStrength(RandomSource random) {
+        return super.generateRandomJumpStrength(random) + 0.25F;
     }
 
     @Override
-    protected double generateRandomSpeed() {
-        return super.generateRandomSpeed() + 0.21F;
+    protected double generateRandomSpeed(RandomSource random) {
+        return super.generateRandomSpeed(random) + 0.21F;
     }
 
     // MISC //
@@ -149,7 +150,7 @@ public class Arion extends Horse {
         ItemStack itemstack = player.getItemInHand(hand);
         if (!this.isBaby()) {
             if (this.isTamed() && player.isSecondaryUseActive()) {
-                this.openInventory(player);
+                this.openCustomInventoryScreen(player);
                 return InteractionResult.sidedSuccess(this.level.isClientSide);
             }
 
@@ -175,7 +176,7 @@ public class Arion extends Horse {
 
             boolean flag = !this.isBaby() && !this.isSaddled() && itemstack.is(Items.SADDLE);
             if (this.isArmor(itemstack) || flag) {
-                this.openInventory(player);
+                this.openCustomInventoryScreen(player);
                 return InteractionResult.sidedSuccess(this.level.isClientSide);
             }
         }

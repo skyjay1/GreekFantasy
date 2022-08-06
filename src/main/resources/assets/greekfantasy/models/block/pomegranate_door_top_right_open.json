@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_top_right_open",
+  "textures": {
+    "bottom": "greekfantasy:block/pomegranate_door_bottom",
+    "top": "greekfantasy:block/pomegranate_door_top"
+  }
+}

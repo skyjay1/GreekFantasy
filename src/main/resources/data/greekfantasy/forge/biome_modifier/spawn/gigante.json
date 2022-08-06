@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#greekfantasy:has_spawn/gigante",
+  "spawners":
+  {
+    "type": "greekfantasy:gigante",
+    "weight": 20,
+    "minCount": 2,
+    "maxCount": 4
+  }
+}

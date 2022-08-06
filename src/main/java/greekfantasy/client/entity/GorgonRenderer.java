@@ -17,7 +17,7 @@ public class GorgonRenderer<T extends Gorgon> extends MobRenderer<T, GorgonModel
 
     public GorgonRenderer(EntityRendererProvider.Context context) {
         super(context, new GorgonModel<>(context.bakeLayer(GorgonModel.GORGON_MODEL_RESOURCE)), 0.5F);
-        this.addLayer(new ItemInHandLayer<>(this));
+        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
 
     @Override

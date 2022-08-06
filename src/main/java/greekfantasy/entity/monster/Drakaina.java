@@ -13,6 +13,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -223,7 +224,7 @@ public class Drakaina extends Monster {
 
     public enum Variant implements StringRepresentable {
         GREEN("green", BiomeTags.IS_FOREST),
-        BROWN("brown", ForgeRegistries.BIOMES.tags().createTagKey(new ResourceLocation(GreekFantasy.MODID, "has_brown_drakaina"))),
+        BROWN("brown", ForgeRegistries.BIOMES.tags().createTagKey(new ResourceLocation(GreekFantasy.MODID, "has_spawn/brown_drakaina"))),
         RED("red", BiomeTags.IS_NETHER);
 
         private final String name;
@@ -247,7 +248,7 @@ public class Drakaina extends Monster {
             return GREEN;
         }
 
-        public static Variant getRandom(final Random rand) {
+        public static Variant getRandom(final RandomSource rand) {
             int len = values().length;
             return values()[rand.nextInt(len)];
         }

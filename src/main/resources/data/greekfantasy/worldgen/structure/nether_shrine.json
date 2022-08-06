@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:jigsaw",
+  "biomes": "#minecraft:is_nether",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_box",
+  "start_pool": "greekfantasy:nether_shrine",
+  "size": 1,
+  "start_height": {
+    "type": "uniform",
+    "max_inclusive": {
+      "below_top": 10
+    },
+    "min_inclusive": {
+      "above_bottom": 32
+    }
+  },
+  "max_distance_from_center": 32,
+  "use_expansion_hack": false
+}

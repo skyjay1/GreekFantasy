@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#forge:is_savanna",
-    "#forge:is_sandy",
-    "#minecraft:is_badlands"
-  ]
-}

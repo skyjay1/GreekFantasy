@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#greekfantasy:has_spawn/forest_creature",
+  "spawners":
+  {
+    "type": "greekfantasy:dryad",
+    "weight": 24,
+    "minCount": 2,
+    "maxCount": 4
+  }
+}

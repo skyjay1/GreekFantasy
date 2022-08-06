@@ -346,10 +346,6 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
         updateCombatAI();
     }
 
-    public void setVariant(final Variant color) {
-        HasHorseVariant.super.setVariant(color);
-    }
-
     @Override
     public void setPackedVariant(int packedColorsTypes) {
         this.getEntityData().set(DATA_VARIANT, packedColorsTypes);

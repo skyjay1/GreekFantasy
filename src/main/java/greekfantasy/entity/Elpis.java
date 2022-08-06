@@ -181,8 +181,8 @@ public class Elpis extends PathfinderMob implements FlyingAnimal {
     }
 
     @Override
-    public float getBrightness() {
-        return Math.min(1.0F, super.getBrightness() + 0.5F);
+    public float getLightLevelDependentMagicValue() {
+        return 1.0F;
     }
 
     @Override

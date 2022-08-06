@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#forge:is_nether_forest",
+  "features": "greekfantasy:pomegranate_tree",
+  "step": "vegetal_decoration"
+}

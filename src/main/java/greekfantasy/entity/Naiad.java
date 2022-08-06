@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -241,7 +242,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
             variant = getVariantForBiome(worldIn.getBiome(this.blockPosition()));
         }
         this.setVariant(variant);
-        populateDefaultEquipmentSlots(difficultyIn);
+        populateDefaultEquipmentSlots(level.getRandom(), difficultyIn);
         return data;
     }
 
@@ -282,9 +283,9 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
 */
 
     @Override
-    protected void populateDefaultEquipmentSlots(DifficultyInstance difficulty) {
+    protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
         float tridentChance = (this.getVariant() == Variant.OCEAN) ? 0.55F : 0.31F;
-        if (this.random.nextFloat() < tridentChance) {
+        if (random.nextFloat() < tridentChance) {
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.TRIDENT));
         }
 
@@ -423,7 +424,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
             return Variant.RIVER;
         }
 
-        public static Variant getRandom(final Random rand) {
+        public static Variant getRandom(final RandomSource rand) {
             int len = WATER.size();
             return len > 0 ? WATER.entrySet().asList().get(rand.nextInt(len)).getValue() : RIVER;
         }

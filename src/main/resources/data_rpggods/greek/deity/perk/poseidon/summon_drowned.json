@@ -14,7 +14,7 @@
         },
         {
             "type": "biome",
-            "data": "WATER"
+            "data": "#forge:is_water"
         }
     ],
     "action": [

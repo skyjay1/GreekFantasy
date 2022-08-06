@@ -94,8 +94,8 @@ public class Empusa extends Monster {
     }
 
     @Override
-    public float getBrightness() {
-        return Math.min(1.0F, super.getBrightness() + 0.5F);
+    public float getLightLevelDependentMagicValue() {
+        return Math.min(1.0F, super.getLightLevelDependentMagicValue() + 0.5F);
     }
 
     public void setDraining(final boolean draining) {

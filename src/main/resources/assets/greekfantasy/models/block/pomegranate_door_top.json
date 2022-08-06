@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/door_top",
-  "render_type": "cutout",
-  "textures": {
-    "top": "greekfantasy:block/pomegranate_door_top",
-    "bottom": "greekfantasy:block/pomegranate_door_bottom"
-  }
-}

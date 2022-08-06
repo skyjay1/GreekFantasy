@@ -1,18 +1,15 @@
 package greekfantasy.client.entity.model;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public final class GFModelUtil {
 
@@ -199,8 +196,8 @@ public final class GFModelUtil {
         return arms;
     }
 
-    public static List<Triple<ModelPart, ModelPart, ModelPart>> getCharybdisArmsList(final ModelPart root) {
-        return new ImmutableList.Builder<Triple<ModelPart, ModelPart, ModelPart>>()
+    public static List<Triple<ModelPart>> getCharybdisArmsList(final ModelPart root) {
+        return new ImmutableList.Builder<Triple<ModelPart>>()
                 .addAll(getCharybdisArms(root.getChild("east_arms")))
                 .addAll(getCharybdisArms(root.getChild("south_arms")))
                 .addAll(getCharybdisArms(root.getChild("west_arms")))
@@ -208,19 +205,19 @@ public final class GFModelUtil {
                 .build();
     }
 
-    public static List<Triple<ModelPart, ModelPart, ModelPart>> getCharybdisArms(final ModelPart root) {
-        return new ImmutableList.Builder<Triple<ModelPart, ModelPart, ModelPart>>()
+    public static List<Triple<ModelPart>> getCharybdisArms(final ModelPart root) {
+        return new ImmutableList.Builder<Triple<ModelPart>>()
                 .add(getCharybdisArmParts(root.getChild("left_arm")))
                 .add(getCharybdisArmParts(root.getChild("middle_arm")))
                 .add(getCharybdisArmParts(root.getChild("right_arm")))
                 .build();
     }
 
-    public static Triple<ModelPart, ModelPart, ModelPart> getCharybdisArmParts(final ModelPart root) {
+    public static Triple<ModelPart> getCharybdisArmParts(final ModelPart root) {
         ModelPart lowerArm = root.getChild("lower_arm");
         ModelPart middleArm = lowerArm.getChild("middle_arm");
         ModelPart upperArm = middleArm.getChild("upper_arm");
-        return ImmutableTriple.of(lowerArm, middleArm, upperArm);
+        return new Triple<>(lowerArm, middleArm, upperArm);
     }
 
 
@@ -399,4 +396,16 @@ public final class GFModelUtil {
         return horn;
     }
 
+    @Immutable
+    public static class Triple<T> {
+        public final T left;
+        public final T middle;
+        public final T right;
+
+        public Triple(T left, T middle, T right) {
+            this.left = left;
+            this.middle = middle;
+            this.right = right;
+        }
+    }
 }

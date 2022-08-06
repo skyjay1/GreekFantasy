@@ -17,7 +17,7 @@
         },
         {
             "type": "biome",
-            "data": "WATER"
+            "data": "#minecraft:is_ocean"
         }
     ],
     "action": [

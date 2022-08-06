@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "#greekfantasy:has_spawn/hostile_non_nether",
+    "#minecraft:is_nether"
+  ]
+}

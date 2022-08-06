@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#forge:has_structure/birch_tree",
+  "features": "greekfantasy:birch_harpy_nest",
+  "step": "vegetal_decoration"
+}

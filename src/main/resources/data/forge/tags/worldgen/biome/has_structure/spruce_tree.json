@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:is_coniferous",
+    "#forge:is_peak"
+  ]
+}

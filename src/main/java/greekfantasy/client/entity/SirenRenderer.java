@@ -15,7 +15,7 @@ public class SirenRenderer<T extends Siren> extends MobRenderer<T, SirenModel<T>
 
     public SirenRenderer(EntityRendererProvider.Context context) {
         super(context, new SirenModel<>(context.bakeLayer(SirenModel.SIREN_MODEL_RESOURCE)), 0.4F);
-        this.addLayer(new ItemInHandLayer<>(this));
+        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
 
     @Override

@@ -18,6 +18,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.DifficultyInstance;
@@ -737,7 +738,7 @@ public class Dryad extends PathfinderMob implements NeutralMob {
             return Variant.OAK;
         }
 
-        public static Variant getRandom(final Random rand) {
+        public static Variant getRandom(final RandomSource rand) {
             int len = OVERWORLD.size();
             return len > 0 ? OVERWORLD.entrySet().asList().get(rand.nextInt(len)).getValue() : OAK;
         }

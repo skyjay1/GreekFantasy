@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:is_mountain",
+    "#forge:is_plateau",
+    "#minecraft:is_hill"
+  ]
+}

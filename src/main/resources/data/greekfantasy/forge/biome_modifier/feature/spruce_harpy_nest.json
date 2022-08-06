@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#forge:has_structure/spruce_tree",
+  "features": "greekfantasy:spruce_harpy_nest",
+  "step": "vegetal_decoration"
+}

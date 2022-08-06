@@ -1,6 +1,7 @@
 package greekfantasy.entity.ai;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.LevelReader;
@@ -99,7 +100,7 @@ public abstract class FindBlockGoal extends Goal {
      * @return an Optional containing a block pos if one is found, otherwise empty
      **/
     protected Optional<BlockPos> findNearbyBlock() {
-        Random rand = this.creature.getRandom();
+        RandomSource rand = this.creature.getRandom();
         BlockPos pos1 = this.creature.blockPosition().below();
         // choose 20 random positions to check
         for (int i = 0; i < 20; i++) {

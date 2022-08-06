@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#greekfantasy:has_spawn/cyclops",
+  "spawners":
+  {
+    "type": "greekfantasy:cyclops",
+    "weight": 24,
+    "minCount": 2,
+    "maxCount": 5
+  }
+}

@@ -16,7 +16,7 @@ public class ElpisRenderer<T extends Elpis> extends MobRenderer<T, ElpisModel<T>
 
     public ElpisRenderer(EntityRendererProvider.Context context) {
         super(context, new ElpisModel<>(context.bakeLayer(ElpisModel.ELPIS_MODEL_RESOURCE)), 0.15F);
-        this.addLayer(new ItemInHandLayer<>(this));
+        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
 
     @Override

@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_jungle",
+  "features": "greekfantasy:jungle_harpy_nest",
+  "step": "vegetal_decoration"
+}

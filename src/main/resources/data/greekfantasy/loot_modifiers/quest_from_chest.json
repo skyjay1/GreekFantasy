@@ -10,6 +10,9 @@
     "greekfantasy:chests/ara_tent",
     "greekfantasy:chests/centaur_stable"
   ],
-  "min": 1,
-  "max": 2
+  "count": {
+    "type": "minecraft:uniform",
+    "min": 1,
+    "max": 2
+  }
 }

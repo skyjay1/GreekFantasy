@@ -221,7 +221,7 @@ public class Shade extends Monster {
     }
 
     @Override
-    protected int getExperienceReward(final Player attackingPlayer) {
+    public int getExperienceReward() {
         return this.getStoredXP();
     }
 

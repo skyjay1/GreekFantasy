@@ -9,6 +9,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -153,7 +154,7 @@ public class Makhai extends TamableAnimal {
     }
 
     @Override
-    public void populateDefaultEquipmentSlots(DifficultyInstance difficulty) {
+    public void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
         setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
         setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GOLDEN_SWORD));
         setDropChance(EquipmentSlot.MAINHAND, 0);
@@ -164,7 +165,7 @@ public class Makhai extends TamableAnimal {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType mobSpawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         final SpawnGroupData data = super.finalizeSpawn(level, difficulty, mobSpawnType, spawnDataIn, dataTag);
-        this.populateDefaultEquipmentSlots(difficulty);
+        this.populateDefaultEquipmentSlots(level.getRandom(), difficulty);
         setSpawning(true);
         setBaby(false);
         return data;

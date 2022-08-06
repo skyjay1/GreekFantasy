@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#forge:is_nether_forest",
+  "spawners":
+  {
+    "type": "greekfantasy:lampad",
+    "weight": 24,
+    "minCount": 2,
+    "maxCount": 5
+  }
+}

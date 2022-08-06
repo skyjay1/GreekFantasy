@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#greekfantasy:has_spawn/harpy",
+  "spawners":
+  {
+    "type": "greekfantasy:harpy",
+    "weight": 10,
+    "minCount": 2,
+    "maxCount": 5
+  }
+}

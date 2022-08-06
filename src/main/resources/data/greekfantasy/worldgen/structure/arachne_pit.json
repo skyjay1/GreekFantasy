@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:jigsaw",
+  "biomes": "#minecraft:has_structure/mineshaft",
+  "step": "underground_structures",
+  "spawn_overrides": {
+    "monster": {
+      "bounding_box": "full",
+      "spawns": [
+        {
+          "type": "minecraft:cave_spider",
+          "weight": 1,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "type": "minecraft:spider",
+          "weight": 2,
+          "minCount": 1,
+          "maxCount": 4
+        }
+      ]
+    }
+  },
+  "terrain_adaptation": "bury",
+  "start_pool": "greekfantasy:arachne_pit",
+  "size": 1,
+  "start_height": {
+    "type": "uniform",
+    "max_inclusive": {
+      "below_top": 32
+    },
+    "min_inclusive": {
+      "above_bottom": 32
+    }
+  },
+  "project_start_to_heightmap": "OCEAN_FLOOR_WG",
+  "max_distance_from_center": 32,
+  "use_expansion_hack": false
+}

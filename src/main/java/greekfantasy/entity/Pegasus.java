@@ -10,6 +10,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -129,26 +130,26 @@ public class Pegasus extends AbstractHorse implements FlyingAnimal, HasHorseVari
     // CALLED FROM ON INITIAL SPAWN //
 
     @Override
-    protected void randomizeAttributes() {
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(this.generateRandomMaxHealth());
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.generateRandomSpeed());
-        this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(this.generateRandomJumpStrength());
+    protected void randomizeAttributes(RandomSource random) {
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(this.generateRandomMaxHealth(random));
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.generateRandomSpeed(random));
+        this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(this.generateRandomJumpStrength(random));
         this.getAttribute(Attributes.FLYING_SPEED).setBaseValue(this.getAttributeValue(Attributes.MOVEMENT_SPEED) + 1.15D);
     }
 
     @Override
-    protected float generateRandomMaxHealth() {
-        return super.generateRandomMaxHealth() + 10.0F;
+    protected float generateRandomMaxHealth(RandomSource random) {
+        return super.generateRandomMaxHealth(random) + 10.0F;
     }
 
     @Override
-    protected double generateRandomJumpStrength() {
-        return super.generateRandomJumpStrength() + 0.20F;
+    protected double generateRandomJumpStrength(RandomSource random) {
+        return super.generateRandomJumpStrength(random) + 0.20F;
     }
 
     @Override
-    protected double generateRandomSpeed() {
-        return super.generateRandomSpeed();
+    protected double generateRandomSpeed(RandomSource random) {
+        return super.generateRandomSpeed(random);
     }
 
     @Nullable
@@ -269,7 +270,7 @@ public class Pegasus extends AbstractHorse implements FlyingAnimal, HasHorseVari
         ItemStack itemstack = player.getItemInHand(hand);
         if (!this.isBaby()) {
             if (this.isTamed() && player.isSecondaryUseActive()) {
-                this.openInventory(player);
+                this.openCustomInventoryScreen(player);
                 return InteractionResult.sidedSuccess(this.level.isClientSide());
             }
 
@@ -300,7 +301,7 @@ public class Pegasus extends AbstractHorse implements FlyingAnimal, HasHorseVari
 
             boolean isUsableSaddle = !this.isBaby() && !this.isSaddled() && itemstack.is(Items.SADDLE);
             if (this.isArmor(itemstack) || isUsableSaddle) {
-                this.openInventory(player);
+                this.openCustomInventoryScreen(player);
                 return InteractionResult.sidedSuccess(this.level.isClientSide());
             }
         }

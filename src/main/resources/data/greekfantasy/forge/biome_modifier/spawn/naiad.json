@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#forge:is_water",
+  "spawners":
+  {
+    "type": "greekfantasy:naiad",
+    "weight": 12,
+    "minCount": 2,
+    "maxCount": 5
+  }
+}

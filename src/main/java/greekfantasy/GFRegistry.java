@@ -123,7 +123,6 @@ import greekfantasy.util.QuestLootModifier;
 import greekfantasy.util.ReplaceDropsLootModifier;
 import greekfantasy.util.SalveRecipe;
 import greekfantasy.util.SpawnRulesUtil;
-import greekfantasy.worldgen.BiomeListConfigSpec;
 import greekfantasy.worldgen.CentaurStructureProcessor;
 import greekfantasy.worldgen.DimensionFilter;
 import greekfantasy.worldgen.GoldenTreeGrower;
@@ -143,7 +142,6 @@ import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
@@ -162,7 +160,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -181,8 +178,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
@@ -198,7 +193,6 @@ import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
@@ -228,7 +222,6 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
@@ -253,6 +246,7 @@ public final class GFRegistry {
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    private static final DeferredRegister<BannerPattern> BANNER_PATTERNS = DeferredRegister.create(Registry.BANNER_PATTERN.key(), MODID);
     private static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(ForgeRegistries.POTIONS, MODID);
     private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, MODID);
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
@@ -261,13 +255,13 @@ public final class GFRegistry {
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
-    private static final DeferredRegister<Feature<?>> STRUCTURE_FEATURES = DeferredRegister.create(Registry.FEATURE_REGISTRY, MODID);
     private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registry.PLACEMENT_MODIFIERS.key(), MODID);
     private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
 
     public static void register() {
         BlockReg.register();
         ItemReg.register();
+        BannerPatternReg.register();
         PotionReg.register();
         LootModifierReg.register();
         MobEffectReg.register();
@@ -278,7 +272,6 @@ public final class GFRegistry {
         ParticleReg.register();
         StructureProcessorReg.register();
         FeatureReg.register();
-        StructureFeatureReg.register();
         PlacementTypeReg.register();
         PlacementReg.register();
     }
@@ -692,9 +685,8 @@ public final class GFRegistry {
                         return true;
                     }
                 });
-        public static final TagKey<BannerPattern> SPIDER_PATTERN = TagKey.create(Registry.BANNER_PATTERN_REGISTRY, new ResourceLocation(GreekFantasy.MODID, "pattern_item/spider"));
         public static final RegistryObject<Item> SPIDER_BANNER_PATTERN = ITEMS.register("spider_banner_pattern", () ->
-                new BannerPatternItem(SPIDER_PATTERN, new Item.Properties().tab(GF_TAB).stacksTo(1).rarity(Rarity.RARE)));
+                new BannerPatternItem(TagKey.create(Registry.BANNER_PATTERN_REGISTRY, new ResourceLocation(GreekFantasy.MODID, "pattern_item/spider")), new Item.Properties().tab(GF_TAB).stacksTo(1).rarity(Rarity.RARE)));
 
         //// LEGENDARY ARMOR ////
         public static final RegistryObject<Item> HELM_OF_DARKNESS = ITEMS.register("helm_of_darkness", () ->
@@ -880,13 +872,21 @@ public final class GFRegistry {
         }
     }
 
+    public static final class BannerPatternReg {
+        public static void register() {
+            BANNER_PATTERNS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        }
+
+        public static final RegistryObject<BannerPattern> SPIDER = BANNER_PATTERNS.register("spider", () ->
+                new BannerPattern("greekfantasy:spider"));
+    }
+
     public static final class EntityReg {
 
         public static void register() {
             ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
             // event listeners
             FMLJavaModLoadingContext.get().getModEventBus().addListener(GFRegistry.EntityReg::registerEntityAttributes);
-            MinecraftForge.EVENT_BUS.addListener(EntityReg::onBiomeLoading);
         }
 
         private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
@@ -917,7 +917,7 @@ public final class GFRegistry {
             register(event, HYDRA.get(), Hydra::createAttributes, null);
             register(event, HYDRA_HEAD.get(), HydraHead::createAttributes, null);
             register(event, LAMPAD.get(), Lampad::createAttributes, Mob::checkMobSpawnRules);
-            register(event, MAD_COW.get(), MadCow::createAttributes, SpawnRulesUtil::checkAnyLightMonsterSpawnRules);
+            register(event, MAD_COW.get(), MadCow::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, MAKHAI.get(), Makhai::createAttributes, null);
             register(event, MINOTAUR.get(), Minotaur::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
@@ -956,55 +956,6 @@ public final class GFRegistry {
                         GreekFantasy.CONFIG.spawnMatchesDimension(level.getLevel()) && placementPredicate.test(entity, level, reason, pos, rand);
                 // actually register the placement
                 SpawnPlacements.register(entityType, placementType, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, placement);
-            }
-        }
-
-        /**
-         * Called from the event bus during the BiomeLoadingEvent.
-         * Adds creature spawns to biomes.
-         *
-         * @param event the biome loading event
-         */
-        private static void onBiomeLoading(BiomeLoadingEvent event) {
-            if (null == event.getName()) {
-                GreekFantasy.LOGGER.warn("Biome name was null during entity BiomeLoadingEvent, skipping.");
-                return;
-            }
-            if (event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
-                addSpawns(event, ARA.get(), 2, 5);
-                addSpawns(event, CENTAUR.get(), 2, 4);
-                addSpawns(event, CERASTES.get(), 1, 3);
-                addSpawns(event, CYCLOPS.get(), 2, 5);
-                addSpawns(event, CYPRIAN.get(), 1, 3);
-                addSpawns(event, DRAKAINA.get(), 1, 2);
-                addSpawns(event, DRYAD.get(), 2, 5);
-                addSpawns(event, EMPUSA.get(), 1, 2);
-                addSpawns(event, FURY.get(), 3, 3);
-                addSpawns(event, GIGANTE.get(), 2, 4);
-                addSpawns(event, GORGON.get(), 1, 2);
-                addSpawns(event, HARPY.get(), 1, 3);
-                addSpawns(event, LAMPAD.get(), 2, 5);
-                addSpawns(event, MAD_COW.get(), 1, 1);
-                addSpawns(event, MINOTAUR.get(), 2, 5);
-                addSpawns(event, NAIAD.get(), 2, 5);
-                addSpawns(event, ORTHUS.get(), 2, 4);
-                addSpawns(event, PEGASUS.get(), 3, 5);
-                addSpawns(event, SATYR.get(), 2, 5);
-                addSpawns(event, SHADE.get(), 1, 1);
-                addSpawns(event, SIREN.get(), 1, 4);
-                addSpawns(event, UNICORN.get(), 3, 5);
-                addSpawns(event, WHIRL.get(), 1, 1);
-            }
-        }
-
-        private static void addSpawns(final BiomeLoadingEvent event, final EntityType<?> entity, final int min, final int max) {
-            final String name = entity.getRegistryName().getPath();
-            final BiomeListConfigSpec config = GreekFantasy.CONFIG.getSpawnConfigSpec(name);
-            final ResourceKey<Biome> key = ResourceKey.create(Registry.BIOME_REGISTRY, event.getName());
-            if (null == config) {
-                GreekFantasy.LOGGER.error("Error adding spawns: config for '" + name + "' not found!");
-            } else if (config.weight() > 0 && config.canSpawnInBiome(key)) {
-                event.getSpawns().addSpawn(entity.getCategory(), new MobSpawnSettings.SpawnerData(entity, config.weight(), min, max));
             }
         }
 
@@ -1433,13 +1384,6 @@ public final class GFRegistry {
                 new SimpleParticleType(true));
     }
 
-    public static final class StructureFeatureReg {
-
-        public static void register() {
-            STRUCTURE_FEATURES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        }
-    }
-
     public static final class StructureProcessorReg {
 
         public static void register() {
@@ -1562,8 +1506,6 @@ public final class GFRegistry {
 
         public static void register() {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(PlacementReg::registerPlacedFeatures);
-            // register event listeners
-            MinecraftForge.EVENT_BUS.addListener(PlacementReg::onBiomeLoading);
         }
 
         public static Holder<PlacedFeature> ORE_LIMESTONE_UPPER;
@@ -1584,29 +1526,24 @@ public final class GFRegistry {
 
         private static void registerPlacedFeatures(final FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
-                BiomeListConfigSpec spec;
-                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("limestone_upper");
                 ORE_LIMESTONE_UPPER = PlacementUtils.register(GreekFantasy.MODID + ":" + "limestone_upper", FeatureReg.ORE_LIMESTONE, List.of(
-                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, GreekFantasy.CONFIG.getFeatureWeight("limestone_upper")))),
                         HeightRangePlacement.uniform(VerticalAnchor.absolute(64), VerticalAnchor.absolute(128)),
                         InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
                 ));
-                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("limestone_lower");
                 ORE_LIMESTONE_LOWER = PlacementUtils.register(GreekFantasy.MODID + ":" + "limestone_lower", FeatureReg.ORE_LIMESTONE, List.of(
-                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, GreekFantasy.CONFIG.getFeatureWeight("limestone_lower")))),
                         CountPlacement.of(2),
                         HeightRangePlacement.uniform(VerticalAnchor.absolute(0), VerticalAnchor.absolute(60)),
                         InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
                 ));
-                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("marble_upper");
                 ORE_MARBLE_UPPER = PlacementUtils.register(GreekFantasy.MODID + ":" + "marble_upper", FeatureReg.ORE_MARBLE, List.of(
-                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, GreekFantasy.CONFIG.getFeatureWeight("marble_upper")))),
                         HeightRangePlacement.uniform(VerticalAnchor.absolute(64), VerticalAnchor.absolute(128)),
                         InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
                 ));
-                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("marble_lower");
                 ORE_MARBLE_LOWER = PlacementUtils.register(GreekFantasy.MODID + ":" + "marble_lower", FeatureReg.ORE_MARBLE, List.of(
-                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, GreekFantasy.CONFIG.getFeatureWeight("marble_lower")))),
                         CountPlacement.of(2),
                         HeightRangePlacement.uniform(VerticalAnchor.absolute(0), VerticalAnchor.absolute(60)),
                         InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
@@ -1640,9 +1577,8 @@ public final class GFRegistry {
                         CountPlacement.of(UniformInt.of(1, 2)),
                         PlacementUtils.filteredByBlockSurvival(BlockReg.OLIVE_SAPLING.get()));
 
-                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("pomegranate_tree");
                 POMEGRANATE_TREE = PlacementUtils.register(GreekFantasy.MODID + ":" + "pomegranate_tree", FeatureReg.POMEGRANATE_TREE, List.of(
-                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, GreekFantasy.CONFIG.getFeatureWeight("pomegranate_tree")))),
                         CountOnEveryLayerPlacement.of(3), DimensionFilter.dimension(), BiomeFilter.biome(),
                         PlacementUtils.filteredByBlockSurvival(BlockReg.POMEGRANATE_SAPLING.get())
                 ));
@@ -1650,7 +1586,6 @@ public final class GFRegistry {
                 // reeds
                 PATCH_REEDS = registerSimple("patch_reeds", FeatureReg.REEDS);
                 PATCH_REEDS_SWAMP = registerSimple("patch_reeds_swamp", FeatureReg.REEDS);
-
             });
         }
 
@@ -1665,58 +1600,13 @@ public final class GFRegistry {
          */
         private static <T extends FeatureConfiguration> Holder<PlacedFeature> registerSimple(final String name,
                          final Holder<ConfiguredFeature<T, ?>> feature, PlacementModifier... modifiers) {
-            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec(name);
             ImmutableList<PlacementModifier> placement = new ImmutableList.Builder<PlacementModifier>()
-                    .add(RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    .add(RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, GreekFantasy.CONFIG.getFeatureWeight(name)))),
                         InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
                         DimensionFilter.dimension(), BiomeFilter.biome())
                     .add(modifiers)
                     .build();
             return PlacementUtils.register(GreekFantasy.MODID + ":" + name, feature, placement);
-        }
-
-        /**
-         * Called from the event bus during the BiomeLoadingEvent.
-         * Adds features to biomes.
-         *
-         * @param event the biome loading event
-         */
-        private static void onBiomeLoading(BiomeLoadingEvent event) {
-            if (null == event.getName()) {
-                GreekFantasy.LOGGER.warn("Biome name was null during feature BiomeLoadingEvent, skipping.");
-                return;
-            }
-            if (event.getCategory() == Biome.BiomeCategory.NETHER) {
-                addFeature(event, "pomegranate_tree", GenerationStep.Decoration.VEGETAL_DECORATION, POMEGRANATE_TREE);
-            }
-            if (event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
-                addFeature(event, "limestone_upper", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_LIMESTONE_UPPER);
-                addFeature(event, "limestone_lower", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_LIMESTONE_LOWER);
-                addFeature(event, "marble_upper", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_MARBLE_UPPER);
-                addFeature(event, "marble_lower", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_MARBLE_LOWER);
-                addFeature(event, "olive_tree", GenerationStep.Decoration.VEGETAL_DECORATION, OLIVE_TREE);
-                addFeature(event, "patch_reeds", GenerationStep.Decoration.VEGETAL_DECORATION, PATCH_REEDS);
-                addFeature(event, "patch_reeds_swamp", GenerationStep.Decoration.VEGETAL_DECORATION, PATCH_REEDS_SWAMP);
-                addFeature(event, "acacia_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, ACACIA_HARPY_NEST);
-                addFeature(event, "birch_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, BIRCH_HARPY_NEST);
-                addFeature(event, "dark_oak_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, DARK_OAK_HARPY_NEST);
-                addFeature(event, "jungle_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, JUNGLE_HARPY_NEST);
-                addFeature(event, "oak_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, OAK_HARPY_NEST);
-                addFeature(event, "olive_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, OLIVE_HARPY_NEST);
-                addFeature(event, "spruce_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, SPRUCE_HARPY_NEST);
-
-
-            }
-        }
-
-        private static void addFeature(final BiomeLoadingEvent event, final String featureConfigSpec,
-                                       final GenerationStep.Decoration stage, final Holder<PlacedFeature> feature) {
-            final BiomeListConfigSpec config = GreekFantasy.CONFIG.getFeatureConfigSpec(featureConfigSpec);
-            if (null == config) {
-                GreekFantasy.LOGGER.error("Error adding features: config for '" + featureConfigSpec + "' not found!");
-            } else if (config.weight() > 0 && config.canSpawnInBiome(ResourceKey.create(Registry.BIOME_REGISTRY, event.getName()))) {
-                event.getGeneration().getFeatures(stage).add(feature);
-            }
         }
     }
 

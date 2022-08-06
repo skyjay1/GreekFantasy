@@ -28,7 +28,7 @@ public class DryadRenderer<T extends Dryad> extends MobRenderer<T, NymphModel<T>
 
     public DryadRenderer(EntityRendererProvider.Context context) {
         super(context, new NymphModel<>(context.bakeLayer(NymphModel.NYMPH_LAYER_LOCATION), false), 0.4F);
-        this.addLayer(new ItemInHandLayer<>(this));
+        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
 
     @Override

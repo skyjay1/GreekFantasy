@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#greekfantasy:has_spawn/hostile_non_nether",
+  "spawners":
+  {
+    "type": "greekfantasy:mad_cow",
+    "weight": 2,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

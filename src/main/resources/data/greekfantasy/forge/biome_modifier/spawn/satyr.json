@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#greekfantasy:has_spawn/forest_creature",
+  "spawners":
+  {
+    "type": "greekfantasy:satyr",
+    "weight": 22,
+    "minCount": 2,
+    "maxCount": 5
+  }
+}

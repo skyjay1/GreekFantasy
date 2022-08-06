@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#greekfantasy:has_spawn/hostile_non_nether",
+  "spawners":
+  {
+    "type": "greekfantasy:ara",
+    "weight": 10,
+    "minCount": 2,
+    "maxCount": 5
+  }
+}

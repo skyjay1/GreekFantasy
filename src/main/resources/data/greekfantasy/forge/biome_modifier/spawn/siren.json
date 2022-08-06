@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#greekfantasy:has_spawn/siren",
+  "spawners":
+  {
+    "type": "greekfantasy:siren",
+    "weight": 10,
+    "minCount": 1,
+    "maxCount": 4
+  }
+}

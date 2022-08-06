@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 
 public class PalladiumRenderer<T extends Palladium> extends LivingEntityRenderer<T, PalladiumModel<T>> {
 
@@ -29,7 +29,7 @@ public class PalladiumRenderer<T extends Palladium> extends LivingEntityRenderer
         // render block
         poseStack.translate(-0.5D, 0.0D, -0.5D);
         Minecraft.getInstance().getBlockRenderer().renderSingleBlock(Blocks.OAK_SLAB.defaultBlockState(),
-                poseStack, multiBufferSource, packedLightIn, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+                poseStack, multiBufferSource, packedLightIn, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
         // translate model
         poseStack.translate(0.5D, 0.5D, 0.5D);
         // render model

@@ -2,14 +2,11 @@ package greekfantasy;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import greekfantasy.worldgen.BiomeListConfigSpec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biomes;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -100,8 +97,6 @@ public class GFConfig {
     // palladium
     private final ForgeConfigSpec.BooleanValue PALLADIUM_ENABLED;
     private boolean palladiumEnabled;
-    private final ForgeConfigSpec.IntValue PALLADIUM_REFRESH_INTERVAL;
-    private int palladiumRefreshInterval;
     private final ForgeConfigSpec.IntValue PALLADIUM_CHUNK_RANGE;
     private int palladiumChunkRange;
     private final ForgeConfigSpec.IntValue PALLADIUM_Y_RANGE;
@@ -114,14 +109,13 @@ public class GFConfig {
     private List<? extends String> spawnDimensionWhitelist;
     private final ForgeConfigSpec.BooleanValue IS_SPAWN_DIMENSION_WHITELIST;
     private boolean isSpawnDimensionWhitelist;
-    private final Map<String, BiomeListConfigSpec> SPAWN_CONFIG_SPECS = new HashMap<>();
 
     // features
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> FEATURE_DIMENSION_WHITELIST;
     private List<? extends String> featureDimensionWhitelist;
     private final ForgeConfigSpec.BooleanValue IS_FEATURE_DIMENSION_WHITELIST;
     private boolean isFeatureDimensionWhitelist;
-    private final Map<String, BiomeListConfigSpec> FEATURE_CONFIG_SPECS = new HashMap<>();
+    private final Map<String, ForgeConfigSpec.IntValue> FEATURE_WEIGHTS = new HashMap<>();
 
     @SuppressWarnings("ConstantConditions")
     private static final String[] curseOfCirceWhitelistDefault = {
@@ -226,52 +220,19 @@ public class GFConfig {
         builder.push("palladium");
         PALLADIUM_ENABLED = builder.comment("Whether the Palladium can prevent monster spawns")
                 .define("palladium_enabled", true);
-        PALLADIUM_REFRESH_INTERVAL = builder.comment("The number of server ticks between Palladium updates (increase to reduce lag)")
-                .defineInRange("palladium_refresh_interval", 110, 2, 1000);
         PALLADIUM_CHUNK_RANGE = builder.comment("The radius (in chunks) of the area protected by Palladium blocks (0=same chunk only)")
                 .defineInRange("palladium_chunk_range", 2, 0, 3);
         PALLADIUM_Y_RANGE = builder.comment("The vertical area (in blocks) protected by Palladium blocks")
                 .defineInRange("palladium_y_range", 128, 0, 255);
         builder.pop();
 
-        // helpers for spawn and feature configs
-        final String[] forest = {BiomeDictionary.Type.FOREST.toString(), BiomeDictionary.Type.CONIFEROUS.toString(), BiomeDictionary.Type.JUNGLE.toString()};
-        final String[] hostileBlacklist = {BiomeDictionary.Type.END.toString(), BiomeDictionary.Type.WATER.toString(), BiomeDictionary.Type.COLD.toString(),
-                BiomeDictionary.Type.SNOWY.toString(), BiomeDictionary.Type.MUSHROOM.toString()};
-        final String[] nonNetherHostileBlacklist = {BiomeDictionary.Type.NETHER.toString(), BiomeDictionary.Type.END.toString(), BiomeDictionary.Type.WATER.toString(),
-                BiomeDictionary.Type.COLD.toString(), BiomeDictionary.Type.SNOWY.toString(), BiomeDictionary.Type.MUSHROOM.toString()};
-
-        builder.comment("Mob spawn weights (higher number = more spawns)").push("mob_spawns");
+        builder.push("mob_spawns");
         SPAWN_DIMENSION_WHITELIST = builder.comment("Dimensions in which mobs can spawn.",
                         "Accepts dimension id or mod id with wildcard.",
                         "Example: [\"minecraft:the_nether\", \"rftoolsdim:" + WILDCARD + "\"]")
                 .define("spawn_dimensions", Lists.newArrayList("minecraft:" + WILDCARD));
         IS_SPAWN_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
                 .define("is_whitelist", true);
-        putSpawnConfigSpec(builder, "ara", 10, false, nonNetherHostileBlacklist);
-        putSpawnConfigSpec(builder, "centaur", 15, true, BiomeDictionary.Type.PLAINS.getName(), BiomeDictionary.Type.CONIFEROUS.getName());
-        putSpawnConfigSpec(builder, "cerastes", 30, true, Biomes.DESERT.location().toString());
-        putSpawnConfigSpec(builder, "cyclops", 24, true, BiomeDictionary.Type.MOUNTAIN.getName(), BiomeDictionary.Type.PLATEAU.getName(), BiomeDictionary.Type.HILLS.getName());
-        putSpawnConfigSpec(builder, "cyprian", 15, true, BiomeDictionary.Type.PLAINS.getName(), BiomeDictionary.Type.CONIFEROUS.getName());
-        putSpawnConfigSpec(builder, "drakaina",40, false, hostileBlacklist);
-        putSpawnConfigSpec(builder, "dryad", 24, true, forest);
-        putSpawnConfigSpec(builder, "empusa",30, false, nonNetherHostileBlacklist);
-        putSpawnConfigSpec(builder, "fury", 9, true, Biomes.NETHER_WASTES.location().toString());
-        putSpawnConfigSpec(builder, "gigante", 20, true, BiomeDictionary.Type.MOUNTAIN.getName(), BiomeDictionary.Type.PLATEAU.getName(),
-                BiomeDictionary.Type.HILLS.getName(), Biomes.SNOWY_PLAINS.location().toString(), Biomes.SNOWY_SLOPES.location().toString());
-        putSpawnConfigSpec(builder, "gorgon", 20, false, nonNetherHostileBlacklist);
-        putSpawnConfigSpec(builder, "harpy", 24, true, Biomes.DESERT.location().toString(), Biomes.WOODED_BADLANDS.location().toString());
-        putSpawnConfigSpec(builder, "lampad", 24, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString());
-        putSpawnConfigSpec(builder, "mad_cow", 2, false, nonNetherHostileBlacklist);
-        putSpawnConfigSpec(builder, "minotaur", 50, false, nonNetherHostileBlacklist);
-        putSpawnConfigSpec(builder, "naiad", 12, true, BiomeDictionary.Type.WATER.getName());
-        putSpawnConfigSpec(builder, "orthus", 20, true, BiomeDictionary.Type.NETHER.getName());
-        putSpawnConfigSpec(builder, "pegasus", 11, true, BiomeDictionary.Type.MOUNTAIN.getName(), Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString());
-        putSpawnConfigSpec(builder, "satyr", 22, true, forest);
-        putSpawnConfigSpec(builder, "shade", 10, false);
-        putSpawnConfigSpec(builder, "siren", 10, true, Biomes.LUKEWARM_OCEAN.location().toString(), Biomes.WARM_OCEAN.location().toString());
-        putSpawnConfigSpec(builder, "unicorn", 11, true, Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString());
-        putSpawnConfigSpec(builder, "whirl", 6, true, BiomeDictionary.Type.OCEAN.getName());
         builder.pop();
 
         builder.comment("Feature generation chances (higher number = more features)").push("features");
@@ -281,23 +242,27 @@ public class GFConfig {
                 .define("spawn_dimensions", Lists.newArrayList("minecraft:" + WILDCARD));
         IS_FEATURE_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
                 .define("is_whitelist", true);
-        this.FEATURE_CONFIG_SPECS.clear();
-        putFeatureConfigSpec(builder, "acacia_harpy_nest", 14, true, BiomeDictionary.Type.SAVANNA.getName());
-        putFeatureConfigSpec(builder, "birch_harpy_nest", 14, true, Biomes.FOREST.location().toString(), Biomes.BIRCH_FOREST.location().toString(), Biomes.OLD_GROWTH_BIRCH_FOREST.location().toString());
-        putFeatureConfigSpec(builder, "dark_oak_harpy_nest", 14, true, Biomes.DARK_FOREST.location().toString());
-        putFeatureConfigSpec(builder, "jungle_harpy_nest", 14, true, BiomeDictionary.Type.JUNGLE.getName());
-        putFeatureConfigSpec(builder, "oak_harpy_nest", 14, true, Biomes.FOREST.location().toString());
-        putFeatureConfigSpec(builder, "olive_harpy_nest", 14, true, Biomes.FOREST.location().toString(), Biomes.BIRCH_FOREST.location().toString(), Biomes.OLD_GROWTH_BIRCH_FOREST.location().toString());
-        putFeatureConfigSpec(builder, "spruce_harpy_nest", 14, true, BiomeDictionary.Type.CONIFEROUS.getName(), BiomeDictionary.Type.PEAK.getName());
-        putFeatureConfigSpec(builder, "limestone_upper", 190, true, BiomeDictionary.Type.OVERWORLD.getName());
-        putFeatureConfigSpec(builder, "limestone_lower", 1000, true, BiomeDictionary.Type.OVERWORLD.getName());
-        putFeatureConfigSpec(builder, "marble_upper", 190, true, BiomeDictionary.Type.OVERWORLD.getName());
-        putFeatureConfigSpec(builder, "marble_lower", 1000, true, BiomeDictionary.Type.OVERWORLD.getName());
-        putFeatureConfigSpec(builder, "olive_tree", 300, true, Biomes.FOREST.location().toString(), Biomes.BIRCH_FOREST.location().toString(), Biomes.OLD_GROWTH_BIRCH_FOREST.location().toString());
-        putFeatureConfigSpec(builder, "patch_reeds", 250, true, BiomeDictionary.Type.OVERWORLD.getName());
-        putFeatureConfigSpec(builder, "patch_reeds_swamp", 900, true, BiomeDictionary.Type.SWAMP.getName());
-        putFeatureConfigSpec(builder, "pomegranate_tree", 500, true, Biomes.WARPED_FOREST.location().toString(), Biomes.CRIMSON_FOREST.location().toString());
+        this.FEATURE_WEIGHTS.clear();
+        putFeatureWeight(builder, "acacia_harpy_nest", 14);
+        putFeatureWeight(builder, "birch_harpy_nest", 14);
+        putFeatureWeight(builder, "dark_oak_harpy_nest", 14);
+        putFeatureWeight(builder, "jungle_harpy_nest", 14);
+        putFeatureWeight(builder, "oak_harpy_nest", 14);
+        putFeatureWeight(builder, "olive_harpy_nest", 14);
+        putFeatureWeight(builder, "spruce_harpy_nest", 14);
+        putFeatureWeight(builder, "limestone_upper", 190);
+        putFeatureWeight(builder, "limestone_lower", 1000);
+        putFeatureWeight(builder, "marble_upper", 190);
+        putFeatureWeight(builder, "marble_lower", 1000);
+        putFeatureWeight(builder, "olive_tree", 300);
+        putFeatureWeight(builder, "patch_reeds", 250);
+        putFeatureWeight(builder, "patch_reeds_swamp", 900);
+        putFeatureWeight(builder, "pomegranate_tree", 500);
         builder.pop();
+    }
+
+    private void putFeatureWeight(ForgeConfigSpec.Builder builder, String name, int weight) {
+        FEATURE_WEIGHTS.put(name, builder.defineInRange(name, weight, 0, 1000));
     }
 
     /**
@@ -334,17 +299,14 @@ public class GFConfig {
         isMirroringEffectEnabled = MIRRORING_EFFECT_ENABLED.get();
         // palladium
         palladiumEnabled = PALLADIUM_ENABLED.get();
-        palladiumRefreshInterval = PALLADIUM_REFRESH_INTERVAL.get();
         palladiumChunkRange = PALLADIUM_CHUNK_RANGE.get();
         palladiumYRange = PALLADIUM_Y_RANGE.get();
         // mob spawns
         spawnDimensionWhitelist = SPAWN_DIMENSION_WHITELIST.get();
         isSpawnDimensionWhitelist = IS_SPAWN_DIMENSION_WHITELIST.get();
-        SPAWN_CONFIG_SPECS.values().forEach(c -> c.bake());
         // feature spawns
         featureDimensionWhitelist = FEATURE_DIMENSION_WHITELIST.get();
         isFeatureDimensionWhitelist = IS_FEATURE_DIMENSION_WHITELIST.get();
-        FEATURE_CONFIG_SPECS.values().forEach(c -> c.bake());
     }
 
     // items
@@ -435,10 +397,6 @@ public class GFConfig {
         return palladiumEnabled;
     }
 
-    public int getPalladiumRefreshInterval() {
-        return palladiumRefreshInterval;
-    }
-
     public int getPalladiumChunkRange() {
         return palladiumChunkRange;
     }
@@ -447,22 +405,13 @@ public class GFConfig {
         return palladiumYRange;
     }
 
-    public BiomeListConfigSpec getSpawnConfigSpec(final String name) {
-        return SPAWN_CONFIG_SPECS.get(name);
-    }
+    // feature
 
-    public BiomeListConfigSpec getFeatureConfigSpec(final String name) {
-        return FEATURE_CONFIG_SPECS.get(name);
-    }
-
-    private void putSpawnConfigSpec(final ForgeConfigSpec.Builder builder, final String name, final int weight,
-                                    final boolean isWhitelist, final String... biomes) {
-        SPAWN_CONFIG_SPECS.put(name, new BiomeListConfigSpec(builder, name, weight, isWhitelist, biomes));
-    }
-
-    private void putFeatureConfigSpec(final ForgeConfigSpec.Builder builder, final String name, final int weight,
-                                    final boolean isWhitelist, final String... biomes) {
-        FEATURE_CONFIG_SPECS.put(name, new BiomeListConfigSpec(builder, name, weight, isWhitelist, biomes));
+    public int getFeatureWeight(final String name) {
+        if(FEATURE_WEIGHTS.containsKey(name)) {
+            return FEATURE_WEIGHTS.get(name).get();
+        }
+        return 0;
     }
 
     /**
@@ -470,7 +419,7 @@ public class GFConfig {
      * @return true if features can be placed in the given dimension
      **/
     public boolean featureMatchesDimension(final Level level) {
-        return matchesBiomeListConfigSpec(featureDimensionWhitelist, isFeatureDimensionWhitelist, level.dimension().location());
+        return matchesDimension(featureDimensionWhitelist, isFeatureDimensionWhitelist, level.dimension().location());
     }
 
     /**
@@ -478,10 +427,10 @@ public class GFConfig {
      * @return true if mobs can spawn in the given dimension
      **/
     public boolean spawnMatchesDimension(final ServerLevel level) {
-        return matchesBiomeListConfigSpec(spawnDimensionWhitelist, isSpawnDimensionWhitelist, level.dimension().location());
+        return matchesDimension(spawnDimensionWhitelist, isSpawnDimensionWhitelist, level.dimension().location());
     }
 
-    private static boolean matchesBiomeListConfigSpec(final List<? extends String> list, final boolean isWhitelist, final ResourceLocation dimensionId) {
+    private static boolean matchesDimension(final List<? extends String> list, final boolean isWhitelist, final ResourceLocation dimensionId) {
         // check dimension id or mod id
         return isWhitelist == (list.contains(dimensionId.toString()) || list.contains(dimensionId.getNamespace() + ":" + WILDCARD));
     }

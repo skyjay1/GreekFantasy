@@ -18,7 +18,7 @@ public class ShadeRenderer<T extends Shade> extends HumanoidMobRenderer<T, Human
 
     public ShadeRenderer(EntityRendererProvider.Context context) {
         super(context, new ShadeModel(context.bakeLayer(ShadeModel.SHADE_MODEL_RESOURCE)), 0.5F);
-        this.addLayer(new ItemInHandLayer<>(this));
+        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
 
     @Override

@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#greekfantasy:has_spawn/shade",
+  "spawners":
+  {
+    "type": "greekfantasy:shade",
+    "weight": 9,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

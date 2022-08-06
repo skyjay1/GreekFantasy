@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "minecraft:forest",
+  "features": "greekfantasy:oak_harpy_nest",
+  "step": "vegetal_decoration"
+}

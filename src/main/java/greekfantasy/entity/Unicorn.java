@@ -5,6 +5,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,10 +26,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class Unicorn extends AbstractHorse {
 
@@ -52,25 +54,25 @@ public class Unicorn extends AbstractHorse {
     // CALLED FROM ON INITIAL SPAWN //
 
     @Override
-    protected void randomizeAttributes() {
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(this.generateRandomMaxHealth());
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.generateRandomSpeed());
-        this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(this.generateRandomJumpStrength());
+    protected void randomizeAttributes(RandomSource random) {
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(this.generateRandomMaxHealth(random));
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.generateRandomSpeed(random));
+        this.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(this.generateRandomJumpStrength(random));
     }
 
     @Override
-    protected float generateRandomMaxHealth() {
-        return super.generateRandomMaxHealth() + 28.0F;
+    protected float generateRandomMaxHealth(RandomSource random) {
+        return super.generateRandomMaxHealth(random) + 28.0F;
     }
 
     @Override
-    protected double generateRandomJumpStrength() {
-        return super.generateRandomJumpStrength() + 0.22F;
+    protected double generateRandomJumpStrength(RandomSource random) {
+        return super.generateRandomJumpStrength(random) + 0.22F;
     }
 
     @Override
-    protected double generateRandomSpeed() {
-        return super.generateRandomSpeed() + 0.16F;
+    protected double generateRandomSpeed(RandomSource random) {
+        return super.generateRandomSpeed(random) + 0.16F;
     }
 
     // MISC //
@@ -98,7 +100,7 @@ public class Unicorn extends AbstractHorse {
         super.die(cause);
         if (cause.getEntity() instanceof LivingEntity) {
             LivingEntity killer = (LivingEntity) cause.getEntity();
-            killer.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 12_000, 0, false, false, true, new MobEffectInstance(MobEffects.BAD_OMEN, 12_000, 0, false, false, false)));
+            killer.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 12_000, 0, false, false, true, new MobEffectInstance(MobEffects.BAD_OMEN, 12_000, 0, false, false, false), MobEffects.UNLUCK.createFactorData()));
         }
     }
 
@@ -110,7 +112,7 @@ public class Unicorn extends AbstractHorse {
     @Override
     public boolean canBeAffected(MobEffectInstance effect) {
         if (effect.getEffect().getCategory() == MobEffectCategory.HARMFUL) {
-            PotionEvent.PotionApplicableEvent event = new PotionEvent.PotionApplicableEvent(this, effect);
+            MobEffectEvent.Applicable event = new MobEffectEvent.Applicable(this, effect);
             event.setResult(Event.Result.DENY);
             MinecraftForge.EVENT_BUS.post(event);
             return event.getResult() == Event.Result.ALLOW;
@@ -169,7 +171,7 @@ public class Unicorn extends AbstractHorse {
         ItemStack itemstack = player.getItemInHand(hand);
         if (!this.isBaby()) {
             if (this.isTamed() && player.isSecondaryUseActive()) {
-                this.openInventory(player);
+                this.openCustomInventoryScreen(player);
                 return InteractionResult.sidedSuccess(this.level.isClientSide());
             }
 
@@ -200,7 +202,7 @@ public class Unicorn extends AbstractHorse {
 
             boolean isUsableSaddle = !this.isBaby() && !this.isSaddled() && itemstack.is(Items.SADDLE);
             if (this.isArmor(itemstack) || isUsableSaddle) {
-                this.openInventory(player);
+                this.openCustomInventoryScreen(player);
                 return InteractionResult.sidedSuccess(this.level.isClientSide());
             }
         }

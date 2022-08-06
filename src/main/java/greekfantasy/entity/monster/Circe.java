@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -93,8 +94,8 @@ public class Circe extends Monster implements RangedAttackMob {
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(DifficultyInstance difficulty) {
-        super.populateDefaultEquipmentSlots(difficulty);
+    protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
+        super.populateDefaultEquipmentSlots(random, difficulty);
         // hold wand in main hand (wand drop is handled in loot table)
         this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(GFRegistry.ItemReg.WAND_OF_CIRCE.get()));
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
@@ -104,7 +105,7 @@ public class Circe extends Monster implements RangedAttackMob {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType mobSpawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         SpawnGroupData data = super.finalizeSpawn(level, difficulty, mobSpawnType, spawnDataIn, dataTag);
-        populateDefaultEquipmentSlots(difficulty);
+        populateDefaultEquipmentSlots(level.getRandom(), difficulty);
         return data;
     }
 
