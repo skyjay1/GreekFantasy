@@ -14,7 +14,6 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class CharybdisModel extends AgeableListModel<Charybdis> {
     protected final ModelPart lowerBody;
     protected final ModelPart head;
     protected final ModelPart arms;
-    protected final List<Triple<ModelPart, ModelPart, ModelPart>> armList;
+    protected final List<GFModelUtil.Triple<ModelPart>> armList;
     protected final List<ModelPart> upperFringes;
     protected final List<ModelPart> upperMiddleFringes;
     protected final List<ModelPart> lowerMiddleFringes;
@@ -149,11 +148,11 @@ public class CharybdisModel extends AgeableListModel<Charybdis> {
         final float throwingTimeLeft = 1.0F - throwingTime;
         final float throwingZ = 0.9F - 2F * Math.abs(throwingTime - 0.5F);
         final float armAmplitude = 0.25F + swirlingTime * 0.6F;
-        Triple<ModelPart, ModelPart, ModelPart> arm;
+        GFModelUtil.Triple<ModelPart> arm;
         for (int i = 0, n = armList.size(); i < n; i++) {
             arm = armList.get(i);
             float idleSwing = Mth.cos(ageInTicks * 0.08F + i * 1.62F) * armAmplitude;
-            GFModelUtil.setupCharybdisArmAnim(arm.getLeft(), arm.getMiddle(), arm.getRight(), idleSwing, throwingTimeLeft, throwingZ);
+            GFModelUtil.setupCharybdisArmAnim(arm.left, arm.middle, arm.right, idleSwing, throwingTimeLeft, throwingZ);
         }
     }
 

@@ -11,7 +11,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class Quest {
 
     public static final Codec<Quest> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.optionalFieldOf("description", "").forGetter(Quest::getDescriptionId),
-            Codec.STRING.listOf().optionalFieldOf("components", Lists.newArrayList()).forGetter(Quest::getComponentsIds),
+            Codec.STRING.listOf().optionalFieldOf("components", List.of()).forGetter(Quest::getComponentsIds),
             Codec.BOOL.optionalFieldOf("disabled", false).forGetter(Quest::isDisabled)
     ).apply(instance, Quest::new));
 

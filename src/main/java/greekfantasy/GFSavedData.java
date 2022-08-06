@@ -48,20 +48,11 @@ public class GFSavedData extends SavedData {
     }
 
     public boolean hasFlyingPlayer(final Player player) {
-        return flyingPlayers.contains(Player.createPlayerUUID(player.getName().getContents()));
+        return flyingPlayers.contains(player.getUUID());
     }
 
     public List<UUID> getFlyingPlayers() {
         return flyingPlayers;
-    }
-
-    public void forEachFlyingPlayer(final Level worldIn, final Consumer<Player> action) {
-        flyingPlayers.forEach(uuid -> {
-            Player p = worldIn.getPlayerByUUID(uuid);
-            if (p != null) {
-                action.accept(p);
-            }
-        });
     }
 
     // NBT methods //
