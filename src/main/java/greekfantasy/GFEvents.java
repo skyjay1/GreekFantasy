@@ -698,7 +698,7 @@ public final class GFEvents {
         /**
          * Canceled when the player is stunned or petrified.
          * Used to run daybreak enchantment when right clicking while holding a clock.
-         * @param event
+         * @param event the player right click item event
          */
         @SubscribeEvent
         public static void onPlayerRightClickItem(final PlayerInteractEvent.RightClickItem event) {

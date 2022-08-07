@@ -66,7 +66,6 @@ public class GreekFantasy {
         });
         // other listeners
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::intermodEnqueue);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::loadConfig);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::reloadConfig);
 
@@ -79,10 +78,6 @@ public class GreekFantasy {
     }
 
     public static void setup(final FMLCommonSetupEvent event) {
-
-    }
-
-    public static void intermodEnqueue(final InterModEnqueueEvent event) {
         isRpgGodsLoaded = ModList.get().isLoaded("rpggods");
     }
 

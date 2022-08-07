@@ -30,7 +30,7 @@ import java.util.UUID;
 public final class SummonBossUtil {
 
     public static final TagKey<Block> BRONZE_BLOCK = ForgeRegistries.BLOCKS.tags().createTagKey(new ResourceLocation("forge", "storage_blocks/bronze"));
-    public static final TagKey<Block> COPPER_BLOCK = ForgeRegistries.BLOCKS.tags().createTagKey(new ResourceLocation("forge", "storage_blocks/copper"));
+    public static final TagKey<Block> COPPER_BLOCK = ForgeRegistries.BLOCKS.tags().createTagKey(new ResourceLocation("forge", "storage_blocks/any_copper"));
     public static final TagKey<Block> CERBERUS_FRAME = ForgeRegistries.BLOCKS.tags().createTagKey(new ResourceLocation(GreekFantasy.MODID, "cerberus_frame"));
 
     /**

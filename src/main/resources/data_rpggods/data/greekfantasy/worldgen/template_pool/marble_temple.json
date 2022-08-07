@@ -1,0 +1,15 @@
+{
+  "name": "greekfantasy:marble_temple",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:marble_temple",
+        "projection": "rigid",
+        "processors": "greekfantasy:temple"
+      }
+    }
+  ]
+}
