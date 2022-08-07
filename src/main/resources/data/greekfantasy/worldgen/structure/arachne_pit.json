@@ -26,11 +26,11 @@
   "size": 1,
   "start_height": {
     "type": "uniform",
-    "max_inclusive": {
-      "below_top": 32
-    },
     "min_inclusive": {
-      "above_bottom": 32
+      "absolute": -110
+    },
+    "max_inclusive": {
+      "absolute": -10
     }
   },
   "project_start_to_heightmap": "OCEAN_FLOOR_WG",

@@ -8,7 +8,7 @@
         "element_type": "minecraft:single_pool_element",
         "location": "greekfantasy:arachne_pit",
         "projection": "rigid",
-        "processors": "minecraft:empty"
+        "processors": "greekfantasy:arachne_pit"
       }
     }
   ]
