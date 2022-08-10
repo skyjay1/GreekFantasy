@@ -1,0 +1,11 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#forge:is_swamp",
+  "spawners":
+  {
+    "type": "greekfantasy:stymphalian",
+    "weight": 30,
+    "minCount": 3,
+    "maxCount": 8
+  }
+}

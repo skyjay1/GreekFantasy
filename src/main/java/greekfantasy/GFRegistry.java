@@ -54,6 +54,7 @@ import greekfantasy.entity.boss.HydraHead;
 import greekfantasy.entity.boss.NemeanLion;
 import greekfantasy.entity.boss.Python;
 import greekfantasy.entity.boss.Talos;
+import greekfantasy.entity.misc.BronzeFeather;
 import greekfantasy.entity.misc.Curse;
 import greekfantasy.entity.misc.CurseOfCirce;
 import greekfantasy.entity.misc.Discus;
@@ -77,8 +78,10 @@ import greekfantasy.entity.monster.MadCow;
 import greekfantasy.entity.monster.Minotaur;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.entity.monster.Siren;
+import greekfantasy.entity.monster.Stymphalian;
 import greekfantasy.item.BagOfWindItem;
 import greekfantasy.item.BidentItem;
+import greekfantasy.item.BronzeFeatherItem;
 import greekfantasy.item.BronzeScrapItem;
 import greekfantasy.item.CerberusHeadItem;
 import greekfantasy.item.ClubItem;
@@ -656,6 +659,8 @@ public final class GFRegistry {
                 new WebBallItem(new Item.Properties().tab(GF_TAB).stacksTo(16)));
 
         //// LEGENDARY TOOLS AND ITEMS ////
+        public static final RegistryObject<Item> BRONZE_FEATHER = ITEMS.register("bronze_feather", () ->
+                new BronzeFeatherItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> DRAGON_TOOTH = ITEMS.register("dragon_tooth", () ->
                 new DragonToothItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)));
         public static final RegistryObject<Item> MIRROR = ITEMS.register("mirror", () ->
@@ -826,6 +831,8 @@ public final class GFRegistry {
                 new ForgeSpawnEggItem(EntityReg.SHADE, 0x222222, 0x000000, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> SIREN_SPAWN_EGG = ITEMS.register("siren_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.SIREN, 0x729f92, 0x398046, new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> STYMPHALIAN_SPAWN_EGG = ITEMS.register("stymphalian_spawn_egg", () ->
+                new ForgeSpawnEggItem(EntityReg.STYMPHALIAN, 0x684822, 0xc08845, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> UNICORN_SPAWN_EGG = ITEMS.register("unicorn_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.UNICORN, 0xeeeeee, 0xe8e8e8, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> WHIRL_SPAWN_EGG = ITEMS.register("whirl_spawn_egg", () ->
@@ -930,6 +937,7 @@ public final class GFRegistry {
             register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, SIREN.get(), Siren::createAttributes, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
             register(event, SPARTI.get(), Sparti::createAttributes, null);
+            register(event, STYMPHALIAN.get(), Stymphalian::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, TALOS.get(), Talos::createAttributes, null);
             register(event, UNICORN.get(), Unicorn::createAttributes, Mob::checkMobSpawnRules);
             register(event, WHIRL.get(), Whirl::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
@@ -1116,6 +1124,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Sparti::new, MobCategory.CREATURE)
                         .sized(0.6F, 1.98F)
                         .build("sparti"));
+        public static final RegistryObject<EntityType<? extends Stymphalian>> STYMPHALIAN = ENTITY_TYPES.register("stymphalian", () ->
+                EntityType.Builder.of(Stymphalian::new, MobCategory.MONSTER)
+                        .sized(0.7F, 0.7F)
+                        .build("stymphalian"));
         public static final RegistryObject<EntityType<? extends Talos>> TALOS = ENTITY_TYPES.register("talos", () ->
                 EntityType.Builder.of(Talos::new, MobCategory.MONSTER)
                         .sized(1.98F, 4.96F).fireImmune()
@@ -1129,6 +1141,10 @@ public final class GFRegistry {
                         .sized(2.9F, 5.0F)
                         .build("whirl"));
         // other
+        public static final RegistryObject<EntityType<? extends BronzeFeather>> BRONZE_FEATHER = ENTITY_TYPES.register("bronze_feather", () ->
+                EntityType.Builder.<BronzeFeather>of(BronzeFeather::new, MobCategory.MISC)
+                        .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
+                        .build("bronze_feather"));
         public static final RegistryObject<EntityType<? extends Curse>> CURSE = ENTITY_TYPES.register("curse", () ->
                 EntityType.Builder.<Curse>of(Curse::new, MobCategory.MISC)
                         .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)

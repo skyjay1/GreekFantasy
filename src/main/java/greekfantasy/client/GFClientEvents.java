@@ -55,6 +55,7 @@ import greekfantasy.client.entity.SirenRenderer;
 import greekfantasy.client.entity.SpartiRenderer;
 import greekfantasy.client.entity.SpearRenderer;
 import greekfantasy.client.entity.SpellRenderer;
+import greekfantasy.client.entity.StymphalianRenderer;
 import greekfantasy.client.entity.TalosRenderer;
 import greekfantasy.client.entity.UnicornRenderer;
 import greekfantasy.client.entity.WhirlRenderer;
@@ -97,6 +98,7 @@ import greekfantasy.client.entity.model.SirenModel;
 import greekfantasy.client.entity.model.SpearModel;
 import greekfantasy.client.entity.model.SpellModel;
 import greekfantasy.client.entity.model.AutomatonModel;
+import greekfantasy.client.entity.model.StymphalianModel;
 import greekfantasy.client.entity.model.UnicornModel;
 import greekfantasy.client.particle.GorgonParticle;
 import greekfantasy.entity.Pegasus;
@@ -321,6 +323,7 @@ public final class GFClientEvents {
             event.registerLayerDefinition(SatyrModel.SATYR_INNER_ARMOR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(new CubeDeformation(0.25F)));
             event.registerLayerDefinition(ShadeModel.SHADE_MODEL_RESOURCE, ShadeModel::createBodyLayer);
             event.registerLayerDefinition(SirenModel.SIREN_MODEL_RESOURCE, SirenModel::createBodyLayer);
+            event.registerLayerDefinition(StymphalianModel.STYMPHALIAN_MODEL_RESOURCE, StymphalianModel::createBodyLayer);
             event.registerLayerDefinition(UnicornModel.UNICORN_MODEL_RESOURCE, UnicornModel::createBodyLayer);
             // other
             event.registerLayerDefinition(CerberusHeadModel.CERBERUS_HEAD_MODEL_RESOURCE, CerberusHeadModel::createLayer);
@@ -373,10 +376,12 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.SPARTI.get(), SpartiRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SHADE.get(), ShadeRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SIREN.get(), SirenRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.STYMPHALIAN.get(), StymphalianRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.TALOS.get(), TalosRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.UNICORN.get(), UnicornRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.WHIRL.get(), WhirlRenderer::new);
             // other
+            event.registerEntityRenderer(GFRegistry.EntityReg.BRONZE_FEATHER.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CURSE.get(), SpellRenderer.CurseRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CURSE_OF_CIRCE.get(), SpellRenderer.CurseOfCirceRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DISCUS.get(), ThrownItemRenderer::new);
@@ -432,6 +437,8 @@ public final class GFClientEvents {
             registerUsingProperties(GFRegistry.ItemReg.PANFLUTE.get(), "playing");
             registerUsingProperties(GFRegistry.ItemReg.WOODEN_LYRE.get(), "playing");
             registerUsingProperties(GFRegistry.ItemReg.GOLDEN_LYRE.get(), "playing");
+            // register bronze feather
+            registerUsingProperties(GFRegistry.ItemReg.BRONZE_FEATHER.get(), "using");
             // register salve
             registerUsingProperties(GFRegistry.ItemReg.OLIVE_SALVE.get(), "using");
             // register bows
