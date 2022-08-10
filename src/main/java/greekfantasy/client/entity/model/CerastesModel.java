@@ -59,7 +59,7 @@ public class CerastesModel<T extends Cerastes> extends AgeableListModel<T> {
         head.addOrReplaceChild("left_nub", CubeListBuilder.create().texOffs(59, 13).addBox(0.0F, -4.0F, -1.0F, 1.0F, 4.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(1.0F, -4.0F, -4.0F, 0.48F, 0.0F, 0.1745F));
         head.addOrReplaceChild("right_nub", CubeListBuilder.create().texOffs(59, 13).addBox(-1.0F, -4.0F, -1.0F, 1.0F, 4.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(-1.0F, -4.0F, -4.0F, 0.48F, 0.0F, -0.1745F));
         GFModelUtil.addOrReplaceRamHorn(head, "left_horn", 3.0F, -2.0F, -4.0F, true);
-        GFModelUtil.addOrReplaceRamHorn(head, "right_horn", -3.0F, -2.0F, -4.0F, true);
+        GFModelUtil.addOrReplaceRamHorn(head, "right_horn", -3.0F, -2.0F, -4.0F, false);
 
         PartDefinition body1 = partdefinition.addOrReplaceChild("body1", CubeListBuilder.create().texOffs(0, 13).addBox(-2.0F, 0.0F, 0.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 8.0F, -4.5F, -0.7854F, 0.0F, 0.0F));
         PartDefinition body2 = body1.addOrReplaceChild("body2", CubeListBuilder.create().texOffs(0, 13).addBox(-1.99F, 0.0F, 0.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, 6.0F, -0.5236F, 0.0F, 0.0F));

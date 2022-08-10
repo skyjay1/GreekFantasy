@@ -270,6 +270,7 @@ public class GFConfig {
         putSpawnConfigSpec(builder, "satyr", 22, true, forest);
         putSpawnConfigSpec(builder, "shade", 10, false);
         putSpawnConfigSpec(builder, "siren", 10, true, Biomes.LUKEWARM_OCEAN.location().toString(), Biomes.WARM_OCEAN.location().toString());
+        putSpawnConfigSpec(builder, "stymphalian", 10, true, BiomeDictionary.Type.SWAMP.getName());
         putSpawnConfigSpec(builder, "unicorn", 11, true, Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString());
         putSpawnConfigSpec(builder, "whirl", 6, true, BiomeDictionary.Type.OCEAN.getName());
         builder.pop();

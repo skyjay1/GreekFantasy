@@ -418,16 +418,19 @@ public class Elpis extends PathfinderMob implements FlyingAnimal {
             this.chance = Math.min(1, chance);
         }
 
+        @Override
         public boolean canUse() {
             return Elpis.this.navigation.isDone()
                     && !Elpis.this.isTrading()
                     && Elpis.this.random.nextInt(chance) == 0;
         }
 
+        @Override
         public boolean canContinueToUse() {
             return Elpis.this.navigation.isInProgress();
         }
 
+        @Override
         public void start() {
             Vec3 vec3 = this.findPos();
             if (vec3 != null) {

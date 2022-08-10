@@ -50,7 +50,7 @@ __Key:__
 - X X X X X Miniboss: Medusa
 - _ _ _ _ _ Miniboss: Cretan Minotaur
 - X X X X X Miniboss: Circe
-- X X X X _ Miniboss: Hydra
+- X X X X X Miniboss: Hydra
 - X X X X X Miniboss: Arachne
 - X X X X X Fury
 - X X X X X Drakaina
@@ -61,6 +61,7 @@ __Key:__
 - X X X X X Makhai
 - X X X X X Baby Spider
 - X X X X X Automaton (friendly Talos)
+- X X X X X Stymphalian
 
 
 ### Other
@@ -79,6 +80,7 @@ __Key:__
 - X X Spear (and Bident)
 - X X Orthus Head
 - X X Palladium
+- X X Bronze Feather
 
 ## Structures
 
@@ -196,6 +198,7 @@ __Key:__
 - X X X Pomegranate
 - X X X Pomegranate Sapling
 - X X X Quest
+- X X X Bronze feather
 
 ### Armor
 
@@ -289,7 +292,6 @@ Can I do something with these?
 - Daemon (spirit of specific trait, emotion, object, etc)
 - Phoenix
 - Werewolf
-- Stymphalian bird
 - Cecrops (half-man, half-snake)
 - Ophiotaur (kill to obtain heart; use heart to banish a god)
 - Kyno (dog-head biped; see also "Cynocephaly")
@@ -297,8 +299,6 @@ Can I do something with these?
 - Pandos (biped, giant ears)
 - Horse of Diomedes (man-eating horse)
 - Underworld: underworld biome, tartarus, styx river, meadow of Asphodels, etc.
-- Iron Feather - from Stymphalian bird; throwable
-- Questing Scroll - in-game instructions to obtain various items, summon bosses, etc.
 - Belt of Aphrodite (maybe allows disguise as other player?)
 - Aegis (Zeus' shield)
 - Adamant Scythe (Kronus)

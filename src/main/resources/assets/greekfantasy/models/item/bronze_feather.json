@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "greekfantasy:item/bronze_feather"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "using": 1
+      },
+      "model": "greekfantasy:item/bronze_feather_using"
+    }
+  ]
+}

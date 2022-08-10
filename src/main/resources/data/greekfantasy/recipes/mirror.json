@@ -6,7 +6,7 @@
   ],
   "key": {
     "#": { "item": "minecraft:glass_pane" },
-    "I": { "item": "minecraft:gold_ingot" }
+    "I": { "tag": "forge:ingots/bronze" }
   },
   "result": {
     "item": "greekfantasy:mirror"

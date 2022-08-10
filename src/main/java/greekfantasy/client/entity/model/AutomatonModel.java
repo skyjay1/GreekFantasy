@@ -148,7 +148,7 @@ public class AutomatonModel<T extends Automaton> extends HierarchicalModel<T> im
         // head
         head.setPos(0, -11.0F + 16.01F * bodyPercent + 12F * legPercent, 0);
         head.xRot = 0;
-        head.yRot *= spawnPercentRaw;
+        head.yRot = netHeadYaw * ((float)Math.PI / 180F) * spawnPercentRaw;
         head.zRot *= spawnPercentRaw;
         // body
         body.setPos(0, 5 + 10 * bodyPercent + 12 * legPercent, 0);
