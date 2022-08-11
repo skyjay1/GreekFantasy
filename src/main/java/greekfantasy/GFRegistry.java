@@ -298,6 +298,7 @@ public final class GFRegistry {
             // register blocks and items together
             registerBlockPolishedEtc("limestone", Block.Properties.of(Material.STONE, MaterialColor.STONE).requiresCorrectToolForDrops().strength(1.5F, 6.0F));
             registerBlockPolishedEtc("marble", Block.Properties.of(Material.STONE, MaterialColor.QUARTZ).requiresCorrectToolForDrops().strength(1.5F, 6.0F));
+            registerBlockPolishedChiseledAndBricks("cretan_stone", BlockBehaviour.Properties.of(Material.STONE, MaterialColor.CLAY).requiresCorrectToolForDrops().strength(80.0F, 3600.0F));
             registerLogsPlanksEtc("olive", 2.0F, 3.0F, MaterialColor.WOOD, MaterialColor.SAND, 5, 5, 20);
             registerLogsPlanksEtc("pomegranate", 2.2F, 3.0F, MaterialColor.TERRACOTTA_PURPLE, MaterialColor.CRIMSON_STEM, 0, 0, 0);
             registerLeaves("olive", 30, 60);
