@@ -136,6 +136,9 @@ import greekfantasy.worldgen.OliveTreeFeature;
 import greekfantasy.worldgen.OliveTreeGrower;
 import greekfantasy.worldgen.PomegranateTreeGrower;
 import greekfantasy.worldgen.SatyrStructureProcessor;
+import greekfantasy.worldgen.maze.MazeConfiguration;
+import greekfantasy.worldgen.maze.MazePiece;
+import greekfantasy.worldgen.maze.MazeStructure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -227,6 +230,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
@@ -325,6 +329,11 @@ public final class GFRegistry {
         public static final RegistryObject<Block> OLIVE_LEAVES = RegistryObject.create(new ResourceLocation(MODID, "olive_leaves"), ForgeRegistries.BLOCKS);
         public static final RegistryObject<Block> POMEGRANATE_LEAVES = RegistryObject.create(new ResourceLocation(MODID, "pomegranate_leaves"), ForgeRegistries.BLOCKS);
         public static final RegistryObject<Block> GOLDEN_LEAVES = RegistryObject.create(new ResourceLocation(MODID, "golden_leaves"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> CRETAN_STONE_BRICK = RegistryObject.create(new ResourceLocation(MODID, "cretan_stone_brick"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> POLISHED_CRETAN_STONE = RegistryObject.create(new ResourceLocation(MODID, "polished_cretan_stone"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> CRACKED_CRETAN_STONE_BRICK = RegistryObject.create(new ResourceLocation(MODID, "cracked_cretan_stone_brick"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> CRACKED_POLISHED_CRETAN_STONE = RegistryObject.create(new ResourceLocation(MODID, "cracked_polished_cretan_stone"), ForgeRegistries.BLOCKS);
+
         public static final RegistryObject<Block> BRONZE_BLOCK = BLOCKS.register("bronze_block", () ->
                 new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN)
                         .requiresCorrectToolForDrops().strength(3.0F, 6.0F)
@@ -1468,16 +1477,26 @@ public final class GFRegistry {
         public static void register() {
             STRUCTURE_FEATURES.register(FMLJavaModLoadingContext.get().getModEventBus());
             FMLJavaModLoadingContext.get().getModEventBus().addListener(StructureFeatureReg::registerStep);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(StructureFeatureReg::registerStructurePieceType);
         }
 
         public static final RegistryObject<StructureFeature<?>> ARACHNE_PIT = STRUCTURE_FEATURES.register("arachne_pit", () ->
                 new ArachnePitFeature(JigsawConfiguration.CODEC));
+        public static final RegistryObject<StructureFeature<?>> MAZE = STRUCTURE_FEATURES.register("maze", () ->
+                new MazeStructure(MazeConfiguration.CODEC));
+        public static StructurePieceType MAZE_ROOM;
 
         private static void registerStep(final FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
                 StructureFeature.STEP.put(ARACHNE_PIT.get(), GenerationStep.Decoration.UNDERGROUND_STRUCTURES);
+                StructureFeature.STEP.put(MAZE.get(), GenerationStep.Decoration.UNDERGROUND_STRUCTURES);
             });
+        }
 
+        private static void registerStructurePieceType(final FMLCommonSetupEvent event) {
+            event.enqueueWork(() -> {
+                MAZE_ROOM = Registry.register(Registry.STRUCTURE_PIECE, new ResourceLocation(GreekFantasy.MODID, "maze"), (config, tag) -> new MazePiece(tag));
+            });
         }
     }
 

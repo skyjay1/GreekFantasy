@@ -1,0 +1,28 @@
+{
+  "structures": [
+    {
+      "location": "greekfantasy:maze/room_0",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/room_1",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/room_2",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/room_3",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/room_4",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/room_5",
+      "weight": 5
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "type": "greekfantasy:maze",
+  "config": {
+    "probability": 0.45,
+    "piece_count_x": 20,
+    "piece_count_z": 20
+  },
+  "biomes": "#minecraft:has_structure/mineshaft",
+  "adapt_noise": true,
+  "spawn_overrides": {
+    "monster": {
+      "bounding_box": "full",
+      "spawns": [
+        {
+          "type": "greekfantasy:minotaur",
+          "weight": 1,
+          "minCount": 1,
+          "maxCount": 2
+        }
+      ]
+    }
+  }
+}

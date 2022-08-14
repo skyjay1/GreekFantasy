@@ -7,6 +7,7 @@ import greekfantasy.network.SSongPacket;
 import greekfantasy.util.GenericJsonReloadListener;
 import greekfantasy.util.Quest;
 import greekfantasy.util.Song;
+import greekfantasy.worldgen.maze.WeightedTemplateList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -50,6 +51,8 @@ public class GreekFantasy {
     public static final GenericJsonReloadListener<Quest> QUESTS = new GenericJsonReloadListener<>("quests", Quest.class, Quest.CODEC,
             l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SQuestPacket(e.getKey(), e.getValue().get()))));
 
+    public static final GenericJsonReloadListener<WeightedTemplateList> WEIGHTED_TEMPLATES = new GenericJsonReloadListener<>("worldgen/maze_piece", WeightedTemplateList.class, WeightedTemplateList.CODEC,
+            l -> {});
 
     public GreekFantasy() {
         // register config

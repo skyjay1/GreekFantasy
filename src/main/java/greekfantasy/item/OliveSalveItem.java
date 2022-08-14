@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -103,8 +104,7 @@ public class OliveSalveItem extends Item {
         }
         // add mob effects to the result list
         for(int i = 0; i < rolls; i++) {
-            GreekFantasy.LOGGER.debug("Adding effect...");
-            WeightedMobEffectInstance weightedEntry = WeightedMobEffectInstance.sample(weighted, random);
+            WeightedMobEffectInstance weightedEntry = WeightedMobEffectInstance.sample(weighted, new LegacyRandomSource(random.nextLong()));
             if(weightedEntry != null) {
                 mobEffects.add(weightedEntry.createMobEffectInstance());
             }
