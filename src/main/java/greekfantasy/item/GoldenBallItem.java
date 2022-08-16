@@ -19,6 +19,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
@@ -44,15 +45,12 @@ public class GoldenBallItem extends Item {
             // determine position and state
             BlockPos pos = livingEntity.blockPosition();
             BlockState current = level.getBlockState(pos);
-            FluidState fluid = level.getFluidState(pos);
-            BlockState string = GFRegistry.BlockReg.GOLDEN_STRING.get().defaultBlockState()
-                    .setValue(BlockStateProperties.WATERLOGGED, fluid.isSource() && fluid.is(FluidTags.WATER));
-            boolean replaceable = current.getMaterial() == Material.AIR || current.getMaterial() == Material.WATER;
+            BlockState string = GFRegistry.BlockReg.GOLDEN_STRING.get().defaultBlockState();
             // determine whether to remove existing string
             boolean isString = current.is(GFRegistry.BlockReg.GOLDEN_STRING.get());
             if(isString && current.getValue(GoldenStringBlock.AGE) > 0) {
-                level.destroyBlock(pos, false);
-            } else if(!isString && replaceable && string.canSurvive(level, pos)) {
+                level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            } else if(!isString && current.getMaterial().isReplaceable() && string.canSurvive(level, pos)) {
                 // place golden string
                 level.setBlock(pos, string, Block.UPDATE_ALL);
                 // damage item

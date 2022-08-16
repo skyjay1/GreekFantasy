@@ -361,7 +361,7 @@ public final class GFRegistry {
                         .randomTicks().lightLevel(b -> b.getValue(OliveOilBlock.LIT) ? 11 : 0).sound(SoundType.WET_GRASS)));
         public static final RegistryObject<Block> GOLDEN_STRING = BLOCKS.register("golden_string", () ->
                 new GoldenStringBlock(BlockBehaviour.Properties.of(Material.DECORATION)
-                        .lightLevel(b -> 8).instabreak().noCollission().noOcclusion()));
+                        .lightLevel(b -> 8).instabreak().noCollission().noOcclusion().sound(SoundType.WOOL)));
         public static final RegistryObject<Block> OLIVE_SAPLING = BLOCKS.register("olive_sapling", () ->
                 new SaplingBlock(new OliveTreeGrower(), BlockBehaviour.Properties.of(Material.PLANT)
                         .noCollission().randomTicks().instabreak().sound(SoundType.GRASS)));
