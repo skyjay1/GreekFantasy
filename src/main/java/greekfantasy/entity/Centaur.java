@@ -51,6 +51,7 @@ import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
@@ -171,6 +172,11 @@ public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMo
     }
 
     // Ranged Attack methods
+
+    @Override
+    public boolean canFireProjectileWeapon(ProjectileWeaponItem item) {
+        return item instanceof BowItem;
+    }
 
     @Override
     public void performRangedAttack(LivingEntity target, float distanceFactor) {

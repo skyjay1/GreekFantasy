@@ -2,6 +2,10 @@ package greekfantasy.worldgen.maze;
 
 import java.util.Objects;
 
+/**
+ * An ordered set of 4 objects. This class is immutable but the objects it contains may not be.
+ * @param <T> any object
+ */
 public class Vector4i<T> {
 	public final T a;
 	public final T b;

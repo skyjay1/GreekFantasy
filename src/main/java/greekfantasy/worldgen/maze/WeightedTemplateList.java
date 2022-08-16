@@ -2,10 +2,10 @@ package greekfantasy.worldgen.maze;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import greekfantasy.util.WeightedMobEffectInstance;
-import net.minecraft.resources.ResourceLocation;
+import greekfantasy.util.WeightedUtil;
 import net.minecraft.world.level.levelgen.RandomSource;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class WeightedTemplateList {
@@ -22,11 +22,20 @@ public class WeightedTemplateList {
         this.templates = templates;
     }
 
+    /**
+     * @return the list of WeightedTemplates
+     */
     public List<WeightedTemplate> getTemplates() {
         return templates;
     }
 
+    /**
+     * Selects a random template from the contained list, using the random source and item weights.
+     * @param random the random source
+     * @return a single element, or null if the list was empty
+     */
+    @Nullable
     public WeightedTemplate sample(final RandomSource random) {
-        return WeightedMobEffectInstance.sample(this.templates, random);
+        return WeightedUtil.sample(this.templates, random);
     }
 }

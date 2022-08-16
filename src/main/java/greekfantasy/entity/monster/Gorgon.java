@@ -48,6 +48,7 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -205,6 +206,11 @@ public class Gorgon extends Monster implements RangedAttackMob {
     }
 
     // Ranged Attack //
+
+    @Override
+    public boolean canFireProjectileWeapon(ProjectileWeaponItem item) {
+        return item instanceof BowItem;
+    }
 
     @Override
     public void performRangedAttack(LivingEntity target, float distanceFactor) {

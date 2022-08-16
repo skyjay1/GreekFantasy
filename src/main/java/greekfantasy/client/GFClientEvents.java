@@ -401,6 +401,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.PALLADIUM.get(), PalladiumRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.POISON_SPIT.get(), SpellRenderer.PoisonSpitRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPEAR.get(), SpearRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.THROWING_AXE.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.WEB_BALL.get(), ThrownItemRenderer::new);
             // register block entities
             event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.CERBERUS_HEAD.get(), CerberusHeadBlockEntityRenderer::new);

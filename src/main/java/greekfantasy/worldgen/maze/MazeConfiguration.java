@@ -13,6 +13,9 @@ public class MazeConfiguration implements FeatureConfiguration {
         Codec.INT.optionalFieldOf("piece_count_z", 20).forGetter(MazeConfiguration::getPieceCountZ)
     ).apply(instance, MazeConfiguration::new));
 
+    /**
+     * The maximum number of pieces along the x or z direction, calculated by maximum structure size and piece size.
+     */
     public static final int MAX_COUNT = (128 / MazePiece.WIDTH) - 2;
 
     private final double probability;
@@ -33,18 +36,30 @@ public class MazeConfiguration implements FeatureConfiguration {
         }
     }
 
+    /**
+     * @return the probability that the structure will spawn at an otherwise viable location
+     */
     public double getProbability() {
         return probability;
     }
 
+    /**
+     * @return the probability that a dead end will be a room instead
+     */
     public double getRoomChance() {
         return roomChance;
     }
 
+    /**
+     * @return the number of pieces along the x direction
+     */
     public int getPieceCountX() {
         return pieceCountX;
     }
 
+    /**
+     * @return the number of pieces along the z direction
+     */
     public int getPieceCountZ() {
         return pieceCountZ;
     }

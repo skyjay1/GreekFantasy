@@ -72,7 +72,7 @@ public class IntervalRangedAttackGoal<T extends Mob & RangedAttackMob> extends G
             entity.performRangedAttack(target, 0.1F);
         }
         // increase timer and finish goal when timer reaches max
-        if (progressTimer++ > maxDuration) {
+        if (progressTimer++ >= maxDuration) {
             stop();
         }
     }

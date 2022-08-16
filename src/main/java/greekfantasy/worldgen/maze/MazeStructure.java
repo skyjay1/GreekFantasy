@@ -13,17 +13,23 @@ import net.minecraft.world.level.levelgen.structure.pieces.PieceGenerator;
 import net.minecraft.world.level.levelgen.structure.pieces.PieceGeneratorSupplier;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class MazeStructure extends StructureFeature<MazeConfiguration> {
+
     public MazeStructure(Codec<MazeConfiguration> codec) {
         super(codec, PieceGeneratorSupplier.simple(MazeStructure::checkLocation, MazeStructure::generatePieces));
     }
 
+    /**
+     * Determines if the structure can generate at the given location.
+     * @param context the piece generator supplier context
+     * @return true if the structure can generate at the given location
+     */
     private static boolean checkLocation(PieceGeneratorSupplier.Context<MazeConfiguration> context) {
         WorldgenRandom worldgenrandom = new WorldgenRandom(new LegacyRandomSource(0L));
         worldgenrandom.setLargeFeatureSeed(context.seed(), context.chunkPos().x, context.chunkPos().z);
@@ -34,6 +40,12 @@ public class MazeStructure extends StructureFeature<MazeConfiguration> {
         return context.validBiome().test(context.chunkGenerator().getNoiseBiome(QuartPos.fromBlock(context.chunkPos().getMiddleBlockX()), QuartPos.fromBlock(50), QuartPos.fromBlock(context.chunkPos().getMiddleBlockZ())));
     }
 
+    /**
+     * Generates all of the pieces for the structure and adds them to the builder.
+     * @param builder the structure pieces builder
+     * @param context the piece generator context
+     * @see #generateMaze(BlockPos, int, PieceGenerator.Context)
+     */
     private static void generatePieces(StructurePiecesBuilder builder, PieceGenerator.Context<MazeConfiguration> context) {
         int offsetY = context.random().nextIntBetweenInclusive(0, 78) - 16;
 
@@ -43,9 +55,18 @@ public class MazeStructure extends StructureFeature<MazeConfiguration> {
             builder.addPiece(piece);
         }
 
-        builder.offsetPiecesVertically(offsetY + 100);
+        builder.offsetPiecesVertically(offsetY);
     }
 
+    /**
+     * Creates each MazePiece with the correct orientation and openings.
+     * Also creates the stairway and entrance pieces to the surface.
+     * @param origin the origin block position
+     * @param offsetY the number of blocks to offset vertically, used to create stairways
+     * @param context the piece generator context
+     * @return the list of configured MazePieces
+     * @see #depthFirst(MazeConfiguration, Point, boolean[][], MazePiece[][], RandomSource)
+     */
     public static List<MazePiece> generateMaze(BlockPos origin, int offsetY, PieceGenerator.Context<MazeConfiguration> context) {
         List<MazePiece> mazeRooms = new ArrayList<>();
 
@@ -63,18 +84,21 @@ public class MazeStructure extends StructureFeature<MazeConfiguration> {
                 tiles[i][j] = MazePiece.create(origin, i, j);
             }
         }
-        // place boss room
+        // determine location of boss rooms
         int bX = countX / 2;
         int bY = countZ / 2;
         bX += rand.nextInt(bX / 2) - bX / 4;
         bY += rand.nextInt(bY / 2) - bY / 4;
-        tiles[bX][bY - 1].withWalls(true, false, true, false);
-        tiles[bX][bY].withWalls(false, true, true, false).withVariant(MazePiece.Variant.BOSS_ROOM_ENTRANCE).withDirection(Direction.WEST);
-        tiles[bX + 1][bY].withWalls(false, true, false, true).withVariant(MazePiece.Variant.BOSS_ROOM).withDirection(Direction.NORTH);
-        tiles[bX][bY + 1].withWalls(true, true, false, false).withVariant(MazePiece.Variant.BOSS_ROOM).withDirection(Direction.SOUTH);
-        tiles[bX + 1][bY + 1].withWalls(true, false, false, true).withVariant(MazePiece.Variant.BOSS_ROOM).withDirection(Direction.EAST);
+        // connect the boss room and maze piece to the north
+        tiles[bX][bY - 1].withOpenings(true, false, true, false);
+        // set boss rooms with variant and orientation
+        tiles[bX][bY].withOpenings(false, true, true, false).withVariant(MazePiece.Variant.BOSS_ROOM_ENTRANCE).withDirection(Direction.WEST);
+        tiles[bX + 1][bY].withOpenings(false, true, false, true).withVariant(MazePiece.Variant.BOSS_ROOM).withDirection(Direction.NORTH);
+        tiles[bX][bY + 1].withOpenings(true, true, false, false).withVariant(MazePiece.Variant.BOSS_ROOM).withDirection(Direction.SOUTH);
+        tiles[bX + 1][bY + 1].withOpenings(true, false, false, true).withVariant(MazePiece.Variant.BOSS_ROOM).withDirection(Direction.EAST);
+        // mark boss rooms as visited to ensure they are not replaced
         visited[bX][bY] = visited[bX + 1][bY] = visited[bX][bY + 1] = visited[bX + 1][bY + 1] = true;
-        // depth-first maze generation
+        // This method calls itself recursively until every tile has been visited
         depthFirst(config, new Point(bX, bY - 1), visited, tiles, rand);
         // Create entrances to connect to the outside.
         // The uses of rand.nextInt ensure that the entrances are closer to the center of their respective side.
@@ -100,10 +124,20 @@ public class MazeStructure extends StructureFeature<MazeConfiguration> {
         return mazeRooms;
     }
 
-    private static Collection<MazePiece> entrance(final PieceGenerator.Context context, final BlockPos origin, final Point vertex, int offsetY, final MazePiece piece, final Direction direction) {
+    /**
+     * Creates stairway and entrance pieces connected to the given piece.
+     * @param context the piece generator context
+     * @param origin the origin block of the structure
+     * @param vertex the indices of the piece that will become an entrance
+     * @param offsetY the vertical offset, used to determine the number of stairways
+     * @param piece the piece to attach to the stairways
+     * @param direction the direction from the maze piece to the entrance stairway (away from the maze)
+     * @return a collection of newly created maze pieces (not including the maze piece from method args)
+     */
+    private static Collection<MazePiece> entrance(final PieceGenerator.Context<MazeConfiguration> context, final BlockPos origin, final Point vertex, int offsetY, final MazePiece piece, final Direction direction) {
         List<MazePiece> pieces = new ArrayList<>();
         // add opening to the existing piece
-        piece.withWalls(piece.getOpenings().a || direction == Direction.NORTH, piece.getOpenings().b || direction == Direction.EAST, piece.getOpenings().c || direction == Direction.SOUTH, piece.getOpenings().d || direction == Direction.WEST);
+        piece.withOpenings(piece.getOpenings().a || direction == Direction.NORTH, piece.getOpenings().b || direction == Direction.EAST, piece.getOpenings().c || direction == Direction.SOUTH, piece.getOpenings().d || direction == Direction.WEST);
         // use reversed direction for pieces
         Direction dOpposite = direction.getOpposite();
         // determine column point
@@ -169,24 +203,24 @@ public class MazeStructure extends StructureFeature<MazeConfiguration> {
         MazePiece temp;
         if (p1.x == p2.x && p1.y > p2.y) { // north
             temp = tiles[p1.x][p1.y];
-            temp.withWalls(true, temp.getOpenings().b, temp.getOpenings().c, temp.getOpenings().d);
+            temp.withOpenings(true, temp.getOpenings().b, temp.getOpenings().c, temp.getOpenings().d);
             temp = tiles[p2.x][p2.y];
-            temp.withWalls(temp.getOpenings().a, temp.getOpenings().b, true, temp.getOpenings().d);
+            temp.withOpenings(temp.getOpenings().a, temp.getOpenings().b, true, temp.getOpenings().d);
         } else if (p1.x < p2.x && p1.y == p2.y) { // east
             temp = tiles[p1.x][p1.y];
-            temp.withWalls(temp.getOpenings().a, true, temp.getOpenings().c, temp.getOpenings().d);
+            temp.withOpenings(temp.getOpenings().a, true, temp.getOpenings().c, temp.getOpenings().d);
             temp = tiles[p2.x][p2.y];
-            temp.withWalls(temp.getOpenings().a, temp.getOpenings().b, temp.getOpenings().c, true);
+            temp.withOpenings(temp.getOpenings().a, temp.getOpenings().b, temp.getOpenings().c, true);
         } else if (p1.x == p2.x && p1.y < p2.y) { // south
             temp = tiles[p1.x][p1.y];
-            temp.withWalls(temp.getOpenings().a, temp.getOpenings().b, true, temp.getOpenings().d);
+            temp.withOpenings(temp.getOpenings().a, temp.getOpenings().b, true, temp.getOpenings().d);
             temp = tiles[p2.x][p2.y];
-            temp.withWalls(true, temp.getOpenings().b, temp.getOpenings().c, temp.getOpenings().d);
+            temp.withOpenings(true, temp.getOpenings().b, temp.getOpenings().c, temp.getOpenings().d);
         } else if (p1.x > p2.x && p1.y == p2.y) { // west
             temp = tiles[p1.x][p1.y];
-            temp.withWalls(temp.getOpenings().a, temp.getOpenings().b, temp.getOpenings().c, true);
+            temp.withOpenings(temp.getOpenings().a, temp.getOpenings().b, temp.getOpenings().c, true);
             temp = tiles[p2.x][p2.y];
-            temp.withWalls(temp.getOpenings().a, true, temp.getOpenings().c, temp.getOpenings().d);
+            temp.withOpenings(temp.getOpenings().a, true, temp.getOpenings().c, temp.getOpenings().d);
         }
     }
 

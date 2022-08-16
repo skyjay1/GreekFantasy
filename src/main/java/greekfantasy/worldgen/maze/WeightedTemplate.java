@@ -20,6 +20,9 @@ public class WeightedTemplate extends WeightedEntry.IntrusiveBase {
         this.location = location;
     }
 
+    /**
+     * @return the ResourceLocation ID of the structure template NBT
+     */
     public ResourceLocation getLocation() {
         return location;
     }
