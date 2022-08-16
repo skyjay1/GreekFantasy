@@ -46,6 +46,7 @@ import greekfantasy.entity.boss.Arachne;
 import greekfantasy.entity.boss.BronzeBull;
 import greekfantasy.entity.boss.Cerberus;
 import greekfantasy.entity.boss.Charybdis;
+import greekfantasy.entity.boss.CretanMinotaur;
 import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.GiantBoar;
 import greekfantasy.entity.boss.Hydra;
@@ -62,6 +63,7 @@ import greekfantasy.entity.misc.GreekFire;
 import greekfantasy.entity.misc.HealingSpell;
 import greekfantasy.entity.misc.PoisonSpit;
 import greekfantasy.entity.misc.Spear;
+import greekfantasy.entity.misc.ThrowingAxe;
 import greekfantasy.entity.misc.WebBall;
 import greekfantasy.entity.monster.Ara;
 import greekfantasy.entity.monster.BabySpider;
@@ -110,6 +112,7 @@ import greekfantasy.item.QuestItem;
 import greekfantasy.item.SnakeskinArmorItem;
 import greekfantasy.item.SpearItem;
 import greekfantasy.item.StaffOfHealingItem;
+import greekfantasy.item.ThrowingAxeItem;
 import greekfantasy.item.ThunderboltItem;
 import greekfantasy.item.UnicornHornItem;
 import greekfantasy.item.WandOfCirceItem;
@@ -136,6 +139,9 @@ import greekfantasy.worldgen.OliveTreeFeature;
 import greekfantasy.worldgen.OliveTreeGrower;
 import greekfantasy.worldgen.PomegranateTreeGrower;
 import greekfantasy.worldgen.SatyrStructureProcessor;
+import greekfantasy.worldgen.maze.MazeConfiguration;
+import greekfantasy.worldgen.maze.MazePiece;
+import greekfantasy.worldgen.maze.MazeStructure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -227,6 +233,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
@@ -298,6 +305,7 @@ public final class GFRegistry {
             // register blocks and items together
             registerBlockPolishedEtc("limestone", Block.Properties.of(Material.STONE, MaterialColor.STONE).requiresCorrectToolForDrops().strength(1.5F, 6.0F));
             registerBlockPolishedEtc("marble", Block.Properties.of(Material.STONE, MaterialColor.QUARTZ).requiresCorrectToolForDrops().strength(1.5F, 6.0F));
+            registerBlockPolishedChiseledAndBricks("cretan_stone", BlockBehaviour.Properties.of(Material.STONE, MaterialColor.CLAY).requiresCorrectToolForDrops().strength(80.0F, 3600.0F));
             registerLogsPlanksEtc("olive", 2.0F, 3.0F, MaterialColor.WOOD, MaterialColor.SAND, 5, 5, 20);
             registerLogsPlanksEtc("pomegranate", 2.2F, 3.0F, MaterialColor.TERRACOTTA_PURPLE, MaterialColor.CRIMSON_STEM, 0, 0, 0);
             registerLeaves("olive", 30, 60);
@@ -324,6 +332,11 @@ public final class GFRegistry {
         public static final RegistryObject<Block> OLIVE_LEAVES = RegistryObject.create(new ResourceLocation(MODID, "olive_leaves"), ForgeRegistries.BLOCKS);
         public static final RegistryObject<Block> POMEGRANATE_LEAVES = RegistryObject.create(new ResourceLocation(MODID, "pomegranate_leaves"), ForgeRegistries.BLOCKS);
         public static final RegistryObject<Block> GOLDEN_LEAVES = RegistryObject.create(new ResourceLocation(MODID, "golden_leaves"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> CRETAN_STONE_BRICK = RegistryObject.create(new ResourceLocation(MODID, "cretan_stone_brick"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> POLISHED_CRETAN_STONE = RegistryObject.create(new ResourceLocation(MODID, "polished_cretan_stone"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> CRACKED_CRETAN_STONE_BRICK = RegistryObject.create(new ResourceLocation(MODID, "cracked_cretan_stone_brick"), ForgeRegistries.BLOCKS);
+        public static final RegistryObject<Block> CRACKED_POLISHED_CRETAN_STONE = RegistryObject.create(new ResourceLocation(MODID, "cracked_polished_cretan_stone"), ForgeRegistries.BLOCKS);
+
         public static final RegistryObject<Block> BRONZE_BLOCK = BLOCKS.register("bronze_block", () ->
                 new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN)
                         .requiresCorrectToolForDrops().strength(3.0F, 6.0F)
@@ -350,7 +363,7 @@ public final class GFRegistry {
                         .randomTicks().lightLevel(b -> b.getValue(OliveOilBlock.LIT) ? 11 : 0).sound(SoundType.WET_GRASS)));
         public static final RegistryObject<Block> GOLDEN_STRING = BLOCKS.register("golden_string", () ->
                 new GoldenStringBlock(BlockBehaviour.Properties.of(Material.DECORATION)
-                        .lightLevel(b -> 8).instabreak().noCollission().noOcclusion()));
+                        .lightLevel(b -> 8).instabreak().noCollission().noOcclusion().sound(SoundType.WOOL)));
         public static final RegistryObject<Block> OLIVE_SAPLING = BLOCKS.register("olive_sapling", () ->
                 new SaplingBlock(new OliveTreeGrower(), BlockBehaviour.Properties.of(Material.PLANT)
                         .noCollission().randomTicks().instabreak().sound(SoundType.GRASS)));
@@ -662,6 +675,8 @@ public final class GFRegistry {
                 new KnifeItem(GFTiers.FLINT, 3, -1.7F, -1.0F, new Item.Properties().tab(GF_TAB).stacksTo(1)));
         public static final RegistryObject<Item> IVORY_SWORD = ITEMS.register("ivory_sword", () ->
                 new IvorySwordItem(GFTiers.IVORY, 3, -2.2F, new Item.Properties().tab(GF_TAB).stacksTo(1)));
+        public static final RegistryObject<Item> THROWING_AXE = ITEMS.register("throwing_axe", () ->
+                new ThrowingAxeItem(Tiers.IRON, 6.0F, -3.1F, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> DISCUS = ITEMS.register("discus", () ->
                 new DiscusItem(new Item.Properties().tab(GF_TAB).stacksTo(16)));
         public static final RegistryObject<Item> GREEK_FIRE = ITEMS.register("greek_fire", () ->
@@ -693,7 +708,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> GOLDEN_FLEECE = ITEMS.register("golden_fleece", () ->
                 new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> GOLDEN_BALL = ITEMS.register("golden_ball", () ->
-                new GoldenBallItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).defaultDurability(480)));
+                new GoldenBallItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).defaultDurability(680)));
         public static final RegistryObject<Item> ICHOR = ITEMS.register("ichor", () ->
                 new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)) {
                     @Override
@@ -792,7 +807,8 @@ public final class GFRegistry {
                 new ForgeSpawnEggItem(EntityReg.CERASTES, 0x847758, 0x997c4d, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> CIRCE_SPAWN_EGG = ITEMS.register("circe_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.CIRCE, 0x844797, 0xe8c669, new Item.Properties().tab(GF_TAB)));
-        // TODO cretan minotaur
+        public static final RegistryObject<Item> CRETAN_MINOTAUR_SPAWN_EGG = ITEMS.register("cretan_minotaur_spawn_egg", () ->
+                new ForgeSpawnEggItem(EntityReg.CRETAN_MINOTAUR, 0x2a2a2a, 0x734933, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> CYCLOPS_SPAWN_EGG = ITEMS.register("cyclops_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.CYCLOPS, 0xda662c, 0x2c1e0e, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> CYPRIAN_SPAWN_EGG = ITEMS.register("cyprian_spawn_egg", () ->
@@ -912,6 +928,7 @@ public final class GFRegistry {
             register(event, CERBERUS.get(), Cerberus::createAttributes, null);
             register(event, CHARYBDIS.get(), Charybdis::createAttributes, null);
             register(event, CIRCE.get(), Circe::createAttributes, null);
+            register(event, CRETAN_MINOTAUR.get(), CretanMinotaur::createAttributes, null);
             register(event, CYCLOPS.get(), Cyclops::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, CYPRIAN.get(), Cyprian::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, DRAKAINA.get(), Drakaina::createAttributes, Monster::checkMonsterSpawnRules);
@@ -1066,6 +1083,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Circe::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.8F)
                         .build("circe"));
+        public static final RegistryObject<EntityType<? extends CretanMinotaur>> CRETAN_MINOTAUR = ENTITY_TYPES.register("cretan_minotaur", () ->
+                EntityType.Builder.of(CretanMinotaur::new, MobCategory.MONSTER)
+                        .sized(0.989F, 3.395F).fireImmune()
+                        .build("cretan_minotaur"));
         public static final RegistryObject<EntityType<? extends Cyclops>> CYCLOPS = ENTITY_TYPES.register("cyclops", () ->
                 EntityType.Builder.of(Cyclops::new, MobCategory.MONSTER)
                         .sized(0.99F, 2.92F)
@@ -1235,6 +1256,10 @@ public final class GFRegistry {
                 EntityType.Builder.<Spear>of(Spear::new, MobCategory.MISC)
                         .sized(0.5F, 0.5F).noSummon().clientTrackingRange(4).updateInterval(20)
                         .build("spear"));
+        public static final RegistryObject<EntityType<? extends ThrowingAxe>> THROWING_AXE = ENTITY_TYPES.register("throwing_axe", () ->
+                EntityType.Builder.<ThrowingAxe>of(ThrowingAxe::new, MobCategory.MISC)
+                        .sized(0.5F, 0.5F).noSummon().clientTrackingRange(4).updateInterval(20)
+                        .build("throwing_axe"));
         public static final RegistryObject<EntityType<? extends WebBall>> WEB_BALL = ENTITY_TYPES.register("web_ball", () ->
                 EntityType.Builder.<WebBall>of(WebBall::new, MobCategory.MISC)
                         .sized(0.25F, 0.25F).fireImmune().noSummon().clientTrackingRange(4).updateInterval(10)
@@ -1467,16 +1492,26 @@ public final class GFRegistry {
         public static void register() {
             STRUCTURE_FEATURES.register(FMLJavaModLoadingContext.get().getModEventBus());
             FMLJavaModLoadingContext.get().getModEventBus().addListener(StructureFeatureReg::registerStep);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(StructureFeatureReg::registerStructurePieceType);
         }
 
         public static final RegistryObject<StructureFeature<?>> ARACHNE_PIT = STRUCTURE_FEATURES.register("arachne_pit", () ->
                 new ArachnePitFeature(JigsawConfiguration.CODEC));
+        public static final RegistryObject<StructureFeature<?>> MAZE = STRUCTURE_FEATURES.register("maze", () ->
+                new MazeStructure(MazeConfiguration.CODEC));
+        public static StructurePieceType MAZE_ROOM;
 
         private static void registerStep(final FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
                 StructureFeature.STEP.put(ARACHNE_PIT.get(), GenerationStep.Decoration.UNDERGROUND_STRUCTURES);
+                StructureFeature.STEP.put(MAZE.get(), GenerationStep.Decoration.UNDERGROUND_STRUCTURES);
             });
+        }
 
+        private static void registerStructurePieceType(final FMLCommonSetupEvent event) {
+            event.enqueueWork(() -> {
+                MAZE_ROOM = Registry.register(Registry.STRUCTURE_PIECE, new ResourceLocation(GreekFantasy.MODID, "maze"), (config, tag) -> new MazePiece(tag));
+            });
         }
     }
 

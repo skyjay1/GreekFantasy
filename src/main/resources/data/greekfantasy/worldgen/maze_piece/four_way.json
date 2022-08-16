@@ -1,0 +1,16 @@
+{
+  "structures": [
+    {
+      "location": "greekfantasy:maze/four_way_0",
+      "weight": 10
+    },
+    {
+      "location": "greekfantasy:maze/four_way_1",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/four_way_2",
+      "weight": 5
+    }
+  ]
+}

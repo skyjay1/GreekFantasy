@@ -57,7 +57,7 @@ public class Minotaur extends Monster {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 24.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.24D)
+                .add(Attributes.MOVEMENT_SPEED, 0.26D)
                 .add(Attributes.ATTACK_DAMAGE, 3.5D)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.25D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.97D)
@@ -75,13 +75,17 @@ public class Minotaur extends Monster {
         super.registerGoals();
         this.goalSelector.addGoal(0, new Minotaur.StunnedGoal());
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new Minotaur.ChargeAttackGoal(1.68D));
-        this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        registerChargeGoal();
+    }
+
+    protected void registerChargeGoal() {
+        this.goalSelector.addGoal(2, new Minotaur.ChargeAttackGoal(2.78D));
     }
 
     @Override
@@ -92,6 +96,13 @@ public class Minotaur extends Monster {
         if (level.isClientSide() && this.isStunned()) {
             spawnStunnedParticles();
         }
+    }
+
+    @Override
+    public boolean canAttackType(EntityType<?> entityType) {
+        return entityType != GFRegistry.EntityReg.MINOTAUR.get()
+                && entityType != GFRegistry.EntityReg.CRETAN_MINOTAUR.get()
+                && super.canAttackType(entityType);
     }
 
     // Sound methods
@@ -145,11 +156,11 @@ public class Minotaur extends Monster {
     // States
 
     public byte getMinotaurState() {
-        return this.getEntityData().get(STATE).byteValue();
+        return this.getEntityData().get(STATE);
     }
 
     public void setMinotaurState(final byte state) {
-        this.getEntityData().set(STATE, Byte.valueOf(state));
+        this.getEntityData().set(STATE, state);
     }
 
     public boolean isNoneState() {
@@ -240,7 +251,7 @@ public class Minotaur extends Monster {
         }
     }
 
-    class ChargeAttackGoal extends Goal {
+    public class ChargeAttackGoal extends Goal {
 
         private final int maxCooldown = 200;
         private final int maxCharging = 40;
@@ -251,7 +262,7 @@ public class Minotaur extends Monster {
         private int cooldown = maxCooldown;
         private Vec3 targetPos;
 
-        protected ChargeAttackGoal(final double speedIn) {
+        public ChargeAttackGoal(final double speedIn) {
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
             speed = speedIn;
             targetPos = null;

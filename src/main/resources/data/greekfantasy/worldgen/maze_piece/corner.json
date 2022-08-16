@@ -1,0 +1,16 @@
+{
+  "structures": [
+    {
+      "location": "greekfantasy:maze/corner_0",
+      "weight": 10
+    },
+    {
+      "location": "greekfantasy:maze/corner_1",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/corner_2",
+      "weight": 5
+    }
+  ]
+}

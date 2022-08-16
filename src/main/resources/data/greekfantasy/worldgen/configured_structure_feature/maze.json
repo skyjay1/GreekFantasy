@@ -1,0 +1,24 @@
+{
+  "type": "greekfantasy:maze",
+  "config": {
+    "probability": 0.029,
+    "room_chance": 0.5,
+    "piece_count_x": 19,
+    "piece_count_z": 19
+  },
+  "biomes": "#greekfantasy:has_structure/maze",
+  "adapt_noise": false,
+  "spawn_overrides": {
+    "monster": {
+      "bounding_box": "full",
+      "spawns": [
+        {
+          "type": "greekfantasy:minotaur",
+          "weight": 100,
+          "minCount": 2,
+          "maxCount": 3
+        }
+      ]
+    }
+  }
+}

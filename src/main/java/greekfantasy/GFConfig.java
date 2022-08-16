@@ -75,6 +75,8 @@ public class GFConfig {
     private boolean showArachneBossBar;
     private final ForgeConfigSpec.BooleanValue SHOW_CIRCE_BOSS_BAR;
     private boolean showCirceBossBar;
+    private final ForgeConfigSpec.BooleanValue SHOW_CRETAN_BOSS_BAR;
+    private boolean showCretanBossBar;
     private final ForgeConfigSpec.BooleanValue SHOW_GIANT_BOAR_BOSS_BAR;
     private boolean showGiantBoarBossBar;
     private final ForgeConfigSpec.BooleanValue SHOW_HYDRA_BOSS_BAR;
@@ -200,6 +202,7 @@ public class GFConfig {
         SHADE_IMMUNE_TO_NONOWNER = builder.define("shade_immune_to_nonowner", true);
         SHOW_ARACHNE_BOSS_BAR = builder.define("show_arachne_boss_bar", false);
         SHOW_CIRCE_BOSS_BAR = builder.define("show_circe_boss_bar", false);
+        SHOW_CRETAN_BOSS_BAR = builder.define("show_cretan_boss_bar", true);
         SHOW_GIANT_BOAR_BOSS_BAR = builder.define("show_giant_boar_boss_bar", true);
         SHOW_HYDRA_BOSS_BAR = builder.define("show_hydra_boss_bar", true);
         SHOW_MEDUSA_BOSS_BAR = builder.define("show_medusa_boss_bar", false);
@@ -320,6 +323,7 @@ public class GFConfig {
         // mob
         showArachneBossBar = SHOW_ARACHNE_BOSS_BAR.get();
         showCirceBossBar = SHOW_CIRCE_BOSS_BAR.get();
+        showCretanBossBar = SHOW_CRETAN_BOSS_BAR.get();
         showGiantBoarBossBar = SHOW_GIANT_BOAR_BOSS_BAR.get();
         showHydraBossBar = SHOW_HYDRA_BOSS_BAR.get();
         showMedusaBossBar = SHOW_MEDUSA_BOSS_BAR.get();
@@ -390,6 +394,9 @@ public class GFConfig {
         return showCirceBossBar;
     }
 
+    public boolean showCretanBossBar() {
+        return showCretanBossBar;
+    }
     public boolean showGiantBoarBossBar() {
         return showGiantBoarBossBar;
     }
@@ -409,6 +416,7 @@ public class GFConfig {
     public boolean showPythonBossBar() {
         return showPythonBossBar;
     }
+
 
     public ResourceLocation getSatyrSong() {
         return satyrSong;

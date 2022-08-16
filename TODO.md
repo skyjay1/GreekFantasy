@@ -48,7 +48,7 @@ __Key:__
 - X X X X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
 - X X X X X Miniboss: Medusa
-- _ _ _ _ _ Miniboss: Cretan Minotaur
+- X X X ~ X Miniboss: Cretan Minotaur
 - X X X X X Miniboss: Circe
 - X X X X X Miniboss: Hydra
 - X X X X X Miniboss: Arachne
@@ -106,6 +106,7 @@ __Key:__
 - X . X Golden Tree
 - X X X Arachne Pit
 - X X X Hydra Lair
+- X X X Minotaur Maze
 
 
 ## Blocks
@@ -131,7 +132,7 @@ __Key:__
 - X X X Golden Sapling
 - X X X Nest
 - X X X Wild Rose
-- _ _ _ Cretan Stone and variants
+- X X X Cretan Stone and variants
 - X X X Reeds
 - X X X Golden String
 - X X X Ichor-Infused Gearbox
@@ -308,6 +309,5 @@ Can I do something with these?
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
 - Story of Antaeus (miniboss; heals when touching earth; "Earth Bond" enchantment for boots heals player similarly)
 - Story of King Midas (gold touch)
-- Story of Labyrinth (Cretan Minotaur miniboss, Golden String, etc)
 - Story of Icarus (improve Elytra)
 
