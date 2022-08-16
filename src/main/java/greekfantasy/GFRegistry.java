@@ -46,6 +46,7 @@ import greekfantasy.entity.boss.Arachne;
 import greekfantasy.entity.boss.BronzeBull;
 import greekfantasy.entity.boss.Cerberus;
 import greekfantasy.entity.boss.Charybdis;
+import greekfantasy.entity.boss.CretanMinotaur;
 import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.GiantBoar;
 import greekfantasy.entity.boss.Hydra;
@@ -802,7 +803,8 @@ public final class GFRegistry {
                 new ForgeSpawnEggItem(EntityReg.CERASTES, 0x847758, 0x997c4d, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> CIRCE_SPAWN_EGG = ITEMS.register("circe_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.CIRCE, 0x844797, 0xe8c669, new Item.Properties().tab(GF_TAB)));
-        // TODO cretan minotaur
+        public static final RegistryObject<Item> CRETAN_MINOTAUR_SPAWN_EGG = ITEMS.register("cretan_minotaur_spawn_egg", () ->
+                new ForgeSpawnEggItem(EntityReg.CRETAN_MINOTAUR, 0x2a2a2a, 0x734933, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> CYCLOPS_SPAWN_EGG = ITEMS.register("cyclops_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.CYCLOPS, 0xda662c, 0x2c1e0e, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> CYPRIAN_SPAWN_EGG = ITEMS.register("cyprian_spawn_egg", () ->
@@ -922,6 +924,7 @@ public final class GFRegistry {
             register(event, CERBERUS.get(), Cerberus::createAttributes, null);
             register(event, CHARYBDIS.get(), Charybdis::createAttributes, null);
             register(event, CIRCE.get(), Circe::createAttributes, null);
+            register(event, CRETAN_MINOTAUR.get(), CretanMinotaur::createAttributes, null);
             register(event, CYCLOPS.get(), Cyclops::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, CYPRIAN.get(), Cyprian::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, DRAKAINA.get(), Drakaina::createAttributes, Monster::checkMonsterSpawnRules);
@@ -1076,6 +1079,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Circe::new, MobCategory.MONSTER)
                         .sized(0.67F, 1.8F)
                         .build("circe"));
+        public static final RegistryObject<EntityType<? extends CretanMinotaur>> CRETAN_MINOTAUR = ENTITY_TYPES.register("cretan_minotaur", () ->
+                EntityType.Builder.of(CretanMinotaur::new, MobCategory.MONSTER)
+                        .sized(0.989F, 3.395F).fireImmune()
+                        .build("cretan_minotaur"));
         public static final RegistryObject<EntityType<? extends Cyclops>> CYCLOPS = ENTITY_TYPES.register("cyclops", () ->
                 EntityType.Builder.of(Cyclops::new, MobCategory.MONSTER)
                         .sized(0.99F, 2.92F)

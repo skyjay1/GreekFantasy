@@ -75,13 +75,16 @@ public class Minotaur extends Monster {
         super.registerGoals();
         this.goalSelector.addGoal(0, new Minotaur.StunnedGoal());
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new Minotaur.ChargeAttackGoal(1.68D));
         this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, false));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
+    protected void registerChargeGoal() {
+        this.goalSelector.addGoal(2, new Minotaur.ChargeAttackGoal(1.68D));
     }
 
     @Override
@@ -240,7 +243,7 @@ public class Minotaur extends Monster {
         }
     }
 
-    class ChargeAttackGoal extends Goal {
+    public class ChargeAttackGoal extends Goal {
 
         private final int maxCooldown = 200;
         private final int maxCharging = 40;
@@ -251,7 +254,7 @@ public class Minotaur extends Monster {
         private int cooldown = maxCooldown;
         private Vec3 targetPos;
 
-        protected ChargeAttackGoal(final double speedIn) {
+        public ChargeAttackGoal(final double speedIn) {
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
             speed = speedIn;
             targetPos = null;

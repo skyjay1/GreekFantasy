@@ -23,6 +23,7 @@ import greekfantasy.client.entity.CerastesRenderer;
 import greekfantasy.client.entity.CerberusRenderer;
 import greekfantasy.client.entity.CharybdisRenderer;
 import greekfantasy.client.entity.CirceRenderer;
+import greekfantasy.client.entity.CretanMinotaurRenderer;
 import greekfantasy.client.entity.CyclopsRenderer;
 import greekfantasy.client.entity.CyprianRenderer;
 import greekfantasy.client.entity.DrakainaRenderer;
@@ -356,6 +357,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.CERBERUS.get(), CerberusRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CHARYBDIS.get(), CharybdisRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CIRCE.get(), CirceRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.CRETAN_MINOTAUR.get(), CretanMinotaurRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CYCLOPS.get(), CyclopsRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CYPRIAN.get(), CyprianRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DRAKAINA.get(), DrakainaRenderer::new);
