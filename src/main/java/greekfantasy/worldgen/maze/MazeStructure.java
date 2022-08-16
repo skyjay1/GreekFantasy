@@ -43,7 +43,7 @@ public class MazeStructure extends StructureFeature<MazeConfiguration> {
             builder.addPiece(piece);
         }
 
-        builder.offsetPiecesVertically(offsetY);
+        builder.offsetPiecesVertically(offsetY + 100);
     }
 
     public static List<MazePiece> generateMaze(BlockPos origin, int offsetY, PieceGenerator.Context<MazeConfiguration> context) {

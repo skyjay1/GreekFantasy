@@ -54,7 +54,7 @@ public class MazePiece extends StructurePiece {
     private static final String KEY_VARIANT = "Variant";
     private static final String KEY_TEMPLATE = "Template";
 
-    public static final int WIDTH = 8;
+    public static final int WIDTH = 6;
     public static final int HEIGHT = 7;
 
     public static final StructureProcessor AGE_PROCESSOR = new RuleProcessor(List.of(

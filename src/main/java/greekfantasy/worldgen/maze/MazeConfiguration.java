@@ -13,6 +13,8 @@ public class MazeConfiguration implements FeatureConfiguration {
         Codec.INT.optionalFieldOf("piece_count_z", 20).forGetter(MazeConfiguration::getPieceCountZ)
     ).apply(instance, MazeConfiguration::new));
 
+    public static final int MAX_COUNT = (128 / MazePiece.WIDTH) - 2;
+
     private final double probability;
     private final double roomChance;
     private final int pieceCountX;
@@ -23,11 +25,11 @@ public class MazeConfiguration implements FeatureConfiguration {
         this.roomChance = roomChance;
         this.pieceCountX = pieceCountX;
         this.pieceCountZ = pieceCountZ;
-        if(pieceCountX < 2 || pieceCountX > 15) {
-            throw new IllegalArgumentException("Error parsing maze configuration: piece_count_x must be between 2 and 15, inclusive.");
+        if(pieceCountX < 2 || pieceCountX > MAX_COUNT) {
+            throw new IllegalArgumentException("Error parsing maze configuration: piece_count_x must be between 2 and " + MAX_COUNT + ", inclusive.");
         }
-        if(pieceCountZ < 2 || pieceCountZ > 15) {
-            throw new IllegalArgumentException("Error parsing maze configuration: piece_count_z must be between 2 and 15, inclusive.");
+        if(pieceCountZ < 2 || pieceCountZ > MAX_COUNT) {
+            throw new IllegalArgumentException("Error parsing maze configuration: piece_count_z must be between 2 and " + MAX_COUNT + ", inclusive.");
         }
     }
 
