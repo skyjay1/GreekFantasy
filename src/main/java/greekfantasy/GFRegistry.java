@@ -704,7 +704,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> GOLDEN_FLEECE = ITEMS.register("golden_fleece", () ->
                 new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> GOLDEN_BALL = ITEMS.register("golden_ball", () ->
-                new GoldenBallItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).defaultDurability(480)));
+                new GoldenBallItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).defaultDurability(680)));
         public static final RegistryObject<Item> ICHOR = ITEMS.register("ichor", () ->
                 new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)) {
                     @Override
