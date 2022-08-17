@@ -1,0 +1,36 @@
+{
+  "structures": [
+    {
+      "location": "greekfantasy:maze/two_way_0",
+      "weight": 15
+    },
+    {
+      "location": "greekfantasy:maze/two_way_1",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/two_way_2",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/two_way_3",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/two_way_4",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/two_way_5",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/two_way_6",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/two_way_7",
+      "weight": 2
+    }
+  ]
+}

@@ -39,7 +39,7 @@ public class SummonMobGoal<T extends Mob> extends Goal {
 
     public SummonMobGoal(final PathfinderMob entity, final int duration, final int cooldown,
                          final EntityType<? extends T> entityType, final int mobCount) {
-        this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+        this.setFlags(EnumSet.of(Flag.MOVE));
         this.summoner = entity;
         this.maxDuration = duration;
         this.maxCooldown = cooldown;
@@ -70,7 +70,7 @@ public class SummonMobGoal<T extends Mob> extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return this.progressTimer > 0 && summoner.getTarget() != null;
+        return this.progressTimer > 0 && canUse();
     }
 
     @Override

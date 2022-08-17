@@ -1,0 +1,16 @@
+{
+  "structures": [
+    {
+      "structure": "greekfantasy:maze",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 25,
+    "separation": 15,
+    "salt": 1031662553,
+    "frequency": 0.09,
+    "frequency_reduction_method": "legacy_type_3"
+  }
+}

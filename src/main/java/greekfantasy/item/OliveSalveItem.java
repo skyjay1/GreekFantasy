@@ -2,6 +2,7 @@ package greekfantasy.item;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.util.WeightedMobEffectInstance;
+import greekfantasy.util.WeightedUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -103,7 +104,7 @@ public class OliveSalveItem extends Item {
         // add mob effects to the result list
         for(int i = 0; i < rolls; i++) {
             GreekFantasy.LOGGER.debug("Adding effect...");
-            WeightedMobEffectInstance weightedEntry = WeightedMobEffectInstance.sample(weighted, random);
+            WeightedMobEffectInstance weightedEntry = WeightedUtil.sample(weighted, random);
             if(weightedEntry != null) {
                 mobEffects.add(weightedEntry.createMobEffectInstance());
             }

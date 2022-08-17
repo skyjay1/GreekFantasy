@@ -24,7 +24,7 @@ public class IntervalRangedAttackGoal<T extends Mob & RangedAttackMob> extends G
      * @param maxCooldownIn the maximum cooldown for this attack
      */
     public IntervalRangedAttackGoal(final T entityIn, final int interval, final int count, final int maxCooldownIn) {
-        this.setFlags(EnumSet.allOf(Goal.Flag.class));
+        this.setFlags(EnumSet.allOf(Flag.class));
         this.entity = entityIn;
         this.interval = Math.max(1, interval);
         this.maxDuration = this.interval * count;
@@ -72,7 +72,7 @@ public class IntervalRangedAttackGoal<T extends Mob & RangedAttackMob> extends G
             entity.performRangedAttack(target, 0.1F);
         }
         // increase timer and finish goal when timer reaches max
-        if (progressTimer++ > maxDuration) {
+        if (progressTimer++ >= maxDuration) {
             stop();
         }
     }

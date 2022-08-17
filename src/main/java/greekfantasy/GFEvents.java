@@ -742,6 +742,7 @@ public final class GFEvents {
         public static void onAddReloadListeners(final AddReloadListenerEvent event) {
             event.addListener(GreekFantasy.SONGS);
             event.addListener(GreekFantasy.QUESTS);
+            event.addListener(GreekFantasy.WEIGHTED_TEMPLATES);
         }
 
         private static void useLordOfTheSea(final ServerPlayer player, final ItemStack item) {

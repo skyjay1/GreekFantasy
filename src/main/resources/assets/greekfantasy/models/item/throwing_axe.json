@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "greekfantasy:item/throwing_axe"
+  }
+}

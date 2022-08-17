@@ -16,6 +16,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -48,6 +49,7 @@ public class Minotaur extends Monster {
     protected static final int STUN_DURATION = 80;
 
     protected final AttributeModifier knockbackModifier = new AttributeModifier("Charge knockback bonus", 2.25F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    protected final AttributeModifier knockbackResistanceModifier = new AttributeModifier("Charge knockback resistance bonus", 1.0F, AttributeModifier.Operation.ADDITION);
     protected final AttributeModifier attackModifier = new AttributeModifier("Charge attack bonus", 2.5F, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public Minotaur(final EntityType<? extends Minotaur> type, final Level level) {
@@ -57,10 +59,10 @@ public class Minotaur extends Monster {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 24.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.24D)
+                .add(Attributes.MOVEMENT_SPEED, 0.26D)
                 .add(Attributes.ATTACK_DAMAGE, 3.5D)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.25D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.97D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.57D)
                 .add(Attributes.ARMOR, 2.0D);
     }
 
@@ -73,15 +75,19 @@ public class Minotaur extends Monster {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(0, new Minotaur.StunnedGoal());
+        this.goalSelector.addGoal(0, new StunnedGoal());
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new Minotaur.ChargeAttackGoal(1.68D));
-        this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        registerChargeGoal();
+    }
+
+    protected void registerChargeGoal() {
+        this.goalSelector.addGoal(2, new ChargeAttackGoal(2.78D));
     }
 
     @Override
@@ -92,6 +98,13 @@ public class Minotaur extends Monster {
         if (level.isClientSide() && this.isStunned()) {
             spawnStunnedParticles();
         }
+    }
+
+    @Override
+    public boolean canAttackType(EntityType<?> entityType) {
+        return entityType != GFRegistry.EntityReg.MINOTAUR.get()
+                && entityType != GFRegistry.EntityReg.CRETAN_MINOTAUR.get()
+                && super.canAttackType(entityType);
     }
 
     // Sound methods
@@ -145,11 +158,11 @@ public class Minotaur extends Monster {
     // States
 
     public byte getMinotaurState() {
-        return this.getEntityData().get(STATE).byteValue();
+        return this.getEntityData().get(STATE);
     }
 
     public void setMinotaurState(final byte state) {
-        this.getEntityData().set(STATE, Byte.valueOf(state));
+        this.getEntityData().set(STATE, state);
     }
 
     public boolean isNoneState() {
@@ -166,6 +179,18 @@ public class Minotaur extends Monster {
 
     public void setCharging(final boolean charging) {
         setMinotaurState(charging ? CHARGING : NONE);
+        if(!this.level.isClientSide()) {
+            // determine if knockback resistance modifier was added
+            AttributeInstance knockbackResist = this.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
+            boolean hasModifier = knockbackResist.hasModifier(knockbackResistanceModifier);
+            if(!charging && hasModifier) {
+                // remove modifier when no longer charging
+                knockbackResist.removeModifier(knockbackResistanceModifier);
+            } else if (charging && !hasModifier) {
+                // add modifier when charging
+                knockbackResist.addTransientModifier(knockbackResistanceModifier);
+            }
+        }
     }
 
     public void setStunned(final boolean stunned) {
@@ -208,7 +233,7 @@ public class Minotaur extends Monster {
         private int stunTime;
 
         protected StunnedGoal() {
-            this.setFlags(EnumSet.allOf(Goal.Flag.class));
+            this.setFlags(EnumSet.allOf(Flag.class));
         }
 
         @Override
@@ -240,7 +265,7 @@ public class Minotaur extends Monster {
         }
     }
 
-    class ChargeAttackGoal extends Goal {
+    public class ChargeAttackGoal extends Goal {
 
         private final int maxCooldown = 200;
         private final int maxCharging = 40;
@@ -251,10 +276,15 @@ public class Minotaur extends Monster {
         private int cooldown = maxCooldown;
         private Vec3 targetPos;
 
-        protected ChargeAttackGoal(final double speedIn) {
-            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        public ChargeAttackGoal(final double speedIn) {
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
             speed = speedIn;
             targetPos = null;
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
         }
 
         @Override
@@ -305,6 +335,7 @@ public class Minotaur extends Monster {
                 // continue moving toward the target that was set earlier
                 Minotaur.this.getMoveControl().setWantedPosition(targetPos.x, targetPos.y, targetPos.z, speed);
                 Minotaur.this.getLookControl().setLookAt(targetPos.add(0, target.getEyeHeight(), 0));
+
             } else {
                 // determine where the charge attack should target
                 this.targetPos = getExtendedTarget(target, disSqToTargetEntity + 16.0D);

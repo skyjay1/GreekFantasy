@@ -23,6 +23,7 @@ import greekfantasy.client.entity.CerastesRenderer;
 import greekfantasy.client.entity.CerberusRenderer;
 import greekfantasy.client.entity.CharybdisRenderer;
 import greekfantasy.client.entity.CirceRenderer;
+import greekfantasy.client.entity.CretanMinotaurRenderer;
 import greekfantasy.client.entity.CyclopsRenderer;
 import greekfantasy.client.entity.CyprianRenderer;
 import greekfantasy.client.entity.DrakainaRenderer;
@@ -348,6 +349,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.CERBERUS.get(), CerberusRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CHARYBDIS.get(), CharybdisRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CIRCE.get(), CirceRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.CRETAN_MINOTAUR.get(), CretanMinotaurRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CYCLOPS.get(), CyclopsRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.CYPRIAN.get(), CyprianRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DRAKAINA.get(), DrakainaRenderer::new);
@@ -391,6 +393,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.PALLADIUM.get(), PalladiumRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.POISON_SPIT.get(), SpellRenderer.PoisonSpitRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPEAR.get(), SpearRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.THROWING_AXE.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.WEB_BALL.get(), ThrownItemRenderer::new);
             // register block entities
             event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.CERBERUS_HEAD.get(), CerberusHeadBlockEntityRenderer::new);
@@ -439,6 +442,8 @@ public final class GFClientEvents {
             registerUsingProperties(GFRegistry.ItemReg.GOLDEN_LYRE.get(), "playing");
             // register bronze feather
             registerUsingProperties(GFRegistry.ItemReg.BRONZE_FEATHER.get(), "using");
+            // register throwing axe
+            registerUsingProperties(GFRegistry.ItemReg.THROWING_AXE.get(), "using");
             // register salve
             registerUsingProperties(GFRegistry.ItemReg.OLIVE_SALVE.get(), "using");
             // register bows

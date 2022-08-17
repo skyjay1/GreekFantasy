@@ -4,17 +4,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import greekfantasy.item.OliveSalveItem;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.Weight;
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Random;
 
 public class WeightedMobEffectInstance extends WeightedEntry.IntrusiveBase {
 
@@ -69,34 +64,5 @@ public class WeightedMobEffectInstance extends WeightedEntry.IntrusiveBase {
         effectTag.putInt("Duration", getDuration());
         effectTag.putInt(WEIGHT, getWeight().asInt());
         return effectTag;
-    }
-
-    /**
-     * Selects a weighted item from a collection
-     * @param collection a collection of weighted entries
-     * @param random the random instance
-     * @param <T>  a weighted entry type
-     * @return a weighted entry from the list, or null if it fails
-     */
-    @Nullable
-    public static <T extends WeightedEntry> T sample(final Collection<T> collection, final RandomSource random) {
-        // add all the weights
-        int sum = 0;
-        for(T instance : collection) {
-            sum += instance.getWeight().asInt();
-        }
-        // choose a random number from 1 to {sum}
-        int target = random.nextInt(1, sum);
-        int w;
-        // iterate through collection until weight is less than or equal to the selected item
-        for(T instance : collection) {
-            w = instance.getWeight().asInt();
-            if(target <= w) {
-                return instance;
-            } else {
-                target -= w;
-            }
-        }
-        return null;
     }
 }

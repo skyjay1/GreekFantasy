@@ -1,0 +1,28 @@
+{
+  "structures": [
+    {
+      "location": "greekfantasy:maze/dead_end_0",
+      "weight": 20
+    },
+    {
+      "location": "greekfantasy:maze/dead_end_1",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/dead_end_2",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/dead_end_3",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/dead_end_4",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/dead_end_5",
+      "weight": 5
+    }
+  ]
+}
