@@ -46,7 +46,7 @@ public class CretanMinotaur extends Minotaur implements RangedAttackMob {
                 .add(Attributes.MOVEMENT_SPEED, 0.31D)
                 .add(Attributes.ATTACK_DAMAGE, 9.0D)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5D)
-                .add(Attributes.ARMOR, 8.0D);
+                .add(Attributes.ARMOR, 10.0D);
     }
 
     @Override
@@ -61,9 +61,9 @@ public class CretanMinotaur extends Minotaur implements RangedAttackMob {
 
     @Override
     protected void registerChargeGoal() {
-        this.goalSelector.addGoal(2, new MinotaurRangedAttackGoal(this, 10, 1, 110));
-        this.goalSelector.addGoal(3, new SummonMobGoal<Minotaur>(this, 10, 180, GFRegistry.EntityReg.MINOTAUR.get(), 1));
-        this.goalSelector.addGoal(4, new ChargeAttackGoal(2.94D));
+        this.goalSelector.addGoal(2, new MinotaurRangedAttackGoal(this, 5, 1, 95));
+        this.goalSelector.addGoal(3, new MinotaurSummonMobGoal(this, 10, 130, 1));
+        //this.goalSelector.addGoal(4, new ChargeAttackGoal(2.94D));
     }
 
     @Override
@@ -98,9 +98,10 @@ public class CretanMinotaur extends Minotaur implements RangedAttackMob {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficultyIn, MobSpawnType reason,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
+        SpawnGroupData data = super.finalizeSpawn(level, difficultyIn, reason, spawnDataIn, dataTag);
         populateDefaultEquipmentSlots(difficultyIn);
         populateDefaultEquipmentEnchantments(difficultyIn);
-        return super.finalizeSpawn(level, difficultyIn, reason, spawnDataIn, dataTag);
+        return data;
     }
 
         // Boss //
@@ -169,14 +170,16 @@ public class CretanMinotaur extends Minotaur implements RangedAttackMob {
     }
 
     static class MinotaurSummonMobGoal extends SummonMobGoal<Minotaur> {
+        protected final CretanMinotaur entity;
 
-        public MinotaurSummonMobGoal(PathfinderMob entity, int duration, int cooldown, int mobCount) {
+        public MinotaurSummonMobGoal(CretanMinotaur entity, int duration, int cooldown, int mobCount) {
             super(entity, duration, cooldown, GFRegistry.EntityReg.MINOTAUR.get(), mobCount);
+            this.entity = entity;
         }
 
         @Override
         public boolean canUse() {
-            return super.canUse() && (this.summoner.getHealth() / this.summoner.getMaxHealth() < 0.5F);
+            return this.entity.isNoneState() && super.canUse() && (this.entity.getHealth() / this.entity.getMaxHealth() < 0.5F);
         }
     }
 }

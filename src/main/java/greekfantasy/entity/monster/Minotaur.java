@@ -16,6 +16,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -48,6 +49,7 @@ public class Minotaur extends Monster {
     protected static final int STUN_DURATION = 80;
 
     protected final AttributeModifier knockbackModifier = new AttributeModifier("Charge knockback bonus", 2.25F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    protected final AttributeModifier knockbackResistanceModifier = new AttributeModifier("Charge knockback resistance bonus", 1.0F, AttributeModifier.Operation.ADDITION);
     protected final AttributeModifier attackModifier = new AttributeModifier("Charge attack bonus", 2.5F, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public Minotaur(final EntityType<? extends Minotaur> type, final Level level) {
@@ -60,7 +62,7 @@ public class Minotaur extends Monster {
                 .add(Attributes.MOVEMENT_SPEED, 0.26D)
                 .add(Attributes.ATTACK_DAMAGE, 3.5D)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.25D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.97D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.57D)
                 .add(Attributes.ARMOR, 2.0D);
     }
 
@@ -177,6 +179,18 @@ public class Minotaur extends Monster {
 
     public void setCharging(final boolean charging) {
         setMinotaurState(charging ? CHARGING : NONE);
+        if(!this.level.isClientSide()) {
+            // determine if knockback resistance modifier was added
+            AttributeInstance knockbackResist = this.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
+            boolean hasModifier = knockbackResist.hasModifier(knockbackResistanceModifier);
+            if(!charging && hasModifier) {
+                // remove modifier when no longer charging
+                knockbackResist.removeModifier(knockbackResistanceModifier);
+            } else if (charging && !hasModifier) {
+                // add modifier when charging
+                knockbackResist.addTransientModifier(knockbackResistanceModifier);
+            }
+        }
     }
 
     public void setStunned(final boolean stunned) {
@@ -269,6 +283,11 @@ public class Minotaur extends Monster {
         }
 
         @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
         public boolean canUse() {
             // this method returns true only when the cooldown is 0 and the other conditions are met
             if (this.cooldown > 0) {
@@ -316,6 +335,7 @@ public class Minotaur extends Monster {
                 // continue moving toward the target that was set earlier
                 Minotaur.this.getMoveControl().setWantedPosition(targetPos.x, targetPos.y, targetPos.z, speed);
                 Minotaur.this.getLookControl().setLookAt(targetPos.add(0, target.getEyeHeight(), 0));
+
             } else {
                 // determine where the charge attack should target
                 this.targetPos = getExtendedTarget(target, disSqToTargetEntity + 16.0D);

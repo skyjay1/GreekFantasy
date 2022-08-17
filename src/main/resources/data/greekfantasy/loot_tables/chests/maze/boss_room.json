@@ -100,6 +100,22 @@
         },
         {
           "type": "minecraft:item",
+          "name": "greekfantasy:throwing_axe",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": {
+                "type": "minecraft:uniform",
+                "max": 39.0,
+                "min": 20.0
+              },
+              "treasure": true
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
           "name": "greekfantasy:netherite_spear",
           "weight": 1,
           "functions": [
@@ -118,7 +134,6 @@
             }
           ]
         },
-
         {
           "type": "minecraft:item",
           "name": "greekfantasy:diamond_spear",

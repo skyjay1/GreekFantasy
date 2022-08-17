@@ -2,7 +2,7 @@
   "structures": [
     {
       "location": "greekfantasy:maze/three_way_0",
-      "weight": 10
+      "weight": 15
     },
     {
       "location": "greekfantasy:maze/three_way_1",
@@ -10,6 +10,10 @@
     },
     {
       "location": "greekfantasy:maze/three_way_2",
+      "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/three_way_3",
       "weight": 5
     }
   ]

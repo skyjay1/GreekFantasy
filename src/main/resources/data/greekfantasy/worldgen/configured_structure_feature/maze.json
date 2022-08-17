@@ -1,10 +1,11 @@
 {
   "type": "greekfantasy:maze",
   "config": {
-    "probability": 0.029,
+    "probability": 0.027,
     "room_chance": 0.5,
     "piece_count_x": 19,
-    "piece_count_z": 19
+    "piece_count_z": 19,
+    "random_connection_ratio": 0.09
   },
   "biomes": "#greekfantasy:has_structure/maze",
   "adapt_noise": false,

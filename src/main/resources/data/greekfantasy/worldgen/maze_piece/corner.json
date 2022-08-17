@@ -11,6 +11,14 @@
     {
       "location": "greekfantasy:maze/corner_2",
       "weight": 5
+    },
+    {
+      "location": "greekfantasy:maze/corner_3",
+      "weight": 2
+    },
+    {
+      "location": "greekfantasy:maze/corner_4",
+      "weight": 2
     }
   ]
 }

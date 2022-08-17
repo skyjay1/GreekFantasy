@@ -716,7 +716,7 @@ public final class GFRegistry {
                         return true;
                     }
                 });
-        private static final BannerPattern SPIDER_PATTERN = BannerPattern.create("greekfantasy_spider", "greekfantasy_spider", "greekfantasy_spider", true);
+        private static final BannerPattern SPIDER_PATTERN = BannerPattern.create("GREEKFANTASY_SPIDER", "greekfantasy:spider", "gf:spi", true);
         public static final RegistryObject<Item> SPIDER_BANNER_PATTERN = ITEMS.register("spider_banner_pattern", () ->
                 new BannerPatternItem(SPIDER_PATTERN, new Item.Properties().tab(GF_TAB).stacksTo(1).rarity(Rarity.RARE)));
 

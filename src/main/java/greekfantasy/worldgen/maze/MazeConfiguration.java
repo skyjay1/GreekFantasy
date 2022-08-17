@@ -10,7 +10,8 @@ public class MazeConfiguration implements FeatureConfiguration {
         Codec.DOUBLE.optionalFieldOf("probability", 1.0D).forGetter(MazeConfiguration::getProbability),
         Codec.DOUBLE.optionalFieldOf("room_chance", 0.5D).forGetter(MazeConfiguration::getRoomChance),
         Codec.INT.optionalFieldOf("piece_count_x", 20).forGetter(MazeConfiguration::getPieceCountX),
-        Codec.INT.optionalFieldOf("piece_count_z", 20).forGetter(MazeConfiguration::getPieceCountZ)
+        Codec.INT.optionalFieldOf("piece_count_z", 20).forGetter(MazeConfiguration::getPieceCountZ),
+        Codec.DOUBLE.optionalFieldOf("random_connection_ratio", 0.0D).forGetter(MazeConfiguration::getRandomConnectionRatio)
     ).apply(instance, MazeConfiguration::new));
 
     /**
@@ -22,12 +23,14 @@ public class MazeConfiguration implements FeatureConfiguration {
     private final double roomChance;
     private final int pieceCountX;
     private final int pieceCountZ;
+    private final double randomConnectionRatio;
 
-    public MazeConfiguration(double probability, double roomChance, int pieceCountX, int pieceCountZ) {
+    public MazeConfiguration(double probability, double roomChance, int pieceCountX, int pieceCountZ, double randomConnectionRatio) {
         this.probability = probability;
         this.roomChance = roomChance;
         this.pieceCountX = pieceCountX;
         this.pieceCountZ = pieceCountZ;
+        this.randomConnectionRatio = randomConnectionRatio;
         if(pieceCountX < 2 || pieceCountX > MAX_COUNT) {
             throw new IllegalArgumentException("Error parsing maze configuration: piece_count_x must be between 2 and " + MAX_COUNT + ", inclusive.");
         }
@@ -62,5 +65,12 @@ public class MazeConfiguration implements FeatureConfiguration {
      */
     public int getPieceCountZ() {
         return pieceCountZ;
+    }
+
+    /**
+     * @return the percent of the maze that has random connections
+     */
+    public double getRandomConnectionRatio() {
+        return randomConnectionRatio;
     }
 }

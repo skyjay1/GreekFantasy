@@ -310,7 +310,7 @@ public class MazePiece extends StructurePiece {
 		// create placement settings
         StructurePlaceSettings placement = new StructurePlaceSettings()
                 .setRotationPivot(pivot).setRotation(getRotation()).setMirror(getMirror()).setRandom(random)
-                .setBoundingBox(getBoundingBox())
+                .setBoundingBox(getBoundingBox()).setFinalizeEntities(true).setKeepLiquids(false)
                 .addProcessor(BlockIgnoreProcessor.STRUCTURE_BLOCK)
                 .addProcessor(PROTECTED_PROCESSOR)
                 .addProcessor(AGE_PROCESSOR);

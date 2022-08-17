@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/skyjay1/GreekFantasy/issues"
 
 [[mods]]
     modId="greekfantasy"
-    version="18.2.3"
+    version="18.2.4"
     displayName="Greek Fantasy"
     credits=""
     authors="skyjay1"
@@ -14,7 +14,7 @@ issueTrackerURL="https://github.com/skyjay1/GreekFantasy/issues"
     [[dependencies.greekfantasy]]
         modId="forge"
         mandatory=true
-        versionRange="[40.1.21,)"
+        versionRange="[40.1.48,)"
         ordering="NONE"
         side="BOTH"
 
