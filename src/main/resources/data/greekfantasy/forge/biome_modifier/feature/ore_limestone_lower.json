@@ -1,6 +1,6 @@
 {
   "type": "forge:add_features",
   "biomes": "#minecraft:is_overworld",
-  "features": "greekfantasy:limestone_lower",
+  "features": "greekfantasy:ore_limestone_lower",
   "step": "underground_ores"
 }

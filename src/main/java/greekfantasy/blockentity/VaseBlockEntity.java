@@ -1,10 +1,15 @@
 package greekfantasy.blockentity;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
@@ -14,11 +19,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
 public class VaseBlockEntity extends BlockEntity implements Container, Nameable {
 
+    private LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> createUnSidedHandler());
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+
     protected Component name;
 
     public VaseBlockEntity(BlockPos pos, BlockState state) {
@@ -27,30 +39,35 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
 
     // CLIENT-SERVER SYNC
 
+    /**
+     * Called when the chunk is saved
+     * @return the compound tag to use in #handleUpdateTag
+     */
     @Override
     public CompoundTag getUpdateTag() {
         return ContainerHelper.saveAllItems(super.getUpdateTag(), inventory);
     }
 
+    /**
+     * Called when the chunk is loaded
+     * @param tag the compound tag
+     */
     @Override
     public void handleUpdateTag(final CompoundTag tag) {
         super.handleUpdateTag(tag);
         ContainerHelper.loadAllItems(tag, inventory);
+        inventoryChanged();
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     //INVENTORY //
 
     public NonNullList<ItemStack> getInventory() {
         return this.inventory;
-    }
-
-    private void inventoryChanged() {
-        this.setChanged();
-        if (getLevel() != null) {
-            getLevel().sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
-        }
-        ItemStack itemStack = getItem(0);
-        this.name = itemStack.hasCustomHoverName() ? itemStack.getHoverName() : null;
     }
 
     public void dropAllItems() {
@@ -60,10 +77,25 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
         this.inventoryChanged();
     }
 
+    public void inventoryChanged() {
+        if (getLevel() != null && !getLevel().isClientSide()) {
+            // GreekFantasy.LOGGER.debug("sending update... ");
+            getLevel().sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+        ItemStack itemStack = getItem(0);
+        this.name = itemStack.hasCustomHoverName() ? itemStack.getHoverName() : null;
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        this.inventoryChanged();
+    }
+
     @Override
     public void clearContent() {
         this.inventory.clear();
-        this.inventoryChanged();
+        this.setChanged();
     }
 
     @Override
@@ -89,7 +121,6 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
     @Override
     public ItemStack removeItem(int index, int count) {
         ItemStack itemStack = ContainerHelper.removeItem(this.inventory, index, count);
-        this.inventoryChanged();
         return itemStack;
     }
 
@@ -99,7 +130,6 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
     @Override
     public ItemStack removeItemNoUpdate(int index) {
         ItemStack itemStack = ContainerHelper.takeItem(this.inventory, index);
-        this.inventoryChanged();
         return itemStack;
     }
 
@@ -140,6 +170,8 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
         ContainerHelper.saveAllItems(tag, this.inventory, true);
     }
 
+    // NAMEABLE
+
     protected Component getDefaultName() {
         return Component.translatable("container.vase");
     }
@@ -153,5 +185,30 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
     @Override
     public Component getCustomName() {
         return this.name;
+    }
+
+    // CAPABILITY
+
+    protected IItemHandler createUnSidedHandler() {
+        return new InvWrapper(this);
+    }
+
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
+        if (!this.remove && cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ) {
+            return itemHandler.cast();
+        }
+        return super.getCapability(cap, side);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        itemHandler.invalidate();
+    }
+
+    @Override
+    public void reviveCaps() {
+        super.reviveCaps();
+        itemHandler = LazyOptional.of(() -> createUnSidedHandler());
     }
 }

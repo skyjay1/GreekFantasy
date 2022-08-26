@@ -1,0 +1,22 @@
+{
+  "feature": "greekfantasy:patch_reeds",
+  "placement": [
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:surface_water_depth_filter",
+      "max_water_depth": 1
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "OCEAN_FLOOR"
+    },
+    {
+      "type": "greekfantasy:dimension"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

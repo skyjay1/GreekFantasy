@@ -117,7 +117,6 @@ public class GFConfig {
     private List<? extends String> featureDimensionWhitelist;
     private final ForgeConfigSpec.BooleanValue IS_FEATURE_DIMENSION_WHITELIST;
     private boolean isFeatureDimensionWhitelist;
-    private final Map<String, ForgeConfigSpec.IntValue> FEATURE_WEIGHTS = new HashMap<>();
 
     @SuppressWarnings("ConstantConditions")
     private static final String[] curseOfCirceWhitelistDefault = {
@@ -245,27 +244,7 @@ public class GFConfig {
                 .define("spawn_dimensions", Lists.newArrayList("minecraft:" + WILDCARD));
         IS_FEATURE_DIMENSION_WHITELIST = builder.comment("true if the above list is a whitelist, false for blacklist")
                 .define("is_whitelist", true);
-        this.FEATURE_WEIGHTS.clear();
-        putFeatureWeight(builder, "acacia_harpy_nest", 14);
-        putFeatureWeight(builder, "birch_harpy_nest", 14);
-        putFeatureWeight(builder, "dark_oak_harpy_nest", 14);
-        putFeatureWeight(builder, "jungle_harpy_nest", 14);
-        putFeatureWeight(builder, "oak_harpy_nest", 14);
-        putFeatureWeight(builder, "olive_harpy_nest", 14);
-        putFeatureWeight(builder, "spruce_harpy_nest", 14);
-        putFeatureWeight(builder, "limestone_upper", 190);
-        putFeatureWeight(builder, "limestone_lower", 1000);
-        putFeatureWeight(builder, "marble_upper", 190);
-        putFeatureWeight(builder, "marble_lower", 1000);
-        putFeatureWeight(builder, "olive_tree", 300);
-        putFeatureWeight(builder, "patch_reeds", 250);
-        putFeatureWeight(builder, "patch_reeds_swamp", 900);
-        putFeatureWeight(builder, "pomegranate_tree", 500);
         builder.pop();
-    }
-
-    private void putFeatureWeight(ForgeConfigSpec.Builder builder, String name, int weight) {
-        FEATURE_WEIGHTS.put(name, builder.defineInRange(name, weight, 0, 1000));
     }
 
     /**
@@ -414,13 +393,6 @@ public class GFConfig {
     }
 
     // feature
-
-    public int getFeatureWeight(final String name) {
-        if(FEATURE_WEIGHTS.containsKey(name)) {
-            return FEATURE_WEIGHTS.get(name).get();
-        }
-        return 0;
-    }
 
     /**
      * @param level the level
