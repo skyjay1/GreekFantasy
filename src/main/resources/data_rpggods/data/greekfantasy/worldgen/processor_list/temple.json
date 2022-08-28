@@ -1,6 +1,9 @@
 {
   "processors": [
     {
+      "processor_type": "rpggods:altar"
+    },
+    {
       "rules": [
         {
           "output_state": {
