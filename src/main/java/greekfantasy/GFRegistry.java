@@ -33,7 +33,7 @@ import greekfantasy.entity.Gigante;
 import greekfantasy.entity.GoldenRam;
 import greekfantasy.entity.Lampad;
 import greekfantasy.entity.Makhai;
-import greekfantasy.entity.Merfolk;
+import greekfantasy.entity.Triton;
 import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Orthus;
 import greekfantasy.entity.Palladium;
@@ -119,7 +119,6 @@ import greekfantasy.item.WandOfCirceItem;
 import greekfantasy.item.WebBallItem;
 import greekfantasy.item.WingedSandalsItem;
 import greekfantasy.mob_effect.CurseOfCirceEffect;
-import greekfantasy.mob_effect.CurseOfLycaonEffect;
 import greekfantasy.mob_effect.MirroringEffect;
 import greekfantasy.mob_effect.SlowSwimEffect;
 import greekfantasy.mob_effect.PrisonerOfHadesEffect;
@@ -844,8 +843,8 @@ public final class GFRegistry {
                 new ForgeSpawnEggItem(EntityReg.MAD_COW, 0x443626, 0xcf9797, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> MAKHAI_SPAWN_EGG = ITEMS.register("makhai_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.MAKHAI, 0x513f38, 0xf33531, new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> MERFOLK_SPAWN_EGG = ITEMS.register("merfolk_spawn_egg", () ->
-                new ForgeSpawnEggItem(EntityReg.MERFOLK, 0x527f72, 0x398046, new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> TRITON_SPAWN_EGG = ITEMS.register("triton_spawn_egg", () ->
+                new ForgeSpawnEggItem(EntityReg.TRITON, 0x527f72, 0x398046, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> MINOTAUR_SPAWN_EGG = ITEMS.register("minotaur_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.MINOTAUR, 0x443626, 0x734933, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> NAIAD_SPAWN_EGG = ITEMS.register("naiad_spawn_egg", () ->
@@ -952,7 +951,7 @@ public final class GFRegistry {
             register(event, LAMPAD.get(), Lampad::createAttributes, Mob::checkMobSpawnRules);
             register(event, MAD_COW.get(), MadCow::createAttributes, SpawnRulesUtil::checkAnyLightMonsterSpawnRules);
             register(event, MAKHAI.get(), Makhai::createAttributes, null);
-            register(event, MERFOLK.get(), Merfolk::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
+            register(event, TRITON.get(), Triton::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
             register(event, MINOTAUR.get(), Minotaur::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
             register(event, NEMEAN_LION.get(), NemeanLion::createAttributes, null);
@@ -1165,10 +1164,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Makhai::new, MobCategory.CREATURE)
                         .sized(0.70F, 1.8F)
                         .build("makhai"));
-        public static final RegistryObject<EntityType<? extends Merfolk>> MERFOLK = ENTITY_TYPES.register("merfolk", () ->
-                EntityType.Builder.of(Merfolk::new, MobCategory.WATER_CREATURE)
+        public static final RegistryObject<EntityType<? extends Triton>> TRITON = ENTITY_TYPES.register("triton", () ->
+                EntityType.Builder.of(Triton::new, MobCategory.WATER_CREATURE)
                         .sized(0.6F, 1.9F)
-                        .build("merfolk"));
+                        .build("triton"));
         public static final RegistryObject<EntityType<? extends Minotaur>> MINOTAUR = ENTITY_TYPES.register("minotaur", () ->
                 EntityType.Builder.of(Minotaur::new, MobCategory.MONSTER)
                         .sized(0.7F, 1.94F)

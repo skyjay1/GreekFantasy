@@ -3,11 +3,13 @@ package greekfantasy.entity.boss;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.Cerastes;
+import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.entity.util.GFMobType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,6 +30,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -35,6 +38,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -103,6 +107,7 @@ public class Hydra extends Monster {
         super.registerGoals();
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new Hydra.MoveToTargetGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 4, 8, 4, new ResourceLocation(GreekFantasy.MODID, "hydra_lair"), DefaultRandomPos::getPos));
         this.goalSelector.addGoal(5, new RandomStrollGoal(this, 0.8D) {
             @Override
             public boolean canUse() {

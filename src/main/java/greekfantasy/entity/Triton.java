@@ -3,14 +3,18 @@ package greekfantasy.entity;
 import greekfantasy.GreekFantasy;
 import greekfantasy.capability.FriendlyGuardian;
 import greekfantasy.entity.ai.GoToWaterGoal;
+import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.entity.ai.TridentRangedAttackGoal;
 import greekfantasy.entity.ai.WaterAnimalMoveControl;
 import greekfantasy.entity.boss.Charybdis;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.TimeUtil;
@@ -30,6 +34,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -61,9 +66,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Merfolk extends PathfinderMob implements RangedAttackMob, NeutralMob {
+public class Triton extends PathfinderMob implements RangedAttackMob, NeutralMob {
 
-    protected static final EntityDataAccessor<Boolean> SLIM = SynchedEntityData.defineId(Merfolk.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Boolean> SLIM = SynchedEntityData.defineId(Triton.class, EntityDataSerializers.BOOLEAN);
     protected static final String KEY_SLIM = "Slim";
     protected static final String KEY_TIMESTAMP = "GuardianTimestamp";
 
@@ -76,7 +81,9 @@ public class Merfolk extends PathfinderMob implements RangedAttackMob, NeutralMo
 
     protected EntityDimensions swimmingDimensions;
 
-    public Merfolk(final EntityType<? extends Merfolk> type, final Level level) {
+    protected Component description;
+
+    public Triton(final EntityType<? extends Triton> type, final Level level) {
         super(type, level);
         this.moveControl = new WaterAnimalMoveControl(this);
         this.swimmingDimensions = EntityDimensions.scalable(0.48F, 0.48F);
@@ -103,7 +110,8 @@ public class Merfolk extends PathfinderMob implements RangedAttackMob, NeutralMo
         this.goalSelector.addGoal(1, new GoToWaterGoal(this, 1.0D, false));
         this.goalSelector.addGoal(2, new TridentRangedAttackGoal(this, 1.0D, 40, 10.0F));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1D, false));
-        this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Charybdis.class, 12.0F, 1.0D, 1.0D));
+        this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Charybdis.class, 12.0F, 1.0D, 1.0D));
+        this.goalSelector.addGoal(5, new MoveToStructureGoal(this, 1.0D, 6, 8, 10, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
         this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 0.8D, 120));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
@@ -143,6 +151,18 @@ public class Merfolk extends PathfinderMob implements RangedAttackMob, NeutralMo
         getEntityData().set(SLIM, slim);
     }
 
+    @Override
+    protected Component getTypeName() {
+        if(null == description) {
+            String descriptionId = this.getType().getDescriptionId();
+            if(isSlim()) {
+                descriptionId += ".slim";
+            }
+            this.description = new TranslatableComponent(descriptionId);
+        }
+        return description;
+    }
+
     // Guardian methods
 
     public boolean wantsToSpawnGuardian(long gameTime) {
@@ -167,6 +187,7 @@ public class Merfolk extends PathfinderMob implements RangedAttackMob, NeutralMo
                 if (guardian != null) {
                     if (guardian.checkSpawnRules(level, MobSpawnType.MOB_SUMMONED) && guardian.checkSpawnObstruction(level)) {
                         level.addFreshEntityWithPassengers(guardian);
+                        guardian.setPersistenceRequired();
                         guardian.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).ifPresent(c -> c.setEnabled(true));
                         return Optional.of(guardian);
                     }
@@ -211,13 +232,13 @@ public class Merfolk extends PathfinderMob implements RangedAttackMob, NeutralMo
         // attempt to summon friendly guardian when hurt
         if (super.hurt(source, amount) && source.getEntity() instanceof Enemy) {
             if (this.level instanceof ServerLevel serverLevel) {
-                // determine if there are enough nearby merfolk
+                // determine if there are enough nearby tritons
                 final AABB aabb = this.getBoundingBox().inflate(10.0D);
                 final long gameTime = level.getGameTime();
-                List<Merfolk> nearbyMerfolk = level.getEntitiesOfClass(Merfolk.class, aabb);
-                List<Merfolk> wantsToSpawnGuardian = nearbyMerfolk.stream()
+                List<Triton> nearbyTriton = level.getEntitiesOfClass(Triton.class, aabb);
+                List<Triton> wantsToSpawnGuardian = nearbyTriton.stream()
                         .filter(m -> m.wantsToSpawnGuardian(gameTime))
-                        .limit(5L).toList();
+                        .limit(4L).toList();
                 if (wantsToSpawnGuardian.size() >= 2) {
                     // determine if there are any guardians in range
                     List<Guardian> guardians = level.getEntitiesOfClass(Guardian.class, aabb, p -> p.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled());
@@ -225,7 +246,7 @@ public class Merfolk extends PathfinderMob implements RangedAttackMob, NeutralMo
                         // attempt to spawn guardian
                         Optional<Guardian> oGuardian = trySpawnGuardian(serverLevel);
                         if (oGuardian.isPresent()) {
-                            nearbyMerfolk.forEach(m -> m.onSpawnGuardian(gameTime));
+                            nearbyTriton.forEach(m -> m.onSpawnGuardian(gameTime));
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 package greekfantasy.entity;
 
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.entity.util.HasHorseVariant;
 import greekfantasy.util.Quest;
 import net.minecraft.Util;
@@ -40,6 +41,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.animal.horse.Markings;
 import net.minecraft.world.entity.animal.horse.Variant;
@@ -103,17 +105,18 @@ public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMo
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new Centaur.RangedAttackGoal(this, 1.0D, this.hasBullHead() ? 50 : 35, 15.0F));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, false));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, true));
-        addTradeGoal();
+        addCentaurGoals();
     }
 
-    protected void addTradeGoal() {
+    protected void addCentaurGoals() {
         this.goalSelector.addGoal(2, new Centaur.TradeGoal(40 + random.nextInt(20)));
+        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 3, 8, 4, new ResourceLocation(GreekFantasy.MODID, "centaur_camp"), DefaultRandomPos::getPos));
     }
 
     @Override

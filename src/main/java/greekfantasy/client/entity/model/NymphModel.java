@@ -15,9 +15,15 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TridentItem;
+import net.minecraft.world.item.UseAnim;
 
-public class NymphModel<T extends LivingEntity> extends HumanoidModel<T> {
+public class NymphModel<T extends PathfinderMob> extends HumanoidModel<T> {
     public static final ModelLayerLocation NYMPH_LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "nymph"), "nymph");
 
     public NymphModel(ModelPart root, boolean hatVisible) {
@@ -48,16 +54,23 @@ public class NymphModel<T extends LivingEntity> extends HumanoidModel<T> {
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
                           float headPitch) {
+        // set pose based on item use animation
+        ItemStack item = entity.getMainHandItem();
+        if (item.getUseAnimation() == UseAnim.SPEAR && entity.isAggressive()) {
+            if (entity.getMainArm() == HumanoidArm.RIGHT) {
+                this.rightArmPose = ArmPose.THROW_SPEAR;
+            } else {
+                this.leftArmPose = ArmPose.THROW_SPEAR;
+            }
+        } else {
+            this.rightArmPose = this.leftArmPose = HumanoidModel.ArmPose.EMPTY;
+        }
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         // fix rotation points
         leftArm.setPos(3.0F, 2.0F, 0.0F);
         rightArm.setPos(-3.0F, 2.0F, 0.0F);
         leftLeg.setPos(1.5F, 12.0F, 0.0F);
         rightLeg.setPos(-1.5F, 12.0F, 0.0F);
-        // held item
-        if (!entity.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
-            this.getArm(entity.getMainArm()).xRot += -0.42F;
-        }
     }
 
     @Override

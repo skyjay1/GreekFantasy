@@ -3,8 +3,8 @@
   "pools": [
     {
       "rolls": {
-        "min": 4,
-        "max": 8
+        "min": 6,
+        "max": 10
       },
       "entries": [
         {
@@ -71,6 +71,21 @@
           "type": "minecraft:item",
           "weight": 3,
           "name": "minecraft:sea_pickle"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 4,
+          "name": "minecraft:lapis_lazuli"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 4,
+          "name": "minecraft:copper_ingot"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 2,
+          "name": "greekfantasy:mirror"
         }
       ]
     },
@@ -127,6 +142,24 @@
               "damage": {
                 "min": 0,
                 "max": 60
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "minecraft:turtle_helmet",
+          "functions": [
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": 20
+            },
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "min": 0,
+                "max": 200
               }
             }
           ]

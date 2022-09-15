@@ -74,7 +74,7 @@ public class Cyprian extends Centaur implements Enemy {
     }
 
     @Override
-    protected void addTradeGoal() {
+    protected void addCentaurGoals() {
         // do nothing
     }
 

@@ -2,6 +2,7 @@ package greekfantasy.entity;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.entity.ai.SummonMobGoal;
 import greekfantasy.entity.util.HasHorseVariant;
 import greekfantasy.util.SongManager;
@@ -42,6 +43,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.animal.horse.Markings;
@@ -141,14 +143,15 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
         this.goalSelector.addGoal(3, new Satyr.PanicGoal(1.3D));
         this.goalSelector.addGoal(4, new Satyr.StartDancingGoal(0.9D, 22, 12, 420));
         this.goalSelector.addGoal(5, new Satyr.LightCampfireGoal(0.9D, 12, 10, 60, 500));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8D, 160) {
+        this.goalSelector.addGoal(6, new MoveToStructureGoal(this, 1.0D, 2, 8, 4, new ResourceLocation(GreekFantasy.MODID, "satyr_camp"), DefaultRandomPos::getPos));
+        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8D, 160) {
             @Override
             public boolean canUse() {
                 return Satyr.this.isIdleState() && Satyr.this.getTarget() == null && super.canUse();
             }
         });
-        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new SatyrHurtByTargetGoal());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(3, new ResetUniversalAngerTargetGoal<>(this, true));

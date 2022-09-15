@@ -2,11 +2,13 @@ package greekfantasy.entity.boss;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.CooldownMeleeAttackGoal;
+import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.entity.util.HasCustomCooldown;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -103,14 +105,15 @@ public class NemeanLion extends Monster implements HasCustomCooldown {
         this.goalSelector.addGoal(1, new NemeanLion.RunAroundLikeCrazyGoal(1.0D));
         this.goalSelector.addGoal(2, new NemeanLion.SitGoal());
         this.goalSelector.addGoal(3, new NemeanLion.NemeanLionAttackGoal(1.15D, true, ATTACK_COOLDOWN));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.86D) {
+        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 3, 8, 4, new ResourceLocation(GreekFantasy.MODID, "lion_den"), DefaultRandomPos::getPos));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.86D) {
             @Override
             public boolean canUse() {
                 return !NemeanLion.this.isSitting() && NemeanLion.this.random.nextInt(400) == 0 && super.canUse();
             }
         });
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, e -> !NemeanLion.this.isVehicle()));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Animal.class, 10, false, false, e -> e.canChangeDimensions() && !e.isInWater() && !NemeanLion.this.isVehicle()));

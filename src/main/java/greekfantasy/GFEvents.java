@@ -5,7 +5,7 @@ import greekfantasy.capability.IFriendlyGuardian;
 import greekfantasy.entity.Arion;
 import greekfantasy.entity.Cerastes;
 import greekfantasy.entity.GoldenRam;
-import greekfantasy.entity.Merfolk;
+import greekfantasy.entity.Triton;
 import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Orthus;
 import greekfantasy.entity.Palladium;
@@ -14,7 +14,6 @@ import greekfantasy.entity.ai.FollowWaterMobGoal;
 import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.GiantBoar;
 import greekfantasy.entity.boss.NemeanLion;
-import greekfantasy.entity.monster.Ara;
 import greekfantasy.entity.monster.Circe;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.integration.RGCompat;
@@ -49,7 +48,6 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.world.entity.ai.goal.FollowMobGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Rabbit;
@@ -58,7 +56,6 @@ import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
-import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.DyeColor;
@@ -542,24 +539,24 @@ public final class GFEvents {
                 // add guardian goals
                 if(mob.getType() == EntityType.GUARDIAN) {
                     // attack enemy goal
-                    Predicate<LivingEntity> predicate = entity -> entity instanceof Enemy && entity.isInWater() && entity.distanceToSqr(mob) > 9.0D;
+                    Predicate<LivingEntity> predicate = entity -> entity instanceof Enemy && !(entity instanceof Guardian) && entity.isInWater() && entity.distanceToSqr(mob) > 9.0D;
                     mob.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(mob, LivingEntity.class, 10, true, false, predicate) {
                         @Override
                         public boolean canUse() {
                             return super.canUse() && this.mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled();
                         }
                     });
-                    // follow merfolk goal
-                    mob.goalSelector.addGoal(6, new FollowWaterMobGoal(mob, Merfolk.class, 1.0D, 8.0F, 12.0F) {
+                    // follow triton goal
+                    mob.goalSelector.addGoal(6, new FollowWaterMobGoal(mob, Triton.class, 1.0D, 8.0F, 12.0F) {
                         @Override
                         public boolean canUse() {
-                            return mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled() && mob.getRandom().nextInt(50) == 0 && super.canUse();
+                            return mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled() && mob.getRandom().nextInt(45) == 0 && super.canUse();
                         }
                     });
                 }
                 // add drowned goals
                 if(mob.getType() == EntityType.DROWNED) {
-                    mob.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(mob, Merfolk.class, false));
+                    mob.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(mob, Triton.class, false));
                     mob.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(mob, Naiad.class, true, false));
                 }
             }

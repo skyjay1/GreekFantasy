@@ -16,18 +16,21 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 
-public class MerfolkModel<T extends LivingEntity> extends HumanoidModel<T> {
+public class TritonModel<T extends PathfinderMob> extends HumanoidModel<T> {
 
-    public static final ModelLayerLocation MERFOLK_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "merfolk"), "merfolk");
+    public static final ModelLayerLocation TRITON_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "triton"), "triton");
 
     protected final ModelPart chest;
     protected final ModelPart upperTail;
     protected final ModelPart middleTail;
     protected final ModelPart lowerTail;
 
-    public MerfolkModel(ModelPart root) {
+    public TritonModel(ModelPart root) {
         super(root);
         this.chest = body.getChild("chest");
         this.upperTail = root.getChild("upper_tail");
@@ -67,6 +70,18 @@ public class MerfolkModel<T extends LivingEntity> extends HumanoidModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // set pose based on item use animation
+        ItemStack item = entity.getMainHandItem();
+        if (item.getUseAnimation() == UseAnim.SPEAR && entity.isAggressive()) {
+            if (entity.getMainArm() == HumanoidArm.RIGHT) {
+                this.rightArmPose = ArmPose.THROW_SPEAR;
+            } else {
+                this.leftArmPose = ArmPose.THROW_SPEAR;
+            }
+        } else {
+            this.rightArmPose = this.leftArmPose = HumanoidModel.ArmPose.EMPTY;
+        }
+        // super method
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         // reset head position
         this.head.y += -2.0F;
