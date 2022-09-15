@@ -1,6 +1,5 @@
 package greekfantasy;
 
-import com.google.common.collect.ImmutableList;
 import greekfantasy.block.CerberusHeadBlock;
 import greekfantasy.block.GoldenStringBlock;
 import greekfantasy.block.MobHeadBlock;
@@ -34,6 +33,7 @@ import greekfantasy.entity.Gigante;
 import greekfantasy.entity.GoldenRam;
 import greekfantasy.entity.Lampad;
 import greekfantasy.entity.Makhai;
+import greekfantasy.entity.Merfolk;
 import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Orthus;
 import greekfantasy.entity.Palladium;
@@ -119,6 +119,7 @@ import greekfantasy.item.WandOfCirceItem;
 import greekfantasy.item.WebBallItem;
 import greekfantasy.item.WingedSandalsItem;
 import greekfantasy.mob_effect.CurseOfCirceEffect;
+import greekfantasy.mob_effect.CurseOfLycaonEffect;
 import greekfantasy.mob_effect.MirroringEffect;
 import greekfantasy.mob_effect.SlowSwimEffect;
 import greekfantasy.mob_effect.PrisonerOfHadesEffect;
@@ -135,6 +136,8 @@ import greekfantasy.worldgen.DimensionFilter;
 import greekfantasy.worldgen.GoldenTreeGrower;
 import greekfantasy.worldgen.HarpyNestFeature;
 import greekfantasy.worldgen.LocStructureProcessor;
+import greekfantasy.worldgen.OceanVillageFeature;
+import greekfantasy.worldgen.OceanVillageStructureProcessor;
 import greekfantasy.worldgen.OliveTreeFeature;
 import greekfantasy.worldgen.OliveTreeGrower;
 import greekfantasy.worldgen.PomegranateTreeGrower;
@@ -148,7 +151,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.data.worldgen.features.FeatureUtils;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
@@ -213,7 +216,6 @@ import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.JigsawConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
@@ -230,7 +232,6 @@ import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -274,6 +275,8 @@ public final class GFRegistry {
     private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, MODID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
+    private static final DeferredRegister<ConfiguredFeature<?, ?>> CONFIGURED_FEATURES = DeferredRegister.create(BuiltinRegistries.CONFIGURED_FEATURE.key(), MODID);
+    private static final DeferredRegister<PlacedFeature> PLACED_FEATURES = DeferredRegister.create(BuiltinRegistries.PLACED_FEATURE.key(), MODID);
     private static final DeferredRegister<StructureFeature<?>> STRUCTURE_FEATURES = DeferredRegister.create(Registry.STRUCTURE_FEATURE_REGISTRY, MODID);
     private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registry.PLACEMENT_MODIFIERS.key(), MODID);
     private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
@@ -841,6 +844,8 @@ public final class GFRegistry {
                 new ForgeSpawnEggItem(EntityReg.MAD_COW, 0x443626, 0xcf9797, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> MAKHAI_SPAWN_EGG = ITEMS.register("makhai_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.MAKHAI, 0x513f38, 0xf33531, new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> MERFOLK_SPAWN_EGG = ITEMS.register("merfolk_spawn_egg", () ->
+                new ForgeSpawnEggItem(EntityReg.MERFOLK, 0x527f72, 0x398046, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> MINOTAUR_SPAWN_EGG = ITEMS.register("minotaur_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.MINOTAUR, 0x443626, 0x734933, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> NAIAD_SPAWN_EGG = ITEMS.register("naiad_spawn_egg", () ->
@@ -947,6 +952,7 @@ public final class GFRegistry {
             register(event, LAMPAD.get(), Lampad::createAttributes, Mob::checkMobSpawnRules);
             register(event, MAD_COW.get(), MadCow::createAttributes, SpawnRulesUtil::checkAnyLightMonsterSpawnRules);
             register(event, MAKHAI.get(), Makhai::createAttributes, null);
+            register(event, MERFOLK.get(), Merfolk::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
             register(event, MINOTAUR.get(), Minotaur::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
             register(event, NEMEAN_LION.get(), NemeanLion::createAttributes, null);
@@ -1159,6 +1165,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Makhai::new, MobCategory.CREATURE)
                         .sized(0.70F, 1.8F)
                         .build("makhai"));
+        public static final RegistryObject<EntityType<? extends Merfolk>> MERFOLK = ENTITY_TYPES.register("merfolk", () ->
+                EntityType.Builder.of(Merfolk::new, MobCategory.WATER_CREATURE)
+                        .sized(0.6F, 1.9F)
+                        .build("merfolk"));
         public static final RegistryObject<EntityType<? extends Minotaur>> MINOTAUR = ENTITY_TYPES.register("minotaur", () ->
                 EntityType.Builder.of(Minotaur::new, MobCategory.MONSTER)
                         .sized(0.7F, 1.94F)
@@ -1401,12 +1411,12 @@ public final class GFRegistry {
         }
 
         public static final RegistryObject<MobEffect> CURSE_OF_CIRCE = MOB_EFFECTS.register("curse_of_circe", () -> new CurseOfCirceEffect());
+        //public static final RegistryObject<MobEffect> CURSE_OF_LYCAON = MOB_EFFECTS.register("curse_of_lycaon", () -> new CurseOfLycaonEffect());
         public static final RegistryObject<MobEffect> MIRRORING = MOB_EFFECTS.register("mirroring", () -> new MirroringEffect());
         public static final RegistryObject<MobEffect> PETRIFIED = MOB_EFFECTS.register("petrified", () -> new StunnedEffect());
         public static final RegistryObject<MobEffect> PRISONER_OF_HADES = MOB_EFFECTS.register("prisoner_of_hades", () -> new PrisonerOfHadesEffect());
         public static final RegistryObject<MobEffect> STUNNED = MOB_EFFECTS.register("stunned", () -> new StunnedEffect());
         public static final RegistryObject<MobEffect> SLOW_SWIM = MOB_EFFECTS.register("slow_swim", () -> new SlowSwimEffect());
-
     }
 
 
@@ -1497,13 +1507,17 @@ public final class GFRegistry {
 
         public static final RegistryObject<StructureFeature<?>> ARACHNE_PIT = STRUCTURE_FEATURES.register("arachne_pit", () ->
                 new ArachnePitFeature(JigsawConfiguration.CODEC));
+        public static final RegistryObject<StructureFeature<?>> OCEAN_VILLAGE = STRUCTURE_FEATURES.register("ocean_village", () ->
+                new OceanVillageFeature(JigsawConfiguration.CODEC));
         public static final RegistryObject<StructureFeature<?>> MAZE = STRUCTURE_FEATURES.register("maze", () ->
                 new MazeStructure(MazeConfiguration.CODEC));
         public static StructurePieceType MAZE_ROOM;
 
+
         private static void registerStep(final FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
                 StructureFeature.STEP.put(ARACHNE_PIT.get(), GenerationStep.Decoration.UNDERGROUND_STRUCTURES);
+                StructureFeature.STEP.put(OCEAN_VILLAGE.get(), GenerationStep.Decoration.SURFACE_STRUCTURES);
                 StructureFeature.STEP.put(MAZE.get(), GenerationStep.Decoration.UNDERGROUND_STRUCTURES);
             });
         }
@@ -1524,6 +1538,7 @@ public final class GFRegistry {
         public static StructureProcessorType<LocStructureProcessor> LOC_PROCESSOR;
         public static StructureProcessorType<CentaurStructureProcessor> CENTAUR_PROCESSOR;
         public static StructureProcessorType<SatyrStructureProcessor> SATYR_PROCESSOR;
+        public static StructureProcessorType<OceanVillageStructureProcessor> OCEAN_VILLAGE_PROCESSOR;
 
         private static void registerStructureProcessors(final FMLCommonSetupEvent event) {
             event.enqueueWork(() -> {
@@ -1536,6 +1551,9 @@ public final class GFRegistry {
                 // register centaur processor
                 ResourceLocation centaurProcessorId = new ResourceLocation(GreekFantasy.MODID, "centaur");
                 CENTAUR_PROCESSOR = StructureProcessorType.register(centaurProcessorId.toString(), CentaurStructureProcessor.CODEC);
+                // register ocean village processor
+                ResourceLocation oceanVillageProcessorId = new ResourceLocation(GreekFantasy.MODID, "ocean_village");
+                OCEAN_VILLAGE_PROCESSOR = StructureProcessorType.register(oceanVillageProcessorId.toString(), OceanVillageStructureProcessor.CODEC);
 
             });
         }
@@ -1545,65 +1563,66 @@ public final class GFRegistry {
 
         public static void register() {
             FEATURES.register(FMLJavaModLoadingContext.get().getModEventBus());
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(FeatureReg::registerConfiguredFeatures);
+            CONFIGURED_FEATURES.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
 
         public static RegistryObject<OliveTreeFeature> OLIVE_TREE_FEATURE = FEATURES.register("olive_tree", () ->
-                new OliveTreeFeature(TreeConfiguration.CODEC));
+            new OliveTreeFeature(TreeConfiguration.CODEC));
         public static RegistryObject<HarpyNestFeature> HARPY_NEST_FEATURE = FEATURES.register("harpy_nest", () ->
-                new HarpyNestFeature(TreeConfiguration.CODEC));
+            new HarpyNestFeature(TreeConfiguration.CODEC));
 
-        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> GOLDEN_TREE;
-        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> ACACIA_HARPY_NEST;
-        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> BIRCH_HARPY_NEST;
-        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> DARK_OAK_HARPY_NEST;
-        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> JUNGLE_HARPY_NEST;
-        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> OAK_HARPY_NEST;
-        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> OLIVE_HARPY_NEST;
-        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> SPRUCE_HARPY_NEST;
-        public static Holder<ConfiguredFeature<OreConfiguration, ?>> ORE_LIMESTONE;
-        public static Holder<ConfiguredFeature<OreConfiguration, ?>> ORE_MARBLE;
-        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> OLIVE_TREE;
-        public static Holder<ConfiguredFeature<TreeConfiguration, ?>> POMEGRANATE_TREE;
-        public static Holder<ConfiguredFeature<RandomPatchConfiguration, ?>> REEDS;
+        public static RegistryObject<ConfiguredFeature<?, ?>> GOLDEN_TREE = CONFIGURED_FEATURES.register("golden_tree", () ->
+            new ConfiguredFeature<>(Feature.TREE, createGolden().build()));
+        public static RegistryObject<ConfiguredFeature<?, ?>> ACACIA_HARPY_NEST = CONFIGURED_FEATURES.register("acacia_harpy_nest", () ->
+            new ConfiguredFeature<>(HARPY_NEST_FEATURE.get(), TreeFeatures.ACACIA.value().config()));
+        public static RegistryObject<ConfiguredFeature<?, ?>> BIRCH_HARPY_NEST = CONFIGURED_FEATURES.register("birch_harpy_nest", () ->
+            new ConfiguredFeature<>(HARPY_NEST_FEATURE.get(), TreeFeatures.BIRCH.value().config()));
+        public static RegistryObject<ConfiguredFeature<?, ?>> DARK_OAK_HARPY_NEST = CONFIGURED_FEATURES.register("dark_oak_harpy_nest", () ->
+            new ConfiguredFeature<>(HARPY_NEST_FEATURE.get(), TreeFeatures.DARK_OAK.value().config()));
+        public static RegistryObject<ConfiguredFeature<?, ?>> JUNGLE_HARPY_NEST = CONFIGURED_FEATURES.register("jungle_harpy_nest", () ->
+            new ConfiguredFeature<>(HARPY_NEST_FEATURE.get(), TreeFeatures.JUNGLE_TREE.value().config()));
+        public static RegistryObject<ConfiguredFeature<?, ?>> OAK_HARPY_NEST = CONFIGURED_FEATURES.register("oak_harpy_nest", () ->
+            new ConfiguredFeature<>(HARPY_NEST_FEATURE.get(), TreeFeatures.OAK.value().config()));
+        public static RegistryObject<ConfiguredFeature<?, ?>> OLIVE_HARPY_NEST = CONFIGURED_FEATURES.register("olive_harpy_nest", () ->
+            new ConfiguredFeature<>(HARPY_NEST_FEATURE.get(), createOlive().build()));
+        public static RegistryObject<ConfiguredFeature<?, ?>> SPRUCE_HARPY_NEST = CONFIGURED_FEATURES.register("spruce_harpy_nest", () ->
+            new ConfiguredFeature<>(HARPY_NEST_FEATURE.get(), TreeFeatures.SPRUCE.value().config()));
 
-        private static void registerConfiguredFeatures(final FMLCommonSetupEvent event) {
-            event.enqueueWork(() -> {
-                GOLDEN_TREE = FeatureUtils.register("golden_tree", Feature.TREE, createGolden().build());
-                ACACIA_HARPY_NEST = FeatureUtils.register("acacia_harpy_nest", HARPY_NEST_FEATURE.get(), TreeFeatures.ACACIA.value().config());
-                BIRCH_HARPY_NEST = FeatureUtils.register("birch_harpy_nest", HARPY_NEST_FEATURE.get(), TreeFeatures.BIRCH.value().config());
-                DARK_OAK_HARPY_NEST = FeatureUtils.register("dark_oak_harpy_nest", HARPY_NEST_FEATURE.get(), TreeFeatures.DARK_OAK.value().config());
-                JUNGLE_HARPY_NEST = FeatureUtils.register("jungle_harpy_nest", HARPY_NEST_FEATURE.get(), TreeFeatures.JUNGLE_TREE_NO_VINE.value().config());
-                OAK_HARPY_NEST = FeatureUtils.register("oak_harpy_nest", HARPY_NEST_FEATURE.get(), TreeFeatures.OAK.value().config());
-                OLIVE_HARPY_NEST = FeatureUtils.register("olive_harpy_nest", HARPY_NEST_FEATURE.get(), createOlive().build());
-                SPRUCE_HARPY_NEST = FeatureUtils.register("spruce_harpy_nest", HARPY_NEST_FEATURE.get(), TreeFeatures.SPRUCE.value().config());
-                ORE_LIMESTONE = FeatureUtils.register("limestone", Feature.ORE,
-                        new OreConfiguration(OreFeatures.NATURAL_STONE, BlockReg.LIMESTONE.get().defaultBlockState(), 64)
-                );
-                ORE_MARBLE = FeatureUtils.register("marble", Feature.ORE,
-                        new OreConfiguration(OreFeatures.NATURAL_STONE, BlockReg.MARBLE.get().defaultBlockState(), 64)
-                );
-                OLIVE_TREE = FeatureUtils.register("olive_tree", OLIVE_TREE_FEATURE.get(), createOlive().build());
-                POMEGRANATE_TREE = FeatureUtils.register("pomegranate_tree", Feature.TREE, createPomegranate().build());
-                REEDS = FeatureUtils.register("reeds", Feature.RANDOM_PATCH,
-                        new RandomPatchConfiguration(40, 5, 1,
-                                PlacementUtils.inlinePlaced(Feature.SIMPLE_BLOCK,
-                                        new SimpleBlockConfiguration(BlockStateProvider.simple(BlockReg.REEDS.get())),
-                                        BlockPredicateFilter.forPredicate(BlockPredicate.allOf(
-                                                BlockPredicate.replaceable(new BlockPos(0, 1, 0)),
-                                                BlockPredicate.hasSturdyFace(new BlockPos(0, -1, 0), Direction.UP),
-                                                BlockPredicate.anyOf(
-                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), BlockPos.ZERO),
-                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(1, -1, 0)),
-                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(-1, -1, 0)),
-                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, 1)),
-                                                        BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, -1))))
-                                        )
-                                )
+        public static RegistryObject<ConfiguredFeature<?, ?>> ORE_LIMESTONE = CONFIGURED_FEATURES.register("limestone", () ->
+            new ConfiguredFeature<>(Feature.ORE,
+                new OreConfiguration(OreFeatures.NATURAL_STONE, BlockReg.LIMESTONE.get().defaultBlockState(), 64)
+            )
+        );
+        public static RegistryObject<ConfiguredFeature<?, ?>> ORE_MARBLE = CONFIGURED_FEATURES.register("marble", () ->
+            new ConfiguredFeature<>(Feature.ORE,
+                new OreConfiguration(OreFeatures.NATURAL_STONE, BlockReg.MARBLE.get().defaultBlockState(), 64)
+            )
+        );
+
+        public static RegistryObject<ConfiguredFeature<?, ?>> OLIVE_TREE = CONFIGURED_FEATURES.register("olive_tree", () ->
+            new ConfiguredFeature<>(OLIVE_TREE_FEATURE.get(), createOlive().build()));
+        public static RegistryObject<ConfiguredFeature<?, ?>> POMEGRANATE_TREE = CONFIGURED_FEATURES.register("pomegranate_tree", () ->
+            new ConfiguredFeature<>(Feature.TREE, createPomegranate().build()));
+
+        public static RegistryObject<ConfiguredFeature<?, ?>> REEDS = CONFIGURED_FEATURES.register("reeds", () ->
+            new ConfiguredFeature<>(Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(40, 5, 1,
+                    PlacementUtils.inlinePlaced(Feature.SIMPLE_BLOCK,
+                        new SimpleBlockConfiguration(BlockStateProvider.simple(BlockReg.REEDS.get())),
+                        BlockPredicateFilter.forPredicate(BlockPredicate.allOf(
+                            BlockPredicate.replaceable(new BlockPos(0, 1, 0)),
+                            BlockPredicate.hasSturdyFace(new BlockPos(0, -1, 0), Direction.UP),
+                            BlockPredicate.anyOf(
+                                BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), BlockPos.ZERO),
+                                BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(1, -1, 0)),
+                                BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(-1, -1, 0)),
+                                BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, 1)),
+                                BlockPredicate.matchesFluids(List.of(Fluids.WATER, Fluids.FLOWING_WATER), new BlockPos(0, -1, -1))))
                         )
-                );
-            });
-        }
+                    )
+                )
+            )
+        );
 
         private static TreeConfiguration.TreeConfigurationBuilder createStraightBlobTree(Block trunk, Block leaves, int trunkHeight, int trunkHeightRandA, int trunkHeightRandB, int foliageRadius) {
             return new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(trunk), new StraightTrunkPlacer(trunkHeight, trunkHeightRandA, trunkHeightRandB), BlockStateProvider.simple(leaves), new BlobFoliagePlacer(ConstantInt.of(foliageRadius), ConstantInt.of(0), 3), new TwoLayersFeatureSize(1, 0, 1));
@@ -1636,119 +1655,148 @@ public final class GFRegistry {
     public static final class PlacementReg {
 
         public static void register() {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(PlacementReg::registerPlacedFeatures);
+            PLACED_FEATURES.register(FMLJavaModLoadingContext.get().getModEventBus());
             // register event listeners
             MinecraftForge.EVENT_BUS.addListener(PlacementReg::onBiomeLoading);
         }
 
-        public static Holder<PlacedFeature> ORE_LIMESTONE_UPPER;
-        public static Holder<PlacedFeature> ORE_LIMESTONE_LOWER;
-        public static Holder<PlacedFeature> ORE_MARBLE_UPPER;
-        public static Holder<PlacedFeature> ORE_MARBLE_LOWER;
-        public static Holder<PlacedFeature> ACACIA_HARPY_NEST;
-        public static Holder<PlacedFeature> BIRCH_HARPY_NEST;
-        public static Holder<PlacedFeature> DARK_OAK_HARPY_NEST;
-        public static Holder<PlacedFeature> JUNGLE_HARPY_NEST;
-        public static Holder<PlacedFeature> OAK_HARPY_NEST;
-        public static Holder<PlacedFeature> OLIVE_HARPY_NEST;
-        public static Holder<PlacedFeature> SPRUCE_HARPY_NEST;
-        public static Holder<PlacedFeature> OLIVE_TREE;
-        public static Holder<PlacedFeature> POMEGRANATE_TREE;
-        public static Holder<PlacedFeature> PATCH_REEDS;
-        public static Holder<PlacedFeature> PATCH_REEDS_SWAMP;
+        public static RegistryObject<PlacedFeature> ORE_LIMESTONE_UPPER = PLACED_FEATURES.register("limestone_upper", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("limestone_upper");
+            return new PlacedFeature(FeatureReg.ORE_LIMESTONE.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(64), VerticalAnchor.absolute(128)),
+                    InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()));
+        });
 
-        private static void registerPlacedFeatures(final FMLCommonSetupEvent event) {
-            event.enqueueWork(() -> {
-                BiomeListConfigSpec spec;
-                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("limestone_upper");
-                ORE_LIMESTONE_UPPER = PlacementUtils.register(GreekFantasy.MODID + ":" + "limestone_upper", FeatureReg.ORE_LIMESTONE, List.of(
-                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
-                        HeightRangePlacement.uniform(VerticalAnchor.absolute(64), VerticalAnchor.absolute(128)),
-                        InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
-                ));
-                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("limestone_lower");
-                ORE_LIMESTONE_LOWER = PlacementUtils.register(GreekFantasy.MODID + ":" + "limestone_lower", FeatureReg.ORE_LIMESTONE, List.of(
-                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
-                        CountPlacement.of(2),
-                        HeightRangePlacement.uniform(VerticalAnchor.absolute(0), VerticalAnchor.absolute(60)),
-                        InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
-                ));
-                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("marble_upper");
-                ORE_MARBLE_UPPER = PlacementUtils.register(GreekFantasy.MODID + ":" + "marble_upper", FeatureReg.ORE_MARBLE, List.of(
-                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
-                        HeightRangePlacement.uniform(VerticalAnchor.absolute(64), VerticalAnchor.absolute(128)),
-                        InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
-                ));
-                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("marble_lower");
-                ORE_MARBLE_LOWER = PlacementUtils.register(GreekFantasy.MODID + ":" + "marble_lower", FeatureReg.ORE_MARBLE, List.of(
-                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
-                        CountPlacement.of(2),
-                        HeightRangePlacement.uniform(VerticalAnchor.absolute(0), VerticalAnchor.absolute(60)),
-                        InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()
-                ));
+        public static RegistryObject<PlacedFeature> ORE_LIMESTONE_LOWER = PLACED_FEATURES.register("limestone_lower", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("limestone_lower");
+            return new PlacedFeature(FeatureReg.ORE_LIMESTONE.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    CountPlacement.of(2),
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(0), VerticalAnchor.absolute(60)),
+                    InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()));
+        });
 
-                // harpy nests
-                ACACIA_HARPY_NEST = registerSimple("acacia_harpy_nest", FeatureReg.ACACIA_HARPY_NEST,
-                        CountPlacement.of(UniformInt.of(0, 1)),
-                        PlacementUtils.filteredByBlockSurvival(Blocks.ACACIA_SAPLING));
-                BIRCH_HARPY_NEST = registerSimple("birch_harpy_nest", FeatureReg.BIRCH_HARPY_NEST,
-                        CountPlacement.of(UniformInt.of(0, 1)),
-                        PlacementUtils.filteredByBlockSurvival(Blocks.BIRCH_SAPLING));
-                DARK_OAK_HARPY_NEST = registerSimple("dark_oak_harpy_nest", FeatureReg.DARK_OAK_HARPY_NEST,
-                        CountPlacement.of(UniformInt.of(0, 1)),
-                        PlacementUtils.filteredByBlockSurvival(Blocks.DARK_OAK_SAPLING));
-                JUNGLE_HARPY_NEST = registerSimple("jungle_harpy_nest", FeatureReg.JUNGLE_HARPY_NEST,
-                        CountPlacement.of(UniformInt.of(0, 1)),
-                        PlacementUtils.filteredByBlockSurvival(Blocks.JUNGLE_SAPLING));
-                OAK_HARPY_NEST = registerSimple("oak_harpy_nest", FeatureReg.OAK_HARPY_NEST,
-                        CountPlacement.of(UniformInt.of(0, 1)),
-                        PlacementUtils.filteredByBlockSurvival(Blocks.OAK_SAPLING));
-                OLIVE_HARPY_NEST = registerSimple("olive_harpy_nest", FeatureReg.OLIVE_HARPY_NEST,
-                        CountPlacement.of(UniformInt.of(0, 1)),
-                        PlacementUtils.filteredByBlockSurvival(BlockReg.OLIVE_SAPLING.get()));
-                SPRUCE_HARPY_NEST = registerSimple("spruce_harpy_nest", FeatureReg.SPRUCE_HARPY_NEST,
-                        CountPlacement.of(UniformInt.of(0, 1)),
-                        PlacementUtils.filteredByBlockSurvival(Blocks.SPRUCE_SAPLING));
+        public static RegistryObject<PlacedFeature> ORE_MARBLE_UPPER = PLACED_FEATURES.register("marble_upper", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("marble_upper");
+            return new PlacedFeature(FeatureReg.ORE_MARBLE.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(64), VerticalAnchor.absolute(128)),
+                    InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()));
+        });
 
-                // olive tree
-                OLIVE_TREE = registerSimple("olive_tree", FeatureReg.OLIVE_TREE,
-                        CountPlacement.of(UniformInt.of(1, 2)),
-                        PlacementUtils.filteredByBlockSurvival(BlockReg.OLIVE_SAPLING.get()));
+        public static RegistryObject<PlacedFeature> ORE_MARBLE_LOWER = PLACED_FEATURES.register("marble_lower", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("marble_lower");
+            return new PlacedFeature(FeatureReg.ORE_MARBLE.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    CountPlacement.of(2),
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(0), VerticalAnchor.absolute(60)),
+                    InSquarePlacement.spread(), DimensionFilter.dimension(), BiomeFilter.biome()));
+        });
 
-                spec = GreekFantasy.CONFIG.getFeatureConfigSpec("pomegranate_tree");
-                POMEGRANATE_TREE = PlacementUtils.register(GreekFantasy.MODID + ":" + "pomegranate_tree", FeatureReg.POMEGRANATE_TREE, List.of(
-                        RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
-                        CountOnEveryLayerPlacement.of(3), DimensionFilter.dimension(), BiomeFilter.biome(),
-                        PlacementUtils.filteredByBlockSurvival(BlockReg.POMEGRANATE_SAPLING.get())
-                ));
+        public static RegistryObject<PlacedFeature> ACACIA_HARPY_NEST = PLACED_FEATURES.register("acacia_harpy_nest", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("acacia_harpy_nest");
+            return new PlacedFeature(FeatureReg.ACACIA_HARPY_NEST.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                    DimensionFilter.dimension(), BiomeFilter.biome(),
+                    CountPlacement.of(UniformInt.of(0, 1)),
+                    PlacementUtils.filteredByBlockSurvival(Blocks.ACACIA_SAPLING)));
+        });
 
-                // reeds
-                PATCH_REEDS = registerSimple("patch_reeds", FeatureReg.REEDS);
-                PATCH_REEDS_SWAMP = registerSimple("patch_reeds_swamp", FeatureReg.REEDS);
+        public static RegistryObject<PlacedFeature> BIRCH_HARPY_NEST = PLACED_FEATURES.register("birch_harpy_nest", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("birch_harpy_nest");
+            return new PlacedFeature(FeatureReg.BIRCH_HARPY_NEST.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                    DimensionFilter.dimension(), BiomeFilter.biome(),
+                    CountPlacement.of(UniformInt.of(0, 1)),
+                    PlacementUtils.filteredByBlockSurvival(Blocks.BIRCH_SAPLING)));
+        });
 
-            });
-        }
+        public static RegistryObject<PlacedFeature> DARK_OAK_HARPY_NEST = PLACED_FEATURES.register("dark_oak_harpy_nest", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("dark_oak_harpy_nest");
+            return new PlacedFeature(FeatureReg.DARK_OAK_HARPY_NEST.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                    DimensionFilter.dimension(), BiomeFilter.biome(),
+                    CountPlacement.of(UniformInt.of(0, 1)),
+                    PlacementUtils.filteredByBlockSurvival(Blocks.DARK_OAK_SAPLING)));
+        });
 
-        /**
-         * Registers a PlacedFeature with RarityFilter (based on biome spec), in-square-spread, HEIGHTMAP_TOP_SOLID,
-         * dimension filter, and biome filter
-         * @param name the placed feature name, should match config spec name
-         * @param feature the configured feature
-         * @param modifiers any additional placement modifiers to apply
-         * @param <T> the feature configuration type
-         * @return a Holder for the PlacedFeature
-         */
-        private static <T extends FeatureConfiguration> Holder<PlacedFeature> registerSimple(final String name,
-                         final Holder<ConfiguredFeature<T, ?>> feature, PlacementModifier... modifiers) {
-            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec(name);
-            ImmutableList<PlacementModifier> placement = new ImmutableList.Builder<PlacementModifier>()
-                    .add(RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
-                        InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
-                        DimensionFilter.dimension(), BiomeFilter.biome())
-                    .add(modifiers)
-                    .build();
-            return PlacementUtils.register(GreekFantasy.MODID + ":" + name, feature, placement);
-        }
+        public static RegistryObject<PlacedFeature> JUNGLE_HARPY_NEST = PLACED_FEATURES.register("jungle_harpy_nest", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("jungle_harpy_nest");
+            return new PlacedFeature(FeatureReg.JUNGLE_HARPY_NEST.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                    DimensionFilter.dimension(), BiomeFilter.biome(),
+                    CountPlacement.of(UniformInt.of(0, 1)),
+                    PlacementUtils.filteredByBlockSurvival(Blocks.JUNGLE_SAPLING)));
+        });
+
+        public static RegistryObject<PlacedFeature> OAK_HARPY_NEST = PLACED_FEATURES.register("oak_harpy_nest", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("oak_harpy_nest");
+            return new PlacedFeature(FeatureReg.OAK_HARPY_NEST.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                    DimensionFilter.dimension(), BiomeFilter.biome(),
+                    CountPlacement.of(UniformInt.of(0, 1)),
+                    PlacementUtils.filteredByBlockSurvival(Blocks.OAK_SAPLING)));
+        });
+
+        public static RegistryObject<PlacedFeature> OLIVE_HARPY_NEST = PLACED_FEATURES.register("olive_harpy_nest", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("olive_harpy_nest");
+            return new PlacedFeature(FeatureReg.OLIVE_HARPY_NEST.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                    DimensionFilter.dimension(), BiomeFilter.biome(),
+                    CountPlacement.of(UniformInt.of(0, 1)),
+                    PlacementUtils.filteredByBlockSurvival(BlockReg.OLIVE_SAPLING.get())));
+        });
+
+        public static RegistryObject<PlacedFeature> SPRUCE_HARPY_NEST = PLACED_FEATURES.register("spruce_harpy_nest", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("spruce_harpy_nest");
+            return new PlacedFeature(FeatureReg.SPRUCE_HARPY_NEST.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                    DimensionFilter.dimension(), BiomeFilter.biome(),
+                    CountPlacement.of(UniformInt.of(0, 1)),
+                    PlacementUtils.filteredByBlockSurvival(Blocks.SPRUCE_SAPLING)));
+        });
+
+        public static RegistryObject<PlacedFeature> OLIVE_TREE = PLACED_FEATURES.register("olive_tree", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("olive_tree");
+            return new PlacedFeature(FeatureReg.OLIVE_TREE.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                    DimensionFilter.dimension(), BiomeFilter.biome(),
+                    CountPlacement.of(UniformInt.of(1, 2)),
+                    PlacementUtils.filteredByBlockSurvival(BlockReg.OLIVE_SAPLING.get())));
+        });
+
+        public static RegistryObject<PlacedFeature> POMEGRANATE_TREE = PLACED_FEATURES.register("pomegranate_tree", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("pomegranate_tree");
+            return new PlacedFeature(FeatureReg.POMEGRANATE_TREE.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    CountOnEveryLayerPlacement.of(3), DimensionFilter.dimension(), BiomeFilter.biome(),
+                    PlacementUtils.filteredByBlockSurvival(BlockReg.POMEGRANATE_SAPLING.get())));
+        });
+
+        public static RegistryObject<PlacedFeature> PATCH_REEDS = PLACED_FEATURES.register("patch_reeds", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("patch_reeds");
+            return new PlacedFeature(FeatureReg.REEDS.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                    DimensionFilter.dimension(), BiomeFilter.biome()));
+        });
+
+        public static RegistryObject<PlacedFeature> PATCH_REEDS_SWAMP = PLACED_FEATURES.register("patch_reeds_swamp", () -> {
+            BiomeListConfigSpec spec = GreekFantasy.CONFIG.getFeatureConfigSpec("patch_reeds_swamp");
+            return new PlacedFeature(FeatureReg.REEDS.getHolder().get(), List.of(
+                    RarityFilter.onAverageOnceEvery(Mth.ceil(1000.0F / Math.max(1, spec.weight()))),
+                    InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_TOP_SOLID,
+                    DimensionFilter.dimension(), BiomeFilter.biome()));
+        });
 
         /**
          * Called from the event bus during the BiomeLoadingEvent.
@@ -1762,25 +1810,23 @@ public final class GFRegistry {
                 return;
             }
             if (event.getCategory() == Biome.BiomeCategory.NETHER) {
-                addFeature(event, "pomegranate_tree", GenerationStep.Decoration.VEGETAL_DECORATION, POMEGRANATE_TREE);
+                addFeature(event, "pomegranate_tree", GenerationStep.Decoration.VEGETAL_DECORATION, POMEGRANATE_TREE.getHolder().orElseThrow());
             }
             if (event.getCategory() != Biome.BiomeCategory.THEEND && event.getCategory() != Biome.BiomeCategory.NONE) {
-                addFeature(event, "limestone_upper", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_LIMESTONE_UPPER);
-                addFeature(event, "limestone_lower", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_LIMESTONE_LOWER);
-                addFeature(event, "marble_upper", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_MARBLE_UPPER);
-                addFeature(event, "marble_lower", GenerationStep.Decoration.VEGETAL_DECORATION, ORE_MARBLE_LOWER);
-                addFeature(event, "olive_tree", GenerationStep.Decoration.VEGETAL_DECORATION, OLIVE_TREE);
-                addFeature(event, "patch_reeds", GenerationStep.Decoration.VEGETAL_DECORATION, PATCH_REEDS);
-                addFeature(event, "patch_reeds_swamp", GenerationStep.Decoration.VEGETAL_DECORATION, PATCH_REEDS_SWAMP);
-                addFeature(event, "acacia_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, ACACIA_HARPY_NEST);
-                addFeature(event, "birch_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, BIRCH_HARPY_NEST);
-                addFeature(event, "dark_oak_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, DARK_OAK_HARPY_NEST);
-                addFeature(event, "jungle_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, JUNGLE_HARPY_NEST);
-                addFeature(event, "oak_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, OAK_HARPY_NEST);
-                addFeature(event, "olive_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, OLIVE_HARPY_NEST);
-                addFeature(event, "spruce_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, SPRUCE_HARPY_NEST);
-
-
+                addFeature(event, "limestone_upper", GenerationStep.Decoration.UNDERGROUND_ORES, ORE_LIMESTONE_UPPER.getHolder().orElseThrow());
+                addFeature(event, "limestone_lower", GenerationStep.Decoration.UNDERGROUND_ORES, ORE_LIMESTONE_LOWER.getHolder().orElseThrow());
+                addFeature(event, "marble_upper", GenerationStep.Decoration.UNDERGROUND_ORES, ORE_MARBLE_UPPER.getHolder().orElseThrow());
+                addFeature(event, "marble_lower", GenerationStep.Decoration.UNDERGROUND_ORES, ORE_MARBLE_LOWER.getHolder().orElseThrow());
+                addFeature(event, "olive_tree", GenerationStep.Decoration.VEGETAL_DECORATION, OLIVE_TREE.getHolder().orElseThrow());
+                addFeature(event, "patch_reeds", GenerationStep.Decoration.VEGETAL_DECORATION, PATCH_REEDS.getHolder().orElseThrow());
+                addFeature(event, "patch_reeds_swamp", GenerationStep.Decoration.VEGETAL_DECORATION, PATCH_REEDS_SWAMP.getHolder().orElseThrow());
+                addFeature(event, "acacia_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, ACACIA_HARPY_NEST.getHolder().orElseThrow());
+                addFeature(event, "birch_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, BIRCH_HARPY_NEST.getHolder().orElseThrow());
+                addFeature(event, "dark_oak_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, DARK_OAK_HARPY_NEST.getHolder().orElseThrow());
+                addFeature(event, "jungle_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, JUNGLE_HARPY_NEST.getHolder().orElseThrow());
+                addFeature(event, "oak_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, OAK_HARPY_NEST.getHolder().orElseThrow());
+                addFeature(event, "olive_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, OLIVE_HARPY_NEST.getHolder().orElseThrow());
+                addFeature(event, "spruce_harpy_nest", GenerationStep.Decoration.VEGETAL_DECORATION, SPRUCE_HARPY_NEST.getHolder().orElseThrow());
             }
         }
 

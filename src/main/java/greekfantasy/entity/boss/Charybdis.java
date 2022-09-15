@@ -33,6 +33,7 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -47,7 +48,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class Charybdis extends WaterAnimal {
+public class Charybdis extends WaterAnimal implements Enemy {
 
     private static final EntityDataAccessor<Byte> STATE = SynchedEntityData.defineId(Charybdis.class, EntityDataSerializers.BYTE);
     private static final String KEY_STATE = "CharybdisState";

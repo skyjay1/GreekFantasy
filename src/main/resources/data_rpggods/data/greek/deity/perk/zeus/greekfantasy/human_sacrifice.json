@@ -1,0 +1,49 @@
+{
+    "icon": {
+        "item": "minecraft:rotten_flesh",
+        "color": 16711680,
+        "fancy": true
+    },
+    "range": {
+        "deity": "greek:zeus",
+        "minlevel": 9,
+        "maxlevel": 10
+    },
+    "condition": [
+        {
+            "type": "near_altar",
+            "data": "greek:zeus"
+        },
+        {
+            "type": "player_killed_entity",
+            "data": "minecraft:villager"
+        }
+    ],
+    "action": [
+        {
+            "type": "summon",
+            "tag": {
+                "id": "minecraft:lightning_bolt"
+            },
+            "multiplier": 0
+        },
+        {
+            "type": "potion",
+            "tag": {
+                "Potion": "greekfantasy:curse_of_lycaon",
+                "Amplifier": 0,
+                "Duration": 0,
+                "ShowParticles": false,
+                "ShowIcon": false
+            }
+        },
+        {
+            "type": "favor",
+            "id": "greek:zeus",
+            "favor": -2500
+        }
+    ],
+    "chance": 1.0,
+    "cooldown_category": "zeus:human_sacrifice",
+    "cooldown": 24000
+}

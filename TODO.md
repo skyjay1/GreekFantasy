@@ -8,7 +8,6 @@ __Key:__
 
 ## Bugs and urgent updates
 
-- Everything ;^D
 - Charybdis "throw" animation cuts off
 - Orthus stands when sitting
 
@@ -52,6 +51,7 @@ __Key:__
 - X X X X X Miniboss: Circe
 - X X X X X Miniboss: Hydra
 - X X X X X Miniboss: Arachne
+- _ _ _ _ _ Miniboss: Scilla
 - X X X X X Fury
 - X X X X X Drakaina
 - X X X X X Arion
@@ -62,7 +62,7 @@ __Key:__
 - X X X X X Baby Spider
 - X X X X X Automaton (friendly Talos)
 - X X X X X Stymphalian
-
+- X ~ _ _ _ Merfolk (friendly)
 
 ### Other
 
@@ -107,6 +107,7 @@ __Key:__
 - X X X Arachne Pit
 - X X X Hydra Lair
 - X X X Minotaur Maze
+- X X X Ocean Villages
 
 
 ## Blocks
@@ -280,26 +281,23 @@ __Key:__
 Can I do something with these?
 
 - Sphinx (when answered correct, places treasure chest and despawns)
-- Muses: Calliope, Clio, Erato, Euterpe, Melpomene, Polyhymnia, Terpsichore, Thalia, Urania
+- Chimera
+- Hippocampus
+- Daemon (spirit of specific trait, emotion, object, etc)
+- Phoenix
+- Werewolf
 - Amazons (fight like players w/ sword and shield, can be hired) (queen is Hippolyta)
 - Amazonian Girdle (Hippolyta)
-- Hero statues (Hercules, Achilles, Helen of Troy, Jason, Perseus, Orpheus)
 - Eurynomos (blue skin; vulture head?)
 - Telchine (seal hands)
 - Yale (Latin "Centicore")
 - Cretan Bull (giant bull)
-- Hippocampus
-- Lamia (demon)
-- Daemon (spirit of specific trait, emotion, object, etc)
-- Phoenix
-- Werewolf
+- Horse of Diomedes (man-eating horse)
 - Cecrops (half-man, half-snake)
-- Ophiotaur (kill to obtain heart; use heart to banish a god)
 - Kyno (dog-head biped; see also "Cynocephaly")
 - Blemmyes (headless biped)
 - Pandos (biped, giant ears)
-- Horse of Diomedes (man-eating horse)
-- Underworld: underworld biome, tartarus, styx river, meadow of Asphodels, etc.
+- Dryad camp
 - Belt of Aphrodite (maybe allows disguise as other player?)
 - Aegis (Zeus' shield)
 - Adamant Scythe (Kronus)

@@ -1,0 +1,30 @@
+{
+  "name": "greekfantasy:ocean_village/lamp",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 10,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/lamp_0",
+        "projection": "rigid",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+	{
+      "weight": 10,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/lamp_1",
+        "projection": "rigid",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+    {
+      "weight": 4,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+  ]
+}

@@ -171,6 +171,11 @@ public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMo
         return super.isInvulnerableTo(source);
     }
 
+    @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
+    }
+
     // Ranged Attack methods
 
     @Override

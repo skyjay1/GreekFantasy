@@ -1,14 +1,20 @@
 package greekfantasy;
 
+import greekfantasy.capability.FriendlyGuardian;
+import greekfantasy.capability.IFriendlyGuardian;
 import greekfantasy.entity.Arion;
 import greekfantasy.entity.Cerastes;
 import greekfantasy.entity.GoldenRam;
+import greekfantasy.entity.Merfolk;
+import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Orthus;
 import greekfantasy.entity.Palladium;
 import greekfantasy.entity.Whirl;
+import greekfantasy.entity.ai.FollowWaterMobGoal;
 import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.GiantBoar;
 import greekfantasy.entity.boss.NemeanLion;
+import greekfantasy.entity.monster.Ara;
 import greekfantasy.entity.monster.Circe;
 import greekfantasy.entity.monster.Shade;
 import greekfantasy.integration.RGCompat;
@@ -20,9 +26,7 @@ import greekfantasy.network.SCurseOfCircePacket;
 import greekfantasy.network.SQuestPacket;
 import greekfantasy.network.SSongPacket;
 import greekfantasy.util.SummonBossUtil;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
@@ -45,12 +49,16 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.FollowMobGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
+import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.DyeColor;
@@ -69,8 +77,11 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -91,7 +102,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.resource.PathResourcePack;
 
@@ -100,6 +110,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public final class GFEvents {
 
@@ -403,14 +414,13 @@ public final class GFEvents {
          *
          * @param event the living target event
          **/
-        @SubscribeEvent
+        @SubscribeEvent(priority = EventPriority.LOW)
         public static void onLivingTarget(final LivingSetAttackTargetEvent event) {
-            if(null == event.getTarget()) {
+            if(null == event.getTarget() || event.getEntityLiving().level.isClientSide()) {
                 return;
             }
             // check mob or target for curse of circe
-            if (!event.getEntityLiving().level.isClientSide()
-                    && GreekFantasy.CONFIG.isCurseOfCirceEnabled()
+            if (GreekFantasy.CONFIG.isCurseOfCirceEnabled()
                     && event.getEntityLiving() instanceof Mob mob
                     && event.getTarget() != mob.getLastHurtByMob()
                     && (mob.hasEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get())
@@ -419,11 +429,19 @@ public final class GFEvents {
                 mob.setTarget(null);
             }
             // check mob for stunned or petrified
-            if (!event.getEntityLiving().level.isClientSide()
-                    && event.getEntityLiving() instanceof Mob mob
+            if (event.getEntityLiving() instanceof Mob mob
                     && isStunnedOrPetrified(mob)) {
                 // remove attack target
                 mob.setTarget(null);
+            }
+            // check mob for capability
+            if(event.getEntityLiving() instanceof PathfinderMob mob
+                && event.getTarget() instanceof Player player) {
+                LazyOptional<IFriendlyGuardian> CAP = event.getEntityLiving().getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP);
+                if(CAP.isPresent() && CAP.orElse(FriendlyGuardian.EMPTY).isNeutralTowardPlayer(mob, player)) {
+                    // remove attack target
+                    mob.setTarget(null);
+                }
             }
         }
 
@@ -511,7 +529,7 @@ public final class GFEvents {
          **/
         @SubscribeEvent
         public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
-            if(event.getEntity() instanceof PathfinderMob mob && !event.getEntity().level.isClientSide()) {
+            if(event.getEntity() instanceof final PathfinderMob mob && !event.getEntity().level.isClientSide()) {
                 // add avoid orthus goal to wither skeleton
                 if(mob.getType() == EntityType.WITHER_SKELETON) {
                     mob.goalSelector.addGoal(3, new AvoidEntityGoal<>(mob, Orthus.class, 6.0F, 1.0D, 1.2D));
@@ -520,6 +538,29 @@ public final class GFEvents {
                 if(mob.getType() == EntityType.RABBIT && ((Rabbit)event.getEntity()).getRabbitType() != 99) {
                     mob.goalSelector.addGoal(3, new AvoidEntityGoal<>(mob, Cerastes.class, 6.0F, 1.0D, 1.2D,
                             e -> e instanceof Cerastes cerastes && !cerastes.isHiding()));
+                }
+                // add guardian goals
+                if(mob.getType() == EntityType.GUARDIAN) {
+                    // attack enemy goal
+                    Predicate<LivingEntity> predicate = entity -> entity instanceof Enemy && entity.isInWater() && entity.distanceToSqr(mob) > 9.0D;
+                    mob.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(mob, LivingEntity.class, 10, true, false, predicate) {
+                        @Override
+                        public boolean canUse() {
+                            return super.canUse() && this.mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled();
+                        }
+                    });
+                    // follow merfolk goal
+                    mob.goalSelector.addGoal(6, new FollowWaterMobGoal(mob, Merfolk.class, 1.0D, 8.0F, 12.0F) {
+                        @Override
+                        public boolean canUse() {
+                            return mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled() && mob.getRandom().nextInt(50) == 0 && super.canUse();
+                        }
+                    });
+                }
+                // add drowned goals
+                if(mob.getType() == EntityType.DROWNED) {
+                    mob.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(mob, Merfolk.class, false));
+                    mob.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(mob, Naiad.class, true, false));
                 }
             }
         }
@@ -748,6 +789,13 @@ public final class GFEvents {
             event.addListener(GreekFantasy.WEIGHTED_TEMPLATES);
         }
 
+        @SubscribeEvent
+        public static void onAttachCapabilities(final AttachCapabilitiesEvent<Entity> event) {
+            if(event.getObject() instanceof Guardian) {
+                event.addCapability(FriendlyGuardian.REGISTRY_NAME, new FriendlyGuardian.Provider());
+            }
+        }
+
         private static void useLordOfTheSea(final ServerPlayer player, final ItemStack item) {
             final BlockHitResult raytrace = ThunderboltItem.raytraceFromEntity(player, 48.0F);
             // add a lightning bolt at the resulting position
@@ -791,6 +839,11 @@ public final class GFEvents {
     }
 
     public static final class ModHandler {
+
+        @SubscribeEvent
+        public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
+            event.register(IFriendlyGuardian.class);
+        }
 
         @SubscribeEvent
         public static void onAddPackFinders(final AddPackFindersEvent event) {

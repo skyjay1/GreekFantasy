@@ -1,5 +1,6 @@
 package greekfantasy;
 
+import greekfantasy.capability.IFriendlyGuardian;
 import greekfantasy.network.CPlayNotePacket;
 import greekfantasy.network.SCurseOfCircePacket;
 import greekfantasy.network.SQuestPacket;
@@ -12,6 +13,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -19,7 +23,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -43,6 +46,8 @@ public class GreekFantasy {
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(MODID, "channel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 
     public static final Logger LOGGER = LogManager.getFormatterLogger(GreekFantasy.MODID);
+
+    public static final Capability<IFriendlyGuardian> FRIENDLY_GUARDIAN_CAP = CapabilityManager.get(new CapabilityToken<>(){});
 
     private static boolean isRpgGodsLoaded;
 

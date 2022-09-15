@@ -211,6 +211,11 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
     }
 
     @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
+    }
+
+    @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         // set variant when not spawned as part of a structure

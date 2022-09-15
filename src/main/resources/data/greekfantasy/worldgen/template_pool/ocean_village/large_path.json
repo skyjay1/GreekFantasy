@@ -1,0 +1,21 @@
+{
+  "name": "greekfantasy:ocean_village/large_path",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 10,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/large_path",
+        "projection": "rigid",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+    {
+      "weight": 2,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+  ]
+}

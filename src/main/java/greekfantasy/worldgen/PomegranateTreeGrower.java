@@ -9,6 +9,6 @@ import java.util.Random;
 
 public class PomegranateTreeGrower extends AbstractTreeGrower {
     protected Holder<? extends ConfiguredFeature<?, ?>> getConfiguredFeature(Random random, boolean hasFlowers) {
-        return GFRegistry.FeatureReg.POMEGRANATE_TREE;
+        return GFRegistry.FeatureReg.POMEGRANATE_TREE.getHolder().get();
     }
 }

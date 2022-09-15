@@ -249,6 +249,11 @@ public class Dryad extends PathfinderMob implements NeutralMob {
         return this.getVariant().getDeathLootTable();
     }
 
+    @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
+    }
+
     // NeutralMob methods
 
     @Override

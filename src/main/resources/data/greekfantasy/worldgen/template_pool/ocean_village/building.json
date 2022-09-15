@@ -1,0 +1,78 @@
+{
+  "name": "greekfantasy:ocean_village/building",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 10,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/house_0",
+        "projection": "rigid",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+	{
+      "weight": 10,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/house_1",
+        "projection": "rigid",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+	{
+      "weight": 10,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/house_2",
+        "projection": "rigid",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+	{
+      "weight": 10,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/house_3",
+        "projection": "rigid",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+	{
+      "weight": 9,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/house_4",
+        "projection": "rigid",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+	{
+      "weight": 9,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/house_5",
+        "projection": "rigid",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+	{
+      "weight": 9,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/fish_farm",
+        "projection": "rigid",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+	{
+      "weight": 9,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/seagrass_farm",
+        "projection": "rigid",
+        "processors": "greekfantasy:ocean_village"
+      }
+    }
+  ]
+}

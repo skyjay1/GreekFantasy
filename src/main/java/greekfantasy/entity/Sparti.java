@@ -136,7 +136,8 @@ public class Sparti extends TamableAnimal implements RangedAttackMob {
         }
     }
 
-    public void setEquipmentOnSpawn() {
+    @Override
+    public void populateDefaultEquipmentSlots(final DifficultyInstance difficulty) {
         this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
         this.setDropChance(EquipmentSlot.MAINHAND, 0);
     }
@@ -145,7 +146,7 @@ public class Sparti extends TamableAnimal implements RangedAttackMob {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         final SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnDataIn, dataTag);
-        setEquipmentOnSpawn();
+        populateDefaultEquipmentSlots(difficulty);
         setBaby(false);
         return data;
     }

@@ -1,25 +1,22 @@
 package greekfantasy.entity;
 
-import com.google.common.collect.ImmutableMap;
 import greekfantasy.GreekFantasy;
+import greekfantasy.capability.FriendlyGuardian;
 import greekfantasy.entity.ai.GoToWaterGoal;
 import greekfantasy.entity.ai.TridentRangedAttackGoal;
 import greekfantasy.entity.ai.WaterAnimalMoveControl;
 import greekfantasy.entity.boss.Charybdis;
-import net.minecraft.core.Holder;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -37,14 +34,15 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.monster.Drowned;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownTrident;
@@ -53,43 +51,41 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.Random;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob {
+public class Merfolk extends PathfinderMob implements RangedAttackMob, NeutralMob {
 
-    protected static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Naiad.class, EntityDataSerializers.STRING);
-    protected static final String KEY_VARIANT = "Variant";
-
-    protected Variant variant = Variant.RIVER;
-
-    protected final WaterBoundPathNavigation waterNavigation;
-    protected final GroundPathNavigation groundNavigation;
+    protected static final EntityDataAccessor<Boolean> SLIM = SynchedEntityData.defineId(Merfolk.class, EntityDataSerializers.BOOLEAN);
+    protected static final String KEY_SLIM = "Slim";
+    protected static final String KEY_TIMESTAMP = "GuardianTimestamp";
 
     protected static final UniformInt ANGER_RANGE = TimeUtil.rangeOfSeconds(4, 10);
     protected int angerTime;
     protected UUID angerTarget;
 
+    protected static final int GUARDIAN_COOLDOWN = 400;
+    protected long guardianTimestamp;
+
     protected EntityDimensions swimmingDimensions;
 
-    public Naiad(final EntityType<? extends Naiad> type, final Level level) {
+    public Merfolk(final EntityType<? extends Merfolk> type, final Level level) {
         super(type, level);
         this.moveControl = new WaterAnimalMoveControl(this);
-        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
-        this.waterNavigation = new WaterBoundPathNavigation(this, level);
-        this.groundNavigation = new GroundPathNavigation(this, level);
         this.swimmingDimensions = EntityDimensions.scalable(0.48F, 0.48F);
+        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 24.0D)
+                .add(Attributes.MAX_HEALTH, 30.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ATTACK_DAMAGE, 3.0D)
                 .add(Attributes.ARMOR, 1.0D)
@@ -99,7 +95,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.getEntityData().define(DATA_VARIANT, Variant.OCEAN.getSerializedName());
+        this.getEntityData().define(SLIM, true);
     }
 
     @Override
@@ -107,26 +103,19 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         this.goalSelector.addGoal(1, new GoToWaterGoal(this, 1.0D, false));
         this.goalSelector.addGoal(2, new TridentRangedAttackGoal(this, 1.0D, 40, 10.0F));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1D, false));
-        this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Satyr.class, 10.0F, 1.2D, 1.1D));
         this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Charybdis.class, 12.0F, 1.0D, 1.0D));
-        this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 0.8D, 120) {
-            @Override
-            public boolean canUse() {
-                return Naiad.this.isInWater() && super.canUse();
-            }
-        });
-        this.goalSelector.addGoal(8, new RandomStrollGoal(this, 0.9D) {
-            @Override
-            public boolean canUse() {
-                return !Naiad.this.isInWater() && super.canUse();
-            }
-        });
+        this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 0.8D, 120));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Drowned.class, false));
         this.targetSelector.addGoal(4, new ResetUniversalAngerTargetGoal<>(this, true));
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        return new WaterBoundPathNavigation(this, level);
     }
 
     @Override
@@ -142,6 +131,52 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
     @Override
     public EntityDimensions getDimensions(Pose pose) {
         return (pose == Pose.SWIMMING) ? swimmingDimensions : super.getDimensions(pose);
+    }
+
+    // Slim methods
+
+    public boolean isSlim() {
+        return getEntityData().get(SLIM);
+    }
+
+    public void setSlim(final boolean slim) {
+        getEntityData().set(SLIM, slim);
+    }
+
+    // Guardian methods
+
+    public boolean wantsToSpawnGuardian(long gameTime) {
+        return gameTime - this.guardianTimestamp > GUARDIAN_COOLDOWN;
+    }
+
+    public void onSpawnGuardian(long gameTime) {
+        this.guardianTimestamp = gameTime;
+    }
+
+    public Optional<Guardian> trySpawnGuardian(ServerLevel level) {
+        BlockPos blockpos = this.blockPosition();
+
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (int i = 0; i < 10; ++i) {
+            pos.setWithOffset(blockpos,
+                    level.random.nextInt(16) - 8,
+                    level.random.nextInt(8) - 4,
+                    level.random.nextInt(16) - 8);
+            if (level.getBlockState(pos).getMaterial() == Material.WATER) {
+                Guardian guardian = EntityType.GUARDIAN.create(level, null, null, null, pos, MobSpawnType.MOB_SUMMONED, false, false);
+                if (guardian != null) {
+                    if (guardian.checkSpawnRules(level, MobSpawnType.MOB_SUMMONED) && guardian.checkSpawnObstruction(level)) {
+                        level.addFreshEntityWithPassengers(guardian);
+                        guardian.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).ifPresent(c -> c.setEnabled(true));
+                        return Optional.of(guardian);
+                    }
+
+                    guardian.discard();
+                }
+            }
+        }
+
+        return Optional.empty();
     }
 
     // NeutralMob methods
@@ -172,58 +207,47 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
     }
 
     @Override
-    public boolean doHurtTarget(final Entity entity) {
-        if (super.doHurtTarget(entity)) {
-            // reset anger after successful attack
-            if (entity.getUUID().equals(this.getPersistentAngerTarget())) {
-                this.setPersistentAngerTarget(null);
+    public boolean hurt(final DamageSource source, final float amount) {
+        // attempt to summon friendly guardian when hurt
+        if (super.hurt(source, amount) && source.getEntity() instanceof Enemy) {
+            if (this.level instanceof ServerLevel serverLevel) {
+                // determine if there are enough nearby merfolk
+                final AABB aabb = this.getBoundingBox().inflate(10.0D);
+                final long gameTime = level.getGameTime();
+                List<Merfolk> nearbyMerfolk = level.getEntitiesOfClass(Merfolk.class, aabb);
+                List<Merfolk> wantsToSpawnGuardian = nearbyMerfolk.stream()
+                        .filter(m -> m.wantsToSpawnGuardian(gameTime))
+                        .limit(5L).toList();
+                if (wantsToSpawnGuardian.size() >= 2) {
+                    // determine if there are any guardians in range
+                    List<Guardian> guardians = level.getEntitiesOfClass(Guardian.class, aabb, p -> p.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled());
+                    if (guardians.isEmpty()) {
+                        // attempt to spawn guardian
+                        Optional<Guardian> oGuardian = trySpawnGuardian(serverLevel);
+                        if (oGuardian.isPresent()) {
+                            nearbyMerfolk.forEach(m -> m.onSpawnGuardian(gameTime));
+                        }
+                    }
+                }
             }
             return true;
         }
         return false;
     }
 
-    // Variant methods
-
-    public void setVariant(final Variant variantIn) {
-        this.variant = variantIn;
-        this.getEntityData().set(DATA_VARIANT, variantIn.getSerializedName());
-    }
-
-    public Variant getVariant() {
-        return variant;
-    }
-
-    public Variant getVariantByName(final String name) {
-        return Variant.getByName(name);
-    }
-
-    public Variant getRandomVariant() {
-        return Variant.getRandom(level.getRandom());
-    }
-
-    public Variant getVariantForBiome(final Holder<Biome> biome) {
-        return Variant.getForBiome(biome);
-    }
-
-    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-        super.onSyncedDataUpdated(key);
-        if (key.equals(DATA_VARIANT)) {
-            this.variant = getVariantByName(this.getEntityData().get(DATA_VARIANT));
-        }
-    }
-
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putString(KEY_VARIANT, this.getEntityData().get(DATA_VARIANT));
+        compound.putBoolean(KEY_SLIM, isSlim());
+        compound.putLong(KEY_TIMESTAMP, guardianTimestamp);
         this.addPersistentAngerSaveData(compound);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(getVariantByName(compound.getString(KEY_VARIANT)));
+        this.setSlim(compound.getBoolean(KEY_SLIM));
+        this.guardianTimestamp = compound.getLong(KEY_TIMESTAMP);
         this.readPersistentAngerSaveData(this.level, compound);
     }
 
@@ -231,20 +255,10 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType mobType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         SpawnGroupData data = super.finalizeSpawn(worldIn, difficultyIn, mobType, spawnDataIn, dataTag);
-        final Variant variant;
-        if (mobType == MobSpawnType.COMMAND || mobType == MobSpawnType.SPAWN_EGG || mobType == MobSpawnType.SPAWNER || mobType == MobSpawnType.DISPENSER) {
-            variant = getRandomVariant();
-        } else {
-            variant = getVariantForBiome(worldIn.getBiome(this.blockPosition()));
-        }
-        this.setVariant(variant);
+        boolean slim = worldIn.getRandom().nextBoolean();
+        this.setSlim(slim);
         populateDefaultEquipmentSlots(difficultyIn);
         return data;
-    }
-
-    @Override
-    public ResourceLocation getDefaultLootTable() {
-        return this.getVariant().getDeathLootTable();
     }
 
     @Override
@@ -299,7 +313,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
 
     @Override
     protected void populateDefaultEquipmentSlots(DifficultyInstance difficulty) {
-        float tridentChance = (this.getVariant() == Variant.OCEAN) ? 0.55F : 0.31F;
+        float tridentChance = 0.31F;
         if (this.random.nextFloat() < tridentChance) {
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.TRIDENT));
         }
@@ -319,13 +333,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
     @Override
     public void updateSwimming() {
         if (!this.level.isClientSide) {
-            if (this.isEffectiveAi() && this.isInWater()) {
-                this.navigation = this.waterNavigation;
-                this.setSwimming(true);
-            } else {
-                this.navigation = this.groundNavigation;
-                this.setSwimming(false);
-            }
+            this.setSwimming(true);
         }
     }
 
@@ -339,56 +347,5 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         throwntrident.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
         this.playSound(SoundEvents.TRIDENT_THROW, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
         this.level.addFreshEntity(throwntrident);
-    }
-
-    public static class Variant implements StringRepresentable {
-        public static final Variant RIVER = new Naiad.Variant("river", new ResourceLocation("minecraft", "is_river"));
-        public static final Variant OCEAN = new Naiad.Variant("ocean", new ResourceLocation("minecraft", "is_ocean"));
-
-        protected final String name;
-        protected final TagKey<Biome> biomeTag;
-        protected final ResourceLocation deathLootTable;
-
-        public static ImmutableMap<String, Variant> WATER = ImmutableMap.<String, Variant>builder()
-                .put(RIVER.getSerializedName(), RIVER)
-                .put(OCEAN.getSerializedName(), OCEAN)
-                .build();
-
-        protected Variant(final String nameIn, final ResourceLocation biomeTag) {
-            this.name = nameIn;
-            this.biomeTag = ForgeRegistries.BIOMES.tags().createTagKey(biomeTag);
-            this.deathLootTable = new ResourceLocation(GreekFantasy.MODID, "entities/naiad/" + name);
-        }
-
-        public static Variant getForBiome(final Holder<Biome> biome) {
-            for (Variant variant : WATER.values()) {
-                if (biome.is(variant.biomeTag)) {
-                    return variant;
-                }
-            }
-            return Variant.RIVER;
-        }
-
-        public static Variant getRandom(final Random rand) {
-            int len = WATER.size();
-            return len > 0 ? WATER.entrySet().asList().get(rand.nextInt(len)).getValue() : RIVER;
-        }
-
-        public static Variant getByName(final String n) {
-            return WATER.getOrDefault(n, RIVER);
-        }
-
-        public TagKey<Biome> getBiome() {
-            return biomeTag;
-        }
-
-        public ResourceLocation getDeathLootTable() {
-            return deathLootTable;
-        }
-
-        @Override
-        public String getSerializedName() {
-            return name;
-        }
     }
 }

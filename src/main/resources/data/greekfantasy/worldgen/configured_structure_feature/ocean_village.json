@@ -1,0 +1,10 @@
+{
+  "type": "greekfantasy:ocean_village",
+  "config": {
+    "start_pool": "greekfantasy:ocean_village/start",
+	"size": 3
+  },
+  "biomes": "#minecraft:has_structure/ocean_ruin_cold",
+  "adapt_noise": true,
+  "spawn_overrides": {}
+}
