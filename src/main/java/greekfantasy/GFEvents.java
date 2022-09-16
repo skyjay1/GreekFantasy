@@ -68,6 +68,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.entity.LevelEntityGetter;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -88,6 +89,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
@@ -124,22 +126,24 @@ public final class GFEvents {
          **/
         @SubscribeEvent(priority = EventPriority.HIGHEST)
         public static void onPlayerDeath(final LivingDeathEvent event) {
-            if (!event.isCanceled() && !event.getEntityLiving().level.isClientSide() && event.getEntityLiving() instanceof Player player) {
+            if (!event.isCanceled() && event.getEntityLiving() instanceof Player player
+                    && event.getEntityLiving().level instanceof ServerLevel level) {
                 // attempt to spawn a shade
                 if (!player.isSpectator() && player.experienceLevel > 3
-                        && !player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)
+                        && !level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)
                         && player.getRandom().nextFloat() * 100.0F < GreekFantasy.CONFIG.SHADE_SPAWN_CHANCE.get()) {
                     // save XP value
                     int xp = player.totalExperience;
                     // remove XP from player
                     player.giveExperienceLevels(-(player.experienceLevel + 1));
                     // give XP to shade and spawn into world
-                    final Shade shade = GFRegistry.EntityReg.SHADE.get().create(player.level);
+                    final Shade shade = GFRegistry.EntityReg.SHADE.get().create(level);
                     shade.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
                     shade.setStoredXP(Mth.floor(xp * 0.9F));
                     shade.setOwnerUUID(player.getUUID());
                     shade.setPersistenceRequired();
-                    player.level.addFreshEntity(shade);
+                    level.addFreshEntityWithPassengers(shade);
+                    shade.finalizeSpawn(level, level.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.TRIGGERED, null, null);
                 }
             }
         }
@@ -267,21 +271,12 @@ public final class GFEvents {
                 // this variable will become true if the player is collided with a cobweb
                 boolean cobweb = false;
                 // check all blocks within player's bounding box
-                AABB axisalignedbb = event.getEntityLiving().getBoundingBox();
-                BlockPos blockpos = new BlockPos(axisalignedbb.minX + 0.001D, axisalignedbb.minY + 0.001D, axisalignedbb.minZ + 0.001D);
-                BlockPos blockpos1 = new BlockPos(axisalignedbb.maxX - 0.001D, axisalignedbb.maxY - 0.001D, axisalignedbb.maxZ - 0.001D);
-                BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
-                entryloop:
-                for (int i = blockpos.getX(); i <= blockpos1.getX(); ++i) {
-                    for (int j = blockpos.getY(); j <= blockpos1.getY(); ++j) {
-                        for (int k = blockpos.getZ(); k <= blockpos1.getZ(); ++k) {
-                            blockpos$mutable.set(i, j, k);
-                            // if the block is a cobweb, exit the loops and change the motion multiplier
-                            if (event.getEntityLiving().level.getBlockState(blockpos$mutable).is(Blocks.COBWEB)) {
-                                cobweb = true;
-                                break entryloop;
-                            }
-                        }
+                AABB aabb = event.getEntityLiving().getBoundingBox();
+                for(BlockPos blockPos : BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ), Mth.ceil(aabb.maxX), Mth.ceil(aabb.maxY), Mth.ceil(aabb.maxZ))) {
+                    if (event.getEntityLiving().level.getBlockState(blockPos).is(Blocks.COBWEB)) {
+                        // exit the loop after locating a cobweb
+                        cobweb = true;
+                        break;
                     }
                 }
                 // actually reset the speed multiplier
@@ -443,6 +438,18 @@ public final class GFEvents {
         }
 
         /**
+         * Used to prevent friendly guardians from taking damage from conduits
+         * @param event the hurt event
+         */
+        @SubscribeEvent
+        public static void onLivingHurt(final LivingHurtEvent event) {
+            if(event.getSource().isMagic() && event.getEntity().getType() == EntityType.GUARDIAN
+                    && event.getEntity().getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled()) {
+                event.setCanceled(true);
+            }
+        }
+
+        /**
          * Used to update client when Curse of Circe is applied
          * @param event the potion added event
          */
@@ -504,6 +511,29 @@ public final class GFEvents {
                     && event.getWorld() instanceof Level) {
                 // delegate to SummonBossUtil
                 SummonBossUtil.onPlaceBronzeBlock((Level) event.getWorld(), event.getPos(), event.getPlacedBlock(), event.getEntity());
+            }
+        }
+
+        /**
+         * Used to anger nearby mobs when the player breaks a conduit
+         * @param event the block break event
+         */
+        @SubscribeEvent
+        public static void onEntityBreakBlock(final BlockEvent.BreakEvent event) {
+            // ensure the block matches
+            if(event.getPlayer() != null && event.getState().is(Blocks.CONDUIT)) {
+                // alert nearby mobs
+                AABB aabb = new AABB(event.getPos()).inflate(80.0D);
+                List<Mob> mobs = event.getWorld().getEntitiesOfClass(Mob.class, aabb, m ->
+                    m.getType() == GFRegistry.EntityReg.TRITON.get()
+                    || m.getType() == EntityType.DROWNED
+                    || (m.getType() == EntityType.GUARDIAN && m.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled()));
+                // update attack targets
+                for(Mob m : mobs) {
+                    m.setLastHurtByMob(event.getPlayer());
+                    m.setLastHurtByPlayer(event.getPlayer());
+                    m.setTarget(event.getPlayer());
+                }
             }
         }
 
@@ -608,12 +638,14 @@ public final class GFEvents {
             // check if the entity is a witch
             if (event.getEntity() != null && event.getEntity().getType() == EntityType.WITCH &&
                     (event.getWorld().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.CIRCE_SPAWN_CHANCE.get()
-                    && event.getWorld() instanceof Level) {
+                    && event.getWorld() instanceof ServerLevel level) {
                 event.setCanceled(true);
                 // spawn Circe instead of witch
-                final Circe circe = GFRegistry.EntityReg.CIRCE.get().create((Level) event.getWorld());
+                BlockPos pos = new BlockPos(event.getX(), event.getY(), event.getZ());
+                final Circe circe = GFRegistry.EntityReg.CIRCE.get().create(level);
                 circe.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
-                event.getWorld().addFreshEntity(circe);
+                circe.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), event.getSpawnReason(), null, null);
+                level.addFreshEntityWithPassengers(circe);
             }
         }
 
@@ -626,18 +658,22 @@ public final class GFEvents {
         @SubscribeEvent
         public static void onEntityStruckByLightning(final EntityStruckByLightningEvent event) {
             if (event.getEntity() instanceof LivingEntity livingEntity && livingEntity.getType() == EntityType.OCELOT
+                    && livingEntity.level instanceof ServerLevel level
                     && livingEntity.getEffect(MobEffects.DAMAGE_BOOST) != null
                     && livingEntity.level.getDifficulty() != Difficulty.PEACEFUL
                     && livingEntity.level.random.nextFloat() * 100.0F < GreekFantasy.CONFIG.NEMEAN_LION_LIGHTNING_CHANCE.get()) {
-                // remove the entity and spawn a nemean lion
-                NemeanLion lion = GFRegistry.EntityReg.NEMEAN_LION.get().create(event.getEntity().level);
+                // spawn a nemean lion
+                NemeanLion lion = GFRegistry.EntityReg.NEMEAN_LION.get().create(level);
                 lion.copyPosition(event.getEntity());
                 if (event.getEntity().hasCustomName()) {
                     lion.setCustomName(event.getEntity().getCustomName());
                     lion.setCustomNameVisible(event.getEntity().isCustomNameVisible());
                 }
                 lion.setPersistenceRequired();
-                event.getEntity().level.addFreshEntity(lion);
+                level.addFreshEntityWithPassengers(lion);
+                BlockPos pos = event.getEntity().blockPosition();
+                lion.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.CONVERSION, null, null);
+                // remove original entity
                 event.getEntity().discard();
             }
         }

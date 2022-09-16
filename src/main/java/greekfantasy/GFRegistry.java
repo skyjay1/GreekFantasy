@@ -843,8 +843,6 @@ public final class GFRegistry {
                 new ForgeSpawnEggItem(EntityReg.MAD_COW, 0x443626, 0xcf9797, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> MAKHAI_SPAWN_EGG = ITEMS.register("makhai_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.MAKHAI, 0x513f38, 0xf33531, new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> TRITON_SPAWN_EGG = ITEMS.register("triton_spawn_egg", () ->
-                new ForgeSpawnEggItem(EntityReg.TRITON, 0x527f72, 0x398046, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> MINOTAUR_SPAWN_EGG = ITEMS.register("minotaur_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.MINOTAUR, 0x443626, 0x734933, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> NAIAD_SPAWN_EGG = ITEMS.register("naiad_spawn_egg", () ->
@@ -865,12 +863,12 @@ public final class GFRegistry {
                 new ForgeSpawnEggItem(EntityReg.SIREN, 0x729f92, 0x398046, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> STYMPHALIAN_SPAWN_EGG = ITEMS.register("stymphalian_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.STYMPHALIAN, 0x684822, 0xc08845, new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> TRITON_SPAWN_EGG = ITEMS.register("triton_spawn_egg", () ->
+                new ForgeSpawnEggItem(EntityReg.TRITON, 0x527f72, 0x398046, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> UNICORN_SPAWN_EGG = ITEMS.register("unicorn_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.UNICORN, 0xeeeeee, 0xe8e8e8, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> WHIRL_SPAWN_EGG = ITEMS.register("whirl_spawn_egg", () ->
                 new ForgeSpawnEggItem(EntityReg.WHIRL, 0x1EF6FF, 0xededed, new Item.Properties().tab(GF_TAB)));
-
-        // TODO spawn eggs for other bosses? bull, geryon, talos, cerberus, charybdis
 
         //// LEGENDARY ITEM BLOCKS ////
         public static final RegistryObject<Item> PALLADIUM = ITEMS.register("palladium", () ->
@@ -1164,10 +1162,6 @@ public final class GFRegistry {
                 EntityType.Builder.of(Makhai::new, MobCategory.CREATURE)
                         .sized(0.70F, 1.8F)
                         .build("makhai"));
-        public static final RegistryObject<EntityType<? extends Triton>> TRITON = ENTITY_TYPES.register("triton", () ->
-                EntityType.Builder.of(Triton::new, MobCategory.WATER_CREATURE)
-                        .sized(0.6F, 1.9F)
-                        .build("triton"));
         public static final RegistryObject<EntityType<? extends Minotaur>> MINOTAUR = ENTITY_TYPES.register("minotaur", () ->
                 EntityType.Builder.of(Minotaur::new, MobCategory.MONSTER)
                         .sized(0.7F, 1.94F)
@@ -1216,6 +1210,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Talos::new, MobCategory.MONSTER)
                         .sized(1.98F, 4.96F).fireImmune()
                         .build("talos"));
+        public static final RegistryObject<EntityType<? extends Triton>> TRITON = ENTITY_TYPES.register("triton", () ->
+                EntityType.Builder.of(Triton::new, MobCategory.WATER_CREATURE)
+                        .sized(0.6F, 1.9F)
+                        .build("triton"));
         public static final RegistryObject<EntityType<? extends Unicorn>> UNICORN = ENTITY_TYPES.register("unicorn", () ->
                 EntityType.Builder.of(Unicorn::new, MobCategory.CREATURE)
                         .sized(1.39F, 1.98F)
@@ -1474,7 +1472,7 @@ public final class GFRegistry {
             RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
 
-        public static final RegistryObject<RecipeSerializer> OLIVE_SALVE = RECIPE_SERIALIZERS.register(SalveRecipe.Serializer.CATEGORY, () ->
+        public static final RegistryObject<RecipeSerializer<?>> OLIVE_SALVE = RECIPE_SERIALIZERS.register(SalveRecipe.Serializer.CATEGORY, () ->
                 new SalveRecipe.Serializer());
     }
 

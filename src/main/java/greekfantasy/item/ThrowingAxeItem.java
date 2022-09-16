@@ -1,7 +1,5 @@
 package greekfantasy.item;
 
-import greekfantasy.entity.misc.BronzeFeather;
-import greekfantasy.entity.misc.DragonTooth;
 import greekfantasy.entity.misc.ThrowingAxe;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;

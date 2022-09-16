@@ -74,7 +74,6 @@ public class GiantBoar extends Hoglin {
     public static GiantBoar spawnGiantBoar(final ServerLevel level, final Hoglin hoglin) {
         GiantBoar entity = GFRegistry.EntityReg.GIANT_BOAR.get().create(level);
         entity.copyPosition(hoglin);
-        entity.finalizeSpawn(level, level.getCurrentDifficultyAt(hoglin.blockPosition()), MobSpawnType.CONVERSION, null, null);
         if (hoglin.hasCustomName()) {
             entity.setCustomName(hoglin.getCustomName());
             entity.setCustomNameVisible(hoglin.isCustomNameVisible());
@@ -82,7 +81,8 @@ public class GiantBoar extends Hoglin {
         entity.setPersistenceRequired();
         entity.yBodyRot = hoglin.yBodyRot;
         entity.setPortalCooldown();
-        level.addFreshEntity(entity);
+        level.addFreshEntityWithPassengers(entity);
+        entity.finalizeSpawn(level, level.getCurrentDifficultyAt(hoglin.blockPosition()), MobSpawnType.CONVERSION, null, null);
         entity.setSpawning(true);
         // remove the old hoglin
         hoglin.ejectPassengers();

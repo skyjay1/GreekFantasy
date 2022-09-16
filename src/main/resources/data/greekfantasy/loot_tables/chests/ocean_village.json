@@ -117,14 +117,7 @@
           "functions": [
             {
               "function": "minecraft:enchant_with_levels",
-              "levels": 20
-            },
-            {
-              "function": "minecraft:set_damage",
-              "damage": {
-                "min": 0,
-                "max": 225
-              }
+              "levels": 10
             }
           ]
         },
@@ -135,14 +128,7 @@
           "functions": [
             {
               "function": "minecraft:enchant_with_levels",
-              "levels": 20
-            },
-            {
-              "function": "minecraft:set_damage",
-              "damage": {
-                "min": 0,
-                "max": 60
-              }
+              "levels": 10
             }
           ]
         },
@@ -153,20 +139,13 @@
           "functions": [
             {
               "function": "minecraft:enchant_with_levels",
-              "levels": 20
-            },
-            {
-              "function": "minecraft:set_damage",
-              "damage": {
-                "min": 0,
-                "max": 200
-              }
+              "levels": 10
             }
           ]
         },
         {
           "type": "minecraft:empty",
-          "weight": 10
+          "weight": 15
         }
       ]
     }

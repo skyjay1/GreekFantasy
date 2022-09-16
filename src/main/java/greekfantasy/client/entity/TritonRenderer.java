@@ -11,6 +11,7 @@ public class TritonRenderer<T extends Triton> extends HumanoidMobRenderer<T, Tri
 
     private static final ResourceLocation TEXTURE_DEFAULT = new ResourceLocation(GreekFantasy.MODID, "textures/entity/triton/default.png");
     private static final ResourceLocation TEXTURE_SLIM = new ResourceLocation(GreekFantasy.MODID, "textures/entity/triton/slim.png");
+    private static final ResourceLocation TEXTURE_ARIEL = new ResourceLocation(GreekFantasy.MODID, "textures/entity/triton/ariel.png");
 
     public TritonRenderer(EntityRendererProvider.Context context) {
         super(context, new TritonModel<>(context.bakeLayer(TritonModel.TRITON_MODEL_RESOURCE)), 0.4F);
@@ -18,6 +19,12 @@ public class TritonRenderer<T extends Triton> extends HumanoidMobRenderer<T, Tri
 
     @Override
     public ResourceLocation getTextureLocation(final T entity) {
-        return entity.isSlim() ? TEXTURE_SLIM : TEXTURE_DEFAULT;
+        if(!entity.isSlim()) {
+            return TEXTURE_DEFAULT;
+        }
+        if(entity.hasCustomName() && "Ariel".equals(entity.getCustomName().getString())) {
+            return TEXTURE_ARIEL;
+        }
+        return TEXTURE_SLIM;
     }
 }

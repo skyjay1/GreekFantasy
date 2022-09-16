@@ -62,7 +62,7 @@ __Key:__
 - X X X X X Baby Spider
 - X X X X X Automaton (friendly Talos)
 - X X X X X Stymphalian
-- X ~ _ _ _ Merfolk (friendly)
+- X ~ _ X X Merfolk (friendly)
 
 ### Other
 
