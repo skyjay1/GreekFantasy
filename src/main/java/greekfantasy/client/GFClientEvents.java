@@ -43,6 +43,7 @@ import greekfantasy.client.entity.HydraRenderer;
 import greekfantasy.client.entity.LampadRenderer;
 import greekfantasy.client.entity.MadCowRenderer;
 import greekfantasy.client.entity.MakhaiRenderer;
+import greekfantasy.client.entity.ScyllaRenderer;
 import greekfantasy.client.entity.TritonRenderer;
 import greekfantasy.client.entity.MinotaurRenderer;
 import greekfantasy.client.entity.NaiadRenderer;
@@ -87,6 +88,7 @@ import greekfantasy.client.entity.model.HarpyModel;
 import greekfantasy.client.entity.model.HydraBodyModel;
 import greekfantasy.client.entity.model.HydraHeadModel;
 import greekfantasy.client.entity.model.MakhaiModel;
+import greekfantasy.client.entity.model.ScyllaModel;
 import greekfantasy.client.entity.model.TritonModel;
 import greekfantasy.client.entity.model.MinotaurModel;
 import greekfantasy.client.entity.model.NemeanLionModel;
@@ -316,7 +318,6 @@ public final class GFClientEvents {
             event.registerLayerDefinition(HydraBodyModel.HYDRA_BODY_MODEL_RESOURCE, HydraBodyModel::createBodyLayer);
             event.registerLayerDefinition(HydraHeadModel.HYDRA_HEAD_MODEL_RESOURCE, HydraHeadModel::createBodyLayer);
             event.registerLayerDefinition(MakhaiModel.MAKHAI_MODEL_RESOURCE, MakhaiModel::createBodyLayer);
-            event.registerLayerDefinition(TritonModel.TRITON_MODEL_RESOURCE, TritonModel::createBodyLayer);
             event.registerLayerDefinition(MinotaurModel.MINOTAUR_MODEL_RESOURCE, MinotaurModel::createBodyLayer);
             event.registerLayerDefinition(NemeanArmorModel.NEMEAN_ARMOR_MODEL_RESOURCE, NemeanArmorModel::createBodyLayer);
             event.registerLayerDefinition(NemeanLionModel.NEMEAN_LION_MODEL_RESOURCE, NemeanLionModel::createBodyLayer);
@@ -327,9 +328,11 @@ public final class GFClientEvents {
             event.registerLayerDefinition(PythonModel.PYTHON_MODEL_RESOURCE, PythonModel::createBodyLayer);
             event.registerLayerDefinition(SatyrModel.SATYR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(CubeDeformation.NONE));
             event.registerLayerDefinition(SatyrModel.SATYR_INNER_ARMOR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(new CubeDeformation(0.25F)));
+            event.registerLayerDefinition(ScyllaModel.SCYLLA_MODEL_RESOURCE, ScyllaModel::createBodyLayer);
             event.registerLayerDefinition(ShadeModel.SHADE_MODEL_RESOURCE, ShadeModel::createBodyLayer);
             event.registerLayerDefinition(SirenModel.SIREN_MODEL_RESOURCE, SirenModel::createBodyLayer);
             event.registerLayerDefinition(StymphalianModel.STYMPHALIAN_MODEL_RESOURCE, StymphalianModel::createBodyLayer);
+            event.registerLayerDefinition(TritonModel.TRITON_MODEL_RESOURCE, TritonModel::createBodyLayer);
             event.registerLayerDefinition(UnicornModel.UNICORN_MODEL_RESOURCE, UnicornModel::createBodyLayer);
             // other
             event.registerLayerDefinition(CerberusHeadModel.CERBERUS_HEAD_MODEL_RESOURCE, CerberusHeadModel::createLayer);
@@ -373,7 +376,6 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.LAMPAD.get(), LampadRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.MAD_COW.get(), MadCowRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.MAKHAI.get(), MakhaiRenderer::new);
-            event.registerEntityRenderer(GFRegistry.EntityReg.TRITON.get(), TritonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.MINOTAUR.get(), MinotaurRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.NAIAD.get(), NaiadRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.NEMEAN_LION.get(), NemeanLionRenderer::new);
@@ -381,11 +383,13 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.PEGASUS.get(), PegasusRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.PYTHON.get(), PythonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SATYR.get(), SatyrRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.SCYLLA.get(), ScyllaRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPARTI.get(), SpartiRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SHADE.get(), ShadeRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SIREN.get(), SirenRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.STYMPHALIAN.get(), StymphalianRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.TALOS.get(), TalosRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.TRITON.get(), TritonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.UNICORN.get(), UnicornRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.WHIRL.get(), WhirlRenderer::new);
             // other
@@ -400,6 +404,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.POISON_SPIT.get(), SpellRenderer.PoisonSpitRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPEAR.get(), SpearRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.THROWING_AXE.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.WATER_SPELL.get(), SpellRenderer.WaterSpellRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.WEB_BALL.get(), ThrownItemRenderer::new);
             // register block entities
             event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.CERBERUS_HEAD.get(), CerberusHeadBlockEntityRenderer::new);

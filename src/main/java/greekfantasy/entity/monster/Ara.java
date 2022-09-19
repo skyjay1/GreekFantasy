@@ -96,7 +96,7 @@ public class Ara extends PathfinderMob implements NeutralMob {
         if (this.isAggressive()) {
             if (this.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
                 this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(weapon));
-                this.getCommandSenderWorld().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ARMOR_EQUIP_IRON, SoundSource.HOSTILE, 1.0F, 1.0F, false);
+                this.playSound(SoundEvents.ARMOR_EQUIP_IRON, 1.2F, 1.0F);
             }
         } else if (this.getTarget() == null && this.getItemInHand(InteractionHand.MAIN_HAND).getItem() == weapon) {
             this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);

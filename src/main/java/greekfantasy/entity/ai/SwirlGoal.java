@@ -1,6 +1,5 @@
 package greekfantasy.entity.ai;
 
-import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -143,5 +142,6 @@ public abstract class SwirlGoal extends Goal {
         target.setDeltaMovement(motionVec);
         target.push(0, 0.0068D, 0);
         target.hurtMarked = true;
+        target.hasImpulse = true;
     }
 }

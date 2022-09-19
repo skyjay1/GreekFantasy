@@ -105,7 +105,7 @@ public class BronzeBull extends Monster {
             CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
         }
         // play sound
-        world.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
+        entity.playSound(SoundEvents.WITHER_SPAWN, 1.2F, 1.0F);
         return entity;
     }
 

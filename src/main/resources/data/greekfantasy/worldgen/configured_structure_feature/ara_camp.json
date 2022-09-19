@@ -6,5 +6,17 @@
   },
   "biomes": "#greekfantasy:has_structure/ara_camp",
   "adapt_noise": true,
-  "spawn_overrides": {}
+  "spawn_overrides": {
+    "monster": {
+      "bounding_box": "full",
+      "spawns": [
+        {
+          "type": "greekfantasy:ara",
+          "weight": 10,
+          "minCount": 1,
+          "maxCount": 3
+        }
+      ]
+    }
+  }
 }

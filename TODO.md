@@ -28,7 +28,7 @@ __Key:__
 - X X X X X Harpy
 - X X X X X Empusa
 - X X X X X Shade
-- X X ~ X X Siren
+- X X X X X Siren
 - X X X X X Cerastes
 - X X _ X X Ara
 - X X X X X Cyclops
@@ -47,11 +47,11 @@ __Key:__
 - X X X X X Miniboss: Python
 - X X X X X Miniboss: Giant Boar
 - X X X X X Miniboss: Medusa
-- X X X ~ X Miniboss: Cretan Minotaur
+- X X X X X Miniboss: Cretan Minotaur
 - X X X X X Miniboss: Circe
 - X X X X X Miniboss: Hydra
 - X X X X X Miniboss: Arachne
-- _ _ _ _ _ Miniboss: Scilla
+- ~ ~ X _ X Miniboss: Scylla
 - X X X X X Fury
 - X X X X X Drakaina
 - X X X X X Arion
@@ -201,6 +201,8 @@ __Key:__
 - X X X Pomegranate Sapling
 - X X X Quest
 - X X X Bronze feather
+- X X X Pinecone
+- X X X Thyrsus
 
 ### Armor
 
@@ -264,6 +266,7 @@ __Key:__
 - X Bronze Scrap in chests
 - X Quest from Centaur
 - X Quest in chests
+- X Pinecones from spruce leaves
 
 ### Uses for bronze
 
@@ -303,7 +306,6 @@ Can I do something with these?
 - Adamant Scythe (Kronus)
 - Special swords: Harpe (sword used to slay Medusa)
 - Special bows: Eurytus
-- Thyrsus: staff with pinecone and ivy leaves used by Dionysus ("Wild Staff") - what would it do?
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
 - Story of Antaeus (miniboss; heals when touching earth; "Earth Bond" enchantment for boots heals player similarly)
 - Story of King Midas (gold touch)

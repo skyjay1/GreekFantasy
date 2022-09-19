@@ -1,17 +1,21 @@
 package greekfantasy.entity;
 
 import com.google.common.collect.ImmutableMap;
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GoToWaterGoal;
 import greekfantasy.entity.ai.TridentRangedAttackGoal;
 import greekfantasy.entity.ai.WaterAnimalMoveControl;
 import greekfantasy.entity.boss.Charybdis;
+import greekfantasy.entity.boss.Scylla;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
@@ -109,6 +113,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1D, false));
         this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Satyr.class, 10.0F, 1.2D, 1.1D));
         this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Charybdis.class, 12.0F, 1.0D, 1.0D));
+        this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Scylla.class, 12.0F, 1.0D, 1.0D));
         this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 0.8D, 120) {
             @Override
             public boolean canUse() {
@@ -132,10 +137,22 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
     @Override
     public void tick() {
         super.tick();
+        // update pose
         if (this.isInWater() && this.getDeltaMovement().horizontalDistanceSqr() > 0.0012D) {
             this.setPose(Pose.SWIMMING);
         } else if (this.getPose() == Pose.SWIMMING) {
             this.setPose(Pose.STANDING);
+        }
+        // check potion effects
+        if(!level.isClientSide() && level instanceof ServerLevel serverLevel
+                && this.getVariant() == Variant.OCEAN
+                && this.getEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get()) != null) {
+            // spawn scylla
+            Scylla.spawnScylla(serverLevel, this);
+            // add particles
+            serverLevel.sendParticles(ParticleTypes.ANGRY_VILLAGER,
+                    this.getX(), this.getY() + this.getBbHeight() / 2.0D, this.getZ(),
+                    40, getBbWidth(), getBbHeight() / 2.0D, getBbWidth(), 0.0D);
         }
     }
 

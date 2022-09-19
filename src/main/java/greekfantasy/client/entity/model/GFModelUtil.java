@@ -1,6 +1,7 @@
 package greekfantasy.client.entity.model;
 
 import com.google.common.collect.ImmutableList;
+import greekfantasy.entity.boss.Scylla;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -196,8 +197,8 @@ public final class GFModelUtil {
         return arms;
     }
 
-    public static List<Triple<ModelPart>> getCharybdisArmsList(final ModelPart root) {
-        return new ImmutableList.Builder<Triple<ModelPart>>()
+    public static List<Tuple3<ModelPart>> getCharybdisArmsList(final ModelPart root) {
+        return new ImmutableList.Builder<Tuple3<ModelPart>>()
                 .addAll(getCharybdisArms(root.getChild("east_arms")))
                 .addAll(getCharybdisArms(root.getChild("south_arms")))
                 .addAll(getCharybdisArms(root.getChild("west_arms")))
@@ -205,19 +206,19 @@ public final class GFModelUtil {
                 .build();
     }
 
-    public static List<Triple<ModelPart>> getCharybdisArms(final ModelPart root) {
-        return new ImmutableList.Builder<Triple<ModelPart>>()
+    public static List<Tuple3<ModelPart>> getCharybdisArms(final ModelPart root) {
+        return new ImmutableList.Builder<Tuple3<ModelPart>>()
                 .add(getCharybdisArmParts(root.getChild("left_arm")))
                 .add(getCharybdisArmParts(root.getChild("middle_arm")))
                 .add(getCharybdisArmParts(root.getChild("right_arm")))
                 .build();
     }
 
-    public static Triple<ModelPart> getCharybdisArmParts(final ModelPart root) {
+    public static Tuple3<ModelPart> getCharybdisArmParts(final ModelPart root) {
         ModelPart lowerArm = root.getChild("lower_arm");
         ModelPart middleArm = lowerArm.getChild("middle_arm");
         ModelPart upperArm = middleArm.getChild("upper_arm");
-        return new Triple<>(lowerArm, middleArm, upperArm);
+        return new Tuple3<>(lowerArm, middleArm, upperArm);
     }
 
 
@@ -396,15 +397,125 @@ public final class GFModelUtil {
         return horn;
     }
 
+    /**
+     * Constructs the given number of scylla legs
+     * @param root the root part
+     * @param count the number of legs
+     * @return the root part
+     */
+    public static PartDefinition addOrReplaceScyllaLegs(final PartDefinition root, final int count) {
+        final float arc = ((float)Math.PI * 2.0F) / Math.max(1.0F, count);
+        for(int index = 0; index < count; index++) {
+            final float angY = (arc * index);
+            final PartDefinition holder = root.addOrReplaceChild(HOLDER + String.valueOf((int)index), CubeListBuilder.create(),
+                    PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, angY, 0.0F));
+            final PartDefinition leg = addOrReplaceScyllaLeg(holder);
+        }
+        return root;
+    }
+
+    /**
+     * Creates a single scylla leg with all of its parts
+     * @param root the root part
+     * @return the leg part definition
+     */
+    public static PartDefinition addOrReplaceScyllaLeg(final PartDefinition root) {
+        // leg parts
+        PartDefinition lowerLeg = root.addOrReplaceChild("lower_leg", CubeListBuilder.create().texOffs(0, 27).addBox(-2.0F, -4.0F, -6.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, -6.0F, 0.0F, 0.0F, 0.0F));
+        PartDefinition lowerMiddleLeg = lowerLeg.addOrReplaceChild("lower_middle_leg", CubeListBuilder.create().texOffs(0, 27).addBox(-2.0F, -4.0F, -6.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, -6.0F, -0.7854F, 0.0F, 0.0F));
+        PartDefinition upperMiddleLeg = lowerMiddleLeg.addOrReplaceChild("upper_middle_leg", CubeListBuilder.create().texOffs(0, 27).addBox(-2.0F, -4.0F, -6.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, -6.0F, -0.5236F, 0.0F, 0.0F));
+        PartDefinition upperLeg = upperMiddleLeg.addOrReplaceChild("upper_leg", CubeListBuilder.create().texOffs(0, 27).addBox(-2.0F, 0.0F, -6.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, -6.0F, 0.3491F, 0.0F, 0.0F));
+        // head
+        PartDefinition head = upperLeg.addOrReplaceChild("leg_head", CubeListBuilder.create().texOffs(0, 38).addBox(-3.0F, -3.0F, -3.0F, 6.0F, 5.0F, 6.0F, CubeDeformation.NONE)
+                .texOffs(0, 51).addBox(-2.5F, -1.0F, -6.0F, 5.0F, 3.0F, 3.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 2.0F, -6.0F, 0.9599F, 0.0F, 0.0F));
+        // horns
+        head.addOrReplaceChild("left_horn", CubeListBuilder.create().texOffs(0, 58).addBox(-1.0F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(3.0F, -2.0F, 0.0F, 0.5236F, 0.0F, 0.5236F));
+        head.addOrReplaceChild("right_horn", CubeListBuilder.create().texOffs(0, 58).addBox(0.0F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(-3.0F, -2.0F, 0.0F, 0.5236F, 0.0F, -0.5236F));
+        return root;
+    }
+
+    /**
+     * Locates the given number of scylla leg holders and constructs tuples for them.
+     * @param root the root part
+     * @param count the number of legs
+     * @return a list of tuples containing legs
+     * @see #getScyllaLeg(ModelPart)
+     */
+    public static List<Tuple5<ModelPart>> getScyllaLegs(final ModelPart root, final int count) {
+        final List<Tuple5<ModelPart>> list = new ArrayList<>();
+        for(int i = 0; i < count; i++) {
+            list.add(getScyllaLeg(root.getChild(HOLDER + i)));
+        }
+        return list;
+    }
+
+    /**
+     * @param holder the model part that contains the leg parts
+     * @return The model parts that make up the scylla leg
+     */
+    public static Tuple5<ModelPart> getScyllaLeg(final ModelPart holder) {
+        ModelPart lowerLeg = holder.getChild("lower_leg");
+        ModelPart lowerMiddleLeg = lowerLeg.getChild("lower_middle_leg");
+        ModelPart upperMiddleLeg = lowerMiddleLeg.getChild("upper_middle_leg");
+        ModelPart upperLeg = upperMiddleLeg.getChild("upper_leg");
+        ModelPart head = upperLeg.getChild("leg_head");
+        return new Tuple5<>(lowerLeg, lowerMiddleLeg, upperMiddleLeg, upperLeg, head);
+    }
+
+    /**
+     * Animates the given scylla leg
+     * @param leg the leg tuple
+     * @param idleSwingCos the idle angle multiplier, from 0 to 1
+     */
+    public static void setupScyllaLegAnim(final Tuple5<ModelPart> leg, final float idleSwingCos) {
+        leg.left.xRot = -idleSwingCos * 0.18F;
+        leg.leftMiddle.xRot = -0.785398F + idleSwingCos * 0.18F;
+        leg.middle.xRot = -0.523599F + idleSwingCos * 0.20F;
+        leg.rightMiddle.xRot = 0.349066F + idleSwingCos * 0.22F;
+        leg.right.xRot = 0.959931F - idleSwingCos * 0.4F;
+    }
+
     @Immutable
-    public static class Triple<T> {
+    public static class Tuple3<T> {
         public final T left;
         public final T middle;
         public final T right;
 
-        public Triple(T left, T middle, T right) {
+        public Tuple3(T left, T middle, T right) {
             this.left = left;
             this.middle = middle;
+            this.right = right;
+        }
+    }
+
+    @Immutable
+    public static class Tuple4<T> {
+        public final T left;
+        public final T leftMiddle;
+        public final T rightMiddle;
+        public final T right;
+
+        public Tuple4(T left, T leftMiddle, T rightMiddle, T right) {
+            this.left = left;
+            this.leftMiddle = leftMiddle;
+            this.rightMiddle = rightMiddle;
+            this.right = right;
+        }
+    }
+
+    @Immutable
+    public static class Tuple5<T> {
+        public final T left;
+        public final T leftMiddle;
+        public final T middle;
+        public final T rightMiddle;
+        public final T right;
+
+        public Tuple5(T left, T leftMiddle, T middle, T rightMiddle, T right) {
+            this.left = left;
+            this.leftMiddle = leftMiddle;
+            this.middle = middle;
+            this.rightMiddle = rightMiddle;
             this.right = right;
         }
     }

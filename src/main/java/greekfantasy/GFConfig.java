@@ -27,6 +27,7 @@ public class GFConfig {
     public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_LIFESPAN;
     public final ForgeConfigSpec.IntValue STAFF_OF_HEALING_COOLDOWN;
     public final ForgeConfigSpec.IntValue THUNDERBOLT_COOLDOWN;
+    public final ForgeConfigSpec.IntValue THYRSUS_COOLDOWN;
     public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
     private final ForgeConfigSpec.DoubleValue WINGED_SANDALS_DURABILITY_CHANCE;
     private double wingedSandalsDurabilityChance;
@@ -67,6 +68,7 @@ public class GFConfig {
     public final ForgeConfigSpec.DoubleValue NEMEAN_LION_LIGHTNING_CHANCE;
     public final ForgeConfigSpec.DoubleValue SHADE_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue SATYR_SHAMAN_CHANCE;
+    public final ForgeConfigSpec.DoubleValue SCYLLA_SPAWN_CHANCE;
     private static final ResourceLocation SATYR_SONG_FALLBACK = new ResourceLocation(GreekFantasy.MODID, "greensleeves");
     private final ForgeConfigSpec.ConfigValue<? extends String> SATYR_SONG;
     private ResourceLocation satyrSong;
@@ -87,6 +89,8 @@ public class GFConfig {
     private boolean showNemeanLionBossBar;
     private final ForgeConfigSpec.BooleanValue SHOW_PYTHON_BOSS_BAR;
     private boolean showPythonBossBar;
+    private final ForgeConfigSpec.BooleanValue SHOW_SCYLLA_BOSS_BAR;
+    private boolean showScyllaBossBar;
 
     // mob effect
     private final ForgeConfigSpec.BooleanValue CURSE_OF_CIRCE_ENABLED;
@@ -153,6 +157,7 @@ public class GFConfig {
         DRAGON_TOOTH_SPARTI_COUNT = builder.defineInRange("dragon_tooth_sparti_count", 1, 0, 8);
         DRAGON_TOOTH_SPARTI_LIFESPAN = builder.defineInRange("dragon_tooth_sparti_lifespan", 300, 1, 24000);
         THUNDERBOLT_COOLDOWN = builder.defineInRange("thunderbolt_cooldown", 100, 0, 24000);
+        THYRSUS_COOLDOWN = builder.defineInRange("thyrsus_cooldown", 60, 0, 24000);
         STAFF_OF_HEALING_COOLDOWN = builder.defineInRange("staff_of_healing_cooldown", 35, 0, 24000);
         UNICORN_HORN_CURES_EFFECTS = builder.define("unicorn_horn_cures_effects", true);
         WAND_OF_CIRCE_DURATION = builder.defineInRange("wand_of_circe_duration", 900, 1, 24000);
@@ -198,6 +203,9 @@ public class GFConfig {
                 .defineInRange("nemean_lion_lightning_chance", 100.0F, 0.0F, 100.0F);
         SHADE_SPAWN_CHANCE = builder.defineInRange("shade_spawn_chance", 100.0F, 0.0F, 100.0F);
         SATYR_SHAMAN_CHANCE = builder.defineInRange("satyr_shaman_chance", 24.0F, 0.0F, 100.0F);
+        SCYLLA_SPAWN_CHANCE = builder
+                .comment("Percent chance that creating a Charybdis also creates a Scylla")
+                .defineInRange("scylla_spawn_chance", 55.0F, 0.0F, 100.0F);
         SATYR_SONG = builder.define("satyr_song", SATYR_SONG_FALLBACK.toString());
         SHADE_IMMUNE_TO_NONOWNER = builder.define("shade_immune_to_nonowner", true);
         SHOW_ARACHNE_BOSS_BAR = builder.define("show_arachne_boss_bar", false);
@@ -208,6 +216,7 @@ public class GFConfig {
         SHOW_MEDUSA_BOSS_BAR = builder.define("show_medusa_boss_bar", false);
         SHOW_NEMEAN_LION_BOSS_BAR = builder.define("show_nemean_lion_boss_bar", true);
         SHOW_PYTHON_BOSS_BAR = builder.define("show_python_boss_bar", true);
+        SHOW_SCYLLA_BOSS_BAR = builder.define("show_scylla_boss_bar", true);
         builder.pop();
 
         builder.push("mob_effects");
@@ -272,9 +281,10 @@ public class GFConfig {
         putSpawnConfigSpec(builder, "pegasus", 11, true, BiomeDictionary.Type.MOUNTAIN.getName(), Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString());
         putSpawnConfigSpec(builder, "satyr", 22, true, forest);
         putSpawnConfigSpec(builder, "shade", 10, false);
-        putSpawnConfigSpec(builder, "siren", 10, true, Biomes.LUKEWARM_OCEAN.location().toString(), Biomes.WARM_OCEAN.location().toString());
+        putSpawnConfigSpec(builder, "siren", 8, true, Biomes.LUKEWARM_OCEAN.location().toString(), Biomes.WARM_OCEAN.location().toString());
         putSpawnConfigSpec(builder, "stymphalian", 10, true, BiomeDictionary.Type.SWAMP.getName());
         putSpawnConfigSpec(builder, "unicorn", 11, true, Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString());
+        putSpawnConfigSpec(builder, "triton", 8, true); // intentionally left blank so triton does not spawn by default
         putSpawnConfigSpec(builder, "whirl", 6, true, BiomeDictionary.Type.OCEAN.getName());
         builder.pop();
 
@@ -329,6 +339,7 @@ public class GFConfig {
         showMedusaBossBar = SHOW_MEDUSA_BOSS_BAR.get();
         showNemeanLionBossBar = SHOW_NEMEAN_LION_BOSS_BAR.get();
         showPythonBossBar = SHOW_PYTHON_BOSS_BAR.get();
+        showScyllaBossBar = SHOW_SCYLLA_BOSS_BAR.get();
         satyrSong = ResourceLocation.tryParse(SATYR_SONG.get());
         if(null == satyrSong) {
             satyrSong = SATYR_SONG_FALLBACK;
@@ -397,6 +408,7 @@ public class GFConfig {
     public boolean showCretanBossBar() {
         return showCretanBossBar;
     }
+
     public boolean showGiantBoarBossBar() {
         return showGiantBoarBossBar;
     }
@@ -417,6 +429,9 @@ public class GFConfig {
         return showPythonBossBar;
     }
 
+    public boolean showScyllaBossBar() {
+        return showScyllaBossBar;
+    }
 
     public ResourceLocation getSatyrSong() {
         return satyrSong;

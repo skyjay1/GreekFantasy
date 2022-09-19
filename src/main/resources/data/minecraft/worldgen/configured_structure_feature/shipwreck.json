@@ -1,0 +1,26 @@
+{
+  "config": {
+    "is_beached": false
+  },
+  "type": "minecraft:shipwreck",
+  "biomes": "#minecraft:has_structure/shipwreck",
+  "spawn_overrides": {
+    "monster": {
+      "bounding_box": "full",
+      "spawns": [
+        {
+          "type": "greekfantasy:siren",
+          "weight": 10,
+          "minCount": 1,
+          "maxCount": 3
+        },
+        {
+          "type": "minecraft:drowned",
+          "weight": 5,
+          "minCount": 1,
+          "maxCount": 2
+        }
+      ]
+    }
+  }
+}

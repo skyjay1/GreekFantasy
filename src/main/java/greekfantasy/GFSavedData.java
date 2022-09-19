@@ -23,7 +23,8 @@ public class GFSavedData extends SavedData {
     private static final String KEY_PLAYERS = "FlyingPlayers";
 
     public static GFSavedData getOrCreate(final ServerLevel server) {
-        return server.getDataStorage().computeIfAbsent(GFSavedData::read, GFSavedData::new, GreekFantasy.MODID);
+        return server.getServer().getLevel(Level.OVERWORLD).getDataStorage()
+                .computeIfAbsent(GFSavedData::read, GFSavedData::new, GreekFantasy.MODID);
     }
 
     public static GFSavedData read(CompoundTag nbt) {

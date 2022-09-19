@@ -71,7 +71,7 @@ public class Arion extends Horse {
         entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60));
         entity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 60));
         // play sound
-        level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.PLAYER_LEVELUP, entity.getSoundSource(), 1.0F, 1.0F, false);
+        entity.playSound(SoundEvents.PLAYER_LEVELUP, 1.2F, 1.0F);
         return entity;
     }
 

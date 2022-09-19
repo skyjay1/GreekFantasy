@@ -230,6 +230,8 @@ public class Cerastes extends TamableAnimal {
         boolean hurt = super.hurt(source, amount);
         this.setHiding(false);
         this.setStanding(true);
+        this.setOrderedToSit(false);
+        this.setInSittingPose(false);
         if(hurt && source.getDirectEntity() instanceof Curse && this.level instanceof ServerLevel) {
             // cause explosion and summon hydra
             level.explode(this, this.getX(), this.getY(), this.getZ(), 2.5F, Explosion.BlockInteraction.DESTROY);

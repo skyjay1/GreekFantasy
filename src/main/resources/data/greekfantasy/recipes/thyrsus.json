@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " ~A",
+    "#/~",
+    "/# "
+  ],
+  "key": {
+    "A": { "item": "greekfantasy:pinecone" },
+    "~": { "item": "greekfantasy:golden_string" },
+    "#": { "tag": "minecraft:leaves" },
+    "/": { "tag": "forge:rods/wooden" }
+  },
+  "result": {
+    "item": "greekfantasy:thyrsus"
+  }
+}

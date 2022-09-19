@@ -76,7 +76,7 @@ public class Whirl extends WaterAnimal {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new GFFloatGoal(this));
+        this.goalSelector.addGoal(1, new GFFloatGoal(this, e -> Mth.ceil(e.getBbHeight())));
         this.goalSelector.addGoal(2, new Whirl.SwirlGoal(this));
     }
 
@@ -104,11 +104,11 @@ public class Whirl extends WaterAnimal {
             // check for trigger items
             if (this.level instanceof ServerLevel && !e.getItem().isEmpty() && e.getItem().is(TRIGGER)) {
                 Charybdis.spawnCharybdis((ServerLevel) this.level, this);
-                e.hurt(DamageSource.mobAttack(this), 1.0F);
+                e.discard();
             }
             // start to remove items
             if (!e.hasPickUpDelay()) {
-                e.hurt(DamageSource.mobAttack(this), 1.0F);
+                e.discard();
             }
             // play sound when item is removed
             if (!e.isAlive()) {

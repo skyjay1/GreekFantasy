@@ -8,7 +8,7 @@ import greekfantasy.entity.misc.Curse;
 import greekfantasy.entity.misc.CurseOfCirce;
 import greekfantasy.entity.misc.HealingSpell;
 import greekfantasy.entity.misc.PoisonSpit;
-import net.minecraft.client.model.geom.ModelLayerLocation;
+import greekfantasy.entity.misc.WaterSpell;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -96,4 +96,17 @@ public abstract class SpellRenderer<T extends Projectile> extends EntityRenderer
         }
     }
 
+    public static class WaterSpellRenderer extends SpellRenderer<WaterSpell> {
+
+        private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/water_spell.png");
+
+        public WaterSpellRenderer(EntityRendererProvider.Context context) {
+            super(context);
+        }
+
+        @Override
+        public ResourceLocation getTextureLocation(final WaterSpell entity) {
+            return TEXTURE;
+        }
+    }
 }

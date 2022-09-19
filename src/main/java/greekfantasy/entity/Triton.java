@@ -7,6 +7,7 @@ import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.entity.ai.TridentRangedAttackGoal;
 import greekfantasy.entity.ai.WaterAnimalMoveControl;
 import greekfantasy.entity.boss.Charybdis;
+import greekfantasy.entity.boss.Scylla;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -111,6 +112,7 @@ public class Triton extends PathfinderMob implements RangedAttackMob, NeutralMob
         this.goalSelector.addGoal(2, new TridentRangedAttackGoal(this, 1.0D, 40, 10.0F));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1D, false));
         this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Charybdis.class, 12.0F, 1.0D, 1.0D));
+        this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Scylla.class, 12.0F, 1.0D, 1.0D));
         this.goalSelector.addGoal(5, new MoveToStructureGoal(this, 1.0D, 6, 8, 10, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
         this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 0.8D, 120));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -129,7 +131,16 @@ public class Triton extends PathfinderMob implements RangedAttackMob, NeutralMob
     @Override
     public void tick() {
         super.tick();
-        if (this.isInWater() && this.getDeltaMovement().horizontalDistanceSqr() > 0.0012D) {
+        boolean inWater = this.isInWaterRainOrBubble();
+        // random motion when not in water
+        if (!inWater && this.onGround) {
+            this.setDeltaMovement(this.getDeltaMovement().add((this.random.nextFloat() * 2.0F - 1.0F) * 0.2F, 0.5D, (this.random.nextFloat() * 2.0F - 1.0F) * 0.2F));
+            this.setYRot(this.random.nextFloat() * 360.0F);
+            this.onGround = false;
+            this.hasImpulse = true;
+        }
+        // update pose
+        if (!inWater || this.getDeltaMovement().horizontalDistanceSqr() > 0.0012D) {
             this.setPose(Pose.SWIMMING);
         } else if (this.getPose() == Pose.SWIMMING) {
             this.setPose(Pose.STANDING);
