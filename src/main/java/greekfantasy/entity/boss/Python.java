@@ -285,7 +285,7 @@ public class Python extends Monster implements RangedAttackMob {
     class PoisonSpitAttackGoal extends IntervalRangedAttackGoal<Python> {
 
         protected PoisonSpitAttackGoal(final int interval, final int count, final int maxCooldownIn) {
-            super(Python.this, interval, count, maxCooldownIn);
+            super(Python.this, interval, count, maxCooldownIn, 15.0F);
         }
 
         @Override

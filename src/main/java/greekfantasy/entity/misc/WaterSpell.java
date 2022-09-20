@@ -58,7 +58,7 @@ public class WaterSpell extends MobEffectProjectile {
 
     @Override
     protected float getImpactDamage(final LivingEntity entity) {
-        return 2.0F;
+        return 4.0F;
     }
 
     public float getGravity() {

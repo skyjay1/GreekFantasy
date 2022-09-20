@@ -65,8 +65,8 @@ public class Circe extends Monster implements RangedAttackMob {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new IntervalRangedAttackGoal<>(this, 10, 1, GreekFantasy.CONFIG.WAND_OF_CIRCE_COOLDOWN.get() * 4));
-        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class, 6.0F, 1.4D, 1.2D, NOT_CURSED.and(e -> e == Circe.this.getTarget())));
+        this.goalSelector.addGoal(1, new IntervalRangedAttackGoal<>(this, 10, 1, GreekFantasy.CONFIG.WAND_OF_CIRCE_COOLDOWN.get() * 4, 10.0F));
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class, 5.0F, 1.4D, 1.2D, NOT_CURSED.and(e -> e == Circe.this.getTarget())));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D) {
             @Override
             public boolean canUse() {

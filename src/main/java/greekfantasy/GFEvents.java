@@ -10,6 +10,7 @@ import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Orthus;
 import greekfantasy.entity.Palladium;
 import greekfantasy.entity.Whirl;
+import greekfantasy.entity.ai.DolphinTemptByTritonGoal;
 import greekfantasy.entity.ai.FollowWaterMobGoal;
 import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.GiantBoar;
@@ -33,6 +34,7 @@ import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffect;
@@ -50,6 +52,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.Dolphin;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.animal.horse.Horse;
@@ -61,6 +64,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
@@ -583,6 +587,11 @@ public final class GFEvents {
                             return mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled() && mob.getRandom().nextInt(45) == 0 && super.canUse();
                         }
                     });
+                }
+                // add dolphin goals
+                if(mob.getType() == EntityType.DOLPHIN && mob instanceof Dolphin dolphin) {
+                    // tempt by triton goal
+                    mob.goalSelector.addGoal(2, new DolphinTemptByTritonGoal(dolphin, 0.9D, Ingredient.of(ItemTags.FISHES)));
                 }
                 // add drowned goals
                 if(mob.getType() == EntityType.DROWNED) {

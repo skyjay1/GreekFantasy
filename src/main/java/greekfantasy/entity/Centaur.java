@@ -2,7 +2,9 @@ package greekfantasy.entity;
 
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.MoveToStructureGoal;
+import greekfantasy.entity.ai.TradeWithPlayerGoal;
 import greekfantasy.entity.util.HasHorseVariant;
+import greekfantasy.entity.util.TradingMob;
 import greekfantasy.util.Quest;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
@@ -56,13 +58,15 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.UUID;
 
-public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMob, HasHorseVariant {
+public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMob, HasHorseVariant, TradingMob {
 
     private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Centaur.class, EntityDataSerializers.INT);
     public static final String KEY_VARIANT = "Variant";
@@ -115,7 +119,7 @@ public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMo
     }
 
     protected void addCentaurGoals() {
-        this.goalSelector.addGoal(2, new Centaur.TradeGoal(40 + random.nextInt(20)));
+        this.goalSelector.addGoal(2, new TradeWithPlayerGoal<>(this, 40 + random.nextInt(20)));
         this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 3, 8, 4, new ResourceLocation(GreekFantasy.MODID, "centaur_camp"), DefaultRandomPos::getPos));
     }
 
@@ -365,73 +369,42 @@ public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMo
 
     @Override
     protected InteractionResult mobInteract(final Player player, final InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        // check if the tradingPlayer is holding a trade item and the entity is not already trading
-        if (!this.level.isClientSide() && this.level instanceof ServerLevel
-                && canPlayerTrade(player) && !this.isAggressive() && !isTrading()
-                && this.getOffhandItem().isEmpty() && !stack.isEmpty() && stack.is(getTradeTag())) {
-            // initiate trading
-            this.setTradingPlayer(player);
-            // take the item from the tradingPlayer
-            this.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(stack.getItem()));
-            if (!player.isCreative()) {
-                stack.shrink(1);
-            }
-            player.setItemInHand(hand, stack);
-            return InteractionResult.SUCCESS;
+        InteractionResult tradeResult = startTrading(this, player, hand);
+        if(tradeResult != InteractionResult.PASS) {
+            return tradeResult;
         }
-
-        return InteractionResult.sidedSuccess(!this.level.isClientSide());
+        return super.mobInteract(player, hand);
     }
 
-    protected TagKey<Item> getTradeTag() {
+    @Override
+    public TagKey<Item> getTradeTag() {
         return CENTAUR_TRADE;
     }
-    /**
-     * @param player the player
-     * @return true if the given player is allowed to trade with this entity
-     */
-    public boolean canPlayerTrade(final Player player) {
-        return player != null && player != this.getTarget();
+
+    @Override
+    public ResourceLocation getTradeLootTable() {
+        return BuiltInLootTables.EMPTY;
     }
 
+    @Override
+    public Player getTradingPlayer() {
+        return tradingPlayer;
+    }
+
+    @Override
     public void setTradingPlayer(@Nullable final Player player) {
         this.tradingPlayer = player;
     }
 
-    public boolean isTrading() {
-        return this.tradingPlayer != null;
+    @Override
+    public void trade(PathfinderMob self, @Nullable final Player player, final ItemStack tradeItem) {
+        TradingMob.super.trade(self, player, tradeItem);
+        this.level.broadcastEntityEvent(this, FINISH_TRADE_EVENT);
     }
 
-    /**
-     * Performs a trade by depleting the tradeItem and creating a resultItem
-     *
-     * @param player    the player
-     * @param tradeItem the item offered by the player
-     */
-    public void trade(@Nullable final Player player, final ItemStack tradeItem) {
-        // determine target position
-        Vec3 tradeTarget;
-        if (player != null) {
-            tradeTarget = player.position();
-        } else {
-            tradeTarget = LandRandomPos.getPos(this, 4, 2);
-            if (null == tradeTarget) {
-                tradeTarget = this.position();
-            }
-        }
-        final Vec3 tradeTargetPos = tradeTarget.add(0, 1, 0);
-        // determine trade result
-        ItemStack quest = Quest.createQuestItemStack(Quest.getRandomQuestId(this.random));
-        // drop trade result as item entities
-        BehaviorUtils.throwItem(this, quest, tradeTargetPos);
-        // shrink/remove held item
-        tradeItem.shrink(1);
-        this.setItemInHand(InteractionHand.OFF_HAND, tradeItem);
-        if (tradeItem.getCount() <= 0) {
-            this.setTradingPlayer(null);
-        }
-        this.level.broadcastEntityEvent(this, FINISH_TRADE_EVENT);
+    @Override
+    public List<ItemStack> getTradeResult(PathfinderMob self, @Nullable Player player, ItemStack tradeItem) {
+        return List.of(Quest.createQuestItemStack(Quest.getRandomQuestId(self.getRandom())));
     }
 
     // Color
@@ -473,52 +446,6 @@ public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMo
         public void stop() {
             super.stop();
             Centaur.this.setAggressive(false);
-        }
-    }
-
-    class TradeGoal extends Goal {
-
-        protected final int maxThinkingTime;
-        protected int thinkingTime;
-
-        public TradeGoal(final int maxThinkingTimeIn) {
-            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-            maxThinkingTime = maxThinkingTimeIn;
-            thinkingTime = 0;
-        }
-
-        @Override
-        public boolean canUse() {
-            return !Centaur.this.isAggressive()
-                    && !Centaur.this.getOffhandItem().isEmpty()
-                    && Centaur.this.getOffhandItem().is(Centaur.this.getTradeTag());
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return thinkingTime > 0 && thinkingTime <= maxThinkingTime && canUse();
-        }
-
-        @Override
-        public void start() {
-            thinkingTime = 1;
-        }
-
-        @Override
-        public void tick() {
-            // stop moving and look down
-            Centaur.this.getNavigation().stop();
-            Centaur.this.getLookControl().setLookAt(Centaur.this.getEyePosition(1.0F).add(0.0D, -0.25D, 0.0D));
-            // if enough time has elapsed, commence the trade
-            if (thinkingTime++ >= maxThinkingTime) {
-                trade(Centaur.this.tradingPlayer, Centaur.this.getOffhandItem());
-                stop();
-            }
-        }
-
-        @Override
-        public void stop() {
-            thinkingTime = 0;
         }
     }
 

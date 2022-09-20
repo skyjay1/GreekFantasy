@@ -2,10 +2,8 @@ package greekfantasy.entity;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.ai.GFFloatGoal;
 import greekfantasy.entity.boss.Charybdis;
 import greekfantasy.integration.RGCompat;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -22,7 +20,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -31,14 +28,11 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class Whirl extends WaterAnimal {
 
@@ -62,7 +56,7 @@ public class Whirl extends WaterAnimal {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 10.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.15D)
+                .add(Attributes.MOVEMENT_SPEED, 0.05D)
                 .add(Attributes.ATTACK_DAMAGE, 0.25D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D);
@@ -76,7 +70,8 @@ public class Whirl extends WaterAnimal {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new GFFloatGoal(this, e -> Mth.ceil(e.getBbHeight())));
+        //this.goalSelector.addGoal(1, new GFFloatGoal(this, e -> Mth.ceil(e.getBbHeight())));
+        this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new Whirl.SwirlGoal(this));
     }
 
@@ -150,6 +145,11 @@ public class Whirl extends WaterAnimal {
         super.doPush(entityIn);
     }
 
+    @Override
+    public double getFluidJumpThreshold() {
+        return getBbHeight() - 0.1D;
+    }
+
     // Misc //
 
     @Override
@@ -185,6 +185,11 @@ public class Whirl extends WaterAnimal {
 
     @Override
     protected void pushEntities() {
+    }
+
+    @Override
+    protected float getWaterSlowDown() {
+        return 0.9F;
     }
 
     // Lifespan and Attract Mobs //
@@ -244,13 +249,14 @@ public class Whirl extends WaterAnimal {
 
     @Override
     public void travel(final Vec3 vec) {
-        if (isEffectiveAi() && isInWater()) {
-            moveRelative(0.01F, vec);
-            move(MoverType.SELF, getDeltaMovement());
-            setDeltaMovement(getDeltaMovement().scale(0.9D));
-        } else {
-            super.travel(vec);
-        }
+//        if (isEffectiveAi() && isInWater()) {
+//            moveRelative(0.01F, vec);
+//            move(MoverType.SELF, getDeltaMovement());
+//            setDeltaMovement(getDeltaMovement().scale(0.9D));
+//        } else {
+//            super.travel(vec);
+//        }
+        super.travel(vec);
     }
 
     @Override

@@ -14,6 +14,7 @@ public class WaterAnimalMoveControl extends MoveControl {
         this.waterAnimal = entity;
     }
 
+    @Override
     public void tick() {
         LivingEntity livingentity = this.waterAnimal.getTarget();
         if (this.waterAnimal.isInWater()) {
