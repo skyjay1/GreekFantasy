@@ -26,6 +26,7 @@ import greekfantasy.client.entity.CirceRenderer;
 import greekfantasy.client.entity.CretanMinotaurRenderer;
 import greekfantasy.client.entity.CyclopsRenderer;
 import greekfantasy.client.entity.CyprianRenderer;
+import greekfantasy.client.entity.DragonToothHookRenderer;
 import greekfantasy.client.entity.DrakainaRenderer;
 import greekfantasy.client.entity.DryadRenderer;
 import greekfantasy.client.entity.ElpisRenderer;
@@ -115,6 +116,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.FishingHookRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -122,8 +124,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -398,6 +403,7 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.CURSE_OF_CIRCE.get(), SpellRenderer.CurseOfCirceRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DISCUS.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DRAGON_TOOTH.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.DRAGON_TOOTH_HOOK.get(), DragonToothHookRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.GREEK_FIRE.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.HEALING_SPELL.get(), SpellRenderer.HealingSpellRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.PALLADIUM.get(), PalladiumRenderer::new);
@@ -501,26 +507,44 @@ public final class GFClientEvents {
             registerSpearProperties(GFRegistry.ItemReg.IRON_SPEAR.get());
             registerSpearProperties(GFRegistry.ItemReg.DIAMOND_SPEAR.get());
             registerSpearProperties(GFRegistry.ItemReg.NETHERITE_SPEAR.get());
+            // register rods
+            registerFishingRodProperties(GFRegistry.ItemReg.DRAGON_TOOTH_ROD.get());
         }
 
         private static void registerUsingProperties(final Item usingItem, final String propertyName) {
             ItemProperties.register(usingItem, new ResourceLocation(propertyName),
-                    (item, world, entity, tintIndex) -> (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
+                    (item, level, entity, tintIndex) -> (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
+        }
+
+        private static void registerFishingRodProperties(final Item rod) {
+            ItemProperties.register(rod, new ResourceLocation("cast"), (item, level, entity, tintIndex) -> {
+                if (entity == null) {
+                    return 0.0F;
+                } else {
+                    boolean isMainhand = entity.getMainHandItem() == item;
+                    boolean isOffhand = entity.getOffhandItem() == item;
+                    if (entity.getMainHandItem().getItem() instanceof FishingRodItem) {
+                        isOffhand = false;
+                    }
+
+                    return (isMainhand || isOffhand) && entity instanceof Player && ((Player)entity).fishing != null ? 1.0F : 0.0F;
+                }
+            });
         }
 
         private static void registerBowProperties(final Item bow) {
             ItemProperties.register(bow, new ResourceLocation("pull"),
-                    (item, world, entity, tintIndex) -> {
+                    (item, level, entity, tintIndex) -> {
                         if (entity == null) return 0.0F;
                         if (entity.getUseItem() != item) return 0.0F;
                         return (item.getUseDuration() - entity.getUseItemRemainingTicks()) / 20.0F;
                     });
             ItemProperties.register(bow, new ResourceLocation("pulling"),
-                    (item, world, entity, tintIndex) -> (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
+                    (item, level, entity, tintIndex) -> (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
         }
 
         private static void registerSpearProperties(final Item spear) {
-            ItemProperties.register(spear, new ResourceLocation("throwing"), (item, world, entity, tintIndex) ->
+            ItemProperties.register(spear, new ResourceLocation("throwing"), (item, level, entity, tintIndex) ->
                     (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
         }
 

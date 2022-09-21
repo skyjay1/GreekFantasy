@@ -1,0 +1,9 @@
+{
+  "disabled": false,
+  "description": "quest.greekfantasy.kill_cretan_minotaur",
+  "components": [
+    "quest.greekfantasy.kill_cretan_minotaur.line1",
+    "quest.greekfantasy.kill_cretan_minotaur.line2",
+    "quest.greekfantasy.kill_cretan_minotaur.line3"
+  ]
+}

@@ -116,7 +116,7 @@ public class SmashingEnchantment extends Enchantment {
 
     @Override
     public boolean isTradeable() {
-        return false;
+        return GreekFantasy.CONFIG.SMASHING_TRADEABLE.get();
     }
 
     @Override

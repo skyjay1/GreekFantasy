@@ -1,6 +1,7 @@
 package greekfantasy.enchantment;
 
 
+import greekfantasy.GreekFantasy;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -29,12 +30,12 @@ public class SilkstepEnchantment extends Enchantment {
 
     @Override
     public boolean isTradeable() {
-        return false;
+        return GreekFantasy.CONFIG.SILKSTEP_TRADEABLE.get();
     }
 
     @Override
     public boolean isDiscoverable() {
-        return true;
+        return GreekFantasy.CONFIG.isSilkstepEnabled();
     }
 
     @Override

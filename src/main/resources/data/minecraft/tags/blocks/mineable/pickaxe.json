@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "greekfantasy:bronze_block",
     "greekfantasy:limestone",
     "greekfantasy:limestone_slab",
     "greekfantasy:limestone_stairs",

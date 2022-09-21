@@ -8,7 +8,7 @@ __Key:__
 
 ## Bugs and urgent updates
 
-- Charybdis "throw" animation cuts off
+- Update CF "summon bosses" pics
 - Orthus stands when sitting
 
 ## Entities
@@ -51,7 +51,7 @@ __Key:__
 - X X X X X Miniboss: Circe
 - X X X X X Miniboss: Hydra
 - X X X X X Miniboss: Arachne
-- ~ X X _ X Miniboss: Scylla
+- ~ X X X X Miniboss: Scylla
 - X X X X X Fury
 - X X X X X Drakaina
 - X X X X X Arion
@@ -108,6 +108,7 @@ __Key:__
 - X X X Hydra Lair
 - X X X Minotaur Maze
 - X X X Ocean Villages
+- _ _ _ Gigante Camp
 
 
 ## Blocks
@@ -203,6 +204,8 @@ __Key:__
 - X X X Bronze feather
 - X X X Pinecone
 - X X X Thyrsus
+- X X X Scylla Bone
+- X X X Dragon Tooth Rod
 
 ### Armor
 

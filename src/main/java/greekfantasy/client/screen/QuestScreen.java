@@ -76,7 +76,7 @@ public class QuestScreen extends Screen {
         startY += this.font.lineHeight + 4;
         for(MutableComponent text : components) {
             this.font.drawWordWrap(FormattedText.of(text.getString()), (int) startX, (int) startY, maxWidth, 0);
-            startY += this.font.wordWrapHeight(text.getString(), maxWidth);
+            startY += this.font.wordWrapHeight(text.getString(), maxWidth) + 2;
         }
         // draw other widgets
         super.render(poseStack, mouseX, mouseY, partialTick);

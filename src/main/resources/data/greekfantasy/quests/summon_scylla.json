@@ -1,0 +1,9 @@
+{
+  "disabled": false,
+  "description": "quest.greekfantasy.summon_scylla",
+  "components": [
+    "quest.greekfantasy.summon_scylla.line1",
+    "quest.greekfantasy.summon_scylla.line2",
+    "quest.greekfantasy.summon_scylla.line3"
+  ]
+}

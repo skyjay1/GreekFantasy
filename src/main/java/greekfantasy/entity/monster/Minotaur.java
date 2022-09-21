@@ -313,6 +313,10 @@ public class Minotaur extends Monster {
         @Override
         public void tick() {
             LivingEntity target = Minotaur.this.getTarget();
+            if(null == target) {
+                stop();
+                return;
+            }
             final double disSqToTargetEntity = Minotaur.this.distanceToSqr(target);
             final boolean hitTarget = disSqToTargetEntity < 1.1D;
             final boolean hasTarget = targetPos != null;
@@ -334,7 +338,7 @@ public class Minotaur extends Monster {
             } else if (hasTarget) {
                 // continue moving toward the target that was set earlier
                 Minotaur.this.getMoveControl().setWantedPosition(targetPos.x, targetPos.y, targetPos.z, speed);
-                Minotaur.this.getLookControl().setLookAt(targetPos.add(0, target.getEyeHeight(), 0));
+                Minotaur.this.getLookControl().setLookAt(targetPos);
 
             } else {
                 // determine where the charge attack should target

@@ -42,7 +42,7 @@ public class WaterSpell extends MobEffectProjectile {
     protected List<MobEffectInstance> getMobEffects(final LivingEntity entity) {
         return List.of(
                 new MobEffectInstance(GFRegistry.MobEffectReg.SLOW_SWIM.get(), 180, 2),
-                new MobEffectInstance(MobEffects.WEAKNESS, 180, 0)
+                new MobEffectInstance(MobEffects.POISON, 90, 0)
         );
     }
 

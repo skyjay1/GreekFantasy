@@ -66,7 +66,7 @@ public class Harpy extends Monster implements FlyingAnimal {
                 .add(Attributes.MAX_HEALTH, 24.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.22D)
                 .add(Attributes.ATTACK_DAMAGE, 3.0D)
-                .add(Attributes.FLYING_SPEED, 1.29D)
+                .add(Attributes.FLYING_SPEED, 1.875D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.32D);
     }
 

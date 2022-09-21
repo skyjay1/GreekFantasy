@@ -1,5 +1,6 @@
 package greekfantasy.item;
 
+import greekfantasy.GreekFantasy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -49,7 +50,13 @@ public class ConchItem extends Item {
                 } else {
                     takeWater(level, hitBlock, hitFluid, hitPos, player, item);
                 }
+                // add cooldown
                 player.getCooldowns().addCooldown(this, 10);
+                // item damage
+                int damage = GreekFantasy.CONFIG.CONCH_DAMAGE_ON_USE.get();
+                if(!player.isCreative() && damage > 0) {
+                    item.hurtAndBreak(damage, player, e -> e.broadcastBreakEvent(handIn));
+                }
                 return InteractionResultHolder.success(item);
             }
         }

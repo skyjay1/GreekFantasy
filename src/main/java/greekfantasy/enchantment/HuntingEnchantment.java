@@ -53,7 +53,7 @@ public class HuntingEnchantment extends Enchantment {
 
     @Override
     public boolean isTradeable() {
-        return GreekFantasy.CONFIG.HUNTING_ENABLED.get();
+        return GreekFantasy.CONFIG.HUNTING_TRADEABLE.get();
     }
 
     @Override

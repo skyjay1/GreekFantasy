@@ -23,6 +23,7 @@ public class GFConfig {
     // items
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_COOLDOWN;
+    public final ForgeConfigSpec.IntValue CONCH_DAMAGE_ON_USE;
     public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_COUNT;
     public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_LIFESPAN;
     public final ForgeConfigSpec.IntValue STAFF_OF_HEALING_COOLDOWN;
@@ -39,24 +40,31 @@ public class GFConfig {
 
     // enchantments
     public final ForgeConfigSpec.BooleanValue BANE_OF_SERPENTS_ENABLED;
+    public final ForgeConfigSpec.BooleanValue BANE_OF_SERPENTS_TRADEABLE;
     public final ForgeConfigSpec.BooleanValue DAYBREAK_ENABLED;
     public final ForgeConfigSpec.BooleanValue FIREFLASH_ENABLED;
     public final ForgeConfigSpec.BooleanValue FIREFLASH_DESTROYS_BLOCKS;
     private final ForgeConfigSpec.BooleanValue FLYING_ENABLED;
     private boolean isFlyingEnabled;
     public final ForgeConfigSpec.BooleanValue HUNTING_ENABLED;
+    public final ForgeConfigSpec.BooleanValue HUNTING_TRADEABLE;
     public final ForgeConfigSpec.BooleanValue LORD_OF_THE_SEA_ENABLED;
     public final ForgeConfigSpec.IntValue LORD_OF_THE_SEA_WHIRL_LIFESPAN;
     private final ForgeConfigSpec.BooleanValue MIRRORING_ENCHANTMENT_ENABLED;
+    public final ForgeConfigSpec.BooleanValue MIRRORING_TRADEABLE;
     private boolean isMirroringEnchantmentEnabled;
     public final ForgeConfigSpec.BooleanValue SMASHING_NERF;
+    public final ForgeConfigSpec.BooleanValue SMASHING_TRADEABLE;
     private final ForgeConfigSpec.BooleanValue OVERSTEP_ENABLED;
+    public final ForgeConfigSpec.BooleanValue OVERSTEP_TRADEABLE;
     private boolean isOverstepEnabled;
     private final ForgeConfigSpec.BooleanValue POISONING_ENABLED;
+    public final ForgeConfigSpec.BooleanValue POISONING_TRADEABLE;
     private boolean isPoisoningEnabled;
     public final ForgeConfigSpec.BooleanValue RAISING_ENABLED;
     public final ForgeConfigSpec.IntValue RAISING_SPARTI_LIFESPAN;
     private final ForgeConfigSpec.BooleanValue SILKSTEP_ENABLED;
+    public final ForgeConfigSpec.BooleanValue SILKSTEP_TRADEABLE;
     private boolean isSilkstepEnabled;
 
     // entity
@@ -153,6 +161,7 @@ public class GFConfig {
         builder.push("items");
         BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
         BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 12000);
+        CONCH_DAMAGE_ON_USE = builder.defineInRange("conch_damage_on_use", 0, 0, 64);
         HELM_HIDES_ARMOR = builder.define("helm_hides_armor", true);
         DRAGON_TOOTH_SPARTI_COUNT = builder.defineInRange("dragon_tooth_sparti_count", 1, 0, 8);
         DRAGON_TOOTH_SPARTI_LIFESPAN = builder.defineInRange("dragon_tooth_sparti_lifespan", 300, 1, 24000);
@@ -169,22 +178,29 @@ public class GFConfig {
 
         builder.push("enchantments");
         BANE_OF_SERPENTS_ENABLED = builder.define("bane_of_serpents_enabled", true);
+        BANE_OF_SERPENTS_TRADEABLE = builder.define("bane_of_serpents_tradeable_by_villagers", true);
         DAYBREAK_ENABLED = builder.define("daybreak_enabled", true);
         FIREFLASH_ENABLED = builder.define("fireflash_enabled", true);
         FIREFLASH_DESTROYS_BLOCKS = builder.define("fireflash_destroys_blocks", true);
         FLYING_ENABLED = builder.define("flying_enabled", true);
         HUNTING_ENABLED = builder.define("hunting_enabled", true);
+        HUNTING_TRADEABLE = builder.define("hunting_tradeable_by_villagers", true);
         LORD_OF_THE_SEA_ENABLED = builder.define("lord_of_the_sea_enabled", true);
         LORD_OF_THE_SEA_WHIRL_LIFESPAN = builder.defineInRange("lord_of_the_sea_whirl_lifespan", 60, 1, 1200);
         MIRRORING_ENCHANTMENT_ENABLED = builder.define("mirroring_enabled", true);
+        MIRRORING_TRADEABLE = builder.define("mirroring_tradeable_by_villagers", true);
         SMASHING_NERF = builder
                 .comment("When true, Smashing applies slowness instead of stunning")
                 .define("smashing_nerf", false);
+        SMASHING_TRADEABLE = builder.define("smashing_tradeable_by_villagers", false);
         OVERSTEP_ENABLED = builder.define("overstep_enabled", true);
+        OVERSTEP_TRADEABLE = builder.define("overstep_tradeable_by_villagers", true);
         POISONING_ENABLED = builder.define("poisoning_enabled", true);
+        POISONING_TRADEABLE = builder.define("poisoning_tradeable_by_villagers", false);
         RAISING_ENABLED = builder.define("raising_enabled", true);
         RAISING_SPARTI_LIFESPAN = builder.defineInRange("raising_sparti_lifespan", 120, 1, 1200);
         SILKSTEP_ENABLED = builder.define("silkstep_enabled", true);
+        SILKSTEP_TRADEABLE = builder.define("silkstep_tradeable_by_villagers", false);
         builder.pop();
 
         builder.push("mobs");

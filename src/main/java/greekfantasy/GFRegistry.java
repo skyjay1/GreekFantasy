@@ -60,6 +60,7 @@ import greekfantasy.entity.misc.Curse;
 import greekfantasy.entity.misc.CurseOfCirce;
 import greekfantasy.entity.misc.Discus;
 import greekfantasy.entity.misc.DragonTooth;
+import greekfantasy.entity.misc.DragonToothHook;
 import greekfantasy.entity.misc.GreekFire;
 import greekfantasy.entity.misc.HealingSpell;
 import greekfantasy.entity.misc.PoisonSpit;
@@ -89,6 +90,7 @@ import greekfantasy.item.BronzeScrapItem;
 import greekfantasy.item.CerberusHeadItem;
 import greekfantasy.item.ClubItem;
 import greekfantasy.item.ConchItem;
+import greekfantasy.item.DragonToothRodItem;
 import greekfantasy.item.EnchantedBowItem;
 import greekfantasy.item.GiganteHeadItem;
 import greekfantasy.item.GreekFireItem;
@@ -697,14 +699,14 @@ public final class GFRegistry {
                 new IvorySwordItem(GFTiers.IVORY, 3, -2.2F, new Item.Properties().tab(GF_TAB).stacksTo(1)));
         public static final RegistryObject<Item> THROWING_AXE = ITEMS.register("throwing_axe", () ->
                 new ThrowingAxeItem(Tiers.IRON, 6.0F, -3.1F, new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> DRAGON_TOOTH_ROD = ITEMS.register("dragon_tooth_rod", () ->
+                new DragonToothRodItem(new Item.Properties().tab(GF_TAB).durability(128)));
         public static final RegistryObject<Item> DISCUS = ITEMS.register("discus", () ->
                 new DiscusItem(new Item.Properties().tab(GF_TAB).stacksTo(16)));
         public static final RegistryObject<Item> GREEK_FIRE = ITEMS.register("greek_fire", () ->
                 new GreekFireItem(new Item.Properties().tab(GF_TAB).stacksTo(16)));
         public static final RegistryObject<Item> WEB_BALL = ITEMS.register("web_ball", () ->
                 new WebBallItem(new Item.Properties().tab(GF_TAB).stacksTo(16)));
-        public static final RegistryObject<Item> THYRSUS = ITEMS.register("thyrsus", () ->
-                new ThyrsusItem(GFTiers.THYRSUS, 2.5F, -2.2F, new Item.Properties().tab(GF_TAB)));
 
         //// LEGENDARY TOOLS AND ITEMS ////
         public static final RegistryObject<Item> BRONZE_FEATHER = ITEMS.register("bronze_feather", () ->
@@ -714,7 +716,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> MIRROR = ITEMS.register("mirror", () ->
                 new Item(new Item.Properties().tab(GF_TAB).stacksTo(1)));
         public static final RegistryObject<Item> CONCH = ITEMS.register("conch", () ->
-                new ConchItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(1)));
+                new ConchItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).defaultDurability(64)));
         public static final RegistryObject<Item> UNICORN_HORN = ITEMS.register("unicorn_horn", () ->
                 new UnicornHornItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).durability(44)));
         public static final RegistryObject<Item> HEART_OF_TALOS = ITEMS.register("heart_of_talos", () ->
@@ -723,6 +725,8 @@ public final class GFRegistry {
                 new BagOfWindItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).durability(24)));
         public static final RegistryObject<Item> STAFF_OF_HEALING = ITEMS.register("staff_of_healing", () ->
                 new StaffOfHealingItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).durability(384)));
+        public static final RegistryObject<Item> THYRSUS = ITEMS.register("thyrsus", () ->
+                new ThyrsusItem(GFTiers.THYRSUS, 2.5F, -2.2F, new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> AMBROSIA = ITEMS.register("ambrosia", () ->
                 new HasCraftRemainderItem(ItemReg.HORN, new Item.Properties().tab(GF_TAB).food(AMBROSIA_FOOD).rarity(Rarity.EPIC)));
         public static final RegistryObject<Item> HORN_OF_PLENTY = ITEMS.register("horn_of_plenty", () ->
@@ -788,19 +792,6 @@ public final class GFRegistry {
                 new Item(new Item.Properties().tab(GF_TAB).food(POMEGRANATE_FOOD)));
 
         //// CRAFTING MATERIALS ////
-        public static final RegistryObject<Item> BRONZE_INGOT = ITEMS.register("bronze_ingot", () -> new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> BRONZE_NUGGET = ITEMS.register("bronze_nugget", () -> new Item(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> BRONZE_BOWL = ITEMS.register("bronze_bowl", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> BRONZE_COINS = ITEMS.register("bronze_coins", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> BRONZE_CUIRASS = ITEMS.register("bronze_cuirass", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> BRONZE_FIGURINE = ITEMS.register("bronze_figurine", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> BRONZE_GOBLET = ITEMS.register("bronze_goblet", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> BRONZE_HELMET = ITEMS.register("bronze_helmet", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> BRONZE_SHIELD = ITEMS.register("bronze_shield", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> BRONZE_VASE = ITEMS.register("bronze_vase", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> REEDS = ITEMS.register("reeds", () -> new BlockItem(BlockReg.REEDS.get(), new Item.Properties().tab(GF_TAB)));
-        public static final RegistryObject<Item> PINECONE = ITEMS.register("pinecone", () -> new Item(new Item.Properties().tab(GF_TAB).food(PINECONE_FOOD)));
-        public static final RegistryObject<Item> HORN = ITEMS.register("horn", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> AVERNAL_FEATHER = ITEMS.register("avernal_feather", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> AVERNAL_HAIR = ITEMS.register("avernal_hair", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> AVERNAL_WING = ITEMS.register("avernal_wing", () -> new Item(new Item.Properties().tab(GF_TAB)));
@@ -812,10 +803,25 @@ public final class GFRegistry {
         public static final RegistryObject<Item> GORGON_BLOOD = ITEMS.register("gorgon_blood", () -> new GorgonBloodItem(new Item.Properties().tab(GF_TAB).stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
         public static final RegistryObject<Item> BOAR_EAR = ITEMS.register("boar_ear", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> BOAR_TUSK = ITEMS.register("boar_tusk", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> DEADLY_FANG = ITEMS.register("deadly_fang", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> GOLDEN_BRIDLE = ITEMS.register("golden_bridle", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> HORN = ITEMS.register("horn", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> PINECONE = ITEMS.register("pinecone", () -> new Item(new Item.Properties().tab(GF_TAB).food(PINECONE_FOOD)));
+        public static final RegistryObject<Item> REEDS = ITEMS.register("reeds", () -> new BlockItem(BlockReg.REEDS.get(), new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> SCYLLA_BONE = ITEMS.register("scylla_bone", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> SNAKESKIN = ITEMS.register("snakeskin", () -> new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> TOUGH_SNAKESKIN = ITEMS.register("tough_snakeskin", () -> new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON)));
-        public static final RegistryObject<Item> DEADLY_FANG = ITEMS.register("deadly_fang", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        //// BRONZE SCRAP ////
+        public static final RegistryObject<Item> BRONZE_INGOT = ITEMS.register("bronze_ingot", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_NUGGET = ITEMS.register("bronze_nugget", () -> new Item(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_BOWL = ITEMS.register("bronze_bowl", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_COINS = ITEMS.register("bronze_coins", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_CUIRASS = ITEMS.register("bronze_cuirass", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_FIGURINE = ITEMS.register("bronze_figurine", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_GOBLET = ITEMS.register("bronze_goblet", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_HELMET = ITEMS.register("bronze_helmet", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_SHIELD = ITEMS.register("bronze_shield", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
+        public static final RegistryObject<Item> BRONZE_VASE = ITEMS.register("bronze_vase", () -> new BronzeScrapItem(new Item.Properties().tab(GF_TAB)));
 
         //// SPAWN EGGS ////
         public static final RegistryObject<Item> ARA_SPAWN_EGG = ITEMS.register("ara_spawn_egg", () ->
@@ -1132,6 +1138,10 @@ public final class GFRegistry {
                 EntityType.Builder.of(Drakaina::new, MobCategory.MONSTER)
                         .sized(0.9F, 1.9F)
                         .build("drakaina"));
+        public static final RegistryObject<EntityType<? extends DragonToothHook>> DRAGON_TOOTH_HOOK = ENTITY_TYPES.register("dragon_tooth_hook", () ->
+                EntityType.Builder.<DragonToothHook>of(DragonToothHook::new, MobCategory.MISC)
+                        .noSave().noSummon().sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(5)
+                        .build("dragon_tooth_hook"));
         public static final RegistryObject<EntityType<? extends Dryad>> DRYAD = ENTITY_TYPES.register("dryad", () ->
                 EntityType.Builder.of(Dryad::new, MobCategory.CREATURE)
                         .sized(0.48F, 1.8F)
