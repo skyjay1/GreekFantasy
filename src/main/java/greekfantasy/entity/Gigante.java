@@ -198,6 +198,11 @@ public class Gigante extends PathfinderMob implements NeutralMob {
     public boolean canBeLeashed(Player player) {
         return false;
     }
+	
+	@Override
+    public boolean removeWhenFarAway(double dis) {
+        return false;
+    }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {

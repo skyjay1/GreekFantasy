@@ -44,7 +44,6 @@ public class WingedSandalsItem extends ArmorItem {
     public WingedSandalsItem(final ArmorMaterial armorMaterial, Properties builderIn) {
         super(armorMaterial, EquipmentSlot.FEET, builderIn);
         final double speedBonus = 1.5F;
-        final double stepHeightBonus = 0.62F;
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
         builder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.FEET));
         builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(SPEED_MODIFIER, "Armor speed modifier", speedBonus, AttributeModifier.Operation.MULTIPLY_TOTAL));
@@ -59,7 +58,7 @@ public class WingedSandalsItem extends ArmorItem {
             stack.enchant(GFRegistry.EnchantmentReg.OVERSTEP.get(), 1);
         }
         // add mob effects
-        if (entity instanceof LivingEntity livingEntity && itemSlot == EquipmentSlot.FEET.getIndex() && stack.getMaxDamage() - stack.getDamageValue() > BROKEN) {
+        if (entity instanceof LivingEntity livingEntity && livingEntity.getItemBySlot(EquipmentSlot.FEET).is(this) && stack.getMaxDamage() - stack.getDamageValue() > BROKEN) {
             livingEntity.addEffect(new MobEffectInstance(MobEffects.JUMP, 30, 4, false, false, false));
             livingEntity.fallDistance = 0;
             // damage the item

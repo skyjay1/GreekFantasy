@@ -32,7 +32,6 @@ public class ReplaceDropsLootModifier extends LootModifier {
     @Nonnull
     @Override
     protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
-        GreekFantasy.LOGGER.debug("replacedrops for " + itemStack.getDisplayName() + " replace=" + doReplace);
         // ensure item stack was parsed correctly
         if (itemStack.isEmpty()) {
             return generatedLoot;

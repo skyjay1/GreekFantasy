@@ -75,7 +75,9 @@ public class DragonToothRodItem extends FishingRodItem {
 
     @Override
     public void onCraftedBy(ItemStack stack, Level level, Player playerIn) {
-        stack.enchant(FISHING_LUCK, FISHING_LUCK_LEVEL);
+        if(EnchantmentHelper.getItemEnchantmentLevel(FISHING_LUCK, stack) < FISHING_LUCK_LEVEL) {
+            stack.enchant(FISHING_LUCK, FISHING_LUCK_LEVEL);
+        }
     }
 
     @Override
