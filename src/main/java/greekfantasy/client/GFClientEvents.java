@@ -26,6 +26,7 @@ import greekfantasy.client.entity.CirceRenderer;
 import greekfantasy.client.entity.CretanMinotaurRenderer;
 import greekfantasy.client.entity.CyclopsRenderer;
 import greekfantasy.client.entity.CyprianRenderer;
+import greekfantasy.client.entity.DragonToothHookRenderer;
 import greekfantasy.client.entity.DrakainaRenderer;
 import greekfantasy.client.entity.DryadRenderer;
 import greekfantasy.client.entity.ElpisRenderer;
@@ -51,6 +52,7 @@ import greekfantasy.client.entity.PalladiumRenderer;
 import greekfantasy.client.entity.PegasusRenderer;
 import greekfantasy.client.entity.PythonRenderer;
 import greekfantasy.client.entity.SatyrRenderer;
+import greekfantasy.client.entity.ScyllaRenderer;
 import greekfantasy.client.entity.ShadeRenderer;
 import greekfantasy.client.entity.SirenRenderer;
 import greekfantasy.client.entity.SpartiRenderer;
@@ -58,6 +60,7 @@ import greekfantasy.client.entity.SpearRenderer;
 import greekfantasy.client.entity.SpellRenderer;
 import greekfantasy.client.entity.StymphalianRenderer;
 import greekfantasy.client.entity.TalosRenderer;
+import greekfantasy.client.entity.TritonRenderer;
 import greekfantasy.client.entity.UnicornRenderer;
 import greekfantasy.client.entity.WhirlRenderer;
 import greekfantasy.client.entity.layer.NemeanLionHideLayer;
@@ -94,12 +97,14 @@ import greekfantasy.client.entity.model.PalladiumModel;
 import greekfantasy.client.entity.model.PegasusModel;
 import greekfantasy.client.entity.model.PythonModel;
 import greekfantasy.client.entity.model.SatyrModel;
+import greekfantasy.client.entity.model.ScyllaModel;
 import greekfantasy.client.entity.model.ShadeModel;
 import greekfantasy.client.entity.model.SirenModel;
 import greekfantasy.client.entity.model.SpearModel;
 import greekfantasy.client.entity.model.SpellModel;
 import greekfantasy.client.entity.model.AutomatonModel;
 import greekfantasy.client.entity.model.StymphalianModel;
+import greekfantasy.client.entity.model.TritonModel;
 import greekfantasy.client.entity.model.UnicornModel;
 import greekfantasy.client.particle.GorgonParticle;
 import greekfantasy.entity.Pegasus;
@@ -108,8 +113,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.TridentModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -118,6 +121,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -239,7 +244,7 @@ public final class GFClientEvents {
                 ItemStack feet = player.getItemBySlot(EquipmentSlot.FEET);
                 // check if the player is wearing an item with overstep enchantment in feet slot
                 final boolean hasOverstep = !feet.isEmpty() && feet.isDamageableItem() && feet.getMaxDamage() - feet.getDamageValue() > WingedSandalsItem.BROKEN
-                        && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.OVERSTEP.get(), feet) > 0;
+                        && feet.getEnchantmentLevel(GFRegistry.EnchantmentReg.OVERSTEP.get()) > 0;
                 // if the player has overstep and is not sneaking, disable autojump
                 if (hasOverstep && !player.isCrouching() && player.isAutoJumpEnabled()) {
                     // use Access Transformers to use/modify this field directly
@@ -322,9 +327,11 @@ public final class GFClientEvents {
             event.registerLayerDefinition(PythonModel.PYTHON_MODEL_RESOURCE, PythonModel::createBodyLayer);
             event.registerLayerDefinition(SatyrModel.SATYR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(CubeDeformation.NONE));
             event.registerLayerDefinition(SatyrModel.SATYR_INNER_ARMOR_MODEL_RESOURCE, () -> SatyrModel.createBodyLayer(new CubeDeformation(0.25F)));
+            event.registerLayerDefinition(ScyllaModel.SCYLLA_MODEL_RESOURCE, ScyllaModel::createBodyLayer);
             event.registerLayerDefinition(ShadeModel.SHADE_MODEL_RESOURCE, ShadeModel::createBodyLayer);
             event.registerLayerDefinition(SirenModel.SIREN_MODEL_RESOURCE, SirenModel::createBodyLayer);
             event.registerLayerDefinition(StymphalianModel.STYMPHALIAN_MODEL_RESOURCE, StymphalianModel::createBodyLayer);
+            event.registerLayerDefinition(TritonModel.TRITON_MODEL_RESOURCE, TritonModel::createBodyLayer);
             event.registerLayerDefinition(UnicornModel.UNICORN_MODEL_RESOURCE, UnicornModel::createBodyLayer);
             // other
             event.registerLayerDefinition(CerberusHeadModel.CERBERUS_HEAD_MODEL_RESOURCE, CerberusHeadModel::createLayer);
@@ -375,11 +382,13 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.PEGASUS.get(), PegasusRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.PYTHON.get(), PythonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SATYR.get(), SatyrRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.SCYLLA.get(), ScyllaRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPARTI.get(), SpartiRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SHADE.get(), ShadeRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SIREN.get(), SirenRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.STYMPHALIAN.get(), StymphalianRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.TALOS.get(), TalosRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.TRITON.get(), TritonRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.UNICORN.get(), UnicornRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.WHIRL.get(), WhirlRenderer::new);
             // other
@@ -388,12 +397,14 @@ public final class GFClientEvents {
             event.registerEntityRenderer(GFRegistry.EntityReg.CURSE_OF_CIRCE.get(), SpellRenderer.CurseOfCirceRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DISCUS.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.DRAGON_TOOTH.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.DRAGON_TOOTH_HOOK.get(), DragonToothHookRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.GREEK_FIRE.get(), ThrownItemRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.HEALING_SPELL.get(), SpellRenderer.HealingSpellRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.PALLADIUM.get(), PalladiumRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.POISON_SPIT.get(), SpellRenderer.PoisonSpitRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.SPEAR.get(), SpearRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.THROWING_AXE.get(), ThrownItemRenderer::new);
+            event.registerEntityRenderer(GFRegistry.EntityReg.WATER_SPELL.get(), SpellRenderer.WaterSpellRenderer::new);
             event.registerEntityRenderer(GFRegistry.EntityReg.WEB_BALL.get(), ThrownItemRenderer::new);
             // register block entities
             event.registerBlockEntityRenderer(GFRegistry.BlockEntityReg.CERBERUS_HEAD.get(), CerberusHeadBlockEntityRenderer::new);
@@ -459,6 +470,8 @@ public final class GFClientEvents {
             registerSpearProperties(GFRegistry.ItemReg.IRON_SPEAR.get());
             registerSpearProperties(GFRegistry.ItemReg.DIAMOND_SPEAR.get());
             registerSpearProperties(GFRegistry.ItemReg.NETHERITE_SPEAR.get());
+            // register rods
+            registerFishingRodProperties(GFRegistry.ItemReg.DRAGON_TOOTH_ROD.get());
         }
 
         private static void registerUsingProperties(final Item usingItem, final String propertyName) {
@@ -475,6 +488,22 @@ public final class GFClientEvents {
                     });
             ItemProperties.register(bow, new ResourceLocation("pulling"),
                     (item, world, entity, tintIndex) -> (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
+        }
+
+        private static void registerFishingRodProperties(final Item rod) {
+            ItemProperties.register(rod, new ResourceLocation("cast"), (item, level, entity, tintIndex) -> {
+                if (entity == null) {
+                    return 0.0F;
+                } else {
+                    boolean isMainhand = entity.getMainHandItem() == item;
+                    boolean isOffhand = entity.getOffhandItem() == item;
+                    if (entity.getMainHandItem().getItem() instanceof FishingRodItem) {
+                        isOffhand = false;
+                    }
+
+                    return (isMainhand || isOffhand) && entity instanceof Player && ((Player)entity).fishing != null ? 1.0F : 0.0F;
+                }
+            });
         }
 
         private static void registerSpearProperties(final Item spear) {

@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -136,7 +137,8 @@ public class Sparti extends TamableAnimal implements RangedAttackMob {
         }
     }
 
-    public void setEquipmentOnSpawn() {
+    @Override
+    public void populateDefaultEquipmentSlots(RandomSource random, final DifficultyInstance difficulty) {
         this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
         this.setDropChance(EquipmentSlot.MAINHAND, 0);
     }
@@ -145,7 +147,7 @@ public class Sparti extends TamableAnimal implements RangedAttackMob {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         final SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnDataIn, dataTag);
-        setEquipmentOnSpawn();
+        populateDefaultEquipmentSlots(level.getRandom(), difficulty);
         setBaby(false);
         return data;
     }
@@ -273,7 +275,7 @@ public class Sparti extends TamableAnimal implements RangedAttackMob {
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        if(compound.getBoolean(KEY_SPAWN_TIME)) {
+        if (compound.getBoolean(KEY_SPAWN_TIME)) {
             setSpawning();
         }
         if (compound.contains(KEY_LIFE_TICKS)) {

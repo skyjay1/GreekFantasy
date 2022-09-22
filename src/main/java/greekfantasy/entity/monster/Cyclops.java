@@ -1,8 +1,11 @@
 package greekfantasy.entity.monster;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.item.ClubItem;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -22,12 +25,12 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -63,9 +66,10 @@ public class Cyclops extends Monster {
             return !entity.isSpectator() && entity.hasCustomName() && "Nobody".equals(entity.getCustomName().getString());
         }));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 4, 8, 4, new ResourceLocation(GreekFantasy.MODID, "cyclops_cave"), DefaultRandomPos::getPos));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
@@ -80,7 +84,7 @@ public class Cyclops extends Monster {
     protected void dropEquipment() {
         // damage held equipment before dropping it
         ItemStack mainhand = this.getMainHandItem();
-        if(mainhand.isDamageableItem()) {
+        if (mainhand.isDamageableItem()) {
             // set item damage to some value between 30% and 50%
             int damage = Mth.floor((0.30F + 0.20F * random.nextFloat()) * mainhand.getMaxDamage());
             mainhand.setDamageValue(damage);
@@ -91,12 +95,12 @@ public class Cyclops extends Monster {
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
         // note: do not call super method because this entity cannot wear armor
-        if (this.random.nextBoolean()) {
+        if (random.nextBoolean()) {
             // determine club type
-            Item club = this.random.nextBoolean() ? GFRegistry.ItemReg.STONE_CLUB.get() : GFRegistry.ItemReg.WOODEN_CLUB.get();
+            Item club = random.nextBoolean() ? GFRegistry.ItemReg.STONE_CLUB.get() : GFRegistry.ItemReg.WOODEN_CLUB.get();
             ItemStack itemStack = new ItemStack(club);
             // randomly enchant club
-            if(this.random.nextFloat() < 0.10F * difficulty.getSpecialMultiplier()) {
+            if (random.nextFloat() < 0.10F * difficulty.getSpecialMultiplier()) {
                 itemStack.enchant(Enchantments.KNOCKBACK, 1);
             }
             // update held item and drop chance

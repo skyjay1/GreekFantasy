@@ -15,11 +15,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
@@ -32,13 +34,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -54,12 +54,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 
 public class Geryon extends Monster implements HasCustomCooldown {
+
+    private static final TagKey<EntityType<?>> BOSSES = ForgeRegistries.ENTITY_TYPES.tags().createTagKey(new ResourceLocation("forge", "bosses"));
 
     private static final EntityDataAccessor<Byte> STATE = SynchedEntityData.defineId(Geryon.class, EntityDataSerializers.BYTE);
     private static final String KEY_STATE = "GeryonState";
@@ -138,7 +141,7 @@ public class Geryon extends Monster implements HasCustomCooldown {
             CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
         }
         // play sound
-        level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
+        entity.playSound(SoundEvents.WITHER_SPAWN, 1.2F, 1.0F);
         return entity;
     }
 
@@ -206,13 +209,13 @@ public class Geryon extends Monster implements HasCustomCooldown {
     public void tick() {
         super.tick();
 
-        if(this.level.isClientSide()) {
+        if (this.level.isClientSide()) {
             // add motion particles
             if (this.getDeltaMovement().horizontalDistanceSqr() > (double) 2.5000003E-7F && this.random.nextInt(5) == 0) {
                 addBlockParticles(2);
             }
             // add spawning particles
-            if(this.isSpawning()) {
+            if (this.isSpawning()) {
                 addBlockParticles(10);
             }
         }
@@ -271,7 +274,7 @@ public class Geryon extends Monster implements HasCustomCooldown {
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
         this.bossInfo.addPlayer(player);
-        if(this.hasCustomName()) {
+        if (this.hasCustomName()) {
             this.bossInfo.setName(this.getCustomName());
         }
     }
@@ -466,7 +469,7 @@ public class Geryon extends Monster implements HasCustomCooldown {
     }
 
     public float getSpawnPercent(final float partialTick) {
-        return 1.0F - (Mth.lerp(partialTick, Math.max(0.0F, spawnTime - 1), spawnTime) / (float)  MAX_SPAWN_TIME);
+        return 1.0F - (Mth.lerp(partialTick, Math.max(0.0F, spawnTime - 1), spawnTime) / (float) MAX_SPAWN_TIME);
     }
 
     public float getSummonPercent(final float partialTick) {
@@ -480,7 +483,8 @@ public class Geryon extends Monster implements HasCustomCooldown {
      * @return whether the given entity should not be affected by smash attack
      **/
     private boolean isExemptFromSmashAttack(final Entity entity) {
-        return !entity.canChangeDimensions() || entity.isNoGravity() || entity.getType() == this.getType()
+        return !entity.canChangeDimensions() || entity.getType().is(BOSSES)
+                || entity.isNoGravity() || entity.getType() == this.getType()
                 || entity.getType() == GFRegistry.EntityReg.MAD_COW.get() || entity.isSpectator()
                 || (entity instanceof Player player && player.isCreative());
     }

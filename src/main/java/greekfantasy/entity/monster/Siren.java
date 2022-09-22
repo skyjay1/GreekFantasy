@@ -3,14 +3,13 @@ package greekfantasy.entity.monster;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GoToWaterGoal;
-import greekfantasy.entity.ai.GFFloatGoal;
+import greekfantasy.entity.ai.WaterAnimalMoveControl;
 import greekfantasy.entity.boss.Charybdis;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -18,12 +17,10 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -40,7 +37,6 @@ import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
 import java.util.EnumSet;
@@ -56,7 +52,7 @@ public class Siren extends WaterAnimal implements Enemy {
 
     public Siren(final EntityType<? extends Siren> type, final Level worldIn) {
         super(type, worldIn);
-        this.moveControl = new SirenMoveControl(this);
+        this.moveControl = new WaterAnimalMoveControl(this);
         this.lookControl = new SmoothSwimmingLookControl(this, 10);
         this.swimmingDimensions = EntityDimensions.scalable(0.6F, 0.6F);
     }
@@ -109,7 +105,16 @@ public class Siren extends WaterAnimal implements Enemy {
     @Override
     public void tick() {
         super.tick();
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 0.0012D) {
+        boolean inWater = this.isInWaterRainOrBubble();
+        // random motion when not in water
+        if (!inWater && this.onGround) {
+            this.setDeltaMovement(this.getDeltaMovement().add((this.random.nextFloat() * 2.0F - 1.0F) * 0.2F, 0.5D, (this.random.nextFloat() * 2.0F - 1.0F) * 0.2F));
+            this.setYRot(this.random.nextFloat() * 360.0F);
+            this.onGround = false;
+            this.hasImpulse = true;
+        }
+        // update pose
+        if (!inWater || this.getDeltaMovement().horizontalDistanceSqr() > 0.0012D) {
             this.setPose(Pose.SWIMMING);
         } else if (this.getPose() == Pose.SWIMMING) {
             this.setPose(Pose.STANDING);
@@ -170,51 +175,6 @@ public class Siren extends WaterAnimal implements Enemy {
             }
         }
         return success;
-    }
-
-    // Move control
-
-    static class SirenMoveControl extends MoveControl {
-        private final Siren siren;
-
-        public SirenMoveControl(Siren entity) {
-            super(entity);
-            this.siren = entity;
-        }
-
-        public void tick() {
-            LivingEntity livingentity = this.siren.getTarget();
-            if (this.siren.isInWater()) {
-                if (livingentity != null && livingentity.getY() > this.siren.getY()) {
-                    this.siren.setDeltaMovement(this.siren.getDeltaMovement().add(0.0D, 0.02D, 0.0D));
-                }
-
-                if (this.operation != MoveControl.Operation.MOVE_TO || this.siren.getNavigation().isDone()) {
-                    this.siren.setSpeed(0.0F);
-                    this.siren.setDeltaMovement(this.siren.getDeltaMovement().multiply(1.0D, 0.5D, 1.0D));
-                    return;
-                }
-
-                double d0 = this.wantedX - this.siren.getX();
-                double d1 = this.wantedY - this.siren.getY();
-                double d2 = this.wantedZ - this.siren.getZ();
-                double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
-                d1 /= d3;
-                float f = (float) (Mth.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
-                this.siren.setYRot(this.rotlerp(this.siren.getYRot(), f, 90.0F));
-                this.siren.yBodyRot = this.siren.getYRot();
-                float f1 = (float) (this.speedModifier * this.siren.getAttributeValue(Attributes.MOVEMENT_SPEED));
-                float f2 = Mth.lerp(0.125F, this.siren.getSpeed(), f1);
-                this.siren.setSpeed(f2);
-                this.siren.setDeltaMovement(this.siren.getDeltaMovement().add((double) f2 * d0 * 0.03D, (double) f2 * d1 * 0.1D, (double) f2 * d2 * 0.03D));
-            } else {
-                if (!this.siren.onGround) {
-                    this.siren.setDeltaMovement(this.siren.getDeltaMovement().add(0.0D, -0.008D, 0.0D));
-                }
-
-                super.tick();
-            }
-        }
     }
 
     // Charm attack goal

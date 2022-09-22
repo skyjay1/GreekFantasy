@@ -13,6 +13,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -56,7 +57,7 @@ public class GorgonParticle extends Particle {
         MultiBufferSource.BufferSource multibuffersource$buffersource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer vertexconsumer = multibuffersource$buffersource.getBuffer(this.renderType);
         this.model.setupSnakeAnim(ageInTicks);
-        this.model.getHead().render(poseStack, vertexconsumer, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, this.alpha);
+        this.model.getHead().render(poseStack, vertexconsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, this.alpha);
         multibuffersource$buffersource.endBatch();
     }
 

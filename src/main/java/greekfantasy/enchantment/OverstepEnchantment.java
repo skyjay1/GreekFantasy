@@ -29,7 +29,7 @@ public class OverstepEnchantment extends Enchantment {
 
     @Override
     public boolean isTradeable() {
-        return false;
+        return GreekFantasy.CONFIG.OVERSTEP_TRADEABLE.get();
     }
 
     @Override

@@ -40,7 +40,7 @@ public class SnakeskinArmorItem extends ArmorItem {
     @Override
     public void onCraftedBy(ItemStack stack, Level worldIn, Player playerIn) {
         // add Poison enchantment if not present
-        if (GreekFantasy.CONFIG.isPoisoningEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.POISONING.get(), stack) < 1) {
+        if (GreekFantasy.CONFIG.isPoisoningEnabled() && stack.getEnchantmentLevel(GFRegistry.EnchantmentReg.POISONING.get()) < 1) {
             stack.enchant(GFRegistry.EnchantmentReg.POISONING.get(), 1);
         }
     }
@@ -58,7 +58,7 @@ public class SnakeskinArmorItem extends ArmorItem {
     public void inventoryTick(final ItemStack stack, final Level worldIn, final Entity entityIn,
                               final int itemSlot, final boolean isSelected) {
         // add Poison enchantment if not present
-        if (GreekFantasy.CONFIG.isPoisoningEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.POISONING.get(), stack) < 1) {
+        if (GreekFantasy.CONFIG.isPoisoningEnabled() && stack.getEnchantmentLevel(GFRegistry.EnchantmentReg.POISONING.get()) < 1) {
             stack.enchant(GFRegistry.EnchantmentReg.POISONING.get(), 1);
         }
     }

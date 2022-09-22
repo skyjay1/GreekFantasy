@@ -3,9 +3,12 @@ package greekfantasy.enchantment;
 import greekfantasy.GreekFantasy;
 import greekfantasy.item.KnifeItem;
 import greekfantasy.item.SpearItem;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
@@ -14,8 +17,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class HuntingEnchantment extends Enchantment {
+
+    private static final TagKey<EntityType<?>> BOSSES = ForgeRegistries.ENTITY_TYPES.tags().createTagKey(new ResourceLocation("forge", "bosses"));
 
     public HuntingEnchantment(final Enchantment.Rarity rarity) {
         super(rarity, EnchantmentCategory.WEAPON, new EquipmentSlot[]{EquipmentSlot.MAINHAND});
@@ -26,7 +32,7 @@ public class HuntingEnchantment extends Enchantment {
         // check for cooldown
         final ItemStack item = user.getItemInHand(InteractionHand.MAIN_HAND);
         // if it's an animal, use high attack damage
-        if (target.canChangeDimensions() && target instanceof Animal animal
+        if (target.canChangeDimensions() && !target.getType().is(BOSSES) && target instanceof Animal animal
                 && user.getRandom().nextFloat() < 0.30F + 0.15F * level) {
             // determine damage amount
             float amount = Math.min(99.0F, (animal.getMaxHealth() + animal.getArmorValue()) * 1.25F);
@@ -53,7 +59,7 @@ public class HuntingEnchantment extends Enchantment {
 
     @Override
     public boolean isTradeable() {
-        return GreekFantasy.CONFIG.HUNTING_ENABLED.get();
+        return GreekFantasy.CONFIG.HUNTING_TRADEABLE.get();
     }
 
     @Override
@@ -70,7 +76,7 @@ public class HuntingEnchantment extends Enchantment {
     public boolean canApplyAtEnchantingTable(ItemStack stack) {
         return GreekFantasy.CONFIG.HUNTING_ENABLED.get()
                 && (stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem
-                    || stack.getItem() instanceof KnifeItem || stack.getItem() instanceof SpearItem)
+                || stack.getItem() instanceof KnifeItem || stack.getItem() instanceof SpearItem)
                 && super.canApplyAtEnchantingTable(stack);
     }
 }

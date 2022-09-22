@@ -6,6 +6,7 @@ import greekfantasy.client.entity.model.ShadeModel;
 import greekfantasy.entity.monster.Shade;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
@@ -31,7 +32,7 @@ public class ShadeRenderer<T extends Shade> extends HumanoidMobRenderer<T, Human
 
     @Override
     public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, 15728880);
+        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, LightTexture.FULL_BRIGHT);
     }
 
     @Override

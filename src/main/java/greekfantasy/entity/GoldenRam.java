@@ -66,7 +66,6 @@ public class GoldenRam extends Sheep implements NeutralMob {
         GoldenRam entity = GFRegistry.EntityReg.GOLDEN_RAM.get().create(level);
         entity.copyPosition(sheep);
         entity.yBodyRot = sheep.yBodyRot;
-        entity.finalizeSpawn(level, level.getCurrentDifficultyAt(sheep.blockPosition()), MobSpawnType.CONVERSION, null, null);
         if (sheep.hasCustomName()) {
             entity.setCustomName(sheep.getCustomName());
             entity.setCustomNameVisible(sheep.isCustomNameVisible());
@@ -74,7 +73,8 @@ public class GoldenRam extends Sheep implements NeutralMob {
         entity.setPersistenceRequired();
         entity.setPortalCooldown();
         entity.setAge(sheep.getAge());
-        level.addFreshEntity(entity);
+        level.addFreshEntityWithPassengers(entity);
+        entity.finalizeSpawn(level, level.getCurrentDifficultyAt(sheep.blockPosition()), MobSpawnType.CONVERSION, null, null);
         // remove the old entity
         sheep.discard();
         // give potion effects
@@ -82,7 +82,7 @@ public class GoldenRam extends Sheep implements NeutralMob {
         entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60));
         entity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 60));
         // play sound
-        level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.PLAYER_LEVELUP, entity.getSoundSource(), 1.0F, 1.0F, false);
+        entity.playSound(SoundEvents.PLAYER_LEVELUP, 1.2F, 1.0F);
         return entity;
     }
 

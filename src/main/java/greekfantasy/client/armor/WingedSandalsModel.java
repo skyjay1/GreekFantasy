@@ -1,7 +1,6 @@
 package greekfantasy.client.armor;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.systems.RenderSystem;
 import greekfantasy.GreekFantasy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -19,7 +18,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class WingedSandalsModel extends HumanoidModel<LivingEntity> {
 
-    public static final ModelLayerLocation WINGED_SANDALS_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "winged_sandals"), "winged_sandals");;
+    public static final ModelLayerLocation WINGED_SANDALS_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "winged_sandals"), "winged_sandals");
+    ;
 
     private final ModelPart leftLeg;
     private final ModelPart rightLeg;

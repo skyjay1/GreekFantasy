@@ -2,7 +2,6 @@ package greekfantasy.client.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import greekfantasy.GreekFantasy;
-import greekfantasy.client.entity.model.DrakainaModel;
 import greekfantasy.client.entity.model.PythonModel;
 import greekfantasy.entity.boss.Python;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

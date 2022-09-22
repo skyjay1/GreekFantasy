@@ -159,7 +159,7 @@ public class CretanMinotaur extends Minotaur implements RangedAttackMob {
         protected final CretanMinotaur entity;
 
         public MinotaurRangedAttackGoal(CretanMinotaur mob, int attackInterval, int count, int maxCooldown) {
-            super(mob, attackInterval, count, maxCooldown);
+            super(mob, attackInterval, count, maxCooldown, 12.0F);
             this.entity = mob;
         }
 

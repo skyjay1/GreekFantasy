@@ -231,7 +231,9 @@ public class Cerastes extends TamableAnimal {
         boolean hurt = super.hurt(source, amount);
         this.setHiding(false);
         this.setStanding(true);
-        if(hurt && source.getDirectEntity() instanceof Curse && this.level instanceof ServerLevel) {
+        this.setOrderedToSit(false);
+        this.setInSittingPose(false);
+        if (hurt && source.getDirectEntity() instanceof Curse && this.level instanceof ServerLevel) {
             // cause explosion and summon hydra
             level.explode(this, this.getX(), this.getY(), this.getZ(), 2.5F, Explosion.BlockInteraction.DESTROY);
             Hydra.spawnHydra((ServerLevel) this.level, this);
@@ -265,7 +267,7 @@ public class Cerastes extends TamableAnimal {
             if (entity instanceof LivingEntity livingEntity) {
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, 6 * 20, 0));
                 // chance to stun target
-                if(this.random.nextFloat() < 0.15D) {
+                if (this.random.nextFloat() < 0.15D) {
                     livingEntity.addEffect(new MobEffectInstance(GFRegistry.MobEffectReg.STUNNED.get(), 2 * 20, 0));
                 }
             }
@@ -332,7 +334,7 @@ public class Cerastes extends TamableAnimal {
                         itemstack.shrink(1);
                     }
 
-                    this.heal((float)itemstack.getFoodProperties(this).getNutrition());
+                    this.heal((float) itemstack.getFoodProperties(this).getNutrition());
                     this.gameEvent(GameEvent.ENTITY_INTERACT);
                     return InteractionResult.SUCCESS;
                 }
@@ -358,9 +360,9 @@ public class Cerastes extends TamableAnimal {
                     this.navigation.stop();
                     this.setTarget(null);
                     this.setOrderedToSit(true);
-                    this.level.broadcastEntityEvent(this, (byte)7);
+                    this.level.broadcastEntityEvent(this, (byte) 7);
                 } else {
-                    this.level.broadcastEntityEvent(this, (byte)6);
+                    this.level.broadcastEntityEvent(this, (byte) 6);
                 }
 
                 return InteractionResult.SUCCESS;
@@ -377,7 +379,7 @@ public class Cerastes extends TamableAnimal {
         if (standing) {
             this.isHiding = false;
         }
-        if(!level.isClientSide()) {
+        if (!level.isClientSide()) {
             this.level.broadcastEntityEvent(this, standing ? STANDING_START_EVENT : STANDING_END_EVENT);
         }
     }

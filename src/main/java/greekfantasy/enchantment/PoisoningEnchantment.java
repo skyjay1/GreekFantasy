@@ -72,7 +72,7 @@ public class PoisoningEnchantment extends Enchantment {
 
     @Override
     public boolean isTradeable() {
-        return false;
+        return GreekFantasy.CONFIG.POISONING_TRADEABLE.get();
     }
 
     @Override

@@ -137,7 +137,7 @@ public class MysteriousBoxBlock extends HorizontalDirectionalBlock implements Si
     public boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player) {
         // block can be harvested when using correct tool AND (open OR silk touch)
         // this is necessary so that onDestroyedByPlayer has the correct value for willHarvest
-        return super.canHarvestBlock(state, level, pos, player) && (state.getValue(OPEN) || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getInventory().getSelected()) > 0);
+        return super.canHarvestBlock(state, level, pos, player) && (state.getValue(OPEN) || player.getInventory().getSelected().getEnchantmentLevel(Enchantments.SILK_TOUCH) > 0);
     }
 
     @Override

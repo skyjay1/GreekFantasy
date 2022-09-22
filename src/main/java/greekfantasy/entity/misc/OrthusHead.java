@@ -1,7 +1,6 @@
 package greekfantasy.entity.misc;
 
 import greekfantasy.util.SummonBossUtil;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;

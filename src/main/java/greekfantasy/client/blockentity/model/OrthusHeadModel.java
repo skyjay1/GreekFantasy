@@ -8,9 +8,6 @@ import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
@@ -32,7 +29,7 @@ public class OrthusHeadModel extends Model implements HeadedModel {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
-         GFModelUtil.addOrReplaceOrthusHead(partdefinition, "head", 0.0F);
+        GFModelUtil.addOrReplaceOrthusHead(partdefinition, "head", 0.0F);
 
         return LayerDefinition.create(meshdefinition, 64, 32);
     }

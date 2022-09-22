@@ -1,6 +1,5 @@
 package greekfantasy.entity.monster;
 
-import greekfantasy.GreekFantasy;
 import greekfantasy.entity.Elpis;
 import greekfantasy.entity.ai.IntervalRangedAttackGoal;
 import greekfantasy.entity.misc.Curse;
@@ -63,7 +62,7 @@ public class Fury extends Monster implements FlyingAnimal, RangedAttackMob {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new IntervalRangedAttackGoal<>(this, 90, 2, 200));
+        this.goalSelector.addGoal(1, new IntervalRangedAttackGoal<>(this, 90, 2, 200, 14.0F));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
         this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0D, 6.0F, 12.0F) {
             @Override
@@ -107,7 +106,7 @@ public class Fury extends Monster implements FlyingAnimal, RangedAttackMob {
     @Override
     public void tick() {
         super.tick();
-        if(this.level.isClientSide()) {
+        if (this.level.isClientSide()) {
             // update flying counter
             flyingTime0 = flyingTime;
             if (this.isFlying()) {

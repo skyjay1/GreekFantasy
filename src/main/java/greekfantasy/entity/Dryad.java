@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.FindBlockGoal;
+import greekfantasy.entity.ai.TradeWithPlayerGoal;
 import greekfantasy.entity.util.NymphVariant;
+import greekfantasy.entity.util.TradingMob;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,7 +16,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -29,7 +30,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.MoverType;
@@ -38,7 +38,6 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -49,7 +48,6 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
-import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -61,10 +59,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -75,14 +69,14 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class Dryad extends PathfinderMob implements NeutralMob {
+public class Dryad extends PathfinderMob implements NeutralMob, TradingMob {
 
     protected static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Dryad.class, EntityDataSerializers.STRING);
     protected static final String KEY_VARIANT = "Variant";
     protected static final String KEY_TREE_POS = "Tree";
     protected static final String KEY_HIDING = "HidingTime";
 
-    protected static final TagKey<Item> DRYAD_TRADES = ItemTags.create(new ResourceLocation(GreekFantasy.MODID, "dryad_trade"));
+    protected static final TagKey<Item> DRYAD_TRADE = ItemTags.create(new ResourceLocation(GreekFantasy.MODID, "dryad_trade"));
 
     private static final byte FINISH_TRADE_EVENT = 9;
 
@@ -114,7 +108,7 @@ public class Dryad extends PathfinderMob implements NeutralMob {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.1D, false));
-        this.goalSelector.addGoal(2, new Dryad.TradeGoal(50 + random.nextInt(20)));
+        this.goalSelector.addGoal(2, new TradeWithPlayerGoal<>(this, 50 + random.nextInt(20)));
         this.goalSelector.addGoal(3, new Dryad.FindTreeGoal(8, 28));
         this.goalSelector.addGoal(4, new Dryad.HideGoal(640));
         this.goalSelector.addGoal(5, new Dryad.GoToTreeGoal(0.9F, 320));
@@ -250,6 +244,11 @@ public class Dryad extends PathfinderMob implements NeutralMob {
         return this.getVariant().getDeathLootTable();
     }
 
+    @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
+    }
+
     // NeutralMob methods
 
     @Override
@@ -286,98 +285,39 @@ public class Dryad extends PathfinderMob implements NeutralMob {
 
     @Override
     protected InteractionResult mobInteract(final Player player, final InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        // check if the tradingPlayer is holding a trade item and the entity is not already trading
-        if (!this.level.isClientSide() && this.level instanceof ServerLevel && !this.isAggressive() && !isTrading()
-                && this.getMainHandItem().isEmpty() && !stack.isEmpty() && stack.is(getTradeTag())) {
-            // check if the tradingPlayer is eligible to trade
-            if (canPlayerTrade(player)) {
-                // initiate trading
-                this.setTradingPlayer(player);
-                // take the item from the tradingPlayer
-                this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(stack.getItem()));
-                if (!player.isCreative()) {
-                    stack.shrink(1);
-                }
-                player.setItemInHand(hand, stack);
-                return InteractionResult.CONSUME;
-            } else {
-                // spawn particles
-                ((ServerLevel) this.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, this.getX(), this.getEyeY(), this.getZ(), 4, 0, 0, 0, 0);
-            }
+        InteractionResult tradeResult = startTrading(this, player, hand);
+        if (tradeResult != InteractionResult.PASS) {
+            return tradeResult;
         }
-
-        return InteractionResult.sidedSuccess(!level.isClientSide());
+        return super.mobInteract(player, hand);
     }
 
-    /**
-     * @param player the player
-     * @return true if the given player is allowed to trade with this entity
-     */
-    public boolean canPlayerTrade(final Player player) {
-        return player != null && player != this.getTarget();
+    @Override
+    public Player getTradingPlayer() {
+        return tradingPlayer;
     }
 
+    @Override
     public void setTradingPlayer(@Nullable final Player player) {
         this.tradingPlayer = player;
-    }
-
-    public boolean isTrading() {
-        return this.tradingPlayer != null;
     }
 
     /**
      * @return an Item Tag of items to accept from the player while trading
      **/
+    @Override
     public TagKey<Item> getTradeTag() {
-        return DRYAD_TRADES;
+        return DRYAD_TRADE;
     }
 
+    @Override
     public ResourceLocation getTradeLootTable() {
         return this.getVariant().getTradeLootTable();
     }
 
-    protected List<ItemStack> getTradeResult(@Nullable final Player player, final ItemStack tradeItem) {
-        LootTable loottable = this.level.getServer().getLootTables().get(this.getTradeLootTable());
-        return loottable.getRandomItems(new LootContext.Builder((ServerLevel) this.level)
-                .withRandom(this.level.random)
-                .withParameter(LootContextParams.THIS_ENTITY, this)
-                .withParameter(LootContextParams.ORIGIN, this.position())
-                .withParameter(LootContextParams.TOOL, tradeItem)
-                .create(LootContextParamSets.PIGLIN_BARTER));
-    }
-
-    /**
-     * Performs a trade by depleting the tradeItem and creating a resultItem
-     *
-     * @param player    the player
-     * @param tradeItem the item offered by the player
-     */
-    public void trade(@Nullable final Player player, final ItemStack tradeItem) {
-        // determine target position
-        Vec3 tradeTarget;
-        if (player != null) {
-            tradeTarget = player.position();
-        } else {
-            tradeTarget = LandRandomPos.getPos(this, 4, 2);
-            if (null == tradeTarget) {
-                tradeTarget = Dryad.this.position();
-            }
-        }
-        final Vec3 tradeTargetPos = tradeTarget.add(0, 1, 0);
-        // determine list of trade results
-        // drop trade results as item entities
-        getTradeResult(player, tradeItem).forEach(item -> BehaviorUtils.throwItem(this, item, tradeTargetPos));
-        // shrink/remove held item
-        tradeItem.shrink(1);
-        this.setItemInHand(InteractionHand.MAIN_HAND, tradeItem);
-        if (tradeItem.getCount() <= 0) {
-            this.setTradingPlayer(null);
-        }
-        // spawn xp orb
-        if (player != null && random.nextInt(3) == 0) {
-            this.level.addFreshEntity(new ExperienceOrb(this.level, this.getX(), this.getY(), this.getZ(), 1 + random.nextInt(2)));
-        }
+    @Override
+    public void trade(PathfinderMob self, @Nullable final Player player, final ItemStack tradeItem) {
+        TradingMob.super.trade(self, player, tradeItem);
         this.level.broadcastEntityEvent(this, FINISH_TRADE_EVENT);
     }
 
@@ -387,8 +327,8 @@ public class Dryad extends PathfinderMob implements NeutralMob {
             case FINISH_TRADE_EVENT:
                 // swing arm and play sound
                 this.swing(InteractionHand.MAIN_HAND, true);
-                for(int i = 0; i < 4; i++) {
-                    this.level.addParticle(ParticleTypes.HAPPY_VILLAGER, this.getX() + 0.5D * (random.nextDouble() - 0.5D), this.getEyeY() + 0.5D * (random.nextDouble() - 0.5D), this.getZ() + 0.5D  * (random.nextDouble() - 0.5D), 0, 0, 0);
+                for (int i = 0; i < 4; i++) {
+                    this.level.addParticle(ParticleTypes.HAPPY_VILLAGER, this.getX() + 0.5D * (random.nextDouble() - 0.5D), this.getEyeY() + 0.5D * (random.nextDouble() - 0.5D), this.getZ() + 0.5D * (random.nextDouble() - 0.5D), 0, 0, 0);
                 }
                 break;
             default:
@@ -638,52 +578,6 @@ public class Dryad extends PathfinderMob implements NeutralMob {
         public boolean canUse() {
             return !Dryad.this.isHiding() && !Dryad.this.isGoingToTree && Dryad.this.getTarget() == null
                     && super.canUse();
-        }
-    }
-
-    class TradeGoal extends Goal {
-
-        protected final int maxThinkingTime;
-        protected int thinkingTime;
-
-        public TradeGoal(final int maxThinkingTimeIn) {
-            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-            maxThinkingTime = maxThinkingTimeIn;
-            thinkingTime = 0;
-        }
-
-        @Override
-        public boolean canUse() {
-            return !Dryad.this.isAggressive()
-                    && !Dryad.this.getMainHandItem().isEmpty()
-                    && Dryad.this.getMainHandItem().is(Dryad.this.getTradeTag());
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return thinkingTime > 0 && thinkingTime <= maxThinkingTime && canUse();
-        }
-
-        @Override
-        public void start() {
-            thinkingTime = 1;
-        }
-
-        @Override
-        public void tick() {
-            // stop moving and look down
-            Dryad.this.getNavigation().stop();
-            Dryad.this.getLookControl().setLookAt(Dryad.this.getEyePosition(1.0F).add(0.0D, -0.25D, 0.0D));
-            // if enough time has elapsed, commence the trade
-            if (thinkingTime++ >= maxThinkingTime) {
-                trade(Dryad.this.tradingPlayer, Dryad.this.getMainHandItem());
-                stop();
-            }
-        }
-
-        @Override
-        public void stop() {
-            thinkingTime = 0;
         }
     }
 

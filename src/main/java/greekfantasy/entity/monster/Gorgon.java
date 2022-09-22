@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
@@ -53,6 +54,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -60,6 +62,8 @@ import java.util.EnumSet;
 import java.util.List;
 
 public class Gorgon extends Monster implements RangedAttackMob {
+
+    private static final TagKey<EntityType<?>> BOSSES = ForgeRegistries.ENTITY_TYPES.tags().createTagKey(new ResourceLocation("forge", "bosses"));
 
     private static final EntityDataAccessor<Boolean> MEDUSA = SynchedEntityData.defineId(Gorgon.class, EntityDataSerializers.BOOLEAN);
     private static final String KEY_MEDUSA = "Medusa";
@@ -251,7 +255,7 @@ public class Gorgon extends Monster implements RangedAttackMob {
      */
     public boolean isImmuneToStareAttack(final LivingEntity target) {
         // check for applicable target
-        if (target.isSpectator() || !target.canChangeDimensions() || (target instanceof Player player && player.isCreative())) {
+        if (target.isSpectator() || !target.canChangeDimensions() || target.getType().is(BOSSES) || (target instanceof Player player && player.isCreative())) {
             return true;
         }
         // check for mirror item
@@ -263,9 +267,9 @@ public class Gorgon extends Monster implements RangedAttackMob {
             return true;
         }
         // check for mirror enchantment
-        if(GreekFantasy.CONFIG.isMirroringEnchantmentEnabled() &&
-                (EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.MIRRORING.get(), target.getMainHandItem()) > 0)
-                || EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.MIRRORING.get(), target.getOffhandItem()) > 0) {
+        if (GreekFantasy.CONFIG.isMirroringEnchantmentEnabled() &&
+                (target.getMainHandItem().getEnchantmentLevel(GFRegistry.EnchantmentReg.MIRRORING.get()) > 0)
+                || target.getOffhandItem().getEnchantmentLevel(GFRegistry.EnchantmentReg.MIRRORING.get()) > 0) {
             return true;
         }
         // target is not immune

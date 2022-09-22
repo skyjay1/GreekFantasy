@@ -7,12 +7,14 @@ import greekfantasy.item.ClubItem;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -49,14 +51,17 @@ public class Talos extends Automaton implements Enemy {
         Talos entity = GFRegistry.EntityReg.TALOS.get().create(level);
         entity.moveTo(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
         entity.yBodyRot = yaw;
-        level.addFreshEntity(entity);
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.addFreshEntityWithPassengers(entity);
+            entity.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null, null);
+        }
         entity.setSpawning(true);
         // trigger spawn for nearby players
         for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, entity.getBoundingBox().inflate(25.0D))) {
             CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
         }
         // play sound
-        level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
+        entity.playSound(SoundEvents.WITHER_SPAWN, 1.2F, 1.0F);
         return entity;
     }
 

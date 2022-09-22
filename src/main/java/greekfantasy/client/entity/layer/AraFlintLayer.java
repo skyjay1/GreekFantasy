@@ -2,9 +2,7 @@ package greekfantasy.client.entity.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import greekfantasy.GFRegistry;
 import greekfantasy.client.entity.model.AraModel;
-import greekfantasy.client.entity.model.EmpusaModel;
 import greekfantasy.entity.monster.Ara;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

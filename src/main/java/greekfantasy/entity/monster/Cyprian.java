@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -74,12 +75,17 @@ public class Cyprian extends Centaur implements Enemy {
     }
 
     @Override
-    protected void addTradeGoal() {
+    protected void addCentaurGoals() {
         // do nothing
     }
 
     @Override
-    public boolean canPlayerTrade(Player player) {
+    public boolean canPlayerTrade(PathfinderMob self, Player player) {
+        return false;
+    }
+
+    @Override
+    public boolean sendAngryParticlesOnFail() {
         return false;
     }
 }

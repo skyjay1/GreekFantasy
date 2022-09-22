@@ -6,7 +6,6 @@ import greekfantasy.client.entity.model.EmpusaModel;
 import greekfantasy.entity.monster.Empusa;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
-import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class EmpusaRenderer<T extends Empusa> extends HumanoidMobRenderer<T, EmpusaModel<T>> {

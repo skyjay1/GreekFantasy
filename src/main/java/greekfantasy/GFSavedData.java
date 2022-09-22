@@ -15,7 +15,6 @@ import net.minecraft.world.level.saveddata.SavedData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class GFSavedData extends SavedData {
 
@@ -23,7 +22,8 @@ public class GFSavedData extends SavedData {
     private static final String KEY_PLAYERS = "FlyingPlayers";
 
     public static GFSavedData getOrCreate(final ServerLevel server) {
-        return server.getDataStorage().computeIfAbsent(GFSavedData::read, GFSavedData::new, GreekFantasy.MODID);
+        return server.getServer().getLevel(Level.OVERWORLD).getDataStorage()
+                .computeIfAbsent(GFSavedData::read, GFSavedData::new, GreekFantasy.MODID);
     }
 
     public static GFSavedData read(CompoundTag nbt) {
@@ -86,8 +86,8 @@ public class GFSavedData extends SavedData {
      */
     public static boolean validatePlayer(final Player player) {
         final ItemStack feet = player.getItemBySlot(EquipmentSlot.FEET);
-        return (feet.getItem() == GFRegistry.ItemReg.WINGED_SANDALS.get()
-                && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.FLYING.get(), feet) > 0
+        return (feet.is(GFRegistry.ItemReg.WINGED_SANDALS.get())
+                && feet.getEnchantmentLevel(GFRegistry.EnchantmentReg.FLYING.get()) > 0
                 && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseFlying(player)));
     }
 }

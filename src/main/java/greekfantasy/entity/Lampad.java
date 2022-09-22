@@ -8,6 +8,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -93,7 +94,7 @@ public class Lampad extends Dryad {
             return Variant.CRIMSON;
         }
 
-        public static Variant getRandom(final Random rand) {
+        public static Variant getRandom(final RandomSource rand) {
             int len = NETHER.size();
             return len > 0 ? NETHER.entrySet().asList().get(rand.nextInt(len)).getValue() : CRIMSON;
         }

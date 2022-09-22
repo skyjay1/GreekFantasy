@@ -17,7 +17,8 @@ import net.minecraft.util.Mth;
 
 public class HarpyModel<T extends Harpy> extends HumanoidModel<T> {
 
-    public static final ModelLayerLocation HARPY_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "harpy"), "harpy");;
+    public static final ModelLayerLocation HARPY_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "harpy"), "harpy");
+    ;
 
     private final ModelPart leftWing1;
     private final ModelPart leftWing2;
@@ -87,9 +88,10 @@ public class HarpyModel<T extends Harpy> extends HumanoidModel<T> {
         final float flyingTime = entity.getFlyingTime(ageInTicks - entity.tickCount);
         final float flyingTimeLeft = 1.0F - flyingTime;
         // animate legs (only while flying)
-        this.leftLeg.xRot *= (flyingTimeLeft * 0.6F);
+        final float flyingTimeLeftAdjusted = Mth.clamp(flyingTimeLeft + 0.15F, 0.0F, 1.0F);
+        this.leftLeg.xRot *= (flyingTimeLeftAdjusted * 0.6F);
         this.leftLeg.xRot += (-0.35F * flyingTime);
-        this.rightLeg.xRot *= (flyingTimeLeft * 0.6F);
+        this.rightLeg.xRot *= (flyingTimeLeftAdjusted * 0.6F);
         this.rightLeg.xRot += (-0.35F * flyingTime);
     }
 

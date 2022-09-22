@@ -1,9 +1,11 @@
 package greekfantasy.entity.boss;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
 import greekfantasy.entity.Whirl;
-import greekfantasy.entity.ai.GFFloatGoal;
+import greekfantasy.entity.misc.WaterSpell;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -19,6 +21,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,16 +31,17 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
@@ -47,7 +51,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class Charybdis extends WaterAnimal {
+public class Charybdis extends WaterAnimal implements Enemy {
 
     private static final EntityDataAccessor<Byte> STATE = SynchedEntityData.defineId(Charybdis.class, EntityDataSerializers.BYTE);
     private static final String KEY_STATE = "CharybdisState";
@@ -66,14 +70,15 @@ public class Charybdis extends WaterAnimal {
     private static final byte THROW_CLIENT = 11;
 
     // other constants for attack, spawn, etc.
-    private static final double RANGE = 10.0D;
+    private static final double RANGE = 15.0D;
     private static final int SPAWN_TIME = 50;
     private static final int SWIRL_TIME = 240;
     private static final int THROW_TIME = 34;
 
     protected static final Predicate<Entity> CAN_TARGET = e -> e.isInWaterOrBubble()
             && !e.isSpectator() && !(e instanceof Player p && p.isCreative())
-            && (e instanceof LivingEntity || e instanceof Boat || e instanceof ItemEntity);
+            && !(e.getType() == GFRegistry.EntityReg.SCYLLA.get() || e.getType() == GFRegistry.EntityReg.WHIRL.get()
+            && (e instanceof LivingEntity || e instanceof Boat || e instanceof ItemEntity));
 
     private final ServerBossEvent bossInfo = new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS);
 
@@ -89,10 +94,9 @@ public class Charybdis extends WaterAnimal {
         this.xpReward = 50;
     }
 
-    public static Charybdis spawnCharybdis(final ServerLevel world, final Whirl whirl) {
-        Charybdis entity = GFRegistry.EntityReg.CHARYBDIS.get().create(world);
+    public static Charybdis spawnCharybdis(final ServerLevel level, final Whirl whirl) {
+        Charybdis entity = GFRegistry.EntityReg.CHARYBDIS.get().create(level);
         entity.moveTo(whirl.getX(), whirl.getY() - 2.8D, whirl.getZ(), whirl.getYRot(), whirl.getXRot());
-        entity.finalizeSpawn(world, world.getCurrentDifficultyAt(whirl.blockPosition()), MobSpawnType.CONVERSION, null, null);
         if (whirl.hasCustomName()) {
             entity.setCustomName(whirl.getCustomName());
             entity.setCustomNameVisible(whirl.isCustomNameVisible());
@@ -100,33 +104,65 @@ public class Charybdis extends WaterAnimal {
         entity.setPersistenceRequired();
         entity.yBodyRot = whirl.yBodyRot;
         entity.setPortalCooldown();
-        world.addFreshEntity(entity);
+        level.addFreshEntityWithPassengers(entity);
+        entity.finalizeSpawn(level, level.getCurrentDifficultyAt(whirl.blockPosition()), MobSpawnType.CONVERSION, null, null);
         entity.setState(SPAWNING);
         // remove the old whirl
         whirl.discard();
         // trigger spawn for nearby players
-        for (ServerPlayer player : world.getEntitiesOfClass(ServerPlayer.class, entity.getBoundingBox().inflate(16.0D))) {
+        for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, entity.getBoundingBox().inflate(16.0D))) {
             CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
         }
         // play sound
-        world.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
+        entity.playSound(SoundEvents.WITHER_SPAWN, 1.2F, 1.0F);
+        // attempt to summon scylla
+        if (level.getRandom().nextFloat() * 100.0F < GreekFantasy.CONFIG.SCYLLA_SPAWN_CHANCE.get()) {
+            Scylla scylla = entity.spawnScylla(level);
+        }
         return entity;
+    }
+
+    protected Scylla spawnScylla(final ServerLevel level) {
+        final Scylla entity = GFRegistry.EntityReg.SCYLLA.get().create(level);
+        final BlockPos entityPos = new BlockPos(position());
+        final BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
+        final int radius = Mth.ceil(getBbWidth() * 1.5F);
+        AABB aabb;
+        // locate spawn position
+        for (int tries = 0, maxTries = 24; tries < maxTries; tries++) {
+            blockPos.setWithOffset(entityPos,
+                    level.getRandom().nextInt(radius * 2) - radius,
+                    level.getRandom().nextInt(4) - 2,
+                    level.getRandom().nextInt(radius * 2) - radius);
+            // create bounding box
+            aabb = GFRegistry.EntityReg.SCYLLA.get().getDimensions().makeBoundingBox(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+            // check if scylla can spawn here
+            if (level.isWaterAt(blockPos) && level.noCollision(entity, aabb)) {
+                // spawn scylla
+                entity.moveTo(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 0, 0);
+                entity.setPersistenceRequired();
+                entity.setPortalCooldown();
+                level.addFreshEntityWithPassengers(entity);
+                entity.finalizeSpawn(level, level.getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
+                // play sound
+                entity.playSound(SoundEvents.GHAST_SCREAM, 1.2F, 1.0F);
+                return entity;
+            }
+        }
+        // no checks passed
+        entity.discard();
+        return null;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 160.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.15D)
-                .add(Attributes.ATTACK_DAMAGE, 4.5D)
+                .add(Attributes.MAX_HEALTH, 180.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.10D)
+                .add(Attributes.ATTACK_DAMAGE, 7.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-                .add(Attributes.FOLLOW_RANGE, 48.0D)
-                .add(Attributes.ARMOR, 4.0D)
+                .add(Attributes.FOLLOW_RANGE, 32.0D)
+                .add(Attributes.ARMOR, 10.0D)
                 .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 0.6D);
-    }
-
-    @Override
-    protected PathNavigation createNavigation(Level level) {
-        return new WaterBoundPathNavigation(this, level);
     }
 
     @Override
@@ -137,10 +173,9 @@ public class Charybdis extends WaterAnimal {
 
     @Override
     protected void registerGoals() {
-        super.registerGoals();
-        this.goalSelector.addGoal(1, new GFFloatGoal(this));
-        this.goalSelector.addGoal(2, new Charybdis.SwirlGoal(this, SWIRL_TIME, 114, RANGE));
-        this.goalSelector.addGoal(3, new Charybdis.ThrowGoal(THROW_TIME, 190, RANGE * 0.75D));
+        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new Charybdis.SwirlGoal(this, SWIRL_TIME, 90, RANGE));
+        this.goalSelector.addGoal(3, new Charybdis.ThrowGoal(THROW_TIME, 130, RANGE * 0.75D));
     }
 
     @Override
@@ -166,7 +201,7 @@ public class Charybdis extends WaterAnimal {
             swirlTime = Math.min(swirlTime + 1, SWIRL_TIME);
             this.setYBodyRot(this.yBodyRot + 5);
         } else if (swirlTime > 0) {
-            swirlTime = 0;
+            swirlTime--;
         }
 
         // update throw attack
@@ -174,7 +209,7 @@ public class Charybdis extends WaterAnimal {
         if (isThrowing()) {
             throwTime = Math.min(throwTime + 1, THROW_TIME);
         } else if (throwTime > 0) {
-            throwTime = 0;
+            throwTime--;
         }
     }
 
@@ -241,11 +276,23 @@ public class Charybdis extends WaterAnimal {
     @Override
     public boolean isInvulnerableTo(final DamageSource source) {
         return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER
-                || source.getDirectEntity() instanceof AbstractArrow || super.isInvulnerableTo(source);
+                || source.getDirectEntity() instanceof AbstractArrow
+                || source.getDirectEntity() instanceof WaterSpell
+                || super.isInvulnerableTo(source);
     }
 
     @Override
     protected void handleAirSupply(int air) {
+    }
+
+    @Override
+    public double getFluidJumpThreshold() {
+        return getBbHeight() - 0.2D;
+    }
+
+    @Override
+    protected float getWaterSlowDown() {
+        return 0.89F;
     }
 
     // Prevent entity collisions //
@@ -315,9 +362,9 @@ public class Charybdis extends WaterAnimal {
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setState(compound.getByte(KEY_STATE));
-        spawnTime = compound.getInt(KEY_SPAWN_TIME);
-        swirlTime = compound.getInt(KEY_SWIRL_TIME);
-        throwTime = compound.getInt(KEY_THROW_TIME);
+        spawnTime0 = spawnTime = compound.getInt(KEY_SPAWN_TIME);
+        swirlTime0 = swirlTime = compound.getInt(KEY_SWIRL_TIME);
+        throwTime0 = throwTime = compound.getInt(KEY_THROW_TIME);
     }
 
     // Swimming //
@@ -341,29 +388,19 @@ public class Charybdis extends WaterAnimal {
     // States //
 
     public void setState(final byte state) {
-        this.getEntityData().set(STATE, Byte.valueOf(state));
+        this.getEntityData().set(STATE, state);
         byte clientFlag = NONE_CLIENT;
         switch (state) {
             case NONE:
-                spawnTime0 = swirlTime0 = throwTime0 = 0;
-                spawnTime = swirlTime = throwTime = 0;
                 break;
             case SPAWNING:
                 spawnTime = SPAWN_TIME;
-                swirlTime = 0;
-                throwTime = 0;
                 clientFlag = SPAWN_CLIENT;
                 break;
             case SWIRLING:
-                spawnTime = 0;
-                swirlTime = 1;
-                throwTime = 0;
                 clientFlag = SWIRL_CLIENT;
                 break;
             case THROWING:
-                spawnTime = 0;
-                swirlTime = 0;
-                throwTime = 1;
                 clientFlag = THROW_CLIENT;
                 break;
         }
@@ -373,7 +410,7 @@ public class Charybdis extends WaterAnimal {
     }
 
     public byte getState() {
-        return this.getEntityData().get(STATE).byteValue();
+        return this.getEntityData().get(STATE);
     }
 
     public boolean isNoneState() {
@@ -381,15 +418,15 @@ public class Charybdis extends WaterAnimal {
     }
 
     public boolean isSpawning() {
-        return spawnTime > 0 || getState() == SPAWNING;
+        return getState() == SPAWNING;
     }
 
     public boolean isSwirling() {
-        return swirlTime > 0 || getState() == SWIRLING;
+        return getState() == SWIRLING;
     }
 
     public boolean isThrowing() {
-        return throwTime > 0 || getState() == THROWING;
+        return getState() == THROWING;
     }
 
     public float getSpawnPercent(final float partialTick) {
@@ -397,7 +434,7 @@ public class Charybdis extends WaterAnimal {
     }
 
     public float getSwirlPercent(final float partialTick) {
-        return Mth.lerp(partialTick, swirlTime0, swirlTime) / (float) SWIRL_TIME;
+        return Mth.clamp(Mth.lerp(partialTick, swirlTime0, swirlTime) / 50.0F, 0.0F, 1.0F);
     }
 
     public float getThrowPercent(final float partialTick) {
@@ -451,7 +488,9 @@ public class Charybdis extends WaterAnimal {
 
         public SwirlGoal(final Charybdis entity, final int duration, final int cooldown, final double range) {
             super(entity, duration, cooldown, range, 0.12F, true, e ->
-                    !(e.getType() == GFRegistry.EntityReg.WHIRL.get() || e.getType() == GFRegistry.EntityReg.CHARYBDIS.get()));
+                    !(e.getType() == GFRegistry.EntityReg.WHIRL.get()
+                            || e.getType() == GFRegistry.EntityReg.CHARYBDIS.get()
+                            || e.getType() == GFRegistry.EntityReg.SCYLLA.get()));
             this.entity = entity;
         }
 
@@ -461,22 +500,36 @@ public class Charybdis extends WaterAnimal {
         }
 
         @Override
-        public void start() {
-            super.start();
-            entity.setState(SWIRLING);
-            entity.swirlTime = 1;
+        public boolean canContinueToUse() {
+            return super.canContinueToUse() && entity.isSwirling();
         }
 
         @Override
-        public boolean canContinueToUse() {
-            return super.canContinueToUse() && entity.isSwirling();
+        public void start() {
+            super.start();
+            entity.setState(SWIRLING);
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+            final float attack = (float) entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue() * 0.25F;
+            for (Entity e : trackedEntities) {
+                if (e instanceof LivingEntity livingEntity) {
+                    // give living entities slow swim
+                    livingEntity.addEffect(new MobEffectInstance(GFRegistry.MobEffectReg.SLOW_SWIM.get(), 10, 0));
+                    // periodically hurt living entities
+                    if (livingEntity.hurtTime == 0 && livingEntity.tickCount % 20 == 0) {
+                        livingEntity.hurt(DamageSource.mobAttack(entity), attack);
+                    }
+                }
+            }
         }
 
         @Override
         public void stop() {
             super.stop();
             entity.setState(NONE);
-            entity.swirlTime = 0;
         }
 
         @Override

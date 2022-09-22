@@ -34,7 +34,7 @@ public class EmpusaModel<T extends Empusa> extends HumanoidModel<T> {
         this.rightWingArm = root.getChild("right_wing_arm");
         this.rightWingInner = rightWingArm.getChild("right_inner_wing");
         this.rightWingOuter = rightWingInner.getChild("right_outer_wing");
-        
+
     }
 
     public static LayerDefinition createBodyLayer() {

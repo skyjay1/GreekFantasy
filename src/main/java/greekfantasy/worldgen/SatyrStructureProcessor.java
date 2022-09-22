@@ -10,6 +10,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.horse.Variant;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
@@ -33,19 +34,19 @@ public class SatyrStructureProcessor extends StructureProcessor {
 
     @Override
     public StructureTemplate.StructureEntityInfo processEntity(LevelReader level, BlockPos seedPos,
-                                                   StructureTemplate.StructureEntityInfo rawEntityInfo,
-                                                   StructureTemplate.StructureEntityInfo entityInfo,
-                                                   StructurePlaceSettings placementSettings,
-                                                   StructureTemplate template) {
+                                                               StructureTemplate.StructureEntityInfo rawEntityInfo,
+                                                               StructureTemplate.StructureEntityInfo entityInfo,
+                                                               StructurePlaceSettings placementSettings,
+                                                               StructureTemplate template) {
         // read entity type from tag
         CompoundTag tag = entityInfo.nbt.copy();
         Optional<EntityType<?>> entityType = EntityType.by(tag);
         // ensure entity is satyr
-        if(entityType.isPresent() && entityType.get() == GFRegistry.EntityReg.SATYR.get()) {
+        if (entityType.isPresent() && entityType.get() == GFRegistry.EntityReg.SATYR.get()) {
             // determine color variant
             final long seed = placementSettings.getBoundingBox().hashCode();
             RandomSource random = RandomSource.create(seed);
-            Variant variant = Util.getRandom(Variant.values(), random);
+            Variant variant = Util.getRandom(net.minecraft.world.entity.animal.horse.Variant.values(), random);
             // write color variant to compound
             tag.putByte(Satyr.KEY_VARIANT, (byte) variant.getId());
             // create modified entity info

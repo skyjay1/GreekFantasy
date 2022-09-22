@@ -138,7 +138,7 @@ public class Gigante extends PathfinderMob implements NeutralMob {
     protected void dropEquipment() {
         // damage held equipment before dropping it
         ItemStack mainhand = this.getMainHandItem();
-        if(mainhand.isDamageableItem()) {
+        if (mainhand.isDamageableItem()) {
             // set item damage to some value between 30% and 50%
             int damage = Mth.floor((0.30F + 0.20F * random.nextFloat()) * mainhand.getMaxDamage());
             mainhand.setDamageValue(damage);
@@ -149,12 +149,12 @@ public class Gigante extends PathfinderMob implements NeutralMob {
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
         // note: do not call super method because this entity cannot wear armor
-        if (this.random.nextBoolean()) {
+        if (random.nextBoolean()) {
             // determine club type
-            Item club = this.random.nextBoolean() ? GFRegistry.ItemReg.STONE_CLUB.get() : GFRegistry.ItemReg.WOODEN_CLUB.get();
+            Item club = random.nextBoolean() ? GFRegistry.ItemReg.STONE_CLUB.get() : GFRegistry.ItemReg.WOODEN_CLUB.get();
             ItemStack itemStack = new ItemStack(club);
             // randomly enchant club
-            if(this.random.nextFloat() < 0.10F * difficulty.getSpecialMultiplier()) {
+            if (random.nextFloat() < 0.10F * difficulty.getSpecialMultiplier()) {
                 itemStack.enchant(Enchantments.KNOCKBACK, 1);
             }
             // update held item and drop chance
@@ -193,6 +193,16 @@ public class Gigante extends PathfinderMob implements NeutralMob {
     @Override
     public float getVoicePitch() {
         return 0.12F;
+    }
+
+    @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double dis) {
+        return false;
     }
 
     @Override

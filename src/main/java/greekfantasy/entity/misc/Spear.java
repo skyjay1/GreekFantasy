@@ -110,7 +110,7 @@ public class Spear extends AbstractArrow {
         this.getEntityData().set(ITEM, stack.copy());
         final ResourceLocation name = ForgeRegistries.ITEMS.getKey(stack.getItem());
         this.texture = new ResourceLocation(name.getNamespace(), "textures/entity/spear/" + name.getPath() + ".png");
-        this.loyaltyLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, stack);
+        this.loyaltyLevel = stack.getEnchantmentLevel(Enchantments.LOYALTY);
         this.enchanted = stack.hasFoil();
     }
 
@@ -121,7 +121,7 @@ public class Spear extends AbstractArrow {
             ItemStack stack = getPickupItem();
             final ResourceLocation name = ForgeRegistries.ITEMS.getKey(stack.getItem());
             this.texture = new ResourceLocation(name.getNamespace(), "textures/entity/spear/" + name.getPath() + ".png");
-            this.loyaltyLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, stack);
+            this.loyaltyLevel = stack.getEnchantmentLevel(Enchantments.LOYALTY);
             this.enchanted = stack.hasFoil();
         }
     }

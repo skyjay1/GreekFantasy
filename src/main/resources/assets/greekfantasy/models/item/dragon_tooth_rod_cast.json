@@ -1,0 +1,6 @@
+{
+    "parent": "item/fishing_rod",
+    "textures": {
+        "layer0": "greekfantasy:item/dragon_tooth_rod_cast"
+    }
+}

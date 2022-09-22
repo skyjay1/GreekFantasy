@@ -52,7 +52,7 @@ public class WingedSandalsItem extends ArmorItem {
     public void inventoryTick(final ItemStack stack, final Level level, final Entity entity,
                               final int itemSlot, final boolean isSelected) {
         // add Overstep enchantment if not present
-        if (GreekFantasy.CONFIG.isOverstepEnabled() && EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.OVERSTEP.get(), stack) < 1) {
+        if (GreekFantasy.CONFIG.isOverstepEnabled() && stack.getEnchantmentLevel(GFRegistry.EnchantmentReg.OVERSTEP.get()) < 1) {
             stack.enchant(GFRegistry.EnchantmentReg.OVERSTEP.get(), 1);
         }
         // add mob effects

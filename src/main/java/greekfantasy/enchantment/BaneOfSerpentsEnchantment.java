@@ -63,7 +63,7 @@ public class BaneOfSerpentsEnchantment extends DamageEnchantment {
 
     @Override
     public boolean isTradeable() {
-        return GreekFantasy.CONFIG.BANE_OF_SERPENTS_ENABLED.get();
+        return GreekFantasy.CONFIG.BANE_OF_SERPENTS_TRADEABLE.get();
     }
 
     @Override

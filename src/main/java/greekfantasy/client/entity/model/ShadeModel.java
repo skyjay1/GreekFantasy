@@ -14,7 +14,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ShadeModel<T extends Shade> extends HumanoidModel<T> {
 
-    public static final ModelLayerLocation SHADE_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "shade"), "shade");;
+    public static final ModelLayerLocation SHADE_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "shade"), "shade");
+    ;
 
     public ShadeModel(final ModelPart root) {
         super(root, RenderType::entityTranslucent);

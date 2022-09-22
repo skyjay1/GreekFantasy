@@ -12,6 +12,7 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.projectile.Projectile;
 
@@ -54,7 +55,7 @@ public class SpellModel<T extends Projectile> extends EntityModel<T> {
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {
-        this.root.render(poseStack, vertexConsumer, usePackedLight ? packedLight : 15728880, packedOverlay);
+        this.root.render(poseStack, vertexConsumer, usePackedLight ? packedLight : LightTexture.FULL_BRIGHT, packedOverlay);
     }
 
 }

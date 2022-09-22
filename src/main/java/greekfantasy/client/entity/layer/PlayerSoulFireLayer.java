@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -35,7 +36,7 @@ public class PlayerSoulFireLayer<T extends Player> extends RenderLayer<T, Player
             // render fire here
             // note: packed light flag 15728640 uses world light, 15728880 uses constant/full light
             Minecraft.getInstance().getBlockRenderer().renderSingleBlock(Blocks.SOUL_FIRE.defaultBlockState(),
-                    poseStack, multiBufferSource, 15728880, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
+                    poseStack, multiBufferSource, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
             // finish rendering
             poseStack.popPose();
         }

@@ -36,7 +36,7 @@ public class ReedsBlock extends TallFlowerBlock implements SimpleWaterloggedBloc
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 16.0D, 12.0D);
+    protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
 
     public ReedsBlock(Properties properties) {
         super(properties);
@@ -78,7 +78,7 @@ public class ReedsBlock extends TallFlowerBlock implements SimpleWaterloggedBloc
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState blockstate = super.getStateForPlacement(context);
-        if(blockstate != null) {
+        if (blockstate != null) {
             blockstate = copyWaterloggedFrom(context.getLevel(), context.getClickedPos(), blockstate);
         }
         return blockstate;
@@ -98,7 +98,7 @@ public class ReedsBlock extends TallFlowerBlock implements SimpleWaterloggedBloc
     public boolean canSurvive(BlockState blockState, LevelReader level, BlockPos pos) {
         BlockPos below = pos.below();
         BlockState blockBelow = level.getBlockState(below);
-        if(blockState.getValue(HALF) == DoubleBlockHalf.LOWER) {
+        if (blockState.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return this.mayPlaceOn(blockBelow, level, below);
         }
         return blockBelow.is(this);
@@ -107,7 +107,7 @@ public class ReedsBlock extends TallFlowerBlock implements SimpleWaterloggedBloc
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         boolean hasSupport = state.is(Blocks.GRAVEL) || state.is(Blocks.SAND) || super.mayPlaceOn(state, level, pos);
-        if(hasSupport) {
+        if (hasSupport) {
             final boolean nextToWater = isWater(level, pos.above()) || isNextToWater(level, pos);
             final boolean belowReplaceable = level.getBlockState(pos.above(1)).getMaterial().isReplaceable()
                     && level.getBlockState(pos.above(2)).getMaterial().isReplaceable()
@@ -124,7 +124,7 @@ public class ReedsBlock extends TallFlowerBlock implements SimpleWaterloggedBloc
 
     /**
      * @param level the world
-     * @param pos     the position to check
+     * @param pos   the position to check
      * @return true if the given position has water (or frosted ice)
      **/
     public static boolean isWater(final BlockGetter level, final BlockPos pos) {
@@ -133,7 +133,7 @@ public class ReedsBlock extends TallFlowerBlock implements SimpleWaterloggedBloc
 
     /**
      * @param level the world
-     * @param pos     the position to check
+     * @param pos   the position to check
      * @return true if one of the four adjacent blocks are water
      **/
     public static boolean isNextToWater(final BlockGetter level, final BlockPos pos) {

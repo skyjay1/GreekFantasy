@@ -11,7 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class SpearModel extends Model {
 
-    public static final ModelLayerLocation SPEAR_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "spear"), "spear");;
+    public static final ModelLayerLocation SPEAR_MODEL_RESOURCE = new ModelLayerLocation(new ResourceLocation(GreekFantasy.MODID, "spear"), "spear");
+    ;
 
     private final ModelPart root;
 

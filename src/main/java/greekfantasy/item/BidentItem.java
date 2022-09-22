@@ -27,7 +27,7 @@ public class BidentItem extends SpearItem {
     @Override
     protected void throwSpear(final Level level, final Player thrower, final ItemStack stack) {
         // Special behavior when enchanted
-        if (EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.RAISING.get(), stack) > 0
+        if (stack.getEnchantmentLevel(GFRegistry.EnchantmentReg.RAISING.get()) > 0
                 && level instanceof ServerLevel
                 && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseRaising(thrower))) {
             // Attempt to spawn a Sparti where the player is looking

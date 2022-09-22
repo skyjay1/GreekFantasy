@@ -51,7 +51,7 @@ public class ThunderboltItem extends Item {
                 level.addFreshEntity(bolt);
                 // check for fireflash enchantment
                 int damageAmount = 15;
-                final int fireflashLevel = EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.FIREFLASH.get(), stack);
+                final int fireflashLevel = stack.getEnchantmentLevel(GFRegistry.EnchantmentReg.FIREFLASH.get());
                 final boolean fireflash = GreekFantasy.CONFIG.FIREFLASH_ENABLED.get() && fireflashLevel > 0
                         && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseFireflash(player));
                 // if enchanted with fireflash, cause an explosion

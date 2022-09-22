@@ -9,10 +9,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -37,10 +39,12 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.function.Predicate;
 
 public class Python extends Monster implements RangedAttackMob {
+    private static final TagKey<EntityType<?>> BOSSES = ForgeRegistries.ENTITY_TYPES.tags().createTagKey(new ResourceLocation("forge", "bosses"));
 
     private static final EntityDataAccessor<Byte> STATE = SynchedEntityData.defineId(Python.class, EntityDataSerializers.BYTE);
     private static final String KEY_STATE = "PythonState";
@@ -53,7 +57,8 @@ public class Python extends Monster implements RangedAttackMob {
 
     private static final Predicate<LivingEntity> TARGET_SELECTOR = (e) -> {
         final MobType mobType = e.getMobType();
-        return e.isAlive() && e.canChangeDimensions() && !(mobType == MobType.ARTHROPOD || mobType == MobType.UNDEAD || mobType == MobType.WATER);
+        return e.isAlive() && !e.getType().is(BOSSES) && e.canChangeDimensions()
+                && !(mobType == MobType.ARTHROPOD || mobType == MobType.UNDEAD || mobType == MobType.WATER);
     };
 
     // other constants for attack, spawn, etc.
@@ -285,7 +290,7 @@ public class Python extends Monster implements RangedAttackMob {
     class PoisonSpitAttackGoal extends IntervalRangedAttackGoal<Python> {
 
         protected PoisonSpitAttackGoal(final int interval, final int count, final int maxCooldownIn) {
-            super(Python.this, interval, count, maxCooldownIn);
+            super(Python.this, interval, count, maxCooldownIn, 15.0F);
         }
 
         @Override

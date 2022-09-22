@@ -20,9 +20,11 @@ public class GFConfig {
     // items
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_COOLDOWN;
+    public final ForgeConfigSpec.IntValue CONCH_DAMAGE_ON_USE;
     public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_COUNT;
     public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_LIFESPAN;
     public final ForgeConfigSpec.IntValue STAFF_OF_HEALING_COOLDOWN;
+    public final ForgeConfigSpec.IntValue THYRSUS_COOLDOWN;
     public final ForgeConfigSpec.IntValue THUNDERBOLT_COOLDOWN;
     public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
     private final ForgeConfigSpec.DoubleValue WINGED_SANDALS_DURABILITY_CHANCE;
@@ -35,24 +37,31 @@ public class GFConfig {
 
     // enchantments
     public final ForgeConfigSpec.BooleanValue BANE_OF_SERPENTS_ENABLED;
+    public final ForgeConfigSpec.BooleanValue BANE_OF_SERPENTS_TRADEABLE;
     public final ForgeConfigSpec.BooleanValue DAYBREAK_ENABLED;
     public final ForgeConfigSpec.BooleanValue FIREFLASH_ENABLED;
     public final ForgeConfigSpec.BooleanValue FIREFLASH_DESTROYS_BLOCKS;
     private final ForgeConfigSpec.BooleanValue FLYING_ENABLED;
     private boolean isFlyingEnabled;
     public final ForgeConfigSpec.BooleanValue HUNTING_ENABLED;
+    public final ForgeConfigSpec.BooleanValue HUNTING_TRADEABLE;
     public final ForgeConfigSpec.BooleanValue LORD_OF_THE_SEA_ENABLED;
     public final ForgeConfigSpec.IntValue LORD_OF_THE_SEA_WHIRL_LIFESPAN;
     private final ForgeConfigSpec.BooleanValue MIRRORING_ENCHANTMENT_ENABLED;
+    public final ForgeConfigSpec.BooleanValue MIRRORING_TRADEABLE;
     private boolean isMirroringEnchantmentEnabled;
     public final ForgeConfigSpec.BooleanValue SMASHING_NERF;
+    public final ForgeConfigSpec.BooleanValue SMASHING_TRADEABLE;
     private final ForgeConfigSpec.BooleanValue OVERSTEP_ENABLED;
+    public final ForgeConfigSpec.BooleanValue OVERSTEP_TRADEABLE;
     private boolean isOverstepEnabled;
     private final ForgeConfigSpec.BooleanValue POISONING_ENABLED;
+    public final ForgeConfigSpec.BooleanValue POISONING_TRADEABLE;
     private boolean isPoisoningEnabled;
     public final ForgeConfigSpec.BooleanValue RAISING_ENABLED;
     public final ForgeConfigSpec.IntValue RAISING_SPARTI_LIFESPAN;
     private final ForgeConfigSpec.BooleanValue SILKSTEP_ENABLED;
+    public final ForgeConfigSpec.BooleanValue SILKSTEP_TRADEABLE;
     private boolean isSilkstepEnabled;
 
     // entity
@@ -64,6 +73,7 @@ public class GFConfig {
     public final ForgeConfigSpec.DoubleValue NEMEAN_LION_LIGHTNING_CHANCE;
     public final ForgeConfigSpec.DoubleValue SHADE_SPAWN_CHANCE;
     public final ForgeConfigSpec.DoubleValue SATYR_SHAMAN_CHANCE;
+    public final ForgeConfigSpec.DoubleValue SCYLLA_SPAWN_CHANCE;
     private static final ResourceLocation SATYR_SONG_FALLBACK = new ResourceLocation(GreekFantasy.MODID, "greensleeves");
     private final ForgeConfigSpec.ConfigValue<? extends String> SATYR_SONG;
     private ResourceLocation satyrSong;
@@ -84,6 +94,8 @@ public class GFConfig {
     private boolean showNemeanLionBossBar;
     private final ForgeConfigSpec.BooleanValue SHOW_PYTHON_BOSS_BAR;
     private boolean showPythonBossBar;
+    private final ForgeConfigSpec.BooleanValue SHOW_SCYLLA_BOSS_BAR;
+    private boolean showScyllaBossBar;
 
     // mob effect
     private final ForgeConfigSpec.BooleanValue CURSE_OF_CIRCE_ENABLED;
@@ -142,9 +154,11 @@ public class GFConfig {
         builder.push("items");
         BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
         BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 12000);
+        CONCH_DAMAGE_ON_USE = builder.defineInRange("conch_damage_on_use", 0, 0, 64);
         HELM_HIDES_ARMOR = builder.define("helm_hides_armor", true);
         DRAGON_TOOTH_SPARTI_COUNT = builder.defineInRange("dragon_tooth_sparti_count", 1, 0, 8);
         DRAGON_TOOTH_SPARTI_LIFESPAN = builder.defineInRange("dragon_tooth_sparti_lifespan", 300, 1, 24000);
+        THYRSUS_COOLDOWN = builder.defineInRange("thyrsus_cooldown", 60, 0, 24000);
         THUNDERBOLT_COOLDOWN = builder.defineInRange("thunderbolt_cooldown", 100, 0, 24000);
         STAFF_OF_HEALING_COOLDOWN = builder.defineInRange("staff_of_healing_cooldown", 35, 0, 24000);
         UNICORN_HORN_CURES_EFFECTS = builder.define("unicorn_horn_cures_effects", true);
@@ -157,22 +171,29 @@ public class GFConfig {
 
         builder.push("enchantments");
         BANE_OF_SERPENTS_ENABLED = builder.define("bane_of_serpents_enabled", true);
+        BANE_OF_SERPENTS_TRADEABLE = builder.define("bane_of_serpents_tradeable_by_villagers", true);
         DAYBREAK_ENABLED = builder.define("daybreak_enabled", true);
         FIREFLASH_ENABLED = builder.define("fireflash_enabled", true);
         FIREFLASH_DESTROYS_BLOCKS = builder.define("fireflash_destroys_blocks", true);
         FLYING_ENABLED = builder.define("flying_enabled", true);
         HUNTING_ENABLED = builder.define("hunting_enabled", true);
+        HUNTING_TRADEABLE = builder.define("hunting_tradeable_by_villagers", true);
         LORD_OF_THE_SEA_ENABLED = builder.define("lord_of_the_sea_enabled", true);
         LORD_OF_THE_SEA_WHIRL_LIFESPAN = builder.defineInRange("lord_of_the_sea_whirl_lifespan", 60, 1, 1200);
         MIRRORING_ENCHANTMENT_ENABLED = builder.define("mirroring_enabled", true);
+        MIRRORING_TRADEABLE = builder.define("mirroring_tradeable_by_villagers", true);
         SMASHING_NERF = builder
                 .comment("When true, Smashing applies slowness instead of stunning")
                 .define("smashing_nerf", false);
+        SMASHING_TRADEABLE = builder.define("smashing_tradeable_by_villagers", false);
         OVERSTEP_ENABLED = builder.define("overstep_enabled", true);
+        OVERSTEP_TRADEABLE = builder.define("overstep_tradeable_by_villagers", true);
         POISONING_ENABLED = builder.define("poisoning_enabled", true);
+        POISONING_TRADEABLE = builder.define("poisoning_tradeable_by_villagers", false);
         RAISING_ENABLED = builder.define("raising_enabled", true);
         RAISING_SPARTI_LIFESPAN = builder.defineInRange("raising_sparti_lifespan", 120, 1, 1200);
         SILKSTEP_ENABLED = builder.define("silkstep_enabled", true);
+        SILKSTEP_TRADEABLE = builder.define("silkstep_tradeable_by_villagers", false);
         builder.pop();
 
         builder.push("mobs");
@@ -186,11 +207,14 @@ public class GFConfig {
                 .comment("Percent chance that lightning converts Gorgon to Medusa")
                 .defineInRange("medusa_lightning_chance", 95.0F, 0.0F, 100.0F);
         MEDUSA_SPAWN_CHANCE = builder.defineInRange("medusa_spawn_chance", 0.8F, 0.0F, 100.0F);
-       NEMEAN_LION_LIGHTNING_CHANCE = builder
+        NEMEAN_LION_LIGHTNING_CHANCE = builder
                 .comment("Percent chance that lightning converts strengthened Ocelot to Nemean Lion")
                 .defineInRange("nemean_lion_lightning_chance", 100.0F, 0.0F, 100.0F);
         SHADE_SPAWN_CHANCE = builder.defineInRange("shade_spawn_chance", 100.0F, 0.0F, 100.0F);
         SATYR_SHAMAN_CHANCE = builder.defineInRange("satyr_shaman_chance", 24.0F, 0.0F, 100.0F);
+        SCYLLA_SPAWN_CHANCE = builder
+                .comment("Percent chance that creating a Charybdis also creates a Scylla")
+                .defineInRange("scylla_spawn_chance", 55.0F, 0.0F, 100.0F);
         SATYR_SONG = builder.define("satyr_song", SATYR_SONG_FALLBACK.toString());
         SHADE_IMMUNE_TO_NONOWNER = builder.define("shade_immune_to_nonowner", true);
         SHOW_ARACHNE_BOSS_BAR = builder.define("show_arachne_boss_bar", false);
@@ -201,6 +225,7 @@ public class GFConfig {
         SHOW_MEDUSA_BOSS_BAR = builder.define("show_medusa_boss_bar", false);
         SHOW_NEMEAN_LION_BOSS_BAR = builder.define("show_nemean_lion_boss_bar", true);
         SHOW_PYTHON_BOSS_BAR = builder.define("show_python_boss_bar", true);
+        SHOW_SCYLLA_BOSS_BAR = builder.define("show_scylla_boss_bar", true);
         builder.pop();
 
         builder.push("mob_effects");
@@ -272,6 +297,7 @@ public class GFConfig {
         showMedusaBossBar = SHOW_MEDUSA_BOSS_BAR.get();
         showNemeanLionBossBar = SHOW_NEMEAN_LION_BOSS_BAR.get();
         showPythonBossBar = SHOW_PYTHON_BOSS_BAR.get();
+        showScyllaBossBar = SHOW_SCYLLA_BOSS_BAR.get();
         satyrSong = ResourceLocation.tryParse(SATYR_SONG.get());
         if(null == satyrSong) {
             satyrSong = SATYR_SONG_FALLBACK;
@@ -356,6 +382,10 @@ public class GFConfig {
 
     public boolean showPythonBossBar() {
         return showPythonBossBar;
+    }
+
+    public boolean showScyllaBossBar() {
+        return showScyllaBossBar;
     }
 
     public ResourceLocation getSatyrSong() {

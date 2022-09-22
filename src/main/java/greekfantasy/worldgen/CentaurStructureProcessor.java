@@ -3,7 +3,6 @@ package greekfantasy.worldgen;
 import com.mojang.serialization.Codec;
 import greekfantasy.GFRegistry;
 import greekfantasy.entity.Centaur;
-import greekfantasy.entity.Satyr;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -19,7 +18,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 import java.util.Optional;
-import java.util.Random;
 
 public class CentaurStructureProcessor extends StructureProcessor {
 

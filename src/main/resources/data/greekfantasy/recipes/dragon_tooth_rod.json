@@ -1,0 +1,18 @@
+{
+
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  /",
+    " /S",
+    "/#S"
+  ],
+  "key": {
+    "#": { "item": "greekfantasy:dragon_tooth" },
+    "S": { "item": "greekfantasy:golden_string" },
+    "/": { "item": "greekfantasy:scylla_bone" }
+  },
+  "result": {
+    "item": "greekfantasy:dragon_tooth_rod",
+    "nbt": "{Enchantments:[{id:\"minecraft:luck_of_the_sea\",lvl:3s}]}"
+  }
+}

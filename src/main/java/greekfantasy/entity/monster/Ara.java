@@ -1,10 +1,12 @@
 package greekfantasy.entity.monster;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.MoveToStructureGoal;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.InteractionHand;
@@ -23,6 +25,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -72,9 +75,10 @@ public class Ara extends PathfinderMob implements NeutralMob {
                 return Ara.this.getRandom().nextInt(80) == 0 && super.canUse();
             }
         });
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 3, 8, 4, new ResourceLocation(GreekFantasy.MODID, "ara_camp"), DefaultRandomPos::getPos));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(4, new ResetUniversalAngerTargetGoal<>(this, true));
@@ -91,7 +95,7 @@ public class Ara extends PathfinderMob implements NeutralMob {
         if (this.isAggressive()) {
             if (this.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
                 this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(weapon));
-                this.getCommandSenderWorld().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ARMOR_EQUIP_IRON, SoundSource.HOSTILE, 1.0F, 1.0F, false);
+                this.playSound(SoundEvents.ARMOR_EQUIP_IRON, 1.2F, 1.0F);
             }
         } else if (this.getTarget() == null && this.getItemInHand(InteractionHand.MAIN_HAND).getItem() == weapon) {
             this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);

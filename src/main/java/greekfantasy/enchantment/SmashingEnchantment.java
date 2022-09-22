@@ -2,14 +2,15 @@ package greekfantasy.enchantment;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
-import greekfantasy.item.ClubItem;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -21,6 +22,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class SmashingEnchantment extends Enchantment {
+
+    private static final TagKey<EntityType<?>> BOSSES = ForgeRegistries.ENTITY_TYPES.tags().createTagKey(new ResourceLocation("forge", "bosses"));
 
     private static final ResourceLocation CLUB = new ResourceLocation(GreekFantasy.MODID, "tools/club");
     private static final double BASE_RANGE = 2.0D;
@@ -34,8 +37,8 @@ public class SmashingEnchantment extends Enchantment {
      * @return whether the given entity should not be affected by smash attack
      **/
     private static boolean isExemptFromSmashAttack(final Entity entity) {
-        return !entity.canChangeDimensions() || entity.isNoGravity() // TODO || entity.getType() == GFRegistry.EntityReg.GIGANTE_ENTITY
-                || entity.isSpectator()
+        return !entity.canChangeDimensions() || entity.getType().is(BOSSES)
+                || entity.isSpectator() || entity.isNoGravity()
                 || (entity instanceof Player player && player.isCreative());
     }
 
@@ -84,7 +87,7 @@ public class SmashingEnchantment extends Enchantment {
             return;
         }
         // check for cooldown
-        if(user instanceof Player player && player.getCooldowns().isOnCooldown(item.getItem())) {
+        if (user instanceof Player player && player.getCooldowns().isOnCooldown(item.getItem())) {
             return;
         }
         // get a bounding box of an area to affect
@@ -94,7 +97,7 @@ public class SmashingEnchantment extends Enchantment {
         // smash attack entities within range
         user.level.getEntities(user, aabb).forEach(e -> useSmashAttack(user, e, level));
         // apply cooldown
-        if(user instanceof Player player) {
+        if (user instanceof Player player) {
             player.getCooldowns().addCooldown(item.getItem(), Mth.ceil(player.getCurrentItemAttackStrengthDelay()));
         }
     }
@@ -116,7 +119,7 @@ public class SmashingEnchantment extends Enchantment {
 
     @Override
     public boolean isTradeable() {
-        return false;
+        return GreekFantasy.CONFIG.SMASHING_TRADEABLE.get();
     }
 
     @Override

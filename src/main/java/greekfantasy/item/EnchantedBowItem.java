@@ -35,7 +35,7 @@ public abstract class EnchantedBowItem extends BowItem {
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
         if (entityLiving instanceof Player player) {
-            boolean doNotConsume = player.getAbilities().instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0;
+            boolean doNotConsume = player.getAbilities().instabuild || stack.getEnchantmentLevel(Enchantments.INFINITY_ARROWS) > 0;
             ItemStack ammo = player.getProjectile(stack);
 
             int useDuration = this.getUseDuration(stack) - timeLeft;
@@ -108,17 +108,17 @@ public abstract class EnchantedBowItem extends BowItem {
             arrow.setCritArrow(true);
         }
         // apply power enchantment
-        int powerEnchant = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, itemStack);
+        int powerEnchant = itemStack.getEnchantmentLevel(Enchantments.POWER_ARROWS);
         if (powerEnchant > 0) {
             arrow.setBaseDamage(arrow.getBaseDamage() + (double) powerEnchant * 0.5D + 0.5D);
         }
         // apply punch enchantment
-        int punchEnchant = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, itemStack);
+        int punchEnchant = itemStack.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
         if (punchEnchant > 0) {
             arrow.setKnockback(punchEnchant);
         }
         // apply flame enchantment
-        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, itemStack) > 0) {
+        if (itemStack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) > 0) {
             arrow.setSecondsOnFire(100);
         }
         // set pickup status
@@ -175,10 +175,10 @@ public abstract class EnchantedBowItem extends BowItem {
 
         @Override
         protected void checkAndApplyBaseEnchantments(final ItemStack stack) {
-            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) < 1) {
+            if (stack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) < 1) {
                 stack.enchant(Enchantments.FLAMING_ARROWS, 1);
             }
-            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.VANISHING_CURSE, stack) < 1) {
+            if (stack.getEnchantmentLevel(Enchantments.VANISHING_CURSE) < 1) {
                 stack.enchant(Enchantments.VANISHING_CURSE, 1);
             }
         }
@@ -201,7 +201,7 @@ public abstract class EnchantedBowItem extends BowItem {
 
         @Override
         protected void checkAndApplyBaseEnchantments(final ItemStack stack) {
-            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, stack) < 5) {
+            if (stack.getEnchantmentLevel(Enchantments.POWER_ARROWS) < 5) {
                 stack.enchant(Enchantments.POWER_ARROWS, 5);
             }
         }
@@ -242,7 +242,7 @@ public abstract class EnchantedBowItem extends BowItem {
 
         @Override
         protected void checkAndApplyBaseEnchantments(final ItemStack stack) {
-            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) < 1) {
+            if (stack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) < 1) {
                 stack.enchant(Enchantments.FLAMING_ARROWS, 1);
             }
         }

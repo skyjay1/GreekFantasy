@@ -2,7 +2,6 @@
   "type": "minecraft:entity",
   "pools": [
     {
-	  "name": "main",
       "rolls": 1,
       "entries": [
         {
@@ -11,18 +10,13 @@
         }
       ]
     },
-    {
-	  "rolls": 1,
-	  "entries": [
-		{
-		  "type": "loot_table",
-		  "name": "minecraft:chests/buried_treasure"
-		}
-	  ]
-	},
 	{
 	  "rolls": 1,
 	  "entries": [
+	    {
+		  "type": "loot_table",
+		  "name": "minecraft:chests/buried_treasure"
+	    },
 		{
 		  "type": "loot_table",
 		  "name": "minecraft:chests/shipwreck_treasure"

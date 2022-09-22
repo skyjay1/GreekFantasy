@@ -75,7 +75,7 @@ public class Minotaur extends Monster {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(0, new StunnedGoal());
+        this.goalSelector.addGoal(0, new Minotaur.StunnedGoal());
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, false));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8D));
@@ -87,7 +87,7 @@ public class Minotaur extends Monster {
     }
 
     protected void registerChargeGoal() {
-        this.goalSelector.addGoal(2, new ChargeAttackGoal(2.78D));
+        this.goalSelector.addGoal(2, new Minotaur.ChargeAttackGoal(2.78D));
     }
 
     @Override
@@ -179,11 +179,11 @@ public class Minotaur extends Monster {
 
     public void setCharging(final boolean charging) {
         setMinotaurState(charging ? CHARGING : NONE);
-        if(!this.level.isClientSide()) {
+        if (!this.level.isClientSide()) {
             // determine if knockback resistance modifier was added
             AttributeInstance knockbackResist = this.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
             boolean hasModifier = knockbackResist.hasModifier(knockbackResistanceModifier);
-            if(!charging && hasModifier) {
+            if (!charging && hasModifier) {
                 // remove modifier when no longer charging
                 knockbackResist.removeModifier(knockbackResistanceModifier);
             } else if (charging && !hasModifier) {
@@ -233,7 +233,7 @@ public class Minotaur extends Monster {
         private int stunTime;
 
         protected StunnedGoal() {
-            this.setFlags(EnumSet.allOf(Flag.class));
+            this.setFlags(EnumSet.allOf(Goal.Flag.class));
         }
 
         @Override
@@ -277,7 +277,7 @@ public class Minotaur extends Monster {
         private Vec3 targetPos;
 
         public ChargeAttackGoal(final double speedIn) {
-            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
             speed = speedIn;
             targetPos = null;
         }
@@ -313,6 +313,10 @@ public class Minotaur extends Monster {
         @Override
         public void tick() {
             LivingEntity target = Minotaur.this.getTarget();
+            if (null == target) {
+                stop();
+                return;
+            }
             final double disSqToTargetEntity = Minotaur.this.distanceToSqr(target);
             final boolean hitTarget = disSqToTargetEntity < 1.1D;
             final boolean hasTarget = targetPos != null;
@@ -334,7 +338,7 @@ public class Minotaur extends Monster {
             } else if (hasTarget) {
                 // continue moving toward the target that was set earlier
                 Minotaur.this.getMoveControl().setWantedPosition(targetPos.x, targetPos.y, targetPos.z, speed);
-                Minotaur.this.getLookControl().setLookAt(targetPos.add(0, target.getEyeHeight(), 0));
+                Minotaur.this.getLookControl().setLookAt(targetPos);
 
             } else {
                 // determine where the charge attack should target
@@ -354,7 +358,8 @@ public class Minotaur extends Monster {
 
         /**
          * Extends a direct path along a straight line until it reaches max length or intersects a block.
-         * @param targetEntity the target entity
+         *
+         * @param targetEntity  the target entity
          * @param maxDistanceSq the maximum length of the path
          * @return the position of the block at the end of the path
          */

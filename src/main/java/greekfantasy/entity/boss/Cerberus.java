@@ -13,6 +13,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -93,14 +94,17 @@ public class Cerberus extends PathfinderMob implements Enemy {
         Cerberus entity = GFRegistry.EntityReg.CERBERUS.get().create(level);
         entity.moveTo(pos.x(), pos.y(), pos.z(), 0.0F, 0.0F);
         entity.yBodyRot = 0.0F;
-        level.addFreshEntity(entity);
-        entity.setSpawning(true);
-        // trigger spawn for nearby players
-        for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, entity.getBoundingBox().inflate(25.0D))) {
-            CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.addFreshEntityWithPassengers(entity);
+            entity.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(new BlockPos(pos)), MobSpawnType.MOB_SUMMONED, null, null);
+            // trigger spawn for nearby players
+            for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, entity.getBoundingBox().inflate(25.0D))) {
+                CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+            }
         }
+        entity.setSpawning(true);
         // play sound
-        level.playLocalSound(pos.x(), pos.y(), pos.z(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
+        entity.playSound(SoundEvents.WITHER_SPAWN, 1.2F, 1.0F);
         return entity;
     }
 
@@ -220,7 +224,7 @@ public class Cerberus extends PathfinderMob implements Enemy {
     @Override
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
-        if(this.hasCustomName()) {
+        if (this.hasCustomName()) {
             this.bossInfo.setName(this.getCustomName());
         }
         this.bossInfo.addPlayer(player);
@@ -344,7 +348,7 @@ public class Cerberus extends PathfinderMob implements Enemy {
 
     @Override
     public void handleEntityEvent(byte id) {
-        switch(id) {
+        switch (id) {
             case SPAWN_CLIENT:
                 setSpawning(true);
                 break;

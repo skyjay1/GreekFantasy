@@ -8,7 +8,8 @@ import greekfantasy.entity.misc.Curse;
 import greekfantasy.entity.misc.CurseOfCirce;
 import greekfantasy.entity.misc.HealingSpell;
 import greekfantasy.entity.misc.PoisonSpit;
-import net.minecraft.client.model.geom.ModelLayerLocation;
+import greekfantasy.entity.misc.WaterSpell;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -36,7 +37,7 @@ public abstract class SpellRenderer<T extends Projectile> extends EntityRenderer
         this.entityModel.prepareMobModel(entity, 0.0F, 0.0F, partialTick);
         this.entityModel.setupAnim(entity, 0.0F, 0.0F, entity.tickCount + partialTick, 0.0F, 0.0F);
         final VertexConsumer vertexConsumer = multiBufferSource.getBuffer(entityModel.renderType(getTextureLocation(entity)));
-        final int light = usePackedLight ? packedLight : 15728880;
+        final int light = usePackedLight ? packedLight : LightTexture.FULL_BRIGHT;
         this.entityModel.renderToBuffer(poseStack, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
@@ -96,4 +97,17 @@ public abstract class SpellRenderer<T extends Projectile> extends EntityRenderer
         }
     }
 
+    public static class WaterSpellRenderer extends SpellRenderer<WaterSpell> {
+
+        private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/water_spell.png");
+
+        public WaterSpellRenderer(EntityRendererProvider.Context context) {
+            super(context);
+        }
+
+        @Override
+        public ResourceLocation getTextureLocation(final WaterSpell entity) {
+            return TEXTURE;
+        }
+    }
 }

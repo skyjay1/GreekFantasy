@@ -10,9 +10,6 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.animal.horse.Markings;
-
-import java.util.EnumMap;
 
 public class PegasusMarkingsLayer<T extends Pegasus> extends RenderLayer<T, PegasusModel<T>> {
 

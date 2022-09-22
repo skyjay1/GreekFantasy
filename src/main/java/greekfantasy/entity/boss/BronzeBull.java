@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -94,18 +95,21 @@ public class BronzeBull extends Monster {
                 .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 0.6F);
     }
 
-    public static BronzeBull spawnBronzeBull(final Level world, final BlockPos pos, final float yaw) {
-        BronzeBull entity = GFRegistry.EntityReg.BRONZE_BULL.get().create(world);
+    public static BronzeBull spawnBronzeBull(final Level level, final BlockPos pos, final float yaw) {
+        BronzeBull entity = GFRegistry.EntityReg.BRONZE_BULL.get().create(level);
         entity.moveTo(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
         entity.yBodyRot = yaw;
-        world.addFreshEntity(entity);
-        entity.setSpawning(true);
-        // trigger spawn for nearby players
-        for (ServerPlayer player : world.getEntitiesOfClass(ServerPlayer.class, entity.getBoundingBox().inflate(25.0D))) {
-            CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.addFreshEntityWithPassengers(entity);
+            entity.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null, null);
+            // trigger spawn for nearby players
+            for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, entity.getBoundingBox().inflate(25.0D))) {
+                CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+            }
         }
+        entity.setSpawning(true);
         // play sound
-        world.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
+        entity.playSound(SoundEvents.WITHER_SPAWN, 1.2F, 1.0F);
         return entity;
     }
 

@@ -2,6 +2,7 @@ package greekfantasy.entity;
 
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.entity.ai.SummonMobGoal;
 import greekfantasy.entity.util.HasHorseVariant;
 import greekfantasy.util.SongManager;
@@ -42,6 +43,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.animal.horse.Markings;
@@ -98,13 +100,13 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
     protected static final UniformInt ANGER_RANGE = TimeUtil.rangeOfSeconds(20, 39);
     protected int angerTime;
     protected UUID angerTarget;
-    
-    public static final BiPredicate<BlockState, Boolean> IS_CAMPFIRE = (state, lit) -> 
-        state.is(BlockTags.CAMPFIRES) && state.hasProperty(CampfireBlock.LIT) 
-                && state.getValue(CampfireBlock.LIT) == lit
-                && (!state.hasProperty(BlockStateProperties.WATERLOGGED)
+
+    public static final BiPredicate<BlockState, Boolean> IS_CAMPFIRE = (state, lit) ->
+            state.is(BlockTags.CAMPFIRES) && state.hasProperty(CampfireBlock.LIT)
+                    && state.getValue(CampfireBlock.LIT) == lit
+                    && (!state.hasProperty(BlockStateProperties.WATERLOGGED)
                     || !state.getValue(BlockStateProperties.WATERLOGGED));
-    
+
     protected BlockPos dancingAround = null;
 
     protected final Goal meleeAttackGoal;
@@ -141,14 +143,15 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
         this.goalSelector.addGoal(3, new Satyr.PanicGoal(1.3D));
         this.goalSelector.addGoal(4, new Satyr.StartDancingGoal(0.9D, 22, 12, 420));
         this.goalSelector.addGoal(5, new Satyr.LightCampfireGoal(0.9D, 12, 10, 60, 500));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8D, 160) {
+        this.goalSelector.addGoal(6, new MoveToStructureGoal(this, 1.0D, 2, 8, 4, new ResourceLocation(GreekFantasy.MODID, "satyr_camp"), DefaultRandomPos::getPos));
+        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8D, 160) {
             @Override
             public boolean canUse() {
                 return Satyr.this.isIdleState() && Satyr.this.getTarget() == null && super.canUse();
             }
         });
-        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new SatyrHurtByTargetGoal());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(3, new ResetUniversalAngerTargetGoal<>(this, true));
@@ -211,10 +214,15 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
     }
 
     @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
+    }
+
+    @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         // set variant when not spawned as part of a structure
-        if(spawnType != MobSpawnType.STRUCTURE) {
+        if (spawnType != MobSpawnType.STRUCTURE) {
             // determine color variant based on spawn group data, or create new group data
             Variant color;
             if (spawnDataIn instanceof Satyr.GroupData) {
@@ -353,7 +361,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
 
     @Override
     public int getPackedVariant() {
-    return getEntityData().get(DATA_VARIANT);
+        return getEntityData().get(DATA_VARIANT);
     }
 
     @Override
@@ -379,6 +387,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
 
     /**
      * Used in the entity model to animate arms when holding a panflute.
+     *
      * @param partialTick the partial tick
      * @return the percent
      **/
@@ -388,29 +397,29 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
     }
 
     /**
-     * @param pos   the BlockPos to check around
+     * @param pos the BlockPos to check around
      * @return if the given pos is a campfire with empty space around it
      **/
     protected boolean wantsToDanceAround(@Nullable final BlockPos pos) {
         // ensure nonnull
-        if(null == pos) {
+        if (null == pos) {
             return false;
         }
         // ensure the block is a campfire
         final BlockState target = level.getBlockState(pos);
-        if(!IS_CAMPFIRE.test(target, true)) {
+        if (!IS_CAMPFIRE.test(target, true)) {
             return false;
         }
         // ensure surrounding area is passable
         BlockPos p;
-        for(int x = -1; x <= 1; x++) {
-            for(int z = -1; z <= 1; z++) {
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
                 // do not check center block
-                if(x == 0 && z == 0) continue;
+                if (x == 0 && z == 0) continue;
                 // update position
                 p = pos.offset(x, 0, z);
                 // ensure the entity can stand at this position or the positions above/below
-                if(cannotStandAt(p.below()) && cannotStandAt(p) && cannotStandAt(p.above())) {
+                if (cannotStandAt(p.below()) && cannotStandAt(p) && cannotStandAt(p.above())) {
                     return false;
                 }
             }
@@ -427,12 +436,12 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
         BlockState state1 = level.getBlockState(pos);
         BlockState state2 = level.getBlockState(pos.above());
         // check material and fluids at and above this position
-        if(state1.getMaterial().blocksMotion() || !state1.getFluidState().is(Fluids.EMPTY)
-        || state2.getMaterial().blocksMotion() || !state2.getFluidState().is(Fluids.EMPTY)) {
+        if (state1.getMaterial().blocksMotion() || !state1.getFluidState().is(Fluids.EMPTY)
+                || state2.getMaterial().blocksMotion() || !state2.getFluidState().is(Fluids.EMPTY)) {
             return true;
         }
         // check no solid surface below this position
-        if(!level.getBlockState(pos.below(1)).entityCanStandOn(level, pos.below(1), this)) {
+        if (!level.getBlockState(pos.below(1)).entityCanStandOn(level, pos.below(1), this)) {
             return true;
         }
         // all conditions passed, entity can stand here
@@ -496,7 +505,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
         protected void onSummonMob(final Wolf mobEntity) {
             mobEntity.setRemainingPersistentAngerTime(800);
             LivingEntity target = Satyr.this.getTarget();
-            if(target != null) {
+            if (target != null) {
                 mobEntity.setPersistentAngerTarget(target.getUUID());
             }
         }
@@ -561,7 +570,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
 
         @Override
         public boolean canUse() {
-            if(Satyr.this.isDancing() && Satyr.this.dancingAround != null) {
+            if (Satyr.this.isDancing() && Satyr.this.dancingAround != null) {
                 this.targetDirection = getClosestDirection();
                 this.targetPos = Vec3.atBottomCenterOf(dancingAround.relative(this.targetDirection));
                 return true;
@@ -751,7 +760,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
             for (final Direction d : Direction.Plane.HORIZONTAL) {
                 p = pos.relative(d, 1);
                 if (IS_CAMPFIRE.test(level.getBlockState(p), false)
-                    && !Satyr.this.level.isRainingAt(p)) {
+                        && !Satyr.this.level.isRainingAt(p)) {
                     this.lightingFireAt = p;
                     return true;
                 }
@@ -806,7 +815,7 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
         @Override
         public void stop() {
             super.stop();
-            if(Satyr.this.getPose() == Pose.CROUCHING) {
+            if (Satyr.this.getPose() == Pose.CROUCHING) {
                 Satyr.this.setPose(Pose.STANDING);
             }
             this.lightingFireAt = null;

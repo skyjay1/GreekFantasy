@@ -40,6 +40,7 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
 
     /**
      * Called when the chunk is saved
+     *
      * @return the compound tag to use in #handleUpdateTag
      */
     @Override
@@ -49,6 +50,7 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
 
     /**
      * Called when the chunk is loaded
+     *
      * @param tag the compound tag
      */
     @Override
@@ -56,11 +58,6 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
         super.handleUpdateTag(tag);
         ContainerHelper.loadAllItems(tag, inventory);
         inventoryChanged();
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     //INVENTORY //
@@ -78,7 +75,6 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
 
     public void inventoryChanged() {
         if (getLevel() != null && !getLevel().isClientSide()) {
-            // GreekFantasy.LOGGER.debug("sending update... ");
             getLevel().sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
         ItemStack itemStack = getItem(0);
@@ -167,6 +163,11 @@ public class VaseBlockEntity extends BlockEntity implements Container, Nameable 
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         ContainerHelper.saveAllItems(tag, this.inventory, true);
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     // NAMEABLE

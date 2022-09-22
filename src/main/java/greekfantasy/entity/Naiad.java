@@ -1,24 +1,29 @@
 package greekfantasy.entity;
 
 import com.google.common.collect.ImmutableMap;
+import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GoToWaterGoal;
+import greekfantasy.entity.ai.TridentRangedAttackGoal;
+import greekfantasy.entity.ai.WaterAnimalMoveControl;
 import greekfantasy.entity.boss.Charybdis;
+import greekfantasy.entity.boss.Scylla;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -27,21 +32,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.MobType;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
-import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
@@ -58,7 +60,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -84,7 +85,7 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
 
     public Naiad(final EntityType<? extends Naiad> type, final Level level) {
         super(type, level);
-        this.moveControl = new NaiadMoveControl(this);
+        this.moveControl = new WaterAnimalMoveControl(this);
         this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
         this.waterNavigation = new WaterBoundPathNavigation(this, level);
         this.groundNavigation = new GroundPathNavigation(this, level);
@@ -109,10 +110,11 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new GoToWaterGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(2, new Naiad.NaiadTridentAttackGoal(this, 1.0D, 40, 10.0F));
+        this.goalSelector.addGoal(2, new TridentRangedAttackGoal(this, 1.0D, 40, 10.0F));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1D, false));
         this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Satyr.class, 10.0F, 1.2D, 1.1D));
         this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Charybdis.class, 12.0F, 1.0D, 1.0D));
+        this.goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Scylla.class, 12.0F, 1.0D, 1.0D));
         this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 0.8D, 120) {
             @Override
             public boolean canUse() {
@@ -136,10 +138,22 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
     @Override
     public void tick() {
         super.tick();
+        // update pose
         if (this.isInWater() && this.getDeltaMovement().horizontalDistanceSqr() > 0.0012D) {
             this.setPose(Pose.SWIMMING);
         } else if (this.getPose() == Pose.SWIMMING) {
             this.setPose(Pose.STANDING);
+        }
+        // check potion effects
+        if (!level.isClientSide() && level instanceof ServerLevel serverLevel
+                && this.getVariant() == Variant.OCEAN
+                && this.getEffect(GFRegistry.MobEffectReg.CURSE_OF_CIRCE.get()) != null) {
+            // spawn scylla
+            Scylla.spawnScylla(serverLevel, this);
+            // add particles
+            serverLevel.sendParticles(ParticleTypes.ANGRY_VILLAGER,
+                    this.getX(), this.getY() + this.getBbHeight() / 2.0D, this.getZ(),
+                    40, getBbWidth(), getBbHeight() / 2.0D, getBbWidth(), 0.0D);
         }
     }
 
@@ -252,6 +266,16 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
     }
 
     @Override
+    public boolean canBreatheUnderwater() {
+        return true;
+    }
+
+    @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
+    }
+
+    @Override
     protected int decreaseAirSupply(int airSupply) {
         return airSupply;
     }
@@ -259,6 +283,15 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
     @Override
     public MobType getMobType() {
         return MobType.WATER;
+    }
+
+    @Override
+    public boolean isInvulnerableTo(final DamageSource source) {
+        // immune to damage from other centaurs
+        if (source.getDirectEntity() instanceof ThrownTrident && source.getEntity() != null && source.getEntity().getType() == this.getType()) {
+            return true;
+        }
+        return super.isInvulnerableTo(source);
     }
 
     /*protected SoundEvent getAmbientSound() {
@@ -324,76 +357,6 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         throwntrident.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
         this.playSound(SoundEvents.TRIDENT_THROW, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
         this.level.addFreshEntity(throwntrident);
-    }
-
-    static class NaiadMoveControl extends MoveControl {
-        private final Naiad naiad;
-
-        public NaiadMoveControl(Naiad entity) {
-            super(entity);
-            this.naiad = entity;
-        }
-
-        @Override
-        public void tick() {
-            LivingEntity livingentity = this.naiad.getTarget();
-            if (this.naiad.isInWater()) {
-                if (livingentity != null && livingentity.getY() > this.naiad.getY()) {
-                    this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().add(0.0D, 0.006D, 0.0D));
-                }
-
-                if (this.operation != MoveControl.Operation.MOVE_TO || this.naiad.getNavigation().isDone()) {
-                    this.naiad.setSpeed(0.0F);
-                    this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().multiply(1.0D, 0.5D, 1.0D));
-                    return;
-                }
-
-                double d0 = this.wantedX - this.naiad.getX();
-                double d1 = this.wantedY - this.naiad.getY();
-                double d2 = this.wantedZ - this.naiad.getZ();
-                double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
-                d1 /= d3;
-                float f = (float) (Mth.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
-                this.naiad.setYRot(this.rotlerp(this.naiad.getYRot(), f, 90.0F));
-                this.naiad.yBodyRot = this.naiad.getYRot();
-                float f1 = (float) (this.speedModifier * this.naiad.getAttributeValue(Attributes.MOVEMENT_SPEED));
-                float f2 = Mth.lerp(0.125F, this.naiad.getSpeed(), f1);
-                this.naiad.setSpeed(f2);
-                this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().add((double) f2 * d0 * 0.05D, (double) f2 * d1 * 0.1D, (double) f2 * d2 * 0.05D));
-            } else {
-                if (!this.naiad.onGround) {
-                    this.naiad.setDeltaMovement(this.naiad.getDeltaMovement().add(0.0D, -0.008D, 0.0D));
-                }
-
-                super.tick();
-            }
-
-        }
-    }
-
-    static class NaiadTridentAttackGoal extends RangedAttackGoal {
-        private final Naiad naiad;
-
-        public NaiadTridentAttackGoal(RangedAttackMob p_32450_, double p_32451_, int p_32452_, float p_32453_) {
-            super(p_32450_, p_32451_, p_32452_, p_32453_);
-            this.naiad = (Naiad) p_32450_;
-        }
-
-        public boolean canUse() {
-            return super.canUse() && this.naiad.getMainHandItem().is(Items.TRIDENT);
-        }
-
-        public void start() {
-            super.start();
-            this.naiad.setAggressive(true);
-            this.naiad.startUsingItem(InteractionHand.MAIN_HAND);
-        }
-
-        public void stop() {
-            super.stop();
-            this.naiad.stopUsingItem();
-            this.naiad.setAggressive(false);
-        }
     }
 
     public static class Variant implements StringRepresentable {

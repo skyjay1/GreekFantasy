@@ -2,7 +2,6 @@ package greekfantasy.client.entity.model;
 
 import com.google.common.collect.ImmutableList;
 import greekfantasy.GreekFantasy;
-import greekfantasy.entity.monster.Drakaina;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;

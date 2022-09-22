@@ -1,0 +1,39 @@
+{
+  "name": "greekfantasy:ocean_village/small_path",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 10,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/small_path_0",
+        "projection": "terrain_matching",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+	{
+      "weight": 10,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/small_path_1",
+        "projection": "terrain_matching",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+	{
+      "weight": 10,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greekfantasy:ocean_village/small_path_2",
+        "projection": "terrain_matching",
+        "processors": "greekfantasy:ocean_village"
+      }
+    },
+    {
+      "weight": 8,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+  ]
+}

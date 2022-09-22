@@ -2,8 +2,8 @@
   "pools": [
     {
       "rolls": {
-        "min": 2,
-        "max": 6
+        "min": 4,
+        "max": 8
       },
       "entries": [
         {
@@ -55,6 +55,10 @@
         {
           "type": "minecraft:item",
           "name": "greekfantasy:wild_rose"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "greekfantasy:pinecone"
         },
         {
           "type": "minecraft:item",

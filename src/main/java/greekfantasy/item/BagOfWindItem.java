@@ -1,6 +1,5 @@
 package greekfantasy.item;
 
-import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;

@@ -7,7 +7,6 @@ import greekfantasy.entity.Orthus;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.animal.Wolf;
 
 public class OrthusRenderer<T extends Orthus> extends MobRenderer<T, OrthusModel<T>> {
     public static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/orthus/orthus.png");

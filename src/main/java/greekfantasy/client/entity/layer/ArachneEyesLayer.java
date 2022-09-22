@@ -3,7 +3,6 @@ package greekfantasy.client.entity.layer;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.boss.Arachne;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;

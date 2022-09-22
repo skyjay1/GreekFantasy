@@ -30,7 +30,7 @@ public class MirroringEnchantment extends Enchantment {
 
     @Override
     public boolean isTradeable() {
-        return GreekFantasy.CONFIG.isMirroringEnchantmentEnabled();
+        return GreekFantasy.CONFIG.MIRRORING_TRADEABLE.get();
     }
 
     @Override

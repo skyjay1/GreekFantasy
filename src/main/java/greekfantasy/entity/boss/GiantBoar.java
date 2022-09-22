@@ -74,7 +74,6 @@ public class GiantBoar extends Hoglin {
     public static GiantBoar spawnGiantBoar(final ServerLevel level, final Hoglin hoglin) {
         GiantBoar entity = GFRegistry.EntityReg.GIANT_BOAR.get().create(level);
         entity.copyPosition(hoglin);
-        entity.finalizeSpawn(level, level.getCurrentDifficultyAt(hoglin.blockPosition()), MobSpawnType.CONVERSION, null, null);
         if (hoglin.hasCustomName()) {
             entity.setCustomName(hoglin.getCustomName());
             entity.setCustomNameVisible(hoglin.isCustomNameVisible());
@@ -82,7 +81,8 @@ public class GiantBoar extends Hoglin {
         entity.setPersistenceRequired();
         entity.yBodyRot = hoglin.yBodyRot;
         entity.setPortalCooldown();
-        level.addFreshEntity(entity);
+        level.addFreshEntityWithPassengers(entity);
+        entity.finalizeSpawn(level, level.getCurrentDifficultyAt(hoglin.blockPosition()), MobSpawnType.CONVERSION, null, null);
         entity.setSpawning(true);
         // remove the old hoglin
         hoglin.ejectPassengers();
@@ -92,7 +92,7 @@ public class GiantBoar extends Hoglin {
             CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
         }
         // play sound
-        level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.WITHER_SPAWN, entity.getSoundSource(), 1.2F, 1.0F, false);
+        entity.playSound(SoundEvents.WITHER_SPAWN, 1.2F, 1.0F);
         return entity;
     }
 
@@ -237,7 +237,7 @@ public class GiantBoar extends Hoglin {
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
         this.bossInfo.addPlayer(player);
-        if(this.hasCustomName()) {
+        if (this.hasCustomName()) {
             this.bossInfo.setName(this.getCustomName());
         }
         this.bossInfo.setVisible(GreekFantasy.CONFIG.showGiantBoarBossBar());
@@ -266,7 +266,7 @@ public class GiantBoar extends Hoglin {
 
     public void setSpawning(final boolean spawning) {
         this.getEntityData().set(SPAWNING, spawning);
-        if(spawning) {
+        if (spawning) {
             spawnTime = 1;
             // notify client
             if (!level.isClientSide()) {
@@ -278,7 +278,7 @@ public class GiantBoar extends Hoglin {
     }
 
     public float getSpawnPercent(final float partialTick) {
-        if(spawnTime <= 0) {
+        if (spawnTime <= 0) {
             return 1.0F;
         }
         return Mth.lerp(partialTick, spawnTime0, spawnTime) / (float) MAX_SPAWN_TIME;

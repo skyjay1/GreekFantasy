@@ -3,11 +3,13 @@ package greekfantasy.entity.boss;
 import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.Cerastes;
+import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.entity.util.GFMobType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,6 +37,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -69,7 +72,7 @@ public class Hydra extends Monster {
                 .add(Attributes.FOLLOW_RANGE, 16.0D)
                 .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 0.6D);
     }
-    
+
     public static Hydra spawnHydra(final ServerLevel level, final Cerastes cerastes) {
         Hydra entity = GFRegistry.EntityReg.HYDRA.get().create(level);
         entity.copyPosition(cerastes);
@@ -89,7 +92,7 @@ public class Hydra extends Monster {
         entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60));
         entity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 60));
         // play sound
-        level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.PLAYER_LEVELUP, entity.getSoundSource(), 1.0F, 1.0F, false);
+        entity.playSound(SoundEvents.WITHER_SPAWN, 1.2F, 1.0F);
         return entity;
     }
 
@@ -104,6 +107,7 @@ public class Hydra extends Monster {
         super.registerGoals();
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new Hydra.MoveToTargetGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 4, 8, 4, new ResourceLocation(GreekFantasy.MODID, "hydra_lair"), DefaultRandomPos::getPos));
         this.goalSelector.addGoal(5, new RandomStrollGoal(this, 0.8D) {
             @Override
             public boolean canUse() {
@@ -181,7 +185,7 @@ public class Hydra extends Monster {
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
         this.bossInfo.addPlayer(player);
-        if(this.hasCustomName()) {
+        if (this.hasCustomName()) {
             bossInfo.setName(this.getCustomName());
         }
         bossInfo.setVisible(GreekFantasy.CONFIG.showHydraBossBar());
