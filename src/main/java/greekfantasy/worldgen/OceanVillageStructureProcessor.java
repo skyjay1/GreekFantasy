@@ -57,7 +57,6 @@ public class OceanVillageStructureProcessor extends StructureProcessor {
             // determine blockstate
             Block mappedBlock = CORAL_LIST.get(blockInfo.state.getBlock()).get(index);
             BlockState replaced = copyMatchingProperties(blockInfo.state, mappedBlock.defaultBlockState());
-            //GreekFantasy.LOGGER.debug("index=" + index + "; seed=" + seed);
             return new StructureTemplate.StructureBlockInfo(blockInfo.pos, replaced, blockInfo.nbt);
         }
         return blockInfo;

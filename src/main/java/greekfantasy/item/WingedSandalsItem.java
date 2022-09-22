@@ -56,7 +56,7 @@ public class WingedSandalsItem extends ArmorItem {
             stack.enchant(GFRegistry.EnchantmentReg.OVERSTEP.get(), 1);
         }
         // add mob effects
-        if (entity instanceof LivingEntity livingEntity && itemSlot == EquipmentSlot.FEET.getIndex() && stack.getMaxDamage() - stack.getDamageValue() > BROKEN) {
+        if (entity instanceof LivingEntity livingEntity && livingEntity.getItemBySlot(EquipmentSlot.FEET).is(this) && stack.getMaxDamage() - stack.getDamageValue() > BROKEN) {
             livingEntity.addEffect(new MobEffectInstance(MobEffects.JUMP, 30, 4, false, false, false));
             livingEntity.fallDistance = 0;
             // damage the item

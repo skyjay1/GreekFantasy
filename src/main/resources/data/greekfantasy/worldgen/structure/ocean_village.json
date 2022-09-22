@@ -1,8 +1,8 @@
 {
   "type": "minecraft:jigsaw",
   "biomes": "#minecraft:has_structure/ocean_ruin_cold",
-  "step": "surface_structures",
-  "terrain_adaptation": "none",
+  "step": "fluid_springs",
+  "terrain_adaptation": "beard_thin",
   "start_pool": "greekfantasy:ocean_village/start",
   "size": 3,
   "start_height": {

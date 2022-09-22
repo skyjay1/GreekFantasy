@@ -22,7 +22,7 @@ public class MoveToStructureGoal extends RandomStrollGoal {
 
     protected final Holder<Structure> structure;
     protected final HolderSet<Structure> structureSet;
-    protected final int rangeInChunks;
+    protected final int rangeInSections;
     protected final int distanceXZ;
     protected final int distanceY;
     protected final RandomPosFactory randomPosFactory;
@@ -32,23 +32,41 @@ public class MoveToStructureGoal extends RandomStrollGoal {
     protected BlockPos structurePos;
     protected StructureStart structureStart;
 
+    /**
+     * @param mob the entity
+     * @param speedModifier the path navigation speed modifier
+     * @param rangeInSections the distance to search for structures in chunk sections (16x16x16)
+     * @param distanceXZ the maximum allowed x and z distance (in blocks) from a located structure
+     * @param distanceY the maximum allowed y distance (in blocks) from a located structure
+     * @param structureId the structure ID
+     * @param posFactory a random position provider
+     */
     public MoveToStructureGoal(PathfinderMob mob, double speedModifier,
-                               int rangeInChunks, int distanceXZ, int distanceY,
+                               int rangeInSections, int distanceXZ, int distanceY,
                                ResourceLocation structureId,
                                RandomPosFactory posFactory) {
-        this(mob, speedModifier, rangeInChunks, distanceXZ, distanceY,
+        this(mob, speedModifier, rangeInSections, distanceXZ, distanceY,
                 createHolder(mob.level.registryAccess(), structureId),
                 posFactory);
     }
 
+    /**
+     * @param mob the entity
+     * @param speedModifier the path navigation speed modifier
+     * @param rangeInSections the distance to search for structures in chunk sections (16x16x16)
+     * @param distanceXZ the maximum allowed x and z distance (in blocks) from a located structure
+     * @param distanceY the maximum allowed y distance (in blocks) from a located structure
+     * @param structure the structure
+     * @param posFactory a random position provider
+     */
     public MoveToStructureGoal(PathfinderMob mob, double speedModifier,
-                               int rangeInChunks, int distanceXZ, int distanceY,
+                               int rangeInSections, int distanceXZ, int distanceY,
                                Holder<Structure> structure,
                                RandomPosFactory posFactory) {
         super(mob, speedModifier, 10);
         this.structure = structure;
         this.structureSet = HolderSet.direct(this.structure);
-        this.rangeInChunks = rangeInChunks;
+        this.rangeInSections = rangeInSections;
         this.distanceXZ = distanceXZ;
         this.distanceY = distanceY;
         this.randomPosFactory = posFactory;
@@ -63,7 +81,7 @@ public class MoveToStructureGoal extends RandomStrollGoal {
         if (isNearStructure(structureStart, blockpos, distanceXZ, distanceY)) {
             return false;
         }
-        Pair<BlockPos, Holder<Structure>> pair = level.getChunkSource().getGenerator().findNearestMapStructure(level, structureSet, blockpos, rangeInChunks, false);
+        Pair<BlockPos, Holder<Structure>> pair = level.getChunkSource().getGenerator().findNearestMapStructure(level, structureSet, blockpos, rangeInSections, false);
         if (null == pair) {
             return false;
         }

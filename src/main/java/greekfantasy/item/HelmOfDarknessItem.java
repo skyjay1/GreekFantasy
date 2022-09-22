@@ -30,7 +30,7 @@ public class HelmOfDarknessItem extends ArmorItem {
     public void inventoryTick(final ItemStack stack, final Level level, final Entity entity,
                               final int itemSlot, final boolean isSelected) {
         // add invisibility effect
-        if (entity instanceof LivingEntity livingEntity && itemSlot == EquipmentSlot.HEAD.getIndex()) {
+        if (entity instanceof LivingEntity livingEntity && livingEntity.getItemBySlot(EquipmentSlot.HEAD).is(this)) {
             livingEntity.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 30));
         }
     }

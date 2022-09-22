@@ -7,7 +7,7 @@
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "greekfantasy:ocean_village/large_path",
-        "projection": "terrain_matching",
+        "projection": "rigid",
         "processors": "greekfantasy:ocean_village"
       }
     },

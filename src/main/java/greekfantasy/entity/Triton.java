@@ -133,7 +133,7 @@ public class Triton extends PathfinderMob implements RangedAttackMob, NeutralMob
         this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Scylla.class, 12.0F, 1.0D, 1.0D));
         this.goalSelector.addGoal(5, new TradeWithPlayerGoal<>(this, 50 + random.nextInt(20)));
         this.goalSelector.addGoal(6, new Triton.FeedDolphinGoal(this, 0.9D, 180, 840, 500));
-        this.goalSelector.addGoal(6, new MoveToStructureGoal(this, 1.0D, 6, 8, 10, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
+        this.goalSelector.addGoal(6, new MoveToStructureGoal(this, 1.0D, 6, 4, 10, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
         this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 0.8D, 120));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 5.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Dolphin.class, 6.0F));

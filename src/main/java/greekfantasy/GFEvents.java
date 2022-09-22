@@ -12,6 +12,7 @@ import greekfantasy.entity.Triton;
 import greekfantasy.entity.Whirl;
 import greekfantasy.entity.ai.DolphinTemptByTritonGoal;
 import greekfantasy.entity.ai.FollowWaterMobGoal;
+import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.GiantBoar;
 import greekfantasy.entity.boss.NemeanLion;
@@ -27,6 +28,7 @@ import greekfantasy.network.SQuestPacket;
 import greekfantasy.network.SSongPacket;
 import greekfantasy.util.SummonBossUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
@@ -49,6 +51,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Cow;
@@ -555,11 +558,15 @@ public final class GFEvents {
                             return mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled() && mob.getRandom().nextInt(45) == 0 && super.canUse();
                         }
                     });
+                    // move to ocean village goal
+                    mob.goalSelector.addGoal(3, new MoveToStructureGoal(mob, 1.0D, 4, 8, 10, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
                 }
                 // add dolphin goals
                 if(mob.getType() == EntityType.DOLPHIN && mob instanceof Dolphin dolphin) {
                     // tempt by triton goal
                     mob.goalSelector.addGoal(2, new DolphinTemptByTritonGoal(dolphin, 0.9D, Ingredient.of(ItemTags.FISHES)));
+                    // move to ocean village goal
+                    mob.goalSelector.addGoal(3, new MoveToStructureGoal(dolphin, 1.0D, 5, 10, 15, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
                 }
                 // add drowned goals
                 if(mob.getType() == EntityType.DROWNED) {
