@@ -425,5 +425,8 @@
   "quest.greekfantasy.trade_with_nymph": "Quest: Trade with a Nymph",
   "quest.greekfantasy.trade_with_nymph.line1": "The Dryads of the forest love new seeds and plants.",
   "quest.greekfantasy.trade_with_nymph.line2": "Offer an item, and you may receive something nice in return!",
-  "quest.greekfantasy.trade_with_nymph.line3": "The Lampads of the underworld enjoy trading as well."
+  "quest.greekfantasy.trade_with_nymph.line3": "The Lampads of the underworld enjoy trading as well.",
+  "quest.greekfantasy.trade_with_triton": "Quest: Trade with a Triton",
+  "quest.greekfantasy.trade_with_triton.line1": "Tritons and Tritonesses are willing to trade for amethyst shards.",
+  "quest.greekfantasy.trade_with_triton.line2": "Look for the friendly folk in ocean villages."
 }

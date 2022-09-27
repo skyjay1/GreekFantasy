@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 public class ScyllaRenderer extends MobRenderer<Scylla, ScyllaModel> {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(GreekFantasy.MODID, "textures/entity/scylla/scylla.png");
-    private static final float SCALE = 1.0F;
+    private static final float SCALE = 2.0F;
 
     public ScyllaRenderer(EntityRendererProvider.Context context) {
         super(context, new ScyllaModel(context.bakeLayer(ScyllaModel.SCYLLA_MODEL_RESOURCE)), 1.0F);
@@ -21,9 +21,7 @@ public class ScyllaRenderer extends MobRenderer<Scylla, ScyllaModel> {
 
     @Override
     protected void scale(final Scylla entity, PoseStack poseStack, float partialTick) {
-        // TODO determine scale?
-        final float s = 2.0F;//SCALE;
-        poseStack.scale(s, s, s);
+        poseStack.scale(SCALE, SCALE, SCALE);
     }
 
     @Override
