@@ -88,11 +88,11 @@ public class Quest {
      * @return the random quest ID, or "empty" if it failed
      */
     public static ResourceLocation getRandomQuestId(final Random rand) {
-        ResourceLocation[] keys = GreekFantasy.QUESTS.getKeys().toArray(new ResourceLocation[0]);
+        ResourceLocation[] keys = GreekFantasy.QUEST_MAP.keySet().toArray(new ResourceLocation[0]);
         // attempt to locate a non-disabled quest
         for(int attempts = 0; attempts < 10; attempts++) {
             ResourceLocation id = Util.getRandom(keys, rand);
-            if(!GreekFantasy.QUESTS.get(id).orElse(Quest.EMPTY).isDisabled()) {
+            if(!GreekFantasy.QUEST_MAP.getOrDefault(id, Quest.EMPTY).isDisabled()) {
                 return id;
             }
         }

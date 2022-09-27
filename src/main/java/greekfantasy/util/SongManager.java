@@ -28,10 +28,10 @@ public final class SongManager {
      **/
     public static boolean playMusic(final LivingEntity entity, final InstrumentItem instrument, final ResourceLocation songName,
                                     final long worldTime, final float volume, final float volumeBass) {
-        final Optional<Song> song = GreekFantasy.SONGS.get(songName);
-        if (song.isPresent() && song.get().shouldPlayNote(worldTime)) {
-            final List<Integer> treble = song.get().getTrebleNotes(worldTime);
-            final List<Integer> bass = song.get().getBassNotes(worldTime);
+        final Song song = GreekFantasy.SONG_MAP.get(songName);
+        if (song != null && song.shouldPlayNote(worldTime)) {
+            final List<Integer> treble = song.getTrebleNotes(worldTime);
+            final List<Integer> bass = song.getBassNotes(worldTime);
             for (final Integer note : treble) {
                 playNoteAt(entity, instrument, note, volume);
             }

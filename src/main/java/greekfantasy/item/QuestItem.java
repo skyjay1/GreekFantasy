@@ -38,8 +38,8 @@ public class QuestItem extends Item {
         if (this.allowdedIn(group)) {
             List<ResourceLocation> questIds = new ArrayList<>();
             // add each non-disabled quest to the list
-            for(Map.Entry<ResourceLocation, Optional<Quest>> entry : GreekFantasy.QUESTS.getEntries()) {
-                if(entry.getValue().isPresent() && !entry.getValue().get().isDisabled()) {
+            for(Map.Entry<ResourceLocation, Quest> entry : GreekFantasy.QUEST_MAP.entrySet()) {
+                if(!entry.getValue().isDisabled()) {
                     questIds.add(entry.getKey());
                 }
             }

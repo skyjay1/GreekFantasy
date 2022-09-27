@@ -1,39 +1,39 @@
 package greekfantasy.network;
 
-import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Codec;
 import greekfantasy.GreekFantasy;
 import greekfantasy.util.Quest;
-import greekfantasy.util.Song;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.Optional;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
  * Called when datapacks are (re)loaded.
- * Sent from the server to the client with a single ResourceLocation ID
- * and the corresponding Song as it was read from JSON.
+ * Sent from the server to the client with a map of
+ * ResourceLocation IDs and Quests
  **/
 public class SQuestPacket {
 
-    protected ResourceLocation questId;
-    protected Quest quest;
+    protected static final Codec<Map<ResourceLocation, Quest>> CODEC = Codec.unboundedMap(ResourceLocation.CODEC, Quest.CODEC);
 
-    public SQuestPacket() {
-    }
+    protected Map<ResourceLocation, Quest> data;
 
     /**
-     * @param questId the ResourceLocation ID of the quest
-     * @param quest     the Quest
+     * @param data the data map
      **/
-    public SQuestPacket(final ResourceLocation questId, final Quest quest) {
-        this.questId = questId;
-        this.quest = quest;
+    public SQuestPacket(final Map<ResourceLocation, Quest> data) {
+        this.data = data;
+        if (FMLEnvironment.dist != Dist.CLIENT) {
+            // update server-side map
+            GreekFantasy.QUEST_MAP.clear();
+            GreekFantasy.QUEST_MAP.putAll(data);
+        }
     }
 
     /**
@@ -43,10 +43,8 @@ public class SQuestPacket {
      * @return a new instance of a SQuestPacket based on the PacketBuffer
      */
     public static SQuestPacket fromBytes(final FriendlyByteBuf buf) {
-        final ResourceLocation sName = buf.readResourceLocation();
-        final CompoundTag sNBT = buf.readNbt();
-        final Optional<Quest> sQuest = GreekFantasy.QUESTS.readObject(sNBT).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read quest from NBT for packet\n" + error));
-        return new SQuestPacket(sName, sQuest.orElse(Quest.EMPTY));
+        final Map<ResourceLocation, Quest> data = buf.readWithCodec(CODEC);
+        return new SQuestPacket(data);
     }
 
     /**
@@ -56,10 +54,7 @@ public class SQuestPacket {
      * @param buf the PacketBuffer
      */
     public static void toBytes(final SQuestPacket msg, final FriendlyByteBuf buf) {
-        DataResult<Tag> nbtResult = GreekFantasy.QUESTS.writeObject(msg.quest);
-        Tag tag = nbtResult.resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to write quest to NBT for packet\n" + error)).get();
-        buf.writeResourceLocation(msg.questId);
-        buf.writeNbt((CompoundTag) tag);
+        buf.writeWithCodec(CODEC, msg.data);
     }
 
     /**
@@ -72,7 +67,8 @@ public class SQuestPacket {
         NetworkEvent.Context context = contextSupplier.get();
         if (context.getDirection().getReceptionSide() == LogicalSide.CLIENT) {
             context.enqueueWork(() -> {
-                GreekFantasy.QUESTS.put(message.questId, message.quest);
+                GreekFantasy.QUEST_MAP.clear();
+                GreekFantasy.QUEST_MAP.putAll(message.data);
             });
         }
         context.setPacketHandled(true);
