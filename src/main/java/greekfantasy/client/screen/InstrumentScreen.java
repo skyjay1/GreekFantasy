@@ -92,7 +92,7 @@ public class InstrumentScreen extends Screen {
             items[i] = new NoteRadialMenuItem(this, Component.literal(NOTE_NAMES[i]), i + 1);
         }
         // create song items
-        this.songs = new ArrayList<>(GreekFantasy.SONGS.getKeys());
+        this.songs = new ArrayList<>(GreekFantasy.SONG_MAP.keySet());
     }
 
     @Override
@@ -270,7 +270,7 @@ public class InstrumentScreen extends Screen {
             if (songId != null) {
                 this.x = (int) (screen.x) - RADIAL_WIDTH - SONG_RADIAL_MARGIN - SONG_WIDTH;
                 this.visible = true;
-                Song song = GreekFantasy.SONGS.get(songId).get();
+                Song song = GreekFantasy.SONG_MAP.getOrDefault(songId, Song.EMPTY);
                 this.name = song.getName().copy().withStyle(ChatFormatting.WHITE);
                 this.credits = song.getCredits().copy().withStyle(ChatFormatting.GRAY);
             } else {

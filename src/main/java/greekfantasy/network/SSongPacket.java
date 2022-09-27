@@ -1,38 +1,39 @@
 package greekfantasy.network;
 
-import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Codec;
 import greekfantasy.GreekFantasy;
 import greekfantasy.util.Song;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.Optional;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
  * Called when datapacks are (re)loaded.
- * Sent from the server to the client with a single ResourceLocation ID
- * and the corresponding Song as it was read from JSON.
+ * Sent from the server to the client with a map of
+ * ResourceLocation IDs and Songs
  **/
 public class SSongPacket {
 
-    protected ResourceLocation songName;
-    protected Song song;
+    protected static final Codec<Map<ResourceLocation, Song>> CODEC = Codec.unboundedMap(ResourceLocation.CODEC, Song.CODEC);
 
-    public SSongPacket() {
-    }
+    protected Map<ResourceLocation, Song> data;
 
     /**
-     * @param songNameIn the ResourceLocation ID of the song
-     * @param songIn     the Song
+     * @param data the data map
      **/
-    public SSongPacket(final ResourceLocation songNameIn, final Song songIn) {
-        this.songName = songNameIn;
-        this.song = songIn;
+    public SSongPacket(final Map<ResourceLocation, Song> data) {
+        this.data = data;
+        if (FMLEnvironment.dist != Dist.CLIENT) {
+            // update server-side map
+            GreekFantasy.SONG_MAP.clear();
+            GreekFantasy.SONG_MAP.putAll(data);
+        }
     }
 
     /**
@@ -42,10 +43,8 @@ public class SSongPacket {
      * @return a new instance of a SSongPacket based on the PacketBuffer
      */
     public static SSongPacket fromBytes(final FriendlyByteBuf buf) {
-        final ResourceLocation sName = buf.readResourceLocation();
-        final CompoundTag sNBT = buf.readNbt();
-        final Optional<Song> sSong = GreekFantasy.SONGS.readObject(sNBT).resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to read song from NBT for packet\n" + error));
-        return new SSongPacket(sName, sSong.orElse(Song.EMPTY));
+        final Map<ResourceLocation, Song> data = buf.readWithCodec(CODEC);
+        return new SSongPacket(data);
     }
 
     /**
@@ -55,10 +54,7 @@ public class SSongPacket {
      * @param buf the PacketBuffer
      */
     public static void toBytes(final SSongPacket msg, final FriendlyByteBuf buf) {
-        DataResult<Tag> nbtResult = GreekFantasy.SONGS.writeObject(msg.song);
-        Tag tag = nbtResult.resultOrPartial(error -> GreekFantasy.LOGGER.error("Failed to write song to NBT for packet\n" + error)).get();
-        buf.writeResourceLocation(msg.songName);
-        buf.writeNbt((CompoundTag) tag);
+        buf.writeWithCodec(CODEC, msg.data);
     }
 
     /**
@@ -71,7 +67,8 @@ public class SSongPacket {
         NetworkEvent.Context context = contextSupplier.get();
         if (context.getDirection().getReceptionSide() == LogicalSide.CLIENT) {
             context.enqueueWork(() -> {
-                GreekFantasy.SONGS.put(message.songName, message.song);
+                GreekFantasy.SONG_MAP.clear();
+                GreekFantasy.SONG_MAP.putAll(message.data);
             });
         }
         context.setPacketHandled(true);

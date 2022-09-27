@@ -5,7 +5,7 @@ import greekfantasy.network.CPlayNotePacket;
 import greekfantasy.network.SCurseOfCircePacket;
 import greekfantasy.network.SQuestPacket;
 import greekfantasy.network.SSongPacket;
-import greekfantasy.util.GenericJsonReloadListener;
+import greekfantasy.util.CodecJsonDataManager;
 import greekfantasy.util.Quest;
 import greekfantasy.util.Song;
 import greekfantasy.worldgen.maze.WeightedTemplateList;
@@ -16,6 +16,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -26,11 +27,12 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Mod(GreekFantasy.MODID)
@@ -52,13 +54,13 @@ public class GreekFantasy {
 
     private static boolean isRpgGodsLoaded;
 
-    public static final GenericJsonReloadListener<Song> SONGS = new GenericJsonReloadListener<>("songs", Song.class, Song.CODEC,
-            l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SSongPacket(e.getKey(), e.getValue().get()))));
-    public static final GenericJsonReloadListener<Quest> QUESTS = new GenericJsonReloadListener<>("quests", Quest.class, Quest.CODEC,
-            l -> l.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.ALL.noArg(), new SQuestPacket(e.getKey(), e.getValue().get()))));
+    private static final CodecJsonDataManager<Song> SONG_JSON_MANAGER = new CodecJsonDataManager<>("songs", Song.CODEC);
+    public static final Map<ResourceLocation, Song> SONG_MAP = new HashMap<>();
 
-    public static final GenericJsonReloadListener<WeightedTemplateList> WEIGHTED_TEMPLATES = new GenericJsonReloadListener<>("worldgen/maze_piece", WeightedTemplateList.class, WeightedTemplateList.CODEC,
-            l -> {});
+    private static final CodecJsonDataManager<Quest> QUEST_JSON_MANAGER = new CodecJsonDataManager<>("quests", Quest.CODEC);
+    public static final Map<ResourceLocation, Quest> QUEST_MAP = new HashMap<>();
+
+    private static final CodecJsonDataManager<WeightedTemplateList> MAZE_PIECE_JSON_MANAGER = new CodecJsonDataManager<>("worldgen/maze_piece", WeightedTemplateList.CODEC);
 
     public GreekFantasy() {
         // register config
@@ -77,6 +79,7 @@ public class GreekFantasy {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::loadConfig);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(GreekFantasy::reloadConfig);
+        MinecraftForge.EVENT_BUS.addListener(GreekFantasy::addReloadListeners);
 
         // register messages
         int messageId = 0;
@@ -84,6 +87,10 @@ public class GreekFantasy {
         CHANNEL.registerMessage(messageId++, SQuestPacket.class, SQuestPacket::toBytes, SQuestPacket::fromBytes, SQuestPacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(messageId++, SCurseOfCircePacket.class, SCurseOfCircePacket::toBytes, SCurseOfCircePacket::fromBytes, SCurseOfCircePacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(messageId++, CPlayNotePacket.class, CPlayNotePacket::toBytes, CPlayNotePacket::fromBytes, CPlayNotePacket::handlePacket, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+
+        // data managers
+        QUEST_JSON_MANAGER.subscribeAsSyncable(CHANNEL, SQuestPacket::new);
+        SONG_JSON_MANAGER.subscribeAsSyncable(CHANNEL, SSongPacket::new);
     }
 
     public static void setup(final FMLCommonSetupEvent event) {
@@ -96,6 +103,16 @@ public class GreekFantasy {
 
     public static void reloadConfig(final ModConfigEvent.Reloading event) {
         CONFIG.bake();
+    }
+
+    public static void addReloadListeners(final AddReloadListenerEvent event) {
+        event.addListener(QUEST_JSON_MANAGER);
+        event.addListener(SONG_JSON_MANAGER);
+        event.addListener(MAZE_PIECE_JSON_MANAGER);
+    }
+
+    public static WeightedTemplateList getMazePiece(final ResourceLocation id) {
+        return MAZE_PIECE_JSON_MANAGER.getData().getOrDefault(id, WeightedTemplateList.EMPTY);
     }
 
     public static boolean isRGLoaded() {

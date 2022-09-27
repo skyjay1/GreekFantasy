@@ -770,36 +770,6 @@ public final class GFEvents {
             }
         }
 
-        /**
-         * Used to sync datapack data from the server to each client
-         *
-         * @param event the player login event
-         **/
-        @SubscribeEvent
-        public static void onPlayerLogin(final PlayerEvent.PlayerLoggedInEvent event) {
-            Player player = event.getEntity();
-            if (player instanceof ServerPlayer) {
-                // sync songs
-                GreekFantasy.SONGS.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new SSongPacket(e.getKey(), e.getValue().get())));
-                // sync quests
-                GreekFantasy.QUESTS.getEntries().forEach(e -> GreekFantasy.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new SQuestPacket(e.getKey(), e.getValue().get())));
-            }
-            // remove this when not in beta
-            // event.getEntity().displayClientMessage(Component.literal("You are using a beta version of Greek Fantasy - do not distribute.").withStyle(ChatFormatting.AQUA), false);
-        }
-
-        /**
-         * Used to sync datapack info when resources are reloaded
-         *
-         * @param event the reload listener event
-         **/
-        @SubscribeEvent
-        public static void onAddReloadListeners(final AddReloadListenerEvent event) {
-            event.addListener(GreekFantasy.SONGS);
-            event.addListener(GreekFantasy.QUESTS);
-            event.addListener(GreekFantasy.WEIGHTED_TEMPLATES);
-        }
-
         @SubscribeEvent
         public static void onAttachCapabilities(final AttachCapabilitiesEvent<Entity> event) {
             if(event.getObject() instanceof Guardian) {

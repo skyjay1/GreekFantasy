@@ -346,7 +346,7 @@ public class MazePiece extends StructurePiece {
      * @return the modified instance for chaining methods
      */
     public MazePiece bake(RandomSource random) {
-        final WeightedTemplateList templatePool = GreekFantasy.WEIGHTED_TEMPLATES.get(variant.getTemplatePool()).orElse(WeightedTemplateList.EMPTY);
+        final WeightedTemplateList templatePool = GreekFantasy.getMazePiece(variant.getTemplatePool());
         WeightedTemplate weightedTemplate = templatePool.sample(random);
         if (weightedTemplate != null) {
             this.template = weightedTemplate.getLocation();

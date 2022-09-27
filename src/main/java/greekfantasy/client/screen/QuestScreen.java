@@ -44,7 +44,7 @@ public class QuestScreen extends Screen {
         this.itemStack = itemStack;
         if(itemStack.is(GFRegistry.ItemReg.QUEST.get()) && itemStack.hasTag() && itemStack.getTag().contains(QuestItem.KEY_QUEST)) {
             this.questId = ResourceLocation.tryParse(itemStack.getTag().getString(QuestItem.KEY_QUEST));
-            this.quest = GreekFantasy.QUESTS.get(questId).orElse(Quest.EMPTY);
+            this.quest = GreekFantasy.QUEST_MAP.getOrDefault(questId, Quest.EMPTY);
         } else {
             this.questId = new ResourceLocation("empty");
             this.quest = Quest.EMPTY;
