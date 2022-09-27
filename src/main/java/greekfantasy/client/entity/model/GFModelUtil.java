@@ -421,16 +421,14 @@ public final class GFModelUtil {
      */
     public static PartDefinition addOrReplaceScyllaLeg(final PartDefinition root) {
         // leg parts
-        PartDefinition lowerLeg = root.addOrReplaceChild("lower_leg", CubeListBuilder.create().texOffs(0, 27).addBox(-2.0F, -4.0F, -6.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, -6.0F, 0.0F, 0.0F, 0.0F));
-        PartDefinition lowerMiddleLeg = lowerLeg.addOrReplaceChild("lower_middle_leg", CubeListBuilder.create().texOffs(0, 27).addBox(-2.0F, -4.0F, -6.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, -6.0F, -0.7854F, 0.0F, 0.0F));
-        PartDefinition upperMiddleLeg = lowerMiddleLeg.addOrReplaceChild("upper_middle_leg", CubeListBuilder.create().texOffs(0, 27).addBox(-2.0F, -4.0F, -6.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, -6.0F, -0.5236F, 0.0F, 0.0F));
-        PartDefinition upperLeg = upperMiddleLeg.addOrReplaceChild("upper_leg", CubeListBuilder.create().texOffs(0, 27).addBox(-2.0F, 0.0F, -6.0F, 4.0F, 4.0F, 6.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -4.0F, -6.0F, 0.3491F, 0.0F, 0.0F));
-        // head
-        PartDefinition head = upperLeg.addOrReplaceChild("leg_head", CubeListBuilder.create().texOffs(0, 38).addBox(-3.0F, -3.0F, -3.0F, 6.0F, 5.0F, 6.0F, CubeDeformation.NONE)
-                .texOffs(0, 51).addBox(-2.5F, -1.0F, -6.0F, 5.0F, 3.0F, 3.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 2.0F, -6.0F, 0.9599F, 0.0F, 0.0F));
-        // horns
-        head.addOrReplaceChild("left_horn", CubeListBuilder.create().texOffs(0, 58).addBox(-1.0F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(3.0F, -2.0F, 0.0F, 0.5236F, 0.0F, 0.5236F));
-        head.addOrReplaceChild("right_horn", CubeListBuilder.create().texOffs(0, 58).addBox(0.0F, -3.0F, -1.0F, 1.0F, 3.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(-3.0F, -2.0F, 0.0F, 0.5236F, 0.0F, -0.5236F));
+        PartDefinition lowerLeg = root.addOrReplaceChild("lower_leg", CubeListBuilder.create().texOffs(32, 22).addBox(-3.0F, -5.0F, -9.0F, 6.0F, 5.0F, 9.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 0.0F, -6.0F));
+        PartDefinition middleLeg = lowerLeg.addOrReplaceChild("middle_leg", CubeListBuilder.create().texOffs(62, 22).addBox(-2.0F, -1.0F, -8.0F, 4.0F, 4.0F, 10.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -3.0F, -8.0F, -2.0071F, 0.0F, 0.0F));
+        PartDefinition upperLeg = middleLeg.addOrReplaceChild("upper_leg", CubeListBuilder.create().texOffs(24, 38).addBox(-1.5F, -0.25F, -9.0F, 3.0F, 4.0F, 9.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -0.75F, -7.75F, 0.8727F, 0.0F, 0.0F));
+        // head parts
+        PartDefinition monsterHead = upperLeg.addOrReplaceChild("monster_head", CubeListBuilder.create()
+                .texOffs(32, 54).addBox(-2.0F, -1.5F, -3.0F, 4.0F, 8.0F, 5.0F, CubeDeformation.NONE)
+                .texOffs(0, 70).addBox(-2.0F, 0.5F, -6.0F, 4.0F, 2.0F, 3.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 1.25F, -9.0F, -0.3491F, 0.0F, 0.0F));
+
         return root;
     }
 
@@ -441,8 +439,8 @@ public final class GFModelUtil {
      * @return a list of tuples containing legs
      * @see #getScyllaLeg(ModelPart)
      */
-    public static List<Tuple5<ModelPart>> getScyllaLegs(final ModelPart root, final int count) {
-        final List<Tuple5<ModelPart>> list = new ArrayList<>();
+    public static List<Tuple4<ModelPart>> getScyllaLegs(final ModelPart root, final int count) {
+        final List<Tuple4<ModelPart>> list = new ArrayList<>();
         for(int i = 0; i < count; i++) {
             list.add(getScyllaLeg(root.getChild(HOLDER + i)));
         }
@@ -453,13 +451,12 @@ public final class GFModelUtil {
      * @param holder the model part that contains the leg parts
      * @return The model parts that make up the scylla leg
      */
-    public static Tuple5<ModelPart> getScyllaLeg(final ModelPart holder) {
+    public static Tuple4<ModelPart> getScyllaLeg(final ModelPart holder) {
         ModelPart lowerLeg = holder.getChild("lower_leg");
-        ModelPart lowerMiddleLeg = lowerLeg.getChild("lower_middle_leg");
-        ModelPart upperMiddleLeg = lowerMiddleLeg.getChild("upper_middle_leg");
-        ModelPart upperLeg = upperMiddleLeg.getChild("upper_leg");
-        ModelPart head = upperLeg.getChild("leg_head");
-        return new Tuple5<>(lowerLeg, lowerMiddleLeg, upperMiddleLeg, upperLeg, head);
+        ModelPart middleLeg = lowerLeg.getChild("middle_leg");
+        ModelPart upperLeg = middleLeg.getChild("upper_leg");
+        ModelPart head = upperLeg.getChild("monster_head");
+        return new Tuple4<>(lowerLeg, middleLeg, upperLeg, head);
     }
 
     /**
@@ -467,12 +464,11 @@ public final class GFModelUtil {
      * @param leg the leg tuple
      * @param idleSwingCos the idle angle multiplier, from 0 to 1
      */
-    public static void setupScyllaLegAnim(final Tuple5<ModelPart> leg, final float idleSwingCos) {
+    public static void setupScyllaLegAnim(final Tuple4<ModelPart> leg, final float idleSwingCos) {
         leg.left.xRot = -idleSwingCos * 0.18F;
-        leg.leftMiddle.xRot = -0.785398F + idleSwingCos * 0.18F;
-        leg.middle.xRot = -0.523599F + idleSwingCos * 0.20F;
-        leg.rightMiddle.xRot = 0.349066F + idleSwingCos * 0.22F;
-        leg.right.xRot = 0.959931F - idleSwingCos * 0.4F;
+        leg.leftMiddle.xRot = -2.0071F + idleSwingCos * 0.4F;
+        leg.rightMiddle.xRot = 0.8727F + idleSwingCos * 0.22F;
+        leg.right.xRot = -0.3491F - idleSwingCos * 0.6F;
     }
 
     @Immutable

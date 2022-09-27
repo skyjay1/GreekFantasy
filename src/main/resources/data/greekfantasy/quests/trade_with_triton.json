@@ -1,0 +1,8 @@
+{
+  "disabled": false,
+  "description": "quest.greekfantasy.trade_with_triton",
+  "components": [
+    "quest.greekfantasy.trade_with_triton.line1",
+    "quest.greekfantasy.trade_with_triton.line2"
+  ]
+}

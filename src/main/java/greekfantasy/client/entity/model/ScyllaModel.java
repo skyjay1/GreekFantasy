@@ -26,7 +26,7 @@ public class ScyllaModel extends HumanoidModel<Scylla> {
     protected final ModelPart monsterBody;
     protected final ModelPart torso;
     protected final ModelPart legs;
-    protected final List<GFModelUtil.Tuple5<ModelPart>> legsList;
+    protected final List<GFModelUtil.Tuple4<ModelPart>> legsList;
 
     public ScyllaModel(ModelPart root) {
         super(root);
@@ -41,28 +41,22 @@ public class ScyllaModel extends HumanoidModel<Scylla> {
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, -3.0F);
         PartDefinition partdefinition = meshdefinition.getRoot();
-
-/*
-        partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, CubeDeformation.NONE), PartPose.offset(0.0F, -3.0F, 0.0F));
-        partdefinition.addOrReplaceChild("hat", CubeListBuilder.create().texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, -3.0F, 0.0F));
-*/
-        partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(48, 16).addBox(-1.0F, -0.5F, -2.0F, 4.0F, 12.0F, 4.0F, CubeDeformation.NONE), PartPose.offset(5.0F, -2.5F, 0.0F));
-        partdefinition.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(48, 16).addBox(-4.0F, -0.5F, -2.0F, 4.0F, 12.0F, 4.0F, CubeDeformation.NONE), PartPose.offset(-4.0F, -2.5F, 0.0F));
-
         
-        PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(24, 16).addBox(-4.0F, -12.0F, -2.0F, 8.0F, 12.0F, 4.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 9.0F, 0.0F));
-        body.addOrReplaceChild("chest", CubeListBuilder.create().texOffs(26, 33).addBox(-4.01F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -11.0F, -2.0F, -0.2182F, 0.0F, 0.0F));
+        partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 22).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, CubeDeformation.NONE), PartPose.offset(0.0F, -3.0F, 0.0F));
+        partdefinition.addOrReplaceChild("hat", CubeListBuilder.create().texOffs(48, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, -3.0F, 0.0F));
 
-        PartDefinition torso = body.addOrReplaceChild("torso", CubeListBuilder.create().texOffs(0, 17).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 5.0F, 4.0F, CubeDeformation.NONE), PartPose.ZERO);
-        torso.addOrReplaceChild("monster_body", CubeListBuilder.create().texOffs(16, 42).addBox(-6.0F, 0.0F, -6.0F, 12.0F, 10.0F, 12.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 5.0F, 0.0F));
+        partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(0, 54).mirror().addBox(-1.0F, -0.5F, -2.0F, 3.0F, 12.0F, 4.0F, CubeDeformation.NONE).mirror(false), PartPose.offset(5.0F, -2.5F, 0.0F));
+        partdefinition.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(0, 54).addBox(-3.0F, -0.5F, -2.0F, 3.0F, 12.0F, 4.0F, CubeDeformation.NONE), PartPose.offset(-4.0F, -2.5F, 0.0F));
 
-        partdefinition.addOrReplaceChild("right_leg", CubeListBuilder.create(), PartPose.ZERO);
-        partdefinition.addOrReplaceChild("left_leg", CubeListBuilder.create(), PartPose.ZERO);
+        PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 38).addBox(-4.0F, -12.0F, -2.0F, 8.0F, 12.0F, 4.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 9.0F, 0.0F));
+        body.addOrReplaceChild("chest", CubeListBuilder.create().texOffs(50, 54).addBox(-4.01F, 0.0F, 0.0F, 8.0F, 4.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, -11.0F, -2.0F, -0.2182F, 0.0F, 0.0F));
+        PartDefinition torso = body.addOrReplaceChild("torso", CubeListBuilder.create().texOffs(48, 38).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 5.0F, 4.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 0.0F, 0.0F));
+        torso.addOrReplaceChild("monster_body", CubeListBuilder.create().texOffs(0, 0).addBox(-6.0F, 0.0F, -6.0F, 12.0F, 10.0F, 12.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 5.0F, 0.0F));
         
         PartDefinition legs = body.addOrReplaceChild("legs", CubeListBuilder.create(), PartPose.offset(0.0F, 15.0F, 0.0F));
         GFModelUtil.addOrReplaceScyllaLegs(legs, LEG_COUNT);
-
-        return LayerDefinition.create(meshdefinition, 64, 64);
+        
+        return LayerDefinition.create(meshdefinition, 128, 128);
     }
 
     @Override
@@ -79,7 +73,7 @@ public class ScyllaModel extends HumanoidModel<Scylla> {
     }
 
     public void setupArmAnim(Scylla entity, float ageInTicks) {
-        GFModelUtil.Tuple5<ModelPart> leg;
+        GFModelUtil.Tuple4<ModelPart> leg;
         for (int i = 0, n = legsList.size(); i < n; i++) {
             leg = legsList.get(i);
             float idleSwing = 0.5F + 0.5F * Mth.cos(ageInTicks * 0.11F + (i) * 1.62F);
