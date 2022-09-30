@@ -15,7 +15,6 @@ import java.util.function.Supplier;
 
 public class GFArmorMaterials {
 
-    // TODO change to bronze ingots?
     private static final ResourceLocation COPPER_INGOTS = new ResourceLocation("forge", "ingots/copper");
 
     public static final GFArmorMaterial HELLENIC = new GFArmorMaterial("hellenic", 26, new int[]{2, 5, 6, 2}, 18,

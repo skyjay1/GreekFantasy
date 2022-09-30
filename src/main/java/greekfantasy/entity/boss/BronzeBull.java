@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -67,7 +68,7 @@ public class BronzeBull extends Monster {
     private static final int MAX_SPAWN_TIME = 90;
     private static final int MAX_FIRING_TIME = 89;
     private static final int MAX_GORING_TIME = 130;
-    private static final int MELEE_COOLDOWN = 60;
+    private static final int MELEE_COOLDOWN = 50;
 
     private final ServerBossEvent bossInfo = new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
 
@@ -84,7 +85,7 @@ public class BronzeBull extends Monster {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 180.0D)
+                .add(Attributes.MAX_HEALTH, 230.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.28D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.FOLLOW_RANGE, 24.0D)
@@ -100,9 +101,12 @@ public class BronzeBull extends Monster {
         entity.yBodyRot = yaw;
         world.addFreshEntity(entity);
         entity.setSpawning(true);
-        // trigger spawn for nearby players
-        for (ServerPlayer player : world.getEntitiesOfClass(ServerPlayer.class, entity.getBoundingBox().inflate(25.0D))) {
-            CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+        if(world instanceof ServerLevel serverLevel) {
+            entity.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null, null);
+            // trigger spawn for nearby players
+            for (ServerPlayer player : world.getEntitiesOfClass(ServerPlayer.class, entity.getBoundingBox().inflate(25.0D))) {
+                CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+            }
         }
         // play sound
         entity.playSound(SoundEvents.WITHER_SPAWN, 1.2F, 1.0F);
@@ -119,7 +123,7 @@ public class BronzeBull extends Monster {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new BronzeBullSpawningGoal());
-        this.goalSelector.addGoal(1, new BronzeBullFireAttackGoal(MAX_FIRING_TIME, 120));
+        this.goalSelector.addGoal(1, new BronzeBullFireAttackGoal(MAX_FIRING_TIME, 150));
         this.goalSelector.addGoal(3, new BronzeBull.BronzeBullMeleeAttackGoal(1.25D, false));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));

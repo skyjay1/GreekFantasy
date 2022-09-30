@@ -26,8 +26,6 @@ import java.util.Map;
 
 public class NestBlock extends Block implements SimpleWaterloggedBlock {
 
-    // TODO random different texture for slab-only variant
-
     public static final BooleanProperty NORTH = BooleanProperty.create("north");
     public static final BooleanProperty SOUTH = BooleanProperty.create("south");
     public static final BooleanProperty EAST = BooleanProperty.create("east");

@@ -50,7 +50,7 @@ public class ThyrsusItem extends DiggerItem {
         if (success) {
             player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.THYRSUS_COOLDOWN.get());
             if (!player.isCreative()) {
-                mainhandItem.hurtAndBreak(10, player, (entity) -> entity.broadcastBreakEvent(hand));
+                mainhandItem.hurtAndBreak(GreekFantasy.CONFIG.THYRSUS_DURABILITY_ON_USE.get(), player, (entity) -> entity.broadcastBreakEvent(hand));
             }
         }
 

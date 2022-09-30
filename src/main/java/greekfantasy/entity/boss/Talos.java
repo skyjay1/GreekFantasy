@@ -22,6 +22,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
@@ -37,7 +38,7 @@ public class Talos extends Automaton implements Enemy {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 200.0D)
+                .add(Attributes.MAX_HEALTH, 260.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.20D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
@@ -151,7 +152,7 @@ public class Talos extends Automaton implements Enemy {
 
     @Override
     public boolean isInvulnerableTo(final DamageSource source) {
-        return source.isMagic() || super.isInvulnerableTo(source);
+        return source.isMagic() || source.getDirectEntity() instanceof AbstractArrow  || super.isInvulnerableTo(source);
     }
 
     @Override

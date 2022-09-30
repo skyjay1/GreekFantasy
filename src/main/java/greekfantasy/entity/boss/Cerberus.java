@@ -83,7 +83,7 @@ public class Cerberus extends PathfinderMob implements Enemy {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 190.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.26D)
+                .add(Attributes.MOVEMENT_SPEED, 0.3125D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
                 .add(Attributes.ATTACK_DAMAGE, 8.0D)
                 .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 0.6D);

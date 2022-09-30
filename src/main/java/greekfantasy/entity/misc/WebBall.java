@@ -202,12 +202,6 @@ public class WebBall extends ThrowableItemProjectile {
         if (web) type = (byte) (type | WEB);
         if (spider) type = (byte) (type | SPIDER);
         if (item) type = (byte) (type | ITEM);
-        /*
-        TODO revert to this if needed
-        if (web) type = (byte) (type + WEB);
-        if (spider) type = (byte) (type + SPIDER);
-        if (item) type = (byte) (type + ITEM);
-         */
         // actually set the web type
         setWebType(type);
         // return the web type

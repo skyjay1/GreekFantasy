@@ -64,6 +64,10 @@ public class ShootFireGoal extends Goal {
 
     @Override
     public void tick() {
+        if(null == entity.getTarget()) {
+            stop();
+            return;
+        }
         if (progressTimer > 0 && progressTimer < maxDuration) {
             progressTimer++;
             // stop the entity from moving, and adjust look vecs

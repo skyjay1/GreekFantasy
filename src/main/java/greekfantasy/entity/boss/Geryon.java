@@ -45,6 +45,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -99,8 +100,8 @@ public class Geryon extends Monster implements HasCustomCooldown {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 140.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.21D)
+                .add(Attributes.MAX_HEALTH, 210.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.24D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.98D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
                 .add(Attributes.ATTACK_DAMAGE, 5.0D)
@@ -284,7 +285,8 @@ public class Geryon extends Monster implements HasCustomCooldown {
 
     @Override
     public boolean isInvulnerableTo(final DamageSource source) {
-        return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER || super.isInvulnerableTo(source);
+        return isSpawning() || source == DamageSource.IN_WALL || source == DamageSource.WITHER
+                || source.getDirectEntity() instanceof AbstractArrow || super.isInvulnerableTo(source);
     }
 
     @Override

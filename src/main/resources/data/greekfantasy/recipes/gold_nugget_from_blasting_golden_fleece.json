@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "greekfantasy:golden_fleece"
+  },
+  "result": {
+    "item": "minecraft:gold_nugget",
+    "count": 8
+  },
+  "experience": 1.0,
+  "cookingtime": 100
+}

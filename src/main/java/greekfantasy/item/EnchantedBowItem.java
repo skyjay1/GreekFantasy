@@ -1,5 +1,6 @@
 package greekfantasy.item;
 
+import greekfantasy.GreekFantasy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -60,10 +61,12 @@ public abstract class EnchantedBowItem extends BowItem {
                         for (int i = 1, arrowCount = getArrowCount(stack); i < arrowCount; i++) {
                             shootArrow(level, stack, ammo, power, 8.0F, true, player);
                         }
+
                         // attempt to damage item
-                        stack.hurtAndBreak(1, player, (e) -> {
-                            e.broadcastBreakEvent(player.getUsedItemHand());
-                        });
+                        int damage = getDamageOnUse(stack);
+                        if(damage > 0) {
+                            stack.hurtAndBreak(damage, player, (e) -> e.broadcastBreakEvent(player.getUsedItemHand()));
+                        }
 
                     }
                     // play sound
@@ -143,6 +146,10 @@ public abstract class EnchantedBowItem extends BowItem {
         return 1;
     }
 
+    protected int getDamageOnUse(final ItemStack stack) {
+        return 1;
+    }
+
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         // add the item to the group with enchantment already applied
@@ -193,6 +200,11 @@ public abstract class EnchantedBowItem extends BowItem {
         protected float getArrowVelocityMultiplier() {
             return 1.0F;
         }
+
+        @Override
+        protected int getDamageOnUse(ItemStack stack) {
+            return GreekFantasy.CONFIG.AVERNAL_BOW_DURABILITY_ON_USE.get();
+        }
     }
 
     public static class ArtemisBowItem extends EnchantedBowItem {
@@ -220,6 +232,11 @@ public abstract class EnchantedBowItem extends BowItem {
         @Override
         protected int getArrowCount(final ItemStack stack) {
             return 3;
+        }
+
+        @Override
+        protected int getDamageOnUse(ItemStack stack) {
+            return GreekFantasy.CONFIG.ARTEMIS_BOW_DURABILITY_ON_USE.get();
         }
 
         @Override
@@ -261,6 +278,11 @@ public abstract class EnchantedBowItem extends BowItem {
         @Override
         protected int getArrowCount(final ItemStack stack) {
             return 2;
+        }
+
+        @Override
+        protected int getDamageOnUse(ItemStack stack) {
+            return GreekFantasy.CONFIG.APOLLO_BOW_DURABILITY_ON_USE.get();
         }
 
         @Override

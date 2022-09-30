@@ -3,6 +3,7 @@ package greekfantasy;
 import greekfantasy.capability.FriendlyGuardian;
 import greekfantasy.capability.IFriendlyGuardian;
 import greekfantasy.entity.Arion;
+import greekfantasy.entity.Automaton;
 import greekfantasy.entity.Cerastes;
 import greekfantasy.entity.GoldenRam;
 import greekfantasy.entity.Triton;
@@ -564,18 +565,17 @@ public final class GFEvents {
         @SubscribeEvent
         public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
             if(event.getEntity() instanceof final PathfinderMob mob && !event.getEntity().level.isClientSide()) {
-                // add avoid orthus goal to wither skeleton
+                // add wither skeleton goal to avoid orthus
                 if(mob.getType() == EntityType.WITHER_SKELETON) {
                     mob.goalSelector.addGoal(3, new AvoidEntityGoal<>(mob, Orthus.class, 6.0F, 1.0D, 1.2D));
                 }
-                // add avoid cerastes goal to rabbits
+                // add rabbit goal to avoid cerastes
                 if(mob.getType() == EntityType.RABBIT && ((Rabbit)event.getEntity()).getRabbitType() != 99) {
                     mob.goalSelector.addGoal(3, new AvoidEntityGoal<>(mob, Cerastes.class, 6.0F, 1.0D, 1.2D,
                             e -> e instanceof Cerastes cerastes && !cerastes.isHiding()));
                 }
-                // add guardian goals
+                // add guardian goals to attack enemies, follow triton, and move to ocean villages
                 if(mob.getType() == EntityType.GUARDIAN) {
-                    // attack enemy goal
                     Predicate<LivingEntity> predicate = entity -> entity instanceof Enemy && !(entity instanceof Guardian) && entity.isInWater() && entity.distanceToSqr(mob) > 9.0D;
                     mob.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(mob, LivingEntity.class, 10, true, false, predicate) {
                         @Override
@@ -583,14 +583,12 @@ public final class GFEvents {
                             return super.canUse() && this.mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled();
                         }
                     });
-                    // follow triton goal
                     mob.goalSelector.addGoal(6, new FollowWaterMobGoal(mob, Triton.class, 1.0D, 8.0F, 12.0F) {
                         @Override
                         public boolean canUse() {
                             return mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled() && mob.getRandom().nextInt(45) == 0 && super.canUse();
                         }
                     });
-                    // move to ocean village goal
                     mob.goalSelector.addGoal(3, new MoveToStructureGoal(mob, 1.0D, 4, 8, 10, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos) {
                         @Override
                         public boolean canUse() {
@@ -598,17 +596,19 @@ public final class GFEvents {
                         }
                     });
                 }
-                // add dolphin goals
+                // add dolphin goals to be tempted by tritons and move to ocean villages
                 if(mob.getType() == EntityType.DOLPHIN && mob instanceof Dolphin dolphin) {
-                    // tempt by triton goal
                     mob.goalSelector.addGoal(2, new DolphinTemptByTritonGoal(dolphin, 0.9D, Ingredient.of(ItemTags.FISHES)));
-                    // move to ocean village goal
-                    mob.goalSelector.addGoal(3, new MoveToStructureGoal(dolphin, 1.0D, 5, 10, 15, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
+                    mob.goalSelector.addGoal(3, new MoveToStructureGoal(dolphin, 1.0D, 2, 10, 15, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
                 }
-                // add drowned goals
+                // add drowned goals to attack tritons and naiads
                 if(mob.getType() == EntityType.DROWNED) {
                     mob.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(mob, Triton.class, false));
                     mob.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(mob, Naiad.class, true, false));
+                }
+                // add zombie goal to attack automaton
+                if(mob.getType() == EntityType.ZOMBIE || mob.getType() == EntityType.DROWNED || mob.getType() == EntityType.HUSK) {
+                    mob.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(mob, Automaton.class, true));
                 }
             }
         }

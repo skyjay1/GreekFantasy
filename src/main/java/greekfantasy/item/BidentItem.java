@@ -21,7 +21,7 @@ import net.minecraftforge.common.ForgeMod;
 public class BidentItem extends SpearItem {
 
     public BidentItem(Tier tier, Item.Properties properties) {
-        super(tier, 1.0F, properties, 4);
+        super(tier, 0.75F, properties, 4);
     }
 
     @Override

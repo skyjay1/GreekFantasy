@@ -96,7 +96,7 @@ public class Automaton extends AbstractGolem implements RangedAttackMob, HasCust
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 210.0D)
+                .add(Attributes.MAX_HEALTH, 160.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.20D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.ATTACK_DAMAGE, 9.5D)
@@ -105,15 +105,18 @@ public class Automaton extends AbstractGolem implements RangedAttackMob, HasCust
                 .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 0.2F);
     }
 
-    public static Automaton spawnAutomaton(final Level world, final BlockPos pos, final float yaw) {
-        Automaton entity = GFRegistry.EntityReg.AUTOMATON.get().create(world);
+    public static Automaton spawnAutomaton(final Level level, final BlockPos pos, final float yaw) {
+        Automaton entity = GFRegistry.EntityReg.AUTOMATON.get().create(level);
         entity.moveTo(pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D, yaw, 0.0F);
         entity.yBodyRot = yaw;
-        world.addFreshEntity(entity);
+        level.addFreshEntity(entity);
         entity.setSpawning(true);
-        // trigger spawn for nearby players
-        for (ServerPlayer player : world.getEntitiesOfClass(ServerPlayer.class, entity.getBoundingBox().inflate(15.0D))) {
-            CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+        if(level instanceof ServerLevel serverLevel) {
+            entity.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null, null);
+            // trigger spawn for nearby players
+            for (ServerPlayer player : serverLevel.getEntitiesOfClass(ServerPlayer.class, entity.getBoundingBox().inflate(15.0D))) {
+                CriteriaTriggers.SUMMONED_ENTITY.trigger(player, entity);
+            }
         }
         return entity;
     }
@@ -136,9 +139,11 @@ public class Automaton extends AbstractGolem implements RangedAttackMob, HasCust
     protected void registerAutomatonGoals() {
         this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, false));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.1D, Ingredient.of(BRONZE_INGOT), false));
-        this.goalSelector.addGoal(10, new Automaton.HealingGoal());
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, e -> e instanceof Enemy));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false,
+                e -> e instanceof Enemy && e.canChangeDimensions()
+                        && e.getType() != GFRegistry.EntityReg.BRONZE_BULL.get()
+                        && e.getType() != GFRegistry.EntityReg.TALOS.get()));
     }
 
     protected int getRangedAttackCooldown() {
@@ -214,6 +219,15 @@ public class Automaton extends AbstractGolem implements RangedAttackMob, HasCust
         } else {
             shootAngle = Math.max(0.0F, shootAngle - 0.08F);
         }
+    }
+
+    @Override
+    public void travel(final Vec3 vec) {
+        Vec3 travelVec = vec;
+        if(this.isInWaterRainOrBubble()) {
+            travelVec = vec.multiply(0.6D, 1.0D, 0.6D);
+        }
+        super.travel(travelVec);
     }
 
     @Override
@@ -301,8 +315,18 @@ public class Automaton extends AbstractGolem implements RangedAttackMob, HasCust
 
     @Override
     public boolean isInvulnerableTo(final DamageSource source) {
-        return isSpawning() || source == DamageSource.DROWN || source == DamageSource.IN_WALL || source == DamageSource.WITHER
-                || source.getDirectEntity() instanceof AbstractArrow || super.isInvulnerableTo(source);
+        return isSpawning() || source == DamageSource.DROWN || source == DamageSource.IN_WALL
+                || source == DamageSource.WITHER || super.isInvulnerableTo(source);
+    }
+
+    @Override
+    public boolean hurt(final DamageSource source, final float amount) {
+        // manually adjust damage amount for arrows
+        float hurtAmount = amount;
+        if(source.getDirectEntity() instanceof AbstractArrow) {
+            hurtAmount = amount * 0.1F;
+        }
+        return super.hurt(source, hurtAmount);
     }
 
     @Override
@@ -473,26 +497,6 @@ public class Automaton extends AbstractGolem implements RangedAttackMob, HasCust
             Automaton.this.getLookControl().setLookAt(Automaton.this.getX(), Automaton.this.getY(), Automaton.this.getZ());
             Automaton.this.setRot(0, 0);
             Automaton.this.setTarget(null);
-        }
-    }
-
-    class HealingGoal extends Goal {
-
-        public HealingGoal() {
-            setFlags(EnumSet.noneOf(Goal.Flag.class));
-        }
-
-        @Override
-        public boolean canUse() {
-            return Automaton.this.getHealth() < Automaton.this.getMaxHealth()
-                    && null == Automaton.this.getTarget() && Automaton.this.getNavigation().isDone();
-        }
-
-        @Override
-        public void tick() {
-            if(Automaton.this.getRandom().nextInt(110) == 0) {
-                Automaton.this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 41, 0, true, true));
-            }
         }
     }
 

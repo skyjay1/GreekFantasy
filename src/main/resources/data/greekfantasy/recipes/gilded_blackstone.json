@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:blackstone" },
+    { "item": "minecraft:blackstone" },
+	{ "item": "greekfantasy:golden_fleece" }
+  ],
+  "result": {
+    "item": "minecraft:gilded_blackstone",
+    "count": 2
+  }
+}

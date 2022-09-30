@@ -21,19 +21,29 @@ import java.util.Map;
 public class GFConfig {
 
     // items
+    public final ForgeConfigSpec.IntValue APOLLO_BOW_DURABILITY_ON_USE;
+    public final ForgeConfigSpec.IntValue ARTEMIS_BOW_DURABILITY_ON_USE;
+    public final ForgeConfigSpec.IntValue AVERNAL_BOW_DURABILITY_ON_USE;
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_COOLDOWN;
+    public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURABILITY_ON_USE;
     public final ForgeConfigSpec.IntValue CONCH_DAMAGE_ON_USE;
     public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_COUNT;
     public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_LIFESPAN;
     public final ForgeConfigSpec.IntValue STAFF_OF_HEALING_COOLDOWN;
+    public final ForgeConfigSpec.IntValue STAFF_OF_HEALING_DURABILITY_ON_USE;
     public final ForgeConfigSpec.IntValue THUNDERBOLT_COOLDOWN;
+    public final ForgeConfigSpec.IntValue THUNDERBOLT_DURABILITY_ON_USE;
+    public final ForgeConfigSpec.IntValue THUNDERBOLT_DURABILITY_ON_FIREFLASH;
     public final ForgeConfigSpec.IntValue THYRSUS_COOLDOWN;
+    public final ForgeConfigSpec.IntValue THYRSUS_DURABILITY_ON_USE;
     public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
+    public final ForgeConfigSpec.IntValue UNICORN_HORN_DURABILITY_ON_USE;
     private final ForgeConfigSpec.DoubleValue WINGED_SANDALS_DURABILITY_CHANCE;
     private double wingedSandalsDurabilityChance;
     public final ForgeConfigSpec.IntValue WAND_OF_CIRCE_DURATION;
     public final ForgeConfigSpec.IntValue WAND_OF_CIRCE_COOLDOWN;
+    public final ForgeConfigSpec.IntValue WAND_OF_CIRCE_DURABILITY_ON_USE;
 
     private final ForgeConfigSpec.BooleanValue HELM_HIDES_ARMOR;
     private boolean helmHidesArmor;
@@ -159,18 +169,28 @@ public class GFConfig {
     public GFConfig(final ForgeConfigSpec.Builder builder) {
 
         builder.push("items");
+        APOLLO_BOW_DURABILITY_ON_USE = builder.defineInRange("apollo_bow_durability_on_use", 1, 0, 64);
+        ARTEMIS_BOW_DURABILITY_ON_USE = builder.defineInRange("artemis_bow_durability_on_use", 1, 0, 64);
+        AVERNAL_BOW_DURABILITY_ON_USE = builder.defineInRange("avernal_bow_durability_on_use", 1, 0, 64);
         BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
         BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 12000);
+        BAG_OF_WIND_DURABILITY_ON_USE = builder.defineInRange("bag_of_wind_durability_on_use", 1, 0, 64);
         CONCH_DAMAGE_ON_USE = builder.defineInRange("conch_damage_on_use", 0, 0, 64);
         HELM_HIDES_ARMOR = builder.define("helm_hides_armor", true);
         DRAGON_TOOTH_SPARTI_COUNT = builder.defineInRange("dragon_tooth_sparti_count", 1, 0, 8);
         DRAGON_TOOTH_SPARTI_LIFESPAN = builder.defineInRange("dragon_tooth_sparti_lifespan", 300, 1, 24000);
         THUNDERBOLT_COOLDOWN = builder.defineInRange("thunderbolt_cooldown", 100, 0, 24000);
+        THUNDERBOLT_DURABILITY_ON_USE = builder.defineInRange("thunderbolt_durability_on_use", 15, 0, 128);
+        THUNDERBOLT_DURABILITY_ON_FIREFLASH = builder.defineInRange("thunderbolt_durability_on_fireflash", 25, 0, 128);
         THYRSUS_COOLDOWN = builder.defineInRange("thyrsus_cooldown", 60, 0, 24000);
+        THYRSUS_DURABILITY_ON_USE = builder.defineInRange("thyrsus_durability_on_use", 1, 0, 64);
         STAFF_OF_HEALING_COOLDOWN = builder.defineInRange("staff_of_healing_cooldown", 35, 0, 24000);
+        STAFF_OF_HEALING_DURABILITY_ON_USE = builder.defineInRange("staff_of_healing_durability_on_use", 1, 0, 64);
         UNICORN_HORN_CURES_EFFECTS = builder.define("unicorn_horn_cures_effects", true);
+        UNICORN_HORN_DURABILITY_ON_USE = builder.defineInRange("unicorn_horn_durability_on_use", 1, 0, 64);
         WAND_OF_CIRCE_DURATION = builder.defineInRange("wand_of_circe_duration", 900, 1, 24000);
         WAND_OF_CIRCE_COOLDOWN = builder.defineInRange("wand_of_circe_cooldown", 50, 0, 24000);
+        WAND_OF_CIRCE_DURABILITY_ON_USE = builder.defineInRange("wand_of_circe_durability_on_use", 1, 0, 64);
         WINGED_SANDALS_DURABILITY_CHANCE = builder
                 .comment("Percent chance of winged sandals losing durability each tick")
                 .defineInRange("winged_sandals_durability_chance", 0.0F, 0.0F, 1.0);
@@ -221,7 +241,7 @@ public class GFConfig {
         SATYR_SHAMAN_CHANCE = builder.defineInRange("satyr_shaman_chance", 24.0F, 0.0F, 100.0F);
         SCYLLA_SPAWN_CHANCE = builder
                 .comment("Percent chance that creating a Charybdis also creates a Scylla")
-                .defineInRange("scylla_spawn_chance", 55.0F, 0.0F, 100.0F);
+                .defineInRange("scylla_spawn_chance", 35.0F, 0.0F, 100.0F);
         SATYR_SONG = builder.define("satyr_song", SATYR_SONG_FALLBACK.toString());
         SHADE_IMMUNE_TO_NONOWNER = builder.define("shade_immune_to_nonowner", true);
         SHOW_ARACHNE_BOSS_BAR = builder.define("show_arachne_boss_bar", false);
@@ -279,29 +299,29 @@ public class GFConfig {
         putSpawnConfigSpec(builder, "ara", 10, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "centaur", 15, true, BiomeDictionary.Type.PLAINS.getName(), BiomeDictionary.Type.CONIFEROUS.getName());
         putSpawnConfigSpec(builder, "cerastes", 30, true, Biomes.DESERT.location().toString());
-        putSpawnConfigSpec(builder, "cyclops", 24, true, BiomeDictionary.Type.MOUNTAIN.getName(), BiomeDictionary.Type.PLATEAU.getName(), BiomeDictionary.Type.HILLS.getName());
-        putSpawnConfigSpec(builder, "cyprian", 15, true, BiomeDictionary.Type.PLAINS.getName(), BiomeDictionary.Type.CONIFEROUS.getName());
-        putSpawnConfigSpec(builder, "drakaina",40, false, hostileBlacklist);
-        putSpawnConfigSpec(builder, "dryad", 24, true, forest);
-        putSpawnConfigSpec(builder, "empusa",30, false, nonNetherHostileBlacklist);
-        putSpawnConfigSpec(builder, "fury", 9, true, Biomes.NETHER_WASTES.location().toString());
-        putSpawnConfigSpec(builder, "gigante", 20, true, BiomeDictionary.Type.MOUNTAIN.getName(), BiomeDictionary.Type.PLATEAU.getName(),
+        putSpawnConfigSpec(builder, "cyclops", 25, true, BiomeDictionary.Type.MOUNTAIN.getName(), BiomeDictionary.Type.PLATEAU.getName(), BiomeDictionary.Type.HILLS.getName());
+        putSpawnConfigSpec(builder, "cyprian", 19, true, BiomeDictionary.Type.PLAINS.getName(), BiomeDictionary.Type.CONIFEROUS.getName());
+        putSpawnConfigSpec(builder, "drakaina",15, false, hostileBlacklist);
+        putSpawnConfigSpec(builder, "dryad", 25, true, forest);
+        putSpawnConfigSpec(builder, "empusa",24, false, nonNetherHostileBlacklist);
+        putSpawnConfigSpec(builder, "fury", 7, true, Biomes.NETHER_WASTES.location().toString());
+        putSpawnConfigSpec(builder, "gigante", 9, true, BiomeDictionary.Type.MOUNTAIN.getName(), BiomeDictionary.Type.PLATEAU.getName(),
                 BiomeDictionary.Type.HILLS.getName(), Biomes.SNOWY_PLAINS.location().toString(), Biomes.SNOWY_SLOPES.location().toString());
-        putSpawnConfigSpec(builder, "gorgon", 20, false, nonNetherHostileBlacklist);
-        putSpawnConfigSpec(builder, "harpy", 24, true, Biomes.DESERT.location().toString(), Biomes.WOODED_BADLANDS.location().toString());
-        putSpawnConfigSpec(builder, "lampad", 24, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString());
-        putSpawnConfigSpec(builder, "mad_cow", 2, false, nonNetherHostileBlacklist);
-        putSpawnConfigSpec(builder, "minotaur", 50, false, nonNetherHostileBlacklist);
-        putSpawnConfigSpec(builder, "naiad", 12, true, BiomeDictionary.Type.WATER.getName());
+        putSpawnConfigSpec(builder, "gorgon", 19, false, nonNetherHostileBlacklist);
+        putSpawnConfigSpec(builder, "harpy", 17, true, Biomes.DESERT.location().toString(), Biomes.WOODED_BADLANDS.location().toString());
+        putSpawnConfigSpec(builder, "lampad", 26, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString());
+        putSpawnConfigSpec(builder, "mad_cow", 8, false, nonNetherHostileBlacklist);
+        putSpawnConfigSpec(builder, "minotaur", 27, false, nonNetherHostileBlacklist);
+        putSpawnConfigSpec(builder, "naiad", 14, true, BiomeDictionary.Type.WATER.getName());
         putSpawnConfigSpec(builder, "orthus", 20, true, BiomeDictionary.Type.NETHER.getName());
-        putSpawnConfigSpec(builder, "pegasus", 11, true, BiomeDictionary.Type.MOUNTAIN.getName(), Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString());
-        putSpawnConfigSpec(builder, "satyr", 22, true, forest);
-        putSpawnConfigSpec(builder, "shade", 10, false);
-        putSpawnConfigSpec(builder, "siren", 8, true, Biomes.LUKEWARM_OCEAN.location().toString(), Biomes.WARM_OCEAN.location().toString());
+        putSpawnConfigSpec(builder, "pegasus", 3, true, BiomeDictionary.Type.MOUNTAIN.getName(), Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString());
+        putSpawnConfigSpec(builder, "satyr", 25, true, forest);
+        putSpawnConfigSpec(builder, "shade", 3, false);
+        putSpawnConfigSpec(builder, "siren", 15, true, Biomes.LUKEWARM_OCEAN.location().toString(), Biomes.WARM_OCEAN.location().toString());
         putSpawnConfigSpec(builder, "stymphalian", 10, true, BiomeDictionary.Type.SWAMP.getName());
-        putSpawnConfigSpec(builder, "unicorn", 11, true, Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString());
+        putSpawnConfigSpec(builder, "unicorn", 15, true, Biomes.SUNFLOWER_PLAINS.location().toString(), Biomes.FLOWER_FOREST.location().toString());
         putSpawnConfigSpec(builder, "triton", 8, true); // intentionally left blank so triton does not spawn by default
-        putSpawnConfigSpec(builder, "whirl", 6, true, BiomeDictionary.Type.OCEAN.getName());
+        putSpawnConfigSpec(builder, "whirl", 14, true, BiomeDictionary.Type.OCEAN.getName());
         builder.pop();
 
         builder.comment("Feature generation chances (higher number = more features)").push("features");

@@ -50,13 +50,13 @@ public class ThunderboltItem extends Item {
                 bolt.setPos(raytrace.getLocation().x(), raytrace.getLocation().y(), raytrace.getLocation().z());
                 level.addFreshEntity(bolt);
                 // check for fireflash enchantment
-                int damageAmount = 15;
+                int damageAmount = GreekFantasy.CONFIG.THUNDERBOLT_DURABILITY_ON_USE.get();
                 final int fireflashLevel = EnchantmentHelper.getItemEnchantmentLevel(GFRegistry.EnchantmentReg.FIREFLASH.get(), stack);
                 final boolean fireflash = GreekFantasy.CONFIG.FIREFLASH_ENABLED.get() && fireflashLevel > 0
                         && (!GreekFantasy.isRGLoaded() || RGCompat.getInstance().canUseFireflash(player));
                 // if enchanted with fireflash, cause an explosion
                 if (fireflash) {
-                    damageAmount = 25;
+                    damageAmount = GreekFantasy.CONFIG.THUNDERBOLT_DURABILITY_ON_FIREFLASH.get();
                     final Explosion.BlockInteraction mode = GreekFantasy.CONFIG.FIREFLASH_DESTROYS_BLOCKS.get() ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
                     level.explode(player, raytrace.getLocation().x(), raytrace.getLocation().y(), raytrace.getLocation().z(), fireflashLevel * 1.64F, true, mode);
                 }
