@@ -92,6 +92,19 @@ repositories {
         name 'CurseMaven'
         url 'https://www.cursemaven.com/'
     }
+    maven { // MODRINTH
+        url 'https://api.modrinth.com/maven'
+    }
+    maven { // CLOTH CONFIG
+        url "https://maven.shedaniel.me/"
+    }
+    maven { // CLOTH CONFIG
+        url "https://maven.terraformersmc.com/releases/"
+    }
+    maven { // PLAYERANIMATOR
+        name "KosmX's maven"
+        url "https://maven.kosmx.dev/"
+    }
 }
 
 dependencies {
@@ -100,12 +113,13 @@ dependencies {
     minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
     // RPG Gods
-    compileOnly fg.deobf("curse.maven:rpggods-${project.rpggods_project}:${project.rpggods_file}")
-    runtimeOnly fg.deobf("curse.maven:rpggods-${project.rpggods_project}:${project.rpggods_file}")
-
+    implementation fg.deobf("curse.maven:rpggods-${project.rpggods_project}:${project.rpggods_file}")
     // JEI
-	compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
-	runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+	implementation fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+    // Better Combat
+    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${project.cloth_config_version}")
+    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_animator_version}")
+    implementation fg.deobf("maven.modrinth:better-combat:${project.better_combat_version}-forge")
 
 }
 // This block of code expands all the gradle properties in the specified resource targets.
