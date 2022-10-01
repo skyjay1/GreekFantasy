@@ -1,20 +1,20 @@
 {
   "type": "minecraft:village",
   "config": {
-    "start_pool": "greekfantasy:ara_camp/start",
-	"size": 3
+    "start_pool": "greekfantasy:gigante_camp/start",
+	"size": 1
   },
-  "biomes": "#greekfantasy:has_structure/ara_camp",
+  "biomes": "#greekfantasy:has_structure/gigante_camp",
   "adapt_noise": true,
   "spawn_overrides": {
-    "monster": {
+    "creature": {
       "bounding_box": "full",
       "spawns": [
         {
-          "type": "greekfantasy:ara",
+          "type": "greekfantasy:gigante",
           "weight": 10,
           "minCount": 1,
-          "maxCount": 3
+          "maxCount": 1
         }
       ]
     }

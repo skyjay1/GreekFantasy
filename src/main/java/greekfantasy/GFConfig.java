@@ -234,7 +234,7 @@ public class GFConfig {
                 .comment("Percent chance that lightning converts Gorgon to Medusa")
                 .defineInRange("medusa_lightning_chance", 95.0F, 0.0F, 100.0F);
         MEDUSA_SPAWN_CHANCE = builder.defineInRange("medusa_spawn_chance", 0.8F, 0.0F, 100.0F);
-       NEMEAN_LION_LIGHTNING_CHANCE = builder
+        NEMEAN_LION_LIGHTNING_CHANCE = builder
                 .comment("Percent chance that lightning converts strengthened Ocelot to Nemean Lion")
                 .defineInRange("nemean_lion_lightning_chance", 100.0F, 0.0F, 100.0F);
         SHADE_SPAWN_CHANCE = builder.defineInRange("shade_spawn_chance", 100.0F, 0.0F, 100.0F);
@@ -305,8 +305,8 @@ public class GFConfig {
         putSpawnConfigSpec(builder, "dryad", 25, true, forest);
         putSpawnConfigSpec(builder, "empusa",24, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "fury", 7, true, Biomes.NETHER_WASTES.location().toString());
-        putSpawnConfigSpec(builder, "gigante", 9, true, BiomeDictionary.Type.MOUNTAIN.getName(), BiomeDictionary.Type.PLATEAU.getName(),
-                BiomeDictionary.Type.HILLS.getName(), Biomes.SNOWY_PLAINS.location().toString(), Biomes.SNOWY_SLOPES.location().toString());
+        putSpawnConfigSpec(builder, "gigante", 9, true, BiomeDictionary.Type.MOUNTAIN.getName(), BiomeDictionary.Type.HILLS.getName(),
+                Biomes.SNOWY_PLAINS.location().toString(), Biomes.SNOWY_SLOPES.location().toString());
         putSpawnConfigSpec(builder, "gorgon", 19, false, nonNetherHostileBlacklist);
         putSpawnConfigSpec(builder, "harpy", 17, true, Biomes.DESERT.location().toString(), Biomes.WOODED_BADLANDS.location().toString());
         putSpawnConfigSpec(builder, "lampad", 26, true, Biomes.CRIMSON_FOREST.location().toString(), Biomes.WARPED_FOREST.location().toString());
