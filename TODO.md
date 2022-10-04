@@ -108,8 +108,8 @@ __Key:__
 - X X X Hydra Lair
 - X X X Minotaur Maze
 - X X X Ocean Villages
-- _ _ _ Harpy Grove
-- _ _ _ Gigante Camp
+- X X _ Harpy Grove
+- X X _ Gigante Camp
 
 
 ## Blocks

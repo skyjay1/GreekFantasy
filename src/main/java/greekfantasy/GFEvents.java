@@ -12,7 +12,6 @@ import greekfantasy.entity.Orthus;
 import greekfantasy.entity.Palladium;
 import greekfantasy.entity.Whirl;
 import greekfantasy.entity.ai.DolphinTemptByTritonGoal;
-import greekfantasy.entity.ai.FollowWaterMobGoal;
 import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.entity.boss.Geryon;
 import greekfantasy.entity.boss.GiantBoar;
@@ -25,8 +24,6 @@ import greekfantasy.item.NemeanLionHideItem;
 import greekfantasy.item.ThunderboltItem;
 import greekfantasy.mob_effect.CurseOfCirceEffect;
 import greekfantasy.network.SCurseOfCircePacket;
-import greekfantasy.network.SQuestPacket;
-import greekfantasy.network.SSongPacket;
 import greekfantasy.util.SummonBossUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -76,7 +73,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.entity.LevelEntityGetter;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -86,7 +82,6 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddPackFindersEvent;
-import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.TickEvent;
@@ -574,19 +569,13 @@ public final class GFEvents {
                     mob.goalSelector.addGoal(3, new AvoidEntityGoal<>(mob, Cerastes.class, 6.0F, 1.0D, 1.2D,
                             e -> e instanceof Cerastes cerastes && !cerastes.isHiding()));
                 }
-                // add guardian goals to attack enemies, follow triton, and move to ocean villages
+                // add guardian goals to attack enemies and move to ocean villages
                 if(mob.getType() == EntityType.GUARDIAN) {
                     Predicate<LivingEntity> predicate = entity -> entity instanceof Enemy && !(entity instanceof Guardian) && entity.isInWater() && entity.distanceToSqr(mob) > 9.0D;
                     mob.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(mob, LivingEntity.class, 10, true, false, predicate) {
                         @Override
                         public boolean canUse() {
                             return super.canUse() && this.mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled();
-                        }
-                    });
-                    mob.goalSelector.addGoal(6, new FollowWaterMobGoal(mob, Triton.class, 1.0D, 8.0F, 12.0F) {
-                        @Override
-                        public boolean canUse() {
-                            return mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled() && mob.getRandom().nextInt(45) == 0 && super.canUse();
                         }
                     });
                     mob.goalSelector.addGoal(3, new MoveToStructureGoal(mob, 1.0D, 4, 8, 10, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos) {

@@ -62,7 +62,7 @@ public class ThunderboltItem extends Item {
                 }
                 // cooldown and item damage
                 player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.THUNDERBOLT_COOLDOWN.get() / (fireflash ? 2 : 1));
-                if (!player.isCreative()) {
+                if (!player.isCreative() && damageAmount > 0) {
                     stack.hurtAndBreak(damageAmount, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
                 }
             }

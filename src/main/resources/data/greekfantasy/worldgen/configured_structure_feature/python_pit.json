@@ -8,7 +8,7 @@
   "adapt_noise": false,
   "spawn_overrides": {
     "monster": {
-      "bounding_box": "full",
+      "bounding_box": "piece",
       "spawns": []
     }
   }
