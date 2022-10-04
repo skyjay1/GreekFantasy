@@ -37,13 +37,13 @@
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 5,
-                "max": 10
+                "min": 0,
+                "max": 2
               }
             },
             {
               "function": "minecraft:looting_enchant",
-              "count": 2
+              "count": 1
             }
           ],
           "name": "greekfantasy:ichor"

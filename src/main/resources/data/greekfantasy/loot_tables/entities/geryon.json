@@ -6,42 +6,29 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:netherite_ingot",
-	      "functions": [
-	        {
-	          "function": "minecraft:set_count",
-	          "count": {
-	            "min": 0,
-	            "max": 2
-	          }
-	        }
-	      ]
+          "name": "greekfantasy:bronze_nugget",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 4,
+                "max": 10
+              }
+            }
+          ]
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:netherite_scrap",
-	      "functions": [
-	        {
-	          "function": "minecraft:set_count",
-	          "count": {
-	            "min": 1,
-	            "max": 4
-	          }
-	        }
-	      ]
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:diamond",
-	      "functions": [
-	        {
-	          "function": "minecraft:set_count",
-	          "count": {
-	            "min": 2,
-	            "max": 8
-	          }
-	        }
-	      ]
+          "name": "greekfantasy:bronze_ingot",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 0,
+                "max": 1
+              }
+            }
+          ]
         }
       ]
     },
@@ -58,13 +45,8 @@
           "function": "minecraft:set_count",
           "count": {
             "min": 0,
-            "max": 5
+            "max": 2
           }
-        }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
         }
       ]
     },
@@ -81,12 +63,12 @@
                 "greekfantasy:smashing"
               ]
             }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:killed_by_player"
+            }
           ]
-        }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
         }
       ]
     },
@@ -96,20 +78,15 @@
         {
           "type": "minecraft:item",
           "name": "greekfantasy:horn_of_plenty",
-	      "functions": [
-	        {
-	          "function": "minecraft:set_count",
-	          "count": {
-	            "min": 1,
-	            "max": 3
-	          }
-	        }
-	      ]
-        }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
         }
       ]
     }

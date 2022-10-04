@@ -28,8 +28,7 @@ public class BagOfWindItem extends Item {
         player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, duration, 0));
         player.getCooldowns().addCooldown(this, GreekFantasy.CONFIG.BAG_OF_WIND_COOLDOWN.get());
         if (!player.isCreative()) {
-            stack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-        }
+            stack.hurtAndBreak(GreekFantasy.CONFIG.BAG_OF_WIND_DURABILITY_ON_USE.get(), player, (entity) -> entity.broadcastBreakEvent(hand));        }
         // play sound
         player.playSound(SoundEvents.ELYTRA_FLYING, 0.11F, 1.0F);
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());

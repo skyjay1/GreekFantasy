@@ -68,7 +68,7 @@ public class BronzeBull extends Monster {
     private static final int MAX_SPAWN_TIME = 90;
     private static final int MAX_FIRING_TIME = 89;
     private static final int MAX_GORING_TIME = 130;
-    private static final int MELEE_COOLDOWN = 60;
+    private static final int MELEE_COOLDOWN = 50;
 
     private final ServerBossEvent bossInfo = new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
 
@@ -85,7 +85,7 @@ public class BronzeBull extends Monster {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 180.0D)
+                .add(Attributes.MAX_HEALTH, 230.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.28D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.FOLLOW_RANGE, 24.0D)
@@ -123,7 +123,7 @@ public class BronzeBull extends Monster {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new BronzeBullSpawningGoal());
-        this.goalSelector.addGoal(1, new BronzeBullFireAttackGoal(MAX_FIRING_TIME, 120));
+        this.goalSelector.addGoal(1, new BronzeBullFireAttackGoal(MAX_FIRING_TIME, 150));
         this.goalSelector.addGoal(3, new BronzeBull.BronzeBullMeleeAttackGoal(1.25D, false));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));

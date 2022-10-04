@@ -165,10 +165,14 @@ public class Spear extends AbstractArrow {
     @Override
     protected void doPostHurtEffects(LivingEntity living) {
         super.doPostHurtEffects(living);
-        final CompoundTag nbt = getPickupItem().getOrCreateTagElement(SpearItem.KEY_MOB_EFFECT).copy();
-        if (nbt.contains(SpearItem.KEY_MOB_EFFECT)) {
+        ItemStack stack = getPickupItem();
+        if (stack.hasTag() && stack.getTag().contains(SpearItem.KEY_MOB_EFFECT)) {
+            final CompoundTag nbt = stack.getTag().getCompound(SpearItem.KEY_MOB_EFFECT).copy();
             nbt.putByte("Id", (byte) MobEffect.getId(ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(nbt.getString(SpearItem.KEY_MOB_EFFECT)))));
-            living.addEffect(MobEffectInstance.load(nbt));
+            MobEffectInstance effectInstance = MobEffectInstance.load(nbt);
+            if(effectInstance != null) {
+                living.addEffect(effectInstance);
+            }
         }
     }
 

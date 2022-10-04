@@ -1,6 +1,7 @@
 package greekfantasy.entity.ai;
 
 import com.mojang.datafixers.util.Pair;
+import greekfantasy.GreekFantasy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -83,6 +84,7 @@ public class MoveToStructureGoal extends RandomStrollGoal {
         }
         Pair<BlockPos, Holder<Structure>> pair = level.getChunkSource().getGenerator().findNearestMapStructure(level, structureSet, blockpos, rangeInSections, false);
         if (null == pair) {
+            GreekFantasy.LOGGER.debug("No structure found for " + structure.unwrapKey().toString());
             return false;
         }
         structurePos = pair.getFirst();
@@ -93,7 +95,6 @@ public class MoveToStructureGoal extends RandomStrollGoal {
     @Nullable
     @Override
     protected Vec3 getPosition() {
-        ServerLevel level = (ServerLevel) this.mob.level;
         Vec3 vec = randomPosFactory.apply(this.mob, distanceXZ, distanceY);
         if (vec != null) {
             // if vec is within structure, use vec
@@ -104,7 +105,7 @@ public class MoveToStructureGoal extends RandomStrollGoal {
             // choose random position towards the nearest structure
             BlockPos center = structureStart.getBoundingBox().getCenter();
             Vec3 towardsVec = DefaultRandomPos.getPosTowards(mob, distanceXZ, distanceY, Vec3.atBottomCenterOf(center), Math.PI / 2.0D);
-            return towardsVec != null ? towardsVec : vec;
+            return towardsVec;
         }
         return null;
     }

@@ -4,7 +4,7 @@
   "spawners":
   {
     "type": "greekfantasy:minotaur",
-    "weight": 45,
+    "weight": 27,
     "minCount": 2,
     "maxCount": 5
   }

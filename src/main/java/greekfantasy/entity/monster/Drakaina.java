@@ -38,6 +38,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -77,6 +78,7 @@ public class Drakaina extends Monster {
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Vex.class, true));
     }
 
     @Override
@@ -223,9 +225,9 @@ public class Drakaina extends Monster {
     }
 
     public enum Variant implements StringRepresentable {
-        GREEN("green", BiomeTags.IS_FOREST),
+        GREEN("green", ForgeRegistries.BIOMES.tags().createTagKey(new ResourceLocation(GreekFantasy.MODID, "has_spawn/green_drakaina"))),
         BROWN("brown", ForgeRegistries.BIOMES.tags().createTagKey(new ResourceLocation(GreekFantasy.MODID, "has_spawn/brown_drakaina"))),
-        RED("red", BiomeTags.IS_NETHER);
+        RED("red", ForgeRegistries.BIOMES.tags().createTagKey(new ResourceLocation(GreekFantasy.MODID, "has_spawn/red_drakaina")));
 
         private final String name;
         private final ResourceLocation lootTable;

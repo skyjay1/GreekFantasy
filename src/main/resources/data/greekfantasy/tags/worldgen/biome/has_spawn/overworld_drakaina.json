@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "#greekfantasy:has_spawn/brown_drakaina",
+    "#greekfantasy:has_spawn/green_drakaina"
+  ]
+}

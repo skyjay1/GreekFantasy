@@ -4,8 +4,8 @@
   "spawners":
   {
     "type": "greekfantasy:siren",
-    "weight": 10,
-    "minCount": 1,
+    "weight": 15,
+    "minCount": 2,
     "maxCount": 4
   }
 }

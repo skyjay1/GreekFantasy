@@ -2,7 +2,19 @@
   "type": "minecraft:jigsaw",
   "biomes": "#greekfantasy:has_structure/satyr_camp",
   "step": "surface_structures",
-  "spawn_overrides": {},
+  "spawn_overrides": {
+    "creature": {
+      "bounding_box": "full",
+      "spawns": [
+        {
+          "type": "greekfantasy:satyr",
+          "weight": 10,
+          "minCount": 1,
+          "maxCount": 3
+        }
+      ]
+    }
+  },
   "terrain_adaptation": "beard_thin",
   "start_pool": "greekfantasy:satyr_camp/campfire",
   "size": 2,

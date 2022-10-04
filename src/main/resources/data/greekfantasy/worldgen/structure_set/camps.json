@@ -2,14 +2,26 @@
   "structures": [
     {
       "structure": "greekfantasy:satyr_camp",
-      "weight": 1
+      "weight": 2
     },
     {
       "structure": "greekfantasy:ara_camp",
-      "weight": 1
+      "weight": 2
     },
     {
       "structure": "greekfantasy:centaur_camp",
+      "weight": 2
+    },
+    {
+      "structure": "greekfantasy:harpy_grove",
+      "weight": 1
+    },
+    {
+      "structure": "greekfantasy:gigante_camp",
+      "weight": 1
+    },
+    {
+      "structure": "greekfantasy:cyclops_cave",
       "weight": 1
     }
   ],

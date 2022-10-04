@@ -49,7 +49,7 @@ public class SpearItem extends TieredItem implements Vanishable {
     protected final int setFire;
 
     public SpearItem(Tier tier, Item.Properties properties) {
-        this(tier, 0.75F, properties);
+        this(tier, 0.25F, properties);
     }
 
     public SpearItem(Tier tier, float attackRange, Item.Properties properties) {
@@ -129,8 +129,8 @@ public class SpearItem extends TieredItem implements Vanishable {
     @Override
     public boolean hurtEnemy(final ItemStack stack, final LivingEntity target, final LivingEntity user) {
         stack.hurtAndBreak(1, user, e -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-        final CompoundTag nbt = stack.getOrCreateTagElement(SpearItem.KEY_MOB_EFFECT).copy();
-        if (nbt.contains(SpearItem.KEY_MOB_EFFECT)) {
+        if (stack.hasTag() && stack.getTag().contains(SpearItem.KEY_MOB_EFFECT)) {
+            final CompoundTag nbt = stack.getTag().getCompound(SpearItem.KEY_MOB_EFFECT).copy();
             nbt.putByte("Id", (byte) MobEffect.getId(ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(nbt.getString(SpearItem.KEY_MOB_EFFECT)))));
             MobEffectInstance effectInstance = MobEffectInstance.load(nbt);
             if(effectInstance != null) {
@@ -175,13 +175,15 @@ public class SpearItem extends TieredItem implements Vanishable {
 
     @Override
     public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        final CompoundTag nbt = stack.getOrCreateTagElement(KEY_MOB_EFFECT);
-        if (nbt.contains(KEY_MOB_EFFECT)) {
+        if (stack.hasTag() && stack.getTag().contains(SpearItem.KEY_MOB_EFFECT)) {
+            final CompoundTag nbt = stack.getTag().getCompound(SpearItem.KEY_MOB_EFFECT).copy();
             MobEffect potion = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(nbt.getString(KEY_MOB_EFFECT)));
-            int level = 1 + nbt.getInt("Amplifier");
-            tooltip.add(Component.translatable(potion.getDescriptionId()).append(" ")
-                    .append(Component.translatable("enchantment.level." + level))
-                    .withStyle(ChatFormatting.GREEN));
+            if(potion != null) {
+                int level = 1 + nbt.getInt("Amplifier");
+                tooltip.add(Component.translatable(potion.getDescriptionId()).append(" ")
+                        .append(Component.translatable("enchantment.level." + level))
+                        .withStyle(ChatFormatting.GREEN));
+            }
         }
     }
 

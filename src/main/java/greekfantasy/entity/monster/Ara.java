@@ -36,15 +36,6 @@ import java.util.UUID;
 
 public class Ara extends PathfinderMob implements NeutralMob {
 
-    // possible names:
-    // Propoetide (original name)
-    // Penthus (mourning)
-    // Pothus (longing)
-    // Thrasus (rashness)
-    // Ara (curse)
-    // Dysnomia (lawlessness)
-    // Coalemus (stupidity)
-
     private static final UniformInt ANGER_RANGE = TimeUtil.rangeOfSeconds(20, 39);
     private int angerTime;
     private UUID angerTarget;
@@ -60,7 +51,7 @@ public class Ara extends PathfinderMob implements NeutralMob {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 24.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.25D)
+                .add(Attributes.MOVEMENT_SPEED, 0.32D)
                 .add(Attributes.ATTACK_DAMAGE, 2.5D);
     }
 

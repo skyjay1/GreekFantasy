@@ -18,19 +18,29 @@ import java.util.Map;
 public class GFConfig {
 
     // items
+    public final ForgeConfigSpec.IntValue APOLLO_BOW_DURABILITY_ON_USE;
+    public final ForgeConfigSpec.IntValue ARTEMIS_BOW_DURABILITY_ON_USE;
+    public final ForgeConfigSpec.IntValue AVERNAL_BOW_DURABILITY_ON_USE;
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_COOLDOWN;
+    public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURABILITY_ON_USE;
     public final ForgeConfigSpec.IntValue CONCH_DAMAGE_ON_USE;
     public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_COUNT;
     public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_LIFESPAN;
     public final ForgeConfigSpec.IntValue STAFF_OF_HEALING_COOLDOWN;
-    public final ForgeConfigSpec.IntValue THYRSUS_COOLDOWN;
+    public final ForgeConfigSpec.IntValue STAFF_OF_HEALING_DURABILITY_ON_USE;
     public final ForgeConfigSpec.IntValue THUNDERBOLT_COOLDOWN;
+    public final ForgeConfigSpec.IntValue THUNDERBOLT_DURABILITY_ON_USE;
+    public final ForgeConfigSpec.IntValue THUNDERBOLT_DURABILITY_ON_FIREFLASH;
+    public final ForgeConfigSpec.IntValue THYRSUS_COOLDOWN;
+    public final ForgeConfigSpec.IntValue THYRSUS_DURABILITY_ON_USE;
     public final ForgeConfigSpec.BooleanValue UNICORN_HORN_CURES_EFFECTS;
+    public final ForgeConfigSpec.IntValue UNICORN_HORN_DURABILITY_ON_USE;
     private final ForgeConfigSpec.DoubleValue WINGED_SANDALS_DURABILITY_CHANCE;
     private double wingedSandalsDurabilityChance;
     public final ForgeConfigSpec.IntValue WAND_OF_CIRCE_DURATION;
     public final ForgeConfigSpec.IntValue WAND_OF_CIRCE_COOLDOWN;
+    public final ForgeConfigSpec.IntValue WAND_OF_CIRCE_DURABILITY_ON_USE;
 
     private final ForgeConfigSpec.BooleanValue HELM_HIDES_ARMOR;
     private boolean helmHidesArmor;
@@ -152,18 +162,28 @@ public class GFConfig {
     public GFConfig(final ForgeConfigSpec.Builder builder) {
 
         builder.push("items");
+        APOLLO_BOW_DURABILITY_ON_USE = builder.defineInRange("apollo_bow_durability_on_use", 1, 0, 64);
+        ARTEMIS_BOW_DURABILITY_ON_USE = builder.defineInRange("artemis_bow_durability_on_use", 1, 0, 64);
+        AVERNAL_BOW_DURABILITY_ON_USE = builder.defineInRange("avernal_bow_durability_on_use", 1, 0, 64);
         BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
         BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 12000);
+        BAG_OF_WIND_DURABILITY_ON_USE = builder.defineInRange("bag_of_wind_durability_on_use", 1, 0, 64);
         CONCH_DAMAGE_ON_USE = builder.defineInRange("conch_damage_on_use", 0, 0, 64);
         HELM_HIDES_ARMOR = builder.define("helm_hides_armor", true);
         DRAGON_TOOTH_SPARTI_COUNT = builder.defineInRange("dragon_tooth_sparti_count", 1, 0, 8);
         DRAGON_TOOTH_SPARTI_LIFESPAN = builder.defineInRange("dragon_tooth_sparti_lifespan", 300, 1, 24000);
-        THYRSUS_COOLDOWN = builder.defineInRange("thyrsus_cooldown", 60, 0, 24000);
         THUNDERBOLT_COOLDOWN = builder.defineInRange("thunderbolt_cooldown", 100, 0, 24000);
+        THUNDERBOLT_DURABILITY_ON_USE = builder.defineInRange("thunderbolt_durability_on_use", 15, 0, 128);
+        THUNDERBOLT_DURABILITY_ON_FIREFLASH = builder.defineInRange("thunderbolt_durability_on_fireflash", 25, 0, 128);
+        THYRSUS_COOLDOWN = builder.defineInRange("thyrsus_cooldown", 60, 0, 24000);
+        THYRSUS_DURABILITY_ON_USE = builder.defineInRange("thyrsus_durability_on_use", 1, 0, 64);
         STAFF_OF_HEALING_COOLDOWN = builder.defineInRange("staff_of_healing_cooldown", 35, 0, 24000);
+        STAFF_OF_HEALING_DURABILITY_ON_USE = builder.defineInRange("staff_of_healing_durability_on_use", 1, 0, 64);
         UNICORN_HORN_CURES_EFFECTS = builder.define("unicorn_horn_cures_effects", true);
+        UNICORN_HORN_DURABILITY_ON_USE = builder.defineInRange("unicorn_horn_durability_on_use", 1, 0, 64);
         WAND_OF_CIRCE_DURATION = builder.defineInRange("wand_of_circe_duration", 900, 1, 24000);
         WAND_OF_CIRCE_COOLDOWN = builder.defineInRange("wand_of_circe_cooldown", 50, 0, 24000);
+        WAND_OF_CIRCE_DURABILITY_ON_USE = builder.defineInRange("wand_of_circe_durability_on_use", 1, 0, 64);
         WINGED_SANDALS_DURABILITY_CHANCE = builder
                 .comment("Percent chance of winged sandals losing durability each tick")
                 .defineInRange("winged_sandals_durability_chance", 0.0F, 0.0F, 1.0);

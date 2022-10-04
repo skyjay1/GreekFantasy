@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/skyjay1/GreekFantasy/issues"
 
 [[mods]]
     modId="greekfantasy"
-    version="19.2.2"
+    version="19.2.3"
     displayName="Greek Fantasy"
     credits=""
     authors="skyjay1"
@@ -22,5 +22,12 @@ issueTrackerURL="https://github.com/skyjay1/GreekFantasy/issues"
         modId="rpggods"
         mandatory=false
         versionRange="[19.2,)"
+        ordering="AFTER"
+        side="BOTH"
+
+    [[dependencies.greekfantasy]]
+        modId="bettercombat"
+        mandatory=false
+        versionRange="[1.4.4,)"
         ordering="AFTER"
         side="BOTH"

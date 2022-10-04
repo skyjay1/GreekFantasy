@@ -4,9 +4,12 @@ import greekfantasy.GFRegistry;
 import greekfantasy.GreekFantasy;
 import greekfantasy.entity.Naiad;
 import greekfantasy.entity.Triton;
+import greekfantasy.entity.ai.CooldownMeleeAttackGoal;
 import greekfantasy.entity.ai.IntervalRangedAttackGoal;
 import greekfantasy.entity.misc.WaterSpell;
+import greekfantasy.entity.util.HasCustomCooldown;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,10 +38,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 
-public class Scylla extends WaterAnimal implements Enemy, RangedAttackMob {
+public class Scylla extends WaterAnimal implements Enemy, RangedAttackMob, HasCustomCooldown {
 
     private final ServerBossEvent bossInfo = new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
 
+    protected static final int MELEE_COOLDOWN = 50;
+    protected int meleeCooldown;
 
     public Scylla(EntityType<? extends Scylla> entityType, Level level) {
         super(entityType, level);
@@ -84,7 +89,7 @@ public class Scylla extends WaterAnimal implements Enemy, RangedAttackMob {
         super.registerGoals();
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new IntervalRangedAttackGoal<>(this, 30, 3, 110, 18.0F));
-        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(3, new CooldownMeleeAttackGoal<>(this, 1.0D, false, MELEE_COOLDOWN));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 15.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -203,5 +208,31 @@ public class Scylla extends WaterAnimal implements Enemy, RangedAttackMob {
             this.level.addFreshEntity(waterSpell);
         }
         this.playSound(SoundEvents.LLAMA_SPIT, 1.2F, 1.2F + this.random.nextFloat() * 0.2F);
+    }
+
+    // Custom Cooldown
+
+    @Override
+    public void setCustomCooldown(int cooldown) {
+        this.meleeCooldown = cooldown;
+    }
+
+    @Override
+    public int getCustomCooldown() {
+        return this.meleeCooldown;
+    }
+
+    // NBT //
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        saveCustomCooldown(compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        readCustomCooldown(compound);
     }
 }

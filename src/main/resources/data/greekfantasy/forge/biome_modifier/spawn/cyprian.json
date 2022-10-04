@@ -4,7 +4,7 @@
   "spawners":
   {
     "type": "greekfantasy:cyprian",
-    "weight": 15,
+    "weight": 19,
     "minCount": 2,
     "maxCount": 4
   }

@@ -2,7 +2,19 @@
   "type": "minecraft:jigsaw",
   "biomes": "#greekfantasy:has_structure/cyclops_cave",
   "step": "surface_structures",
-  "spawn_overrides": {},
+  "spawn_overrides": {
+    "monster": {
+      "bounding_box": "full",
+      "spawns": [
+        {
+          "type": "greekfantasy:cyclops",
+          "weight": 10,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ]
+    }
+  },
   "terrain_adaptation": "beard_thin",
   "start_pool": "greekfantasy:cyclops_cave",
   "size": 1,

@@ -1,11 +1,14 @@
 package greekfantasy.entity;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.GreekFantasy;
+import greekfantasy.entity.ai.MoveToStructureGoal;
 import greekfantasy.item.ClubItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -34,6 +37,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -80,8 +84,8 @@ public class Gigante extends PathfinderMob implements NeutralMob {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(3, new GiganteAttackGoal(1.0D, false));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.9D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
+        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 6, 15, 10, new ResourceLocation(GreekFantasy.MODID, "gigante_camp"), DefaultRandomPos::getPos));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.9D));        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));

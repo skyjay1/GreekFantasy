@@ -4,7 +4,7 @@
   "spawners":
   {
     "type": "greekfantasy:cyclops",
-    "weight": 24,
+    "weight": 25,
     "minCount": 2,
     "maxCount": 5
   }

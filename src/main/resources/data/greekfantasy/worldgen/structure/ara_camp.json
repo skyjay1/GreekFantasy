@@ -2,10 +2,22 @@
   "type": "minecraft:jigsaw",
   "biomes": "#greekfantasy:has_structure/ara_camp",
   "step": "surface_structures",
-  "spawn_overrides": {},
+  "spawn_overrides": {
+    "monster": {
+      "bounding_box": "full",
+      "spawns": [
+        {
+          "type": "greekfantasy:ara",
+          "weight": 10,
+          "minCount": 1,
+          "maxCount": 3
+        }
+      ]
+    }
+  },
   "terrain_adaptation": "beard_thin",
   "start_pool": "greekfantasy:ara_camp/start",
-  "size": 2,
+  "size": 3,
   "start_height": {
     "absolute": 0
   },

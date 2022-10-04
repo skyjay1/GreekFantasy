@@ -31,7 +31,7 @@ public class WandOfCirceItem extends Item {
 
         // damage the item stack
         if (!player.isCreative()) {
-            stack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+            stack.hurtAndBreak(GreekFantasy.CONFIG.WAND_OF_CIRCE_DURABILITY_ON_USE.get(), player, (entity) -> entity.broadcastBreakEvent(hand));
         }
 
         return InteractionResultHolder.sidedSuccess(stack, world.isClientSide());

@@ -122,9 +122,9 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 24.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.25D)
-                .add(Attributes.ATTACK_DAMAGE, 2.0D);
+                .add(Attributes.MAX_HEALTH, 28.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.35D)
+                .add(Attributes.ATTACK_DAMAGE, 2.5D);
     }
 
     @Override
