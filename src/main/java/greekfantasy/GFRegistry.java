@@ -1518,8 +1518,8 @@ public final class GFRegistry {
                 () -> MazeStructure.CODEC);
         public static final RegistryObject<StructurePieceType> MAZE_ROOM = STRUCTURE_PIECE_TYPES.register("maze", () ->
                 (config, tag) -> new MazePiece(tag));
-        /*public static final RegistryObject<StructureType<OceanVillageStructure>> OCEAN_VILLAGE = STRUCTURE_TYPES.register("ocean_village", () ->
-                () -> OceanVillageStructure.CODEC);*/
+        public static final RegistryObject<StructureType<OceanVillageStructure>> OCEAN_VILLAGE = STRUCTURE_TYPES.register("ocean_village", () ->
+                () -> OceanVillageStructure.CODEC);
     }
 
     public static final class FeatureReg {

@@ -84,7 +84,6 @@ public class MoveToStructureGoal extends RandomStrollGoal {
         }
         Pair<BlockPos, Holder<Structure>> pair = level.getChunkSource().getGenerator().findNearestMapStructure(level, structureSet, blockpos, rangeInSections, false);
         if (null == pair) {
-            GreekFantasy.LOGGER.debug("No structure found for " + structure.unwrapKey().toString());
             return false;
         }
         structurePos = pair.getFirst();
