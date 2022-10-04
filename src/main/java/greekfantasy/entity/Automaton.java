@@ -176,8 +176,9 @@ public class Automaton extends AbstractGolem implements RangedAttackMob, HasCust
     @Override
     public void travel(final Vec3 vec) {
         Vec3 travelVec = vec;
-        if(this.isInWaterRainOrBubble()) {
-            travelVec = vec.multiply(0.6D, 1.0D, 0.6D);
+        if(!this.isInWaterOrBubble() && this.isInRain()) {
+            double multiplier = 1.0D - getWaterSlowDown() * 0.5D;
+            travelVec = vec.multiply(multiplier, 1.0D, multiplier);
         }
         super.travel(travelVec);
     }

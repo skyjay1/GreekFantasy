@@ -140,6 +140,7 @@ import greekfantasy.worldgen.DimensionFilter;
 import greekfantasy.worldgen.GoldenTreeGrower;
 import greekfantasy.worldgen.HarpyNestFeature;
 import greekfantasy.worldgen.LocStructureProcessor;
+import greekfantasy.worldgen.OceanVillageStructure;
 import greekfantasy.worldgen.OceanVillageStructureProcessor;
 import greekfantasy.worldgen.OliveTreeFeature;
 import greekfantasy.worldgen.OliveTreeGrower;
@@ -707,7 +708,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> MIRROR = ITEMS.register("mirror", () ->
                 new Item(new Item.Properties().tab(GF_TAB).stacksTo(1)));
         public static final RegistryObject<Item> CONCH = ITEMS.register("conch", () ->
-                new ConchItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(1)));
+                new ConchItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE).stacksTo(1).durability(64)));
         public static final RegistryObject<Item> UNICORN_HORN = ITEMS.register("unicorn_horn", () ->
                 new UnicornHornItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).durability(44)));
         public static final RegistryObject<Item> HEART_OF_TALOS = ITEMS.register("heart_of_talos", () ->
@@ -725,7 +726,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> GOLDEN_FLEECE = ITEMS.register("golden_fleece", () ->
                 new Item(new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<Item> GOLDEN_BALL = ITEMS.register("golden_ball", () ->
-                new GoldenBallItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).defaultDurability(680)));
+                new GoldenBallItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).durability(680)));
         public static final RegistryObject<Item> ICHOR = ITEMS.register("ichor", () ->
                 new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)) {
                     @Override
@@ -1517,6 +1518,8 @@ public final class GFRegistry {
                 () -> MazeStructure.CODEC);
         public static final RegistryObject<StructurePieceType> MAZE_ROOM = STRUCTURE_PIECE_TYPES.register("maze", () ->
                 (config, tag) -> new MazePiece(tag));
+        /*public static final RegistryObject<StructureType<OceanVillageStructure>> OCEAN_VILLAGE = STRUCTURE_TYPES.register("ocean_village", () ->
+                () -> OceanVillageStructure.CODEC);*/
     }
 
     public static final class FeatureReg {
