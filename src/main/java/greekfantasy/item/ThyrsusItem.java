@@ -1,18 +1,26 @@
 package greekfantasy.item;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import greekfantasy.GreekFantasy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.Vanishable;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
@@ -21,10 +29,24 @@ import net.minecraft.world.level.material.Fluids;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ThyrsusItem extends DiggerItem {
+public class ThyrsusItem extends TieredItem implements Vanishable {
+
+    private final float attackDamage;
+    private final Multimap<Attribute, AttributeModifier> defaultModifiers;
 
     public ThyrsusItem(Tier tier, float attackDamage, float attackSpeed, Properties properties) {
-        super(attackDamage, attackSpeed, tier, tier.getTag(), properties);
+        super(tier, properties);
+        this.attackDamage = attackDamage + tier.getAttackDamageBonus();
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", this.attackDamage, AttributeModifier.Operation.ADDITION));
+        builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", attackSpeed, AttributeModifier.Operation.ADDITION));
+        this.defaultModifiers = builder.build();
+    }
+
+    @Override
+    public boolean hurtEnemy(ItemStack itemStack, LivingEntity target, LivingEntity owner) {
+        itemStack.hurtAndBreak(1, owner, (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        return true;
     }
 
     @Override
@@ -55,6 +77,11 @@ public class ThyrsusItem extends DiggerItem {
         }
 
         return InteractionResultHolder.sidedSuccess(mainhandItem, level.isClientSide());
+    }
+
+    @Override
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+        return slot == EquipmentSlot.MAINHAND ? defaultModifiers : super.getAttributeModifiers(slot, stack);
     }
 
     @Override
