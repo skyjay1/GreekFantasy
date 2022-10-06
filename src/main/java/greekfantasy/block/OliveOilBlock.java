@@ -25,11 +25,13 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.portal.PortalShape;
@@ -39,8 +41,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 
-public class OliveOilBlock extends Block implements SimpleWaterloggedBlock {
+public class OliveOilBlock extends Block implements LiquidBlockContainer {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -190,9 +193,28 @@ public class OliveOilBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return (level.getFluidState(pos).getType() == Fluids.WATER
-                || level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP))
-                && level.getFluidState(pos.above()).isEmpty();
+        // requires no fluid above
+        if(!level.getFluidState(pos.above()).isEmpty()) {
+            return false;
+        }
+        // when not waterlogged, requires solid block below
+        if(!state.getValue(WATERLOGGED) && !level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)) {
+            return false;
+        }
+        // all checks passed
+        return true;
+    }
+
+    @Override
+    public boolean canPlaceLiquid(BlockGetter level, BlockPos pos, BlockState state, Fluid fluid) {
+        return fluid == Fluids.FLOWING_WATER || fluid == Fluids.WATER;
+    }
+
+    @Override
+    public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+        level.setBlock(pos, fluidState.createLegacyBlock(), Block.UPDATE_ALL);
+        level.scheduleTick(pos, fluidState.getType(), fluidState.getType().getTickDelay(level));
+        return true;
     }
 
     @Override

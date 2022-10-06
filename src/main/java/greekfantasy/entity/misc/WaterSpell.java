@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WaterSpell extends MobEffectProjectile {
@@ -40,10 +41,14 @@ public class WaterSpell extends MobEffectProjectile {
 
     @Override
     protected List<MobEffectInstance> getMobEffects(final LivingEntity entity) {
-        return List.of(
-                new MobEffectInstance(GFRegistry.MobEffectReg.SLOW_SWIM.get(), 180, 2),
-                new MobEffectInstance(MobEffects.POISON, 90, 0)
-        );
+        List<MobEffectInstance> list = new ArrayList<>();
+        // add slow swim to the list
+        list.add(new MobEffectInstance(GFRegistry.MobEffectReg.SLOW_SWIM.get(), 180, 2));
+        // add poison to the list depending on random chance and difficulty
+        if(random.nextInt(15) < 1 + level.getDifficulty().getId() * 4) {
+            list.add(new MobEffectInstance(MobEffects.POISON, 50, 0));
+        }
+        return list;
     }
 
     @Override

@@ -65,7 +65,6 @@ public abstract class EnchantedBowItem extends BowItem {
                         if(damage > 0) {
                             stack.hurtAndBreak(damage, player, (e) -> e.broadcastBreakEvent(player.getUsedItemHand()));
                         }
-
                     }
                     // play sound
                     level.playSound(null, player.getX(), player.getY(), player.getZ(),
