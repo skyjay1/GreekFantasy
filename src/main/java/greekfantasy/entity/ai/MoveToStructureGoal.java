@@ -69,7 +69,7 @@ public class MoveToStructureGoal extends RandomStrollGoal {
                                int rangeInSections, int distanceXZ, int distanceY,
                                Holder<Structure> structure,
                                RandomPosFactory posFactory) {
-        super(mob, speedModifier, 10);
+        super(mob, speedModifier, 20);
         this.structure = structure;
         this.structureSet = HolderSet.direct(this.structure);
         this.rangeInSections = rangeInSections;

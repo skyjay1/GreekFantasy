@@ -4,6 +4,7 @@ package greekfantasy.entity.monster;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -52,6 +53,11 @@ public class MadCow extends Cow implements Enemy {
         if (!this.isPersistenceRequired() && this.random.nextInt(400) == 0) {
             this.hurt(DamageSource.STARVE, 1.0F);
         }
+    }
+
+    @Override
+    public MobCategory getClassification(boolean forSpawnCount) {
+        return MobCategory.MONSTER;
     }
 
     @Override

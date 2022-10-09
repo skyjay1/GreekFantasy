@@ -143,7 +143,9 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
         this.goalSelector.addGoal(3, new Satyr.PanicGoal(1.3D));
         this.goalSelector.addGoal(4, new Satyr.StartDancingGoal(0.9D, 22, 12, 420));
         this.goalSelector.addGoal(5, new Satyr.LightCampfireGoal(0.9D, 12, 10, 60, 500));
-        this.goalSelector.addGoal(6, new MoveToStructureGoal(this, 1.0D, 2, 8, 4, new ResourceLocation(GreekFantasy.MODID, "satyr_camp"), DefaultRandomPos::getPos));
+        if(GreekFantasy.CONFIG.SATYR_SEEK_CAMP.get()) {
+            this.goalSelector.addGoal(6, new MoveToStructureGoal(this, 1.0D, 2, 8, 4, new ResourceLocation(GreekFantasy.MODID, "satyr_camp"), DefaultRandomPos::getPos));
+        }
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8D, 160) {
             @Override
             public boolean canUse() {

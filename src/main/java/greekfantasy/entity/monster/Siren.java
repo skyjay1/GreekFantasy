@@ -5,11 +5,15 @@ import greekfantasy.GreekFantasy;
 import greekfantasy.entity.ai.GoToWaterGoal;
 import greekfantasy.entity.ai.WaterAnimalMoveControl;
 import greekfantasy.entity.boss.Charybdis;
+import greekfantasy.util.SpawnRulesUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -17,6 +21,9 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -37,6 +44,9 @@ import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeMod;
 
 import java.util.EnumSet;
@@ -63,6 +73,17 @@ public class Siren extends WaterAnimal implements Enemy {
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ATTACK_DAMAGE, 3.0D)
                 .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 0.6D);
+    }
+
+    public static boolean checkSirenSpawnRules(EntityType<? extends PathfinderMob> entityType, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, RandomSource rand) {
+        // determine if surface water mob spawn rules passed
+        if(!SpawnRulesUtil.checkSurfaceWaterMobSpawnRules(entityType, level, mobSpawnType, pos, rand)) {
+            return false;
+        }
+        return true;
+        // do not allow if there are nearby sirens
+        //AABB aabb = new AABB(pos).inflate(14.0D);
+        //return level.getEntitiesOfClass(Siren.class, aabb).isEmpty();
     }
 
     @Override
@@ -119,6 +140,11 @@ public class Siren extends WaterAnimal implements Enemy {
         } else if (this.getPose() == Pose.SWIMMING) {
             this.setPose(Pose.STANDING);
         }
+    }
+
+    @Override
+    public MobCategory getClassification(boolean forSpawnCount) {
+        return MobCategory.MONSTER;
     }
 
     @Override

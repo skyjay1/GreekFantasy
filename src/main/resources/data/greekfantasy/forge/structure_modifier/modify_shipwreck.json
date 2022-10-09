@@ -1,0 +1,11 @@
+{
+  "type": "greekfantasy:add_spawn",
+  "category": "monster",
+  "spawn": {
+    "type": "greekfantasy:siren",
+    "minCount": -2,
+    "maxCount": 1,
+    "weight": 10
+  },
+  "structures": "minecraft:shipwreck"
+}

@@ -20,6 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -150,6 +151,11 @@ public class Whirl extends WaterAnimal {
     }
 
     // Misc //
+
+    @Override
+    public MobCategory getClassification(boolean forSpawnCount) {
+        return MobCategory.WATER_CREATURE;
+    }
 
     @Override
     protected boolean shouldDespawnInPeaceful() {

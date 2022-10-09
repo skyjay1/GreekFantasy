@@ -20,6 +20,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -130,6 +131,11 @@ public class GiantBoar extends Hoglin {
                 setSpawning(false);
             }
         }
+    }
+
+    @Override
+    public MobCategory getClassification(boolean forSpawnCount) {
+        return MobCategory.MONSTER;
     }
 
     // Hoglin overrides //

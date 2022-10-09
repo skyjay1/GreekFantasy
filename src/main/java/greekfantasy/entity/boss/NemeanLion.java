@@ -105,7 +105,9 @@ public class NemeanLion extends Monster implements HasCustomCooldown {
         this.goalSelector.addGoal(1, new NemeanLion.RunAroundLikeCrazyGoal(1.0D));
         this.goalSelector.addGoal(2, new NemeanLion.SitGoal());
         this.goalSelector.addGoal(3, new NemeanLion.NemeanLionAttackGoal(1.15D, true, ATTACK_COOLDOWN));
-        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 3, 8, 4, new ResourceLocation(GreekFantasy.MODID, "lion_den"), DefaultRandomPos::getPos));
+        if(GreekFantasy.CONFIG.NEMEAN_LION_SEEK_DEN.get()) {
+            this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 3, 8, 4, new ResourceLocation(GreekFantasy.MODID, "lion_den"), DefaultRandomPos::getPos));
+        }
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.86D) {
             @Override
             public boolean canUse() {

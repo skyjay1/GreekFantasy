@@ -130,6 +130,7 @@ import greekfantasy.mob_effect.MirroringEffect;
 import greekfantasy.mob_effect.SlowSwimEffect;
 import greekfantasy.mob_effect.PrisonerOfHadesEffect;
 import greekfantasy.mob_effect.StunnedEffect;
+import greekfantasy.util.AddSpawnsStructureModifier;
 import greekfantasy.util.BronzeScrapLootModifier;
 import greekfantasy.util.QuestLootModifier;
 import greekfantasy.util.ReplaceDropsLootModifier;
@@ -245,6 +246,7 @@ import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -278,6 +280,7 @@ public final class GFRegistry {
     private static final DeferredRegister<StructurePieceType> STRUCTURE_PIECE_TYPES = DeferredRegister.create(Registry.STRUCTURE_PIECE.key(), MODID);
     private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registry.PLACEMENT_MODIFIERS.key(), MODID);
     private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
+    private static final DeferredRegister<Codec<? extends StructureModifier>> STRUCTURE_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS, MODID);
 
     public static void register() {
         BlockReg.register();
@@ -295,6 +298,7 @@ public final class GFRegistry {
         StructureProcessorReg.register();
         FeatureReg.register();
         PlacementTypeReg.register();
+        StructureModifierReg.register();
     }
 
 
@@ -947,50 +951,50 @@ public final class GFRegistry {
         }
 
         private static void registerEntityAttributes(EntityAttributeCreationEvent event) {
-            register(event, AUTOMATON.get(), Automaton::createAttributes, null);
+            register(event, AUTOMATON.get(), Automaton::createAttributes, Mob::checkMobSpawnRules);
             register(event, ARA.get(), Ara::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
-            register(event, ARACHNE.get(), Arachne::createAttributes, null);
-            register(event, ARION.get(), Arion::createAttributes, null);
-            register(event, BABY_SPIDER.get(), BabySpider::createAttributes, null);
-            register(event, BRONZE_BULL.get(), BronzeBull::createAttributes, null);
+            register(event, ARACHNE.get(), Arachne::createAttributes, Monster::checkMonsterSpawnRules);
+            register(event, ARION.get(), Arion::createAttributes, Mob::checkMobSpawnRules);
+            register(event, BABY_SPIDER.get(), BabySpider::createAttributes, Monster::checkMonsterSpawnRules);
+            register(event, BRONZE_BULL.get(), BronzeBull::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, CENTAUR.get(), Centaur::createAttributes, Mob::checkMobSpawnRules);
             register(event, CERASTES.get(), Cerastes::createAttributes, Cerastes::checkCerastesSpawnRules);
-            register(event, CERBERUS.get(), Cerberus::createAttributes, null);
-            register(event, CHARYBDIS.get(), Charybdis::createAttributes, null);
-            register(event, CIRCE.get(), Circe::createAttributes, null);
-            register(event, CRETAN_MINOTAUR.get(), CretanMinotaur::createAttributes, null);
+            register(event, CERBERUS.get(), Cerberus::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
+            register(event, CHARYBDIS.get(), Charybdis::createAttributes, SpawnRulesUtil::checkWaterMonsterSpawnRules);
+            register(event, CIRCE.get(), Circe::createAttributes, Monster::checkMonsterSpawnRules);
+            register(event, CRETAN_MINOTAUR.get(), CretanMinotaur::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, CYCLOPS.get(), Cyclops::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, CYPRIAN.get(), Cyprian::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, DRAKAINA.get(), Drakaina::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, DRYAD.get(), Dryad::createAttributes, Mob::checkMobSpawnRules);
-            register(event, ELPIS.get(), Elpis::createAttributes, null);
+            register(event, ELPIS.get(), Elpis::createAttributes, Mob::checkMobSpawnRules);
             register(event, EMPUSA.get(), Empusa::createAttributes, Empusa::checkEmpusaSpawnRules);
             register(event, FURY.get(), Fury::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
-            register(event, GERYON.get(), Geryon::createAttributes, null);
-            register(event, GIANT_BOAR.get(), GiantBoar::createAttributes, null);
+            register(event, GERYON.get(), Geryon::createAttributes, Monster::checkMonsterSpawnRules);
+            register(event, GIANT_BOAR.get(), GiantBoar::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, GIGANTE.get(), Gigante::createAttributes, Mob::checkMobSpawnRules);
-            register(event, GOLDEN_RAM.get(), GoldenRam::createAttributes, null);
+            register(event, GOLDEN_RAM.get(), GoldenRam::createAttributes, Mob::checkMobSpawnRules);
             register(event, GORGON.get(), Gorgon::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, HARPY.get(), Harpy::createAttributes, Monster::checkAnyLightMonsterSpawnRules);
-            register(event, HYDRA.get(), Hydra::createAttributes, null);
+            register(event, HYDRA.get(), Hydra::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, HYDRA_HEAD.get(), HydraHead::createAttributes, null);
             register(event, LAMPAD.get(), Lampad::createAttributes, Mob::checkMobSpawnRules);
             register(event, MAD_COW.get(), MadCow::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
-            register(event, MAKHAI.get(), Makhai::createAttributes, null);
+            register(event, MAKHAI.get(), Makhai::createAttributes, SpawnRulesUtil::checkAnyLightMonsterSpawnRules);
             register(event, MINOTAUR.get(), Minotaur::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, NAIAD.get(), Naiad::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
-            register(event, NEMEAN_LION.get(), NemeanLion::createAttributes, null);
+            register(event, NEMEAN_LION.get(), NemeanLion::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, ORTHUS.get(), Orthus::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             event.put(PALLADIUM.get(), Palladium.createAttributes().build());
             register(event, PEGASUS.get(), Pegasus::createAttributes, Mob::checkMobSpawnRules);
-            register(event, PYTHON.get(), Python::createAttributes, null);
+            register(event, PYTHON.get(), Python::createAttributes, Monster::checkMonsterSpawnRules);
             register(event, SATYR.get(), Satyr::createAttributes, Mob::checkMobSpawnRules);
-            register(event, SCYLLA.get(), Scylla::createAttributes, null);
+            register(event, SCYLLA.get(), Scylla::createAttributes, SpawnRulesUtil::checkWaterMonsterSpawnRules);
             register(event, SHADE.get(), Shade::createAttributes, Monster::checkMonsterSpawnRules);
-            register(event, SIREN.get(), Siren::createAttributes, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
-            register(event, SPARTI.get(), Sparti::createAttributes, null);
+            register(event, SIREN.get(), Siren::createAttributes, Siren::checkSirenSpawnRules);
+            register(event, SPARTI.get(), Sparti::createAttributes, Mob::checkMobSpawnRules);
             register(event, STYMPHALIAN.get(), Stymphalian::createAttributes, Monster::checkMonsterSpawnRules);
-            register(event, TALOS.get(), Talos::createAttributes, null);
+            register(event, TALOS.get(), Talos::createAttributes, SpawnRulesUtil::checkMonsterSpawnRules);
             register(event, TRITON.get(), Triton::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
             register(event, UNICORN.get(), Unicorn::createAttributes, Mob::checkMobSpawnRules);
             register(event, WHIRL.get(), Whirl::createAttributes, SpawnRulesUtil::checkWaterMobSpawnRules);
@@ -1541,5 +1545,14 @@ public final class GFRegistry {
         }
 
         public static final RegistryObject<PlacementModifierType<DimensionFilter>> DIMENSION_FILTER = PLACEMENT_MODIFIER_TYPES.register("dimension", () -> () -> DimensionFilter.CODEC);
+    }
+
+    public static final class StructureModifierReg {
+
+        public static void register() {
+            STRUCTURE_MODIFIERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        }
+
+        public static final RegistryObject<Codec<AddSpawnsStructureModifier>> ADD_SPAWNS_MODIFIER = STRUCTURE_MODIFIERS.register("add_spawn", () -> AddSpawnsStructureModifier.CODEC);
     }
 }

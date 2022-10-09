@@ -84,7 +84,9 @@ public class Gigante extends PathfinderMob implements NeutralMob {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(3, new GiganteAttackGoal(1.0D, false));
-        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 6, 15, 10, new ResourceLocation(GreekFantasy.MODID, "gigante_camp"), DefaultRandomPos::getPos));
+        if(GreekFantasy.CONFIG.GIGANTE_SEEK_CAMP.get()) {
+            this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 6, 15, 10, new ResourceLocation(GreekFantasy.MODID, "gigante_camp"), DefaultRandomPos::getPos));
+        }
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.9D));        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));

@@ -11,9 +11,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GFConfig {
 
@@ -107,6 +105,18 @@ public class GFConfig {
     private final ForgeConfigSpec.BooleanValue SHOW_SCYLLA_BOSS_BAR;
     private boolean showScyllaBossBar;
 
+    // goals
+    public final ForgeConfigSpec.BooleanValue ARA_SEEK_CAMP;
+    public final ForgeConfigSpec.BooleanValue CENTAUR_SEEK_CAMP;
+    public final ForgeConfigSpec.BooleanValue CYCLOPS_SEEK_CAVE;
+    public final ForgeConfigSpec.BooleanValue DOLPHIN_SEEK_OCEAN_VILLAGE;
+    public final ForgeConfigSpec.BooleanValue GIGANTE_SEEK_CAMP;
+    public final ForgeConfigSpec.BooleanValue GUARDIAN_SEEK_OCEAN_VILLAGE;
+    public final ForgeConfigSpec.BooleanValue HYDRA_SEEK_LAIR;
+    public final ForgeConfigSpec.BooleanValue NEMEAN_LION_SEEK_DEN;
+    public final ForgeConfigSpec.BooleanValue SATYR_SEEK_CAMP;
+    public final ForgeConfigSpec.BooleanValue TRITON_SEEK_OCEAN_VILLAGE;
+
     // mob effect
     private final ForgeConfigSpec.BooleanValue CURSE_OF_CIRCE_ENABLED;
     private boolean isCurseOfCirceEnabled;
@@ -151,7 +161,6 @@ public class GFConfig {
             ForgeRegistries.ENTITY_TYPES.getKey(EntityType.WANDERING_TRADER).toString(),
             ForgeRegistries.ENTITY_TYPES.getKey(EntityType.ILLUSIONER).toString(),
             ForgeRegistries.ENTITY_TYPES.getKey(EntityType.PILLAGER).toString(),
-            ForgeRegistries.ENTITY_TYPES.getKey(EntityType.WITCH).toString(),
             new ResourceLocation(GreekFantasy.MODID, "ara").toString(),
             new ResourceLocation(GreekFantasy.MODID, "dryad").toString(),
             new ResourceLocation(GreekFantasy.MODID, "lampad").toString(),
@@ -246,6 +255,19 @@ public class GFConfig {
         SHOW_NEMEAN_LION_BOSS_BAR = builder.define("show_nemean_lion_boss_bar", true);
         SHOW_PYTHON_BOSS_BAR = builder.define("show_python_boss_bar", true);
         SHOW_SCYLLA_BOSS_BAR = builder.define("show_scylla_boss_bar", true);
+        builder.pop();
+
+        builder.push("goals");
+        ARA_SEEK_CAMP = builder.define("ara_seek_camp", true);
+        CENTAUR_SEEK_CAMP = builder.define("centaur_seek_camp", false);
+        CYCLOPS_SEEK_CAVE = builder.define("cyclops_seek_cave", false);
+        DOLPHIN_SEEK_OCEAN_VILLAGE = builder.define("dolphin_seek_ocean_village", false);
+        GIGANTE_SEEK_CAMP = builder.define("gigante_seek_camp", false);
+        GUARDIAN_SEEK_OCEAN_VILLAGE = builder.define("guardian_seek_ocean_village", true);
+        HYDRA_SEEK_LAIR = builder.define("hydra_seek_lair", true);
+        NEMEAN_LION_SEEK_DEN = builder.define("nemean_lion_seek_den", true);
+        SATYR_SEEK_CAMP = builder.define("satyr_seek_camp", false);
+        TRITON_SEEK_OCEAN_VILLAGE = builder.define("triton_seek_ocean_village", true);
         builder.pop();
 
         builder.push("mob_effects");

@@ -107,7 +107,9 @@ public class Hydra extends Monster {
         super.registerGoals();
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new Hydra.MoveToTargetGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 4, 8, 4, new ResourceLocation(GreekFantasy.MODID, "hydra_lair"), DefaultRandomPos::getPos));
+        if(GreekFantasy.CONFIG.HYDRA_SEEK_LAIR.get()) {
+            this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 4, 8, 4, new ResourceLocation(GreekFantasy.MODID, "hydra_lair"), DefaultRandomPos::getPos));
+        }
         this.goalSelector.addGoal(5, new RandomStrollGoal(this, 0.8D) {
             @Override
             public boolean canUse() {

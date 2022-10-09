@@ -551,12 +551,21 @@ public final class GFEvents {
                             return super.canUse() && this.mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled();
                         }
                     });
-                    mob.goalSelector.addGoal(3, new MoveToStructureGoal(mob, 1.0D, 4, 8, 10, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
+                    if(GreekFantasy.CONFIG.GUARDIAN_SEEK_OCEAN_VILLAGE.get()) {
+                        mob.goalSelector.addGoal(3, new MoveToStructureGoal(mob, 1.0D, 4, 8, 10, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos) {
+                            @Override
+                            public boolean canUse() {
+                                return super.canUse() && this.mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled();
+                            }
+                        });
+                    }
                 }
                 // add dolphin goals to be tempted by tritons and move to ocean villages
                 if(mob.getType() == EntityType.DOLPHIN && mob instanceof Dolphin dolphin) {
                     mob.goalSelector.addGoal(2, new DolphinTemptByTritonGoal(dolphin, 0.9D, Ingredient.of(ItemTags.FISHES)));
-                    mob.goalSelector.addGoal(3, new MoveToStructureGoal(dolphin, 1.0D, 5, 10, 15, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
+                    if (GreekFantasy.CONFIG.DOLPHIN_SEEK_OCEAN_VILLAGE.get()) {
+                        mob.goalSelector.addGoal(3, new MoveToStructureGoal(dolphin, 1.0D, 5, 10, 15, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
+                    }
                 }
                 // add drowned goals to attack tritons and naiads
                 if(mob.getType() == EntityType.DROWNED) {
@@ -607,7 +616,6 @@ public final class GFEvents {
 
         /**
          * Used to sometimes replace Witch with Circe when a witch is spawned.
-         * Used to sometimes replace Sheep with Golden Ram when a yellow sheep is spawned.
          *
          * @param event the LivingSpawnEvent.SpecialSpawn
          */
@@ -615,13 +623,16 @@ public final class GFEvents {
         public static void onEntitySpawn(final LivingSpawnEvent.SpecialSpawn event) {
             // check if the entity is a witch
             if (event.getEntity() != null && event.getEntity().getType() == EntityType.WITCH
-                    && event.getLevel() instanceof Level
+                    && event.getLevel() instanceof ServerLevel level
                     && (event.getLevel().getRandom().nextDouble() * 100.0D) < GreekFantasy.CONFIG.CIRCE_SPAWN_CHANCE.get()) {
                 event.setCanceled(true);
                 // spawn Circe instead of witch
+                BlockPos pos = new BlockPos(event.getX(), event.getY(), event.getZ());
                 final Circe circe = GFRegistry.EntityReg.CIRCE.get().create((Level) event.getLevel());
                 circe.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
-                event.getLevel().addFreshEntity(circe);
+                level.addFreshEntity(circe);
+                circe.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), event.getSpawnReason(), null, null);
+
             }
         }
 
