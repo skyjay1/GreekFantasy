@@ -575,20 +575,24 @@ public final class GFEvents {
                     mob.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(mob, LivingEntity.class, 10, true, false, predicate) {
                         @Override
                         public boolean canUse() {
-                            return super.canUse() && this.mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled();
+                            return this.mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled() && super.canUse();
                         }
                     });
-                    mob.goalSelector.addGoal(3, new MoveToStructureGoal(mob, 1.0D, 4, 8, 10, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos) {
-                        @Override
-                        public boolean canUse() {
-                            return mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled() && super.canUse();
-                        }
-                    });
+                    if(GreekFantasy.CONFIG.GUARDIAN_SEEK_OCEAN_VILLAGE.get()) {
+                        mob.goalSelector.addGoal(3, new MoveToStructureGoal(mob, 1.0D, 4, 8, 10, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos) {
+                            @Override
+                            public boolean canUse() {
+                                return mob.getCapability(GreekFantasy.FRIENDLY_GUARDIAN_CAP).orElse(FriendlyGuardian.EMPTY).isEnabled() && super.canUse();
+                            }
+                        });
+                    }
                 }
                 // add dolphin goals to be tempted by tritons and move to ocean villages
                 if(mob.getType() == EntityType.DOLPHIN && mob instanceof Dolphin dolphin) {
                     mob.goalSelector.addGoal(2, new DolphinTemptByTritonGoal(dolphin, 0.9D, Ingredient.of(ItemTags.FISHES)));
-                    mob.goalSelector.addGoal(3, new MoveToStructureGoal(dolphin, 1.0D, 2, 10, 15, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
+                    if (GreekFantasy.CONFIG.DOLPHIN_SEEK_OCEAN_VILLAGE.get()) {
+                        mob.goalSelector.addGoal(3, new MoveToStructureGoal(dolphin, 1.0D, 2, 10, 15, new ResourceLocation(GreekFantasy.MODID, "ocean_village"), BehaviorUtils::getRandomSwimmablePos));
+                    }
                 }
                 // add drowned goals to attack tritons and naiads
                 if(mob.getType() == EntityType.DROWNED) {
@@ -639,7 +643,6 @@ public final class GFEvents {
 
         /**
          * Used to sometimes replace Witch with Circe when a witch is spawned.
-         * Used to sometimes replace Sheep with Golden Ram when a yellow sheep is spawned.
          *
          * @param event the LivingSpawnEvent.SpecialSpawn
          */
@@ -654,8 +657,8 @@ public final class GFEvents {
                 BlockPos pos = new BlockPos(event.getX(), event.getY(), event.getZ());
                 final Circe circe = GFRegistry.EntityReg.CIRCE.get().create(level);
                 circe.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
-                circe.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), event.getSpawnReason(), null, null);
                 level.addFreshEntityWithPassengers(circe);
+                circe.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), event.getSpawnReason(), null, null);
             }
         }
 

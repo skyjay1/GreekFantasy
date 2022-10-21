@@ -8,8 +8,7 @@ __Key:__
 
 ## Bugs and urgent updates
 
-- Update CF "summon bosses" pics
-- Orthus stands when sitting
+- Orthus stands when sitting and tempted
 
 ## Entities
 
@@ -81,6 +80,10 @@ __Key:__
 - X X Orthus Head
 - X X Palladium
 - X X Bronze Feather
+- X X Water Spell
+- X X Dragon Tooth
+- X X Dragon Tooth Hook
+- X X Throwing Axe
 
 ## Structures
 
@@ -304,6 +307,7 @@ Can I do something with these?
 - Kyno (dog-head biped; see also "Cynocephaly")
 - Blemmyes (headless biped)
 - Pandos (biped, giant ears)
+- Pine trees, ~~pinecones~~, pine sap, amber (from smelting pine cone or sap)
 - Dryad camp
 - Belt of Aphrodite (maybe allows disguise as other player?)
 - Aegis (Zeus' shield)
@@ -311,7 +315,9 @@ Can I do something with these?
 - Special swords: Harpe (sword used to slay Medusa)
 - Special bows: Eurytus
 - Baetylus (AKA Bethel or Betyl) (stone endowed with life) (immune to poison while in inventory?)
+- Oysters and pearls?
 - Story of Antaeus (miniboss; heals when touching earth; "Earth Bond" enchantment for boots heals player similarly)
+	- To defeat: craft some magical item that enhances knockback with fist (amber, etc.) OR some way for player to inflict levitation
 - Story of King Midas (gold touch)
 - Story of Icarus (improve Elytra)
 

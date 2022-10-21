@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -37,6 +38,11 @@ public class Cyprian extends Centaur implements Enemy {
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         // this goal has a custom predicate to make sure the centaur entity is not also a cyprian entity (don't attack teammates)
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Centaur.class, 10, true, false, e -> e.getType() == GFRegistry.EntityReg.CENTAUR.get()));
+    }
+
+    @Override
+    public MobCategory getClassification(boolean forSpawnCount) {
+        return MobCategory.MONSTER;
     }
 
     @Override

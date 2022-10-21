@@ -66,7 +66,9 @@ public class Cyclops extends Monster {
             return !entity.isSpectator() && entity.hasCustomName() && "Nobody".equals(entity.getCustomName().getString());
         }));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 4, 8, 4, new ResourceLocation(GreekFantasy.MODID, "cyclops_cave"), DefaultRandomPos::getPos));
+        if(GreekFantasy.CONFIG.CYCLOPS_SEEK_CAVE.get()) {
+            this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 4, 8, 4, new ResourceLocation(GreekFantasy.MODID, "cyclops_cave"), DefaultRandomPos::getPos));
+        }
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));

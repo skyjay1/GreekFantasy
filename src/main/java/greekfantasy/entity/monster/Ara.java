@@ -13,6 +13,7 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -67,7 +68,9 @@ public class Ara extends PathfinderMob implements NeutralMob {
                 return Ara.this.getRandom().nextInt(80) == 0 && super.canUse();
             }
         });
-        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 3, 8, 4, new ResourceLocation(GreekFantasy.MODID, "ara_camp"), DefaultRandomPos::getPos));
+        if(GreekFantasy.CONFIG.ARA_SEEK_CAMP.get()) {
+            this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 3, 8, 4, new ResourceLocation(GreekFantasy.MODID, "ara_camp"), DefaultRandomPos::getPos));
+        }
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
@@ -122,6 +125,11 @@ public class Ara extends PathfinderMob implements NeutralMob {
     }
 
     // End IAngerable methods
+
+    @Override
+    public MobCategory getClassification(boolean forSpawnCount) {
+        return MobCategory.MONSTER;
+    }
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {

@@ -122,7 +122,9 @@ public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMo
 
     protected void addCentaurGoals() {
         this.goalSelector.addGoal(2, new TradeWithPlayerGoal<>(this, 40 + random.nextInt(20)));
-        this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 3, 8, 4, new ResourceLocation(GreekFantasy.MODID, "centaur_camp"), DefaultRandomPos::getPos));
+        if(GreekFantasy.CONFIG.CENTAUR_SEEK_CAMP.get()) {
+            this.goalSelector.addGoal(4, new MoveToStructureGoal(this, 1.0D, 3, 8, 4, new ResourceLocation(GreekFantasy.MODID, "centaur_camp"), DefaultRandomPos::getPos));
+        }
     }
 
     @Override

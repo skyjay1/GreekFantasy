@@ -111,9 +111,9 @@ public abstract class BigCatModel<T extends LivingEntity> extends QuadrupedModel
         float limbSwingCos = Mth.cos(limbSwing) * limbSwingAmount;
         float idleSwing = 0.1F * Mth.cos((entity.tickCount + partialTick) * 0.08F);
         float tailSwing = 0.42F * limbSwingCos;
-        upperTail.xRot = 0.6854F + tailSwing;
+        upperTail.xRot = 0.6854F + tailSwing + 0.7F * getSittingPercent(entity, partialTick);
         lowerTail.xRot = 0.3491F + tailSwing * 0.6F;
-        upperTail.zRot = idleSwing + 0.7F * getSittingPercent(entity, partialTick);
+        upperTail.zRot = idleSwing;
         lowerTail.zRot = idleSwing * 0.85F;
         body.zRot = limbSwingCos * 0.12F;
     }

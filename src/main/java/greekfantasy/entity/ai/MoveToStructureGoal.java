@@ -6,18 +6,22 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.SectionPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class MoveToStructureGoal extends RandomStrollGoal {
 
@@ -28,9 +32,11 @@ public class MoveToStructureGoal extends RandomStrollGoal {
     protected final int distanceXZ;
     protected final int distanceY;
     protected final RandomPosFactory randomPosFactory;
-    /** The block position of the nearest structure start **/
-    protected BlockPos structurePos;
+    /** The nearest structure start **/
     protected StructureStart structureStart;
+    /** The number of ticks to wait before attempting to locate structures **/
+    protected final int maxCooldown;
+    protected int cooldown;
 
     /**
      * @param mob the entity
@@ -63,7 +69,7 @@ public class MoveToStructureGoal extends RandomStrollGoal {
                                int rangeInSections, int distanceXZ, int distanceY,
                                Holder<ConfiguredStructureFeature<?, ?>> structure,
                                RandomPosFactory posFactory) {
-        super(mob, speedModifier, 10);
+        super(mob, speedModifier, 20);
         this.structure = structure;
         this.structureSet = HolderSet.direct(this.structure);
         this.rangeInSections = rangeInSections;
@@ -72,28 +78,48 @@ public class MoveToStructureGoal extends RandomStrollGoal {
         this.randomPosFactory = posFactory;
         // initialize structure start to avoid null errors
         this.structureStart = StructureStart.INVALID_START;
+        this.maxCooldown = 250 + mob.getId() % 200;
+        this.cooldown = 10 + mob.getId() % 20;
     }
 
     @Override
     public boolean canUse() {
         ServerLevel level = (ServerLevel)this.mob.level;
         BlockPos blockpos = this.mob.blockPosition();
+        // check if mob is near structure
         if(isNearStructure(structureStart, blockpos, distanceXZ, distanceY)) {
             return false;
         }
-        Pair<BlockPos, Holder<ConfiguredStructureFeature<?, ?>>> pair = level.getChunkSource().getGenerator().findNearestMapFeature(level, structureSet, blockpos, rangeInSections, false);
-        if(null == pair) {
-            return false;
+        // periodically check for nearby structure
+        if(cooldown-- <= 0) {
+            // reset cooldown
+            cooldown = maxCooldown;
+            // attempt to locate structure
+            Pair<BlockPos, Holder<ConfiguredStructureFeature<?, ?>>> pair = level.getChunkSource().getGenerator().findNearestMapFeature(level, structureSet, blockpos, rangeInSections, false);
+            if(null == pair) {
+                structureStart = StructureStart.INVALID_START;
+                return false;
+            }
+            // determine structure position and section
+            final BlockPos structurePos = pair.getFirst();
+            final SectionPos sectionPos = SectionPos.of(structurePos);
+            final int sectionX = SectionPos.blockToSectionCoord(structurePos.getX());
+            final int sectionZ = SectionPos.blockToSectionCoord(structurePos.getZ());
+            // load the chunk to query structure starts
+            final ChunkAccess chunkAccess = level.getChunk(sectionX, sectionZ, ChunkStatus.STRUCTURE_STARTS);
+            // locate structure start, or fallback to invalid start
+            structureStart = Optional.ofNullable(level.structureFeatureManager().getStartForFeature(sectionPos, pair.getSecond().value(), chunkAccess)).orElse(StructureStart.INVALID_START);
+            if(structureStart != StructureStart.INVALID_START) {
+                this.trigger();
+            }
         }
-        structurePos = pair.getFirst();
-        structureStart = level.structureFeatureManager().getStructureAt(structurePos, structure.value());
+        // only execute when structure is valid
         return structureStart != StructureStart.INVALID_START && super.canUse();
     }
 
     @Nullable
     @Override
     protected Vec3 getPosition() {
-        ServerLevel level = (ServerLevel)this.mob.level;
         Vec3 vec = randomPosFactory.apply(this.mob, distanceXZ, distanceY);
         if(vec != null) {
             // if vec is within structure, use vec
