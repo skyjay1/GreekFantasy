@@ -253,7 +253,7 @@ public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMo
     // End NeutralMob methods
 
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         // set variant when not spawned as part of a structure
         Variant color = this.getVariant();
@@ -262,16 +262,16 @@ public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMo
             if (spawnDataIn instanceof Centaur.GroupData) {
                 color = ((Centaur.GroupData) spawnDataIn).variant;
             } else {
-                color = Util.getRandom(Variant.values(), this.random);
+                color = Util.getRandom(Variant.values(), worldIn.getRandom());
                 spawnDataIn = new Centaur.GroupData(color);
             }
         }
         // set markings
-        this.setVariant(color, Util.getRandom(Markings.values(), this.random));
+        this.setVariant(color, Util.getRandom(Markings.values(), worldIn.getRandom()));
         if (this.random.nextInt(3) > 0) {
             this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
         }
-        return super.finalizeSpawn(level, difficulty, spawnType, spawnDataIn, dataTag);
+        return super.finalizeSpawn(worldIn, difficulty, spawnType, spawnDataIn, dataTag);
     }
 
     @Override

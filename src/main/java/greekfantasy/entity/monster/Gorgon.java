@@ -142,12 +142,12 @@ public class Gorgon extends Monster implements RangedAttackMob {
     }
 
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficultyIn, MobSpawnType reason,
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-        if (this.getRandom().nextDouble() * 100.0D < GreekFantasy.CONFIG.MEDUSA_SPAWN_CHANCE.get()) {
+        if (worldIn.getRandom().nextDouble() * 100.0D < GreekFantasy.CONFIG.MEDUSA_SPAWN_CHANCE.get()) {
             this.setMedusa(true);
         }
-        return super.finalizeSpawn(level, difficultyIn, reason, spawnDataIn, dataTag);
+        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
     @Override

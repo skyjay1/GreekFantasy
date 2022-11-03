@@ -45,8 +45,8 @@ public class Lampad extends Dryad {
     }
 
     @Override
-    public NymphVariant getRandomVariant() {
-        return Lampad.Variant.getRandom(level.getRandom());
+    public NymphVariant getRandomVariant(final RandomSource rand) {
+        return Lampad.Variant.getRandom(rand);
     }
 
     @Override

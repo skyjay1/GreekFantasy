@@ -216,8 +216,8 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         return Variant.getByName(name);
     }
 
-    public Variant getRandomVariant() {
-        return Variant.getRandom(level.getRandom());
+    public Variant getRandomVariant(final RandomSource rand) {
+        return Variant.getRandom(rand);
     }
 
     public Variant getVariantForBiome(final Holder<Biome> biome) {
@@ -251,12 +251,12 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         SpawnGroupData data = super.finalizeSpawn(worldIn, difficultyIn, mobType, spawnDataIn, dataTag);
         final Variant variant;
         if (mobType == MobSpawnType.COMMAND || mobType == MobSpawnType.SPAWN_EGG || mobType == MobSpawnType.SPAWNER || mobType == MobSpawnType.DISPENSER) {
-            variant = getRandomVariant();
+            variant = getRandomVariant(worldIn.getRandom());
         } else {
             variant = getVariantForBiome(worldIn.getBiome(this.blockPosition()));
         }
         this.setVariant(variant);
-        populateDefaultEquipmentSlots(level.getRandom(), difficultyIn);
+        populateDefaultEquipmentSlots(worldIn.getRandom(), difficultyIn);
         return data;
     }
 

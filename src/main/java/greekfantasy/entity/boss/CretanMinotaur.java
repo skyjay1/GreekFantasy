@@ -96,11 +96,11 @@ public class CretanMinotaur extends Minotaur implements RangedAttackMob {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficultyIn, MobSpawnType reason,
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-        SpawnGroupData data = super.finalizeSpawn(level, difficultyIn, reason, spawnDataIn, dataTag);
-        populateDefaultEquipmentSlots(level.getRandom(), difficultyIn);
-        populateDefaultEquipmentEnchantments(level.getRandom(), difficultyIn);
+        SpawnGroupData data = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        populateDefaultEquipmentSlots(worldIn.getRandom(), difficultyIn);
+        populateDefaultEquipmentEnchantments(worldIn.getRandom(), difficultyIn);
         return data;
     }
 

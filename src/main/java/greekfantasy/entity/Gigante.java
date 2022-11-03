@@ -172,7 +172,7 @@ public class Gigante extends PathfinderMob implements NeutralMob {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficulty, MobSpawnType mobType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-        populateDefaultEquipmentSlots(level.getRandom(), difficulty);
+        populateDefaultEquipmentSlots(worldIn.getRandom(), difficulty);
         return super.finalizeSpawn(worldIn, difficulty, mobType, spawnDataIn, dataTag);
     }
 

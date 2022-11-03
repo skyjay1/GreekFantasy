@@ -232,7 +232,7 @@ public class Dryad extends PathfinderMob implements NeutralMob, TradingMob {
         SpawnGroupData data = super.finalizeSpawn(worldIn, difficultyIn, mobType, spawnDataIn, dataTag);
         final NymphVariant variant;
         if (mobType == MobSpawnType.COMMAND || mobType == MobSpawnType.SPAWN_EGG || mobType == MobSpawnType.SPAWNER || mobType == MobSpawnType.DISPENSER) {
-            variant = getRandomVariant();
+            variant = getRandomVariant(worldIn.getRandom());
         } else {
             variant = getVariantForBiome(worldIn.getBiome(this.blockPosition()));
         }
@@ -353,8 +353,8 @@ public class Dryad extends PathfinderMob implements NeutralMob, TradingMob {
         return Variant.getByName(name);
     }
 
-    public NymphVariant getRandomVariant() {
-        return Variant.getRandom(level.getRandom());
+    public NymphVariant getRandomVariant(final RandomSource rand) {
+        return Variant.getRandom(rand);
     }
 
     public NymphVariant getVariantForBiome(final Holder<Biome> biome) {

@@ -153,9 +153,9 @@ public class Hydra extends Monster {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-        SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnDataIn, dataTag);
+        SpawnGroupData data = super.finalizeSpawn(worldIn, difficulty, spawnType, spawnDataIn, dataTag);
         addHead(0);
         addHead(1);
         addHead(2);

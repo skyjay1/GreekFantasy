@@ -293,9 +293,9 @@ public class Geryon extends Monster implements HasCustomCooldown {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-        final SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnDataIn, dataTag);
+        final SpawnGroupData data = super.finalizeSpawn(worldIn, difficulty, spawnType, spawnDataIn, dataTag);
         this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(GFRegistry.ItemReg.IRON_CLUB.get()));
         this.setSpawning(true);
         return data;

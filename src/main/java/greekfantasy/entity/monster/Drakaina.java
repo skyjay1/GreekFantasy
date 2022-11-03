@@ -186,16 +186,16 @@ public class Drakaina extends Monster {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficulty, MobSpawnType spawnType,
                                            @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         final Variant variant;
         if (spawnType == MobSpawnType.COMMAND || spawnType == MobSpawnType.SPAWN_EGG || spawnType == MobSpawnType.SPAWNER || spawnType == MobSpawnType.DISPENSER) {
-            variant = Variant.getRandom(level.getRandom());
+            variant = Variant.getRandom(worldIn.getRandom());
         } else {
-            variant = Variant.getForBiome(level.getBiome(this.blockPosition()));
+            variant = Variant.getForBiome(worldIn.getBiome(this.blockPosition()));
         }
         this.setVariant(variant);
-        return super.finalizeSpawn(level, difficulty, spawnType, spawnDataIn, dataTag);
+        return super.finalizeSpawn(worldIn, difficulty, spawnType, spawnDataIn, dataTag);
     }
 
     // NBT and Variant //

@@ -114,7 +114,7 @@ public class Cyclops extends Monster {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficulty, MobSpawnType mobSpawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-        populateDefaultEquipmentSlots(level.getRandom(), difficulty);
+        populateDefaultEquipmentSlots(worldIn.getRandom(), difficulty);
         return super.finalizeSpawn(worldIn, difficulty, mobSpawnType, spawnDataIn, dataTag);
     }
 
