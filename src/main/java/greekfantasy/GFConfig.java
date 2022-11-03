@@ -22,9 +22,10 @@ public class GFConfig {
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURATION;
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_COOLDOWN;
     public final ForgeConfigSpec.IntValue BAG_OF_WIND_DURABILITY_ON_USE;
-    public final ForgeConfigSpec.IntValue CONCH_DAMAGE_ON_USE;
+    public final ForgeConfigSpec.IntValue CONCH_DURABILITY_ON_USE;
     public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_COUNT;
     public final ForgeConfigSpec.IntValue DRAGON_TOOTH_SPARTI_LIFESPAN;
+    public final ForgeConfigSpec.IntValue HORN_OF_PLENTY_DURABILITY_ON_USE;
     public final ForgeConfigSpec.IntValue STAFF_OF_HEALING_COOLDOWN;
     public final ForgeConfigSpec.IntValue STAFF_OF_HEALING_DURABILITY_ON_USE;
     public final ForgeConfigSpec.IntValue THUNDERBOLT_COOLDOWN;
@@ -177,10 +178,11 @@ public class GFConfig {
         BAG_OF_WIND_DURATION = builder.defineInRange("bag_of_wind_duration", 400, 1, 24000);
         BAG_OF_WIND_COOLDOWN = builder.defineInRange("bag_of_wind_cooldown", 700, 0, 12000);
         BAG_OF_WIND_DURABILITY_ON_USE = builder.defineInRange("bag_of_wind_durability_on_use", 1, 0, 64);
-        CONCH_DAMAGE_ON_USE = builder.defineInRange("conch_damage_on_use", 0, 0, 64);
+        CONCH_DURABILITY_ON_USE = builder.defineInRange("conch_durability_on_use", 0, 0, 64);
         HELM_HIDES_ARMOR = builder.define("helm_hides_armor", true);
         DRAGON_TOOTH_SPARTI_COUNT = builder.defineInRange("dragon_tooth_sparti_count", 1, 0, 8);
         DRAGON_TOOTH_SPARTI_LIFESPAN = builder.defineInRange("dragon_tooth_sparti_lifespan", 300, 1, 24000);
+        HORN_OF_PLENTY_DURABILITY_ON_USE = builder.defineInRange("horn_of_plenty_durability_on_use", 1, 0, 64);
         THUNDERBOLT_COOLDOWN = builder.defineInRange("thunderbolt_cooldown", 100, 0, 24000);
         THUNDERBOLT_DURABILITY_ON_USE = builder.defineInRange("thunderbolt_durability_on_use", 15, 0, 128);
         THUNDERBOLT_DURABILITY_ON_FIREFLASH = builder.defineInRange("thunderbolt_durability_on_fireflash", 25, 0, 128);

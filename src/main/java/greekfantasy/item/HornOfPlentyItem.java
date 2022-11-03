@@ -32,7 +32,7 @@ public class HornOfPlentyItem extends HasCraftRemainderItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if(level instanceof ServerLevel) {
             // create list of food items using loot table
@@ -45,8 +45,9 @@ public class HornOfPlentyItem extends HasCraftRemainderItem {
             });
         }
         ItemStack container = getCraftingRemainingItem(itemStack);
-        if (!player.isCreative()) {
-            itemStack.hurtAndBreak(1, player, (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        int damage = GreekFantasy.CONFIG.HORN_OF_PLENTY_DURABILITY_ON_USE.get();
+        if (!player.isCreative() && damage > 0) {
+            itemStack.hurtAndBreak(damage, player, (entity) -> entity.broadcastBreakEvent(hand));
         }
         player.getCooldowns().addCooldown(this, 5);
         return InteractionResultHolder.sidedSuccess(itemStack.isEmpty() ? container : itemStack, level.isClientSide());

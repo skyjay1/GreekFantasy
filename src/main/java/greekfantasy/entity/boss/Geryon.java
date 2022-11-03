@@ -156,7 +156,7 @@ public class Geryon extends Monster implements HasCustomCooldown {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new Geryon.SpawningGoal());
-        this.goalSelector.addGoal(1, new Geryon.SummonCowGoal(MAX_SUMMON_TIME, 440));
+        this.goalSelector.addGoal(1, new Geryon.SummonCowGoal(MAX_SUMMON_TIME, 390));
         this.goalSelector.addGoal(2, new Geryon.SmashAttackGoal(SMASH_RANGE, 210));
         this.goalSelector.addGoal(3, new Geryon.GeryonAttackGoal(1.0D, false, ATTACK_COOLDOWN));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
@@ -524,19 +524,12 @@ public class Geryon extends Monster implements HasCustomCooldown {
         }
         final Vec3 facing = Vec3.directionFromRotation(this.getRotationVector());
         final AABB box = this.getBoundingBox().move(facing.normalize().scale(offset));
-        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
-        BlockState s;
-        for (double x = box.minX - 0.25D; x < box.maxX + 0.25D; x++) {
-            for (double y = box.minY + 1.1D; y < box.maxY + 0.5D; y++) {
-                for (double z = box.minZ - 0.25D; z < box.maxZ + 0.25D; z++) {
-                    p.set(x, y, z);
-                    s = this.level.getBlockState(p);
-                    if ((s.canOcclude() || s.getMaterial().blocksMotion()) && !s.is(BlockTags.WITHER_IMMUNE)) {
-                        this.level.destroyBlock(p, true);
-                    }
-                }
+        BlockPos.betweenClosedStream(box).forEach(p -> {
+            BlockState b = this.level.getBlockState(p);
+            if ((b.canOcclude() || b.getMaterial().blocksMotion()) && !b.is(BlockTags.WITHER_IMMUNE)) {
+                this.level.destroyBlock(p, true);
             }
-        }
+        });
     }
 
     @Override
@@ -607,7 +600,6 @@ public class Geryon extends Monster implements HasCustomCooldown {
                 return false;
             }
             return Geryon.this.getTarget() != null && Geryon.this.isNoneState()
-                    && Geryon.this.hasNoCustomCooldown()
                     && Geryon.this.distanceToSqr(Geryon.this.getTarget()) < (range * range);
         }
 
@@ -621,7 +613,6 @@ public class Geryon extends Monster implements HasCustomCooldown {
                 // get a list of nearby entities and use smash attack on each one
                 Geryon.this.level.getEntities(Geryon.this, Geryon.this.getBoundingBox().inflate(range, range / 2, range))
                         .forEach(e -> Geryon.this.useSmashAttack(e));
-                Geryon.this.setCustomCooldown(ATTACK_COOLDOWN);
                 // destroy nearby blocks
                 if (isBlockSmash) {
                     Geryon.this.destroyIntersectingBlocks(2.5D);
@@ -653,7 +644,7 @@ public class Geryon extends Monster implements HasCustomCooldown {
 
         @Override
         public boolean canUse() {
-            return super.canUse() && Geryon.this.hasNoCustomCooldown() && Geryon.this.isNoneState();
+            return super.canUse() && Geryon.this.isNoneState();
         }
 
         @Override
@@ -670,7 +661,6 @@ public class Geryon extends Monster implements HasCustomCooldown {
         @Override
         public void stop() {
             super.stop();
-            Geryon.this.setCustomCooldown(ATTACK_COOLDOWN);
             Geryon.this.setSummoning(false);
         }
     }

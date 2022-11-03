@@ -31,6 +31,11 @@ public class NemeanLionHideItem extends ArmorItem {
     }
 
     @Override
+    public boolean isEnchantable(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
         list.add(Component.translatable(getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GOLD));
     }

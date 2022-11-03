@@ -79,6 +79,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -191,13 +192,16 @@ public final class GFEvents {
          * Used to prevent or increase projectile damage when wearing certain armor
          * @param event the projectile impact event
          */
-        @SubscribeEvent
+        @SubscribeEvent(priority = EventPriority.HIGH)
         public static void onProjectileImpact(final ProjectileImpactEvent event) {
-            if(event.getRayTraceResult().getType() == HitResult.Type.ENTITY
+            if(!event.getProjectile().level.isClientSide()
+                    && event.getRayTraceResult().getType() == HitResult.Type.ENTITY
                     && event.getRayTraceResult() instanceof EntityHitResult entityHitResult
                     && entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
                 // determine dot product between entity and projectile
                 final double dot = getDotProduct(livingEntity, event.getProjectile(), true);
+                // TODO debug
+                GreekFantasy.LOGGER.debug("dot=" + dot);
                 final int achillesCount = HellenicArmorItem.getAchillesCount(livingEntity);
                 // determine if the entity is wearing armor and immune to projectiles
                 if(achillesCount > 0 && HellenicArmorItem.isImmune(livingEntity, event.getProjectile(), dot, achillesCount)) {
@@ -205,6 +209,8 @@ public final class GFEvents {
                     event.getProjectile().setDeltaMovement(event.getProjectile().getDeltaMovement().multiply(-1.0D, 1.0D, -1.0D));
                     // cancel the event
                     event.setCanceled(true);
+                    // damage the armor
+                    HellenicArmorItem.damageArmor(livingEntity, 1);
                     return;
                 }
                 // determine if entity is wearing armor and weak to arrow projectiles
@@ -216,12 +222,15 @@ public final class GFEvents {
                     return;
                 }
                 // determine if the entity is wearing nemean lion hide and immune to projectile
-                if(achillesCount == 0 && livingEntity.getItemBySlot(EquipmentSlot.HEAD).is(GFRegistry.ItemReg.NEMEAN_LION_HIDE.get())
+                ItemStack helmet = livingEntity.getItemBySlot(EquipmentSlot.HEAD);
+                if(achillesCount == 0 && helmet.is(GFRegistry.ItemReg.NEMEAN_LION_HIDE.get())
                         && NemeanLionHideItem.isImmune(livingEntity, event.getProjectile(), dot)) {
                     // reflect the projectile motion
                     event.getProjectile().setDeltaMovement(event.getProjectile().getDeltaMovement().multiply(-1.0D, 1.0D, -1.0D));
                     // cancel the event
                     event.setCanceled(true);
+                    // damage the armor
+                    helmet.hurtAndBreak(1, livingEntity, e -> e.broadcastBreakEvent(EquipmentSlot.HEAD));
                     return;
                 }
             }
@@ -231,11 +240,15 @@ public final class GFEvents {
          * @param first the first entity
          * @param second the second entity
          * @param horizontalOnly true if the dot product should only account for horizontal facing
-         * @return the dot product  between the facing directions of two entities
+         * @return the dot product between the facing directions of two entities
          */
         private static double getDotProduct(final Entity first, final Entity second, final boolean horizontalOnly) {
-            Vec3 firstFacing = Vec3.directionFromRotation(first.getXRot(), first.getYRot());
-            Vec3 secondFacing = Vec3.directionFromRotation(second.getXRot(), horizontalOnly ? first.getYRot() : second.getYRot());
+            Vec2 firstVec = new Vec2(horizontalOnly ? 0 : first.getXRot(), first.getYRot());
+            Vec2 secondVec = new Vec2(horizontalOnly ? 0 : second.getXRot(), second.getYRot());
+            Vec3 firstFacing = Vec3.directionFromRotation(firstVec);
+            Vec3 secondFacing = Vec3.directionFromRotation(secondVec);
+            // TODO debug
+            GreekFantasy.LOGGER.debug("\nfirst=" + firstFacing + "\nsecond=" + secondFacing);
             return secondFacing.dot(firstFacing);
         }
 

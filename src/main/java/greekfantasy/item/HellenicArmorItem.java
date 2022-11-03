@@ -17,8 +17,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.lang3.RandomUtils;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HellenicArmorItem extends ArmorItem {
@@ -58,6 +60,17 @@ public class HellenicArmorItem extends ArmorItem {
                                    final double dotProduct, final int armorCount) {
         // checks if the entity and projectile are facing opposite direction and random check against armor count
         return dotProduct < -0.70D && armorCount > 0 && (entity.getRandom().nextInt(4) + 1) < armorCount;
+    }
+
+    public static boolean damageArmor(final LivingEntity entity, final int amount) {
+        for(EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD}) {
+            ItemStack itemStack = entity.getItemBySlot(slot);
+            if(itemStack.is(ACHILLES_ITEM)) {
+                itemStack.hurtAndBreak(amount, entity, e -> e.broadcastBreakEvent(slot));
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

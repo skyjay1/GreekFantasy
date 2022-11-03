@@ -1,7 +1,9 @@
 package greekfantasy.entity.boss;
 
 import greekfantasy.GFRegistry;
+import greekfantasy.entity.ai.CooldownMeleeAttackGoal;
 import greekfantasy.entity.ai.ShootFireGoal;
+import greekfantasy.entity.util.HasCustomCooldown;
 import greekfantasy.item.ClubItem;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -48,12 +50,11 @@ import net.minecraftforge.common.ForgeMod;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
-public class BronzeBull extends Monster {
+public class BronzeBull extends Monster implements HasCustomCooldown {
 
     private static final EntityDataAccessor<Byte> STATE = SynchedEntityData.defineId(BronzeBull.class, EntityDataSerializers.BYTE);
     private static final String KEY_STATE = "BullState";
     private static final String KEY_SPAWN = "SpawnTime";
-    private static final String KEY_ATTACK_COOLDOWN = "AttackCooldown";
     // bytes to use in STATE
     private static final byte NONE = (byte) 0;
     private static final byte SPAWNING = (byte) 1;
@@ -137,6 +138,10 @@ public class BronzeBull extends Monster {
 
         // boss info
         this.bossInfo.setProgress(this.getHealth() / this.getMaxHealth());
+
+        if(!level.isClientSide()) {
+            this.tickCustomCooldown();
+        }
 
         // update spawn time
         if (isSpawning() || spawnTime > 0) {
@@ -290,7 +295,7 @@ public class BronzeBull extends Monster {
         super.addAdditionalSaveData(compound);
         compound.putByte(KEY_STATE, this.getState());
         compound.putInt(KEY_SPAWN, spawnTime);
-        compound.putInt(KEY_ATTACK_COOLDOWN, attackCooldown);
+        saveCustomCooldown(compound);
     }
 
     @Override
@@ -298,7 +303,7 @@ public class BronzeBull extends Monster {
         super.readAdditionalSaveData(compound);
         this.setState(compound.getByte(KEY_STATE));
         spawnTime = compound.getInt(KEY_SPAWN);
-        attackCooldown = compound.getInt(KEY_ATTACK_COOLDOWN);
+        readCustomCooldown(compound);
     }
 
     public void spawnFireParticles() {
@@ -371,14 +376,6 @@ public class BronzeBull extends Monster {
         }
     }
 
-    public void setAttackCooldown(final int cooldown) {
-        attackCooldown = cooldown;
-    }
-
-    public boolean hasNoCooldown() {
-        return attackCooldown <= 0;
-    }
-
     @Override
     public void handleEntityEvent(byte id) {
         switch (id) {
@@ -435,44 +432,34 @@ public class BronzeBull extends Monster {
         }
         final Vec3 facing = Vec3.directionFromRotation(this.getRotationVector());
         final AABB box = this.getBoundingBox().move(facing.normalize().scale(offset));
-        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
-        BlockState b;
-        for (double x = box.minX - 0.25D; x < box.maxX + 0.25D; x++) {
-            for (double y = box.minY + 1.1D; y < box.maxY + 0.5D; y++) {
-                for (double z = box.minZ - 0.25D; z < box.maxZ + 0.25D; z++) {
-                    p.set(x, y, z);
-                    b = this.level.getBlockState(p);
-                    if ((b.canOcclude() || b.getMaterial().blocksMotion()) && b.getDestroySpeed(level, p) < maxHardness && !b.is(BlockTags.WITHER_IMMUNE)) {
-                        this.level.destroyBlock(p, true);
-                    }
-                }
+        BlockPos.betweenClosedStream(box).forEach(p -> {
+            BlockState b = this.level.getBlockState(p);
+            if ((b.canOcclude() || b.getMaterial().blocksMotion()) && b.getDestroySpeed(level, p) < maxHardness && !b.is(BlockTags.WITHER_IMMUNE)) {
+                this.level.destroyBlock(p, true);
             }
-        }
+        });
+    }
+
+    @Override
+    public void setCustomCooldown(int cooldown) {
+        this.attackCooldown = cooldown;
+    }
+
+    @Override
+    public int getCustomCooldown() {
+        return this.attackCooldown;
     }
 
     // Custom goals
-    class BronzeBullMeleeAttackGoal extends MeleeAttackGoal {
+    class BronzeBullMeleeAttackGoal extends CooldownMeleeAttackGoal<BronzeBull> {
 
         public BronzeBullMeleeAttackGoal(double speedIn, boolean useLongMemory) {
-            super(BronzeBull.this, speedIn, useLongMemory);
-        }
-
-        @Override
-        protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
-            if (BronzeBull.this.hasNoCooldown()) {
-                super.checkAndPerformAttack(enemy, distToEnemySqr);
-            }
-        }
-
-        @Override
-        protected void resetAttackCooldown() {
-            super.resetAttackCooldown();
-            BronzeBull.this.setAttackCooldown(MELEE_COOLDOWN);
+            super(BronzeBull.this, speedIn, useLongMemory, MELEE_COOLDOWN);
         }
 
         @Override
         protected double getAttackReachSqr(LivingEntity attackTarget) {
-            return super.getAttackReachSqr(attackTarget) - 4.0D;
+            return super.getAttackReachSqr(attackTarget) - 2.0D;
         }
     }
 

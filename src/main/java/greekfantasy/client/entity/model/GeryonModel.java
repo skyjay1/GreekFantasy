@@ -45,8 +45,8 @@ public class GeryonModel<T extends Geryon> extends GiganteModel<T> {
     }
 
     @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float partialTick, float rotationYaw, float rotationPitch) {
-        super.setupAnim(entity, limbSwing, limbSwingAmount, partialTick, rotationYaw, rotationPitch);
+    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float rotationYaw, float rotationPitch) {
+        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, rotationYaw, rotationPitch);
         // update heads
         this.leftHead.copyFrom(this.head);
         this.leftHead.x += -8.0F;
@@ -56,6 +56,7 @@ public class GeryonModel<T extends Geryon> extends GiganteModel<T> {
         this.rightHead.y += 1.0F;
         //this.head.y -= 0.25F;
         // smash animation
+        final float partialTick = ageInTicks - entity.tickCount;
         final float smashTime = entity.getSmashPercent(partialTick);
         final float summonTime = entity.getSummonPercent(partialTick);
         if (summonTime > 0) {
