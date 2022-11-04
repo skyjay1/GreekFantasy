@@ -147,7 +147,7 @@ public class Sparti extends TamableAnimal implements RangedAttackMob {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficulty, MobSpawnType spawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         final SpawnGroupData data = super.finalizeSpawn(worldIn, difficulty, spawnType, spawnDataIn, dataTag);
-        populateDefaultEquipmentSlots(worldIn.getRandom(), difficulty);
+        populateDefaultEquipmentSlots(getRandom(), difficulty);
         setBaby(false);
         return data;
     }

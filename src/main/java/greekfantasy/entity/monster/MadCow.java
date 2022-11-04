@@ -19,6 +19,7 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 
 public class MadCow extends Cow implements Enemy {
 
@@ -27,6 +28,12 @@ public class MadCow extends Cow implements Enemy {
 
     public MadCow(final EntityType<? extends MadCow> type, final Level worldIn) {
         super(type, worldIn);
+        // remove pathfinding malus to encourage dangerous movement
+        this.setPathfindingMalus(BlockPathTypes.DANGER_CACTUS, 0);
+        this.setPathfindingMalus(BlockPathTypes.DAMAGE_CACTUS, 0);
+        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0);
+        this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 0);
+        this.setPathfindingMalus(BlockPathTypes.DANGER_OTHER, 0);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -58,6 +65,11 @@ public class MadCow extends Cow implements Enemy {
     @Override
     public MobCategory getClassification(boolean forSpawnCount) {
         return MobCategory.MONSTER;
+    }
+
+    @Override
+    public boolean canCutCorner(BlockPathTypes pathType) {
+        return pathType != BlockPathTypes.WALKABLE_DOOR;
     }
 
     @Override

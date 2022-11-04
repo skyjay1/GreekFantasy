@@ -228,7 +228,7 @@ public class Shade extends Monster {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         if (this.getStoredXP() == 0) {
-            this.setStoredXP(5 + this.random.nextInt(10));
+            this.setStoredXP(5 + getRandom().nextInt(10));
         }
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }

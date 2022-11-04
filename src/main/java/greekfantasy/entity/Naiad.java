@@ -251,12 +251,12 @@ public class Naiad extends PathfinderMob implements RangedAttackMob, NeutralMob 
         SpawnGroupData data = super.finalizeSpawn(worldIn, difficultyIn, mobType, spawnDataIn, dataTag);
         final Variant variant;
         if (mobType == MobSpawnType.COMMAND || mobType == MobSpawnType.SPAWN_EGG || mobType == MobSpawnType.SPAWNER || mobType == MobSpawnType.DISPENSER) {
-            variant = getRandomVariant(worldIn.getRandom());
+            variant = getRandomVariant(getRandom());
         } else {
             variant = getVariantForBiome(worldIn.getBiome(this.blockPosition()));
         }
         this.setVariant(variant);
-        populateDefaultEquipmentSlots(worldIn.getRandom(), difficultyIn);
+        populateDefaultEquipmentSlots(getRandom(), difficultyIn);
         return data;
     }
 

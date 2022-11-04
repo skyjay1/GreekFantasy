@@ -190,7 +190,7 @@ public class Drakaina extends Monster {
                                            @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         final Variant variant;
         if (spawnType == MobSpawnType.COMMAND || spawnType == MobSpawnType.SPAWN_EGG || spawnType == MobSpawnType.SPAWNER || spawnType == MobSpawnType.DISPENSER) {
-            variant = Variant.getRandom(worldIn.getRandom());
+            variant = Variant.getRandom(getRandom());
         } else {
             variant = Variant.getForBiome(worldIn.getBiome(this.blockPosition()));
         }

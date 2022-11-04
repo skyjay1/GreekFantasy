@@ -383,9 +383,9 @@ public class Triton extends PathfinderMob implements RangedAttackMob, NeutralMob
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType mobType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         SpawnGroupData data = super.finalizeSpawn(worldIn, difficultyIn, mobType, spawnDataIn, dataTag);
-        boolean slim = worldIn.getRandom().nextBoolean();
+        boolean slim = getRandom().nextBoolean();
         this.setSlim(slim);
-        populateDefaultEquipmentSlots(worldIn.getRandom(), difficultyIn);
+        populateDefaultEquipmentSlots(getRandom(), difficultyIn);
         return data;
     }
 

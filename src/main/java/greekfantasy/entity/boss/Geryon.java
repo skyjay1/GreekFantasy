@@ -52,6 +52,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
@@ -66,10 +67,6 @@ public class Geryon extends Monster implements HasCustomCooldown {
     private static final TagKey<EntityType<?>> BOSSES = ForgeRegistries.ENTITY_TYPES.tags().createTagKey(new ResourceLocation("forge", "bosses"));
 
     private static final EntityDataAccessor<Byte> STATE = SynchedEntityData.defineId(Geryon.class, EntityDataSerializers.BYTE);
-    private static final String KEY_STATE = "GeryonState";
-    private static final String KEY_SPAWN_TIME = "SpawnTime";
-    private static final String KEY_SMASH_TIME = "SmashTime";
-    private static final String KEY_SUMMON_TIME = "SummonTime";
     // bytes to use in STATE
     private static final byte NONE = (byte) 0;
     private static final byte SPAWNING = (byte) 1;
@@ -174,7 +171,9 @@ public class Geryon extends Monster implements HasCustomCooldown {
         this.bossInfo.setProgress(this.getHealth() / this.getMaxHealth());
 
         // attack cooldown
-        tickCustomCooldown();
+        if(!this.level.isClientSide()) {
+            tickCustomCooldown();
+        }
 
         // update spawn time
         if (isSpawning() && --spawnTime <= 0) {
@@ -333,20 +332,12 @@ public class Geryon extends Monster implements HasCustomCooldown {
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putByte(KEY_STATE, this.getGeryonState());
-        compound.putInt(KEY_SPAWN_TIME, this.spawnTime);
-        compound.putInt(KEY_SUMMON_TIME, this.summonTime);
-        compound.putInt(KEY_SMASH_TIME, this.smashTime);
         saveCustomCooldown(compound);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setGeryonState(compound.getByte(KEY_STATE));
-        this.spawnTime = compound.getInt(KEY_SPAWN_TIME);
-        this.summonTime = compound.getInt(KEY_SUMMON_TIME);
-        this.smashTime = compound.getInt(KEY_SMASH_TIME);
         readCustomCooldown(compound);
     }
 
@@ -400,7 +391,7 @@ public class Geryon extends Monster implements HasCustomCooldown {
                 break;
             case SMASH_EVENT:
                 // spawn particles for all nearby entities
-                final List<Entity> targets = this.getCommandSenderWorld().getEntities(Geryon.this, Geryon.this.getBoundingBox().inflate(SMASH_RANGE, SMASH_RANGE / 2, SMASH_RANGE));
+                final List<Entity> targets = this.level.getEntities(Geryon.this, Geryon.this.getBoundingBox().inflate(SMASH_RANGE, SMASH_RANGE / 2, SMASH_RANGE));
                 for (final Entity e : targets) {
                     addSmashParticlesAt(e);
                 }
@@ -589,8 +580,11 @@ public class Geryon extends Monster implements HasCustomCooldown {
         @Override
         public void start() {
             Geryon.this.setSmashAttack(true);
-            Geryon.this.getNavigation().createPath(Geryon.this.getTarget(), 0);
-            isBlockSmash = Geryon.this.getNavigation().isDone();
+            isBlockSmash = false;
+            if(Geryon.this.getTarget() != null) {
+                Path path = Geryon.this.getNavigation().createPath(Geryon.this.getTarget(), 0);
+                isBlockSmash = (null == path);
+            }
         }
 
         @Override
@@ -604,9 +598,16 @@ public class Geryon extends Monster implements HasCustomCooldown {
         }
 
         @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
         public void tick() {
             Geryon.this.getNavigation().stop();
-            Geryon.this.getLookControl().setLookAt(Geryon.this.getTarget(), Geryon.this.getMaxHeadYRot(), Geryon.this.getMaxHeadXRot());
+            if(Geryon.this.getTarget() != null) {
+                Geryon.this.getLookControl().setLookAt(Geryon.this.getTarget(), Geryon.this.getMaxHeadYRot(), Geryon.this.getMaxHeadXRot());
+            }
             if (Geryon.this.smashTime >= Geryon.MAX_SMASH_TIME) {
                 // notify client (spawns particles around entities)
                 Geryon.this.level.broadcastEntityEvent(Geryon.this, Geryon.SMASH_EVENT);
@@ -624,8 +625,7 @@ public class Geryon extends Monster implements HasCustomCooldown {
 
         @Override
         public boolean canContinueToUse() {
-            return Geryon.this.isSmashAttack() && Geryon.this.getTarget() != null
-                    && Geryon.this.distanceToSqr(Geryon.this.getTarget()) < (range * range);
+            return Geryon.this.isSmashAttack();
         }
 
         @Override
@@ -645,6 +645,11 @@ public class Geryon extends Monster implements HasCustomCooldown {
         @Override
         public boolean canUse() {
             return super.canUse() && Geryon.this.isNoneState();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return Geryon.this.isSummoning() && this.progressTimer > 0;
         }
 
         @Override

@@ -230,14 +230,14 @@ public class Satyr extends PathfinderMob implements NeutralMob, HasHorseVariant 
             if (spawnDataIn instanceof Satyr.GroupData) {
                 color = ((Satyr.GroupData) spawnDataIn).variant;
             } else {
-                color = Util.getRandom(Variant.values(), worldIn.getRandom());
+                color = Util.getRandom(Variant.values(), getRandom());
                 spawnDataIn = new Satyr.GroupData(color);
             }
             this.setVariant(color);
         }
 
         // random chance to be a satyr shaman
-        this.setShaman(worldIn.getRandom().nextFloat() * 100.0F < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get());
+        this.setShaman(getRandom().nextFloat() * 100.0F < GreekFantasy.CONFIG.SATYR_SHAMAN_CHANCE.get());
         return super.finalizeSpawn(worldIn, difficulty, spawnType, spawnDataIn, dataTag);
     }
 

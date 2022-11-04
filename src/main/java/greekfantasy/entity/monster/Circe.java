@@ -105,7 +105,7 @@ public class Circe extends Monster implements RangedAttackMob {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficulty, MobSpawnType mobSpawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         SpawnGroupData data = super.finalizeSpawn(worldIn, difficulty, mobSpawnType, spawnDataIn, dataTag);
-        populateDefaultEquipmentSlots(worldIn.getRandom(), difficulty);
+        populateDefaultEquipmentSlots(getRandom(), difficulty);
         return data;
     }
 

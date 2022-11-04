@@ -645,7 +645,6 @@ public final class GFEvents {
                 circe.moveTo(event.getX(), event.getY(), event.getZ(), 0, 0);
                 level.addFreshEntity(circe);
                 circe.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), event.getSpawnReason(), null, null);
-
             }
         }
 

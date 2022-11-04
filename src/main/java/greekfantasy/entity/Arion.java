@@ -52,7 +52,6 @@ public class Arion extends Horse {
         Arion entity = GFRegistry.EntityReg.ARION.get().create(level);
         entity.copyPosition(horse);
         entity.yBodyRot = horse.yBodyRot;
-        entity.finalizeSpawn(level, level.getCurrentDifficultyAt(horse.blockPosition()), MobSpawnType.CONVERSION, null, null);
         if (horse.hasCustomName()) {
             entity.setCustomName(horse.getCustomName());
             entity.setCustomNameVisible(horse.isCustomNameVisible());
@@ -63,6 +62,7 @@ public class Arion extends Horse {
         entity.setPortalCooldown();
         entity.setAge(horse.getAge());
         level.addFreshEntity(entity);
+        entity.finalizeSpawn(level, level.getCurrentDifficultyAt(horse.blockPosition()), MobSpawnType.CONVERSION, null, null);
         // copy inventory and remove the old horse
         entity.copyInventory(horse);
         horse.inventory.clearContent();

@@ -159,11 +159,11 @@ public class Pegasus extends AbstractHorse implements FlyingAnimal, HasHorseVari
         if (spawnDataIn instanceof Horse.HorseGroupData) {
             color = ((Horse.HorseGroupData) spawnDataIn).variant;
         } else {
-            color = Util.getRandom(Variant.values(), worldIn.getRandom());
+            color = Util.getRandom(Variant.values(), getRandom());
             spawnDataIn = new Horse.HorseGroupData(color);
         }
         // set color and type
-        this.setVariant(color, Util.getRandom(Markings.values(), worldIn.getRandom()));
+        this.setVariant(color, Util.getRandom(Markings.values(), getRandom()));
         return super.finalizeSpawn(worldIn, difficulty, mobSpawnType, spawnDataIn, dataTag);
     }
 

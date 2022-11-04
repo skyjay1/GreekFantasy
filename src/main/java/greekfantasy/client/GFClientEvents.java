@@ -259,8 +259,6 @@ public final class GFClientEvents {
 
     public static final class ModHandler {
 
-        private static final String MODID = GreekFantasy.MODID;
-
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             event.enqueueWork(ModHandler::registerModelProperties);
@@ -421,9 +419,9 @@ public final class GFClientEvents {
          **/
         @SubscribeEvent
         public static void registerBlockColors(final RegisterColorHandlersEvent.Block event) {
-            event.register((BlockState stateIn, BlockAndTintGetter level, BlockPos pos, int color) -> 0xD8E3D0,
+            event.register((BlockState stateIn, BlockAndTintGetter level, BlockPos pos, int tintIndex) -> 0xD8E3D0,
                     RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "olive_leaves"), ForgeRegistries.BLOCKS).get());
-            event.register((BlockState stateIn, BlockAndTintGetter level, BlockPos pos, int color) -> 0x80f66b,
+            event.register((BlockState stateIn, BlockAndTintGetter level, BlockPos pos, int tintIndex) -> 0x80f66b,
                     RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "golden_leaves"), ForgeRegistries.BLOCKS).get());
         }
 
@@ -435,9 +433,9 @@ public final class GFClientEvents {
          **/
         @SubscribeEvent
         public static void registerItemColors(final RegisterColorHandlersEvent.Item event) {
-            event.register((ItemStack item, int i) -> 0xD8E3D0,
+            event.register((ItemStack item, int tintIndex) -> 0xD8E3D0,
                     RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "olive_leaves"), ForgeRegistries.ITEMS).get());
-            event.register((ItemStack item, int i) -> 0x80f66b,
+            event.register((ItemStack item, int tintIndex) -> 0x80f66b,
                     RegistryObject.create(new ResourceLocation(GreekFantasy.MODID, "golden_leaves"), ForgeRegistries.ITEMS).get());
         }
 

@@ -258,6 +258,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @SuppressWarnings({"unused", "RedundantTypeArguments"})
@@ -694,9 +695,9 @@ public final class GFRegistry {
         public static final RegistryObject<Item> IVORY_SWORD = ITEMS.register("ivory_sword", () ->
                 new IvorySwordItem(GFTiers.IVORY, 3, -2.2F, new Item.Properties().tab(GF_TAB).stacksTo(1)));
         public static final RegistryObject<Item> THROWING_AXE = ITEMS.register("throwing_axe", () ->
-                new ThrowingAxeItem(Tiers.IRON, 6.0F, -3.1F, new Item.Properties().tab(GF_TAB)));
+                new ThrowingAxeItem(Tiers.IRON, 6.0F, -3.1F, new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)));
         public static final RegistryObject<Item> DRAGON_TOOTH_ROD = ITEMS.register("dragon_tooth_rod", () ->
-                new DragonToothRodItem(new Item.Properties().tab(GF_TAB).durability(128)));
+                new DragonToothRodItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.EPIC).durability(128)));
         public static final RegistryObject<Item> DISCUS = ITEMS.register("discus", () ->
                 new DiscusItem(new Item.Properties().tab(GF_TAB).stacksTo(16)));
         public static final RegistryObject<Item> GREEK_FIRE = ITEMS.register("greek_fire", () ->
@@ -728,7 +729,7 @@ public final class GFRegistry {
         public static final RegistryObject<Item> HORN_OF_PLENTY = ITEMS.register("horn_of_plenty", () ->
                 new HornOfPlentyItem(ItemReg.HORN, new Item.Properties().tab(GF_TAB).durability(24).rarity(Rarity.UNCOMMON)));
         public static final RegistryObject<Item> GOLDEN_FLEECE = ITEMS.register("golden_fleece", () ->
-                new Item(new Item.Properties().tab(GF_TAB)));
+                new Item(new Item.Properties().tab(GF_TAB).rarity(Rarity.RARE)));
         public static final RegistryObject<Item> GOLDEN_BALL = ITEMS.register("golden_ball", () ->
                 new GoldenBallItem(new Item.Properties().tab(GF_TAB).rarity(Rarity.UNCOMMON).durability(680)));
         public static final RegistryObject<Item> ICHOR = ITEMS.register("ichor", () ->
@@ -900,16 +901,16 @@ public final class GFRegistry {
 
         //// ITEM BLOCKS ////
         public static final RegistryObject<BlockItem> BRONZE_BLOCK = registerItemBlock(BlockReg.BRONZE_BLOCK);
-        public static final RegistryObject<BlockItem> ICHOR_INFUSED_GEARBOX = registerItemBlock(BlockReg.ICHOR_INFUSED_GEARBOX);
-        public static final RegistryObject<BlockItem> MYSTERIOUS_BOX = registerItemBlock(BlockReg.MYSTERIOUS_BOX);
+        public static final RegistryObject<BlockItem> ICHOR_INFUSED_GEARBOX = registerItemBlock(BlockReg.ICHOR_INFUSED_GEARBOX, p -> p.rarity(Rarity.RARE));
+        public static final RegistryObject<BlockItem> MYSTERIOUS_BOX = registerItemBlock(BlockReg.MYSTERIOUS_BOX, p -> p.rarity(Rarity.UNCOMMON));
         public static final RegistryObject<BlockItem> GIGANTE_HEAD = ITEMS.register("gigante_head", () -> new GiganteHeadItem(BlockReg.GIGANTE_HEAD.get(), new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<BlockItem> ORTHUS_HEAD = ITEMS.register("orthus_head", () -> new OrthusHeadItem(BlockReg.ORTHUS_HEAD.get(), new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<BlockItem> CERBERUS_HEAD = ITEMS.register("cerberus_head", () -> new CerberusHeadItem(BlockReg.CERBERUS_HEAD.get(), new Item.Properties().tab(GF_TAB)));
         public static final RegistryObject<BlockItem> OIL_LAMP = registerItemBlock(BlockReg.OIL_LAMP);
         public static final RegistryObject<BlockItem> OLIVE_SAPLING = registerItemBlock(BlockReg.OLIVE_SAPLING);
         public static final RegistryObject<BlockItem> POMEGRANATE_SAPLING = registerItemBlock(BlockReg.POMEGRANATE_SAPLING);
-        public static final RegistryObject<BlockItem> GOLDEN_SAPLING = registerItemBlock(BlockReg.GOLDEN_SAPLING);
-        public static final RegistryObject<BlockItem> WILD_ROSE = registerItemBlock(BlockReg.WILD_ROSE);
+        public static final RegistryObject<BlockItem> GOLDEN_SAPLING = registerItemBlock(BlockReg.GOLDEN_SAPLING, p -> p.rarity(Rarity.UNCOMMON));
+        public static final RegistryObject<BlockItem> WILD_ROSE = registerItemBlock(BlockReg.WILD_ROSE, p -> p.rarity(Rarity.UNCOMMON));
         public static final RegistryObject<BlockItem> NEST = registerItemBlock(BlockReg.NEST);
 
         /**
@@ -919,7 +920,18 @@ public final class GFRegistry {
          * @return the BlockItem registry object
          */
         private static RegistryObject<BlockItem> registerItemBlock(final RegistryObject<? extends Block> blockSupplier) {
-            return ITEMS.register(blockSupplier.getId().getPath(), itemBlock(blockSupplier));
+            return ITEMS.register(blockSupplier.getId().getPath(), itemBlock(blockSupplier, p -> {}));
+        }
+
+        /**
+         * Registers an item for the given block
+         *
+         * @param blockSupplier the block supplier
+         * @param consumer the item properties consumer
+         * @return the BlockItem registry object
+         */
+        private static RegistryObject<BlockItem> registerItemBlock(final RegistryObject<? extends Block> blockSupplier, Consumer<Item.Properties> consumer) {
+            return ITEMS.register(blockSupplier.getId().getPath(), itemBlock(blockSupplier, consumer));
         }
 
         /**
@@ -928,8 +940,10 @@ public final class GFRegistry {
          * @param blockSupplier the block supplier
          * @return a supplier for the block item
          */
-        private static Supplier<BlockItem> itemBlock(final RegistryObject<? extends Block> blockSupplier) {
-            return () -> new BlockItem(blockSupplier.get(), new Item.Properties().tab(GF_TAB));
+        private static Supplier<BlockItem> itemBlock(final RegistryObject<? extends Block> blockSupplier, Consumer<Item.Properties> consumer) {
+            Item.Properties props = new Item.Properties().tab(GF_TAB);
+            consumer.accept(props);
+            return () -> new BlockItem(blockSupplier.get(), props);
         }
     }
 

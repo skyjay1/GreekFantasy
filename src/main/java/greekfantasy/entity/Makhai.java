@@ -165,7 +165,7 @@ public class Makhai extends TamableAnimal {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficulty, MobSpawnType mobSpawnType,
                                         @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         final SpawnGroupData data = super.finalizeSpawn(worldIn, difficulty, mobSpawnType, spawnDataIn, dataTag);
-        this.populateDefaultEquipmentSlots(worldIn.getRandom(), difficulty);
+        this.populateDefaultEquipmentSlots(getRandom(), difficulty);
         setSpawning(true);
         setBaby(false);
         return data;

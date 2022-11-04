@@ -262,12 +262,12 @@ public class Centaur extends PathfinderMob implements NeutralMob, RangedAttackMo
             if (spawnDataIn instanceof Centaur.GroupData) {
                 color = ((Centaur.GroupData) spawnDataIn).variant;
             } else {
-                color = Util.getRandom(Variant.values(), worldIn.getRandom());
+                color = Util.getRandom(Variant.values(), getRandom());
                 spawnDataIn = new Centaur.GroupData(color);
             }
         }
         // set markings
-        this.setVariant(color, Util.getRandom(Markings.values(), worldIn.getRandom()));
+        this.setVariant(color, Util.getRandom(Markings.values(), getRandom()));
         if (this.random.nextInt(3) > 0) {
             this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
         }
